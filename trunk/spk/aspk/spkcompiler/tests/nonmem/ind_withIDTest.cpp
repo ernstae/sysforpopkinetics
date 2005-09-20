@@ -34,121 +34,45 @@ using namespace xercesc;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // NONMEM Control file
 /*
-  $PROBLEM y(t) =  a * exp( - b * t ) + e(t)
-  $DATA indSingleExpSim.dat
-  $INPUT TIME DV
-  $PRED 
-  A = THETA(1)
-  B = THETA(2)
-  T = TIME
-  E = ETA(1)
-
-  F = A * EXP( - B * T  ) 
-  Y = F + E
-  $THETA 
-  (.1,1,10)
-  (.1,1,10)
-  $OMEGA DIAGONAL(1) .001
-  $ESTIMATION METHOD=0 NOPOSTHOC SIGDIGITS=3 MAXEVALS=450 PRINT=5
-  $TABLE TIME DV FILE=junk.dat
-*/
-// NONMEM data file  
+$PROBLEM NIST MISRA1A
+$DATA misra1a.dat
+$INPUT DV TIME
+$PRED 
+B1 = THETA(1)
+B2 = THETA(2)
+F = B1*(1-EXP(-B2*TIME))
+Y = F + ETA(1)
+$THETA 
+(50.0,500,5000)
+(.00001,0.0001,0.001)
+$OMEGA DIAGONAL(1) 0.001
+$ESTIMATION METHOD=0 NOPOSTHOC SIGDIGITS=3 MAXEVALS=450 PRINT=5
+$COVARIANCE
+ */
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// NONMEM data file
 /*
-  0.0000E+00  1.0352E+00
-  2.0000E-01  8.3796E-01
-  4.0000E-01  6.4780E-01
-  6.0000E-01  4.9445E-01
-  8.0000E-01  4.3668E-01
-  1.0000E+00  2.9604E-01
-*/
-// NONMEM results
+  1.0070E+01  7.7600E+01
+  1.4730E+01  1.1490E+02
+  1.7940E+01  1.4110E+02
+  2.3930E+01  1.9080E+02
+  2.9610E+01  2.3990E+02
+  3.5180E+01  2.8900E+02
+  4.0020E+01  3.3280E+02
+  4.4820E+01  3.7840E+02
+  5.0760E+01  4.3480E+02
+  5.5050E+01  4.7730E+02
+  6.1010E+01  5.3680E+02
+  6.6400E+01  5.9310E+02
+  7.5470E+01  6.8910E+02
+  8.1780E+01  7.6000E+02
+ */
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// NONMEM Result
 /*
-1NONLINEAR MIXED EFFECTS MODEL PROGRAM (NONMEM)    DOUBLE PRECISION NONMEM    VERSION V LEVEL 1.1  
- DEVELOPED AND PROGRAMMED BY STUART BEAL AND LEWIS SHEINER
- 
- PROBLEM NO.:         1
- y(t) =  a * exp( - b * t ) + e(t)                                       
-0DATA CHECKOUT RUN:              NO 
- DATA SET LOCATED ON UNIT NO.:    2
- THIS UNIT TO BE REWOUND:        NO 
- NO. OF DATA RECS IN DATA SET:    6
- NO. OF DATA ITEMS IN DATA SET:   3
- ID DATA ITEM IS DATA ITEM NO.:   3
- DEP VARIABLE IS DATA ITEM NO.:   2
-0LABELS FOR DATA ITEMS:
- TIME      DV    .ID.
-0FORMAT FOR DATA:
- (2E11.0,1F2.0)                                                                  
- 
- TOT. NO. OF OBS RECS:       6
- TOT. NO. OF INDIVIDUALS:    6
-0LENGTH OF THETA:  2
-0OMEGA HAS SIMPLE DIAGONAL FORM WITH DIMENSION:  1
-0INITIAL ESTIMATE OF THETA:
- LOWER BOUND    INITIAL EST    UPPER BOUND
-  0.1000E+00     0.1000E+01     0.1000E+02
-  0.1000E+00     0.1000E+01     0.1000E+02
-0INITIAL ESTIMATE OF OMEGA:
- 0.1000E-02
-0ESTIMATION STEP OMITTED:           NO 
- NO. OF FUNCT. EVALS. ALLOWED:     450
- NO. OF SIG. FIGURES REQUIRED:       3
- INTERMEDIATE PRINTOUT:            YES 
- ESTIMATE OUTPUT TO MSF:            NO 
-0COVARIANCE STEP OMITTED:    NO 
- EIGENVLS. PRINTED:    NO 
- SPECIAL COMPUTATION:  NO 
- COMPRESSED FORMAT:    NO 
-0TABLES STEP OMITTED:    NO 
- NO. OF TABLES:           1
-0-- TABLE  1 --
- PRINTED:               YES 
- FOR TABLE FILE,
- HEADER:                YES 
- FILE TO BE FORWARDED:   NO 
-0USER-CHOSEN ITEMS 
- IN THE ORDER THEY WILL APPEAR IN THE TABLE:
- TIME
-1
- MONITORING OF SEARCH:
-
-0ITERATION NO.:    0     OBJECTIVE VALUE: -0.3105E+02     NO. OF FUNC. EVALS.: 4
- CUMULATIVE NO. OF FUNC. EVALS.:    4
- PARAMETER:  0.1000E+00  0.1000E+00  0.1000E+00
- GRADIENT:   0.9943E+03 -0.1790E+04 -0.8759E+02
-0ITERATION NO.:    5     OBJECTIVE VALUE: -0.4052E+02     NO. OF FUNC. EVALS.: 5
- CUMULATIVE NO. OF FUNC. EVALS.:   39
- PARAMETER:  0.1022E+00  0.1110E+00  0.5340E-01
- GRADIENT:  -0.2268E+04  0.1235E+04 -0.9116E+02
-0ITERATION NO.:   10     OBJECTIVE VALUE: -0.4151E+02     NO. OF FUNC. EVALS.: 0
- CUMULATIVE NO. OF FUNC. EVALS.:   66
- PARAMETER:  0.1024E+00  0.1102E+00  0.6040E-01
- GRADIENT:  -0.1078E+02  0.1856E+01  0.3287E+00
-0MINIMIZATION SUCCESSFUL
- NO. OF FUNCTION EVALUATIONS USED:   66
- NO. OF SIG. DIGITS IN FINAL EST.:  3.1
-1
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- ************************************************************************************************************************
+  ************************************************************************************************************************
  ********************                                                                                ********************
  ********************                           MINIMUM VALUE OF OBJECTIVE FUNCTION                  ********************
  ********************                                                                                ********************
@@ -159,7 +83,7 @@ using namespace xercesc;
 
 
 
- **************************************************        -41.506     **************************************************
+ **************************************************        -52.102     **************************************************
 1
  ************************************************************************************************************************
  ********************                                                                                ********************
@@ -174,7 +98,7 @@ using namespace xercesc;
 
             TH 1      TH 2
  
-         1.04E+00  1.19E+00
+         2.39E+02  5.51E-04
  
 
 
@@ -184,126 +108,12 @@ using namespace xercesc;
             ETA1
  
  ETA1
-+        3.65E-04
- 
-1
- ************************************************************************************************************************
- ********************                                                                                ********************
- ********************                             STANDARD ERROR OF ESTIMATE                         ********************
- ********************                                                                                ********************
- ************************************************************************************************************************
++        8.90E-03
  
 
+ */
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
- THETA - VECTOR OF FIXED EFFECTS PARAMETERS   *********
-
-
-            TH 1      TH 2
- 
-         9.60E-03  4.45E-02
- 
-
-
- OMEGA - COV MATRIX FOR RANDOM EFFECTS - ETAS  ********
-
-
-            ETA1
- 
- ETA1
-+        1.46E-04
- 
-1
- ************************************************************************************************************************
- ********************                                                                                ********************
- ********************                          COVARIANCE MATRIX OF ESTIMATE                         ********************
- ********************                                                                                ********************
- ************************************************************************************************************************
- 
-
-            TH 1      TH 2      OM11
- 
- TH 1
-+        9.21E-05
- 
- TH 2
-+        2.90E-04  1.98E-03
- 
- OM11
-+       -1.71E-07 -2.98E-06  2.12E-08
- 
-1
- ************************************************************************************************************************
- ********************                                                                                ********************
- ********************                         CORRELATION MATRIX OF ESTIMATE                         ********************
- ********************                                                                                ********************
- ************************************************************************************************************************
- 
-
-            TH 1      TH 2      OM11
- 
- TH 1
-+        1.00E+00
- 
- TH 2
-+        6.78E-01  1.00E+00
- 
- OM11
-+       -1.22E-01 -4.60E-01  1.00E+00
- 
-1
- ************************************************************************************************************************
- ********************                                                                                ********************
- ********************                  INVERSE COVARIANCE MATRIX OF ESTIMATE                         ********************
- ********************                                                                                ********************
- ************************************************************************************************************************
- 
-
-            TH 1      TH 2      OM11
- 
- TH 1
-+        2.20E+04
- 
- TH 2
-+       -3.74E+03  1.28E+03
- 
- OM11
-+       -3.48E+05  1.49E+05  6.52E+07
- 
-1
- 
- ************************************************************************************************************************
- ********************                                                                                ********************
- ********************                          TABLES OF DATA AND PREDICTIONS                        ********************
- ********************                                                                                ********************
- ************************************************************************************************************************
- 
-1TABLE NO.  1
-
-
-
- LINE NO.   TIME        DV      PRED      RES       WRES
- 
-    1
-+        0.00E+00  1.04E+00  1.04E+00 -7.94E-03 -4.16E-01
- 
-    2
-+        2.00E-01  8.38E-01  8.23E-01  1.50E-02  7.88E-01
- 
-    3
-+        4.00E-01  6.48E-01  6.49E-01 -1.38E-03 -7.24E-02
- 
-    4
-+        6.00E-01  4.94E-01  5.12E-01 -1.77E-02 -9.26E-01
- 
-    5
-+        8.00E-01  4.37E-01  4.04E-01  3.27E-02  1.71E+00
- 
-    6
-+        1.00E+00  2.96E-01  3.19E-01 -2.27E-02 -1.19E+00
- 
-
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  */
 namespace{
   const unsigned int MAXCHARS = 64;
 
@@ -354,7 +164,7 @@ namespace{
   //============================================
   // Optimizer controls
   //============================================
-  const int  mitr       = 100;
+  const int  mitr       = 450;
   const bool isEstimate = true;
 
   //============================================
@@ -371,25 +181,24 @@ namespace{
 
   //============================================
   // <Data Set>
-  //
-  // ID      TIME        DV=CP     
-  // 1    0.0000E+00  1.0352E+00
-  // 1    2.0000E-01  8.3796E-01
-  // 1    4.0000E-01  6.4780E-01
-  // 1    6.0000E-01  4.9445E-01
-  // 1    8.0000E-01  4.3668E-01
-  // 1    1.0000E+00  2.9604E-01
-  //
   //============================================
-  const int    nRecords   =  6;
+  const int    nRecords   =  14;
   const int    nFixed     =  0;
   const int    nItems     =  3;
-  const double record0[]  = { 1, 0.0000E+00,  1.0352E+00 };
-  const double record1[]  = { 1, 2.0000E-01,  8.3796E-01 };
-  const double record2[]  = { 1, 4.0000E-01,  6.4780E-01 };
-  const double record3[]  = { 1, 6.0000E-01,  4.9445E-01 };
-  const double record4[]  = { 1, 8.0000E-01,  4.3668E-01 };
-  const double record5[]  = { 1, 1.0000E+00,  2.9604E-01 };
+  const double record0[]  = { 1, 1.0070E+01, 7.7600E+01 };
+  const double record1[]  = { 1, 1.4730E+01, 1.1490E+02 };
+  const double record2[]  = { 1, 1.7940E+01, 1.4110E+02 };
+  const double record3[]  = { 1, 2.3930E+01, 1.9080E+02 };
+  const double record4[]  = { 1, 2.9610E+01, 2.3990E+02 };
+  const double record5[]  = { 1, 3.5180E+01, 2.8900E+02 };
+  const double record6[]  = { 1, 4.0020E+01, 3.3280E+02 };
+  const double record7[]  = { 1, 4.4820E+01, 3.7840E+02 };
+  const double record8[]  = { 1, 5.0760E+01, 4.3480E+02 };
+  const double record9[]  = { 1, 5.5050E+01, 4.7730E+02 };
+  const double record10[] = { 1, 6.1010E+01, 5.3680E+02 };
+  const double record11[] = { 1, 6.6400E+01, 5.9310E+02 };
+  const double record12[] = { 1, 7.5470E+01, 6.8910E+02 };
+  const double record13[] = { 1, 8.1780E+01, 7.6000E+02 };
 
   double const * record[nRecords];
 
@@ -414,9 +223,9 @@ namespace{
   // theta.
   //============================================
   const int    thetaLen = 2;
-  const double theta_low[ thetaLen ]   = {  0.1,  0.1 };
-  const double theta_in [ thetaLen ]   = {  1.0,  1.0 };
-  const double theta_up [ thetaLen ]   = { 10.0, 10.0 };
+  const double theta_low[ thetaLen ]   = {   50.0, 0.00001 };
+  const double theta_in [ thetaLen ]   = {  500.0, 0.0001 };
+  const double theta_up [ thetaLen ]   = { 5000.0, 0.001 };
   const bool   theta_fix[ thetaLen ]   = { false, false };
 
   //============================================
@@ -466,22 +275,18 @@ namespace{
   const int  subproblems        = 1;
 
   //============================================
-  // PRED model based on Norris
+  // PRED
   //
-  // A = THETA(1)
-  // B = THETA(2)
-  // T = TIME
-  // E = ETA(1)
+  // B1 = THETA(1)
+  // B2 = THETA(2)
   // 
-  // F = A * EXP( - B * T  ) 
-  // Y = F + E
+  // F = B1 * (1.0-EXP(-B2*TIME)) 
+  // Y = F + ETA(1)
   //============================================
-  const char PREDEQN[] = "A = THETA(1)\n \
-  B = THETA(2) \n \
-  T = TiMe \n \
-  E = ETA(1) \n \
-  F = A * EXP( - B * T  ) \n \
-  Y = F + E\n";
+  const char PREDEQN[] = "B1 = THETA(1)\n \
+B2 = THETA(2)\n \
+F = B1*(1-EXP(-B2*TiMe))\n \
+Y = F + ETA(1)\n";
 
   //============================================
   // NONMEM's answers
@@ -489,60 +294,9 @@ namespace{
   // NOTE: NONMEM's matrices are placed
   // in the row-major order.
   //============================================
-  const double nm_obj       =  -41.506;
-  const double nm_theta[]   = { 1.04E+00, 1.19E+00 };
-  const double nm_omega[]   = { 3.64E-04 };
-
-  // Standard error
-  // With SPK's parameterization:
-  //
-  // theta(1)    9.60E-03  
-  // theta(2)    4.45E-02  
-  // Omega(1,1)  1.46E-04
-  // 
-  //                            theta(1)  theta(2)  Omega(1,1)
-  const double nm_stderr[]  = { 9.60E-03, 4.45E-02, 1.46E-04 }; 
-                              
-  //
-  // Covariance
-  // With SPK's parameterization:
-  //
-  //                theta(1)     theta(2)     Omega(1,1)
-  //            /                                         \
-  // theta(1)   |   9.21E-05         0            0       |
-  // theta(2)   |   2.90E-04     1.98E-03         0       |
-  // Omega(1,1) |  -1.71E-07    -2.98E-06     2.12E-08    |
-  //            \                                         /
-  //
-  const double nm_cov[]     = { 9.21E-05, 2.90E-04, 1.98E-03, -1.71E-07, -2.98E-06, 2.12E-08 };
-
-  // Inverse of covariance
-  //
-  //               theta(1)      theta(2)     Omega(1,1)
-  //            /                                         \
-  // theta(1)   |  2.20E+04                               |
-  // theta(2)   | -3.74E+03      1.28E+03                 |
-  // Omega(1,1) | -3.48E+05      1.49E+05     6.52E+07    |
-  //            \                                         /
-  // 
-  const double nm_inv_cov[] = { 2.20E+04, -3.74E+03, 1.28E+03, -3.48E+05, 1.49E+05, 6.52E+07 };
-
-
-  // Correlation matrix
-  // With SPK's parameterization:
-  //
-  //               theta(1)      theta(2)     Omega(1,1)
-  //            /                                        \
-  // theta(1)   |   1.00E-00                             |
-  // theta(2)   |   6.78E-01     1.00E+00     0.0        |
-  // Omega(1,1) |  -1.22E-01    -4.60E-01     1.0E+00    |
-  //            \                                        /
-  //
-  const double nm_corr[] = { 1.00E+00, 6.78E+01, 1.00+00, -1.22E-01, -4.60E+01, 1.0E+00 };
-
-  const double nm_pred[] = {  1.04E+00,  8.23E-01,  6.49E-01,  5.12E-01,  4.04E-01,  3.19E-01 };
-  const double nm_RES[]  = { -7.94E-03,  1.50E-02, -1.38E-03, -1.77E-02,  3.27E-02, -2.27E-02 };
-  const double nm_WRES[] = { -4.16E-01,  7.88E-01, -7.24E-02, -9.26E-01,  1.71E+00, -1.19E+00 };
+  const double nm_obj       =  -52.102;
+  const double nm_theta[]   = { 2.39E+02, 5.51E-04 };
+  const double nm_omega[]   = { 8.90E-03 };
 };
 
 void ind_withIDTest::setUp()
@@ -621,6 +375,14 @@ void ind_withIDTest::setUp()
   record[3]   = record3;
   record[4]   = record4;
   record[5]   = record5;
+  record[6]   = record6;
+  record[7]   = record7;
+  record[8]   = record8;
+  record[9]   = record9;
+  record[10]  = record10;
+  record[11]  = record11;
+  record[12]  = record12;
+  record[13]  = record13;
 
   createDataML();
   createSourceML();
@@ -1313,7 +1075,7 @@ void ind_withIDTest::testPredClass()
   o << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   o << "      double actualF = CppAD::Value(depVar[ fOffset + j ]);"  << endl;
-  o << "      expectedF1[j]   = CppAD::Value(indepVar[thetaOffset+0] * exp( -indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] ) );" << endl;
+  o << "      expectedF1[j]   = CppAD::Value(indepVar[thetaOffset+0] * (1.0 - exp(-indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] ) ) );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedF1[j], actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   o << "      double actualY = CppAD::Value(depVar[ yOffset + j ]);" << endl;
@@ -1326,7 +1088,6 @@ void ind_withIDTest::testPredClass()
   o << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   o << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
   o << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
-  o << "      MY_ASSERT_EQUAL( expectedF1[j], set.data[who]->" << strPRED << "[j] );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedF1[j], set.data[who]->" << strF << "[j] );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedY1[j], set.data[who]->" << strY<< "[j] );" << endl;
   o << "   }" << endl;
@@ -1353,7 +1114,7 @@ void ind_withIDTest::testPredClass()
   o << "                 indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
   o << "      double actualF = CppAD::Value(depVar[ fOffset + j ]);" << endl;
-  o << "      expectedF2[j]   = CppAD::Value(indepVar[thetaOffset+0] * exp( -indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] ) );" << endl;
+  o << "      expectedF2[j]   = CppAD::Value(indepVar[thetaOffset+0] * (1.0 -exp( -indepVar[thetaOffset+1] * set.data[who]->" << strTIME << "[j] ) ) );" << endl;
   //o << "      expectedF2[j]  = CppAD::Value(indepVar[thetaOffset+0] + indepVar[thetaOffset+1] * set.data[who]->";
   //o << strTIME << "[j] );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedF2[j], actualF );" << endl;
@@ -1368,7 +1129,6 @@ void ind_withIDTest::testPredClass()
   o << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   o << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
   o << "      MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
-  o << "      MY_ASSERT_EQUAL( expectedF1[j], set.data[who]->" << strPRED << "[j] );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedF1[j], set.data[who]->" << strF << "[j] );" << endl;
   o << "      MY_ASSERT_EQUAL( expectedY1[j], set.data[who]->" << strY << "[j] );" << endl;
   o << "   }" << endl;
@@ -1452,8 +1212,6 @@ void ind_withIDTest::testDriver()
 }
 void ind_withIDTest::testReportML()
 {
-  const double scale = 0.05;
-
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Parse the generated reportML document.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1515,21 +1273,6 @@ void ind_withIDTest::testReportML()
   CPPUNIT_ASSERT_MESSAGE( "<error_list> should have been empty.", XMLString::isAllWhiteSpace( error_message ) );
    
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the objective value.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  double obj_out = 0.0;
-  DOMNodeList * objOut_list = report->getElementsByTagName( X_IND_OBJ_OUT );
-  if( objOut_list->getLength() > 0 )
-    {
-      DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
-      DOMNodeList* value_list = objOut->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      CPPUNIT_ASSERT_EQUAL( 1, n );
-      obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );      
-      // CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_obj, obj_out, scale * nm_obj );
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Verify the final estimate for theta
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double theta_out[thetaLen];
@@ -1543,7 +1286,7 @@ void ind_withIDTest::testReportML()
       for( int i=0; i<n; i++ )
 	{
 	  theta_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_theta[i], theta_out[i], scale * nm_theta[i] );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_theta[i], theta_out[i], nm_theta[i] / 1000.0 * 5.0 );
 	}
     }
 
@@ -1561,149 +1304,7 @@ void ind_withIDTest::testReportML()
       for( int i=0; i<+n; i++ )
 	{
 	  omega_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], scale * nm_omega[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Grab a pointer to the top of "ind_stat_result" sub-tree.
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *ind_analysis_result = report->getElementsByTagName( X_IND_ANALYSIS_RESULT );
-  CPPUNIT_ASSERT( ind_analysis_result->getLength() == 1 );
-  DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( ind_analysis_result->item( 0 ) );
-  CPPUNIT_ASSERT( ind_stat_result != NULL );
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the standard error of the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> se_val;
-  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( X_IND_STDERROR_OUT );
-  if( se_list->getLength() == 1 )
-    {
-      DOMElement * se = dynamic_cast<DOMElement*>( se_list->item(0) );
-      CPPUNIT_ASSERT( se != NULL );
-      DOMNodeList * value_list = se->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      se_val.resize( n );
-      for( int i=0; i<n; i++ )
-	{
-	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	  if( x_val != NULL )
-	    se_val[i] = atof( XMLString::transcode( x_val ) );
-	  //printf( "se[%d] = %f\n", i, se_val[i] );
-	  //	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_stderr[i], se_val[i], scale * nm_stderr[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the covariance of the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cov_val;
-  vector<double> inv_cov_val;
-  int covLen = series(1,1,omegaOrder+thetaLen);
-  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  X_IND_COVARIANCE_OUT ) ;
-  if( cov_list->getLength() == 1 )
-    {
-      DOMElement * cov = dynamic_cast<DOMElement*>( cov_list->item(0) );
-      CPPUNIT_ASSERT( cov != NULL );
-      DOMNodeList * value_list = cov->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cov_val.resize( n );
-      for( int i=0; i<n; i++ )
-	{
-	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	  if( x_val != NULL )
-	    cov_val[i] = atof( XMLString::transcode( x_val ) );
-	  CPPUNIT_ASSERT_EQUAL( covLen, n );
-
-	  //printf( "cov[%d] = %f\n", i, cov_val[i] );
-
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], cov_val[i], scale * nm_cov[i] );
-	}
-    }
-  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  X_IND_INVERSE_COVARIANCE_OUT ) ;
-  if( invcov_list->getLength() == 1 )
-    {
-      DOMElement * invcov = dynamic_cast<DOMElement*>( invcov_list->item(0) );
-      CPPUNIT_ASSERT( invcov != NULL );
-      DOMNodeList * value_list = invcov->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      inv_cov_val.resize( n );
-      for( int i=0; i<n; i++ )
-	{
-	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	  if( x_val != NULL )
-	    inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
-	  //printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the confidence interval for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> ci_val;
-  DOMNodeList * ci_list =ind_stat_result->getElementsByTagName(  X_IND_CONFIDENCE_OUT ) ;
-  if( ci_list->getLength() == 1 )
-    {
-      DOMElement * ci = dynamic_cast<DOMElement*>( ci_list->item(0) );
-      CPPUNIT_ASSERT( ci != NULL );
-      DOMNodeList * value_list = ci->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      ci_val.resize( n );
-      for( int i=0; i<n; i++ )
-	{
-	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	  if( x_val != NULL )
-	    ci_val[i] = atof( XMLString::transcode( x_val ) );
-	  //printf( "ci[%d] = %f\n", i, ci_val[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the coefficient of variation for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cv_val;
-  DOMNodeList * cv_list =ind_stat_result->getElementsByTagName(  X_IND_COEFFICIENT_OUT ) ;
-  if( cv_list->getLength() == 1 )
-    {
-      DOMElement * cv = dynamic_cast<DOMElement*>( cv_list->item(0) );
-      CPPUNIT_ASSERT( cv != NULL );
-      DOMNodeList * value_list = cv->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cv_val.resize( n );
-      for( int i=0; i<n; i++ )
-	{
-	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	  if( x_val != NULL )
-	    cv_val[i] = atof( XMLString::transcode( x_val ) );
-	  //printf( "cv[%d] = %f\n", i, cv_val[i] );
-	}
-    }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Verify the correlation matrix for the final estimate of parameters
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  vector<double> cor_val;
-  DOMNodeList * cor_list =ind_stat_result->getElementsByTagName(  X_IND_CORRELATION_OUT ) ;
-  if( cor_list->getLength() == 1 )
-    {
-      DOMElement * cor = dynamic_cast<DOMElement*>( cor_list->item(0) );
-      CPPUNIT_ASSERT( cor != NULL );
-      DOMNodeList * value_list = cor->getElementsByTagName( X_VALUE );
-      int n = value_list->getLength();
-      cor_val.resize( n );
-      for( int i=0; i<n; i++ )
-	{
-	  DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
-	  const XMLCh * x_val = value->getFirstChild()->getNodeValue();
-	  if( x_val != NULL )
-	    cor_val[i] = atof( XMLString::transcode( x_val ) );
-	  //printf( "cor[%d] = %f\n", i, cor_val[i] );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], nm_omega[i] / 1000.0 * 5.0 );
 	}
     }
 
