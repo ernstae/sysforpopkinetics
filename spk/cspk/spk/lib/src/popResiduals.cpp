@@ -349,11 +349,13 @@ $end
 
 // SPK library header files.
 #include "add.h"
+#include "intToOrdinalString.h"
 #include "multiply.h"
 #include "popResiduals.h"
 #include "SpkException.h"
 #include "SpkValarray.h"
 #include "transpose.h"
+#include "symmetrize.h"
 #include "wres.h"
 
 // Standard library header files.
@@ -618,6 +620,7 @@ void popResiduals( SpkModel&                model,
   valarray<double> pred_i;
   valarray<double> temp1;
   valarray<double> temp2;
+  valarray<double> temp3;
 
   int nY_iTotal = 0;
   int nY_i;
@@ -626,185 +629,232 @@ void popResiduals( SpkModel&                model,
   // individuals in the population.
   for ( i = 0; i < nInd; i++ )
   {
-    //------------------------------------------------------------
-    // Prepare the current individual.
-    //------------------------------------------------------------
-
-    // Set the current individual.
-    model.selectIndividual( i );
-
-    // Get the number of data values for this individual.
-    nY_i = nMeasurementsAll[i];
-
-    // Get this individual's parameter if the objective is not 
-    // one of the first order objectives.
-    if ( objective != FIRST_ORDER && objective != NAIVE_FIRST_ORDER  )
+    try
     {
-      b_i = indParAll[ slice( i * nB, nB, 1 ) ];
+      //------------------------------------------------------------
+      // Prepare the current individual.
+      //------------------------------------------------------------
+  
+      // Set the current individual.
+      model.selectIndividual( i );
+  
+      // Get the number of data values for this individual.
+      nY_i = nMeasurementsAll[i];
+  
+      // Get this individual's parameter if the objective is not 
+      // one of the first order objectives.
+      if ( objective != FIRST_ORDER && objective != NAIVE_FIRST_ORDER  )
+      {
+        b_i = indParAll[ slice( i * nB, nB, 1 ) ];
+      }
+  
+      // Set the current individual parameter.
+      model.setIndPar( b_i );
+  
+  
+      //------------------------------------------------------------
+      // Evaluate the model functions.
+      //------------------------------------------------------------
+  
+      // Evaluate
+      //
+      //     f (alp, b )  .
+      //      i       i
+      //
+      model.dataMean( f_i );
+  
+      // Evaluate
+      //
+      //     d  f (alp, b )  .
+      //      b  i       i
+      //
+      bool notAllZeroF_i_b = model.dataMean_indPar( f_i_b );
+  
+      // Evaluate
+      //
+      //     R (alp, b )  .
+      //      i       i
+      //
+      model.dataVariance( R_i );
+  
+  
+      //------------------------------------------------------------
+      // Calculate the predicted values for this individual's data.
+      //------------------------------------------------------------
+  
+      pred_i.resize( nY_i );
+      temp1 .resize( nY_i );
+  
+      // Calculate the predicted value for this individual's data,
+      //
+      //     pred   =  f (alp, b )  -  d  f (alp, b )  b   .
+      //         i      i       i       b  i       i    i 
+      //
+      // Note that this is the expected value for the first order
+      // approximation for the model, i.e.,
+      //
+      //     E  [ f (alp, b ) ]  ~  f (alp, b )  -  d  f (alp, b )  b   .
+      //      b    i       i         i       i       b  i       i    i
+      //
+      // This approximation is based on Eq. (6.19) and the discussion on
+      // pp. 164-6 from Davidian M. and Giltinan D. M. (1998) "Nonlinear
+      // Models for Repeated Measurement Data", Chapman & Hall/CRC, Boca
+      // Raton, Florida.  When b_i equals zero as in the first order 
+      // objective, this approximation is equivalent to Eq. (6.4) and is
+      // based on the discussion on pp. 152-4 from the same book.
+      temp1 = multiply( f_i_b, nB, b_i, 1 );
+      pred_i = f_i - temp1;
+  
+  
+      //------------------------------------------------------------
+      // Calculate the covariance of this individual's data.
+      //------------------------------------------------------------
+  
+      assert( R_i.size() == nY_i * nY_i );
+  
+      VTilde_i.resize( nY_i * nY_i );
+  
+      // Calculate
+      //
+      //     VTilde   =  R (alp, b )
+      //           i      i       i
+      //                                                 T
+      //        +  d  f (alp, b )  D(alp)  d  f (alp, b )   .
+      //            b  i       i            b  i       i
+      //
+      // This approximation is also based on Eq. (6.19) from 
+      // Davidian and Giltinan (1998).
+      if ( notAllZeroF_i_b )
+      {
+        assert( f_i_b.size() == nY_i * nB );
+        assert( D.size()     == nB   * nB );
+  
+        f_i_bTranspose.resize( nB   * nY_i );
+        temp1         .resize( nB   * nY_i );
+        temp2         .resize( nY_i * nY_i );
+        temp3         .resize( nY_i * nY_i );
+  
+        f_i_bTranspose = transpose( f_i_b, nB );
+  
+        temp1 = multiply( D,   nB, f_i_bTranspose, nY_i );
+        temp2 = multiply( f_i_b, nB, temp1,        nY_i );
+  
+        temp3 = R_i + temp2;
+  
+        // Make sure that the calculated covariance is symmetric.
+        symmetrize( temp3, nY_i, VTilde_i );
+      }
+      else
+      {
+        VTilde_i = R_i;
+      }
+  
+  
+      //------------------------------------------------------------
+      // Calculate their residuals and/or weighted residuals.
+      //------------------------------------------------------------
+  
+      // Get this invidividual's data vector.
+      y_i.resize( nY_i );
+      y_i = measurementsAll[ slice( nY_iTotal, nY_i, 1 ) ];
+  
+      // Prepare this individual's residuals, if necessary.
+      if ( pPopResOut )
+      {
+        res_i.resize( nY_i );
+      }
+  
+      // Prepare this individual's weighted residuals, if necessary.
+      if ( pPopResWtdOut )
+      {
+        resWtd_i.resize( nY_i );
+      }
+  
+      // Calculate this individual's residuals and weighted residuals.
+      wres( y_i, pred_i, VTilde_i, pRes_i, pResWtd_i );
+  
+      // Set this individual's predicted values, if necessary.
+      if ( pPopPredOut )
+      {
+        popPredTemp[ slice( nY_iTotal, nY_i, 1 ) ] = pred_i;
+      }
+      
+      // Set this individual's residuals, if necessary.
+      if ( pPopResOut )
+      {
+        popResTemp[ slice( nY_iTotal, nY_i, 1 ) ] = res_i;
+      }
+      
+      // Set this individual's weighted residuals, if necessary.
+      if ( pPopResWtdOut )
+      {
+        popResWtdTemp[ slice( nY_iTotal, nY_i, 1 ) ] = resWtd_i;
+      }
+  
+      nY_iTotal += nY_i;
+  
+  
+      //------------------------------------------------------------
+      // Calculate their individual parameter residuals and weighted residuals.
+      //------------------------------------------------------------
+  
+      // Calculate this individual's individual parameter residuals
+      // and weighted individual parameter residuals.
+      wres( zeroes, b_i, D, pIndParRes_i, pIndParResWtd_i );
+  
+      // Set this individual's individual parameter residuals, if
+      // necessary.
+      if ( pPopIndParResOut )
+      {
+        popIndParResTemp[ slice( i * nB, nB, 1 ) ] = indParRes_i;
+      }
+  
+      // Set this individual's weighted individual parameter residuals,
+      // if necessary.
+      if ( pPopIndParResWtdOut )
+      {
+        popIndParResWtdTemp[ slice( i * nB, nB, 1 ) ] = indParResWtd_i;
+      }
+
     }
+    catch( SpkException& e )
+    {         
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      sprintf( message, "The population residuals calculation failed for the %s individual.",
+               intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
-    // Set the current individual parameter.
-    model.setIndPar( b_i );
-
-
-    //------------------------------------------------------------
-    // Evaluate the model functions.
-    //------------------------------------------------------------
-
-    // Evaluate
-    //
-    //     f (alp, b )  .
-    //      i       i
-    //
-    model.dataMean( f_i );
-
-    // Evaluate
-    //
-    //     d  f (alp, b )  .
-    //      b  i       i
-    //
-    bool notAllZeroF_i_b = model.dataMean_indPar( f_i_b );
-
-    // Evaluate
-    //
-    //     R (alp, b )  .
-    //      i       i
-    //
-    model.dataVariance( R_i );
-
-
-    //------------------------------------------------------------
-    // Calculate the predicted values for this individual's data.
-    //------------------------------------------------------------
-
-    pred_i.resize( nY_i );
-    temp1 .resize( nY_i );
-
-    // Calculate the predicted value for this individual's data,
-    //
-    //     pred   =  f (alp, b )  -  d  f (alp, b )  b   .
-    //         i      i       i       b  i       i    i 
-    //
-    // Note that this is the expected value for the first order
-    // approximation for the model, i.e.,
-    //
-    //     E  [ f (alp, b ) ]  ~  f (alp, b )  -  d  f (alp, b )  b   .
-    //      b    i       i         i       i       b  i       i    i
-    //
-    // This approximation is based on Eq. (6.19) and the discussion on
-    // pp. 164-6 from Davidian M. and Giltinan D. M. (1998) "Nonlinear
-    // Models for Repeated Measurement Data", Chapman & Hall/CRC, Boca
-    // Raton, Florida.  When b_i equals zero as in the first order 
-    // objective, this approximation is equivalent to Eq. (6.4) and is
-    // based on the discussion on pp. 152-4 from the same book.
-    temp1 = multiply( f_i_b, nB, b_i, 1 );
-    pred_i = f_i - temp1;
-
-
-    //------------------------------------------------------------
-    // Calculate the covariance of this individual's data.
-    //------------------------------------------------------------
-
-    assert( R_i.size() == nY_i * nY_i );
-
-    VTilde_i.resize( nY_i * nY_i );
-
-    // Calculate
-    //
-    //     VTilde   =  R (alp, b )
-    //           i      i       i
-    //                                                 T
-    //        +  d  f (alp, b )  D(alp)  d  f (alp, b )   .
-    //            b  i       i            b  i       i
-    //
-    // This approximation is also based on Eq. (6.19) from 
-    // Davidian and Giltinan (1998).
-    if ( notAllZeroF_i_b )
-    {
-      assert( f_i_b.size() == nY_i * nB );
-      assert( D.size()     == nB   * nB );
-
-      f_i_bTranspose.resize( nB   * nY_i );
-      temp1         .resize( nB   * nY_i );
-      temp2         .resize( nY_i * nY_i );
-
-      f_i_bTranspose = transpose( f_i_b, nB );
-
-      temp1 = multiply( D,   nB, f_i_bTranspose, nY_i );
-      temp2 = multiply( f_i_b, nB, temp1,        nY_i );
-
-      VTilde_i = R_i + temp2;
+      throw e.push(
+        SpkError::SPK_UNKNOWN_ERR, 
+        message,
+        __LINE__, 
+        __FILE__ );
     }
-    else
+    catch( const std::exception& stde )
     {
-      VTilde_i = R_i;
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      sprintf( message, "The population residuals calculation failed for the %s individual because \na standard exception was thrown.",
+               intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+
+      throw SpkException(
+        stde,
+        message,
+        __LINE__,
+        __FILE__ );
     }
-
-
-    //------------------------------------------------------------
-    // Calculate their residuals and/or weighted residuals.
-    //------------------------------------------------------------
-
-    // Get this invidividual's data vector.
-    y_i.resize( nY_i );
-    y_i = measurementsAll[ slice( nY_iTotal, nY_i, 1 ) ];
-
-    // Prepare this individual's residuals, if necessary.
-    if ( pPopResOut )
+    catch( ... )
     {
-      res_i.resize( nY_i );
-    }
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      sprintf( message, "The population residuals calculation failed for the %s individual because \an unknown exception was thrown.",
+               intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
-    // Prepare this individual's weighted residuals, if necessary.
-    if ( pPopResWtdOut )
-    {
-      resWtd_i.resize( nY_i );
-    }
-
-    // Calculate this individual's residuals and weighted residuals.
-    wres( y_i, pred_i, VTilde_i, pRes_i, pResWtd_i );
-
-    // Set this individual's predicted values, if necessary.
-    if ( pPopPredOut )
-    {
-      popPredTemp[ slice( nY_iTotal, nY_i, 1 ) ] = pred_i;
-    }
-    
-    // Set this individual's residuals, if necessary.
-    if ( pPopResOut )
-    {
-      popResTemp[ slice( nY_iTotal, nY_i, 1 ) ] = res_i;
-    }
-    
-    // Set this individual's weighted residuals, if necessary.
-    if ( pPopResWtdOut )
-    {
-      popResWtdTemp[ slice( nY_iTotal, nY_i, 1 ) ] = resWtd_i;
-    }
-
-    nY_iTotal += nY_i;
-
-
-    //------------------------------------------------------------
-    // Calculate their individual parameter residuals and weighted residuals.
-    //------------------------------------------------------------
-
-    // Calculate this individual's individual parameter residuals
-    // and weighted individual parameter residuals.
-    wres( zeroes, b_i, D, pIndParRes_i, pIndParResWtd_i );
-
-    // Set this individual's individual parameter residuals, if
-    // necessary.
-    if ( pPopIndParResOut )
-    {
-      popIndParResTemp[ slice( i * nB, nB, 1 ) ] = indParRes_i;
-    }
-
-    // Set this individual's weighted individual parameter residuals,
-    // if necessary.
-    if ( pPopIndParResWtdOut )
-    {
-      popIndParResWtdTemp[ slice( i * nB, nB, 1 ) ] = indParResWtd_i;
+      throw SpkException(
+        SpkError::SPK_UNKNOWN_ERR,
+        message,
+        __LINE__,
+        __FILE__ );
     }
 
   }
