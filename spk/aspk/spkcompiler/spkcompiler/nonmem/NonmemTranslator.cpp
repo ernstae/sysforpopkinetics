@@ -5586,6 +5586,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "      measurements[ SPK_VA::slice( m, nYi, 1 ) ] = data[i]->getMeasurements();" << endl;
   oDataSet_h << "      m+=nYi;" << endl;
   oDataSet_h << "      int n = data[i]->getNRecords();" << endl;
+  oDataSet_h << "      for( int k=0; k<n; k++, j++ )" << endl;
+  oDataSet_h << "      {" << endl;
   if( myIsMissingMdv )
     {
       oDataSet_h << "      jPrimeToj[jPrime] = j;" << endl;
@@ -5594,8 +5596,6 @@ void NonmemTranslator::generateDataSet( ) const
     }
   else
     {
-      oDataSet_h << "      for( int k=0; k<n; k++, j++ )" << endl;
-      oDataSet_h << "      {" << endl;
       oDataSet_h << "         if( data[i]->" << UserStr.MDV << "[k] == 0 )" << endl;
       oDataSet_h << "         {" << endl;
       oDataSet_h << "            jPrimeToj[jPrime] = j;" << endl;
@@ -5604,8 +5604,8 @@ void NonmemTranslator::generateDataSet( ) const
       oDataSet_h << "         }" << endl;
       oDataSet_h << "         else" << endl;
       oDataSet_h << "            jTojPrime[j] = -1;" << endl;
-      oDataSet_h << "      }" << endl;
     }
+  oDataSet_h << "      }" << endl;
   oDataSet_h << "   }" << endl;
 
   oDataSet_h << "}" << endl;
@@ -6864,6 +6864,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       const string keyLabel              = SymbolTable::key( label );
       enum Symbol::ObjectType objectType = pT->second.object_type;
       enum Symbol::Ownership  owner      = pT->second.owner;
+      enum Symbol::Access     access     = pT->second.access;
+
       if( keyLabel == KeyStr.THETA )
 	{
 	  oPred_h << "   copy( " << label << ", " << label << "+spk_thetaLen, ";
@@ -6882,41 +6884,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
           oPred_h << "spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	  continue;
 	}
-      else if( objectType == Symbol::MATRIX || objectType == Symbol::VECTOR )
-	  /*
-               keyLabel == KeyStr.OMEGA 
-	       || keyLabel == KeyStr.SIGMA
-	       //	       || keyLabel == KeyStr.PRED
-	       || keyLabel == KeyStr.RES 
-	       || keyLabel == KeyStr.WRES
-	       || keyLabel == KeyStr.ETARES
-	       || keyLabel == KeyStr.WETARES
-	       || keyLabel == KeyStr.IPRED
-	       || keyLabel == KeyStr.IRES 
-	       || keyLabel == KeyStr.IWRES
-	       || keyLabel == KeyStr.IETARES
-	       || keyLabel == KeyStr.IWETARES
-	       || keyLabel == KeyStr.PPRED
-	       || keyLabel == KeyStr.PRES 
-	       || keyLabel == KeyStr.PWRES
-	       || keyLabel == KeyStr.PETARES
-	       || keyLabel == KeyStr.PWETARES
-	       || keyLabel == KeyStr.CPRED
-	       || keyLabel == KeyStr.CRES 
-	       || keyLabel == KeyStr.CWRES
-	       || keyLabel == KeyStr.CETARES
-	       || keyLabel == KeyStr.CWETARES
-	       || keyLabel == KeyStr.ORGDV )
-	  */
-	{
-	  // ignore.  These values are only computed outside at the final estimate.
-	  continue;
-	}
-      else if( owner == Symbol::DATASET )
-	{
-	  continue;
-	}
-      else
+      if( access != Symbol::READONLY )
 	{
 	  oPred_h << "   spk_temp.data[ spk_i ]->" << label;
 	  oPred_h << "[ spk_j ]";
@@ -6942,32 +6910,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     {
       const string label     = pT->second.name;
       const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr.OMEGA 
-          || keyLabel == KeyStr.SIGMA 
-	  //          || keyLabel == KeyStr.PRED 
-          || keyLabel == KeyStr.RES 
-          || keyLabel == KeyStr.WRES 
-	  || keyLabel == KeyStr.ETARES
-	  || keyLabel == KeyStr.WETARES
-          || keyLabel == KeyStr.IPRED 
-          || keyLabel == KeyStr.IRES 
-          || keyLabel == KeyStr.IWRES 
-	  || keyLabel == KeyStr.IETARES
-	  || keyLabel == KeyStr.IWETARES
-          || keyLabel == KeyStr.PPRED 
-          || keyLabel == KeyStr.PRES 
-          || keyLabel == KeyStr.PWRES 
-	  || keyLabel == KeyStr.PETARES
-	  || keyLabel == KeyStr.PWETARES
-          || keyLabel == KeyStr.CPRED 
-          || keyLabel == KeyStr.CRES 
-          || keyLabel == KeyStr.CWRES 
-	  || keyLabel == KeyStr.CETARES
-	  || keyLabel == KeyStr.CWETARES
-	  || keyLabel == KeyStr.ORGDV )
-	continue;
-
-      if( find( labels->begin(), labels->end(), label ) == labels->end() )
+      enum Symbol::Access access = pT->second.access;
+      if( ( keyLabel == KeyStr.THETA || keyLabel == KeyStr.ETA || keyLabel == KeyStr.EPS ) 
+          || ( access != Symbol::READONLY ) )
 	{
 	  oPred_h << "       spk_perm->data[ i ]->" << label;
 	  oPred_h << " = spk_temp.data[ i ]->";
@@ -6993,10 +6938,10 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     oPred_h << "   // MDV data item found in the data set." << endl;
     oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
     oPred_h << "   {" << endl;
-    // Set the output values
-    oPred_h << "      spk_depVar[ spk_fOffset+spk_j ] = " << UserStr.F << ";" << endl;
-    oPred_h << "      spk_depVar[ spk_yOffset+spk_j ] = " << UserStr.Y << ";" << endl;
     oPred_h << "      spk_m = spk_perm->getMeasurementIndex( spk_j );" << endl;
+    // Set the output values
+    oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
+    oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
     oPred_h << "      return true;" << endl;
     oPred_h << "   }" << endl;
     oPred_h << "   else" << endl;
