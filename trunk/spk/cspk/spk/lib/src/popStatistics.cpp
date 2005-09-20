@@ -774,7 +774,7 @@ void popStatistics( SpkModel&                popModel,
     {
         for ( int i = 0; i < nB; i++ )
         {
-            if( indParAll[ i + j * nB ] <= indParLow[i] || indParAll[ i + j * nB ] >= indParUp[i] )
+            if( indParAll[ i + j * nB ] < indParLow[i] || indParAll[ i + j * nB ] > indParUp[i] )
             {
 	      char message[ SpkError::maxMessageLen() ];
               sprintf( message, "The initial value for the individual parameter must \
