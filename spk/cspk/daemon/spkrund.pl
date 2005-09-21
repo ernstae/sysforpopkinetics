@@ -571,7 +571,11 @@ sub reaper {
         $end_code = "serr";
         $err_msg .= "data simulation failed; ";
     }
-    elsif($child_exit_value >  5) {
+    elsif($child_exit_value == 6) {
+        $end_code = "srun";
+        $err_msg .= "optimization did not converge; ";
+    }
+    elsif($child_exit_value >  6) {
         $end_code = "serr";
         $err_msg .= "exit value = $child_exit_value; ";
     }

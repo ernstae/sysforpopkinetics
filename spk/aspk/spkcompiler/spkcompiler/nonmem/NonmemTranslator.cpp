@@ -8538,11 +8538,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
 
   oIndDriver << "enum RETURN_CODE { SUCCESS=0,"             << endl;
-  oIndDriver << "                   CONVERGENCE_FAILURE=1," << endl;
+  oIndDriver << "                   OPTIMIZATION_FAILURE=1," << endl;
   oIndDriver << "                   FILE_ACCESS_FAILURE=2," << endl;
   oIndDriver << "                   MONTE_FAILURE=3,"       << endl;
   oIndDriver << "                   STAT_FAILURE=4,"        << endl;
   oIndDriver << "                   SIMULATION_FAILURE=5," << endl;
+  oIndDriver << "                   OPTIMIZATION_DID_NOT_CONVERGE=6," << endl;
   oIndDriver << "                   OTHER_FAILURE };"       << endl;
   oIndDriver << endl;
   oIndDriver << "int main( int argc, const char argv[] )" << endl;
@@ -8830,8 +8831,14 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            catch( const SpkException& e )" << endl;
   oIndDriver << "            {" << endl;
   oIndDriver << "               errors.cat( e );" << endl;
-  oIndDriver << "               isOptSuccess = false;" << endl;
-  oIndDriver << "               ret = CONVERGENCE_FAILURE;" << endl;
+  oIndDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) >= 0 " << endl;
+  oIndDriver << "                   || e.find( SpkError::SPK_NOT_CONVERGED ) >= 0 )" << endl;
+  oIndDriver << "                 ret = OPTIMIZATION_DID_NOT_CONVERGE;" << endl;
+  oIndDriver << "               else" << endl;
+  oIndDriver << "               {" << endl;
+  oIndDriver << "                 isOptSuccess = false;" << endl;
+  oIndDriver << "                 ret = OPTIMIZATION_FAILURE;" << endl;
+  oIndDriver << "               }" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( ... )" << endl;
   oIndDriver << "            {" << endl;
@@ -8839,7 +8846,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oIndDriver << "               errors.push( e );" << endl;
   oIndDriver << "               isOptSuccess = false;" << endl;
-  oIndDriver << "               ret = CONVERGENCE_FAILURE;" << endl;
+  oIndDriver << "               ret = OPTIMIZATION_FAILURE;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << endl;
   oIndDriver << "            // Get the latest value of theta and Omega." << endl;
@@ -9318,11 +9325,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "using namespace std;" << endl;
   oPopDriver << endl;
   oPopDriver << "enum RETURN_CODE { SUCCESS=0,"             << endl;
-  oPopDriver << "                   CONVERGENCE_FAILURE=1," << endl;
+  oPopDriver << "                   OPTIMIZATION_FAILURE=1," << endl;
   oPopDriver << "                   FILE_ACCESS_FAILURE=2," << endl;
   oPopDriver << "                   MONTE_FAILURE=3,"       << endl;
   oPopDriver << "                   STAT_FAILURE=4,"        << endl;
   oPopDriver << "                   SIMULATION_FAILURE=5,"  << endl;
+  oPopDriver << "                   OPTIMIZATION_DID_NOT_CONVERGE=6," << endl;
   oPopDriver << "                   OTHER_FAILURE };"       << endl;
   oPopDriver << endl;
 
@@ -9676,8 +9684,14 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               errors.cat( e );" << endl;
-  oPopDriver << "               isOptSuccess = false;" << endl;
-  oPopDriver << "               ret = CONVERGENCE_FAILURE;" << endl;
+  oPopDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) >= 0 " << endl;
+  oPopDriver << "                   || e.find( SpkError::SPK_NOT_CONVERGED ) >= 0 )" << endl;
+  oPopDriver << "                 ret = OPTIMIZATION_DID_NOT_CONVERGE;" << endl;
+  oPopDriver << "               else" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                 isOptSuccess = false;" << endl;
+  oPopDriver << "                 ret = OPTIMIZATION_FAILURE;" << endl;
+  oPopDriver << "               }" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( ... )" << endl;
   oPopDriver << "            {" << endl;
@@ -9685,7 +9699,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.push( e );" << endl;
   oPopDriver << "               isOptSuccess = false;" << endl;
-  oPopDriver << "               ret = CONVERGENCE_FAILURE;" << endl;
+  oPopDriver << "               ret = OPTIMIZATION_FAILURE;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            gettimeofday( &optEnd, NULL );" << endl;
   oPopDriver << "            optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
