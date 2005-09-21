@@ -9,6 +9,14 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.22</revnumber>
+            <date>September 20, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Adding a new return code for "didn't-converge".
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.21</revnumber>
             <date>June 10, 2005</date>
             <authorinitials>sh</authorinitials>
@@ -750,6 +758,14 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
+            <term><literal>void expand( const std::valarray&lt;double&gt; &amp; trancated, std::valarray&lt;double&gt; &amp; expanded ) const</literal></term>
+            <listitem>
+               <para>
+               Map <varname>trancated</varname> that is in the measurement-oriented space to the original record-oriented space.  The measurement-oriented space refers to the space in which only the data records that contain Dependent Variable values.  Whereas, the record-oriented space refers to the original data set that also contains rows missing DVs.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
             <term><literal>const std::valarray&lt;int&gt; getN() const</literal></term>
             <listitem>
                <para>
@@ -1264,12 +1280,20 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <term>5</term>
             <listitem>
                <para>
-               Abnormal completion dur to the data simulation failure.
+               Abnormal completion due to the data simulation failure.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>&gt;5</term>
+            <term>6</term>
+            <listitem>
+               <para>
+               Normal completion but the optimization did not converge within the given maximum number of iterations.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>&gt;6</term>
             <listitem>
                <para>
                Abnormal completion for unknown reasons.
@@ -1356,7 +1380,7 @@ At the very end of the execution, an exit value is also printed in the following
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>&gt;5</term>
+            <term>&gt;6</term>
             <listitem>
                <para>
                Abnormal completion for unknown reasons.
