@@ -105,6 +105,9 @@ Test* SpkErrorTest::suite()
     suiteOfTests->addTest(new TestCaller<SpkErrorTest>(
                           "formatLongErrorTest", 
                           &SpkErrorTest::formatLongErrorTest));
+    suiteOfTests->addTest(new TestCaller<SpkErrorTest>(
+                          "specialCharsTest", 
+                          &SpkErrorTest::specialCharsTest));
     return suiteOfTests;
 }
 /*
@@ -347,7 +350,26 @@ void SpkErrorTest::serializeTest()
     CPPUNIT_ASSERT_MESSAGE( "e1.message()==e3.message()", strcmp(e1.message(),e3.message())==0 );
   
 }
+void SpkErrorTest::specialCharsTest()
+{
+  char message[ SpkError::maxMessageLen() ];
+  sprintf( message, "<&>\"\'" );
+  SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );
 
+  ostringstream expected, actual;
+
+  expected << "<error code=\"" << e.code() << "\">" << endl;
+  expected << "<description>" << SpkError::describe( e.code() ) << "</description>" << endl;
+  expected << "<file_name>" << e.filename() << "</file_name>" << endl;
+  expected << "<line_number>" << e.linenum() << "</line_number>" << endl;
+  expected << "<message>" <<  "&lt;&amp;&gt;&quot;&apos;" << "</message>" << endl;
+  expected << "</error>" << endl;
+
+  actual << e;
+
+  CPPUNIT_ASSERT( expected.str() == actual.str() );
+  return;
+}
 void SpkErrorTest::formatLongErrorTest()
 {
     // Create an error message that is too long to be stored
