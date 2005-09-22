@@ -283,6 +283,16 @@ const std::string SpkCompilerError::getXml() const
 	m.erase( i, 1 );
 	m.insert( i, "&gt;" );
       }
+    for( int i = m.find( '\'', 0 ); i != string::npos; i = m.find( '\'', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&apos;" );
+      }
+    for( int i = m.find( '\"', 0 ); i != string::npos; i = m.find( '\"', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&quot;" );
+      }
 
 
     o << "<error>"          << endl;

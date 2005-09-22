@@ -317,7 +317,7 @@ void SpkCompilerErrorTest::serializeTest()
 void SpkCompilerErrorTest::getXmlTest()
 {
   char message[ SpkCompilerError::maxMessageLen() ];
-  sprintf( message, "<&>" );
+  sprintf( message, "<&>\"\'" );
   SpkCompilerError e( SpkCompilerError::ASPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );
 
   ostringstream expected, actual;
@@ -326,10 +326,13 @@ void SpkCompilerErrorTest::getXmlTest()
   expected << "   <code>" << SpkCompilerError::describe( e.code() ) << "</code>" << endl;
   expected << "   <file_name>" << e.filename() << "</file_name>" << endl;
   expected << "   <line_number>" << e.linenum() << "</line_number>" << endl;
-  expected << "   <message>" <<  "&lt;&amp;&gt;" << "</message>" << endl;
+  expected << "   <message>" <<  "&lt;&amp;&gt;&quot;&apos;" << "</message>" << endl;
   expected << "</error>" << endl;
+
   actual << e.getXml();
 
+  cout << expected.str() << endl;
+  cout << actual.str() << endl;
   CPPUNIT_ASSERT( expected.str() == actual.str() );
   return;
 }
