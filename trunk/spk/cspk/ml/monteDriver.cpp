@@ -504,41 +504,58 @@ int main(int argc, const char *argv[])
 		return UnknownFailure;
 	}
 
-	// model constructor
-	PopPredModel model(
-		mPred,
-		nTheta,
-		thetaLow,
-		thetaUp,
-		thetaIn,
-		nEta,
-		etaIn,
-		nEps,
-		omegaStruct,
-		omegaIn,
-		sigmaStruct,
-		sigmaIn 
-	);
+	PopPredModel *model = 0;
+	try {	// model constructor
+		model = new PopPredModel(
+			mPred,
+			nTheta,
+			thetaLow,
+			thetaUp,
+			thetaIn,
+			nEta,
+			etaIn,
+			nEps,
+			omegaStruct,
+			omegaIn,
+			sigmaStruct,
+			sigmaIn 
+		);
+	}
+	catch( const SpkException& e )
+	{	cout << "<error_list>" << endl;
+		cout << "Known exception in model contructor:" << std::endl;
+		cout << e << endl;
+		cout << "</error_list>" << endl;
+	        cout << "</spkreport>" << endl; 
+		return EstimateFailure;
+	}
+	catch( ... )
+	{	cout << "<error_list>" << endl;
+		cout << "Unknown exception in model contructor:" << std::endl;
+		cout << "</error_list>" << endl;
+	        cout << "</spkreport>" << endl; 
+		return EstimateFailure;
+	}
 
 	// get the input value for the fixed effects as a single vector
-	const int nAlp = model.getNPopPar();
+	const int nAlp = model->getNPopPar();
 	valarray<double> alpIn (nAlp);
-	model.getPopPar( alpIn );
+	model->getPopPar( alpIn );
 
 	// get the limits on the fixed effects
 	valarray<double> alpLow(nAlp);
 	valarray<double> alpUp(nAlp);
-	model.getPopParLimits(alpLow, alpUp);
+	model->getPopParLimits(alpLow, alpUp);
 
 	// step size in fixed effects
 	valarray<double> alpStep(nAlp);
 	alpStep = 2e-2 * (alpUp - alpLow);
 
 	// get the limits on the random effects
-	const int nB = model.getNIndPar();
+	const int nB = model->getNIndPar();
 	valarray<double> bLow( nB );
 	valarray<double> bUp( nB );
-	model.getIndParLimits( bLow, bUp );
+	model->getIndParLimits( bLow, bUp );
 
 	// start the output file
 	cout << "<?xml version=\"1.0\"?>" << endl;
@@ -571,7 +588,7 @@ int main(int argc, const char *argv[])
 				if( analytic ) AnalyticIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
-					model           ,
+					*model           ,
 					N               ,
 					y               ,
 					alp             ,
@@ -582,7 +599,7 @@ int main(int argc, const char *argv[])
 				if( grid ) GridIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
-					model           ,
+					*model           ,
 					N               ,
 					y               ,
 					alp             ,
@@ -594,7 +611,7 @@ int main(int argc, const char *argv[])
 				if( monte ) MonteIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
-					model           ,
+					*model           ,
 					N               ,
 					y               ,
 					alp             ,
@@ -615,6 +632,7 @@ int main(int argc, const char *argv[])
 	}
 	catch( const SpkException& e )
 	{	cout << "<error_list>" << endl;
+		cout << "Known exception during integration:" << std::endl;
 		cout << e << endl;
 		cout << "</error_list>" << endl;
 	        cout << "</spkreport>" << endl; 
@@ -622,11 +640,14 @@ int main(int argc, const char *argv[])
 	}
 	catch( ... )
 	{	cout << "<error_list>" << endl;
-		cout << "Unknown exception occurred";
+		cout << "Unknown exception during integration:" << std::endl;
 		cout << "</error_list>" << endl;
 	        cout << "</spkreport>" << endl; 
 		return EstimateFailure;
 	}
+
+	// done with the model object
+	delete model;
 
         // Estimates completed successfully.  Print out emtpy <error_list>.
         cout << "<error_list/>" << endl;
