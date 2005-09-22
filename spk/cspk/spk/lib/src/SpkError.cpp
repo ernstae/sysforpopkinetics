@@ -897,6 +897,16 @@ std::string& operator<<(std::string& s, SpkError& e)
 std::ostream& operator<<(std::ostream& o, const SpkError& e)
 {
     string m = e._message;
+    //
+    // escape XML sensitive characters { <, >, & }
+    // '&' must be replaced first because < and > will be replaced by
+    // words containing '&'.
+    // 
+    for( int i = m.find( '&', 0 ); i != string::npos; i = m.find( '&', i+1 ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&amp;" );
+      }
     for( int i = m.find( '<', 0 ); i != string::npos; i = m.find( '<', i ) )
       {
 	m.erase( i, 1 );
@@ -906,6 +916,16 @@ std::ostream& operator<<(std::ostream& o, const SpkError& e)
       {
 	m.erase( i, 1 );
 	m.insert( i, "&gt;" );
+      }
+    for( int i = m.find( '\'', 0 ); i != string::npos; i = m.find( '\'', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&apos;" );
+      }
+    for( int i = m.find( '\"', 0 ); i != string::npos; i = m.find( '\"', i ) )
+      {
+	m.erase( i, 1 );
+	m.insert( i, "&quot;" );
       }
 
   o << "<error code=\"" << e._errorcode << "\">" << endl;
