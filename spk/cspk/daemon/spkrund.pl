@@ -439,6 +439,16 @@ sub fork_driver {
       }
   }
 }
+sub escapeSpecialChars {
+    my $raw = shift;
+    my $xml = $raw;
+    $xml =~ s/&/&amp;/g;
+    $xml =~ s/'/&apos;/g;
+    $xml =~ s/"/&quot;/g;
+    $xml =~ s/</&lt;/g;
+    $xml =~ s/>/&gt;/g;
+    return $xml;
+}
 sub insert_error {
     my $daemon_text = shift;
     my $driver_text = shift;
@@ -450,7 +460,7 @@ sub insert_error {
     $daemon_text_xml    .= "<line_number>N/A</line_number>\n";
     $daemon_text_xml    .= "<message>";
     if ( $daemon_text ){
-       $daemon_text_xml .= $daemon_text;
+       $daemon_text_xml .= escapeSpecialChars( $daemon_text );
     }
     else{
        $daemon_text_xml .= "N/A";
@@ -464,7 +474,14 @@ sub insert_error {
        $driver_text_xml .= "\n<description>Assertion text from driver</description>\n";
        $driver_text_xml .= "<file_name>N/A</file_name>\n";
        $driver_text_xml .= "<line_number>N/A</line_number>\n";
-       $driver_text_xml .= "<message>$driver_text</message>\n";
+       $driver_text_xml .= "<message>";
+       if( $driver_text ){
+          $driver_text_xml .= escapeSpecialChars($driver_text);
+       }
+       else{
+          $driver_text_xml .= "N/A";
+       }
+       $driver_text_xml .= "</message>\n";
        $driver_text_xml .= "</error>\n";
     }
 
