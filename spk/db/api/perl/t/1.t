@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::Simple tests => 61;  # number of ok() tests
+use Test::Simple tests => 63;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
@@ -10,7 +10,7 @@ use Spkdb (
     'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
-    'new_user', 'update_user', 'get_user', 'email_for_job'
+    'new_user', 'update_user', 'get_user', 'set_mail_notice', 'get_mail_notice', 'email_for_job'
 	   );
 my $rv;
 
@@ -110,6 +110,13 @@ my $email_addr = "mj\@u.washington.edu";
 $email = &email_for_job($dbh, 1);
 ok($email =~ $email_addr, "email_for_job");
 
+my $mail_notice = &Spkdb::get_mail_notice($dbh, 1);
+ok($mail_notice == 0, "mail notice is not requested");
+
+&Spkdb::set_mail_notice($dbh, 1, 1);
+$mail_notice = &Spkdb::get_mail_notice($dbh, 1);
+ok($mail_notice == 1, "mail notice is requested");
+
 $row = &de_q2c($dbh);
 ok($row && $row->{"job_id"} == $job_id
              && $row->{"xml_source"},       "de_q2c, first job");
@@ -117,22 +124,26 @@ sleep(1);
 $row = &de_q2c($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1
              && $row->{"xml_source"},       "de_q2c, second job");
-sleep(1);
+my $jobId;
+
 &set_state_code($dbh, $job_id, "q2ac");
+sleep(1);
 &set_state_code($dbh, $job_id + 1, "q2ac");
-my $jobId = &de_q2ac($dbh);
+$jobId = &de_q2ac($dbh);
 ok($jobId && $jobId == $job_id,             "de_q2ac, first job");
 sleep(1);
 $jobId = &de_q2ac($dbh);
 ok($jobId && $jobId == $job_id + 1,         "de_q2ac, second job");
-sleep(1);
+
 &set_state_code($dbh, $job_id, "q2ar");
+sleep(1);
 &set_state_code($dbh, $job_id + 1, "q2ar");
 $jobId = &de_q2ar($dbh);
-ok($jobId && $jobId == $job_id,             "de_q2ar, first job");
+ok($jobId && $jobId == $job_id,             "de_q2ar, first job,$jobId,  ,$job_id");
 sleep(1);
 $jobId = &de_q2ar($dbh);
-ok($jobId && $jobId == $job_id + 1,         "de_q2ar, second job");
+ok($jobId && $jobId == $job_id + 1,         "de_q2ar, second job,$jobId,  ,$job_id");
+
 &set_state_code($dbh, $job_id, "q2c");
 &set_state_code($dbh, $job_id + 1, "q2c");
 

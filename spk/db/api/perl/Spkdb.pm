@@ -318,6 +318,7 @@ sub get_job() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+        return undef;
     }
     my $count = $sth->rows;
 
@@ -382,6 +383,7 @@ sub job_status() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+        return undef;
     }
     return $sth->fetchrow_hashref();
 }
@@ -466,10 +468,11 @@ sub set_state_code() {
     my $dbh = shift;
     my $job_id = shift;
     my $state_code = shift;
+    my $event_time = time();
     $err = 0;
     $errstr = "";
 
-    my $sql = "update job set state_code='$state_code' where job_id='$job_id';";
+    my $sql = "update job set state_code='$state_code',event_time='$event_time' where job_id='$job_id';";
 
     my $nrows = $dbh->do($sql);
     unless ($nrows)
@@ -907,7 +910,7 @@ sub de_q2ar() {
 	    .       "where state_code='q2ar' "
             .       "order by event_time "
             .       "limit 1 "
-            .       "for update;";
+            .       "for update; ";
 
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
@@ -930,15 +933,15 @@ sub de_q2ar() {
 	return 0;
     }
     my $job_id = $row->{"job_id"};
+    my $state_code = "arun";
     my $event_time = time();
     
-    my $state_code = "arun";
     $sql = "update job set state_code = '$state_code', event_time = '$event_time' where job_id=$job_id;";
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
 	$dbh->rollback;
-	return;
+	return undef;
     }
     $dbh->commit;
     &add_to_history($dbh, $job_id, $state_code);
@@ -1118,6 +1121,7 @@ sub job_report() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+        return undef;
     }
     my $rrow = $sth->fetchrow_arrayref;
     unless ($rrow) {
@@ -1173,6 +1177,7 @@ sub job_checkpoint() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+        return undef;
     }
     my $rrow = $sth->fetchrow_arrayref;
     unless ($rrow) {
@@ -1289,6 +1294,7 @@ sub get_dataset() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+        return undef;
     }
     my $count = $sth->rows;
 
@@ -1530,6 +1536,7 @@ sub get_model() {
 	$err = $EXECUTE_FAILED;
 	$errstr = "could not execute state: $sql; error returned "
 	    . $sth->errstr;
+        return undef;
     }
     my $count = $sth->rows;
 
