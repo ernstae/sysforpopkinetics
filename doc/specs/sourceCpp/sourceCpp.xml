@@ -1261,18 +1261,18 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>7</term>
+            <term>1</term>
             <listitem>
                <para>
-               Abnormal completion for other known errors.
+               Normal completion for unknown problem(s).
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>8</term>
+            <term>2</term>
             <listitem>
                <para>
-               Abnormal completion for other unknown failures.
+               Abnormal completion for unknown failures.
                </para>
             </listitem>
          </varlistentry>
@@ -1280,7 +1280,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <term>10</term>
             <listitem>
                <para>
-               Abnormal completion due to a known system error such as file/directory access errors.
+               Normal completion but some known problem was detected during a file/directory access
                </para>
             </listitem>
          </varlistentry>
@@ -1288,7 +1288,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <term>11</term>
             <listitem>
                <para>
-               Abnormal completion due to a known data simulation error.
+               Normal completion but some known problem was detected during data simulation.
                </para>
             </listitem>
          </varlistentry>
@@ -1296,7 +1296,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <term>12</term>
             <listitem>
                <para>
-               Abnormal completion due to a known optimization error.
+               Normal completion but some known prolem was detected during optimization.
                </para>
             </listitem>
          </varlistentry>
@@ -1304,7 +1304,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <term>13</term>
             <listitem>
                <para>
-               Abnormal completion due to a known statisitcs calculation error.
+               Normal completion but some known problem was detected during statisitcs calculation.
                </para>
             </listitem>
          </varlistentry>
@@ -1312,7 +1312,15 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <term>14</term>
             <listitem>
                <para>
-               Abnormal completion due to a known user input error.
+               Normal completion but some known user input error was detected.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>15</term>
+            <listitem>
+               <para>
+               Normal completion but some known programmer's error was detected.
                </para>
             </listitem>
          </varlistentry>
@@ -1349,6 +1357,22 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
                <para>
                Abnormal completion due to a unknown statisitcs calculation failure.
                This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>104</term>
+            <listitem>
+               <para>
+               Abnormal completion due to some unknown user input error.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>105</term>
+            <listitem>
+               <para>
+               Abnormal completion due to some programmer's error.
                </para>
             </listitem>
          </varlistentry>
@@ -1411,7 +1435,7 @@ At the very end of the execution, an exit value is also printed in the following
             <term>10</term>
             <listitem>
                <para>
-               Abnormal completion due to a known file/directory access error.
+               Normal completion but some known problem was detected during file/directory access 
                </para>
             </listitem>
          </varlistentry>
