@@ -9,6 +9,14 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.23</revnumber>
+            <date>September 23, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Re-defining fitDriver.cpp and monteDriver.cpp's return codes.
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.22</revnumber>
             <date>September 20, 2005</date>
             <authorinitials>sh</authorinitials>
@@ -1253,50 +1261,94 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>1</term>
+            <term>7</term>
             <listitem>
                <para>
-               Abnormal completion due to the optimization failure.
+               Abnormal completion for other known errors.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>2</term>
+            <term>8</term>
             <listitem>
                <para>
-               Abnormal completion due to a file/directory access failure.
+               Abnormal completion for other unknown failures.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>4</term>
+            <term>10</term>
             <listitem>
                <para>
-               Abnormal completion due to the statisitcs calculation failure.
+               Abnormal completion due to a known system error such as file/directory access errors.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>5</term>
+            <term>11</term>
             <listitem>
                <para>
-               Abnormal completion due to the data simulation failure.
+               Abnormal completion due to a known data simulation error.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>6</term>
+            <term>12</term>
             <listitem>
                <para>
-               Normal completion but the optimization did not converge within the given maximum number of iterations.
+               Abnormal completion due to a known optimization error.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>&gt;6</term>
+            <term>13</term>
             <listitem>
                <para>
-               Abnormal completion for unknown reasons.
+               Abnormal completion due to a known statisitcs calculation error.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>14</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a known user input error.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>100</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown system failures.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>101</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown data simulation fatal failure.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>102</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown optimization failure.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>103</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown statisitcs calculation failure.
+               This shall result in submitting a bugzilla report.
                </para>
             </listitem>
          </varlistentry>
@@ -1343,7 +1395,7 @@ At the very end of the execution, an exit value is also printed in the following
    <sect1>
       <title><filename>monteDriver.cpp</filename></title>
       <para>
-      This is a driver for a post-integration process (ex. Monte Carlo).
+      This is a driver for a post-optimality process (ex. Monte Carlo).
       </para>
       <variablelist>
          <title>Return value</title>
@@ -1355,35 +1407,51 @@ At the very end of the execution, an exit value is also printed in the following
                </para>
             </listitem>
          </varlistentry>
-         <!-- varlistentry>
-            <term>1</term>
-            <listitem>
-               <para>
-               Abnormal completion due to the optimization failure.
-               </para>
-            </listitem>
-         </varlistentry -->
          <varlistentry>
-            <term>2</term>
+            <term>10</term>
             <listitem>
                <para>
-               Abnormal completion due to a file/directory access failure.
+               Abnormal completion due to a known file/directory access error.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>3</term>
+            <term>100</term>
             <listitem>
                <para>
-               Abnormal completion due to the (post-) integration failure.
+               Abnormal completion due to a unknown file/directory access failure.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term>&gt;6</term>
+            <term>200</term>
             <listitem>
                <para>
-               Abnormal completion for unknown reasons.
+               Abnormal completion due to a known post-optimality failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>7</term>
+            <listitem>
+               <para>
+               Abnormal completion for other known errors.
+               </para>
+            </listitem>
+         </varlistentry>
+        <varlistentry>
+            <term>300</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown post-optimality failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>8</term>
+            <listitem>
+               <para>
+               Abnormal completion for other unknown failures.
                </para>
             </listitem>
          </varlistentry>
