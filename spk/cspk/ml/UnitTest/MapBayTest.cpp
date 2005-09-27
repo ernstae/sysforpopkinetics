@@ -27,7 +27,7 @@ bool MapBayTest(void)
 	valarray<double> Y(3);
 	Y[0] = 1.;
 	Y[1] = 2.;
-	Y[3] = 3.;
+	Y[2] = 3.;
 
 	// other model parameters
 	double Rvar = .1;
