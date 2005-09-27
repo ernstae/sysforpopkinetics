@@ -2,6 +2,8 @@
 # include <cmath>
 # include <iostream>
 # include <valarray>
+# include <spk/SpkError.h>
+# include <spk/SpkException.h>
 
 namespace {
 	double F(double *X, size_t m, void *p)
@@ -37,6 +39,18 @@ bool GridIntegralTest(void)
 
 	ok &= estimateStd <= 1e-2;
 	ok &= fabs( integralEstimate - prod ) <= 2. * estimateStd;
+
+	// test throw inside of GridIntegral
+	ngrid[0] = 1;   // to small a value of N
+	try
+	{	GridIntegral(F, m, p, ngrid, Low, Up, 
+			integralEstimate, estimateStd);
+		ok = false;
+	}
+	catch( SpkException& list )
+	{	SpkError e = list.pop();
+	 	ok &= (e.code() == SpkError::SPK_USER_INPUT_ERR);
+	}
 
 	return ok;
 }
