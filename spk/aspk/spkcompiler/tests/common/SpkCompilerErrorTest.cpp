@@ -331,8 +331,6 @@ void SpkCompilerErrorTest::getXmlTest()
 
   actual << e.getXml();
 
-  cout << expected.str() << endl;
-  cout << actual.str() << endl;
   CPPUNIT_ASSERT( expected.str() == actual.str() );
   return;
 }
