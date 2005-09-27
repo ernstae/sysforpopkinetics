@@ -85,6 +85,8 @@ $end
 # include <iostream>
 # include <valarray>
 # include <cassert>
+# include <spk/SpkError.h>
+# include <spk/SpkException.h>
 
 namespace {
 
@@ -188,8 +190,25 @@ void GridIntegral(
 	std::valarray<int> N2 = N / 2;
 	size_t i;
 	for(i = 0; i < N.size(); i++)
-		assert( N2[i] > 0 );
-
+	{	if( N2[i] < 1 )
+		{	int max = SpkError::maxMessageLen();
+			char Buffer[200];
+			sprintf( Buffer, 
+				"Grid: N[%d] = %d is to small\n", 
+				i                               , 
+				int(N[i])
+			);
+			if( max - 1 < strlen(Buffer) )
+				Buffer[max-1] = '\0';
+		 	throw SpkException (
+				SpkError::SPK_USER_INPUT_ERR,
+				Buffer                      ,
+				__LINE__                    ,
+				__FILE__
+			);
+		}
+	}
+		
 	std::valarray<int> M = N - N2;
 	double compareEstimate = GridIntegral(Feval, m, p, M, L, U);
 	estimateStd            = fabs(integralEstimate - compareEstimate);
