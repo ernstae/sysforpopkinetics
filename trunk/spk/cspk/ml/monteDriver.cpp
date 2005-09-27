@@ -495,7 +495,6 @@ int main(int argc, const char *argv[])
 	}
 
     try{
-throw SpkException( SpkError::SPK_USER_INPUT_ERR, "test", __LINE__, __FILE__ );
 	// data set
 	DataSet< CppAD::AD<double> > set;
 	Pred< CppAD::AD<double> > mPred(&set);
