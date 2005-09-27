@@ -494,6 +494,8 @@ int main(int argc, const char *argv[])
 		}
 	}
 
+    // pointer to model 
+    PopPredModel *model = 0; // initialize as not constructed
     try{
 	// data set
 	DataSet< CppAD::AD<double> > set;
@@ -518,8 +520,6 @@ int main(int argc, const char *argv[])
 		return USER_INPUT_ERROR;
 	}
 
-	// model constructor
-       PopPredModel *model = 0;
        try {   // model constructor
                model = new PopPredModel(
                        mPred,
@@ -693,7 +693,9 @@ int main(int argc, const char *argv[])
         delete model;
    }
    catch( const SpkException& e )
-   {
+   {       // check if model has been constructed
+           if( model != 0 )
+                 delete model;      
            cout << "<error_list>" << endl;
            cout << e << endl;
            cout << "</error_list>" << endl;
