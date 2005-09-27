@@ -190,14 +190,14 @@ $end
 
 # define monteDriverDebug 0
 
-enum { SUCCESSFUL           = 0,
-       KNOWN_ERROR          = 1,
-       UNKNOWN_FAILURE      = 2,
-       SYSTEM_ERROR         = 10,
-       USER_INPUT_ERROR     = 14,
-       SYSTEM_FAILURE       = 100,
-       POST_OPT_ERROR       = 200,
-       POST_OPT_FAILURE     = 300
+enum { SUCCESSFUL             = 0,
+       OTHER_KNOWN_ERROR      = 1,
+       UNKNOWN_FAILURE        = 2,
+       SYSTEM_ERROR           = 10,
+       USER_INPUT_ERROR       = 14,
+       SYSTEM_FAILURE         = 100,
+       POST_OPT_ERROR         = 200,
+       POST_OPT_FAILURE       = 300
      };
 
 
@@ -495,6 +495,7 @@ int main(int argc, const char *argv[])
 	}
 
     try{
+throw SpkException( SpkError::SPK_USER_INPUT_ERR, "test", __LINE__, __FILE__ );
 	// data set
 	DataSet< CppAD::AD<double> > set;
 	Pred< CppAD::AD<double> > mPred(&set);
@@ -519,40 +520,58 @@ int main(int argc, const char *argv[])
 	}
 
 	// model constructor
-	PopPredModel model(
-		mPred,
-		nTheta,
-		thetaLow,
-		thetaUp,
-		thetaIn,
-		nEta,
-		etaIn,
-		nEps,
-		omegaStruct,
-		omegaIn,
-		sigmaStruct,
-		sigmaIn 
-	);
+       PopPredModel *model = 0;
+       try {   // model constructor
+               model = new PopPredModel(
+                       mPred,
+                       nTheta,
+                       thetaLow,
+                       thetaUp,
+                       thetaIn,
+                       nEta,
+                       etaIn,
+                       nEps,
+                       omegaStruct,
+                       omegaIn,
+                       sigmaStruct,
+                       sigmaIn
+               );
+       }
+       catch( const SpkException& e )
+       {       cout << "<error_list>" << endl;
+               cout << "Known exception in model contructor:" << std::endl;
+               cout << e << endl;
+               cout << "</error_list>" << endl;
+               cout << "</spkreport>" << endl;
+               return OTHER_KNOWN_ERROR;
+       }
+       catch( ... )
+       {       cout << "<error_list>" << endl;
+               cout << "Unknown exception in model contructor:" << std::endl;
+               cout << "</error_list>" << endl;
+               cout << "</spkreport>" << endl;
+               return UNKNOWN_FAILURE;
+       }
 
 	// get the input value for the fixed effects as a single vector
-	const int nAlp = model.getNPopPar();
+	const int nAlp = model->getNPopPar();
 	valarray<double> alpIn (nAlp);
-	model.getPopPar( alpIn );
+	model->getPopPar( alpIn );
 
 	// get the limits on the fixed effects
 	valarray<double> alpLow(nAlp);
 	valarray<double> alpUp(nAlp);
-	model.getPopParLimits(alpLow, alpUp);
+	model->getPopParLimits(alpLow, alpUp);
 
 	// step size in fixed effects
 	valarray<double> alpStep(nAlp);
 	alpStep = 2e-2 * (alpUp - alpLow);
 
 	// get the limits on the random effects
-	const int nB = model.getNIndPar();
+	const int nB = model->getNIndPar();
 	valarray<double> bLow( nB );
 	valarray<double> bUp( nB );
-	model.getIndParLimits( bLow, bUp );
+	model->getIndParLimits( bLow, bUp );
 
 	// start timing
 	timeval timeBegin;
@@ -581,7 +600,7 @@ int main(int argc, const char *argv[])
 				if( analytic ) AnalyticIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
-					model           ,
+					*model           ,
 					N               ,
 					y               ,
 					alp             ,
@@ -592,7 +611,7 @@ int main(int argc, const char *argv[])
 				if( grid ) GridIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
-					model           ,
+					*model           ,
 					N               ,
 					y               ,
 					alp             ,
@@ -604,7 +623,7 @@ int main(int argc, const char *argv[])
 				if( monte ) MonteIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
-					model           ,
+					*model           ,
 					N               ,
 					y               ,
 					alp             ,
@@ -670,6 +689,9 @@ int main(int argc, const char *argv[])
 	// return from main program
         cout << "</pop_monte_result>" << endl;
 	cout << "</spkreport>" << endl; 
+
+        // Clean up
+        delete model;
    }
    catch( const SpkException& e )
    {
