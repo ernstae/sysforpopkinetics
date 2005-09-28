@@ -62,8 +62,7 @@ is atomic.  If the lock-file already exists, the program writes an
 error message to the system log and terminates, because only one 
 copy of spkcmpd.pl can be allowed run at any given time.
 
-Next, it opens the database and attach a sensor for monitoring.  The 
-sensor is a server written in java.
+Next, it opens the database.
 
 The program designates itself to be a process group leader. This
 way it will be able to send signals to all of its descendents without
@@ -199,7 +198,6 @@ my $service_root = "spkcmp";
 my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
 my $retain_working_dir = 0;
-my $attach_sensor = 1;
 
 my $dbh;
 my $database_open = 0;
@@ -218,9 +216,6 @@ my $spk_version = "0.1";
 my $tmp_dir = "/tmp";
 my $spk_library_path = "/usr/local/lib/spkprod";
 my $cpath = "/usr/local/include/spkprod";
-my $sensor_classpath = "-cp /usr/local/bin/spkmonitor:.";
-my $sensor_port = "9000";
-my $sensor_pid;
 
 if ($mode =~ "test") {
     $submit_to_bugzilla = !$bugzilla_production_only;
@@ -230,7 +225,6 @@ if ($mode =~ "test") {
     $pathname_compiler = "/usr/local/bin/spktest/spkcompiler";
     $spk_library_path = "/usr/local/lib/spktest";
     $cpath = "/usr/local/include/spktest";
-    $attach_sensor = 0;
 }
 
 my $service_name = "$service_root" . "d";
@@ -244,12 +238,6 @@ sub death {
 
     # Log the reason for termination
     syslog($level, $msg);
-
-    # Stop the sensor
-    if (defined $sensor_pid) {
-        $SIG{'TERM'} = 'IGNORE';
-        kill('TERM', $sensor_pid);
-    }
 
     # Close the connection to the database
     if ($database_open) {
@@ -676,32 +664,6 @@ sub start {
 	or death("emerg", "can't connect to database=$database, host=$host");
     syslog("info", "connected to database=$database, host=$host");
     $database_open = 1;
-
-    # Attach a sensor
-    if($attach_sensor == 1)
-    {
-        FORK: {
-            if ($sensor_pid = fork) {
-            }
-            elsif (defined $sensor_pid) {
-	        my @args = ("java $sensor_classpath uw.rfpk.monitor.Sensor $sensor_port");
-	        my $e = exec(@args);
- 
-	        # This statement will never be reached, unless the exec failed
-	        if (!$e) {
-	            syslog("emerg", "couldn't attach a sensor");
-	            die;
-	        };
-            }
-            elsif ($! == EAGAIN) {
-                sleep 5;
-                redo FORK;
-            }
-            else { 
-                die "can't fork: $! to attach a sensor\n";
-            }
-        }
-    }
 }
 sub stop {
     # We have received the TERM signal. 
@@ -725,7 +687,6 @@ sub stop {
 
     # Send the TERM signal to every member of our process group
     kill('TERM', -$$);
-    kill('TERM', $sensor_pid);
 
     # Wait for all of our children to die
     my $child_pid;

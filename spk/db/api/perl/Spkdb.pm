@@ -275,7 +275,7 @@ sub job_history() {
 	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
-
+    $sth->finish;
     return $array_row_ref;
 }
 
@@ -330,7 +330,9 @@ sub get_job() {
 	$errstr = "duplicate job record";
 	return undef;
     }
-    return $sth->fetchrow_hashref();
+    my $jrow = $sth->fetchrow_hashref();
+    $sth->finish;
+    return $jrow;
 }
 
 =head2 job_status -- return the current state of a job
@@ -385,7 +387,9 @@ sub job_status() {
 	    . $sth->errstr;
         return undef;
     }
-    return $sth->fetchrow_hashref();
+    my $jrow = $sth->fetchrow_hashref();
+    $sth->finish;
+    return $jrow;
 }
 
 =head2 user_jobs -- get status for the most recent jobs of a user
@@ -439,7 +443,7 @@ sub user_jobs() {
 	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
-
+    $sth->finish;
     return $array_row_ref;
 }
 
@@ -546,6 +550,7 @@ sub de_q2c() {
         return undef;
     }
     my $row = $sth->fetchrow_hashref();
+    $sth->finish;
     unless ($row) {
 	$dbh->rollback;
 	return 0;
@@ -617,6 +622,7 @@ sub de_q2ac() {
         return undef;
     }
     my $row = $sth->fetchrow_hashref();
+    $sth->finish;
     unless ($row) {
 	$dbh->rollback;
 	return 0;
@@ -687,6 +693,7 @@ sub get_job_ids() {
     while(($job) = $sth->fetchrow_array) {
         push(@jobs, $job);
     }
+    $sth->finish;
     my $count = @jobs;
     if ($count == 0) {
 	return 0;
@@ -745,7 +752,7 @@ sub get_cmp_jobs() {
 	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
-
+    $sth->finish;
     return $array_row_ref;
 }
 
@@ -797,6 +804,7 @@ sub en_q2r() {
 	$err = $UPDATE_FAILED;
 	return 0;
     }
+    $sth->finish;
     &add_to_history($dbh, $job_id, $state_code);
     return 1;
 }
@@ -856,6 +864,7 @@ sub de_q2r() {
         return undef;
     }
     my $row = $sth->fetchrow_hashref();
+    $sth->finish;
     unless ($row) {
 	$dbh->rollback;
 	return 0;
@@ -928,6 +937,7 @@ sub de_q2ar() {
         return undef;
     }
     my $row = $sth->fetchrow_hashref();
+    $sth->finish;
     unless ($row) {
 	$dbh->rollback;
 	return 0;
@@ -996,7 +1006,7 @@ sub get_run_jobs() {
 	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
-
+    $sth->finish;
     return $array_row_ref;
 }
 
@@ -1056,7 +1066,7 @@ sub end_job() {
         $err = $INVALID_END;
 	return 0;
     }
-
+    $sth->finish;
     my $state_code = "end";
     $sql = "update job "
 	      .  "set state_code='$state_code', "
@@ -1077,6 +1087,7 @@ sub end_job() {
 	$err = $UPDATE_FAILED;
 	return 0;
     }
+    $sth->finish;
     &add_to_history($dbh, $job_id, $state_code);
     return 1;
 } 
@@ -1134,6 +1145,7 @@ sub job_report() {
 	$err = $NOT_ENDED;
 	return undef;
     }
+    $sth->finish;
     return $rrow->[1];
 }
 
@@ -1190,6 +1202,7 @@ sub job_checkpoint() {
 	$err = $NOT_ENDED;
 	return undef;
     }
+    $sth->finish;
     return $rrow->[1];
 }
 
@@ -1430,7 +1443,7 @@ sub user_datasets() {
 	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
-
+    $sth->finish;
     return $array_row_ref;
 }
 
@@ -1548,7 +1561,9 @@ sub get_model() {
 	$errstr = "duplicate model record";
 	return undef;
     }
-    return $sth->fetchrow_hashref();
+    my $mrow = $sth->fetchrow_hashref();
+    $sth->finish;
+    return $mrow;
 }
 
 =head2 update_model -- update a model
@@ -1672,7 +1687,7 @@ sub user_models() {
 	return undef;
     }
     my $array_row_ref = $sth->fetchall_arrayref({});
-
+    $sth->finish;
     return $array_row_ref;
 }
 
@@ -1978,6 +1993,7 @@ sub get_mail_notice() {
 	return undef;
     }
     my $row = $sth->fetchrow_hashref();
+    $sth->finish;
     return $row->{"mail"};
 }
 
@@ -2026,6 +2042,7 @@ sub email_for_job() {
 	return undef;
     }
     my $row = $sth->fetchrow_hashref();
+    $sth->finish;
     return $row->{"email"};
 }
 
