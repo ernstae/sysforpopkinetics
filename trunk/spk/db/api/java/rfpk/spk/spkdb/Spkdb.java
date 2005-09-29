@@ -106,6 +106,7 @@ public abstract class Spkdb {
             if (!rs.next())
 	        throw new SpkdbException("This job cannot restart because the\ncheckpoint file does not exist.");
             checkpoint = rs.getBlob("checkpoint");
+            stmt.close();
             if (checkpoint == null)
 	        throw new SpkdbException("This job cannot restart because the\ncheckpoint file does not exist.");
 	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
@@ -136,6 +137,7 @@ public abstract class Spkdb {
 	if (rs.next()) {
 	    jobId = rs.getLong(1);
 	}
+        pstmt.close();
 	addToHistory(conn, jobId, stateCode, "unknown");
 	return jobId;
     }
@@ -152,8 +154,7 @@ public abstract class Spkdb {
     {
 	String sql = "select * from history where job_id=" + jobId + ";";
 	Statement stmt = conn.createStatement();
-	stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 
 	return rs;
     }
@@ -170,8 +171,7 @@ public abstract class Spkdb {
     {
 	String sql = "select * from job where job_id=" + jobId + ";";
 	Statement stmt = conn.createStatement();
-	stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 
 	return rs;
     }
@@ -199,17 +199,17 @@ public abstract class Spkdb {
 	}
 	sql += " order by job_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
-        stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 
 	return rs;
     }
-    /** If the state code is 'q2c', set the job's state code to 'end' and end code to 'abrt'.
-     * If the state code is 'cmp', set the job's state code to 'q2ac'.
-     * If the state code is 'q2r', set the job's state code to 'end' and the end code to 'abrt'.
-     * If the state code is 'run', set the job's state code to 'q2ar'.
-     * Set the job's event time and add the state change event to the job's history.
-     * @return true if the job's state_code is set to "q2a" by this method, otherwise false.
+    /** Abort a job when the job is in one of the four possible states. 
+     * If the job's state code is 'q2c', set the state code to 'end' and end code to 'abrt'.
+     * If the job's state code is 'cmp', set the state code to 'q2ac'.
+     * If the job's state code is 'q2r', set the state code to 'end' and the end code to 'abrt'.
+     * If the job's state code is 'run', set the state code to 'q2ar'.
+     * Set the job's event time and state code to the job's history.
+     * @return true if the job's state_code has been set to 'end', 'q2ac', or 'q2ar', otherwise false.
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
      * @throws SQLException a SQL exception.
@@ -244,6 +244,7 @@ public abstract class Spkdb {
                 }
             }
         }
+        stmt.close();
         addToHistory(conn, jobId, state, "unknown");
 	return true;
     }
@@ -270,7 +271,9 @@ public abstract class Spkdb {
 	    + " where job_id =" + jobId + " and state_code!='end';";
 	pstmt = conn.prepareStatement(sql);
 	pstmt.setBinaryStream(1, new ByteArrayInputStream(report.getBytes()), report.length());
-	if(pstmt.executeUpdate() == 1)
+        boolean ok = pstmt.executeUpdate() == 1;
+        pstmt.close();
+	if(ok)
 	    addToHistory(conn, jobId, "end", "unknown");
         else
             return false;
@@ -304,6 +307,7 @@ public abstract class Spkdb {
 	if (rs.next()) {
 	    datasetId = rs.getLong(1);
 	}
+        pstmt.close();
 	return datasetId;
     }       
     /**        Get a dataset.
@@ -351,7 +355,9 @@ public abstract class Spkdb {
 	 sql += " where dataset_id=" + datasetId + ";";
 	 Statement stmt = conn.createStatement();
 	 stmt.executeUpdate(sql);
-	 return stmt.getUpdateCount() == 1;
+	 boolean ok = stmt.getUpdateCount() == 1;
+         stmt.close();
+         return ok;
     }
     /**        Get datasets belonging to a given user
      * @return Object of a class which implements the java.sql.ResultSet interface, containing
@@ -375,8 +381,7 @@ public abstract class Spkdb {
 	}
 	sql += " order by dataset_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
-        stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 
 	return rs;
     }
@@ -408,6 +413,7 @@ public abstract class Spkdb {
 	if (rs.next()) {
 	    modelId = rs.getLong(1);
 	}
+        pstmt.close();
 	return modelId;
     }       
     /**        Get a model
@@ -455,7 +461,9 @@ public abstract class Spkdb {
 	 sql += " where model_id=" + modelId + ";";
 	 Statement stmt = conn.createStatement();
 	 stmt.executeUpdate(sql);
-	 return stmt.getUpdateCount() == 1;
+	 boolean ok = stmt.getUpdateCount() == 1;
+         stmt.close();
+         return ok;
     }
     /**        Get a sequence of  models belonging to a given user
      * @return Object of a class which implements the java.sql.ResultSet interface, containing
@@ -479,8 +487,7 @@ public abstract class Spkdb {
 	}
 	sql += " order by model_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
-        stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 
 	return rs;
     }
@@ -525,6 +532,7 @@ public abstract class Spkdb {
 	if (rs.next()) {
 	    userId = rs.getLong(1);
 	}
+        stmt.close();
 	return userId;
     }
     /**        Update a row in the user table.
@@ -560,7 +568,9 @@ public abstract class Spkdb {
 	 sql += " where user_id=" + userId + ";";
 	 Statement stmt = conn.createStatement();
 	 stmt.executeUpdate(sql);
-	 return stmt.getUpdateCount() == 1;
+	 boolean ok = stmt.getUpdateCount() == 1;
+         stmt.close();
+         return ok;
     }
     /**        Get a row from the user table
      * @return Object of a class which implements the java.sql.ResultSet interface,
@@ -575,8 +585,7 @@ public abstract class Spkdb {
     {
 	String sql = "select * from user where username='" + username +"';";
 	Statement stmt = conn.createStatement();
-	stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 	return rs;
     }
     /**        Get the entire end table
@@ -591,8 +600,7 @@ public abstract class Spkdb {
     {
 	String sql = "select * from end;";
 	Statement stmt = conn.createStatement();
-	stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 	return rs;
     }
     /**        Get the entire method table
@@ -607,8 +615,7 @@ public abstract class Spkdb {
     {
 	String sql = "select * from method;";
 	Statement stmt = conn.createStatement();
-	stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 	return rs;
     }
     /**        Get the entire state table
@@ -623,8 +630,7 @@ public abstract class Spkdb {
     {
 	String sql = "select * from state;";
 	Statement stmt = conn.createStatement();
-	stmt.execute(sql);
-	ResultSet rs = stmt.getResultSet();
+	ResultSet rs = stmt.executeQuery(sql);
 	return rs;
     }
     /** Add the job state to the history table
@@ -688,7 +694,9 @@ public abstract class Spkdb {
         String sql = "update job set state_code='" + stateCode + "' where job_id=" +
                      jobId + ";";
         Statement stmt = conn.createStatement();
-	if(stmt.executeUpdate(sql) != 1)
+        boolean ok = stmt.executeUpdate(sql) != 1;
+        stmt.close();
+	if(ok)
             return false;
         return true;   
     }
@@ -708,7 +716,9 @@ public abstract class Spkdb {
         String sql = "update job set checkpoint='" + checkpoint + "' where job_id=" +
                      jobId + ";";
         Statement stmt = conn.createStatement();
-	if(stmt.executeUpdate(sql) != 1)
+        boolean ok = stmt.executeUpdate(sql) != 1;
+        stmt.close();
+	if(ok)
             return false;
         return true;   
     }    
