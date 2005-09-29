@@ -549,8 +549,19 @@ sub reaper {
     }
 
     # Assume success, then look for errors
-    $end_code = "srun";  
-    $submit_to_bugzilla = 0;
+    $end_code = "srun"; 
+
+    # $submit_to_bugzilla must be re-initialized every time
+    # this routine is called because it is taking now AND operation.
+    # Without it, the value from the previous run is used as the
+    # initial value.
+    # Sachiko, 09/29/2005
+    if ($mode =~ "test") {
+       $submit_to_bugzilla = !$bugzilla_production_only;
+    }
+    else {
+       $submit_to_bugzilla = 1;
+    }
     my $err_msg = "";
     my $err_rpt = "";
 
@@ -716,7 +727,7 @@ sub reaper {
         }
 
 	# Place a message in system log
-        syslog('info', "job_id=$job_id: $err_msg");
+        syslog('info', "job_id=$job_id: $err_msg ($end_code)($submit_to_bugzilla)");
 
 	# Submit runtime bugs to bugzilla only if the end_code is either "serr" or "herr".
 	if ($submit_to_bugzilla ) {
@@ -739,6 +750,9 @@ sub reaper {
 	    if ($exit_status != 0) {
 		syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
 	    }
+            else{
+                syslog('info', "submitted a bugzilla report for job_id=$job_id: $exit_status");
+            }
 	}
     }
     # Replace/write results in report file
