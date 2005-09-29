@@ -168,9 +168,23 @@ author: Jiaji Du
               <input type="hidden" name="jnlp_dir" value=<%=jnlp_dir%>>
               <input type="hidden" name="type" value="nonmem">
               Model Design Agent - NONMEM Compatible<input type="Submit" value="Download"><br>
-              Model Design Agent - SAAM II Compatible - COMING SOON!
             </form>
-               <br><br>
+            <form action="servlet/uw.rfpk.servlets.GetJnlp" method="post">
+              <c:choose>
+                <c:when test="${pageContext.request.serverPort==8443}">
+                  <input type="hidden" name="host" value=<%=host%>>
+                  <input type="hidden" name="port" value=<%=port%>>
+                  <input type="hidden" name="secret" value=<%=session.getAttribute("SECRET")%>>
+                  <input type="hidden" name="jnlp_dir" value=<%=jnlp_dir%>>
+                  <input type="hidden" name="type" value="saamii">
+                  Model Design Agent - SAAMII Compatible<input type="Submit" value="Download"><br>
+                </c:when>
+                <c:otherwise>
+                  Model Design Agent - SAAM II Compatible - COMING SOON!
+                </c:otherwise>
+              </c:choose>
+            </form>
+               <br>If you receive a error message please re-open your web browser and try again.<br>
             </p><p>
                Note:  FOR WINDOWS USERS: If the MDA fails to install:<br>
                Open Java Web Start<br>

@@ -44,7 +44,10 @@ public class VersionList implements java.io.Serializable
         // Prepare for the return   
         String[][] versionList = null;  
 
+        // Database connection
         Connection con = null;
+        Statement archiveStmt = null;
+        
         try
         {
             // Connect to the database
@@ -56,15 +59,13 @@ public class VersionList implements java.io.Serializable
                 archiveRS = Spkdb.getModel(con, id); 
             if(type.equals("data"))
                 archiveRS = Spkdb.getDataset(con, id);
+            archiveStmt = archiveRS.getStatement();
                 
             archiveRS.next();
       	    Blob blobArchive = archiveRS.getBlob("archive");
 	    long length = blobArchive.length(); 
 	    String archive = new String(blobArchive.getBytes(1L, (int)length)); 
-            
-            // Disconnect to the database
-            Spkdb.disconnect(con);          
-            
+          
             // Generate version list for the model or the dataset
             Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
             int number = arch.getRevisionVersion().last(); 
@@ -87,6 +88,15 @@ public class VersionList implements java.io.Serializable
         }
         catch(ParseException e)
         { 
+        }
+        finally
+        {
+            try
+            {
+                if(archiveStmt != null) archiveStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){}
         }
         return versionList;
     }

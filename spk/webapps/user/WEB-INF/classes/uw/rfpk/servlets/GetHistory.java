@@ -62,6 +62,13 @@ public class GetHistory extends HttpServlet
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement jobStmt = null;
+        Statement historyStmt = null;
+        Statement stateStmt = null;
+        
         // Prepare output message
         String messageOut = "";
         String[][] jobHistory = null; 
@@ -95,18 +102,20 @@ public class GetHistory extends HttpServlet
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
                 
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
                  
                 // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId); 
+                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                jobStmt = jobRS.getStatement();
                 jobRS.next();
 
                 // Check if the job belongs to the user
@@ -114,9 +123,11 @@ public class GetHistory extends HttpServlet
                 {
                     // get job history
                     ResultSet historyRS = Spkdb.jobHistory(con, jobId);
+                    historyStmt = historyRS.getStatement();
                     
                     // Set state_code conversion
                     ResultSet stateRS = Spkdb.getStateTable(con);
+                    stateStmt = stateRS.getStatement();
                     Properties state = new Properties();                
                     while(stateRS.next())
                         state.setProperty(stateRS.getString(1), stateRS.getString(2));                    
@@ -144,9 +155,6 @@ public class GetHistory extends HttpServlet
                     // Write the outgoing messages
                     messageOut = "Authorization error.";                    
                 }
-                                    
-                // Disconnect to the database
-                Spkdb.disconnect(con); 
             }
             else
             {
@@ -166,7 +174,19 @@ public class GetHistory extends HttpServlet
         {
             messageOut = e.getMessage();
         }
-
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(jobStmt != null) jobStmt.close();
+                if(historyStmt != null) historyStmt.close();
+                if(stateStmt != null) stateStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
+        }
+        
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))

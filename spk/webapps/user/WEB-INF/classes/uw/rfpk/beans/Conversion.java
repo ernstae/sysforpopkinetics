@@ -43,30 +43,44 @@ public class Conversion implements java.io.Serializable
      */    
     public void initConversion(String dbName, String dbHost, String dbUser, String dbPass)
     {
+        // Database connection
+        Connection con = null;
+        Statement stateStmt = null;
+        Statement endStmt = null;
+        
         try
         {
             // Connect to the database
-            Connection con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
+            con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
 
             // Set state_code conversion
-            ResultSet stateRS = Spkdb.getStateTable(con);            
+            ResultSet stateRS = Spkdb.getStateTable(con);
+            stateStmt = stateRS.getStatement();
             while(stateRS.next())
             stateConv.setProperty(stateRS.getString(1), stateRS.getString(2));
 
             // Set end_code conversion
-            ResultSet endRS = Spkdb.getEndTable(con);                
+            ResultSet endRS = Spkdb.getEndTable(con);
+            endStmt = endRS.getStatement();
             while(endRS.next())
                 endConv.setProperty(endRS.getString(1), endRS.getString(2));            
-            
-            // Disconnect to the database
-            Spkdb.disconnect(con);
         }
         catch(SQLException e)
         {
         }    
         catch(SpkdbException e)
         {
-        }        
+        }
+        finally
+        {
+            try
+            {
+                if(stateStmt != null) stateStmt.close();
+                if(endStmt != null) endStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){}
+        }
     }
     
     /** Sets time to formated time.

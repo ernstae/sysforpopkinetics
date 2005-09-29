@@ -204,12 +204,12 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nA standard data item may have alias.  The first data item must be  \"ID\" if\nit exists in the data file.  Data item \"DV\"(data values) is always required.");
+        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nA standard data item may have alias.  The first data item must be  \"ID\" if\nit exists in the data file.  Data item \"DV\"(data values) is always required.\nThe data item names are not case sensitive.  Each name must be unique.");
         jTextPane1.setPreferredSize(new java.awt.Dimension(435, 66));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextPane1, gridBagConstraints);
 
         jRadioButton1.setSelected(true);
@@ -461,7 +461,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         if(!iterator.getIsInd() && index == 0)
             return;
         
-        if(!input[index].equals("MDV"))
+        if(!input[index].equalsIgnoreCase("MDV"))
         {
             input[index] = "";
         
@@ -568,8 +568,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         else
             element = "DROP";
         for(int i = 0; i < nDataCol; i++)
-            if(input[i].split("=")[0].equals(element.split("=")[0])
-               && !element.equals("DROP")) 
+            if(input[i].split("=")[0].equalsIgnoreCase(element.split("=")[0])
+               && !element.equalsIgnoreCase("DROP")) 
             {
                 JOptionPane.showMessageDialog(null, 
                                               "Data item " + element.split("=")[0] +
@@ -690,7 +690,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     {
         String first = string.split("=")[0];
         for(int i = 0; i < strings.length; i++)
-            if(first.equals(strings[i].split("=")[0]))
+            if(first.equalsIgnoreCase(strings[i].split("=")[0]))
                 return true;
         return false;
     }
@@ -720,7 +720,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 row = new String[nDataCol];
                 for(int j = 0; j < nDataCol; j++)
                     row[j] = (String)tableEditModel.getValueAt(i, j);
-                if(row[0].equals(id))
+                if(row[0].equalsIgnoreCase(id))
                     indData.add(row);
                 else
                 {
@@ -866,16 +866,18 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String inputs = "";
             for(int i = 0; i < nDataCol - 1; i++)
-                inputs = inputs + input[i] + " ";
+                inputs = inputs + input[i].toUpperCase() + " ";
             inputs += input[nDataCol - 1];
+            if(input.length > nDataCol)
+            {
+                inputs += " MDV";
+                iterator.setNDataCol(input.length);
+                nDataCol = input.length;
+                setDataObject();
+            }
             String record = "$INPUT " + inputs.replaceAll("\r", "");
             object.getRecords().setProperty("Input", record);
             object.getSource().input = record.substring(7).split(" ");
-            if(input.length > nDataCol)
-            {
-                iterator.setNDataCol(input.length);
-                setDataObject();
-            }
 	}
 
 	public boolean isValid(){

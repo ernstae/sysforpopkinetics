@@ -25,6 +25,7 @@ import javax.swing.*;
 import rfpk.spk.spkdb.*;
 import javax.swing.JOptionPane;
 import uw.rfpk.mda.nonmem.*;
+import uw.rfpk.mda.*;
 import javax.swing.table.*;
 import org.apache.commons.jrcs.rcs.*;
 import org.apache.commons.jrcs.util.ToString;
@@ -403,7 +404,7 @@ public class GetReport extends javax.swing.JFrame {
     // Display a list of library models
     private void showArchiveList(int indexList)
     {
-        String[] header = new String[]{"Submission Time", "State Code", "End Code", "Description"};
+        String[] header = new String[]{"Job ID", "Submission Time", "State Code", "End Code", "Description"};
         String title = "Job List";
         String[][] archiveList = null;
 
@@ -452,7 +453,7 @@ public class GetReport extends javax.swing.JFrame {
         if(archiveList.length < 0)
             return;
 
-        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 1);  
+        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 0);  
         jTable1.setModel(reportModel); 
         TableColumnModel columnModel = jTable1.getColumnModel();
         columnModel.getColumn(header.length - 1).setPreferredWidth(500);

@@ -67,7 +67,7 @@
 
     <context-param>
         <param-name>maxNum</param-name>
-        <param-value>2</param-value>
+        <param-value>20</param-value>
         <description>The maximum number of rows</description>
     </context-param>
 

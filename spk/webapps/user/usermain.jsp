@@ -1,7 +1,3 @@
-                  2  
-
- 
- 
 <!---------------------------------------------------------------------
 From:   Resource Facility for Population Kinetics                    
         Department of Bioengineering Box 352255                      
@@ -76,6 +72,7 @@ author: Jiaji Du
                 <a href="enteruser.jsp?">Add new user account</a><br>
                 <a href="userlistupdate.jsp">Update user account</a><br>
                 <a href="searchuser.jsp">Search in user database</a><br>
+                <a href="usagelist.jsp">View SPK usage list</a><br>
                 <form action="notice.jsp" method="post">
                   <c:choose>
                     <c:when test="${notice == '1'}">

@@ -304,7 +304,7 @@ public class XMLWriter
         Element model = docSource.createElement("model");
         if(source.subroutines != null)
         {
-            model.setAttribute("advan", source.subroutines[0]);
+            model.setAttribute("advan", source.subroutines[0].substring(5));
             if(source.subroutines[1] != null)
                 model.setAttribute("tolerance", source.subroutines[1]);
             if(source.subroutines[2] != null)
@@ -314,7 +314,7 @@ public class XMLWriter
         {
             Element comp_model = docSource.createElement("comp_model");
             comp_model.setAttribute("ncompartments", source.model[0][0]);
-            comp_model.setAttribute("nequilibrium", source.model[0][1]);
+            comp_model.setAttribute("nequilibriums", source.model[0][1]);
             if(source.model[0][2] != null)
                 comp_model.setAttribute("nparameters", source.model[0][2]);
             for(int i = 1; i < source.model.length; i++)
@@ -329,8 +329,8 @@ public class XMLWriter
                     compartment.setAttribute("equilibrium", source.model[i][4]);
                     compartment.setAttribute("exclude", source.model[i][5]);
                 }
-                compartment.setAttribute("def_observation", source.model[i][6]);
-                compartment.setAttribute("def_dose", source.model[i][7]);
+                compartment.setAttribute("default_observation", source.model[i][6]);
+                compartment.setAttribute("default_dose", source.model[i][7]);
                 comp_model.appendChild(compartment);
             }
             model.appendChild(comp_model);

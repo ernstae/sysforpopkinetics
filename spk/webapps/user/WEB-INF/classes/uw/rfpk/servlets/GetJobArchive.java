@@ -69,6 +69,12 @@ public class GetJobArchive extends HttpServlet
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement jobStmt = null;
+        Statement stmt = null;
+        
         // Prepare output message
         String messageOut = "";
         Properties archive = new Properties(); 
@@ -100,18 +106,20 @@ public class GetJobArchive extends HttpServlet
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
                 
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
                  
                 // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId); 
+                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                jobStmt = jobRS.getStatement();
                 jobRS.next();
                  
                 // Check if the job belongs to the user
@@ -123,18 +131,17 @@ public class GetJobArchive extends HttpServlet
                     if(messageIn[2].equals("model"))
                     {
                         rs = Spkdb.getModel(con, jobRS.getLong("model_id"));
+                        stmt = rs.getStatement();
                         version = jobRS.getString("model_version");
                     }
                     else if(messageIn[2].equals("data"))
                     {
                         rs = Spkdb.getDataset(con, jobRS.getLong("dataset_id"));
+                        stmt = rs.getStatement();
                         version = jobRS.getString("dataset_version");
                     }
                     else
                         messageOut = "The type was not found."; 
- 
-                    // Disconnect to the database
-                    Spkdb.disconnect(con);
                 
                     // Get the requested version of model or dataset
                     rs.next();
@@ -185,6 +192,17 @@ public class GetJobArchive extends HttpServlet
         catch(PatchFailedException e)
         {
             messageOut = e.getMessage();
+        }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(jobStmt != null) jobStmt.close();
+                if(stmt != null) stmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
         }
         
         // Write the data to our internal buffer

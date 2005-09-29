@@ -28,6 +28,7 @@ import org.apache.commons.jrcs.util.ToString;
 import org.apache.commons.jrcs.diff.*;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
+import uw.rfpk.mda.*;
 import uw.rfpk.mda.nonmem.*;
 
 /** This class encapsulates the database calls for the transactions required by the model
@@ -179,7 +180,10 @@ public class Database {
                          modelVersion, 
                          source,
                          "",
-                         0);
+                         "author",
+                         0L,
+                         false,
+                         false);
             JOptionPane.showMessageDialog(null, "A new job, " + jobAbstract +
                                           ", has been added to the database.",  
                                           "Job submission information",

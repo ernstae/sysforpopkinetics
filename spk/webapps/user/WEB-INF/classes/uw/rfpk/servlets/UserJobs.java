@@ -66,8 +66,17 @@ public class UserJobs extends HttpServlet
     {
         // Get the user name of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();  
-
+        String username = user.getUserName();
+        
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement jobStmt = null;
+        Vector modelStmt = new Vector();
+        Vector datasetStmt = new Vector();
+        Statement stateStmt = null;
+        Statement endStmt = null;
+        
         // Prepare output message
         String messageOut = "";
         String[][] userJobs = null;
@@ -88,7 +97,7 @@ public class UserJobs extends HttpServlet
      
         // Prepare for the return
         Vector jobList = new Vector();
- 
+
         try
         {
             // Read the data from the client 
@@ -103,27 +112,31 @@ public class UserJobs extends HttpServlet
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
                 
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
- 
+
                 // Get user jobs
-                ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff);  
-                                
+                ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff);
+                jobStmt = userJobsRS.getStatement();
+
                 // Set state_code - name conversion
                 ResultSet stateRS = Spkdb.getStateTable(con);
+                stateStmt = stateRS.getStatement();
                 Properties state = new Properties();                
                 while(stateRS.next())
                     state.setProperty(stateRS.getString(1), stateRS.getString(2));
 
                 // Set end_code - name conversion
-                ResultSet endRS = Spkdb.getEndTable(con);                
+                ResultSet endRS = Spkdb.getEndTable(con);
+                endStmt = endRS.getStatement();
                 Properties end = new Properties();
                 while(endRS.next())
                     end.setProperty(endRS.getString(1), endRS.getString(2));
@@ -145,9 +158,11 @@ public class UserJobs extends HttpServlet
                             job[2] = "";                        
                     }                    
                     ResultSet modelRS = Spkdb.getModel(con, userJobsRS.getLong("model_id"));
+                    modelStmt.add(modelRS.getStatement());                   
                     modelRS.next();
                     job[3] = modelRS.getString("name") + "." + userJobsRS.getString("model_version").substring(2);
                     ResultSet datasetRS = Spkdb.getDataset(con, userJobsRS.getLong("dataset_id"));
+                    datasetStmt.add(datasetRS.getStatement());
                     datasetRS.next();
                     job[4] = datasetRS.getString("name") + "." + userJobsRS.getString("dataset_version").substring(2);
                     job[5] = userJobsRS.getString("abstract");                    
@@ -161,10 +176,7 @@ public class UserJobs extends HttpServlet
                         userJobs[i] = (String[])jobList.get(i);                     
                 }
                 else
-                    messageOut = "No job was found in the database";
-                
-                // Disconnect to the database
-                Spkdb.disconnect(con);
+                    messageOut = "No job was found in the database"; 
             }
             else
             {
@@ -184,7 +196,21 @@ public class UserJobs extends HttpServlet
         {
             messageOut = e.getMessage();
         } 
-         
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(jobStmt != null) jobStmt.close();
+                for(int i = 0; i < modelStmt.size(); i++) ((Statement)modelStmt.get(i)).close();
+                for(int i = 0; i < datasetStmt.size(); i++) ((Statement)datasetStmt.get(i)).close();
+                if(stateStmt != null) stateStmt.close();
+                if(endStmt != null) endStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
+        }
+        
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))

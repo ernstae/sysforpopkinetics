@@ -53,6 +53,11 @@ public class AbortJob extends HttpServlet
         // Get the user name of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();  
+        
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement jobStmt = null;
 
         // Prepare output message
         String messageOut = "";
@@ -83,26 +88,25 @@ public class AbortJob extends HttpServlet
 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
            
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
 
                 // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId); 
+                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                jobStmt = jobRS.getStatement();
                 jobRS.next();
                                 
                 // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
                     success = String.valueOf(Spkdb.abortJob(con, jobId));
-                
-                // Disconnect to the database
-                Spkdb.disconnect(con);
             }
             else
             {
@@ -122,7 +126,17 @@ public class AbortJob extends HttpServlet
         {
             messageOut = e.getMessage();
         } 
-
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(jobStmt != null) jobStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
+        }
+        
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))

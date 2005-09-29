@@ -60,12 +60,13 @@ public class Server {
      * @param dataInfo archive information of the dataset associated with the job.
      * @param jobMethodCode a String containing job method code.
      * @param jobParent a long representing the id of the parent job.
-     * @param isWarmStart a boolean "true" for warm start, "false" otherwise.
+     * @param isWarmStart a boolean "true" for warm start, "false" for otherwise.
+     * @param isMailNotice a boolean "true" for sending end-job mail notice, "false" for otherwise.
      */
-    public void submitJob(String source, String jobAbstract, ArchiveInfo modelInfo, 
-                          ArchiveInfo dataInfo, String jobMethodCode, long jobParent, boolean isWarmStart)
+    public void submitJob(String source, String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo, 
+                          String jobMethodCode, long jobParent, boolean isWarmStart, boolean isMailNotice)
     {
-        String[] messageOut = new String[23];
+        String[] messageOut = new String[24];
         messageOut[0] = secret;
         messageOut[1] = source;
         if(dataInfo.isNewArchive || dataInfo.isNewVersion)
@@ -94,7 +95,8 @@ public class Server {
         messageOut[19] = jobMethodCode;
         messageOut[20] = String.valueOf(jobParent);
         messageOut[21] = String.valueOf(isWarmStart);
-        messageOut[22] = System.getProperty("user.name").trim();
+        messageOut[22] = System.getProperty("user.name").replaceAll(" ", "_");
+        messageOut[23] = String.valueOf(isMailNotice);
 
         try
         {

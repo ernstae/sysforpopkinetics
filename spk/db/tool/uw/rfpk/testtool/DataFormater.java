@@ -23,6 +23,7 @@ import javax.swing.*;
 import java.util.StringTokenizer;
 import java.text.DecimalFormat;
 import uw.rfpk.mda.nonmem.*;
+import uw.rfpk.mda.*;
 import javax.print.*;
 import javax.print.attribute.*;
 import java.awt.print.*;

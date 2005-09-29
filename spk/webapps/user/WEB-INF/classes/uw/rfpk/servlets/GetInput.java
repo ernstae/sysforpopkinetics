@@ -69,6 +69,13 @@ public class GetInput extends HttpServlet
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement jobStmt = null;
+        Statement modelStmt = null;
+        Statement datasetStmt = null;
+        
         // Prepare output message
         String messageOut = "";
         Properties spkInput = new Properties(); 
@@ -100,53 +107,58 @@ public class GetInput extends HttpServlet
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
                 
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
                  
                 // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId); 
+                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                jobStmt = jobRS.getStatement();
                 jobRS.next();
 
                 // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
                 {
                     // Get source
-                    Blob blobSource = jobRS.getBlob("xml_source");
-	            long length = blobSource.length(); 
-	            String source = new String(blobSource.getBytes(1L, (int)length));
+                    Blob blob = jobRS.getBlob("xml_source");
+	            long length = blob.length(); 
+	            String source = new String(blob.getBytes(1L, (int)length));
                    
                     // Get model
-                    ResultSet rs = Spkdb.getModel(con, jobRS.getLong("model_id"));
+                    ResultSet modelRS = Spkdb.getModel(con, jobRS.getLong("model_id"));
+                    modelStmt = modelRS.getStatement();
                     String version = jobRS.getString("model_version");
-                    rs.next();
-                    String ar = rs.getString("archive"); 
+                    modelRS.next();
+                    blob = modelRS.getBlob("archive");
+                    length = blob.length();
+                    String ar = new String(blob.getBytes(1L, (int)length));
                     Archive arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));                
                     Object[] revision = arch.getRevision(version); 
                     String model = ToString.arrayToString(revision, "\n");                     
-
-                    // Get dataset
-                    rs = Spkdb.getDataset(con, jobRS.getLong("dataset_id"));
-                    version = jobRS.getString("dataset_version");
-                    rs.next();
-                    ar = rs.getString("archive"); 
-                    arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));                
-                    revision = arch.getRevision(version); 
-                    String dataset = ToString.arrayToString(revision, "\n");                    
-                
-                    // Disconnect to the database
-                    Spkdb.disconnect(con);
                     
+                    // Get dataset
+                    ResultSet datasetRS = Spkdb.getDataset(con, jobRS.getLong("dataset_id"));
+                    datasetStmt = datasetRS.getStatement();
+                    version = jobRS.getString("dataset_version");
+                    datasetRS.next();
+                    blob = datasetRS.getBlob("archive");
+                    length = blob.length();
+                    ar = new String(blob.getBytes(1L, (int)length));
+                    arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));
+                    revision = arch.getRevision(version);
+                    String dataset = ToString.arrayToString(revision, "\n");
+
                     // Put data into the properties object
                     spkInput.setProperty("source", source); 
                     spkInput.setProperty("model", model); 
-                    spkInput.setProperty("dataset", dataset);                     
+                    spkInput.setProperty("dataset", dataset); 
                 }
                 else
                 {
@@ -184,24 +196,36 @@ public class GetInput extends HttpServlet
         {
             messageOut = e.getMessage();
         }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(jobStmt != null) jobStmt.close();
+                if(modelStmt != null) modelStmt.close();
+                if(datasetStmt != null) datasetStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
+        }
         
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))
             out.writeObject(spkInput);
-        
+
         // Flush the contents of the output stream to the byte array
         out.flush();
-        
+
         // Get the buffer that is holding our response
         byte[] buf = byteOut.toByteArray();
-        
+
         // Notify the client how much data is being sent
         resp.setContentLength(buf.length);
-        
+
         // Send the buffer to the client
         ServletOutputStream servletOut = resp.getOutputStream();
-        
+
         // Wrap up
         servletOut.write(buf);
         servletOut.close();

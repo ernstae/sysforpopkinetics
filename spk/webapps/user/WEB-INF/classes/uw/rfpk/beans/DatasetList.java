@@ -86,21 +86,25 @@ public class DatasetList implements java.io.Serializable
         // Prepare for the return   
         Vector datasetList = new Vector();  
 
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement userDatasetsStmt = null;
+        
         try
         {
             // Connect to the database
-            Connection con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
+            con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
         
             // Get user id
             ResultSet userRS = Spkdb.getUser(con, username);
+            userStmt = userRS.getStatement();
             userRS.next();
             long userId = userRS.getLong("user_id");
  
-            // Get user models
+            // Get user datasets
             ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff);
-        
-            // Disconnect to the database
-            Spkdb.disconnect(con);
+            userDatasetsStmt = userDatasetsRS.getStatement();
             
             // Fill in the List
             while(userDatasetsRS.next())
@@ -132,7 +136,17 @@ public class DatasetList implements java.io.Serializable
         }
         catch(ParseException e)
         { 
-        }        
+        }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(userDatasetsStmt != null) userDatasetsStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){}
+        }
         return datasetList;
     }
         

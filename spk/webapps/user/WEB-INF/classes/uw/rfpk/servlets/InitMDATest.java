@@ -58,6 +58,10 @@ public class InitMDATest extends HttpServlet
         String messageOut = "";
         String[] sessionCodes = new String[2];
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        
         // Get the input stream for reading data from the client
         ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
       
@@ -83,14 +87,15 @@ public class InitMDATest extends HttpServlet
             if(testHost != null && req.getRemoteHost().equals(testHost))               
             {
                 // Connect to the database
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
                 
                 // Authenticate the user
                 boolean OK = false;
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 if(Spkdb.md5sum(password).equals(userRS.getString("password")))
                     OK = true;
@@ -149,8 +154,6 @@ public class InitMDATest extends HttpServlet
                     // Write the outgoing messages
                     messageOut = "Authentication error.";
                 }
-                // Disconnect to the database
-                Spkdb.disconnect(con);
             }
             else
             {
@@ -169,6 +172,15 @@ public class InitMDATest extends HttpServlet
         catch(ClassNotFoundException e)
         {
             messageOut = e.getMessage();
+        }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
         }
         
         // Write the data to our internal buffer

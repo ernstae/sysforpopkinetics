@@ -145,7 +145,7 @@ public class Likelihood {
                     nEvaluation += "\n            <value>" + nGrid + "</value>";
             }
         }
-        else if(jobMethodCode.equals("ml") || jobMethodCode.equals("mi"))
+        else if(jobMethodCode.equals("ml") || jobMethodCode.equals("mi") || jobMethodCode.equals("vl"))
         {
             nEvaluation = JOptionPane.showInputDialog(null, "Enter number of individual objective evaluations.", "1000");
             if(nEvaluation == null || !Utility.isPosIntNumber(nEvaluation.trim()))
@@ -166,6 +166,8 @@ public class Likelihood {
             integrationMethod = "grid";
         else if(jobMethodCode.equals("mi"))
             integrationMethod = "miser";
+        else if(jobMethodCode.equals("vl"))
+            integrationMethod = "vegas";
         else if(jobMethodCode.equals("an"))
             integrationMethod = "analytic";
 

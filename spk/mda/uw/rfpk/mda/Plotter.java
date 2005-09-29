@@ -512,6 +512,7 @@ public class Plotter extends JPanel
         
         public boolean accept(File file) 
         {
+            if(file.isDirectory()) return true;
             String filename = file.getName();
             return filename.endsWith(type);
         }

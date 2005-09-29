@@ -42,6 +42,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
     private JWizardPane wizardPane = null;
     private boolean isValid = false;
     private int index = -1;
+    private int compN = 0;
 
     /** Creates new form Model.
      * @param iter a MDAIterator object to initialize the field iterator.
@@ -231,7 +232,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Or enter total number of compartments except the output compartment, \nnumber of equilibrium compartments, number of basic PK parameters.  \nThen enter the definition of each compartments: its name and attributes.\n(Note:  These items are all optional in order to create a compartment.)");
+        jTextPane1.setText("Enter total number of compartments except the output compartment, \nnumber of equilibrium compartments, number of basic PK parameters.  \nThen enter the definition of each compartments: its name and attributes.\n(Note:  These items are all optional in order to create a compartment.)");
         jTextPane1.setFocusable(false);
         jTextPane1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jTextPane1.setMinimumSize(new java.awt.Dimension(500, 60));
@@ -501,16 +502,11 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         if(index == -1) return;
-        // Update the name of the followed compartments
-        for(int i = index + 1; i < model.getSize(); i++)
-        {
-            String comp = (String)model.get(i);
-            if(comp.startsWith("COMP=(COMP " + (i + 1)))
-                model.setElementAt("COMP=(COMP " + i + comp.substring(12), i);
-        }
+
         // Remove element
         model.removeElement(jList1.getSelectedValue());
         jList1.setSelectedIndex(--index);
+        clear();
         
         // Set add button
         addButton.setEnabled(true);
@@ -543,6 +539,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             }
         model.setElementAt(element, index);     
         jList1.setSelectedIndex(index);
+        clear();
     }//GEN-LAST:event_changeButtonActionPerformed
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
@@ -561,7 +558,9 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         // Construct element
         String name = jTextField4.getText().trim();
         if(name.equals(""))
-            name = "COMP" + String.valueOf(index + 2);
+        {
+            name = "COMP" + (++compN);
+        }
         String element = "COMP=(" + name + attributes + ")";
         // Check if addable
         for(int i = 0; i < model.getSize(); i++)
@@ -573,21 +572,12 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 return;
             }
         }
-        // Update the name of the followed compartments
-        for(int i = index + 1; i < model.getSize(); i++)
-        {
-            String comp = (String)model.get(i);
-            if(comp.startsWith("COMP=(COMP " + (i + 1)))
-                model.setElementAt("COMP=(COMP " + (i + 2) + comp.substring(12), i);
-        }
+
         // Add element
         model.add(++index, element);     
         jList1.setSelectedIndex(index);
-        
-        // Check the limit
-        if(model.getSize() == 9)
-            addButton.setEnabled(false);
-        
+        clear();
+
         // Set up and down buttons
         Utility.setUpDownButton(index, model, upButton, downButton);
         
@@ -595,7 +585,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         String n1 = jTextField1.getText().trim();
         String n2 = jTextField2.getText().trim();
         String n3 = jTextField3.getText().trim();        
-        if(!Utility.isPosIntNumber(n1))
+        if(!n1.equals("") && !Utility.isPosIntNumber(n1))
         {
             JOptionPane.showMessageDialog(null, 
                                           "The number of compartments other than the output compartment is " +
@@ -604,7 +594,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE); 
             jTextField1.setText("");
         }
-        else if(!Utility.isPosIntNumber(n2) && !n2.equals("0"))
+        else if(!n2.equals("") && !Utility.isPosIntNumber(n2) && !n2.equals("0"))
         {
             JOptionPane.showMessageDialog(null, 
                                           "The number of equilibrium equations is " +
@@ -613,7 +603,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                                           JOptionPane.ERROR_MESSAGE); 
             jTextField2.setText("");
         }
-        else if(!Utility.isPosIntNumber(n3) && !n3.equals("0"))
+        else if(!n3.equals("") && !Utility.isPosIntNumber(n3) && !n3.equals("0"))
         {
             JOptionPane.showMessageDialog(null, 
                                           "The number of basic PK parameters is " +
@@ -621,14 +611,26 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                                           "Input Error",  
                                           JOptionPane.ERROR_MESSAGE); 
             jTextField3.setText("");
-        }        
+        }
         else
         {
             isValid = true;
-            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());            
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
         }        
     }//GEN-LAST:event_addButtonActionPerformed
 
+    private void clear()
+    {
+        jTextField4.setText("");
+        jCheckBox1.setSelected(false);
+        jCheckBox2.setSelected(false);
+        jCheckBox3.setSelected(false);
+        jCheckBox4.setSelected(false);
+        jCheckBox5.setSelected(false);
+        jCheckBox6.setSelected(false);
+        jCheckBox7.setSelected(false);
+    }
+    
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
         jList1.setSelectedIndex(--index);
         
@@ -702,24 +704,32 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 {
                     text = text.trim().concat(" ");
                     iterator.getReload().remove("MODEL");
-                    int beginIndex = text.indexOf("NCOMPARTMENTS=") + 14;
-                    int endIndex = 0;
-                    if(beginIndex != -1)
+                    int beginIndex, endIndex;
+                    if(text.indexOf("NCOMPARTMENTS=") != -1 || text.indexOf("NEQUILIBRIUM=") != -1 ||
+                       text.indexOf("NPARAMETERS=") != -1)
                     {
-                        endIndex = text.indexOf(" ", beginIndex); 
-                        jTextField1.setText(text.substring(beginIndex, endIndex));
-                    }
-                    beginIndex = text.indexOf("NEQUILIBRIUM=") + 13;
-                    if(beginIndex != -1)
-                    {
-                        endIndex = text.indexOf(" ", beginIndex); 
-                        jTextField2.setText(text.substring(beginIndex, endIndex));
-                    }
-                    beginIndex = text.indexOf("NPARAMETERS=") + 12;
-                    if(beginIndex != -1)
-                    {
-                        endIndex = text.indexOf(" ", beginIndex); 
-                        jTextField3.setText(text.substring(beginIndex, endIndex));
+                        String numbers = text.substring(6, text.indexOf("\n"));
+                        beginIndex = numbers.indexOf("NCOMPARTMENTS=");
+                        if(beginIndex != -1)
+                        {
+                            endIndex = numbers.indexOf(" ", beginIndex);
+                            if(endIndex == -1) endIndex = numbers.length(); 
+                            jTextField1.setText(numbers.substring(beginIndex + 14, endIndex));
+                        }
+                        beginIndex = numbers.indexOf("NEQUILIBRIUM=");
+                        if(beginIndex != -1)
+                        {
+                            endIndex = numbers.indexOf(" ", beginIndex);
+                            if(endIndex == -1) endIndex = numbers.length();
+                            jTextField2.setText(numbers.substring(beginIndex + 13, endIndex));
+                        }
+                        beginIndex = numbers.indexOf("NPARAMETERS=");
+                        if(beginIndex != -1)
+                        {
+                            endIndex = numbers.indexOf(" ", beginIndex);
+                            if(endIndex == -1) endIndex = numbers.length();
+                            jTextField3.setText(numbers.substring(beginIndex + 12, endIndex));
+                        }
                     }
                     model.removeAllElements();
                     beginIndex = text.indexOf("COMP=(");
@@ -731,6 +741,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                     }
                     index = model.size() - 1;
                     jList1.setSelectedIndex(index);
+                    setLastDefaultCompNumber();
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
                 }
@@ -742,24 +753,50 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 for(int i = 0; i < model.size(); i++)
                     model.set(i, checkAttribute((String)model.get(i)));
 	}
+        
+        private void setLastDefaultCompNumber()
+        {
+            compN = 0;
+            String s;
+            for(int i = model.getSize() - 1; i > 0; i--)
+            {
+                s = (String)model.get(i);
+                if(s.startsWith("COMP=(COMP"))
+                {
+                    if(s.indexOf(" ") != -1) 
+                        s = s.substring(10);
+                    else 
+                        s = s.substring(10, s.length() - 1);
+                    if(Utility.isPosIntNumber(s))
+                        compN = Math.max(compN, Integer.parseInt(s));
+                }
+            }
+        }
 
         private String checkAttribute(String element)
         {
-            String cName = element.substring(6, element.indexOf(" "));
-            String attrs = element.substring(element.indexOf(" "), element.length() - 1);
-            if(iterator.getAdvan() != 9 && attrs.indexOf(" EQUILIBRIUM") != -1)
+            int end = element.indexOf(" ");
+            if(end == -1)
+                end = element.indexOf(")");
+            String cName = element.substring(6, end);
+            String attrs = null;
+            if(element.indexOf(" ") != -1)
             {
-                element = element.replaceAll(" EQUILIBRIUM", "");
-                JOptionPane.showMessageDialog(null, "The attribute 'EQUILIBRIUM' has been removed from compartment '" + cName + "'\n" +
-                                              "because it is only for ADVAN9.", 
-                                              "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
-            if(iterator.getAdvan() != 9 && attrs.indexOf(" EXCLUDE") != -1)
-            {
-                element =element.replaceAll(" EXCLUDE", "");
-                JOptionPane.showMessageDialog(null, "The attribute 'EXCLUDE' has been removed from compartment '" + cName + "'\n" +
-                                              "because it is only for ADVAN9.", 
-                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                attrs = element.substring(element.indexOf(" "), element.length() - 1);
+                if(iterator.getAdvan() != 9 && attrs.indexOf(" EQUILIBRIUM") != -1)
+                {
+                    element = element.replaceAll(" EQUILIBRIUM", "");
+                    JOptionPane.showMessageDialog(null, "The attribute 'EQUILIBRIUM' has been removed from compartment '" + cName + "'\n" +
+                                                 "because it is only for ADVAN9.", 
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
+                if(iterator.getAdvan() != 9 && attrs.indexOf(" EXCLUDE") != -1)
+                {
+                    element =element.replaceAll(" EXCLUDE", "");
+                    JOptionPane.showMessageDialog(null, "The attribute 'EXCLUDE' has been removed from compartment '" + cName + "'\n" +
+                                                  "because it is only for ADVAN9.", 
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
             return element;
         }
@@ -788,6 +825,43 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             if(!n3.equals(""))
                 record += " NPARAMETERS=" + n3 + " ";
             
+            // Find default dose and default observation
+            boolean hasIt = false;
+            for(int i = 0; i < size; i++)
+            {
+                if(((String)model.get(i)).indexOf(" DEFDOSE") != -1)
+                {
+                    hasIt = true;
+                    break;
+                }
+            }
+            if(!hasIt)
+            {
+                String s = (String)model.get(0);                
+                model.set(0, s.substring(0, s.length() - 1) + " DEFDOSE)");
+                JOptionPane.showMessageDialog(null, "The 'DEFDOSE' was not found in the compartments." + 
+                                              "\nThe MDA added it to the first compartment as default.",
+                                              "Warning Message", JOptionPane.WARNING_MESSAGE);         
+            }
+            hasIt = false;
+            for(int i = 0; i < size; i++)
+            {
+                if(((String)model.get(i)).indexOf(" DEFOBSERVATION") != -1)
+                {
+                    hasIt = true;
+                    break;
+                }
+            }
+            if(!hasIt)
+            {
+                String s = (String)model.get(0);                
+                model.set(0, s.substring(0, s.length() - 1) + " DEFOBSERVATION)");
+                JOptionPane.showMessageDialog(null, "The 'DEFOBSERVATION' was not found in the compartments." + 
+                                              "\nThe MDA added it to the first compartment as default.",
+                                              "Warning Message", JOptionPane.WARNING_MESSAGE);         
+            }
+            
+            // Set records
             for(int i = 0; i < size; i++)
                 record += "\n" + ((String)model.get(i)).replaceAll("\r", "");
             object.getRecords().setProperty("Model", "$MODEL" + record);

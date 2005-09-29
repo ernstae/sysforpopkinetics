@@ -61,6 +61,11 @@ public class UserModels extends HttpServlet
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement userModelsStmt = null;
+        
         // Prepare output message
         String messageOut = "";
         String[][] userModels = null;
@@ -93,25 +98,24 @@ public class UserModels extends HttpServlet
                 long leftOff = Long.parseLong(messageIn[2]);
                 if(messageIn[3].equals("true"))
                     username = "librarian";
-           
+
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));                
- 
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
+                
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
  
                 // Get user models
-                ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);  
-                             
-                // Disconnect to the database
-                Spkdb.disconnect(con);
-                
+                ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);
+                userModelsStmt = userModelsRS.getStatement();
+
                 // Fill in the List
                 while(userModelsRS.next())
                 {                  
@@ -166,6 +170,16 @@ public class UserModels extends HttpServlet
         catch(ParseException e)
         { 
             messageOut = e.getMessage();
+        }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(userModelsStmt != null) userModelsStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
         }
         
         // Write the data to our internal buffer

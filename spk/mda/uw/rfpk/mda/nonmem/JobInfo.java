@@ -758,8 +758,14 @@ public class JobInfo extends javax.swing.JFrame {
         }
         source = source.replaceFirst(analysis, analysis + "is_restart=\"yes\" ");
         
+        // Ask the user if an end-job email notice is requested
+        boolean isMailNotice = false;
+        if(JOptionPane.showConfirmDialog(null, "Do you want to receive an email notice when the job has finished?",
+                                         "Question", JOptionPane.YES_NO_OPTION) == 0)
+            isMailNotice = true;
+        
         // submit the warm start job
-        frame.server.submitJob(source, jobAbstract, modelArchive, dataArchive, methodCode, id, true);
+        frame.server.submitJob(source, jobAbstract, modelArchive, dataArchive, methodCode, id, true, isMailNotice);
 
         // Close the dialog
         warmStartDialog.dispose();
