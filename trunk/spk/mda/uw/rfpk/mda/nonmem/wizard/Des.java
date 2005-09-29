@@ -167,7 +167,7 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("DES");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(4).trim());
+                    jTextArea1.setText(text.substring(5, text.length() - 1));
                     iterator.getReload().remove("DES");
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
@@ -175,14 +175,14 @@ public class Des extends javax.swing.JPanel implements WizardStep {
             }
             else
             {
-                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Des");
+//                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Des");
+                String value = jTextArea1.getText();
                 if(value.equals(""))
                 {
                     String initCode = "";
                     for(int i = 0; i < iterator.getNComp(); i++)
                         initCode += "DADT(" + (i + 1) + ")\n";
                     jTextArea1.setText(initCode);
-                    jTextArea1.setCaretPosition(8);
                 }
             }
             jTextArea1.requestFocusInWindow();
@@ -195,7 +195,7 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String desCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            String desCode = jTextArea1.getText().replaceAll("\r", "").toUpperCase();
             if(!desCode.equals(""))
             {
                 String record = "$DES " + "\n" + desCode;

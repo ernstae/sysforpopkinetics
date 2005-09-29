@@ -25,7 +25,9 @@ import javax.swing.*;
 import javax.swing.table.*;
 import rfpk.spk.spkdb.*;
 import javax.swing.JOptionPane;
-import uw.rfpk.mda.nonmem.*;
+import uw.rfpk.mda.ArchiveInfo;
+import uw.rfpk.mda.nonmem.Utility;
+import uw.rfpk.mda.nonmem.XMLReader;
 
 /**
  * This is the main class of job management tool.
@@ -414,7 +416,7 @@ public class UserJob extends javax.swing.JFrame {
     // Display a list of library models
     private void showArchiveList(int indexList)
     {
-        String[] header = new String[]{"Submission Time", "State Code", "End Code", "Description"};
+        String[] header = new String[]{"Job ID", "Submission Time", "State Code", "End Code", "Description"};
         String title = "Job List";
         String[][] archiveList = null;
 
@@ -463,7 +465,7 @@ public class UserJob extends javax.swing.JFrame {
         if(archiveList.length < 0)
             return;
 
-        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 1);  
+        DisplayTableModel reportModel = new DisplayTableModel(archiveList, header, 0);  
         jTable1.setModel(reportModel); 
         TableColumnModel columnModel = jTable1.getColumnModel();
         columnModel.getColumn(header.length - 1).setPreferredWidth(500);

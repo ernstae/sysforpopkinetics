@@ -61,6 +61,11 @@ public class UserDatasets extends HttpServlet
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement userDatasetsStmt = null;
+        
         // Prepare output message
         String messageOut = "";
         String[][] userDatasets = null;
@@ -96,22 +101,21 @@ public class UserDatasets extends HttpServlet
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));                 
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));                 
  
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
  
                 // Get user datasetss
-                ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff);  
-                
-                // Disconnect to the database
-                Spkdb.disconnect(con);
-                    
+                ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff); 
+                userDatasetsStmt = userDatasetsRS.getStatement();
+
                 // Fill in the List
                 while(userDatasetsRS.next())
                 {                  
@@ -166,6 +170,16 @@ public class UserDatasets extends HttpServlet
         catch(ParseException e)
         { 
             messageOut = e.getMessage();
+        }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(userDatasetsStmt != null) userDatasetsStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
         }
         
         // Write the data to our internal buffer

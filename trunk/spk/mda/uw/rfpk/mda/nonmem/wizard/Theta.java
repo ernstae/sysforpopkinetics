@@ -900,10 +900,12 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
+            if(iterator.getIsInd()) return "Random Effects";
   	    return "Fixed Effects";
   	}
 
 	public String getStepTitle(){
+            if(iterator.getIsInd()) return "Random Effects";
 	    return "Fixed Effects Across The Population";
 	}
 
@@ -946,6 +948,11 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
             {
                 nTheta = iterator.getNTheta();
                 isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                
+            }
+            if(model.size() == iterator.getNTheta())
+            {
+                isValid = true;
                 wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                
             }
             jTextField2.requestFocusInWindow();        

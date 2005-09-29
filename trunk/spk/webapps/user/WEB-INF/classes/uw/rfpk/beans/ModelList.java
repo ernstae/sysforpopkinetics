@@ -86,21 +86,25 @@ public class ModelList implements java.io.Serializable
         // Prepare for the return   
         Vector modelList = new Vector();  
 
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement userModelsStmt = null;
+        
         try
         {
             // Connect to the database
-            Connection con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
+            con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
         
             // Get user id
             ResultSet userRS = Spkdb.getUser(con, username);
+            userStmt = userRS.getStatement();
             userRS.next();
             long userId = userRS.getLong("user_id");
  
             // Get user models
             ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);
-        
-            // Disconnect to the database
-            Spkdb.disconnect(con);
+            userModelsStmt = userModelsRS.getStatement();
             
             // Fill in the List
             while(userModelsRS.next())
@@ -132,7 +136,17 @@ public class ModelList implements java.io.Serializable
         }
         catch(ParseException e)
         { 
-        }        
+        }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(userModelsStmt != null) userModelsStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){}
+        }
         return modelList;
     }
         

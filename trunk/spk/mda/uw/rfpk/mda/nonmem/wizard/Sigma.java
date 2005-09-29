@@ -150,6 +150,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         jDialog1.getContentPane().add(jButton2, gridBagConstraints);
 
         jCheckBox1.setText("The entire block is fixed.");
+        jCheckBox1.setEnabled(false);
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -522,12 +523,12 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     item = items[i];
                     if(item.endsWith("F"))
                     {
-                        diagonalValues[i][1] = new Boolean(true);
+                        diagonalValues[i][1] = ""; //new Boolean(true); temporary
                         item = item.substring(0, item.length() - 1);
                     }
                     else
                     {
-                        diagonalValues[i][1] = new Boolean(false);
+                        diagonalValues[i][1] = ""; //new Boolean(false); temporary
                         isAllFixed = false;
                     }
                     diagonalValues[i][0] = item;
@@ -686,7 +687,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                 if(diagonalValues == null)
                 {
                     data[i][1] = "";
-                    data[i][2] = new Boolean(false);
+                    data[i][2] = "";   //new Boolean(false); temporary
                     jButton2.setEnabled(false);
                     jCheckBox1.setSelected(false);                    
                 }
@@ -1092,7 +1093,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                         }
                         else
                             JOptionPane.showMessageDialog(null, "Error in residual unknown variability covariance" +
-                                                          "\n($SIGMA record) of reloaded model.",
+                                                          "\n($SIGMA record) of the reloaded model.",
                                                           "Input Error", JOptionPane.ERROR_MESSAGE);
                     }
                     index = values.length - 1;

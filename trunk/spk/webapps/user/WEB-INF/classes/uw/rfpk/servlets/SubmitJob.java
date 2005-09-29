@@ -34,7 +34,7 @@ import uw.rfpk.beans.UserInfo;
  * Strings are source, dataset, model archive, job_abstract, model_abstract, model_log, 
  * model_name, model_version, model_id, is_new_model, is_new_model_version, dataset_abstract, 
  * dataset_log, dataset_name, dataset_version, dataset_id, is_new_dataset, is_new_dataset_version,
- * job_method_code, job_parent and is_warm_start.
+ * job_method_code, job_parent, is_warm_start and isMailNotice.
  * If the model is new the servlet calls database API method, newModle, to get model_id.
  * If the model is old but the version is new the servlet calls database API methods, getModel
  * and updateModel, to update the model archive.  The servlet does the same operations for the
@@ -65,7 +65,13 @@ public class SubmitJob extends HttpServlet
         // Get the user name of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
-       
+        
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement modelStmt = null;
+        Statement datasetStmt = null;
+            
         // Prepare output message
         String messageOut = "";
         String messages = "";
@@ -114,16 +120,18 @@ public class SubmitJob extends HttpServlet
                 long jobParent = Long.parseLong(messageIn[20]);
                 String isWarmStart = messageIn[21];
                 String author = messageIn[22];
+                String isMailNotice = messageIn[23];
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
                
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");  
 
@@ -148,8 +156,8 @@ public class SubmitJob extends HttpServlet
                 {        
                     if(isNewModelVersion.equals("true"))   
                     {                         
-                        ResultSet modelRS = Spkdb.getModel(con, 
-                                                           modelId);                         
+                        ResultSet modelRS = Spkdb.getModel(con, modelId);
+                        modelStmt = modelRS.getStatement();
                         modelRS.next();                         
                         Blob blobArchive = modelRS.getBlob("archive");                        
                         long length = blobArchive.length();                         
@@ -190,8 +198,8 @@ public class SubmitJob extends HttpServlet
                 {        
                     if(isNewDatasetVersion.equals("true"))
                     {               
-                        ResultSet datasetRS = Spkdb.getDataset(con, 
-                                                               datasetId);;
+                        ResultSet datasetRS = Spkdb.getDataset(con, datasetId);
+                        datasetStmt = datasetRS.getStatement();
                         datasetRS.next();
                         Blob blobArchive = datasetRS.getBlob("archive");
                         long length = blobArchive.length();
@@ -223,13 +231,11 @@ public class SubmitJob extends HttpServlet
                                  jobMethodCode,
                                  author,
                                  jobParent,                                 
-                                 isWarmStart.equals("true"));
+                                 isWarmStart.equals("true"),
+                                 isMailNotice.equals("true"));
                     messages += "A new job, " + jobAbstract +
                                 ", has been added to the database.\n";  
                 }
-
-                // Disconnect to the database
-                Spkdb.disconnect(con);
             }
             else
             {
@@ -274,7 +280,18 @@ public class SubmitJob extends HttpServlet
         {
             messageOut = e.getMessage();
         }
-   
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(modelStmt != null) modelStmt.close();
+                if(datasetStmt != null) datasetStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
+        }
+        
         // Write the data to our internal buffer
         out.writeObject(messageOut);  
         if(messageOut.equals(""))

@@ -150,6 +150,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         jDialog1.getContentPane().add(jButton2, gridBagConstraints);
 
         jCheckBox1.setText("The entire block is fixed.");
+        jCheckBox1.setEnabled(false);
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -523,12 +524,12 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                     item = items[i];
                     if(item.endsWith("F"))
                     {
-                        diagonalValues[i][1] = new Boolean(true);
+                        diagonalValues[i][1] = ""; //new Boolean(true); temporary
                         item = item.substring(0, item.length() - 1);
                     }
                     else
                     {
-                        diagonalValues[i][1] = new Boolean(false);
+                        diagonalValues[i][1] = ""; //new Boolean(false); temporary
                         isAllFixed = false;
                     }
                     diagonalValues[i][0] = item;
@@ -686,7 +687,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                 if(diagonalValues == null)
                 {
                     data[i][1] = "";
-                    data[i][2] = new Boolean(false);
+                    data[i][2] = ""; //new Boolean(false);  temporary
                     jButton2.setEnabled(false);
                     jCheckBox1.setSelected(false);                    
                 }
@@ -1061,10 +1062,12 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
+            if(iterator.getIsInd()) return "Residual Unknown\nVariability Covariance";
   	    return "Random Effects\nCovariance";
   	}
 
 	public String getStepTitle(){
+            if(iterator.getIsInd()) return "Residual Unknown Variability Covariance";
 	    return "Random Effects Covariance";
 	}
 
@@ -1092,9 +1095,16 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                             nEta += dim;
                         }
                         else
-                            JOptionPane.showMessageDialog(null, "Error in random effects covariance" +
-                                                          "\n($OMEGA record) of the reloaded model.",
-                                                          "Input Error", JOptionPane.ERROR_MESSAGE);                            
+                        {
+                            if(iterator.getIsInd())
+                                JOptionPane.showMessageDialog(null, "Error in random effects covariance" +
+                                                              "\n($OMEGA record) of the reloaded model.",
+                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                            else
+                                JOptionPane.showMessageDialog(null, "Error in residual unknown variability covariance" +
+                                                              "\n($OMEGA record) of the reloaded model.",
+                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                     index = values.length - 1;
                     jList1.setSelectedIndex(index);

@@ -188,7 +188,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("PRED");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(5).trim());
+                    jTextArea1.setText(text.substring(6, text.length() - 1));
                     iterator.getReload().remove("PRED");
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -202,7 +202,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 return;
            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            String record = jTextArea1.getText().replaceAll("\r", "").toUpperCase();
             String title = getStepTitle();
             if(!record.equals(""))
             {

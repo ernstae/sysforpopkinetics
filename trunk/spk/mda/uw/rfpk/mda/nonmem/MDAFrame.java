@@ -373,7 +373,9 @@ public class MDAFrame extends JFrame
         traceMenu = new javax.swing.JMenuItem();
         indIDMenu = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
         dataMenu = new javax.swing.JMenuItem();
+        FirstMenu = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         useMDAMenu = new javax.swing.JMenuItem();
         useRMenu = new javax.swing.JMenuItem();
@@ -694,9 +696,8 @@ public class MDAFrame extends JFrame
         jPanel5.add(jTextField14, gridBagConstraints);
 
         jRadioButton9.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton9.setText("Use Gibbs Markov Chain Monte Carlo");
+        jRadioButton9.setText("Vegas M.C. integration on likelihood");
         buttonGroup3.add(jRadioButton9);
-        jRadioButton9.setEnabled(false);
         jRadioButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton9ActionPerformed(evt);
@@ -705,7 +706,7 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel5.add(jRadioButton9, gridBagConstraints);
 
@@ -720,7 +721,7 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel5.add(jRadioButton10, gridBagConstraints);
 
@@ -735,7 +736,7 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel5.add(jRadioButton11, gridBagConstraints);
 
@@ -1851,16 +1852,28 @@ public class MDAFrame extends JFrame
         jMenuBar1.add(jMenu9);
 
         jMenu1.setText("Plot");
+        jMenu2.setText("Report Data");
         dataMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
         dataMenu.setMnemonic('d');
-        dataMenu.setText("Report Data");
+        dataMenu.setText("Entire Report");
         dataMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dataMenuActionPerformed(evt);
             }
         });
 
-        jMenu1.add(dataMenu);
+        jMenu2.add(dataMenu);
+
+        FirstMenu.setText("First Only");
+        FirstMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FirstMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu2.add(FirstMenu);
+
+        jMenu1.add(jMenu2);
 
         jMenu1.add(jSeparator1);
 
@@ -1905,6 +1918,19 @@ public class MDAFrame extends JFrame
 
         pack();
     }//GEN-END:initComponents
+
+    private void FirstMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FirstMenuActionPerformed
+        if(dataFirst != null)
+        {
+            textArea.setText(dataFirst);
+            textArea.setCaretPosition(0);
+            String title = "Report Data(First row only): Job-" + jobInfo.id;
+            jInternalFrame1.setTitle(title);
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_FirstMenuActionPerformed
 
     private void indIDMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indIDMenuActionPerformed
         if(output.indIDs == null)
@@ -2110,8 +2136,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_useMDAMenuActionPerformed
 
     private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
-        jobMethodCode = "mc";
-        jTextField14.setText(((String[])methodTable.get("mc"))[0]);
+        jobMethodCode = "vl";
+        jTextField14.setText(((String[])methodTable.get("vl"))[0]);
     }//GEN-LAST:event_jRadioButton9ActionPerformed
 
     private void jRadioButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton8ActionPerformed
@@ -3080,7 +3106,7 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_summaryMenuActionPerformed
     
     private void ReadOutputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadOutputButtonActionPerformed
-        if(jobInfo.subReport.equals("Parameter-All"))
+        if(jobInfo != null && jobInfo.subReport != null && jobInfo.subReport.equals("Parameter-All"))
         {
             String text = textArea.getText();
             int index = text.lastIndexOf("<?xml ");
@@ -3124,7 +3150,7 @@ public class MDAFrame extends JFrame
         // If the user is going to use a likelihhod evaluation method modify the input file
         jobMethodClass = "";        
         if(jobId != 0 && text.indexOf("<pop_analysis ") != -1 && text.indexOf(" is_estimation=\"yes\" ") != -1 && 
-           jobInfo.endCode.equals("srun"))
+           (jobInfo.endCode.equals("srun") || jobInfo.endCode.equals("staf")))
         {
             if(JOptionPane.showConfirmDialog(null, "Are you going to use a likelihood evaluation only method?",
                                              "Question", JOptionPane.YES_NO_OPTION) == 0)
@@ -3278,6 +3304,7 @@ public class MDAFrame extends JFrame
                                  ((String[])methodTable.get("eh"))[2].equals("0") ||
                                  ((String[])methodTable.get("la"))[2].equals("0") || isDeveloper);
         jRadioButton8.setEnabled(((String[])methodTable.get("ml"))[2].equals("0") || isDeveloper);
+        jRadioButton9.setEnabled(((String[])methodTable.get("vl"))[2].equals("0") || isDeveloper);
         jRadioButton10.setEnabled(((String[])methodTable.get("gr"))[2].equals("0") || isDeveloper);
         jRadioButton11.setEnabled(((String[])methodTable.get("an"))[2].equals("0") || isDeveloper);
         jRadioButton12.setEnabled(((String[])methodTable.get("mi"))[2].equals("0") || isDeveloper);        
@@ -3295,6 +3322,7 @@ public class MDAFrame extends JFrame
             jRadioButton7.setSelected(true);
             jRadioButton7.doClick();
             jRadioButton8.setEnabled(false);
+            jRadioButton9.setEnabled(false);
             jRadioButton10.setEnabled(false);
             jRadioButton11.setEnabled(false);
             jRadioButton12.setEnabled(false);
@@ -3517,7 +3545,7 @@ public class MDAFrame extends JFrame
         if(output != null && (output.objective != null || output.likelihood != null) && output.methodCode != null)
         {
             String objective = null;
-            String objStdErr = "";            
+            String objStdErr = "";
             String nEvaluation = "";
             String computeTime = "";
             if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
@@ -3760,9 +3788,15 @@ public class MDAFrame extends JFrame
             jobId = 0;
         }
 
+        // Ask the user if an end-job email notice is requested
+        boolean isMailNotice = false;
+        if(JOptionPane.showConfirmDialog(null, "Do you want to receive an email notice when the job has finished?",
+                                         "Question", JOptionPane.YES_NO_OPTION) == 0)
+            isMailNotice = true;
+        
         // Submit the job
         server.submitJob(source, jobAbstract, modelArchive, dataArchive,
-                         jobMethodCode, jobParent, false);
+                         jobMethodCode, jobParent, false, isMailNotice);
         
         // Close the dialog
         archiveDialog.dispose();
@@ -4033,19 +4067,23 @@ public class MDAFrame extends JFrame
             }
         }
 
-        // Create a presentation data block
+        // Create a presentation data block and a first row only data block
         if(output.dataItems != null && output.dataAll != null)
         {
             int nColumns = output.dataItems.size();
             int nRows = output.dataAll.length;
             StringBuffer sb = new StringBuffer();
+            StringBuffer fr = new StringBuffer();
             for(int i = 0; i < nColumns; i++)
             {
                 String label = (String)output.dataItems.get(i); 
                 sb.append(getSpace(12 - label.length()));
-                sb.append(label);                            
+                sb.append(label);
+                fr.append(getSpace(12 - label.length()));
+                fr.append(label);
             }
-            sb.append(ls);
+            sb.append("\n");
+            fr.append("\n");
             DecimalFormat f = new DecimalFormat("0.0000E00");
             for(int j = 0; j < nRows; j++)
             {
@@ -4054,56 +4092,33 @@ public class MDAFrame extends JFrame
                 sb.append(ID);
                 for(int i = 1; i < nColumns; i++)
                     sb.append(" " + Utility.formatData(8, f.format(output.dataAll[j][i]))); 
-                sb.append(ls);
-            }        
-            dataBlock = sb.toString();
-        }
-/*        
-        // Promote user to save presentation data
-        if(output.dataAll != null )
-        {
-            if(JOptionPane.showConfirmDialog(null, 
-                                             "Do you want to save the SPK report data file?",   
-                                             "Question Dialog",
-                                             JOptionPane.YES_NO_OPTION,
-                                             JOptionPane.QUESTION_MESSAGE) == 0)
+                sb.append("\n");
+            }
+            String ID = "";
+            for(int j = 0; j < nRows; j++)
             {
-                files.setDialogTitle("Save SPK report data File");
-                files.setSelectedFile(new File("data.txt")); 
-                int result = files.showSaveDialog(null);
-                if(result == files.APPROVE_OPTION)
-	        {
-                    file = files.getSelectedFile();
-                    try
-                    {
-                        BufferedWriter out = new BufferedWriter(new FileWriter(file));
-                        out.write(dataBlock);                   
-                        file = null;
-                        out.close();
-                    }
-                    catch(IOException e )
-                    {
-                        JOptionPane.showMessageDialog(null, e,  
-                                                      "File Error",               
-                                                      JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                }
-                else
+                if(!output.indIDs[j].equals(ID))
                 {
-                    files.setDialogTitle("");
-                    files.setSelectedFile(new File(""));                   
+                    ID = output.indIDs[j];
+                    fr.append(getSpace(12 - ID.length()));
+                    fr.append(ID);
+                    for(int i = 1; i < nColumns; i++)
+                        fr.append(" " + Utility.formatData(8, f.format(output.dataAll[j][i]))); 
+                    fr.append("\n");
                 }
             }
+            dataBlock = sb.toString();
+            dataFirst = fr.toString();
         }
-*/
+
         JOptionPane.showMessageDialog(null, "Report parsing is finished. Result is ready for presentation.",  
                                       "MDA Status Information",             
                                       JOptionPane.INFORMATION_MESSAGE);
 //        saveFile();
         textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable));
         textArea.setCaretPosition(0);
-        jInternalFrame1.setTitle("Summary Report: Job-" + jobInfo.id);
+        if(jobInfo != null)
+            jInternalFrame1.setTitle("Summary Report: Job-" + jobInfo.id);
         file = null;
     }
     
@@ -4414,6 +4429,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton CompareFilesButton;
     private javax.swing.JButton DataArchiveButton;
     private javax.swing.JButton DatasetLibraryButton;
+    private javax.swing.JMenuItem FirstMenu;
     private javax.swing.JButton GetReportButton;
     private javax.swing.JButton HelpButton;
     private javax.swing.JButton JobExamplesButton;
@@ -4477,6 +4493,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu9;
@@ -4738,4 +4755,7 @@ public class MDAFrame extends JFrame
     
     /** Presentation data block */
     protected String dataBlock = null;
+    
+    // First row only data block
+    private String dataFirst = null;
 }

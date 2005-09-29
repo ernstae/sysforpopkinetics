@@ -36,14 +36,12 @@ public class Monitor
    /**
     * The main method of the application.
     * @param args a String array containing the host name of the SMTP mail server,
-    *                                       the email address of the sender.
-    *                                       the email address of the receiver.
-    *                                       the host name of the compiler daemon sensor.
-    *                                       the port number of the compiler daemaon sensor.
-    *                                       the host name of the run daemon sensror.
-    *                                       the port number of the run daemon sensor.
-    *                                       the host name of the SPK web server.
-    *                                       the port number of the SPK web server.
+    *                                       the email address of the sender,
+    *                                       the email address of the receiver,
+    *                                       the host name of the compiler daemon computer,
+    *                                       the host name of the run-time daemon computer,
+    *                                       the host name of the SPK web server,
+    *                                       the port number of the SPK web server,
     *                                       the pathname of the file to record the state.
     */
     public static void main(String[] args)
@@ -51,7 +49,7 @@ public class Monitor
         char[] state = new char[3];
         try
         {
-            BufferedReader in = new BufferedReader(new FileReader(args[9]));
+            BufferedReader in = new BufferedReader(new FileReader(args[7]));
             String line = in.readLine();
             state[0] = line.charAt(0);
             state[1] = line.charAt(1);
@@ -64,50 +62,86 @@ public class Monitor
         
         try
         {
-            Socket s = new Socket(args[3], Integer.parseInt(args[4]));
-            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            String message = in.readLine();
-            in.close();
-            state[0] = '1';
-            System.out.println("The cmp daemon is up.");
+            // Get Runtime object
+            Runtime runtime = Runtime.getRuntime();
+            // Create a subprocess
+            String[] c = new String[]{"ssh", args[3], "ps -elf | grep spk"}; 
+            Process process = runtime.exec(c);
+            process.waitFor();
+            if(process.exitValue() < 2)
+            {
+                // Get stdout of the subprocess
+                BufferedInputStream in = new BufferedInputStream(process.getInputStream());
+                String stdout = "";
+                while(true)
+                {
+                    int i = in.read();
+                    if(i == -1)
+                        break;
+                    stdout += (char)i;
+                }
+                in.close();
+                if(stdout.indexOf("/usr/bin/perl -w /usr/local/bin/spkprod/spkcmpd.pl spkdb") != -1)
+                {
+                    state[1] = '1';            
+                    System.out.println("The compiler daemon is up.");
+                }
+                else
+                {
+                    if(state[1] == '1')
+                    {
+                        sendEmail(args[0], args[1], args[2], 
+                                  "The compiler daemon is down.", "This message was sent by SPK Monitor.");
+                        System.out.println("The compiler daemon is down.  A mail was sent.");                
+                    }
+                    else
+                        System.out.println("The compiler daemon is down.");
+                    state[1] = '0';
+                }
+            }
+            // Create a subprocess
+            c = new String[]{"ssh", args[4], "ps -elf | grep spk"}; 
+            process = runtime.exec(c);
+            process.waitFor();
+            if(process.exitValue() < 2)
+            {
+                // Get stdout of the subprocess
+                BufferedInputStream in = new BufferedInputStream(process.getInputStream());
+                String stdout = "";
+                while(true)
+                {
+                    int i = in.read();
+                    if(i == -1)
+                        break;
+                    stdout += (char)i;
+                }
+                in.close();
+                if(stdout.indexOf("/usr/bin/perl -w /usr/local/bin/spkprod/spkrund.pl spkdb") != -1)
+                {
+                    state[1] = '1';            
+                    System.out.println("The run-time daemon is up.");
+                }
+                else
+                {
+                    if(state[1] == '1')
+                    {
+                        sendEmail(args[0], args[1], args[2], 
+                                  "The run-time daemon is down.", "This message was sent by SPK Monitor.");
+                        System.out.println("The run-time daemon is down.  A mail was sent.");                
+                    }
+                    else
+                        System.out.println("The run-time daemon is down.");
+                    state[1] = '0';
+                }
+            }
         }
         catch(IOException e)
         {
-            if(state[0] == '1')
-            {
-                sendEmail(args[0], args[1], args[2], 
-                         "The compiler daemon is down.", "This message was sent by SPK Monitor.");
-                System.out.println("The cmp daemon is down.  A mail was sent.");
-            }
-            else
-                System.out.println("The cmp daemon is down.");
-            state[0] = '0';
+        }
+        catch(InterruptedException e)
+        {
+        }
 
-        }
-      
-        try
-        {
-            Socket s = new Socket(args[5], Integer.parseInt(args[6]));
-            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            String message = in.readLine();
-            in.close();
-            state[1] = '1';            
-            System.out.println("The run daemon is up.");
-        }
-        catch(IOException e)
-        {
-            if(state[1] == '1')
-            {
-                sendEmail(args[0], args[1], args[2], 
-                         "The run daemon is down.", "This message was sent by SPK Monitor.");
-                System.out.println("The run daemon is down.  A mail was sent.");                
-            }
-            else
-                System.out.println("The run daemon is down.");
-            state[1] = '0';
- 
-        }
-        
         TrustManager[] trustAllCerts = new TrustManager[]
         {
             new X509TrustManager() 
@@ -133,22 +167,22 @@ public class Monitor
 	    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 	    HttpsURLConnection.setDefaultHostnameVerifier(new NoHostnameVerifier());
 
-            URL url = new URL("https://" + args[7] + ":" + args[8] + "/user/index.jsp");
+            URL url = new URL("https://" + args[5] + ":" + args[6] + "/user/index.jsp");
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             String message = in.readLine();
             state[2] = '1';
-            System.out.println("The web server is up.");
+            System.out.println("The SPK web server is up.");
         }
         catch(IOException e)
         {
             if(state[2] == '1')
             {
                 sendEmail(args[0], args[1], args[2], 
-                         "The web server is down.", "This message was sent by SPK Monitor.");
-                System.out.println("The web server is down.  A mail was sent.");
+                         "The SPK web server is down.", "This message was sent by SPK Monitor.");
+                System.out.println("The SPK web server is down.  A mail was sent.");
             }
             state[2] = '0';
-            System.out.println("The web server is down.");
+            System.out.println("The SPK web server is down.");
         }
         catch(java.security.NoSuchAlgorithmException e)
         {            
@@ -159,7 +193,7 @@ public class Monitor
         
         try
         {
-            BufferedWriter out = new BufferedWriter(new FileWriter(args[9]));
+            BufferedWriter out = new BufferedWriter(new FileWriter(args[7]));
             out.write(new String(state));
             out.flush();
         }

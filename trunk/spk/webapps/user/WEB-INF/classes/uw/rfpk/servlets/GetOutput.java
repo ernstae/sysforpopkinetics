@@ -63,6 +63,13 @@ public class GetOutput extends HttpServlet
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement jobStmt = null;
+        Statement modelStmt = null;
+        Statement datasetStmt = null;
+        
         // Prepare output message
         String messageOut = "";
         Properties spkOutput = new Properties();
@@ -94,18 +101,20 @@ public class GetOutput extends HttpServlet
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
                  
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");
                                                
                 // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId); 
+                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                jobStmt = jobRS.getStatement();
                 jobRS.next();
 
                  // Check if the job belongs to the user
@@ -134,20 +143,19 @@ public class GetOutput extends HttpServlet
 	                String source = new String(blobSource.getBytes(1L, (int)length));
              
                         // Get model information
-                        ResultSet modelRS = Spkdb.getModel(con, modelId); 
+                        ResultSet modelRS = Spkdb.getModel(con, modelId);
+                        modelStmt = modelRS.getStatement();
                         modelRS.next();
                         String modelName = modelRS.getString("name");
                         String modelAbstract = modelRS.getString("abstract"); 
                          
                         // Get dataset information
-                        ResultSet datasetRS = Spkdb.getDataset(con, datasetId); 
+                        ResultSet datasetRS = Spkdb.getDataset(con, datasetId);
+                        datasetStmt = datasetRS.getStatement();
                         datasetRS.next();
                         String datasetName = datasetRS.getString("name");
                         String datasetAbstract = datasetRS.getString("abstract");           
-           
-                        // Disconnect to the database
-                        Spkdb.disconnect(con);
-             
+                       
                         // Put returning objects into the Properties
                         spkOutput.setProperty("source", source);
                         spkOutput.setProperty("report", report);
@@ -164,7 +172,9 @@ public class GetOutput extends HttpServlet
                         spkOutput.setProperty("methodCode", methodCode);
                     }
                     else
+                    {
                         messageOut = "No job report was found for the job.";
+                    }
                 }
                 else
                 {
@@ -190,7 +200,19 @@ public class GetOutput extends HttpServlet
         {
             messageOut = e.getMessage();
         }
-         
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(jobStmt != null) jobStmt.close();
+                if(modelStmt != null) modelStmt.close();
+                if(datasetStmt != null) datasetStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
+        }
+        
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))

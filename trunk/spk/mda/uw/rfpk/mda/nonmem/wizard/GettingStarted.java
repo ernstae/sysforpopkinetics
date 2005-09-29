@@ -106,6 +106,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         });
 
         jMenuItem1.setText("SUBROUTINE ADVAN1");
+        jMenuItem1.setEnabled(false);
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -115,6 +116,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("SUBROUTINE ADVAN2");
+        jMenuItem2.setEnabled(false);
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -124,6 +126,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem2);
 
         jMenuItem3.setText("SUBROUTINE ADVAN3");
+        jMenuItem3.setEnabled(false);
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
@@ -133,6 +136,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem3);
 
         jMenuItem4.setText("SUBROUTINE ADVAN4");
+        jMenuItem4.setEnabled(false);
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
@@ -142,6 +146,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem4);
 
         jMenuItem5.setText("SUBROUTINE ADVAN5");
+        jMenuItem5.setEnabled(false);
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);
@@ -160,6 +165,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem6);
 
         jMenuItem7.setText("SUBROUTINE ADVAN7");
+        jMenuItem7.setEnabled(false);
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -169,6 +175,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem7);
 
         jMenuItem8.setText("SUBROUTINE ADAVN8");
+        jMenuItem8.setEnabled(false);
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
@@ -178,6 +185,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem8);
 
         jMenuItem9.setText("SUBROUTINE ADVAN9");
+        jMenuItem9.setEnabled(false);
         jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem9ActionPerformed(evt);
@@ -187,6 +195,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem9);
 
         jMenuItem10.setText("SUBROUTINE ANVAN10");
+        jMenuItem10.setEnabled(false);
         jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem10ActionPerformed(evt);
@@ -196,6 +205,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem10);
 
         jMenuItem11.setText("SUBROUTINE ADVAN11");
+        jMenuItem11.setEnabled(false);
         jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem11ActionPerformed(evt);
@@ -205,6 +215,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem11);
 
         jMenuItem12.setText("SUBROUTINE ADVAN12");
+        jMenuItem12.setEnabled(false);
         jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem12ActionPerformed(evt);
@@ -274,8 +285,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         add(jRadioButton3, gridBagConstraints);
 
         jRadioButton4.setText("Using the RFPK model library");
@@ -290,8 +301,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
         add(jRadioButton4, gridBagConstraints);
 
         jRadioButton5.setText("Computing statistics of estimates");
@@ -299,8 +310,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 11, 6);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 11, 6);
         add(jRadioButton5, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
@@ -315,8 +326,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridheight = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 24);
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 24);
         add(jTextPane2, gridBagConstraints);
 
         jCheckBox1.setSelected(true);
@@ -435,8 +446,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 14;
-        gridBagConstraints.insets = new java.awt.Insets(7, 8, 11, 24);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 8, 11, 24);
         add(jButton1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -461,8 +472,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 42, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 42, 0, 0);
         add(jLabel1, gridBagConstraints);
 
     }//GEN-END:initComponents
@@ -537,7 +548,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jRadioButton1.setEnabled(isSelected);
         jRadioButton2.setEnabled(isSelected);
         jRadioButton3.setEnabled(isSelected);
-        if(iterator.getIsDeveloper()) jRadioButton4.setEnabled(isSelected);
+        if(iterator.getIsTester()) jRadioButton4.setEnabled(isSelected);
         jRadioButton5.setEnabled(isCheckBox1);
         if(!isCheckBox1) jRadioButton5.setSelected(false);         
         jCheckBox3.setEnabled(isCheckBox1);
@@ -729,7 +740,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             control.splotSim = null;
             control.tableEst = null;
             control.tableSim = null;
-            jRadioButton4.setEnabled(iterator.getIsDeveloper());
+            jRadioButton4.setEnabled(iterator.getIsTester());
 	}
 
 	public void hidingStep(JWizardPane wizard){

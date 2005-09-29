@@ -150,7 +150,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("ERROR");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(6).trim());
+                    jTextArea1.setText(text.substring(7, text.length() - 1));
                     iterator.getReload().remove("ERROR");
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -158,9 +158,12 @@ public class Error extends javax.swing.JPanel implements WizardStep {
             }
             else
             {            
-                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Error");
-                if(value.equals(""))
+//                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Error");
+                String value = jTextArea1.getText();
+                if(value.equals("") && !iterator.getIsInd())
                     jTextArea1.setText("Y=F+EPS(1)");
+                if(value.equals("") && iterator.getIsInd())
+                    jTextArea1.setText("Y=F+ETA(1)");
             }
             jTextArea1.requestFocusInWindow();
 	}
@@ -172,16 +175,26 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String errorCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase(); 
+            String errorCode = jTextArea1.getText().replaceAll("\r", "").toUpperCase(); 
             if(!errorCode.equals(""))
             {
                 // Eliminate comments
                 errorCode = Utility.eliminateComments(errorCode); 
-                // Find number of EPSs
-                iterator.setNEps(Utility.find(errorCode, "EPS"));
-                if(!iterator.getIsInd() && iterator.getNEps() == 0)
-                    JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);                
+                // Find number of EPSs for population analysis or Etas for individual analysis
+                if(!iterator.getIsInd())
+                {
+                    iterator.setNEps(Utility.find(errorCode, "EPS"));
+                    if(iterator.getNEps() == 0)
+                        JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    iterator.setNEta(Utility.find(errorCode, "ETA"));
+                    if(iterator.getNEta() == 0)
+                        JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
                 String record = "$ERROR " + "\n" + errorCode;
                 object.getRecords().setProperty("Error", record);
                 object.getSource().error = record.substring(7) + "\n";                

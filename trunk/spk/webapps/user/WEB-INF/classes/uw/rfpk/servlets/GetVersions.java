@@ -68,6 +68,11 @@ public class GetVersions extends HttpServlet
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
         String username = user.getUserName();
         
+        // Database connection
+        Connection con = null;
+        Statement userStmt = null;
+        Statement archiveStmt = null;
+
         // Prepare output message
         String messageOut = "";
         String[][] versionList = null;
@@ -101,13 +106,14 @@ public class GetVersions extends HttpServlet
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));                
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));                
 
                 // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
+                userStmt = userRS.getStatement();
                 userRS.next();
                 long userId = userRS.getLong("user_id");                
                 
@@ -117,10 +123,8 @@ public class GetVersions extends HttpServlet
                     archiveRS = Spkdb.getModel(con, id); 
                 if(type.equals("data"))
                     archiveRS = Spkdb.getDataset(con, id);
+                archiveStmt = archiveRS.getStatement();
                 archiveRS.next();
-                
-                // Disconnect to the database
-                Spkdb.disconnect(con);
                 
                 // Check if the job belongs to the user
                 if(archiveRS.getLong("user_id") == userId)
@@ -173,6 +177,16 @@ public class GetVersions extends HttpServlet
         catch(ParseException e)
         { 
             messageOut = e.getMessage();
+        }
+        finally
+        {
+            try
+            {
+                if(userStmt != null) userStmt.close();
+                if(archiveStmt != null) archiveStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
         }
         
         // Write the data to our internal buffer

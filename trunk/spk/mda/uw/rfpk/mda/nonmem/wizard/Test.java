@@ -91,8 +91,8 @@ public class Test{
 //            GettingStarted step = new GettingStarted(i);
 //            Estimation step = new Estimation(i);
 //            Input step = new Input(i);
-//            Model step = new Model(i);
-            Omega step = new Omega(i);
+            Model step = new Model(i);
+//            Omega step = new Omega(i);
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);
 //            Problem step = new Problem(i);

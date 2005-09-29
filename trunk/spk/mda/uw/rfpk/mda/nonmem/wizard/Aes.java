@@ -181,7 +181,7 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("AES");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(4).trim());
+                    jTextArea1.setText(text.substring(5, text.length() - 1));
                     iterator.getReload().remove("AES");
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -196,7 +196,7 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
                 return;
             }
             MDAObject object = (MDAObject)wizard.getCustomizedObject();           
-            String aesCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            String aesCode = jTextArea1.getText().replaceAll("\r", "").toUpperCase();
             if(!aesCode.equals(""))
             {
                 String record = "$AES " + "\n" + aesCode;

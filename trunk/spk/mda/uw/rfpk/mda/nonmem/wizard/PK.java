@@ -180,7 +180,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("PK");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(3).trim());
+                    jTextArea1.setText(text.substring(4, text.length() - 1));
                     iterator.getReload().remove("PK");
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -188,7 +188,8 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             }
             else
             {
-                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("PK");
+//                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("PK");
+                String value = jTextArea1.getText();
                 if(value.equals(""))
                     jTextArea1.setText(Utility.defaultPK(iterator.getAdvan(), iterator.getTrans()));
             }
@@ -202,7 +203,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();        
-            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            String record = jTextArea1.getText().replaceAll("\r", "").toUpperCase();
             String title = getStepTitle();
             if(!record.equals(""))
             {
@@ -210,16 +211,24 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 object.getSource().pk = "\n" + record + "\n";
                 // Eliminate comments
                 String code = Utility.eliminateComments(record); 
-                // Find number of THETAs
+                // Find number of THETAs and number of ETAS
                 iterator.setNTheta(Utility.find(code, "THETA"));
-                if(iterator.getNTheta() == 0)
-                    JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);                
-                // Find number of ETAs
-                iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
-                if(iterator.getNEta() == 0)
-                    JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);                
+                if(!iterator.getIsInd())
+                {
+                    if(iterator.getNTheta() == 0)
+                        JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);                
+                    iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                    if(iterator.getNEta() == 0)
+                        JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    if(iterator.getNTheta() == 0)
+                        JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch

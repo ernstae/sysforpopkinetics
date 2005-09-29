@@ -138,14 +138,14 @@ public class TableShow extends javax.swing.JFrame {
         // Fill the tables and display
         for(int j = 0; j < selectedIndex.length; j++)
         {
-        String[][] tableI = tableAll[selectedIndex[j]]; 
-        String[][] data = new String[dataAll.length][tableI[1].length + 1];
-        String[] header = new String[tableI[1].length + 1];
-        fillTable(tableI, data, header);
+            String[][] tableI = tableAll[selectedIndex[j]]; 
+            String[][] data = new String[dataAll.length][tableI[1].length + 1];
+            String[] header = new String[tableI[1].length + 1];
+            fillTable(tableI, data, header);
         
-        // Display the table
-        new MatrixShow(data, header, "Table " + (selectedIndex[j] + 1), "Table " + 
-                       (selectedIndex[j] + 1), 800, 600, 50 * j, 50 * j, false);
+            // Display the table
+            new MatrixShow(data, header, "Table " + (selectedIndex[j] + 1), "Table " + 
+                           (selectedIndex[j] + 1), 800, 600, 50 * j, 50 * j, false);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
     

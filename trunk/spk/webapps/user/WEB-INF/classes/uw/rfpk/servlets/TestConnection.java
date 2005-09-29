@@ -50,6 +50,10 @@ public class TestConnection extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
+        // Database connection
+        Connection con = null;
+        Statement methodStmt = null;
+        
         // Prepare output message
         String messageOut = "";
         HashMap methodTable = null;
@@ -76,14 +80,16 @@ public class TestConnection extends HttpServlet
             {   
                 // Connect to the database
                 ServletContext context = getServletContext();
-                Connection con = Spkdb.connect(context.getInitParameter("database_name"),
-                                               context.getInitParameter("database_host"),
-                                               context.getInitParameter("database_username"),
-                                               context.getInitParameter("database_password"));
+                con = Spkdb.connect(context.getInitParameter("database_name"),
+                                    context.getInitParameter("database_host"),
+                                    context.getInitParameter("database_username"),
+                                    context.getInitParameter("database_password"));
 
                 // Get method table
                 methodTable = new HashMap(7);              
-                ResultSet methodRS = Spkdb.getMethodTable(con);                
+                ResultSet methodRS = Spkdb.getMethodTable(con);
+                methodStmt = methodRS.getStatement();
+    
                 while(methodRS.next())
                 {
                     String[] row = new String[3];                    
@@ -111,7 +117,16 @@ public class TestConnection extends HttpServlet
         {
             messageOut = e.getMessage();
         }
-        
+        finally
+        {
+            try
+            {
+                if(methodStmt != null) methodStmt.close();
+                if(con != null) Spkdb.disconnect(con);
+            }
+            catch(SQLException e){messageOut = e.getMessage();}
+        }
+                            
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))
