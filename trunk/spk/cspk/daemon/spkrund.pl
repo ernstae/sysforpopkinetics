@@ -572,82 +572,82 @@ sub reaper {
     }
     elsif($child_exit_value == 1 ) {
         $end_code = "othe"; #unknown problem
-        $err_msg .= "detected some unknown problem(s); ";
+        $err_msg .= "a known error was detected at a un-identified location; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value == 2 ) {
         $end_code = "othf"; #unknown failure
-        $err_msg .= "unknown error(s) occured; ";
+        $err_msg .= "an unknown error(s) occured at a un-identified location; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  10) {
         $end_code = "acce"; #access error
-        $err_msg .= "detected some known problem during file/directory access; ";
+        $err_msg .= "a known error was detected during file/directory access; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  11) {
         $end_code = "sime"; #simulation error
-        $err_msg .= "detected some known problem during data simulation; ";
+        $err_msg .= "a known error was detected during data simulation; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  12) {
         $end_code = "opte"; #optimization error
-        $err_msg .= "detected some known during optimization; ";
+        $err_msg .= "a known error was detected during optimization; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  13) {
         $end_code = "stae"; #statistics error
-        $err_msg .= "detected some known during statistics calculation; ";
+        $err_msg .= "a known error was detected during statistics calculation; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  14) {
         $end_code = "usre"; #user error 
-        $err_msg .= "detected some known user input error; ";
+        $err_msg .= "a known user input error was detected; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  15) {
         $end_code = "deve"; #programmer/developer error 
-        $err_msg .= "detected some known programmer's error; ";
+        $err_msg .= "a known programmer's error was detected; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  100) {
         $end_code = "accf"; #access failure
-        $err_msg .= "unknown error(s) occured during file/directory access; ";
+        $err_msg .= "an unknown failure occured during file/directory access; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  101) {
         $end_code = "simf"; #simulation failure
-        $err_msg .= "unknown error(s) occured during data simulation; ";
+        $err_msg .= "an unknown failure occured during data simulation; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  102) {
         $end_code = "optf"; #optimization failure
-        $err_msg .= "unknown error(s) occured during optimization; ";
+        $err_msg .= "an unknown failure occured during optimization; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  103) {
         $end_code = "staf"; #statistics failure
-        $err_msg .= "unknown error(s) occured during statistics calculation; ";
+        $err_msg .= "an unknown failure occured during statistics calculation; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  104) {
         $end_code = "usrf"; #user input error 
-        $err_msg .= "unknown user input error occured; ";
+        $err_msg .= "an unknown user input error occured; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  105) {
         $end_code = "devf"; #programmer/developer failure 
-        $err_msg .= "unkown programmer's error occured; ";
+        $err_msg .= "an unkown programmer's error occured; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  200) {
         $end_code = "pose"; #post-optimality error
-        $err_msg .= "problems(s) detected during post-optimality; ";
+        $err_msg .= "a known error was detected during post-optimality; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  300) {
         $end_code = "posf"; #post-optimality failure
-        $err_msg .= "unknown error(s) occured during post-optimality; ";
+        $err_msg .= "an unknown failure occured during post-optimality; ";
         $submit_to_bugzilla &= 1;
     }
 
@@ -719,7 +719,9 @@ sub reaper {
 	   read(FH, $report, -s FH );
            close(FH);
            # Insert the return value and its description in the results file.
-	   $report = insert_error($err_msg, $err_rpt, $report);
+           if($end_code=~"serr") {
+              $report = insert_error($err_msg, $err_rpt, $report);
+           }
         }
         else{
            # Format error report.
