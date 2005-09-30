@@ -61,7 +61,7 @@ public:
     void messageTest();
     void serializeTest();
     void formatLongErrorTest();
-
+    void specialCharsTest();
     void mapTest();
 };
 
