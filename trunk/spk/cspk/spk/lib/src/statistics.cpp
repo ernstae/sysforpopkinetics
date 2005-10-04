@@ -239,8 +239,10 @@ $end
 */
 
 #include <cmath>
+#include "inverse.h"
 #include "statistics.h"
 #include "SpkException.h"
+#include "WarningsManager.h"
 using SPK_VA::valarray;
 using SPK_VA::slice;
 using namespace std;
@@ -265,6 +267,30 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
   const int nX = static_cast<int>( x.size() );
   assert( nX > 0 );
     
+  //----------------------------------------------------------------
+  // Check that the covariance matrix is ok to use for statistics.
+  //----------------------------------------------------------------
+  // Calculate the inverse of the covariance of the original
+  // parameters after its fixed elements have been eliminated.
+  try
+  {
+    valarray<double> xCovInv( nX * nX );
+    xCovInv = inverse( xCov, nX );
+  }
+  catch ( ... )
+  {
+    // If the inverse calculation fails, issue some warnings.
+    WarningsManager::addWarning(
+      "The parameter estimates covariance matrix could not be inverted.",
+      __LINE__,
+      __FILE__ );
+
+    WarningsManager::addWarning(
+      "The parameter estimates statistics are unreliable and should only be \nused for qualitative purposes.",
+      __LINE__,
+      __FILE__ );
+   }
+
   //----------------------------------------------------------------
   // Calculate Standard Error of individual parameter estimates
   //----------------------------------------------------------------
