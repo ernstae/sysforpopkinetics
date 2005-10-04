@@ -1249,11 +1249,13 @@ using SPK_VA::valarray;
 namespace // [Begin: unnamed namespace]
 {
   void checkPopPar(
+    const Optimizer&    popOptimizer,
     const DoubleMatrix& dvecAlpLow,
     const DoubleMatrix& dvecAlpUp,
     const DoubleMatrix& dvecAlpOut );
 
   void checkIndPar(
+    const Optimizer&    indOptimizer,
     const DoubleMatrix& dvecBLow,
     const DoubleMatrix& dvecBUp,
     const DoubleMatrix& dmatBOut );
@@ -1962,10 +1964,10 @@ void fitPopulation(
   //------------------------------------------------------------
 
   // Check for population level parameters that are constrained.
-  checkPopPar( dvecAlpLow, dvecAlpUp, dvecAlpOut );
+  checkPopPar( popOptimizer, dvecAlpLow, dvecAlpUp, dvecAlpOut );
 
   // Check for individual level parameters that are constrained.
-  checkIndPar( dvecBLow, dvecBUp, dmatBOut );
+  checkIndPar( indOptimizer, dvecBLow, dvecBUp, dmatBOut );
 
   //------------------------------------------------------------
   // Finish up.
@@ -2010,12 +2012,13 @@ namespace // [Begin: unnamed namespace]
  *
  *
  * Checks the vector of output population parameters to see if any of
- * its elements is constrained by its corresponding lower and/or
- * upper limit.
+ * its elements is constrained by its corresponding lower or upper
+ * limit but not by both.
  *
  *************************************************************************/
 
 void checkPopPar(
+  const Optimizer&    popOptimizer,
   const DoubleMatrix& dvecAlpLow,
   const DoubleMatrix& dvecAlpUp,
   const DoubleMatrix& dvecAlpOut )
@@ -2042,51 +2045,70 @@ void checkPopPar(
   ostringstream warning;
 
   int k;
+  double maxDistFromBound_k;
 
   int colWidth1 = 9 - 2;
   int colWidth2 = 12 + 2;
-  int colWidth3 = 9;
+  int colWidth3 = 12;
   string colSpacer = "  ";
 
-  warning << "The following population parameters are at their bounds." << endl;
+  warning << "The following population parameters are at or near their bounds." << endl;
   warning << endl;
-  warning << "Parameter      Value         Bound"   << endl;
-  warning << "---------  --------------  ---------" << endl;
+  warning << "Parameter      Value            Bound"      << endl;
+  warning << "---------  --------------  ---------------" << endl;
 
   // Check the final population parameter value to see if it 
   // is constrained by its lower or upper bound;
-  bool isAnyAlpAtLimit = false;
+  bool isAnyAlpAtOrNearLimit = false;
   for ( k = 0; k < nAlp; k++ )
   {
-    if ( pdAlpOutData[k] == pdAlpLowData[k] || 
-         pdAlpOutData[k] == pdAlpUpData[k] )
+    // Don't give a warning if the value is constrained by both
+    // of its bounds.
+    if ( pdAlpLowData[k] != pdAlpUpData[k] )
     {
-      isAnyAlpAtLimit = true;
+      // Set the maximum distance allowed from either bound.
+      maxDistFromBound_k = 
+        popOptimizer.getEpsilon() * ( pdAlpUpData[k] - pdAlpLowData[k] );
 
-      // Column 1.
-      warning << setw( colWidth1 ) << k + 1 << colSpacer;
-
-      // Column 2.
-      warning << setw( colWidth2 ) << scientific 
-            << setprecision( 2 ) << pdAlpOutData[k] << colSpacer;
-
-      // Column 3.
-      warning << setw( colWidth3 );
-      if ( pdAlpOutData[k] == pdAlpLowData[k] && 
-           pdAlpOutData[k] == pdAlpUpData[k] )
+      // Give a warning if the value is within the maximum distance of
+      // either bound.
+      if ( pdAlpOutData[k] - pdAlpLowData[k] <= maxDistFromBound_k ||
+           pdAlpUpData[k]  - pdAlpOutData[k] <= maxDistFromBound_k )
       {
-        warning << "Both ";
-      }
-      else if ( pdAlpOutData[k] == pdAlpLowData[k] )
-      {
-        warning << "Lower";
-      }
-      else
-      {
-        warning << "Upper";
-      }
+        isAnyAlpAtOrNearLimit = true;
+    
+        // Column 1.
+        warning << setw( colWidth1 ) << k + 1 << colSpacer;
+    
+        // Column 2.
+        warning << setw( colWidth2 ) << scientific 
+                << setprecision( 2 ) << pdAlpOutData[k] << colSpacer;
+    
+        // Column 3.
+        warning << colSpacer << colSpacer << setw( colWidth3 );
+        if ( pdAlpOutData[k] == pdAlpLowData[k] )
+        {
+          warning << "Lower (at)  ";
+        }
+        else if ( pdAlpOutData[k] == pdAlpUpData[k] )
+        {
+          warning << "Upper (at)  ";
+        }
+        else if ( pdAlpUpData[k] - pdAlpLowData[k] <= maxDistFromBound_k ) 
+        {
+          warning << "Both (near) ";
+        }
+        else if ( pdAlpOutData[k] - pdAlpLowData[k] <= maxDistFromBound_k )
+        {
+          warning << "Lower (near)";
+        }
+        else
+        {
+          warning << "Upper (near)";
+        }
 
-      warning << endl;
+        warning << endl;
+      }
     }
   }
 
@@ -2097,7 +2119,7 @@ void checkPopPar(
 
   // Only issue the warning message if at least one of the
   // values is constrained.
-  if ( isAnyAlpAtLimit )
+  if ( isAnyAlpAtOrNearLimit )
   {
     string warningStr = warning.str();
     WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
@@ -2111,12 +2133,13 @@ void checkPopPar(
  *
  *
  * Checks the matrix of output individual parameters to see if any of
- * its elements is constrained by its corresponding lower and/or
- * upper limit.
+ * its elements is constrained by its corresponding lower or upper
+ * limit but not by both.
  *
  *************************************************************************/
 
 void checkIndPar(
+  const Optimizer&    indOptimizer,
   const DoubleMatrix& dvecBLow,
   const DoubleMatrix& dvecBUp,
   const DoubleMatrix& dmatBOut )
@@ -2146,21 +2169,22 @@ void checkIndPar(
   int i;
   int k;
   double bOut_i_k;
+  double maxDistFromBound_k;
 
   int colWidth1 = 10 - 2;
   int colWidth2 = 9;
   int colWidth3 = 13 + 2;
-  int colWidth4 = 9;
+  int colWidth4 = 12;
   string colSpacer = "  ";
 
-  warning << "The following individual parameters are at their bounds." << endl;
+  warning << "The following individual parameters are at or near their bounds." << endl;
   warning << endl;
-  warning << "Individual  Parameter       Value         Bound"   << endl;
-  warning << "----------  ---------  ---------------  ---------" << endl;
+  warning << "Individual  Parameter       Value            Bound"      << endl;
+  warning << "----------  ---------  ---------------  ---------------" << endl;
 
   // Check each individual's final parameter value to see if they
   // are constrained by their lower or upper bound;
-  bool isAnyBAtLimit = false;
+  bool isAnyBAtOrNearLimit = false;
   bool printIndex;
   for ( i = 0; i < nInd; i++ )
   {
@@ -2168,49 +2192,69 @@ void checkIndPar(
 
     for ( k = 0; k < nB; k++ )
     {
-      bOut_i_k = pdBOutData[k + i * nB];
-
-      if ( bOut_i_k == pdBLowData[k] || bOut_i_k == pdBUpData[k] )
+      // Don't give a warning if the value is constrained by both
+      // of its bounds.
+      if ( pdBLowData[k] != pdBUpData[k] )
       {
-        isAnyBAtLimit = true;
-
-        // Column 1.
-        warning << setw( colWidth1 );
-        if ( printIndex )
+        // Set the maximum distance allowed from either bound.
+        maxDistFromBound_k = 
+          indOptimizer.getEpsilon() * ( pdBUpData[k] - pdBLowData[k] );
+    
+        bOut_i_k = pdBOutData[k + i * nB];
+    
+        // Give a warning if the value is within the maximum distance of
+        // either bound.
+        if ( bOut_i_k     - pdBLowData[k] <= maxDistFromBound_k ||
+             pdBUpData[k] - bOut_i_k      <= maxDistFromBound_k )
         {
-          warning << i + 1;
+          isAnyBAtOrNearLimit = true;
+    
+          // Column 1.
+          warning << setw( colWidth1 );
+          if ( printIndex )
+          {
+            warning << i + 1;
+          }
+          else
+          {
+            warning << "";
+          }
+          warning << colSpacer;
+    
+          // Column 2.
+          warning << setw( colWidth2 ) << k + 1 << colSpacer;
+    
+          // Column 3.
+          warning << setw( colWidth3 ) << scientific 
+                  << setprecision( 3 ) << bOut_i_k << colSpacer;
+    
+          // Column 4.
+          warning << colSpacer << colSpacer << setw( colWidth4 );
+          if ( bOut_i_k == pdBLowData[k] )
+          {
+            warning << "Lower (at)  ";
+          }
+          else if ( bOut_i_k == pdBUpData[k] )
+          {
+            warning << "Upper (at)  ";
+          }
+          else if ( pdBUpData[k] - pdBLowData[k] <= maxDistFromBound_k ) 
+          {
+            warning << "Both (near) ";
+          }
+          else if ( bOut_i_k - pdBLowData[k] <= maxDistFromBound_k )
+          {
+            warning << "Lower (near)";
+          }
+          else
+          {
+            warning << "Upper (near)";
+          }
+    
+          warning << endl;
+    
+          printIndex = false;
         }
-        else
-        {
-          warning << "";
-        }
-        warning << colSpacer;
-
-        // Column 2.
-        warning << setw( colWidth2 ) << k + 1 << colSpacer;
-
-        // Column 3.
-        warning << setw( colWidth3 ) << scientific 
-                << setprecision( 3 ) << bOut_i_k << colSpacer;
-
-        // Column 4.
-	warning << setw( colWidth4 );
-        if ( bOut_i_k == pdBLowData[k] && bOut_i_k == pdBUpData[k] )
-        {
-          warning << "Both ";
-        }
-        else if ( bOut_i_k == pdBLowData[k] )
-        {
-          warning << "Lower";
-        }
-        else
-        {
-          warning << "Upper";
-        }
-
-	warning << endl;
-
-        printIndex = false;
       }
     }
   }
@@ -2222,7 +2266,7 @@ void checkIndPar(
 
   // Only issue the warning message if at least one of the
   // values is constrained.
-  if ( isAnyBAtLimit )
+  if ( isAnyBAtOrNearLimit )
   {
     string warningStr = warning.str();
     WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
