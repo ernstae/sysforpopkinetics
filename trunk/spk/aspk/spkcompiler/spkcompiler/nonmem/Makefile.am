@@ -20,5 +20,22 @@ dist_libnonmem_a_SOURCES = \
         CompModelInfo.h \
         NonmemTranslator.cpp \
         NonmemTranslator.h \
+	NM_detAnalysisType.cpp \
+	NM_parseData.cpp \
+	NM_parseSource.cpp \
+        NM_parseMonte.cpp \
+	NM_generateMakefile.cpp \
+	NM_parsePopAnalysis.cpp \
+	NM_parseIndAnalysis.cpp \
+	NM_parsePred.cpp \
+	NM_parseAdvan.cpp \
+	NM_generateIndData.cpp \
+	NM_generateDataSet.cpp \
+	NM_generatePred.cpp \
+	NM_generateMontePars.cpp \
+	NM_generateNonmemPars.cpp \
+	NM_generateOdePred.cpp \
+	NM_generateIndDriver.cpp \
+	NM_generatePopDriver.cpp \
         countStrInLhs.cpp \
-        countStrInLhs.h
+        countStrInLhs.h 
