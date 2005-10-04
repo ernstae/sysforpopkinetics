@@ -1395,7 +1395,7 @@ void quasiNewtonAnyBox(
         {
           if ( yCurr[i] < epsilon || 1.0 - yCurr[i] < epsilon )
           {
-            stringMessage += "  Note that some parameter values are near their bounds.";
+            stringMessage += "\nNote that some parameter values are at or near their bounds.";
             break;
           }
         }
