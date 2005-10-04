@@ -832,15 +832,27 @@ void derParStatistics( const SPK_VA::valarray<bool>   & mask,
 		     ( zCVOut?  &yCV  : NULL ),
 		     ( zCIOut?  &yCI  : NULL )
 		     );
-  yInvCov = inverse( yCov, nY );
 
+   double val = NAN;
+
+   // Calculate the inverse of the covariance of the original
+   // parameters after its fixed elements have been eliminated.
+   try
+   {
+      yInvCov = inverse( yCov, nY );
+   }
+   catch ( ... )
+   {
+      // If the inverse calculation fails, set the inverse elements to
+      // indicate that its values could not be calculated.
+      yInvCov = val;
+   }
 
   valarray<bool> zCI_mask ( nZ * 2 );
   valarray<bool> zSE_mask ( nZ );
   valarray<bool> zCV_mask ( nZ );
   valarray<bool> zCov_mask( nZ * nZ );
   valarray<bool> zCor_mask( nZ * nZ );
-  double val = NAN;
 
   for( int j=0; j<2; j++ )
     {
