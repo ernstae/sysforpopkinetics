@@ -193,6 +193,21 @@ class NonmemTranslator : public ClientTranslator
    */
   virtual void parseSource();
 
+  /**
+   * Parse the DOMDocument tree that represents
+   * the SpkDataML document and register the foundings into the symbol table.
+   *
+   * Precondition: The symbol table has no *label* entries
+   * (ie. parseSource() shall not have been completed).
+   *
+   * Postcondition: Upon the successful completion, the symbol table will be populated
+   * with the data labels and their corresponding data values.
+   * The labels however are not associated with (possible) synonyms yet
+   * at this point.
+   * 
+   */
+  virtual void parseData();
+
  /**
   * Returns a pointer handler to the CompModelInfo object that captures the information
   * necessary to define a compartmental model.
@@ -205,7 +220,7 @@ class NonmemTranslator : public ClientTranslator
    * the number of subjects.  The parent class variable, ourTarget 
    * is set to either enum values POP or IND indicating population
    * or individual analysis, respectively.  Another parent class
-   * variable ourPopSize is set to the number of subjects.
+   * variable getPopSize() is set to the number of subjects.
    * The number of subjects is also returned as the function value.
    */
   virtual int detAnalysisType();
@@ -295,8 +310,28 @@ class NonmemTranslator : public ClientTranslator
   //=========================================================
   // constant strings used as <tag> names and values
   //---------------------------------------------------------
+
+  int whereis( const XMLCh* label ) const;
+
+  // SpkDataML tags & attributes;
+  static const char * C_SPKDATA;     XMLCh* X_SPKDATA;
+  static const char * C_VERSION;     XMLCh* X_VERSION;
+  static const char * C_POINTONE;    XMLCh* X_POINTONE;
+  static const char * C_TABLE;       XMLCh* X_TABLE;
+  static const char * C_COLUMNS;     XMLCh* X_COLUMNS;
+  static const char * C_ROWS;        XMLCh* X_ROWS;
+  static const char * C_DESCRIPTION; XMLCh* X_DESCRIPTION;
+  static const char * C_ROW;         XMLCh* X_ROW;
+  static const char * C_POSITION;    XMLCh* X_POSITION;
+  static const char * C_VALUE;       XMLCh* X_VALUE;
+  static const char * C_TYPE;        XMLCh* X_TYPE;
+  static const char * C_NUMERIC;     XMLCh* X_NUMERIC;
+  static const char * C_ID;          XMLCh* X_ID;
+  static const char * C_MDV;         XMLCh* X_MDV;
+  static const char * C_EVID;        XMLCh* X_EVID;
+
   // SpkSourceML attributes  
-  XMLCh* X_DESCRIPTION;                static const char* C_DESCRIPTION;
+  //  XMLCh* X_DESCRIPTION;                static const char* C_DESCRIPTION;
   XMLCh* X_YES;                        static const char* C_YES;             
   XMLCh* X_NO;                         static const char* C_NO;
   XMLCh* X_FIXED;                      static const char* C_FIXED;
@@ -305,7 +340,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_UP;                         static const char* C_UP;
   XMLCh* X_DIAGONAL;                   static const char* C_DIAGONAL;
   XMLCh* X_BLOCK;                      static const char* C_BLOCK;
-  XMLCh* X_VALUE;                      static const char* C_VALUE;
+  //  XMLCh* X_VALUE;                      static const char* C_VALUE;
   XMLCh* X_STRUCT;                     static const char* C_STRUCT;
   XMLCh* X_DIMENSION;                  static const char* C_DIMENSION;
   XMLCh* X_LABEL;                      static const char* C_LABEL;
@@ -349,7 +384,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_ERROR;                      static const char* C_ERROR;
   XMLCh* X_MONTE_CARLO;                static const char* C_MONTE_CARLO;
   XMLCh* X_PRESENTATION;               static const char* C_PRESENTATION;
-  XMLCh* X_TABLE;                      static const char* C_TABLE;
+  //  XMLCh* X_TABLE;                      static const char* C_TABLE;
   XMLCh* X_SCATTERPLOT;                static const char* C_SCATTERPLOT;
   XMLCh* X_COLUMN;                     static const char* C_COLUMN;
   XMLCh* X_X;                          static const char* C_X;
@@ -433,6 +468,26 @@ class NonmemTranslator : public ClientTranslator
   //========================================
 
  private:
+
+  /**
+   * Insert the ID field (ie. node) in each record (subtree) if the data set lacks of it.
+   * Returns the location in which the ID field can be found.
+   */
+  int insertID( xercesc::DOMElement* dataset );
+
+  /**
+   * Insert the MDV field (ie. node) in each record (subtree) if the data set lacks of it.
+   * Returns the location in which the MDV field can be found.
+   */
+  int insertMDV( xercesc::DOMElement* dataset );
+
+  /**
+   * Insert the EVID field (ie. node) in each record (subtree) if the data set lacks of it.
+   * Returns the location in which the EVID field can be found.
+   * This routine assumes MDV is present or has been inserted by SPK Compiler in the data set.
+   */
+  int insertEVID( xercesc::DOMElement* dataset );
+
   //
   // Analyze the <pop_analysis> subtree.
   //

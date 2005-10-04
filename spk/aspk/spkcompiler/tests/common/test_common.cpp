@@ -11,7 +11,7 @@
 #include "SymbolTableTest.h"
 #include "SpkCompilerErrorTest.h"
 #include "SpkCompilerExceptionTest.h"
-#include "ClientTranslatorTest.h"
+//#include "ClientTranslatorTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -29,7 +29,7 @@ int main( int argc, const char * argv[] )
   master[ "SymbolTableTest" ]          = SymbolTableTest::suite();
   master[ "SpkCompilerErrorTest" ]     = SpkCompilerErrorTest::suite();
   master[ "SpkCompilerExceptionTest" ] = SpkCompilerExceptionTest::suite();
-  master[ "ClientTranslatorTest" ]     = ClientTranslatorTest::suite();
+//  master[ "ClientTranslatorTest" ]     = ClientTranslatorTest::suite();
 
   if( argc == 1 )
     {
