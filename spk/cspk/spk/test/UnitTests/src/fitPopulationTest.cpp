@@ -1437,10 +1437,26 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
     alpIn[ k ] = alpUp[ k ];
   }
 
-  // Reset some of the initial values equal to their bounds
-  // so that warnings will be generated.
+  double popEpsilon = 1.0e-6;
+
+  // Set this initial value to be equal to its upper bound.  This
+  // should generate a warning.
   alpIn[ 0 ] = alpUp [ 0 ];
-  alpIn[ 5 ] = alpLow[ 5 ];
+
+  // Set this initial value to be equal to its lower bound.  This
+  // should generate a warning.
+  alpIn[ 1 ] = alpLow[ 1 ];
+
+  // Set this initial value to be within relative epsilon tolerance of
+  // the upper bound.  This should generate a warning.
+  alpIn[ 2 ] = alpUp [ 2 ] - popEpsilon * ( alpUp[ 2 ] - alpLow[ 2 ] );
+
+  // Set this initial value to be within relative epsilon tolerance of
+  // the lower bound.  This should generate a warning.
+  alpIn[ 5 ] = alpLow[ 5 ] + popEpsilon * ( alpUp[ 5 ] - alpLow[ 5 ] );
+
+  // This initial value is equal to both its lower and upper bounds.
+  // This should not generate a warning.
   alpIn[ 9 ] = alpUp [ 9 ];
 
   
@@ -1461,7 +1477,7 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
   bUp[ 0 ] = 4.0;
   bUp[ 1 ] = 4.0;
   bUp[ 2 ] = 1.0e-5;
-  bUp[ 3 ] = 4.395237;
+  bUp[ 3 ] = 4.395;
   bUp[ 4 ] = 35.982709204;
 
   // Set the lower bounds.
@@ -1479,12 +1495,15 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
     }
   }
 
+  double indEpsilon = 1.0e-6;
+
   // Reset some of the initial values equal to their bounds
   // so that warnings will be generated.
   i = 0;
   bIn[ 0 + i * nB ] = bUp [ 0 ];
-  bIn[ 3 + i * nB ] = bLow[ 3 ];
-  bIn[ 4 + i * nB ] = bUp [ 4 ];
+  bIn[ 1 + i * nB ] = bLow[ 1 ];
+  bIn[ 2 + i * nB ] = bUp [ 2 ] - indEpsilon * ( bUp[ 2 ] - bLow[ 2 ] );
+  bIn[ 3 + i * nB ] = bLow[ 3 ] + indEpsilon * ( bUp[ 3 ] - bLow[ 3 ] );
   i = 8;
   bIn[ 1 + i * nB ] = bUp [ 1 ];
   i = 39;
@@ -1516,8 +1535,8 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
   // Set the number of iterations at the population and individual
   // levels to be zero so that the final parameters will be equal to
   // their initial values.
-  Optimizer indOptimizer( 1.0e-6, 0, 0 );
-  Optimizer popOptimizer( 1.0e-6, 0, 0 );
+  Optimizer indOptimizer( indEpsilon, 0, 0 );
+  Optimizer popOptimizer( popEpsilon, 0, 0 );
 
   // Set the parallel controls object
   DirBasedParallelControls parallelControls( false, 0, 0 );

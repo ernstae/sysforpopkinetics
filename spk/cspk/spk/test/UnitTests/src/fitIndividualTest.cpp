@@ -351,9 +351,9 @@ private:
     bool doDataMean_indPar( valarray<double>& ret ) const
     {
       //
-      //              / 0   0   0 \ 
-      //     f_b(b) = |           |   .
-      //              \ 0   0   0 /
+      //              / 0   0   0   0   0 \ 
+      //     f_b(b) = |                   |   .
+      //              \ 0   0   0   0   0 /
       //
       ret.resize(_nY * _nB);
       for( int i=0; i<_nY*_nB; i++ )
@@ -377,10 +377,10 @@ private:
     bool doDataVariance_indPar( valarray<double>& ret ) const
     {
       //
-      //              /  0     0     0  \ 
-      //     R_b(b) = |  0     0     0  |  .
-      //              |  0     0     0  | 
-      //              \  0     0     0  / 
+      //              /  0     0     0     0     0  \ 
+      //     R_b(b) = |  0     0     0     0     0  |  .
+      //              |  0     0     0     0     0  | 
+      //              \  0     0     0     0     0  / 
       //
       ret.resize(_nY * _nY * _nB);
       for( int i=0; i<_nY*_nY*_nB; i++ )
@@ -403,10 +403,10 @@ private:
     bool doDataVarianceInv_indPar( valarray<double>& ret ) const
     {
       //
-      //                   /  0     0     0  \ 
-      //     R^(-1)_b(b) = |  0     0     0  |  .
-      //                   |  0     0     0  | 
-      //                   \  0     0     0  / 
+      //                   /  0     0     0     0     0  \ 
+      //     R^(-1)_b(b) = |  0     0     0     0     0  |  .
+      //                   |  0     0     0     0     0  | 
+      //                   \  0     0     0     0     0  / 
       //
       ret.resize(_nY * _nY * _nB);
       for( int i=0; i<_nY*_nY*_nB; i++ )
@@ -416,9 +416,11 @@ private:
     void doIndParVariance( valarray<double>& ret ) const
     {
       //
-      //              /  1     0     0  \ 
-      //     D(alp) = |  0     1     0  |  .
-      //              \  0     0     1  / 
+      //              /  1     0     0     0     0  \ 
+      //              |  0     1     0     0     0  |
+      //     D(alp) = |  0     0     1     0     0  |  .
+      //              |  0     0     0     1     0  | 
+      //              \  0     0     0     0     1  / 
       //
       ret.resize(_nB * _nB);
       identity( _nB, ret );
@@ -426,9 +428,11 @@ private:
     void doIndParVarianceInv( valarray<double>& ret ) const
     {
       //
-      //      -1        /  1     0     0  \ 
-      //     D  (alp) = |  0     1     0  |  .
-      //                \  0     0     1  / 
+      //                /  1     0     0     0     0  \ 
+      //      -1        |  0     1     0     0     0  |
+      //     D  (alp) = |  0     0     1     0     0  |  .
+      //                |  0     0     0     1     0  | 
+      //                \  0     0     0     0     1  / 
       //
       ret.resize(_nB * _nB);
       identity( _nB, ret );
@@ -1131,7 +1135,7 @@ void fitIndividualTest::fitIndividualLimitsWarningsTest()
 
   const int nY = 2;
 
-  const int nB = 3;
+  const int nB = 5;
 
   int k;
 
@@ -1165,6 +1169,8 @@ void fitIndividualTest::fitIndividualLimitsWarningsTest()
   bUp[ 0 ] = 0.1e10;
   bUp[ 1 ] = 33.75;
   bUp[ 2 ] = 7.2503e-235;
+  bUp[ 3 ] = 5.04e+235;
+  bUp[ 4 ] = 1.0;
 
   // Set the lower bounds.
   for ( k = 0; k < nB - 1; k++ )
@@ -1176,11 +1182,27 @@ void fitIndividualTest::fitIndividualLimitsWarningsTest()
     bLow[ k ] = bUp[ k ];
   }
 
-  // Set the initial values equal to their bounds so that warnings
-  // will be generated.
+  double epsilon = 1.e-3; 
+
+  // Set this initial value to be equal to its upper bound.  This
+  // should generate a warning.
   bIn[ 0 ] = bUp [ 0 ];
+
+  // Set this initial value to be equal to its lower bound.  This
+  // should generate a warning.
   bIn[ 1 ] = bLow[ 1 ];
-  bIn[ 2 ] = bUp [ 2 ];
+
+  // Set this initial value to be within relative epsilon tolerance of
+  // the upper bound.  This should generate a warning.
+  bIn[ 2 ] = bUp [ 2 ] - epsilon * ( bUp[ 2 ] - bLow[ 2 ] );
+
+  // Set this initial value to be within relative epsilon tolerance of
+  // the lower bound.  This should generate a warning.
+  bIn[ 3 ] = bLow[ 3 ] + epsilon * ( bUp[ 3 ] - bLow[ 3 ] );
+
+  // This initial value is equal to both its lower and upper bounds.
+  // This should not generate a warning.
+  bIn[ 4 ] = bUp [ 4 ];
 
 
   //------------------------------------------------------------
@@ -1197,7 +1219,6 @@ void fitIndividualTest::fitIndividualLimitsWarningsTest()
   // Remaining inputs to fitIndividual.
   //------------------------------------------------------------
 
-  double epsilon  = 1.e-3; 
   int nMaxIter    = 0; 
   double fOut     = 0.0; 
   int level       = 0;
