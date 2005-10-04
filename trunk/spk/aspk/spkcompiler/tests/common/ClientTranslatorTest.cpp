@@ -34,13 +34,17 @@ public:
     : ClientTranslator( sourceIn, dataIn ), myPopSize( popSize )
   {
   }
+
+  virtual void parseData()
+  {
+  }
   virtual int detAnalysisType()
   {
-    ourPopSize = myPopSize;
+    setPopSize( myPopSize );
     if( myPopSize > 1 )
-      ourTarget = POP;
+      setTarget( POP );
     else
-      ourTarget = IND;
+      setTarget( IND );
 
     return myPopSize;
   }

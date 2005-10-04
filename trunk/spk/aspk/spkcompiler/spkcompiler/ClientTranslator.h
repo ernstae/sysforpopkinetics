@@ -47,31 +47,12 @@ class ClientTranslator{
   /**
    * The destructor.
    */
-  virtual ~ClientTranslator();
+  ~ClientTranslator();
 
   /**
    * Parse both SpkDataML and SpkSourceML documents and generate C++ source code files.
    */
   void translate();
-
-  /**
-   * Insert the ID field (ie. node) in each record (subtree) if the data set lacks of it.
-   * Returns the location in which the ID field can be found.
-   */
-  int insertID( xercesc::DOMElement* dataset );
-
-  /**
-   * Insert the MDV field (ie. node) in each record (subtree) if the data set lacks of it.
-   * Returns the location in which the MDV field can be found.
-   */
-  int insertMDV( xercesc::DOMElement* dataset );
-
-  /**
-   * Insert the EVID field (ie. node) in each record (subtree) if the data set lacks of it.
-   * Returns the location in which the EVID field can be found.
-   * This routine assumes MDV is present or has been inserted by SPK Compiler in the data set.
-   */
-  int insertEVID( xercesc::DOMElement* dataset );
 
   /**
    * Parse the DOMDocument tree that represents
@@ -86,7 +67,7 @@ class ClientTranslator{
    * at this point.
    * 
    */
-  void parseData();
+  virtual void parseData() = 0;
 
   /**
    * Parse the DOMDocument tree that represents
@@ -121,50 +102,64 @@ public:
    *
    * @return t A pointer to the symbol table.
    */
-  const SymbolTable* getSymbolTable() const;
+  inline const SymbolTable* getSymbolTable() const
+    {
+      return &table;
+    }
 
   /**
    * Return a pointer to the (writable) symbol table.
    *
    * @return t A pointer to the symbol table.
    */
-  SymbolTable* getSymbolTable();
+  inline SymbolTable* getSymbolTable()
+    {
+      return &table;
+    }
+
+  inline xercesc::DOMDocument * getSourceTree()
+    {
+      return source;
+    }
+  inline const xercesc::DOMDocument * getSourceTree() const
+    {
+      return source;
+    }
+  inline xercesc::DOMDocument * getDataTree()
+    {
+      return data;
+    }
+  inline const xercesc::DOMDocument * getDataTree() const
+    {
+      return data;
+    }
+  inline const unsigned int getPopSize() const
+    {
+      return popSize;
+    }
+  inline const enum TARGET getTarget() const
+    {
+      return target;
+    }
+  inline const enum APPROX getApproximation() const
+    {
+      return approximation;
+    }
 
  protected:
-  /**
-   * A pointer to the SpkSourceML parse tree.
-   */
-  xercesc::DOMDocument * source;
 
-  /**
-   * A pointer to the SpkDataML parse tree.
-   */
-  xercesc::DOMDocument * data;
-
-  /**
-   * The number of individuals in the population.
-   */
-  unsigned int ourPopSize;
-
-  /**
-   * Analysis type: Population or Individual
-   */
-  enum TARGET ourTarget;
-
-  /**
-   * Approximation method
-   */
-  enum APPROX ourApproximation;
-
-  /**
-   * The number of data recoreds for each individual.
-   */
-  std::valarray<int> ourN;
-
-  /**
-   * The symbol table.
-   */
-  SymbolTable table;
+  inline void setPopSize( unsigned int n )
+    {
+      popSize = n;
+    }
+  inline void setTarget( enum TARGET t )
+    {
+      target = t;
+    }
+  inline void setApproximation( enum APPROX a )
+    {
+      approximation = a;
+    }
 
   /**
    * The default constructor.
@@ -181,22 +176,35 @@ public:
 
  private:
 
-  int whereis( const XMLCh* label ) const;
+  /**
+   * A pointer to the SpkSourceML parse tree.
+   */
+  xercesc::DOMDocument * source;
 
-  static const char * C_SPKDATA;     XMLCh* X_SPKDATA;
-  static const char * C_VERSION;     XMLCh* X_VERSION;
-  static const char * C_POINTONE;    XMLCh* X_POINTONE;
-  static const char * C_TABLE;       XMLCh* X_TABLE;
-  static const char * C_COLUMNS;     XMLCh* X_COLUMNS;
-  static const char * C_ROWS;        XMLCh* X_ROWS;
-  static const char * C_DESCRIPTION; XMLCh* X_DESCRIPTION;
-  static const char * C_ROW;         XMLCh* X_ROW;
-  static const char * C_POSITION;    XMLCh* X_POSITION;
-  static const char * C_VALUE;       XMLCh* X_VALUE;
-  static const char * C_TYPE;        XMLCh* X_TYPE;
-  static const char * C_NUMERIC;     XMLCh* X_NUMERIC;
-  static const char * C_ID;          XMLCh* X_ID;
-  static const char * C_MDV;         XMLCh* X_MDV;
-  static const char * C_EVID;        XMLCh* X_EVID;
+  /**
+   * A pointer to the SpkDataML parse tree.
+   */
+  xercesc::DOMDocument * data;
+
+  /**
+   * The symbol table.
+   */
+  SymbolTable table;
+
+  /**
+   * The number of individuals in the population.
+   */
+  unsigned int popSize;
+
+  /**
+   * Analysis type: Population or Individual
+   */
+  enum TARGET target;
+
+  /**
+   * Approximation method
+   */
+  enum APPROX approximation;
+
 };
 #endif

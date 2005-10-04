@@ -24,7 +24,5 @@ testall_SOURCES = \
         SpkCompilerErrorTest.cpp \
         SpkCompilerErrorTest.h \
         SpkCompilerExceptionTest.cpp \
-        SpkCompilerExceptionTest.h \
-	ClientTranslatorTest.cpp \
-	ClientTranslatorTest.h 
+        SpkCompilerExceptionTest.h 
 

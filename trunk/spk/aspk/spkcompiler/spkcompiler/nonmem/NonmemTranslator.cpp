@@ -57,7 +57,23 @@ extern "C"{
 //==================================================================================
 // XML tag names and attribute names in C string
 //==================================================================================
-const char* NonmemTranslator::C_DESCRIPTION                ( "description" );
+const char* NonmemTranslator::C_SPKDATA    ( "spkdata" );
+const char* NonmemTranslator::C_VERSION    ( "version" );
+const char* NonmemTranslator::C_POINTONE   ( "0.1" );
+const char* NonmemTranslator::C_TABLE      ( "table" );
+const char* NonmemTranslator::C_COLUMNS    ( "columns" );
+const char* NonmemTranslator::C_ROWS       ( "rows" );
+const char* NonmemTranslator::C_DESCRIPTION( "description" );
+const char* NonmemTranslator::C_ROW        ( "row" );
+const char* NonmemTranslator::C_POSITION   ( "position" );
+const char* NonmemTranslator::C_VALUE      ( "value" );
+const char* NonmemTranslator::C_TYPE       ( "type" );
+const char* NonmemTranslator::C_NUMERIC    ( "numeric" );
+const char* NonmemTranslator::C_ID         ( "ID" );
+const char* NonmemTranslator::C_MDV        ( "MDV" );
+const char* NonmemTranslator::C_EVID       ( "EVID" );
+
+//const char* NonmemTranslator::C_DESCRIPTION                ( "description" );
 const char* NonmemTranslator::C_YES                        ( "yes" );
 const char* NonmemTranslator::C_NO                         ( "no" );
 const char* NonmemTranslator::C_FIXED                      ( "fixed" );
@@ -66,7 +82,7 @@ const char* NonmemTranslator::C_LOW                        ( "low" );
 const char* NonmemTranslator::C_UP                         ( "up" );
 const char* NonmemTranslator::C_DIAGONAL                   ( "diagonal" );
 const char* NonmemTranslator::C_BLOCK                      ( "block" );
-const char* NonmemTranslator::C_VALUE                      ( "value" );
+//const char* NonmemTranslator::C_VALUE                      ( "value" );
 const char* NonmemTranslator::C_STRUCT                     ( "struct" );
 const char* NonmemTranslator::C_DIMENSION                  ( "dimension" );
 const char* NonmemTranslator::C_LABEL                      ( "label" );
@@ -90,7 +106,7 @@ const char* NonmemTranslator::C_DIFFEQN                    ( "diffeqn" );
 const char* NonmemTranslator::C_PK                         ( "pk" );
 const char* NonmemTranslator::C_ERROR                      ( "error" );
 const char* NonmemTranslator::C_PRESENTATION               ( "presentation" );
-const char* NonmemTranslator::C_TABLE                      ( "table" );
+//const char* NonmemTranslator::C_TABLE                      ( "table" );
 const char* NonmemTranslator::C_SCATTERPLOT                ( "scatterplot" );
 const char* NonmemTranslator::C_COLUMN                     ( "column" );
 const char* NonmemTranslator::C_X                          ( "x" );
@@ -412,8 +428,25 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   KeyStr.TSCALE                = SymbolTable::key( DefaultStr.TSCALE );
   KeyStr.S                     = SymbolTable::key( DefaultStr.S );
 
+  // SpkDataML tags & attributes;
+    X_SPKDATA    = XMLString::transcode( C_SPKDATA );
+    X_VERSION    = XMLString::transcode( C_VERSION );
+    X_POINTONE   = XMLString::transcode( C_POINTONE );
+    X_TABLE      = XMLString::transcode( C_TABLE );
+    X_COLUMNS    = XMLString::transcode( C_COLUMNS );
+    X_ROWS       = XMLString::transcode( C_ROWS );
+    X_DESCRIPTION= XMLString::transcode( C_DESCRIPTION );
+    X_ROW        = XMLString::transcode( C_ROW );
+    X_POSITION   = XMLString::transcode( C_POSITION );
+    X_VALUE      = XMLString::transcode( C_VALUE );
+    X_TYPE       = XMLString::transcode( C_TYPE );
+    X_NUMERIC    = XMLString::transcode( C_NUMERIC );
+    X_ID         = XMLString::transcode( C_ID );
+    X_MDV        = XMLString::transcode( C_MDV );
+    X_EVID       = XMLString::transcode( C_EVID );
+
   // SpkSourceML tags
-  X_DESCRIPTION                = XMLString::transcode( C_DESCRIPTION );
+    //  X_DESCRIPTION                = XMLString::transcode( C_DESCRIPTION );
   X_IN                         = XMLString::transcode( C_IN );
   X_NONMEM                     = XMLString::transcode( C_NONMEM );
   X_POP_ANALYSIS               = XMLString::transcode( C_POP_ANALYSIS );
@@ -430,7 +463,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_PK                         = XMLString::transcode( C_PK );
   X_ERROR                      = XMLString::transcode( C_ERROR );
   X_PRESENTATION               = XMLString::transcode( C_PRESENTATION );
-  X_TABLE                      = XMLString::transcode( C_TABLE );
+  //  X_TABLE                      = XMLString::transcode( C_TABLE );
   X_SCATTERPLOT                = XMLString::transcode( C_SCATTERPLOT );
   X_COLUMN                     = XMLString::transcode( C_COLUMN );
   X_LOW                        = XMLString::transcode( C_LOW );
@@ -460,7 +493,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
 
   // SpkSourceML attributes
   X_FIXED                      = XMLString::transcode( C_FIXED );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
+  //  X_VALUE                      = XMLString::transcode( C_VALUE );
   X_STRUCT                     = XMLString::transcode( C_STRUCT );
   X_DIMENSION                  = XMLString::transcode( C_DIMENSION );
   X_IS_ERR_OUT                 = XMLString::transcode( C_IS_STDERROR_OUT );
@@ -582,6 +615,23 @@ NonmemTranslator::~NonmemTranslator()
     delete [] myDescription;
   if( myCompModel )
     delete myCompModel;
+
+  XMLString::release( &X_SPKDATA );
+  XMLString::release( &X_VERSION );
+  XMLString::release( &X_POINTONE );
+  XMLString::release( &X_TABLE );
+  XMLString::release( &X_COLUMNS );
+  XMLString::release( &X_ROWS );
+  XMLString::release( &X_DESCRIPTION );
+  XMLString::release( &X_ROW );
+  XMLString::release( &X_POSITION );
+  XMLString::release( &X_VALUE );
+  XMLString::release( &X_TYPE );
+  XMLString::release( &X_NUMERIC );
+  XMLString::release( &X_ID );
+  XMLString::release( &X_MDV );
+
+  //  XMLString::release( &X_DESCRIPTION );
   XMLString::release( &X_YES );
   XMLString::release( &X_NO );
   XMLString::release( &X_FIXED );
@@ -590,7 +640,7 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_UP );
   XMLString::release( &X_DIAGONAL );
   XMLString::release( &X_BLOCK );
-  XMLString::release( &X_VALUE );
+  //  XMLString::release( &X_VALUE );
   XMLString::release( &X_STRUCT );
   XMLString::release( &X_DIMENSION );
   XMLString::release( &X_LABEL );
@@ -621,7 +671,7 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_ERROR );
   XMLString::release( &X_MONTE_CARLO );
   XMLString::release( &X_PRESENTATION );
-  XMLString::release( &X_TABLE );
+  //  XMLString::release( &X_TABLE );
   XMLString::release( &X_SCATTERPLOT );
   XMLString::release( &X_COLUMN );
   XMLString::release( &X_X );
@@ -730,16 +780,19 @@ NonmemTranslator& NonmemTranslator::operator=( const NonmemTranslator& )
 //
 //  Post-conditions
 //
-//  * ourTarget is set to either POP or IND
-//  * ourPopSize is set to the number of subjects
+//  * ClientTranslator::ourTarget is set to either POP or IND
+//  * ClientTranslator::ourPopSize is set to the number of subjects
 //
 /////////////////////////////////////////////////////////////////////////////////////////////
 int NonmemTranslator::detAnalysisType()
 {
-  DOMElement  * spksource      = source->getDocumentElement();
+  DOMElement  * spksource      = getSourceTree()->getDocumentElement();
   DOMNodeList * pop_analysises = spksource->getElementsByTagName( X_POP_ANALYSIS );
   DOMNodeList * ind_analysises = spksource->getElementsByTagName( X_IND_ANALYSIS );
   DOMElement  * analysis;
+  unsigned int popSize = 0;
+  enum TARGET target;
+
   if( pop_analysises->getLength() > 0 )
     {
       if( ind_analysises->getLength() > 0 )
@@ -751,7 +804,7 @@ int NonmemTranslator::detAnalysisType()
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	  throw e;
 	}
-      ourTarget = POP;
+      target = POP;
       analysis = dynamic_cast<DOMElement*>( pop_analysises->item(0) );
       assert( analysis != NULL );
 
@@ -766,7 +819,7 @@ int NonmemTranslator::detAnalysisType()
 	  throw e;
 	}
       const XMLCh * xml_pop_size = analysis->getAttribute( X_POP_SIZE );
-      if( !XMLString::textToBin( xml_pop_size, ourPopSize ) )
+      if( !XMLString::textToBin( xml_pop_size, popSize ) )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
 	  sprintf( mess, 
@@ -775,16 +828,16 @@ int NonmemTranslator::detAnalysisType()
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	  throw e;
 	}
-      return ourPopSize;
     }
   else //( ind_analysises->getLength() > 0 )
     {
-      ourTarget = IND;
-      ourPopSize = 1;
-      return ourPopSize;
-    }
+      target = IND;
+      popSize = 1;
 
-  return ourPopSize;
+    }
+  setTarget ( target );
+  setPopSize( popSize );
+  return popSize;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -794,8 +847,8 @@ int NonmemTranslator::detAnalysisType()
 //
 //  Pre-conditions
 //
-//  * ourTarget is set to either POP or IND
-//  * ourPopSize is set to the number of subjects.
+//  * ClientTranslator::ourTarget is set to either POP or IND
+//  * ClientTranslator::ourPopSize is set to the number of subjects.
 // 
 //  Post-conditions
 //
@@ -805,7 +858,7 @@ void NonmemTranslator::parseSource()
   //---------------------------------------------------------------------------------------
   // <nonmem>
   //---------------------------------------------------------------------------------------
-  DOMElement  * spksouce = source->getDocumentElement();
+  DOMElement  * spksouce = getSourceTree()->getDocumentElement();
   DOMNodeList * nonmems  = spksouce->getElementsByTagName( X_NONMEM );
   if( !nonmems->getLength() > 0 )
     {
@@ -840,13 +893,13 @@ void NonmemTranslator::parseSource()
 
   DOMElement * analysis;
   bool isAnalysisDone = false;
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       DOMNodeList * pop_analysises = constraint->getElementsByTagName( X_POP_ANALYSIS );
       analysis = dynamic_cast<DOMElement*>( pop_analysises->item(0) );
       parsePopAnalysis( analysis );
     }
-  else //if( ourTarget == IND )
+  else //if( getTarget() == IND )
     {
       DOMNodeList * ind_analysises = constraint->getElementsByTagName( X_IND_ANALYSIS );
       analysis = dynamic_cast<DOMElement*>( ind_analysises->item(0) );
@@ -935,7 +988,7 @@ void NonmemTranslator::parseSource()
       //    throw e;
       // }
 
-      if( ourTarget != POP )
+      if( getTarget() != POP )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
 	  sprintf( mess, "Integral methods are only valid for the population analysis results.");
@@ -965,7 +1018,7 @@ void NonmemTranslator::parseSource()
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       sprintf( mess, "<%s> must be parsed before parsing <%s>", 
-	       (ourTarget==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ), 
+	       (getTarget()==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ), 
 	       C_PRESENTATION );
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -982,7 +1035,7 @@ void NonmemTranslator::parseSource()
 
   DOMElement * presentation = dynamic_cast<DOMElement*>( presentations->item(0) );
 
-  myRecordNums.resize( ourPopSize );
+  myRecordNums.resize( getPopSize() );
   Symbol * id = table->findi( KeyStr.ID );
   if( id == NULL || id == Symbol::empty() )
     {
@@ -994,7 +1047,7 @@ void NonmemTranslator::parseSource()
     }
 
   // Determine the number of data records for each subject.
-  for( int i=0; i<ourPopSize; i++ )
+  for( int i=0; i<getPopSize(); i++ )
     {
       myRecordNums[i] = id->initial[i].size();
     }
@@ -1108,7 +1161,7 @@ void NonmemTranslator::parseSource()
       UserStr.IWRES = DefaultStr.IWRES;
     }
 
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       // ETARES
       if( (p = table->findi( KeyStr.ETARES )) != Symbol::empty() )
@@ -1365,7 +1418,7 @@ void NonmemTranslator::parseSource()
     }
 
   // Predefined words required only for POPULATION analysis.
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       // SIGMA
       if( (p = table->findi( KeyStr.SIGMA )) != Symbol::empty() )
@@ -1438,7 +1491,7 @@ void NonmemTranslator::parseSource()
   
   if( myIsEstimate || myIsSimulate )
     {
-      if( ourTarget == POP )
+      if( getTarget() == POP )
 	generatePopDriver();
       else 
 	generateIndDriver();
@@ -1725,11 +1778,11 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
       const XMLCh * xml_approx = pop_analysis->getAttribute( X_APPROXIMATION );
       
       if( XMLString::equals( xml_approx, X_FO ) )
-	ourApproximation = FO;
+	setApproximation( FO );
       else if( XMLString::equals( xml_approx, X_FOCE ) )
-	ourApproximation = FOCE;
+	setApproximation( FOCE );
       else if( XMLString::equals( xml_approx, X_LAPLACE ) )
-	ourApproximation = LAPLACE;  
+	setApproximation( LAPLACE );
       else
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
@@ -4331,7 +4384,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   void replaceCPred  ( const SPK_VA::valarray<double>& cPredIn );"  << endl;
   oIndData_h << "   void replaceCRes   ( const SPK_VA::valarray<double>& cResIn );"   << endl;
   oIndData_h << "   void replaceCWRes  ( const SPK_VA::valarray<double>& cWresIn );"  << endl;
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       oIndData_h << "   void replaceEta     ( const SPK_VA::valarray<double>& etaIn );"      << endl;
       oIndData_h << "   void replaceEtaRes  ( const SPK_VA::valarray<double>& EtaresIn );"  << endl;
@@ -4626,7 +4679,7 @@ void NonmemTranslator::generateIndData( ) const
     {
       oIndData_h << "      " << UserStr.ETA     << "[j].resize( " << myEtaLen << " );" << endl;
       oIndData_h << "      " << "fill( " << UserStr.ETA << "[j].begin(), " << UserStr.ETA << "[j].end(), -99999 );" << endl;
-      if( ourTarget == POP )
+      if( getTarget() == POP )
 	{
 	  oIndData_h << "      " << UserStr.ETARES   << "[j].resize( " << myEtaLen << " );" << endl;
 	  oIndData_h << "      " << UserStr.WETARES  << "[j].resize( " << myEtaLen << " );" << endl;
@@ -5014,7 +5067,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "}" << endl;
   oIndData_h << endl;
 
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       // --------------------
       // replaceEta()
@@ -5462,10 +5515,10 @@ void NonmemTranslator::generateDataSet( ) const
   //
   // Constructor intialization
   //
-  oDataSet_h << ": popSize( " << ourPopSize << " )," << endl;
-  oDataSet_h << "  data( "    << ourPopSize << " )," << endl;
-  oDataSet_h << "  N( "       << ourPopSize << " ), // #of records for each individual" << endl;
-  oDataSet_h << "  Ny( "      << ourPopSize << " )  // #of DVs for each individuals" << endl;
+  oDataSet_h << ": popSize( " << getPopSize() << " )," << endl;
+  oDataSet_h << "  data( "    << getPopSize() << " )," << endl;
+  oDataSet_h << "  N( "       << getPopSize() << " ), // #of records for each individual" << endl;
+  oDataSet_h << "  Ny( "      << getPopSize() << " )  // #of DVs for each individuals" << endl;
 
   //
   // Constructor body
@@ -5473,7 +5526,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "{" << endl;
 
   // Initialize the entire data set.
-  for( int who=0, sofar=0, nRecords=0; who < ourPopSize; who++, sofar+=nRecords )
+  for( int who=0, sofar=0, nRecords=0; who < getPopSize(); who++, sofar+=nRecords )
     {
       char c_who[256];
       sprintf( c_who, "%d", who );
@@ -5948,7 +6001,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       // ------------------------
       // replaceEta()
@@ -6125,15 +6178,15 @@ void NonmemTranslator::generateDataSet( ) const
   int nColumns = nItems
     + myThetaLen-1
     + myEtaLen-1 
-    + (ourTarget==POP? (myEpsLen - 1) : 0 ) // for EPS
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for ETARES
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for WETARES
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IETARES
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for IWETARES
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PETARES
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for PWETARES
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CETARES
-    + (ourTarget==POP? (myEtaLen - 1) : 0 ) // for CWETARES
+    + (getTarget()==POP? (myEpsLen - 1) : 0 ) // for EPS
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for ETARES
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for WETARES
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for IETARES
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for IWETARES
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for PETARES
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for PWETARES
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for CETARES
+    + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for CWETARES
     - (table->findi(KeyStr.OMEGA)   == Symbol::empty()? 0 : 1 )
     - (table->findi(KeyStr.SIGMA)   == Symbol::empty()? 0 : 1 );
  
@@ -6331,7 +6384,7 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( keyWhatGoesIn == KeyStr.EPS && ourTarget == POP )
+      else if( keyWhatGoesIn == KeyStr.EPS && getTarget() == POP )
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
@@ -6663,7 +6716,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "template <class spk_ValueType>" << endl;
   oPred_h << "Pred<spk_ValueType>::Pred( const DataSet<spk_ValueType>* dataIn )" << endl;
   oPred_h << ": spk_perm( dataIn )," << endl;
-  oPred_h << "  spk_nIndividuals( " << ourPopSize << " )," << endl;
+  oPred_h << "  spk_nIndividuals( " << getPopSize() << " )," << endl;
   oPred_h << "  spk_isIterCompleted( true )" << endl;
   oPred_h << "{" << endl;
   oPred_h << "}" << endl;
@@ -6808,7 +6861,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // The size of EPS vector is the order of SIGMA which is only apparent in
   // the population analysis.  So, if this is the individual level,
   // "myEpsLen" has been set to zero; thus the following loop loops zero times.
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       oPred_h << "   " << UserStr.EPS;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
@@ -6896,7 +6949,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // Saving/moving computed values to ensure a complete set of values
   // is available even when a failure occurs.
   //
-  oPred_h << "   if( spk_i == " << ourPopSize << "-1 && spk_j == spk_perm->data[spk_i]->";
+  oPred_h << "   if( spk_i == " << getPopSize() << "-1 && spk_j == spk_perm->data[spk_i]->";
   oPred_h << UserStr.ID << ".size()-1 )" << endl;
   oPred_h << "   {" << endl;
   oPred_h << "     // This means, SPK advanced in iteration." << endl;
@@ -7017,7 +7070,7 @@ void NonmemTranslator::generateMonteParsNamespace() const
   oMontePars << "// " << endl;
   oMontePars << "// The namespace MontePars exports the values needed by monteDriver.cpp." << endl;
   oMontePars << "// " << endl;
-  oMontePars << "// The user requested the " << (ourTarget==POP? "population":"individual");
+  oMontePars << "// The user requested the " << (getTarget()==POP? "population":"individual");
   oMontePars << " analysis." << endl;
   oMontePars << "// " << endl;
   oMontePars << "//==============================================================================" << endl;
@@ -7823,7 +7876,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       oOdePred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
     }
 
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       //
       // EPS: This value is given by the system through the eval() interface.
@@ -7967,7 +8020,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   // Saving/moving computed values to ensure a complete set of values
   // is available even when a failure occurs.
   //
-  oOdePred_h << "   if( spk_i == " << ourPopSize << "-1 && spk_j == spk_perm->data[spk_i]->";
+  oOdePred_h << "   if( spk_i == " << getPopSize() << "-1 && spk_j == spk_perm->data[spk_i]->";
   oOdePred_h << UserStr.ID << ".size()-1 )" << endl;
   oOdePred_h << "   {" << endl;
   oOdePred_h << "     // This means, SPK advanced in iteration." << endl;
@@ -8189,9 +8242,9 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "// The namespace NonmemPars exports the values " << endl;
   oNonmemPars << "// given by the user or values drived from the user-given values." << endl;
   oNonmemPars << "// " << endl;
-  oNonmemPars << "// The user requested the " << (ourTarget==POP? "population":"individual") << " analysis." << endl;
+  oNonmemPars << "// The user requested the " << (getTarget()==POP? "population":"individual") << " analysis." << endl;
   oNonmemPars << "// This means that this namespace would contain materials related to " << endl;
-  if( ourTarget==POP )
+  if( getTarget()==POP )
     {
       oNonmemPars << "// all of THETA, OMEGA, ETA, SIGMA and EPS." << endl;
     }
@@ -8209,7 +8262,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "#include <valarray>" << endl;
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     oNonmemPars << "#include <spkpred/PopPredModel.h>" << endl;
   else
     oNonmemPars << "#include <spkpred/IndPredModel.h>" << endl;
@@ -8309,8 +8362,8 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
   oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
      
-  oNonmemPars << "   const enum " << (ourTarget==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
-  oNonmemPars << (ourTarget==POP? "Pop":"Ind") << "PredModel::";
+  oNonmemPars << "   const enum " << (getTarget()==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
+  oNonmemPars << (getTarget()==POP? "Pop":"Ind") << "PredModel::";
   oNonmemPars << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
   oNonmemPars << endl;
 
@@ -8342,7 +8395,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // EPS" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
   oNonmemPars << "   // The length of EPS vector, which determines the dimension of SIGMA." << endl;
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       oNonmemPars << "   const int nEps = " << myEpsLen << ";" << endl;
     }
@@ -8358,7 +8411,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // SIGMA" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
-  if( ourTarget == POP )
+  if( getTarget() == POP )
     {
       oNonmemPars << "   // The structure of SIGMA matrix." << endl;
       oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
@@ -9367,9 +9420,9 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      const bool isOptRequested     = " << (myIsEstimate? "true":"false") << ";" << endl;
   oPopDriver << "      bool isOptSuccess             = !isOptRequested;" << endl;
   oPopDriver << "      Objective objective           = ";
-  if( ourApproximation == FO )
+  if( getApproximation() == FO )
     oPopDriver << "FIRST_ORDER;" << endl;
-  else if( ourApproximation == FOCE )
+  else if( getApproximation() == FOCE )
     oPopDriver << "EXPECTED_HESSIAN;" << endl;
   else
     oPopDriver << "MODIFIED_LAPLACE;" << endl;
@@ -10269,4 +10322,595 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "   return ret;" << endl;
   oPopDriver << "}" << endl;
   oPopDriver.close();
+}
+/*
+ * Look for a label/item.  If the label is found, return the position from the left (>=0).
+ * If not found, return -1.
+ */
+int NonmemTranslator::whereis( const XMLCh* x_label ) const
+{
+  //
+  // Precondition: The number of individuals has been determined.
+  //
+  if( getPopSize() <= 0 )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Programming error!  The population size must have been determined!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+
+  //
+  // Precondition: The type of analysis has been determined.
+  //
+  if( getTarget() != POP && getTarget() != IND )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Programming error!  The analysis type (individual/population) must have been determined!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+
+  //
+  // Determine if there's the ID field in the data set or not.
+  //
+  DOMElement * spkdata   = getDataTree()->getDocumentElement();
+  DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
+  assert( datasets->getLength() == 1 );
+  DOMElement  * dataset  = dynamic_cast<DOMElement*>( datasets->item(0) );
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  unsigned int recordNum = 0;
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      if( recordNum == 1 )
+	{
+	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  for( int j=0; j<values->getLength(); j++ )
+	    {
+	      const XMLCh* x_value = values->item(j)->getFirstChild()->getNodeValue();
+
+	      // If there's the label, return immediately.
+	      if( XMLString::compareIString( x_value, x_label ) == 0 )
+		{
+		  // The ID field is found in the j-th column.
+		  return j;
+		}
+	    }
+	  break;
+	}      
+    }
+  return -1;
+}
+/*
+ * Insert the ID field if the data set lacks the field.
+ * Returns the location (>=0) in which the ID field can be found.
+ */
+
+int NonmemTranslator::insertID( DOMElement * dataset )
+{
+  // If ID is defined in the data set, don't need to do anything.
+  int posID;
+  if( ( posID = whereis( X_ID ) ) >= 0 )
+    return posID;
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  //
+  // If the data set is a population data and lacks the ID field,
+  // then every record should be assigned to a different ID.
+  //
+  unsigned int recordNum = 0;
+  const XMLCh * x_id_val;
+  char id[ 56 ];
+  if( getTarget() == POP )
+    {
+      for( int i=0; i<records->getLength(); i++ )
+	{
+	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+	  XMLString::textToBin( x_position, recordNum );
+	  if( recordNum == 1 )
+	    {
+	      x_id_val = X_ID;
+	    }
+	  else
+	    {
+	      sprintf( id, "%d", recordNum-1 );
+	      x_id_val = XMLString::transcode( id );
+	    }
+	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNode     * firstValueNode  = values->item(0);
+	  DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+	  DOMText     * newTerminalNode = getDataTree()->createTextNode( x_id_val );
+	  newValueNode->appendChild( newTerminalNode );
+	  records->item(i)->insertBefore( newValueNode, firstValueNode );
+	}
+    }
+  //
+  // If the data set is an individual data set and lacks the ID field,
+  // all the records belongs to a subject whose ID=1.
+  //
+  else // getTarget() == IND
+    {
+      const XMLCh* X_1 = XMLString::transcode( "1" );
+      for( int i=0; i<records->getLength(); i++ )
+	{
+	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+	  XMLString::textToBin( x_position, recordNum );
+	  if( recordNum == 1 )
+	    {
+	      x_id_val = X_ID;
+	    }
+	  else
+	    {
+	      x_id_val = X_1;
+	    }
+	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNode     * firstValueNode  = values->item(0);
+	  DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+	  DOMText     * newTerminalNode = getDataTree()->createTextNode( x_id_val );
+	  newValueNode->appendChild( newTerminalNode );
+	  records->item(i)->insertBefore( newValueNode, firstValueNode );
+	}
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
+
+  // The ID was inserted into the 1st column.
+  return 0;
+}
+/*
+ * Insert the MDV field if the data set lacks the field.
+ *
+ * Initialize MDV in the following way:
+ *    MDV(i) = 0 for no EVID.
+ *    MDV(i) = (EVID(i)==0? 0 : 1) if EVID is given.
+ * The initial values may be altered later once this data is
+ * passed to a specific client translator.
+ *
+ * Returns the location (>=0) in which the ID field can be found.
+ */
+int NonmemTranslator::insertMDV( DOMElement * dataset )
+{
+  // If MDV is defined in the data set, don't need to do anything.
+  int posMDV;
+  if( (posMDV = whereis( X_MDV ) ) >= 0 )
+    return posMDV;
+
+  // Determine if EVID exists in the data set.  If exists, where?
+  int posEVID = whereis( X_EVID );
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  //
+  // Case 1: no EVID in the data set
+  // Assign 0 (no) to all values of MDV.
+  // 
+  // Case 2: EVID presents
+  // Assign 0 to these MDV values if the corresponding EVID!=0 (EVID=0 is observation)
+  // and 1 to the rest (i.e. non-observations).
+  //
+  unsigned int recordNum=0;
+  const XMLCh* x_mdv_val;
+  const XMLCh* X_0 = XMLString::transcode( "0" );
+  const XMLCh* X_1 = XMLString::transcode( "1" );
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      if( recordNum == 1 )
+	{
+	  x_mdv_val = X_MDV;
+	}
+      else
+	{
+	  if( posEVID >= 0 )
+	  {
+	    unsigned int evid = 0;
+	    // Converting the value of EVID on i-th record to an integer.
+	    XMLString::textToBin( dynamic_cast<DOMElement*>(values->item(posEVID))->getFirstChild()->getNodeValue(), evid );
+	    if( evid == 1 )
+	      x_mdv_val = X_1;
+	  }
+	  else
+	    {
+	      x_mdv_val = X_0;
+	    }
+	}
+
+      //  values  -> item(0)          
+      //             <value>ID</value>
+      //          -> item(1)
+      //             <value>TIME</value>
+      //          -> item(2)
+      //             <value>DV</value>
+      //          -> item(3)
+      //             <value>EVID</value>
+      DOMNode     * firstValueNode  = values->item(0);
+      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMText     * newTerminalNode = getDataTree()->createTextNode( x_mdv_val );
+      newValueNode->appendChild( newTerminalNode );
+      records->item(i)->appendChild( newValueNode );
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
+
+  // The MDV was appended at the last.
+  return nItems;
+}
+/*
+ * Insert the EVID field if the data set lacks the field.
+ *
+ * EVID(i) = 0 if no MDV
+ * EVID(i) = MDV(i) if MDV is given.
+ *
+ * Returns the location (>=0) in which the EVID field can be found.
+ */
+int NonmemTranslator::insertEVID( DOMElement * dataset )
+{
+  // If EVID is defined in the data set, don't need to do anything.
+  int posEVID;
+  if( (posEVID = whereis( X_EVID ) ) >= 0 )
+    return posEVID;
+
+  // Determine if MDV exists in the data set.  MDV must exist when EVID is not present.
+  int posMDV = whereis( X_MDV );
+  if( posMDV < 0 )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "MDV must be present (or inserted by SPK Compiler) in the data set when EVID is not given by the user!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  unsigned int recordNum=0;
+  const XMLCh* x_evid_val;
+  const XMLCh* X_0 = XMLString::transcode( "0" );
+  const XMLCh* X_1 = XMLString::transcode( "1" );
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      if( recordNum == 1 )
+	{
+	  x_evid_val = X_EVID;
+	}
+      else
+	{
+	  unsigned int mdv = 0;
+	  // Copy the value of MDV on i-th record to an integer.
+	  x_evid_val = dynamic_cast<DOMElement*>(values->item(posMDV))->getFirstChild()->getNodeValue();
+	}
+
+      //  values  -> item(0)          
+      //             <value>ID</value>
+      //          -> item(1)
+      //             <value>TIME</value>
+      //          -> item(2)
+      //             <value>DV</value>
+      //          -> item(3)
+      //             <value>MDV</value>
+      DOMNode     * firstValueNode  = values->item(0);
+      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMText     * newTerminalNode = getDataTree()->createTextNode( x_evid_val );
+      newValueNode->appendChild( newTerminalNode );
+      records->item(i)->appendChild( newValueNode );
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
+
+  // The EVID was appended at the last.
+  return nItems;
+}
+
+void NonmemTranslator::parseData()
+{
+  SymbolTable * table = getSymbolTable();
+
+  //
+  // Precondition: The number of individuals has been determined.
+  //
+  if( getPopSize() <= 0 )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Programming error!  The population size must have been determined!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+
+  //
+  // Precondition: The type of analysis has been determined.
+  //
+  if( getTarget() != POP && getTarget() != IND )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Programming error!  The analysis type (individual/population) must have been determined!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+
+  //
+  // Precondition: The symbol table has no entry yet for data labels.
+  //
+  if( table->getLabels()->size() != 0 )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Programming error!  No labels should have been registered in the symbol table!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+     }
+
+  valarray<int> N;
+  DOMElement * spkdata = getDataTree()->getDocumentElement();
+  assert( XMLString::equals( spkdata->getNodeName(), X_SPKDATA ) );
+  const XMLCh* version = spkdata->getAttribute( X_VERSION );
+
+  if( !XMLString::equals( version, X_POINTONE ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Version %s is not supported yet!", version );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+     }
+
+  //
+  // Process through n number of <table>s, where n >= 0.
+  // NOTE: For v0.1, n == 1.
+  //
+  DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
+  int nDataSets = datasets->getLength();
+  if( nDataSets < 1 )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing a data set!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  if( nDataSets > 1 )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Multiple data sets not supported!" );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+
+  int nSubjects = 0;
+  for( int i=0; i<nDataSets; i++ )
+    {
+      DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
+
+      // Warning: Do not change the order of the following three calls.
+      const int locID   = insertID( dataset );   // if no ID
+      //      const int locMDV  = insertMDV( dataset );  // if no MDV
+      //      const int locEVID = insertEVID( dataset ); // if no EVID 
+
+      unsigned int nFields;
+      if( !dataset->hasAttribute( X_COLUMNS ) )
+	{
+	  char m[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	}     
+      XMLString::textToBin( dataset->getAttribute( X_COLUMNS ), nFields );
+
+      unsigned int nRecords;
+      if( !dataset->hasAttribute( X_ROWS ) )
+	{
+	  char m[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_ROWS );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	} 
+      XMLString::textToBin( dataset->getAttribute( X_ROWS ), nRecords );
+
+      if( nRecords == 0 )
+      {
+         // empty data set, skip to the next data set.
+         // continue;
+         // For ver 0.1, this is an error!
+	char m[ SpkCompilerError::maxMessageLen() ];
+	sprintf( m, "Empty data set!" );
+	SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
+	throw e;
+      }
+
+      map< string, map<string, vector<string> > > tmp_values;
+      vector<string> tmp_ids;
+      vector<string> tmp_labels(nFields);
+      vector<string> tmp_types (nFields);
+
+      unsigned int pos;      
+      DOMNodeList * rows = dataset->getElementsByTagName( X_ROW );
+      if( rows->getLength() != nRecords )
+	{
+	  char m[ SpkCompilerError::maxMessageLen() ];
+	  sprintf( m, "The number of &lt;row&gt;s does not match with the value of &lt;table::rows&gt; attribute!" );
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	}
+
+      for( int j=0; j<nRecords; j++ )
+	{
+	  DOMElement  * row    = dynamic_cast<DOMElement*>( rows->item(j) );
+	  if( !row->hasAttribute( X_POSITION ) )
+	    {
+	      char m[ SpkCompilerError::maxMessageLen() ];
+	      sprintf( m, "An attribute, %s, is missing from &lt;%s&gt; tag.", X_POSITION, X_ROW );
+	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );	      
+	    }
+	  const XMLCh* xml_position = row->getAttribute( X_POSITION );
+	  if( !XMLString::textToBin( xml_position, pos ) )
+	    {
+	      char m[ SpkCompilerError::maxMessageLen() ];
+	      sprintf( m, "Failed to convert an alphanumeric value to an integer!" );
+	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	    }
+	  DOMNodeList * values = row->getElementsByTagName( X_VALUE );
+	  if( values->getLength() != nFields )
+	    {
+	      char m[ SpkCompilerError::maxMessageLen() ];
+	      sprintf( m, "The number of &lt;%s&gt; elements does not match with the value of &lt;%s&gt; attribute!",
+		       X_VALUE, X_COLUMNS );
+	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+	    }
+
+	  //
+	  // At the first iteration, k=0, the value of *id is set and it is used for the
+	  // rest of iterations.
+	  //
+	  const XMLCh* xml_value = values->item(locID)->getFirstChild()->getNodeValue();
+	  XMLCh* xml_value_noWS = XMLString::replicate( xml_value );
+	  XMLString::removeWS( xml_value_noWS );
+	  char * id = XMLString::transcode( xml_value_noWS );
+	  for( int k=0; k<nFields; k++ )
+	    {
+	      //
+	      // The values in the first row (ie. position=1) are data labels.
+	      //
+	      if( pos==1 )
+		{
+		  const XMLCh* xml_label = values->item(k)->getFirstChild()->getNodeValue();
+		  assert( xml_label != NULL );
+		  // At this point xml_label may contain white spaces.
+		  // Get rid of them!
+		  XMLCh* xml_label_noWS = XMLString::replicate( xml_label );
+		  XMLString::removeWS( xml_label_noWS );
+                  char * delme = XMLString::transcode( xml_label_noWS );
+		  if( find( tmp_labels.begin(), tmp_labels.end(), string(delme) ) != tmp_labels.end() )
+		    {
+		      char m[ SpkCompilerError::maxMessageLen() ];
+		      sprintf( m, "%s is already defined!", delme );
+		      throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
+		    }
+		  tmp_labels[k] = string( delme );
+                  delete delme;
+		  XMLString::release( &xml_label_noWS );
+		  continue;
+		}
+
+	      const XMLCh* xml_type;
+	      if( dynamic_cast<DOMElement*>( values->item(k) )->hasAttribute( X_TYPE ) )
+		{
+		  xml_type = dynamic_cast<DOMElement*>( values->item(k) )->getAttribute( X_TYPE );
+		}
+	      else
+		{
+		  xml_type = X_NUMERIC;
+		}
+	      //
+	      // The value types in the second row (ie. position=2) are used as reference
+	      // against which the value types in the subsequent rows will be compared.
+	      //
+	      if( pos==2 )
+		{
+		  char * delme_c = XMLString::transcode(xml_type);
+		  string delme_s( delme_c );
+		  delete delme_c;
+		  tmp_types[k] = delme_s;
+		}	      
+
+	      //
+	      // For the subsequent rows (>2), the value types should match the entries in tmp_types[].
+	      //
+	      char * delme_c = XMLString::transcode( xml_type );
+              string delme_s( delme_c );
+	      delete delme_c;
+	      assert( delme_s == tmp_types[k] );
+	      
+	      const XMLCh* xml_value = values->item(k)->getFirstChild()->getNodeValue();
+	      XMLCh* xml_value_noWS = XMLString::replicate( xml_value );
+	      XMLString::removeWS( xml_value_noWS );
+
+              //
+              // If this item is an ID, check if the value changed since the previous iteration.
+              // If it does, increment the #of subjects and keep the new ID for future reference.
+	      //
+	      if( k == locID )
+		{
+		  id = XMLString::transcode( xml_value_noWS );
+		  if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )
+		    {
+		      tmp_ids.push_back( id );
+		      ++nSubjects;
+		    }
+		}
+              //
+              // If a data value is ".", that means 0.0.
+              //
+	      char * c_value = 
+                 ( XMLString::stringLen( xml_value )>0? XMLString::transcode( xml_value_noWS ) : NULL );
+              if( strcmp( c_value, "." ) == 0 )
+                 tmp_values[id][tmp_labels[k]].push_back( "0.0" );
+              else
+	         tmp_values[id][tmp_labels[k]].push_back( string(c_value) );
+	      delete c_value;
+	      XMLString::release( &xml_value_noWS );		  
+	    }
+	  delete id;
+	}
+      assert( nSubjects == getPopSize() ); 
+      assert( nSubjects == tmp_ids.size() );
+      N.resize( nSubjects );
+
+
+      vector<string>::const_iterator pID = tmp_ids.begin();
+      for( int k=0; pID != tmp_ids.end(), k<nSubjects; k++, pID++ )
+	{
+	  N[k] = tmp_values[*pID][tmp_labels[0]].size();
+	}
+      
+      //
+      // Register the data labels without any attributes yet.
+      //
+      int nLabels = tmp_labels.size();
+      for( int k=0; k<nLabels; k++ )
+	{
+	  table->insertLabel( tmp_labels[k], "", N );  
+	}
+
+      // Store the data item values permanently.
+      // A Symbol object for a label maintains three vectors: initial, upper and lower.
+      // Use "initial" vector to store the data item values for the label. 
+      //
+      // label ---> initial[i] ---> data for the i-th individual's "label" data item.
+      //
+      int who=0;
+      for( vector<string>::const_iterator pID = tmp_ids.begin(); pID != tmp_ids.end(); pID++, who++ )
+	{
+	  for( int k=0; k<nLabels; k++ )
+	    {
+	      Symbol *s = table->findi( tmp_labels[k] );
+	      vector<string>::const_iterator itr = (tmp_values[*pID][tmp_labels[k]]).begin();
+	      for( int l=0; itr != tmp_values[*pID][tmp_labels[k]].end(); l++, itr++ )
+		{
+		  s->initial[who][l] = tmp_values[*pID][tmp_labels[k]][l];
+		}
+	    }
+	}
+    }
 }
