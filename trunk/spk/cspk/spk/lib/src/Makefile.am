@@ -11,6 +11,9 @@ AM_LDFLAGS  = -llapack -lg2c
 
 libspk_la_CXXFLAGS = -g
 
+AM_FFLAGS  = 
+FFLAGS     = 
+
 F77COMPILE = -g
 
 libspk_la_SOURCES = \
