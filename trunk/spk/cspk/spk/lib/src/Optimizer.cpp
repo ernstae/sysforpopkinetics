@@ -5150,7 +5150,7 @@ void Optimizer::getErrorInfo(
 
   int colWidth1 = 9 - 2;
   int colWidth2 = 12 + 2;
-  int colWidth3 = 9;
+  int colWidth3 = 16;
   int colWidth4 = colWidth2;
   int colWidth5 = colWidth2;
   string colSpacer = "  ";
@@ -5158,11 +5158,12 @@ void Optimizer::getErrorInfo(
   message << "An error occurred in the optimizer for the iteration that" << endl;
   message << "started with the following parameters:" << endl;
   message << endl;
-  message << "Parameter      Value       At Bound?     Gradient     Proj. Gradient"   << endl;
-  message << "---------  --------------  ---------  --------------  --------------" << endl;
+  message << "Parameter      Value       At or Near Bound?     Gradient     Proj. Gradient" << endl;
+  message << "---------  --------------  -----------------  --------------  --------------" << endl;
 
   int i;
   int nObjParFree = 0;
+  double maxDistFromBound_i;
 
   for ( i = 0; i < stateInfo.m; i++ )
   {
@@ -5172,6 +5173,9 @@ void Optimizer::getErrorInfo(
 
     // Calculate the distance between the original bounds.
     diff[i] = stateInfo.up[i] - stateInfo.low[i];
+
+    // Set the maximum distance allowed from either bound.
+    maxDistFromBound_i = epsilon * diff[i];
 
     // Calculate the parameter and gradient in the original coordinates.
     if ( diff[i] != 0.0 )
@@ -5216,20 +5220,32 @@ void Optimizer::getErrorInfo(
     message << setw( colWidth3 );
     if ( stateInfo.low[i] == stateInfo.up[i] )
     {
-      message << "Both ";
+      message << "Both (at)    ";
       isAnyElemConstrained = true;
     }
     else if ( xOrig == stateInfo.low[i] )
     {
-      message << "Lower";
+      message << "Lower (at)   ";
     }
     else if ( xOrig == stateInfo.up[i] )
     {
-      message << "Upper";
+      message << "Upper (at)   ";
+    }
+    else if ( diff[i] <= maxDistFromBound_i ) 
+    {
+      message << "Both (near)  ";
+    }
+    else if ( xOrig - stateInfo.low[i] <= maxDistFromBound_i )
+    {
+      message << "Lower (near) ";
+    }
+    else if ( stateInfo.up[i] - xOrig <= maxDistFromBound_i )
+    {
+      message << "Upper (near) ";
     }
     else
     {
-      message << "No   ";
+      message << "No           ";
     }
     message << colSpacer;
 

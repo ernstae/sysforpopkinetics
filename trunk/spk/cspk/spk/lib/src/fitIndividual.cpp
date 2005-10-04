@@ -843,6 +843,7 @@ using SPK_VA::valarray;
 namespace // [Begin: unnamed namespace]
 {
   void checkIndPar(
+    const Optimizer&    indOptimizer,
     const DoubleMatrix& dvecBLow,
     const DoubleMatrix& dvecBUp,
     const DoubleMatrix& dvecBOut );
@@ -1038,7 +1039,7 @@ void fitIndividual(
           );
 
     // Check for parameters that are constrained.
-    checkIndPar( dvecBLow, dvecBUp, dvecBOut );
+    checkIndPar( indOptimizer, dvecBLow, dvecBUp, dvecBOut );
 
     // Convert results to valarray
     if( indParOut )
@@ -1067,12 +1068,13 @@ namespace // [Begin: unnamed namespace]
  *
  *
  * Checks the vector of output individual parameters to see if any of
- * its elements is constrained by its corresponding lower and/or
- * upper limit.
+ * its elements is constrained by its corresponding lower or upper
+ * limit but not by both.
  *
  *************************************************************************/
 
 void checkIndPar(
+  const Optimizer&    indOptimizer,
   const DoubleMatrix& dvecBLow,
   const DoubleMatrix& dvecBUp,
   const DoubleMatrix& dvecBOut )
@@ -1099,51 +1101,70 @@ void checkIndPar(
   ostringstream warning;
 
   int k;
+  double maxDistFromBound_k;
 
   int colWidth1 = 9 - 2;
   int colWidth2 = 12 + 2;
-  int colWidth3 = 9;
+  int colWidth3 = 12;
   string colSpacer = "  ";
 
-  warning << "The following individual parameters are at their bounds." << endl;
+  warning << "The following individual parameters are at or near their bounds." << endl;
   warning << endl;
-  warning << "Parameter      Value         Bound"   << endl;
-  warning << "---------  --------------  ---------" << endl;
+  warning << "Parameter      Value            Bound"      << endl;
+  warning << "---------  --------------  ---------------" << endl;
 
   // Check the final individual parameter value to see if it 
-  // is constrained by its lower or upper bound;
-  bool isAnyBAtLimit = false;
+  // is constrained by its lower or upper bound.
+  bool isAnyBAtOrNearLimit = false;
   for ( k = 0; k < nB; k++ )
   {
-    if ( pdBOutData[k] == pdBLowData[k] || 
-         pdBOutData[k] == pdBUpData[k] )
+    // Don't give a warning if the value is constrained by both
+    // of its bounds.
+    if ( pdBLowData[k] != pdBUpData[k] )
     {
-      isAnyBAtLimit = true;
+      // Set the maximum distance allowed from either bound.
+      maxDistFromBound_k = 
+        indOptimizer.getEpsilon() * ( pdBUpData[k] - pdBLowData[k] );
 
-      // Column 1.
-      warning << setw( colWidth1 ) << k + 1 << colSpacer;
-
-      // Column 2.
-      warning << setw( colWidth2 ) << scientific 
-            << setprecision( 2 ) << pdBOutData[k] << colSpacer;
-
-      // Column 3.
-      warning << setw( colWidth3 );
-      if ( pdBOutData[k] == pdBLowData[k] && 
-           pdBOutData[k] == pdBUpData[k] )
+      // Give a warning if the value is within the maximum distance of
+      // either bound.
+      if ( pdBOutData[k] - pdBLowData[k] <= maxDistFromBound_k ||
+           pdBUpData[k]  - pdBOutData[k] <= maxDistFromBound_k )
       {
-        warning << "Both ";
+        isAnyBAtOrNearLimit = true;
+    
+        // Column 1.
+        warning << setw( colWidth1 ) << k + 1 << colSpacer;
+    
+        // Column 2.
+        warning << setw( colWidth2 ) << scientific 
+                << setprecision( 2 ) << pdBOutData[k] << colSpacer;
+    
+        // Column 3.
+        warning << colSpacer << colSpacer << setw( colWidth3 );
+        if ( pdBOutData[k] == pdBLowData[k] )
+        {
+          warning << "Lower (at)  ";
+        }
+        else if ( pdBOutData[k] == pdBUpData[k] )
+        {
+          warning << "Upper (at)  ";
+        }
+        else if ( pdBUpData[k] - pdBLowData[k] <= maxDistFromBound_k ) 
+        {
+          warning << "Both (near) ";
+        }
+        else if ( pdBOutData[k] - pdBLowData[k] <= maxDistFromBound_k )
+        {
+          warning << "Lower (near)";
+        }
+        else
+        {
+          warning << "Upper (near)";
+        }
+    
+        warning << endl;
       }
-      else if ( pdBOutData[k] == pdBLowData[k] )
-      {
-        warning << "Lower";
-      }
-      else
-      {
-        warning << "Upper";
-      }
-
-      warning << endl;
     }
   }
 
@@ -1154,7 +1175,7 @@ void checkIndPar(
 
   // Only issue the warning message if at least one of the
   // values is constrained.
-  if ( isAnyBAtLimit )
+  if ( isAnyBAtOrNearLimit )
   {
     string warningStr = warning.str();
     WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
