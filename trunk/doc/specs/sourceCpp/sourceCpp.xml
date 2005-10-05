@@ -9,6 +9,17 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.24</revnumber>
+            <date>October 05, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            DataSet::getMeasurementIndex(i,j),
+            DataSet::getRecordIndex(i,j),
+            Pred::getMeasurementIndex(i,j),
+            Pred::getRecordIndex(i,j)
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.23</revnumber>
             <date>September 23, 2005</date>
             <authorinitials>sh</authorinitials>
@@ -615,7 +626,7 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>int getMeasurementIndex( int j ) const</literal></term>
+            <term><literal>int getMeasurementIndex( j ) const</literal></term>
             <listitem>
                <para>
                Returns the index to an element of the measurement vector, i.e. y, that 
@@ -627,10 +638,33 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
+            <term><literal>int getMeasurementIndex( int i, int j ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to an element of the i-th individual's measurement vector, i.e. yi, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the 
+               i-th individual's original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
             <term><literal>int getRecordIndex( int j' ) const</literal></term>
             <listitem>
                <para>
                Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getRecordIndex( int i, int j' ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to a record in the i-th individual's original data 
+               set from which the j'th 
                element of the measurement vector, i.e. y, originated.
                </para>
             </listitem>
@@ -757,10 +791,33 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
+            <term><literal>int getMeasurementIndex( int i, int j ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to an element of the i-th individual's measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the 
+               i-th individual's original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
             <term><literal>int getRecordIndex( int j' ) const</literal></term>
             <listitem>
                <para>
                Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getRecordIndex( int i, int j' ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to a record in the i-th individual's
+               original data set from which the j'th 
                element of the measurement vector, i.e. y, originated.
                </para>
             </listitem>
@@ -774,13 +831,40 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const std::valarray&lt;int&gt; getN() const</literal></term>
+            <term><literal>const std::valarray&lt;int&gt; getNObservs() const</literal></term>
             <listitem>
                <para>
-               Returns a vector of numbers of measurements.  The i-th element of the vector
+               Returns a vector of numbers of obervation records.  The i-th element of the vector
                indicates the number of measurements for the i-th individual, 
                where 0 &lt;= i &lt; n and
                n is the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNObservs(int i) const</literal></term>
+            <listitem>
+               <para>
+               Returns the number of obervation records for the i-th individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const std::valarray&lt;int&gt; getNRecords() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of numbers of records.  The i-th element of the vector
+               indicates the number of record for the i-th individual, 
+               where 0 &lt;= i &lt; n and
+               n is the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNRecords(int i) const</literal></term>
+            <listitem>
+               <para>
+               Returns the number of records for the i-th individual.
                </para>
             </listitem>
          </varlistentry>
@@ -861,13 +945,18 @@ of the function implementation.
          <anchor id="predbase"/>
          <para>
             <classname>PredBase</classname> declares a pure virtual function, 
-            <function>eval()</function>.  This function evaluates
-            the C++ translation of user's $PRED model for the j-th component of
-            the i-th individual's measurement data.  The class <classname>PredBase</classname>
-            is part of <varname>spkpred</varname> library and declared in 
-            <filename>PredBase.h</filename>.
+            <function>eval()</function> along with (defined) utility functions.
          </para>
-         <programlisting>
+         <sect3>
+            <title>virtual bool eval()</title>
+            <para>
+               <function>eval()</function> function evaluates
+               the C++ translation of user's $PRED model for the j-th component of
+               the i-th individual's measurement data.  The class <classname>PredBase</classname>
+               is part of <varname>spkpred</varname> library and declared in 
+               <filename>PredBase.h</filename>.
+            </para>
+            <programlisting>
 // This class is defined in &lt;spk/PredBase.h&gt;.
 template &lt;class T&gt;
 PredBase{
@@ -887,13 +976,13 @@ PredBase{
       PredBase( const PredBase& ){}
       PredBase& operator=( const PredBase& ){}
 }
-         </programlisting>
-         <formalpara>
-            <title>Requirements</title>
-            <para>
-               <itemizedlist>
-                  <listitem>
-                     <para>
+            </programlisting>
+            <formalpara>
+               <title>Requirements</title>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>
 At the end of an iteration of population parameter optimization,
 a <emphasis>complete</emphasis> set of values assigned 
 to the all variables appeared 
@@ -903,161 +992,224 @@ each individual shall be kept and be available externally.
 This implies that the values from the previous iteration shall
 be available if the current iteration failed in the middle
 of computation.
-                     </para>
-                  </listitem>  
-                  <listitem>
-                     <para>
+                        </para>
+                     </listitem>  
+                     <listitem>
+                        <para>
 The user's model definition which is in a psudo FORTRAN language
 shall retain the case-insensitive attribute when it is translated to C++.
-                     </para>
-                  </listitem>
-                  <listitem>
-                     <para>
+                        </para>
+                     </listitem>
+                     <listitem>
+                        <para>
 A prefix <literal>spk_</literal> is reserved for use by SPK Compiler developers.
-                     </para>
-                  </listitem>
-               </itemizedlist>
-            </para>
-         </formalpara>
-         <formalpara>
-            <title>Returned Value</title>
-            <para>
+                        </para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+            </formalpara>
+            <formalpara>
+               <title>Returned Value</title>
+               <para>
 <literal>true</literal> if the MDV for the corresponding data record ---
 the i-th individual's j-th data record --- is 0.  <literal>false</literal> otherwise.
-            </para>
-         </formalpara>
-         <variablelist>
-            <title>Arguments</title>
-            <varlistentry>
-               <term><literal>const int spk_thetaOffset</literal></term>
-               <listitem>
-	          <para>
-                  is the index to the head of <emphasis>theta</emphasis> vector within <varname>spk_indepVar</varname>.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_thetaLen</literal></term>
-               <listitem>
-                  <para>
-                  is the length of <emphasis>theta</emphasis> vector.  The vector elements are assumed to be placed
-                  from <varname>spk_indepVar[spk_thetaOffset]</varname> 
-                  to <varname>spk_indepVar[spk_theetaOffset + spk_thetaLen]</varname>.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_etaOffset</literal></term>
-               <listitem>
-                  <para>
-                  is the index to the head of <emphasis>eta</emphasis> vector within <varname>spk_indepVar</varname>.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_etaLen</literal></term>
-               <listitem>
-                  <para>
-                  is the length of <emphasis>eta</emphasis> vector.  The vector elements are assumed to be placed
-                  from <varname>spk_indepVar[spk_etaOffset]</varname>
-                  to <varname>spk_indepVar[spk_etaOffset + spk_etaLen]</varname>.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_epsOffset</literal></term>
-               <listitem>
-                  <para>
-                  is the index to the head of <emphasis>eps</emphasis> vector within <varname>spk_indepVar</varname>.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_epsLen</literal></term>
-               <listitem>
-                  <para>
-                  is the length of <emphasis>eps</emphasis> vector.
-                  The vector elements are assumed to be placed
-                  from <varname>spk_indepVar[spk_thetaOffset]</varname> 
-                  to <varname>spk_indepVar[spk_theetaOffset + spk_theetaLen]</varname>.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_fOffset</literal></term>
-               <listitem>
-                  <para>
-                  is the index to the element in <varname>spk_depVar</varname> in which
-                  the prediction for the j-th data record for the i-th individual, 
-                  <emphasis>F</emphasis> (in NONMEM's term), shall be placed.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
+               </para>
+            </formalpara>
+            <variablelist>
+               <title>Arguments</title>
+               <varlistentry>
+                  <term><literal>const int spk_thetaOffset</literal></term>
+                  <listitem>
+	             <para>
+                     is the index to the head of <emphasis>theta</emphasis> 
+                      vector within <varname>spk_indepVar</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_thetaLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the length of <emphasis>theta</emphasis> vector.  
+                     The vector elements are assumed to be placed
+                     from <varname>spk_indepVar[spk_thetaOffset]</varname> 
+                     to <varname>spk_indepVar[spk_theetaOffset + spk_thetaLen]</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_etaOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the head of <emphasis>eta</emphasis> 
+                     vector within <varname>spk_indepVar</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_etaLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the length of <emphasis>eta</emphasis> vector.  
+                     The vector elements are assumed to be placed   
+                     from <varname>spk_indepVar[spk_etaOffset]</varname>
+                     to <varname>spk_indepVar[spk_etaOffset + spk_etaLen]</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_epsOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the head of <emphasis>eps</emphasis> 
+                     vector within <varname>spk_indepVar</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_epsLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the length of <emphasis>eps</emphasis> vector.
+                     The vector elements are assumed to be placed
+                     from <varname>spk_indepVar[spk_thetaOffset]</varname> 
+                     to <varname>spk_indepVar[spk_theetaOffset + spk_theetaLen]</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_fOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the element in <varname>spk_depVar</varname> in which
+                     the prediction for the j-th data record for the i-th individual, 
+                     <emphasis>F</emphasis> (in NONMEM's term), shall be placed.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
                <term><literal>const int spk_fLen</literal></term>
-               <listitem>
-                  <para>
-                  is the number of measurements for the i-th individual.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_yOffset</literal></term>
-               <listitem>
-                  <para>
-                  is the index to the element in <varname>spk_depVar</varname> in which
-                  the error model value for the j-th data record for the i-th individual,
-                  <emphasis>Y</emphasis> (in NONMEM's term), shall be placed.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_yLen</literal></term>
-               <listitem>
-                  <para>
-                  is the number of measurments for the i-th individual..
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_i</literal></term>
-               <listitem>
-                  <para>
-                  is the index to the i-th individual 
-                  within the population (0 indicates the first individual).
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const int spk_j</literal></term>
-               <listitem>
-                  <para>
-                  is the index to the j-th data record of the i-th individual.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>const std::vector&lt;T&gt; & spk_indepVar</literal></term>
-               <listitem>
-                  <para>
-                  is the vector containing independent variables: 
-                  <emphasis>theta</emphasis>, <emphasis>eta</emphasis> 
-                  and <emphasis>eps</emphasis>.
-                  </para>
-               </listitem>
-            </varlistentry>
-            <varlistentry>
-               <term><literal>std::vector&lt;T&gt; & spk_depVar</literal></term>
-               <listitem>
-                  <para>
-                  is an output in which the predicted value for the i-th individual's j-th data record
-                  will be placed at the <varname>spk_yOffset</varname>-th element.
-                  The <literal>spk_yOffset</literal>-th elements will be 
-                  are replaced by the error model value for the i-th individual's j-th data record.
-                  </para>
-               </listitem>
-            </varlistentry>
-         </variablelist>
+                  <listitem>
+                     <para>
+                     is the number of measurements for the i-th individual.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_yOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the element in <varname>spk_depVar</varname> in which
+                     the error model value for the j-th data record for the i-th individual,
+                     <emphasis>Y</emphasis> (in NONMEM's term), shall be placed.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_yLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the number of measurments for the i-th individual..
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_i</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the i-th individual 
+                     within the population (0 indicates the first individual).
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_j</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the j-th data record of the i-th individual.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int &amp;spk_m</literal></term>
+                  <listitem>
+                     <para>
+                     will be replaced by the index to the observation record that corresponds to
+                     the j-th data record of the i-th individual.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const std::vector&lt;T&gt; & spk_indepVar</literal></term>
+                  <listitem>
+                     <para>
+                     is the vector containing independent variables: 
+                     <emphasis>theta</emphasis>, <emphasis>eta</emphasis> 
+                     and <emphasis>eps</emphasis>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>std::vector&lt;T&gt; & spk_depVar</literal></term>
+                  <listitem>
+                     <para>
+                     is an output in which the predicted value for the i-th individual's j-th data record
+                     will be placed at the <varname>spk_yOffset</varname>-th element.
+                     The <literal>spk_yOffset</literal>-th elements will be 
+                     are replaced by the error model value for the i-th individual's j-th data record.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </sect3>
+         <sect3>
+            <title>int getNObservs( int i ) const</title>
+            <para>
+            Returns the number of obervations records for the i-th individual.
+            </para>
+         </sect3>
+         <sect3>
+            <title>int getNRecords( int i ) const</title>
+            <para>
+            Returns the number of total records for the i-th individual.
+            </para>
+         </sect3>
+         <sect3>
+            <title>int getMeasurementIndex( int j ) const</title>
+            <para>
+               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+            </para>
+         </sect3>
+         <sect3>
+            <title>int getMeasurementIndex( int i, int j ) const</title>
+            <para>
+               Returns the index to an element of the i-th individual's measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the 
+               i-th individual's original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.            
+            </para>
+         </sect3>
+         <sect3>
+            <title>int getRecordIndex( int j ) const</title>
+            <para>
+               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+            </para>
+         </sect3>
+         <sect3>
+            <title>int getRecordIndex( int i, int j ) const</title>
+            <para>
+               Returns the index to a record in the i-th individual's
+               original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+            </para>
+         </sect3>
       </sect2>
       <sect2>
          <title>An instance of $PRED and <filename>Pred.h</filename></title>
@@ -1106,6 +1258,7 @@ public:
                       int spk_yOffset,     int spk_yLen,
                       int spk_i,
                       int spk_j,
+                      int spk_m,
                       const std::vector&lt;T&gt;& spk_indepVar,
                       std::vector&lt;T&gt;& spk_depVar );
    Pred( const DataSet&lt;T&gt; * dataIn ){}
@@ -1149,6 +1302,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
                     int spk_yOffset,     int spk_yLen,
                     int spk_i,
                     int spk_j,
+                    int spk_m,
                     const std::vector&lt;T&gt;& spk_indepVar,
                     std::vector&lt;T&gt;& spk_depVar )
 {
@@ -1209,21 +1363,20 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
    // Wrap up:
    //
    // Place values to expected locations in given vectors.
-   //==================================================================================
-   spk_depVar[ spk_fOffset ] = f;
-   spk_depVar[ spk_yOffset ] = y;
-
-
-   //==================================================================================
-   // Return:
-   //
    // Return true if MDV (missing dependent variable) for this record is false.
    // Otherwise return false (which is not supported for ver 0.1).
    //==================================================================================
+   spk_m = getMeasurementIndex( spk_i, spk_j );
    if( set->data[ spk_i ]->mdv[ spk_j ] == 0 )
+   {
+      spk_depVar[ spk_fOffset + spk_m ] = f;
+      spk_depVar[ spk_yOffset + spk_m ] = y;
       return true;
+   }
    else 
+   {
       return false;
+   }
 }
 
 #endif
