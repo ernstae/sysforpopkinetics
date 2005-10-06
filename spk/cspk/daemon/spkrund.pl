@@ -573,7 +573,7 @@ sub reaper {
     elsif($child_exit_value == 1 ) {
         $end_code = "othe"; #unknown problem
         $err_msg .= "a known error was detected at a un-identified location; ";
-        $submit_to_bugzilla &= 1;
+        $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value == 2 ) {
         $end_code = "othf"; #unknown failure
@@ -583,11 +583,6 @@ sub reaper {
     elsif($child_exit_value ==  10) {
         $end_code = "acce"; #access error
         $err_msg .= "a known error was detected during file/directory access; ";
-        $submit_to_bugzilla &= 0;
-    }
-    elsif($child_exit_value ==  11) {
-        $end_code = "sime"; #simulation error
-        $err_msg .= "a known error was detected during data simulation; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  12) {
@@ -610,16 +605,19 @@ sub reaper {
         $err_msg .= "a known programmer's error was detected; ";
         $submit_to_bugzilla &= 0;
     }
+    elsif($child_exit_value ==  16) {
+        $end_code = "sime"; #simulation error
+        $err_msg .= "a known error was detected during data simulation; ";
+        $submit_to_bugzilla &= 0;
+    }
     elsif($child_exit_value ==  100) {
         $end_code = "accf"; #access failure
         $err_msg .= "an unknown failure occured during file/directory access; ";
         $submit_to_bugzilla &= 1;
     }
-    elsif($child_exit_value ==  101) {
-        $end_code = "simf"; #simulation failure
-        $err_msg .= "an unknown failure occured during data simulation; ";
-        $submit_to_bugzilla &= 1;
-    }
+    #
+    # 101 is reserved for C++ compilation error
+    #
     elsif($child_exit_value ==  102) {
         $end_code = "optf"; #optimization failure
         $err_msg .= "an unknown failure occured during optimization; ";
@@ -638,6 +636,11 @@ sub reaper {
     elsif($child_exit_value ==  105) {
         $end_code = "devf"; #programmer/developer failure 
         $err_msg .= "an unkown programmer's error occured; ";
+        $submit_to_bugzilla &= 1;
+    }
+    elsif($child_exit_value ==  106) {
+        $end_code = "simf"; #simulation failure
+        $err_msg .= "an unknown failure occured during data simulation; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  200) {
