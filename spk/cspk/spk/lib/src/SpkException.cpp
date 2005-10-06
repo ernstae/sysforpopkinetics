@@ -282,16 +282,7 @@ $syntax/
 
 friend std::ostream& operator<<(std::ostream& stream, const SpkException& e);
 /$$
-Returns a serialized SpkException object is in the format of:
-$pre
-<error_list len=NUMERRORS>\n
-  ERROR
-</error_list>\n
-$$
-  $table
-  $bold NUMERRORS$$  $cend The number of error messages (ie. SpkError objects).$rend
-  $bold ERROR$$      $cend A serialized SpkError object (see $xref/SpkError//SpkError/$$).  $rend
-  $tend
+Returns a list of serialized $xref/SpkError//SpkError/$$ objects.
 
 $syntax/
 
@@ -685,7 +676,7 @@ std::ostream& operator<<(std::ostream& stream, const SpkException& e)
 {
     std::string buf;
 
-//    stream << "<error_list len=\"" << e.size() << "\">" << endl;
+  //  stream << "<error_list len=\"" << e.size() << "\">" << endl;
   //  stream << "<error_list>" << endl;
     for( int i=0; i<e.size(); i++)
     {
