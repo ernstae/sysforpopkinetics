@@ -133,7 +133,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "   int getNObservs( int ) const;" << endl;
   oPred_h << "   int getNRecords( int ) const;" << endl;
   oPred_h << "   int getMeasurementIndex( int ) const;" << endl;
+  oPred_h << "   int getMeasurementIndex( int, int ) const;" << endl;
   oPred_h << "   int getRecordIndex( int ) const;" << endl;
+  oPred_h << "   int getRecordIndex( int, int ) const;" << endl;
   oPred_h << "   bool eval( int  spk_thetaOffset, int spk_thetaLen," << endl;
   oPred_h << "              int  spk_etaOffset,   int spk_etaLen," << endl;
   oPred_h << "              int  spk_epsOffset,   int spk_epsLen," << endl;
@@ -303,7 +305,18 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << endl;
 
   // ----------------------
-  // getMeasurementIndex()
+  // getMeasurementIndex(i,j)
+  // Returns the index to an observation record that corresponds to the i-th individual's j-th record.
+  // ----------------------
+  oPred_h << "template <class spk_ValueType>" << endl;
+  oPred_h << "int Pred<spk_ValueType>::getMeasurementIndex( int who, int recordIndex ) const" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return spk_perm->getMeasurementIndex( who, recordIndex );" << endl;
+  oPred_h << "}" << endl;
+
+  // ----------------------
+  // getMeasurementIndex(j)
+  // Returns the index to an observation record that corresponds to j-th record within the whole population data set.
   // ----------------------
   oPred_h << "template <class spk_ValueType>" << endl;
   oPred_h << "int Pred<spk_ValueType>::getMeasurementIndex( int recordIndex ) const" << endl;
@@ -312,7 +325,19 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "}" << endl;
 
   // -----------------
-  // getRecordIndex()
+  // getRecordIndex(i,j)
+  // Returns the index to a record that corresponds to the i-th individual's j-th measurement.
+  // -----------------
+  oPred_h << "template <class spk_ValueType>" << endl;
+  oPred_h << "int Pred<spk_ValueType>::getRecordIndex( int who, int measurementIndex ) const" << endl;
+  oPred_h << "{" << endl;
+  oPred_h << "   return spk_perm->getRecordIndex( who, measurementIndex );" << endl;
+  oPred_h << "}" << endl;
+
+
+  // -----------------
+  // getRecordIndex(j)
+  // Returns the index to a record that corresponds to the j-th measurement within the whole population data set.
   // -----------------
   oPred_h << "template <class spk_ValueType>" << endl;
   oPred_h << "int Pred<spk_ValueType>::getRecordIndex( int measurementIndex ) const" << endl;
@@ -542,7 +567,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
     oPred_h << "   // MDV data item found in the data set." << endl;
     oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
     oPred_h << "   {" << endl;
-    oPred_h << "      spk_m = spk_perm->getMeasurementIndex( spk_j );" << endl;
+    oPred_h << "      spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
     oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
     oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
     oPred_h << "      return true;" << endl;
@@ -558,7 +583,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  oPred_h << "   // Assume MDV = 0 if AMT = 0 and MDV = 1 if AMT > 0." << endl;
 	  oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.AMT << "[ spk_j ] == 0 )" << endl;
 	  oPred_h << "   {" << endl;
-	  oPred_h << "      spk_m = spk_perm->getMeasurementIndex( spk_j );" << endl;
+	  oPred_h << "      spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
 	  oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
 	  oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
 	  oPred_h << "      return true;" << endl;
@@ -571,7 +596,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
       else
 	{
 	  oPred_h << "   // No MDV or AMT found in the data set.  Asuume all MDV=0." << endl;
-	  oPred_h << "   spk_m = spk_perm->getMeasurementIndex( spk_j );" << endl;
+	  oPred_h << "   spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
 	  oPred_h << "   spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
 	  oPred_h << "   spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
 	  oPred_h << "   return true;" << endl;

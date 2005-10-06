@@ -22,7 +22,8 @@
 #include "CompModelInfoTest.h"
 //#include "ind_advan6Test.h"
 #include "pop_advan6Test.h"
-#include "dataSetTest.h"
+#include "ind_dataSetTest.h"
+#include "pop_dataSetTest.h"
 
 #include "countStrInLhsTest.h"
 #include "linInterpTest.h"
@@ -107,7 +108,8 @@ int main( int argc, const char * argv[] )
 //  master[ "linInterpTest" ] = linInterpTest::suite();
 
   // Test for Linear Interpolation
-  master[ "dataSetTest" ] = dataSetTest::suite();
+  master[ "ind_dataSetTest" ] = ind_dataSetTest::suite();
+  master[ "pop_dataSetTest" ] = pop_dataSetTest::suite();
 
   if( argc == 1 )
     {

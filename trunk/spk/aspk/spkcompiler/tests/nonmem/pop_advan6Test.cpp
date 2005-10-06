@@ -865,7 +865,7 @@ void pop_advan6Test::createDataML()
     //dataParser->parse( "pop_advan6Test.data.xml" );
     dataParser->parse( fDataML );
     data = dataParser->getDocument();
-    //DOMPrint( data );
+    DOMPrint( data );
     CPPUNIT_ASSERT_MESSAGE( "Failed to obtain a pointer to DOM parse tree for the data set.", 
                             data != NULL);
   }

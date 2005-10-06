@@ -72,8 +72,8 @@ const char* NonmemTranslator::C_NUMERIC    ( "numeric" );
 const char* NonmemTranslator::C_ID         ( "ID" );
 const char* NonmemTranslator::C_MDV        ( "MDV" );
 const char* NonmemTranslator::C_EVID       ( "EVID" );
+const char* NonmemTranslator::C_AMT        ( "AMT" );
 
-//const char* NonmemTranslator::C_DESCRIPTION                ( "description" );
 const char* NonmemTranslator::C_YES                        ( "yes" );
 const char* NonmemTranslator::C_NO                         ( "no" );
 const char* NonmemTranslator::C_FIXED                      ( "fixed" );
@@ -82,7 +82,6 @@ const char* NonmemTranslator::C_LOW                        ( "low" );
 const char* NonmemTranslator::C_UP                         ( "up" );
 const char* NonmemTranslator::C_DIAGONAL                   ( "diagonal" );
 const char* NonmemTranslator::C_BLOCK                      ( "block" );
-//const char* NonmemTranslator::C_VALUE                      ( "value" );
 const char* NonmemTranslator::C_STRUCT                     ( "struct" );
 const char* NonmemTranslator::C_DIMENSION                  ( "dimension" );
 const char* NonmemTranslator::C_LABEL                      ( "label" );
@@ -444,6 +443,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     X_ID         = XMLString::transcode( C_ID );
     X_MDV        = XMLString::transcode( C_MDV );
     X_EVID       = XMLString::transcode( C_EVID );
+    X_AMT        = XMLString::transcode( C_AMT );
 
   // SpkSourceML tags
     //  X_DESCRIPTION                = XMLString::transcode( C_DESCRIPTION );
@@ -630,6 +630,8 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_NUMERIC );
   XMLString::release( &X_ID );
   XMLString::release( &X_MDV );
+  XMLString::release( &X_EVID );
+  XMLString::release( &X_AMT );
 
   //  XMLString::release( &X_DESCRIPTION );
   XMLString::release( &X_YES );

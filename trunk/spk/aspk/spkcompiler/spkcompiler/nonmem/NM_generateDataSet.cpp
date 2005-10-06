@@ -158,12 +158,16 @@ void NonmemTranslator::generateDataSet( ) const
   // -----------------------
   // Public member functions
   // -----------------------
-  oDataSet_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
   oDataSet_h << "   void expand( const SPK_VA::valarray<double>& measurements, SPK_VA::valarray<double>& records ) const;" << endl;
+  oDataSet_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
+  oDataSet_h << "   int getMeasurementIndex( int who, int recordIndex ) const;" << endl;
   oDataSet_h << "   int getRecordIndex( int measurementIndex ) const;" << endl;
+  oDataSet_h << "   int getRecordIndex( int who, int measurementIndex ) const;" << endl;
   oDataSet_h << "   int getPopSize() const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<int> getN() const;" << endl;
+  oDataSet_h << "   const SPK_VA::valarray<int> getNObservs() const;" << endl;
   oDataSet_h << "   int getNObservs( int i ) const;" << endl;
+  oDataSet_h << "   const SPK_VA::valarray<int> getNRecords() const;" << endl;
   oDataSet_h << "   int getNRecords( int i ) const;" << endl;
   oDataSet_h << "   const SPK_VA::valarray<double> getAllMeasurements() const;" << endl;
   oDataSet_h << "   void replaceAllMeasurements( const SPK_VA::valarray<double> & yy );"    << endl;
@@ -205,8 +209,8 @@ void NonmemTranslator::generateDataSet( ) const
   //----------------------------------------
   oDataSet_h << "private:" << endl;
   oDataSet_h << "   SPK_VA::valarray<double> measurements; // a long vector containg all measurements" << endl;
-  oDataSet_h << "   SPK_VA::valarray<int> N;  // # of records for each individual." << endl;
-  oDataSet_h << "   SPK_VA::valarray<int> Ny; // # of measurements for each individual." << endl;
+  oDataSet_h << "   SPK_VA::valarray<int> NRecords;  // # of records for each individual." << endl;
+  oDataSet_h << "   SPK_VA::valarray<int> NObservs; // # of measurements for each individual." << endl;
   oDataSet_h << "   const int popSize;" << endl;
   oDataSet_h << endl;
   oDataSet_h << "   /////////////////////////////////////////////////////////" << endl;
@@ -264,10 +268,10 @@ void NonmemTranslator::generateDataSet( ) const
   //
   // Constructor intialization
   //
-  oDataSet_h << ": popSize( " << getPopSize() << " )," << endl;
-  oDataSet_h << "  data( "    << getPopSize() << " )," << endl;
-  oDataSet_h << "  N( "       << getPopSize() << " ), // #of records for each individual" << endl;
-  oDataSet_h << "  Ny( "      << getPopSize() << " )  // #of DVs for each individuals" << endl;
+  oDataSet_h << ": popSize( "  << getPopSize() << " )," << endl;
+  oDataSet_h << "  data( "     << getPopSize() << " )," << endl;
+  oDataSet_h << "  NRecords( " << getPopSize() << " ), // #of records for each individual" << endl;
+  oDataSet_h << "  NObservs( " << getPopSize() << " )  // #of DVs for each individuals" << endl;
 
   //
   // Constructor body
@@ -294,7 +298,7 @@ void NonmemTranslator::generateDataSet( ) const
       oDataSet_h << "   // Subject <" << id << "> " << endl;
       oDataSet_h << "   // # of sampling points = " << nRecords << endl;
       oDataSet_h << "   //------------------------------------" << endl;
-      oDataSet_h << "   N[" << who << "] = " << nRecords << ";" << endl;
+      oDataSet_h << "   NRecords[" << who << "] = " << nRecords << ";" << endl;
 
       //
       // Initialize C arrays with data values.
@@ -376,8 +380,8 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   int nY = 0;  // # of DVs" << endl;
   oDataSet_h << "   for( int i=0; i<popSize; i++ )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      Ny[i] = data[i]->getMeasurements().size();" << endl;
-  oDataSet_h << "      nY += Ny[i];" << endl;  
+  oDataSet_h << "      NObservs[i] = data[i]->getMeasurements().size();" << endl;
+  oDataSet_h << "      nY += NObservs[i];" << endl;  
   oDataSet_h << "   }" << endl;
   oDataSet_h << "   measurements.resize( nY ); " << endl;
   oDataSet_h << "   jPrimeToj.resize( nY );" << endl;
@@ -400,7 +404,7 @@ void NonmemTranslator::generateDataSet( ) const
 	}
       else
 	{
-	  oDataSet_h << "        if( " << UserStr.AMT << "[j] == 0 )" << endl;
+	  oDataSet_h << "        if( data[i]->" << UserStr.AMT << "[k] == 0 )" << endl;
 	  oDataSet_h << "        {" << endl;
 	  oDataSet_h << "           jPrimeToj[jPrime] = j;" << endl;
 	  oDataSet_h << "           jTojPrime[j] = jPrime;" << endl;
@@ -467,6 +471,7 @@ void NonmemTranslator::generateDataSet( ) const
 
   // ------------------------------
   // getMeasurementIndex( int j )
+  // This returns the index to an observation record that corresponds to the record index within the whole population.
   // ------------------------------
   oDataSet_h << "template <class spk_ValueType>" << endl;
   oDataSet_h << "int DataSet<spk_ValueType>::getMeasurementIndex( int recordIndex ) const" << endl;
@@ -475,12 +480,36 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "}" << endl;
 
   // ------------------------------
-  // getRecordIndex( int jPrime )
+  // getMeasurementIndex( int i, int j )
+  // This returns the index to an observation record that corresponds to the i-th individual's record index.
+  // ------------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "int DataSet<spk_ValueType>::getMeasurementIndex( int who, int recordIndex ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return data[who]->getMeasurementIndex(recordIndex);" << endl;
+  oDataSet_h << "}" << endl;
+
+  // ------------------------------
+  // getRecordIndex( int i, int jPrime )
+  // This returns the index to a record that corresponds to the measurement index within the whole population.
   // ------------------------------
   oDataSet_h << "template <class spk_ValueType>" << endl;
   oDataSet_h << "int DataSet<spk_ValueType>::getRecordIndex( int measurementIndex ) const" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   return jPrimeToj[ measurementIndex ];" << endl;
+  oDataSet_h << "}" << endl;
+
+  // ------------------------------
+  // getRecordIndex( int i, int jPrime )
+  // This returns the index to a record that corresponds to the i-th individual's measurement index.
+  // ------------------------------
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "int DataSet<spk_ValueType>::getRecordIndex( int who, int measurementIndex ) const" << endl;
+  oDataSet_h << "{" << endl;
+  /*
+  oDataSet_h << "   return jPrimeToj[ measurementIndex ];" << endl;
+  */
+  oDataSet_h << "   return data[who]->getRecordIndex(measurementIndex);" << endl;
   oDataSet_h << "}" << endl;
 
   // --------------------
@@ -505,7 +534,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "       const SPK_VA::valarray<double> & measurements," << endl;  
   oDataSet_h << "       SPK_VA::valarray<double> & records ) const" << endl;
   oDataSet_h << "{" << endl;
-  oDataSet_h << "   const int n = Ny.sum();" << endl;
+  oDataSet_h << "   const int n = NObservs.sum();" << endl;
   oDataSet_h << "   int m = 0;" << endl;
   oDataSet_h << "   for( int i=0; i<popSize; i++ )" << endl;
   oDataSet_h << "      m += getNRecords(i);" << endl;
@@ -539,12 +568,24 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "template <class spk_ValueType>" << endl;
   oDataSet_h << "const SPK_VA::valarray<int> DataSet<spk_ValueType>::getN() const" << endl;
   oDataSet_h << "{" << endl;
-  oDataSet_h << "   return Ny;" << endl;
+  oDataSet_h << "   return NObservs;" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
 
   // -------------
   // getNObservs()
+  // Return the number of observation records for the entire population.
+  // -------------
+  oDataSet_h << "// Return the number of measurements (DVs) for the entire population." << endl;
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "const SPK_VA::valarray<int> DataSet<spk_ValueType>::getNObservs() const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return NObservs;" << endl;
+  oDataSet_h << "}" << endl;
+
+  // -------------
+  // getNObservs(i)
+  // Return the i-th individual's number of observation records.
   // -------------
   oDataSet_h << "// Return the number of measurements (DVs) of the i-th individual." << endl;
   oDataSet_h << "template <class spk_ValueType>" << endl;
@@ -555,6 +596,18 @@ void NonmemTranslator::generateDataSet( ) const
 
   // -------------
   // getNRecords()
+  // Return the number of total records for the entire population.
+  // -------------
+  oDataSet_h << "// Return the number of data records (including MDV=1) for the entire population." << endl;
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "const SPK_VA::valarray<int> DataSet<spk_ValueType>::getNRecords() const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   return NRecords;" << endl;
+  oDataSet_h << "}" << endl;
+
+  // -------------
+  // getNRecords(i)
+  // Return the i-th individual's number of total records.
   // -------------
   oDataSet_h << "// Return the number of data records (including MDV=1) of the i-th individual." << endl;
   oDataSet_h << "template <class spk_ValueType>" << endl;
@@ -573,9 +626,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceAllMeasurements( const SPK_VA::valarray<double> & yy )" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n= data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceMeasurements( yy[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceMeasurements( yy[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "   measurements = yy;" << endl;
   oDataSet_h << "}" << endl;
@@ -589,9 +642,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replacePred( const SPK_VA::valarray<double>& PredIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replacePred( PredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replacePred( PredIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -603,9 +656,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& ResIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceRes( ResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceRes( ResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -617,9 +670,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& WResIn )"    << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceWRes( WResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceWRes( WResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -631,9 +684,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceIPred( const SPK_VA::valarray<double>& iPredIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceIPred( iPredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceIPred( iPredIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -645,9 +698,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceIRes( const SPK_VA::valarray<double>& iResIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceIRes( iResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceIRes( iResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -659,9 +712,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceIWRes( const SPK_VA::valarray<double>& iWResIn )"    << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceIWRes( iWResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceIWRes( iWResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -673,9 +726,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replacePPred( const SPK_VA::valarray<double>& pPredIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replacePPred( pPredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replacePPred( pPredIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -687,9 +740,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replacePRes( const SPK_VA::valarray<double>& pResIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replacePRes( pResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replacePRes( pResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -701,9 +754,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replacePWRes( const SPK_VA::valarray<double>& pWResIn )"    << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replacePWRes( pWResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replacePWRes( pWResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -715,9 +768,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceCPred( const SPK_VA::valarray<double>& cPredIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceCPred( cPredIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceCPred( cPredIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -729,9 +782,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceCRes( const SPK_VA::valarray<double>& cResIn )"     << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceCRes( cResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceCRes( cResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -743,9 +796,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceCWRes( const SPK_VA::valarray<double>& cWResIn )"    << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n = data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=N[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceCWRes( cWResIn[ SPK_VA::slice(k, N[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceCWRes( cWResIn[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
   oDataSet_h << endl;
@@ -969,7 +1022,7 @@ void NonmemTranslator::generateDataSet( ) const
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Open <presentation_data>
   //
-  oDataSet_h << "   o << \"<\" << \"presentation_data\" << \" rows=\\\"\" << A.N.sum() << \"\\\" \";" << endl;
+  oDataSet_h << "   o << \"<\" << \"presentation_data\" << \" rows=\\\"\" << A.NRecords.sum() << \"\\\" \";" << endl;
   oDataSet_h << "   o << \"columns=\\\"" << nColumns << "\\\">\" << endl;" << endl;
 
   //-----------------------------------------------------------------------------
@@ -1096,7 +1149,7 @@ void NonmemTranslator::generateDataSet( ) const
   // 
   oDataSet_h << "   for( int i=0, position=1; i<A.getPopSize(); i++ )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      for( int j=0; j<A.N[i]; j++, position++ )" << endl;
+  oDataSet_h << "      for( int j=0; j<A.NRecords[i]; j++, position++ )" << endl;
   oDataSet_h << "      {" << endl;
   oDataSet_h << "         o << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
 
