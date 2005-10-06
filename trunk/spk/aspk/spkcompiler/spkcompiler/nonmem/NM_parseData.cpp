@@ -642,6 +642,12 @@ void NonmemTranslator::parseData()
 	    }
 	  delete id;
 	}
+      if( (nSubjects > 1) && (getTarget() == IND) )
+        {
+          throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, 
+			      "Individual analysis was requested with a population data set!", __LINE__, __FILE__ );
+        }
+
       assert( nSubjects == getPopSize() ); 
       assert( nSubjects == tmp_ids.size() );
       N.resize( nSubjects );

@@ -105,6 +105,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       throw e;
     }
 
+  setPopSize( 1 );
 
   myIndTraceLevel = 1;
   myPopTraceLevel = 1;
