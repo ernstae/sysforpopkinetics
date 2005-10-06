@@ -32,7 +32,7 @@ ClientTranslator & ClientTranslator::operator=( const ClientTranslator& )
 ClientTranslator::ClientTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   : source       ( sourceIn ), 
     data         ( dataIn ),
-    popSize      ( 0 ),
+    popSize      ( 1 ),
     approximation( FO ),
     target       ( POP )
 
