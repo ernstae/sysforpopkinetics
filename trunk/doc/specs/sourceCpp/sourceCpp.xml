@@ -9,6 +9,14 @@
    <articleinfo>
       <revhistory>
          <revision>
+            <revnumber>1.25</revnumber>
+            <date>October 06, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Simulation error 11->16. Simulation failure 101->106.
+            </revremark>
+         </revision>
+         <revision>
             <revnumber>1.24</revnumber>
             <date>October 05, 2005</date>
             <authorinitials>sh</authorinitials>
@@ -1426,6 +1434,7 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <listitem>
                <para>
                Abnormal completion for unknown failures.
+               This shall result in submitting a bugzilla report.
                </para>
             </listitem>
          </varlistentry>
@@ -1434,14 +1443,6 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <listitem>
                <para>
                Normal completion but some known problem was detected during a file/directory access
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
-            <term>11</term>
-            <listitem>
-               <para>
-               Normal completion but some known problem was detected during data simulation.
                </para>
             </listitem>
          </varlistentry>
@@ -1478,6 +1479,14 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             </listitem>
          </varlistentry>
          <varlistentry>
+            <term>16</term>
+            <listitem>
+               <para>
+               Normal completion but some known problem was detected during data simulation.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
             <term>100</term>
             <listitem>
                <para>
@@ -1490,11 +1499,11 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <term>101</term>
             <listitem>
                <para>
-               Abnormal completion due to a unknown data simulation fatal failure.
-               This shall result in submitting a bugzilla report.
+               The value, 101, is reserved for C++ compilation error.
                </para>
             </listitem>
          </varlistentry>
+
          <varlistentry>
             <term>102</term>
             <listitem>
@@ -1526,6 +1535,15 @@ bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
             <listitem>
                <para>
                Abnormal completion due to some programmer's error.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>106</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown data simulation fatal failure.
+               This shall result in submitting a bugzilla report.
                </para>
             </listitem>
          </varlistentry>
