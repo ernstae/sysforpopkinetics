@@ -11,6 +11,7 @@
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
+#include "../DOMPrint.h"
 
 using namespace std;
 using namespace xercesc;
@@ -19,8 +20,9 @@ using namespace xercesc;
  * Look for a label/item.  If the label is found, return the position from the left (>=0).
  * If not found, return -1.
  */
-int NonmemTranslator::whereis( const XMLCh* x_label ) const
+int NonmemTranslator::whereis( DOMElement * dataset, const XMLCh* x_label ) const
 {
+  /*
   //
   // Precondition: The number of individuals has been determined.
   //
@@ -40,14 +42,16 @@ int NonmemTranslator::whereis( const XMLCh* x_label ) const
       sprintf( m, "Programming error!  The analysis type (individual/population) must have been determined!" );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-
+  */
   //
   // Determine if there's the ID field in the data set or not.
   //
+  /*
   DOMElement * spkdata   = getDataTree()->getDocumentElement();
   DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
   assert( datasets->getLength() == 1 );
   DOMElement  * dataset  = dynamic_cast<DOMElement*>( datasets->item(0) );
+  */
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   unsigned int recordNum = 0;
   for( int i=0; i<records->getLength(); i++ )
@@ -82,8 +86,7 @@ int NonmemTranslator::insertID( DOMElement * dataset )
 {
   // If ID is defined in the data set, don't need to do anything.
   int posID;
-  if( ( posID = whereis( X_ID ) ) >= 0 )
-    return posID;
+  assert( whereis( dataset, X_ID ) < 0 );
 
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   //
@@ -176,11 +179,10 @@ int NonmemTranslator::insertMDV( DOMElement * dataset )
 {
   // If MDV is defined in the data set, don't need to do anything.
   int posMDV;
-  if( (posMDV = whereis( X_MDV ) ) >= 0 )
-    return posMDV;
+  assert( whereis( dataset, X_MDV ) < 0 );
 
   // Determine if EVID exists in the data set.  If exists, where?
-  int posEVID = whereis( X_EVID );
+  int posEVID = whereis( dataset, X_EVID );
 
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   //
@@ -263,11 +265,10 @@ int NonmemTranslator::insertEVID( DOMElement * dataset )
 {
   // If EVID is defined in the data set, don't need to do anything.
   int posEVID;
-  if( (posEVID = whereis( X_EVID ) ) >= 0 )
-    return posEVID;
+  assert( whereis( dataset, X_EVID ) < 0 );
 
   // Determine if MDV exists in the data set.  MDV must exist when EVID is not present.
-  int posMDV = whereis( X_MDV );
+  int posMDV = whereis( dataset, X_MDV );
   if( posMDV < 0 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
@@ -327,6 +328,69 @@ int NonmemTranslator::insertEVID( DOMElement * dataset )
   // The EVID was appended at the last.
   return nItems;
 }
+/*
+ * Insert the AMT field if the data set lacks the field.
+ *
+ * AMT(i) = 0
+ *
+ * Returns the location (>=0) in which the AMT field can be found.
+ */
+int NonmemTranslator::insertAMT( DOMElement * dataset )
+{
+  // If AMT is defined in the data set, don't need to do anything.
+  int posAMT;
+  assert( whereis( dataset, X_AMT ) < 0 );
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  unsigned int recordNum=0;
+  const XMLCh* x_amt_val;
+  const XMLCh* X_0 = XMLString::transcode( "0.0" );
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      if( recordNum == 1 )
+	{
+	  x_amt_val = X_AMT;
+	}
+      else
+	{
+	  x_amt_val = X_0;
+	}
+
+      //  values  -> item(0)          
+      //             <value>ID</value>
+      //          -> item(1)
+      //             <value>TIME</value>
+      //          -> item(2)
+      //             <value>DV</value>
+      //          -> item(3)
+      //             <value>AMT</value>
+      DOMNode     * firstValueNode  = values->item(0);
+      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMText     * newTerminalNode = getDataTree()->createTextNode( x_amt_val );
+      newValueNode->appendChild( newTerminalNode );
+      records->item(i)->appendChild( newValueNode );
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
+
+  // The EVID was appended at the last.
+  return nItems;
+}
+
 
 void NonmemTranslator::parseData()
 {
@@ -399,9 +463,22 @@ void NonmemTranslator::parseData()
       DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
 
       // Warning: Do not change the order of the following three calls.
-      const int locID   = insertID( dataset );   // if no ID
-      //      const int locMDV  = insertMDV( dataset );  // if no MDV
-      //      const int locEVID = insertEVID( dataset ); // if no EVID 
+      int  locID, locAMT, locMDV, locEVID;
+      bool isID   = ( ( locID   = whereis( dataset, X_ID )   ) >= 0 );
+      bool isAMT  = ( ( locAMT  = whereis( dataset, X_AMT )  ) >= 0 );
+      bool isMDV  = ( ( locMDV  = whereis( dataset, X_MDV )  ) >= 0 );
+      bool isEVID = ( ( locEVID = whereis( dataset, X_EVID ) ) >= 0 );
+     
+      if( !isID )
+	locID = insertID( dataset );
+      if( !isAMT )
+	locAMT = insertAMT( dataset );
+      /*
+      if( !isMDV )
+	locMDV = insertMDV( dataset );
+      if( !isEVID )
+	locEVID = insertEVID( dataset );
+      */
 
       unsigned int nFields;
       if( !dataset->hasAttribute( X_COLUMNS ) )

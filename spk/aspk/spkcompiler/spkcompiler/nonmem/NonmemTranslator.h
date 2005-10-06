@@ -311,27 +311,27 @@ class NonmemTranslator : public ClientTranslator
   // constant strings used as <tag> names and values
   //---------------------------------------------------------
 
-  int whereis( const XMLCh* label ) const;
+  int whereis( xercesc::DOMElement* dataset, const XMLCh* label ) const;
 
   // SpkDataML tags & attributes;
-  static const char * C_SPKDATA;     XMLCh* X_SPKDATA;
-  static const char * C_VERSION;     XMLCh* X_VERSION;
-  static const char * C_POINTONE;    XMLCh* X_POINTONE;
-  static const char * C_TABLE;       XMLCh* X_TABLE;
-  static const char * C_COLUMNS;     XMLCh* X_COLUMNS;
-  static const char * C_ROWS;        XMLCh* X_ROWS;
-  static const char * C_DESCRIPTION; XMLCh* X_DESCRIPTION;
-  static const char * C_ROW;         XMLCh* X_ROW;
-  static const char * C_POSITION;    XMLCh* X_POSITION;
-  static const char * C_VALUE;       XMLCh* X_VALUE;
-  static const char * C_TYPE;        XMLCh* X_TYPE;
-  static const char * C_NUMERIC;     XMLCh* X_NUMERIC;
-  static const char * C_ID;          XMLCh* X_ID;
-  static const char * C_MDV;         XMLCh* X_MDV;
-  static const char * C_EVID;        XMLCh* X_EVID;
+  XMLCh* X_SPKDATA;                    static const char * C_SPKDATA;
+  XMLCh* X_VERSION;                    static const char * C_VERSION;
+  XMLCh* X_POINTONE;                   static const char * C_POINTONE;
+  XMLCh* X_TABLE;                      static const char * C_TABLE;
+  XMLCh* X_COLUMNS;                    static const char * C_COLUMNS;
+  XMLCh* X_ROWS;                       static const char * C_ROWS;
+  XMLCh* X_DESCRIPTION;                static const char * C_DESCRIPTION;
+  XMLCh* X_ROW;                        static const char * C_ROW;
+  XMLCh* X_POSITION;                   static const char * C_POSITION;
+  XMLCh* X_VALUE;                      static const char * C_VALUE;
+  XMLCh* X_TYPE;                       static const char * C_TYPE;
+  XMLCh* X_NUMERIC;                    static const char * C_NUMERIC;
+  XMLCh* X_ID;                         static const char * C_ID;
+  XMLCh* X_MDV;                        static const char * C_MDV;
+  XMLCh* X_EVID;                       static const char * C_EVID;
+  XMLCh* X_AMT;                        static const char * C_AMT;
 
   // SpkSourceML attributes  
-  //  XMLCh* X_DESCRIPTION;                static const char* C_DESCRIPTION;
   XMLCh* X_YES;                        static const char* C_YES;             
   XMLCh* X_NO;                         static const char* C_NO;
   XMLCh* X_FIXED;                      static const char* C_FIXED;
@@ -340,7 +340,6 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_UP;                         static const char* C_UP;
   XMLCh* X_DIAGONAL;                   static const char* C_DIAGONAL;
   XMLCh* X_BLOCK;                      static const char* C_BLOCK;
-  //  XMLCh* X_VALUE;                      static const char* C_VALUE;
   XMLCh* X_STRUCT;                     static const char* C_STRUCT;
   XMLCh* X_DIMENSION;                  static const char* C_DIMENSION;
   XMLCh* X_LABEL;                      static const char* C_LABEL;
@@ -487,6 +486,12 @@ class NonmemTranslator : public ClientTranslator
    * This routine assumes MDV is present or has been inserted by SPK Compiler in the data set.
    */
   int insertEVID( xercesc::DOMElement* dataset );
+
+  /**
+   * Insert the AMT field (ie. node) in each record (subtree) if the data set lacks of it.
+   * Returns the location in which the AMT field can be found.
+   */
+  int insertAMT( xercesc::DOMElement* dataset );
 
   //
   // Analyze the <pop_analysis> subtree.

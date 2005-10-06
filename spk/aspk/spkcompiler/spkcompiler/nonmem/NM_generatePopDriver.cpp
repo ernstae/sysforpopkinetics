@@ -82,16 +82,17 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                   UNKNOWN_ERROR        = 1,"   << endl;
   oPopDriver << "                   UNKNOWN_FAILURE      = 2,"   << endl;
   oPopDriver << "                   FILE_ACCESS_ERROR    = 10,"  << endl;
-  oPopDriver << "                   SIMULATION_ERROR     = 11,"  << endl;
   oPopDriver << "                   OPTIMIZATION_ERROR   = 12,"  << endl;
   oPopDriver << "                   STATISTICS_ERROR     = 13,"  << endl;
   oPopDriver << "                   USER_INPUT_ERROR     = 14,"  << endl;
   oPopDriver << "                   PROGRAMMER_ERROR     = 15,"  << endl;
+  oPopDriver << "                   SIMULATION_ERROR     = 16,"  << endl;
   oPopDriver << "                   FILE_ACCESS_FAILURE  = 100," << endl;
-  oPopDriver << "                   SIMULATION_FAILURE   = 101," << endl;
+  oPopDriver << "                   RESERVED_DO_NOT_USE  = 101," << endl;
   oPopDriver << "                   OPTIMIZATION_FAILURE = 102," << endl;
   oPopDriver << "                   STATISTICS_FAILURE   = 103," << endl;
-  oPopDriver << "                   PROGRAMMER_FAILURE   = 105"  << endl;
+  oPopDriver << "                   PROGRAMMER_FAILURE   = 105," << endl;
+  oPopDriver << "                   SIMULATION_FAILURE   = 106"  << endl;
   oPopDriver << "                 };"       << endl;
   oPopDriver << endl;
 

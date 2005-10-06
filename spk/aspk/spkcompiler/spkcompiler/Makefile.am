@@ -3,7 +3,7 @@ bin_PROGRAMS     = spkcompiler
 bindir           = /usr/local/bin/spktest
 noinst_LIBRARIES = libcommon.a
 AM_CXXFLAGS      = -g -I./nonmem
-AM_LDFLAGS       = -lxerces-c ./libcommon.a nonmem/libnonmem.a
+AM_LDFLAGS       = -lxerces-c nonmem/libnonmem.a ./libcommon.a
 
 MOSTLYCLEANFILES = libcommon.a 
 
@@ -15,6 +15,14 @@ spkcompiler_DEPENDENCIES = \
 	nonmem/libnonmem.a
 
 dist_libcommon_a_SOURCES = \
+        DOMPrint.h \
+        DOMPrint.cpp \
+        DOMPrintErrorHandler.cpp \
+        DOMPrintErrorHandler.hpp \
+        DOMPrintFilter.cpp \
+        DOMPrintFilter.hpp \
+        DOMTreeErrorReporter.cpp \
+        DOMTreeErrorReporter.hpp \
         client.h \
         series.h \
         series.cpp \

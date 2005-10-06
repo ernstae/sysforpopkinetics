@@ -85,24 +85,24 @@ if( actual != expected ) \\\n \
   //============================================
   // <Data Set>
   //
-  //   ID      TIME     CP=DV
-  //   1       0.0       0.0
-  //   2       0.0       0.0
-  //   2       1.0      10.0
-  //   3       0.0       0.0
-  //   3       1.0      10.0
-  //   3       2.0      20.0
-  //   4       0.0       0.0
-  //   4       1.0      10.0
-  //   4       2.0      20.0
-  //   4       3.0      25.0
+  //   ID      TIME     CP=DV     (AMT)
+  //   1       0.0       0.0       0.0
+  //   2       0.0       0.0       0.0
+  //   2       1.0      10.0       0.0
+  //   3       0.0       0.0       0.0
+  //   3       1.0      10.0       0.0
+  //   3       2.0      20.0       0.0
+  //   4       0.0       0.0       0.0
+  //   4       1.0      10.0       0.0 
+  //   4       2.0      20.0       0.0
+  //   4       3.0      25.0       0.0
   //============================================
   map<const char*, const char*> label_alias;
   const char *strID         = "ID";
   const char *strTIME       = "TiMe";
   const char *strDV         = "DV";
   const char *strCP         = "CP";
-  const char *label[]       = { strID, strDV, strTIME };
+  const char *label[]       = { strID, strTIME, strDV };
   const int    nLabels      = 3;
   const int    nIndividuals = 4;
   const int    nRecords     = 10;
@@ -713,23 +713,25 @@ void pop_basicTest::testIndDataClass()
   o << "   vector<char*>  a_id(n);" << endl;
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
+  o << "   vector<double> a_amt(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
     o << "   a_id  [" << i << "] = \"" << record[i][0] << "\";" << endl;
-    o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
-    o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
+    o << "   a_time[" << i << "] = "   << record[i][1] << ";" << endl;
+    o << "   a_dv  [" << i << "] = "   << record[i][2] << ";" << endl;
+    o << "   a_amt [" << i << "] = 0.0;" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time );" << endl;
+  o << "   IndData<double> A( n, a_id, a_time, a_dv, a_amt );" << endl;
 
   // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strCP   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strDV   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strDV   << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strCP   << "[" << i << "] );" << endl;
       // There have to be placeholders for the current values of theta/eta for
       // each call to Pred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;
@@ -853,11 +855,11 @@ void pop_basicTest::testDataSetClass()
      for( int i=0; i<N[j]; i++, k++ )
      {
        o << "   assert( strcmp( set.data[" << j << "]->" << strID << "[" << i << "], \"" << record[k][0] << "\" ) == 0 );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][1] << ", set.data[" << j << "]->" << strCP;
+       o << "   MY_ASSERT_EQUAL(  " << record[k][1] << ", set.data[" << j << "]->" << strTIME;
        o << "[" << i << "] );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][1] << ", set.data[" << j << "]->" << strDV;
+       o << "   MY_ASSERT_EQUAL(  " << record[k][2] << ", set.data[" << j << "]->" << strCP;
        o << "[" << i << "] );" << endl;
-       o << "   MY_ASSERT_EQUAL(  " << record[k][2] << ", set.data[" << j << "]->" << strTIME;
+       o << "   MY_ASSERT_EQUAL(  " << record[k][2] << ", set.data[" << j << "]->" << strDV;
        o << "[" << i << "] );" << endl;
      }
   }
@@ -990,7 +992,8 @@ void pop_basicTest::testPredClass()
   o << "   bool ok = true;" << endl;
   o << "   const int nIndividuals = " << nIndividuals << ";" << endl;
   o << "   DataSet< CppAD::AD<double> > set;" << endl;
-  o << "   const valarray<int> N = set.getN();" << endl;
+  o << "   const valarray<int> NObservs = set.getN();" << endl;
+  o << "   const valarray<int> NRecords = set.getNRecords();" << endl;
   o << "   Pred< CppAD::AD<double> > pred( &set );" << endl;
   o << "   const double C1 = 1.0;" << endl;
   o << "   const double C2 = 2.0;" << endl;
@@ -1002,16 +1005,17 @@ void pop_basicTest::testPredClass()
   o << "   const int etaOffset   = thetaLen;" << endl;
   o << "   const int epsOffset   = thetaLen + etaLen;" << endl;
   o << "   vector< CppAD::AD<double> > indepVar( thetaLen + etaLen + epsLen );" << endl;
-  o << "   double expectedF1[N.sum()];" << endl;
-  o << "   double expectedY1[N.sum()];" << endl;
+  o << "   double expectedF1[nIndividuals][NObservs.sum()];" << endl;
+  o << "   double expectedY1[nIndividuals][NObservs.sum()];" << endl;
+  o << "   int m;" << endl;
   o << endl;
   o << endl;
 
-  o << "   for( int who=0, k=0; who<nIndividuals; who++ )" << endl;
+  o << "   for( int who=0; who<nIndividuals; who++ )" << endl;
   o << "   {" << endl;
-  o << "      for( int j=0; j<N[who]; j++, k++ )" << endl;
+  o << "      for( int j=0; j<NRecords[who]; j++ )" << endl;
   o << "      {" << endl;
-  o << "         const int n           = N[who];" << endl;
+  o << "         const int n           = NObservs[who];" << endl;
   o << "         const int fOffset     = 0;" << endl;
   o << "         const int yOffset     = n;" << endl;
   o << "         vector< CppAD::AD<double> > depVar( n*2 );" << endl;
@@ -1033,37 +1037,39 @@ void pop_basicTest::testPredClass()
   o << "                    epsOffset,   epsLen ," << endl;
   o << "                    fOffset,     n, " << endl;
   o << "                    yOffset,     n, " << endl;
-  o << "                    who, j, " << endl;
+  o << "                    who, j, m," << endl;
   o << "                    indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualF = CppAD::Value(depVar[ fOffset + j ]);" << endl;
+  o << "         double actualF = CppAD::Value(depVar[ fOffset + m ]);" << endl;
   o << "         double KA = CppAD::Value( indepVar[thetaOffset+0] + indepVar[etaOffset+0] );" << endl;
   o << "         double KE = CppAD::Value( indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
-  o << "         expectedF1[k]  = KE*KA;" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], actualF );" << endl;
+  o << "         expectedF1[who][m]  = KE*KA;" << endl;
+  o << "         MY_ASSERT_EQUAL( expectedF1[who][m], actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualY = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  o << "         expectedY1[k]  = expectedF1[k] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY1[k], actualY );" << endl;
+  o << "         double actualY = CppAD::Value(depVar[ yOffset + m ]);" << endl;
+  o << "         expectedY1[who][m]  = expectedF1[who][m] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
+  o << "         MY_ASSERT_EQUAL( expectedY1[who][m], actualY );" << endl;
   o << "      }" << endl;
   o << "   } // End of the first complete iteration over j" << endl;
 
   // Test if the DataSet objects hold the complete set of computed values from the just-finished iteration.
-  o << "   for( int who=0, k=0; who<nIndividuals; who++ )" << endl;
+  o << "   for( int who=0; who<nIndividuals; who++ )" << endl;
   o << "   {" << endl;
-  o << "      for( int j=0; j<N[who]; j++, k++ )" << endl;
+  o << "      for( int j=0, m=0; j<NRecords[who]; j++ )" << endl;
   o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][2] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strPRED << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strF << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY1[k], set.data[who]->" << strY<< "[j] );" << endl;
+  o << "         if( set.getMeasurementIndex(who, j) != -1.0 )" << endl;
+  o << "         {" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][2] );" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][1] );" << endl;
+  o << "            MY_ASSERT_EQUAL( expectedF1[who][m], set.data[who]->" << strF << "[j] );" << endl;
+  o << "            MY_ASSERT_EQUAL( expectedY1[who][m], set.data[who]->" << strY<< "[j] );" << endl;
+  o << "            m++;" << endl;
+  o << "         }" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
-
 
   //
   // End of a complete iteration over j
@@ -1072,13 +1078,13 @@ void pop_basicTest::testPredClass()
   //---------------------------------------------------------------------------------
   // Incomplete iteration over j
   //
-  o << "   double expectedF2[N.sum()];" << endl;
-  o << "   double expectedY2[N.sum()];" << endl;
-  o << "   for( int who=1, k=0; who<nIndividuals; who++ )" << endl;
+  o << "   double expectedF2[nIndividuals][NObservs.sum()];" << endl;
+  o << "   double expectedY2[nIndividuals][NObservs.sum()];" << endl;
+  o << "   for( int who=1; who<nIndividuals; who++ )" << endl;
   o << "   {" << endl;
-  o << "      for( int j=0; j<1; j++, k++ )" << endl;
+  o << "      for( int j=0; j<1; j++ )" << endl;
   o << "      {" << endl;
-  o << "         const int n           = N[who];" << endl;
+  o << "         const int n           = NObservs[who];" << endl;
   o << "         assert( n>1 );" << endl;
   o << "         const int fOffset     = 0;" << endl;
   o << "         const int yOffset     = n;" << endl;
@@ -1098,35 +1104,39 @@ void pop_basicTest::testPredClass()
   o << "                    epsOffset,   epsLen ," << endl;
   o << "                    fOffset,     n, " << endl;
   o << "                    yOffset,     n, " << endl;
-  o << "                    who, j, " << endl;
+  o << "                    who, j, m," << endl;
   o << "                    indepVar, depVar );" << endl;
   // Test if F(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualF = CppAD::Value(depVar[ fOffset + j ]);" << endl;
+  o << "         double actualF = CppAD::Value(depVar[ fOffset + m ]);" << endl;
   o << "         double KA = CppAD::Value( indepVar[thetaOffset+0] + indepVar[etaOffset+0] );" << endl;
   o << "         double KE = CppAD::Value( indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
-  o << "         expectedF2[k]  = KE*KA;" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF2[k], actualF );" << endl;
+  o << "         expectedF2[who][m]  = KE*KA;" << endl;
+  o << "         MY_ASSERT_EQUAL( expectedF2[who][m], actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
-  o << "         double actualY = CppAD::Value(depVar[ yOffset + j ]);" << endl;
-  o << "         expectedY2[k]  = expectedF2[k] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY2[k], actualY );" << endl;
+  o << "         double actualY = CppAD::Value(depVar[ yOffset + m ]);" << endl;
+  o << "         expectedY2[who][m]  = expectedF2[who][m] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
+  o << "         MY_ASSERT_EQUAL( expectedY2[who][m], actualY );" << endl;
   o << "      }" << endl;
   o << "   } // End of the first complete iteration over j" << endl;
   // Test if the DataSet objects hold the complete set of computed values from the most recent complete iteration.
   o << "   for( int who=0, k=0; who<nIndividuals; who++ )" << endl;
   o << "   {" << endl;
-  o << "      for( int j=0; j<N[who]; j++, k++ )" << endl;
+  o << "      for( int j=0, m=0; j<NRecords[who]; j++ )" << endl;
   o << "      {" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
-  o << "         MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strPRED << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[k], set.data[who]->" << strF << "[j] );" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedY1[k], set.data[who]->" << strY << "[j] );" << endl;
+  o << "         if( set.getMeasurementIndex(who, j) != -1.0 )" << endl;
+  o << "         {" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
+  o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
+  o << "            MY_ASSERT_EQUAL( expectedF1[who][m], set.data[who]->" << strF << "[j] );" << endl;
+  o << "            MY_ASSERT_EQUAL( expectedY1[who][m], set.data[who]->" << strY << "[j] );" << endl;
+  o << "            m++;" << endl;
+  o << "         }" << endl;
   o << "      }" << endl;
   o << "   }" << endl;
+
   //
-  //  End of an incomplete iteration over j
+  //  End of an INcomplete iteration over j
   //---------------------------------------------------------------------------------
   o << "   return !ok;" << endl;
   o << "}" << endl;
@@ -1205,6 +1215,10 @@ void pop_basicTest::testDriver()
 }
 void pop_basicTest::testReportML()
 {
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Test driver.cpp to see if it compiles/links successfully.
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  printf( "\n--- %s ---\n", "Verifying the results" );
   const double scale = 0.05;
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1279,7 +1293,7 @@ void pop_basicTest::testReportML()
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( 1, n );
       obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );      
-      // CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_obj, obj_out, scale * nm_obj );
+      //      CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_obj, obj_out, scale * nm_obj );
     }
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1314,7 +1328,7 @@ void pop_basicTest::testReportML()
       for( int i=0; i<+n; i++ )
 	{
 	  omega_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
-	  //CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], scale * nm_omega[i] );
+	  //	  CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], scale * nm_omega[i] );
 	}
     }
 
@@ -1473,7 +1487,6 @@ CppUnit::Test * pop_basicTest::suite()
      new CppUnit::TestCaller<pop_basicTest>(
          "testIndDataClass", 
 	 &pop_basicTest::testIndDataClass ) );
-/*
   suiteOfTests->addTest( 
      new CppUnit::TestCaller<pop_basicTest>(
          "testDataSetClass", 
@@ -1486,11 +1499,6 @@ CppUnit::Test * pop_basicTest::suite()
      new CppUnit::TestCaller<pop_basicTest>(
          "testDriver", 
 	 &pop_basicTest::testDriver ) );
-  suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_basicTest>(
-         "testReportML", 
-	 &pop_basicTest::testReportML ) );
-*/
   return suiteOfTests;
 }
 
