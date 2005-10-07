@@ -917,16 +917,6 @@ std::ostream& operator<<(std::ostream& o, const SpkError& e)
 	m.erase( i, 1 );
 	m.insert( i, "&gt;" );
       }
-    for( int i = m.find( '\'', 0 ); i != string::npos; i = m.find( '\'', i ) )
-      {
-	m.erase( i, 1 );
-	m.insert( i, "&apos;" );
-      }
-    for( int i = m.find( '\"', 0 ); i != string::npos; i = m.find( '\"', i ) )
-      {
-	m.erase( i, 1 );
-	m.insert( i, "&quot;" );
-      }
 
   o << "<error code=\"" << e._errorcode << "\">" << endl;
   o << "<description>"  << SpkError::describe( e._errorcode ) << "</description>" << endl;
