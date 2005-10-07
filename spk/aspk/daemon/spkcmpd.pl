@@ -157,9 +157,6 @@ NOTE: Life-Cycle of the Working Directory Name
      reading the contents of the file named "job_id", which it created
      shortly after it created the directory.
 
-In the case of error ending, if the end_code is not "abrt", the daemon 
-sends an end-job email notice to the user on the user's request.
-
 =head1 RETURNS
 
 Nothing, because it has no parent (other than init) to which an exit
@@ -176,10 +173,9 @@ use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'de_q2c', 'de_q2ac', 'en_q2r', 'get_job_ids',
-          'end_job', 'get_cmp_jobs', 'get_dataset', 'email_for_job', 'get_mail_notice');
+          'end_job', 'get_cmp_jobs', 'get_dataset', 'email_for_job');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
-use IO::Socket::INET;
-use Sys::Hostname;
+
 
 my $database = shift;
 my $host     = shift;
@@ -187,11 +183,7 @@ my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
 
-my $mailserver = "smtp.washington.edu:25";
-my $hostname = hostname();
-my $from = "rfpksoft\@u.washington.edu";
-
-my $bugzilla_production_only = 1;
+my $bugzilla_production_only = 0;
 my $bugzilla_url = "http://192.168.2.2:8081/";
 
 my $service_root = "spkcmp";
@@ -398,16 +390,6 @@ sub fork_compiler {
       }
   }
 }
-sub escapeSpecialChars {
-    my $raw = shift;
-    my $xml = $raw;
-    $xml =~ s/&/&amp;/g;
-    $xml =~ s/'/&apos;/g;
-    $xml =~ s/"/&quot;/g;
-    $xml =~ s/</&lt;/g;
-    $xml =~ s/>/&gt;/g;
-    return $xml;
-}
 sub insert_error {
     my $daemon_text = shift;
     my $driver_text = shift;
@@ -419,7 +401,7 @@ sub insert_error {
     $daemon_text_xml    .= "<line_number>N/A</line_number>\n";
     $daemon_text_xml    .= "<message>";
     if ( $daemon_text ){
-       $daemon_text_xml .= escapeSpecialChars( $daemon_text );
+       $daemon_text_xml .= $daemon_text;
     }
     else{
        $daemon_text_xml .= "N/A";
@@ -433,11 +415,7 @@ sub insert_error {
        $driver_text_xml .= "\n<description>Assertion text from driver</description>\n";
        $driver_text_xml .= "<file_name>N/A</file_name>\n";
        $driver_text_xml .= "<line_number>N/A</line_number>\n";
-       $driver_text_xml .= "<message>";
-       if( $driver_text ){
-          $driver_text_xml .= escapeSpecialChars( $driver_text );
-       }
-       $driver_text_xml .= "</message>\n";
+       $driver_text_xml .= "<message>$driver_text</message>\n";
        $driver_text_xml .= "</error>\n";
     }
                                                                                                
@@ -523,25 +501,34 @@ sub reaper {
 	my $report = "";
 	my $end_code = "unkown";
 
+        $submit_to_bugzilla = 1;
+        if ($mode =~ "test") {
+           $submit_to_bugzilla = !$bugzilla_production_only;
+        }
 	if ($child_exit_value != 0) {
-	    $end_code = "serr";
+	    $end_code = "cerr";
 	    $err_msg .= "exit value = $child_exit_value; ";
+            $submit_to_bugzilla &= 0;
 	}
 	if ($child_signal_number == SIGABRT) {
 	    $end_code = "serr";
 	    $err_msg .= "compiler bug asserted; ";
+            $submit_to_bugzilla &= 1;
 	}
 	elsif ($child_signal_number == SIGTERM) {
 	    $end_code = "abrt";
 	    $err_msg .= "killed by operator; ";
+            $submit_to_bugzilla &= 1;
 	}
 	elsif ($child_signal_number == SIGSEGV) {
 	    $end_code = "herr";
 	    $err_msg .= "segmentation fault; ";
+            $submit_to_bugzilla &= 1;
 	}
 	elsif($child_signal_number != 0) {
 	    $end_code = "herr";
 	    $err_msg .= "killed with signal $child_signal_number; ";
+            $submit_to_bugzilla &= 1;
 	}
 
 	# Did the compiler find errors in the user's source?
@@ -553,7 +540,8 @@ sub reaper {
 	    $err_msg .= "compiler bug caught as exception; ";
 	    $end_code = "cerr";
 	    $remove_working_dir = 0;
-            $report = insert_error($err_msg, "", $report);
+            $submit_to_bugzilla &= 0;
+            #$report = insert_error($err_msg, "", $report);
 	}
 	# Did the compiler die because of a software fault?
 	elsif (-f $filename_serr && -s $filename_serr > 0){
@@ -563,13 +551,15 @@ sub reaper {
 	    $end_code = "serr";
 	    $err_msg .= "software bug caught as assertion; ";
             $remove_working_dir = 0;
+            $submit_to_bugzilla &= 1;
             $report = format_error_report( "$err_msg $err_rpt" );     
 	} 
         # Core dump?
         if( $child_dumped_core ){
-           $end_code = "cerr";
+           $end_code = "serr";
            $err_msg .= "core dump in $working_dir; ";
            $remove_working_dir = 0;
+            $submit_to_bugzilla &= 1;
            $report = format_error_report( "$err_msg $err_rpt" );     
         }
         # Remove the empty STDERR captured file
@@ -588,11 +578,12 @@ sub reaper {
         # End the job
 	&end_job($dbh, $job_id, $end_code, $report)
 	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
-	syslog('info', "job_id=$job_id $err_msg");
+	syslog('info', "job_id=$job_id $err_msg ($end_code)");
 
 	# Submit compiler bugs to bugzilla
-	if ($submit_to_bugzilla && ($end_code == "cerr" || $end_code == "serr")) {
-	    my $summary = $end_code == "cerr" ? "comp" : "soft";
+	if ($submit_to_bugzilla) {
+            #only serr and herr should be caught here.
+	    my $summary = $end_code == "serr" ? "soft" : "hard";
 	    my @args = ($pathname_bugzilla_submit);
 	    push @args, "--product",     $bugzilla_product;
 	    push @args, "--version",     $spk_version;
@@ -611,36 +602,15 @@ sub reaper {
 	    if ($exit_status != 0) {
 		syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
 	    }
-	}
-
-        # Send end-job email notice to the user if it is requested
-        if ($end_code ne "abrt") {
-            my $mail_notice = &get_mail_notice($dbh, $job_id);
-            if (defined $mail_notice && $mail_notice == 1) {
-                sendmail($job_id, $email);
-                syslog('info', "end-job email notice sent for job_id=$job_id from spkcmpd");
+            else {
+                syslog('info', "submited a bugzilla report for job $job_id");
             }
-        }
+	}
     }
     # Remove working directory if not needed
     if ($remove_working_dir && !$retain_working_dir) {
 	File::Path::rmtree($working_dir);
       }
-}
-sub sendmail {
-    my $job_id = shift;
-    my $to = shift;
-    my $status = "Your SPK job has ended due to an error in compilation.";
-    my $subject = "SPK job finished - Job ID: $job_id";
-    my $message = "This message was sent by the SPK service provider.\n$status";
-    my $socket = IO::Socket::INET->new($mailserver);
-    print $socket "HELO $hostname\r\n";
-    print $socket "MAIL FROM: <$from>\r\n";
-    print $socket "RCPT TO: <$to>\r\n";
-    print $socket "DATA\r\n";
-    print $socket "To: $to\nSubject: $subject\n$message\r\n";
-    print $socket ".\r\n";
-    close($socket);
 }
 sub start {
     # Open the system log and record that we have started
@@ -784,7 +754,7 @@ while(1) {
 	death("emerg", "error reading database: $Spkdb::errstr");
     }
     # Process any child processes which have terminated
-    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {
+    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {   
 	reaper($child_pid, $?);
         delete($jobid_pid{'jobid'});
     }
