@@ -362,7 +362,7 @@ void SpkErrorTest::specialCharsTest()
   expected << "<description>" << SpkError::describe( e.code() ) << "</description>" << endl;
   expected << "<file_name>" << e.filename() << "</file_name>" << endl;
   expected << "<line_number>" << e.linenum() << "</line_number>" << endl;
-  expected << "<message>" <<  "&lt;&amp;&gt;&quot;&apos;" << "</message>" << endl;
+  expected << "<message>" <<  "&lt;&amp;&gt;\"\'" << "</message>" << endl;
   expected << "</error>" << endl;
 
   actual << e;
