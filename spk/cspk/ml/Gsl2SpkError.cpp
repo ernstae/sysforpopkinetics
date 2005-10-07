@@ -39,9 +39,6 @@ extern "C" void Gsl2SpkError(
 
 	// copy the line number
 	Line = line; 
-
-	// write message to cerr
-	std::cerr << Message << std::endl;
 }
 
 void ThrowGsl2SpkError(
@@ -51,7 +48,7 @@ void ThrowGsl2SpkError(
 	// can only handel one error
 	assert( Buffer == 0 );
 
-	int Len = strlen(routine) + 2 + strlen(Message) + 1;
+	int Len = strlen(routine) + strlen(Message) + 4;
 	Buffer = new char[Len];
 	sprintf(Buffer, "\n%s:\n%s", routine, Message);
 	throw SpkException(
