@@ -59,7 +59,7 @@ $head error_list$$
 $index error_list$$
 This record contains a list of error messages accumulated during 
 the execution of program.  If no error occurred, this record is still
-present but as empty.
+present but it is empty.
 
 $head pop_monte_result$$
 $index pop_monte_result$$
@@ -167,6 +167,7 @@ $tref Subroutine$$
 $end
 */
 
+# include <memory>
 # include <cassert>
 # include <fstream>
 # include <valarray>
@@ -421,6 +422,24 @@ namespace {
 		}
 		pop_obj_stderror = sqrt( pop_obj_stderror);
 	}
+
+	void OutputErrorMsg(const char *msg)
+	{	using std::cout;
+		using std::endl;
+		cout << "<error_list>" << endl;
+		cout << msg            << endl;
+		cout << "<error_list>" << endl;
+		cout << "</spkreport>" << endl;
+	}
+
+	void OutputSpkException(const SpkException &e)
+	{	using std::cout;
+		using std::endl;
+		cout << "<error_list>" << endl;
+		cout << e              << endl;
+		cout << "<error_list>" << endl;
+		cout << "</spkreport>" << endl;
+	}
 }
 
 int main(int argc, const char *argv[])
@@ -430,13 +449,13 @@ int main(int argc, const char *argv[])
 	using std::cout;
 	using std::endl;
 	using std::valarray;
-
 	using namespace NonmemPars;
 
-        // start the output file
-        cout << "<?xml version=\"1.0\"?>" << endl;
-        cout << "<spkreport>" << endl;
-                                                                                                                     
+	const char *msg;
+
+	// start the output file
+	cout << "<?xml version=\"1.0\"?>" << endl;
+	cout << "<spkreport>" << endl;
 
 	// number_eval
 	valarray<int>  number_eval = MontePars::numberEval;
@@ -474,83 +493,109 @@ int main(int argc, const char *argv[])
 		break;
 
 		default:
-		cerr << "monteDriver: ";
-		cerr << "method is not one of the following:" << endl;
-		cerr << "analytic, grid, plain, miser, or vegas" << endl;
+		msg = "monteDriver\n"
+		      "Method is not one of the following:\n"
+		      "analytic, grid, plain, miser, or vegas";
+		OutputErrorMsg(msg);
 		return USER_INPUT_ERROR;
 	}
 	if( analytic && NonmemPars::nEta != 1 )
-	{	cerr << "monteDriver: ";
-		cerr << "method is analytic and nEta != 1" << endl;
+	{	msg = "monteDriver\n"
+		      "Method is analytic and nEta != 1"; 
+		OutputErrorMsg(msg);
 		return USER_INPUT_ERROR;
 	}
 
 	size_t i;
 	for(i = 0; i < number_eval.size(); i++)
 	{	if( number_eval[i] <= 0 )
-		{	cerr << "monteDriver: ";
-			cerr << "number_eval is not greater than zero" << endl;
+		{	msg = "monteDriver\n"
+			       "number_eval is not greater than zero";
+			OutputErrorMsg(msg);
 			return USER_INPUT_ERROR;
 		}
 	}
 
-    // pointer to model 
-    PopPredModel *model = 0; // initialize as not constructed
-    try{
-	// data set
-	DataSet< CppAD::AD<double> > set;
-	Pred< CppAD::AD<double> > mPred(&set);
+	// pointers to objects created inside of try block
+	std::auto_ptr< DataSet< CppAD::AD<double> > > set; 
+	std::auto_ptr< Pred< CppAD::AD<double> > > mPred;
 
-	const int nPop = set.getPopSize();
-	if( nPop <= 0 )
-	{	cerr << "monteDriver: DataSet.getPopSize() <= 0 " << endl;
+	try { 
+		// data set
+		set.reset( new DataSet< CppAD::AD<double> > );
+		mPred.reset( new Pred< CppAD::AD<double> >(set.get()) );
+	}
+	catch( SpkException& e )
+	{       e.push(SpkError::SPK_USER_INPUT_ERR,
+			"DataSet or Pred constructor",
+			__LINE__,
+			__FILE__
+		);
+		OutputSpkException( e );
 		return USER_INPUT_ERROR;
 	}
-	valarray<int> N = set.getN();
+	catch( ... )
+	{	OutputErrorMsg("DataSet or Pred constructor");
+		return   UNKNOWN_FAILURE;
+	}
+
+	const int nPop = set->getPopSize();
+	if( nPop <= 0 )
+	{	msg = "monteDriver\n"
+		      "DataSet.getPopSize() is less than or equal 0";
+		OutputErrorMsg(msg);
+		return USER_INPUT_ERROR;
+	}
+	valarray<int> N = set->getN();
 	for(i = 0; i < nPop; i++)
 	{	if( N[i] <= 0 )
-		{	cerr << "monteDriver: DataSet.getN() <= 0" << endl;
+		{	msg = "monteDriver\n"
+			      "DataSet.getN() is less than or equal 0";
+			OutputErrorMsg(msg);
 			return USER_INPUT_ERROR;
 		}
 	}
-	valarray<double> y = set.getAllMeasurements();
+	valarray<double> y = set->getAllMeasurements();
 	const int nY = N.sum();
 	if( nY != y.size() )
-	{	cerr << "monteDriver: y.size != N[0] + ... + N[M-1]" << endl;
+	{	msg = "monteDriver\n"
+		      "y.size != N[0] + ... + N[M-1]";
+		OutputErrorMsg(msg);
 		return USER_INPUT_ERROR;
 	}
 
-       try {   // model constructor
-               model = new PopPredModel(
-                       mPred,
-                       nTheta,
-                       thetaLow,
-                       thetaUp,
-                       thetaIn,
-                       nEta,
-                       etaIn,
-                       nEps,
-                       omegaStruct,
-                       omegaIn,
-                       sigmaStruct,
-                       sigmaIn
-               );
-       }
-       catch( const SpkException& e )
-       {       cout << "<error_list>" << endl;
-               cout << "Known exception in model contructor:" << std::endl;
-               cout << e << endl;
-               cout << "</error_list>" << endl;
-               cout << "</spkreport>" << endl;
-               return OTHER_KNOWN_ERROR;
-       }
-       catch( ... )
-       {       cout << "<error_list>" << endl;
-               cout << "Unknown exception in model contructor:" << std::endl;
-               cout << "</error_list>" << endl;
-               cout << "</spkreport>" << endl;
-               return UNKNOWN_FAILURE;
-       }
+	// pointers to object created inside of try block
+	std::auto_ptr< PopPredModel > model;
+
+	try {   // model constructor
+		model.reset( new PopPredModel(
+			*mPred,
+			nTheta,
+			thetaLow,
+			thetaUp,
+			thetaIn,
+			nEta,
+			etaIn,
+			nEps,
+			omegaStruct,
+			omegaIn,
+			sigmaStruct,
+			sigmaIn
+		) );
+	}
+	catch( SpkException& e )
+	{       e.push(SpkError::SPK_USER_INPUT_ERR,
+			"Model constructor",
+			__LINE__,
+			__FILE__
+		);
+		OutputSpkException( e );
+		return USER_INPUT_ERROR;
+	}
+	catch( ... )
+	{	OutputErrorMsg("Model constructor");
+		return   UNKNOWN_FAILURE;
+	}
 
 	// get the input value for the fixed effects as a single vector
 	const int nAlp = model->getNPopPar();
@@ -641,26 +686,23 @@ int main(int argc, const char *argv[])
 			obj_std[index]   = obj_std[1];
 		}
 	}
-	catch( const SpkException& e )
-	{	cout << "<error_list>" << endl;
-		cout << e << endl;
-		cout << "</error_list>" << endl;
-	        cout << "</spkreport>" << endl; 
-                if( e.find( SpkError::SPK_USER_INPUT_ERR ) >= 0 )
-                   return USER_INPUT_ERROR;
-                else
-		   return POST_OPT_ERROR;
+	catch( SpkException& e )
+	{       e.push(SpkError::SPK_USER_INPUT_ERR,
+			"Monte Carlo or grid integration",
+			__LINE__,
+			__FILE__
+		);
+		OutputSpkException( e );
+		return USER_INPUT_ERROR;
 	}
 	catch( ... )
-	{	cout << "<error_list>" << endl;
-		cout << "Unknown exception occurred";
-		cout << "</error_list>" << endl;
-	        cout << "</spkreport>" << endl; 
-		return POST_OPT_FAILURE;
+	{	OutputErrorMsg("Monte Carlo or grid integration");
+		return   UNKNOWN_FAILURE;
 	}
 
-        // Estimates completed successfully.  Print out emtpy <error_list>.
-        cout << "<error_list/>" << endl;
+	// Estimates completed successfully.  Print out emtpy <error_list>.
+	cout << "<error_list>"  << endl;
+	cout << "</error_list>" << endl;
 
 	timeval timeEnd;
 	gettimeofday( &timeEnd, NULL );
@@ -686,32 +728,9 @@ int main(int argc, const char *argv[])
 
 
 	// return from main program
-        cout << "</pop_monte_result>" << endl;
+	cout << "</pop_monte_result>" << endl;
 	cout << "</spkreport>" << endl; 
 
-        // Clean up
-        delete model;
-   }
-   catch( const SpkException& e )
-   {       // check if model has been constructed
-           if( model != 0 )
-                 delete model;      
-           cout << "<error_list>" << endl;
-           cout << e << endl;
-           cout << "</error_list>" << endl;
-           cout << "</spkreport>" << endl;
-           if( e.find( SpkError::SPK_USER_INPUT_ERR ) >= 0 )
-              return USER_INPUT_ERROR;
-           else
-              return POST_OPT_ERROR;
-   }
-   catch( ... )
-   {       
-           cout << "<error_list>" << endl;
-           cout << "Unknown exception occurred";
-           cout << "</error_list>" << endl;
-           cout << "</spkreport>" << endl;
-           return POST_OPT_FAILURE;
-   }
-   return SUCCESSFUL;
+	// automatic cleanup by auto_ptr
+	return SUCCESSFUL;
 }
