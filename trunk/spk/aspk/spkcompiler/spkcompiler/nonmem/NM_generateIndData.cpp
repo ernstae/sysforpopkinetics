@@ -737,16 +737,33 @@ void NonmemTranslator::generateIndData( ) const
   
   if( myIsMissingMdv )
     {
-      if( table->findi( KeyStr.AMT ) == Symbol::empty() )
+      if( table->findi( KeyStr.EVID ) == Symbol::empty() )
 	{
-	  oIndData_h << "        assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
-	  oIndData_h << "        jPrimeToj[jPrime] = j;" << endl;
-	  oIndData_h << "        jTojPrime[j] = jPrime;" << endl;
-	  oIndData_h << "        jPrime++;" << endl;
+	  if( table->findi( KeyStr.AMT ) == Symbol::empty() )
+	    {
+	      oIndData_h << "        assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
+	      oIndData_h << "        jPrimeToj[jPrime] = j;" << endl;
+	      oIndData_h << "        jTojPrime[j] = jPrime;" << endl;
+	      oIndData_h << "        jPrime++;" << endl;
+	    }
+	  else
+	    {
+	      oIndData_h << "        if( " << UserStr.AMT << "[j] == 0 )" << endl;
+	      oIndData_h << "        {" << endl;
+	      oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
+	      oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
+	      oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
+	      oIndData_h << "           jPrime++;" << endl;
+	      oIndData_h << "        }" << endl;
+	      oIndData_h << "        else" << endl;
+	      oIndData_h << "        {" << endl;
+	      oIndData_h << "           jTojPrime[j] = -1;" << endl;
+	      oIndData_h << "        }" << endl;
+	    }
 	}
       else
 	{
-	  oIndData_h << "        if( " << UserStr.AMT << "[j] == 0 )" << endl;
+	  oIndData_h << "        if( " << UserStr.EVID << "[j] == 0 )" << endl;
 	  oIndData_h << "        {" << endl;
 	  oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
 	  oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
