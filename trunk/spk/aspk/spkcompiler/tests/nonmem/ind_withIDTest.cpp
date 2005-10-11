@@ -869,17 +869,15 @@ void ind_withIDTest::testIndDataClass()
   o << "   vector<char*>  a_id(n);" << endl;
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
-  o << "   vector<double> a_amt(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
     {
       o << "   a_id  [" << i << "] = \"" << record[i][0] << "\";" << endl;
       o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
       o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
-      o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
     }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_amt );" << endl;
+  o << "   IndData<double> A( n, a_id, a_dv, a_time );" << endl;
 
   // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
@@ -888,7 +886,6 @@ void ind_withIDTest::testIndDataClass()
       o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strCP   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strDV   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strTIME << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << 0.0 << ", A." << strAMT << "[" << i << "] );" << endl;
       // There have to be placeholders for the current values of theta/eta for
       // each call to Pred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;

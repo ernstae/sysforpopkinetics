@@ -114,8 +114,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
 
   oIndDriver << "      DataSet< CppAD::AD<double> > set;" << endl;
-  oIndDriver << "      const int nY = set.getNObservs( 0 );" << endl;
-  oIndDriver << "      valarray<double> y( nY );" << endl;
+  oIndDriver << "      const int nObservs = set.getNObservs( 0 );" << endl;
+  oIndDriver << "      valarray<double> y( nObservs );" << endl;
   oIndDriver << endl;
   
   oIndDriver << "      const bool isSimRequested     = " << ( myIsSimulate? "true":"false" ) << ";" << endl;
@@ -158,15 +158,15 @@ void NonmemTranslator::generateIndDriver( ) const
     {
       oIndDriver << "      OdePred<CppAD::AD<double> > mPred( &set, " << endl;
       oIndDriver << "                                         nPop, " << endl;
-      oIndDriver << "                                         NonmemPars::isPkFunctionOfT," << endl;
-      oIndDriver << "                                         NonmemPars::nCompartments," << endl;
-      oIndDriver << "                                         NonmemPars::nParameters," << endl;
-      oIndDriver << "                                         NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                                         NonmemPars::isPkFunctionOfT,"        << endl;
+      oIndDriver << "                                         NonmemPars::nCompartments,"          << endl;
+      oIndDriver << "                                         NonmemPars::nParameters,"            << endl;
+      oIndDriver << "                                         NonmemPars::defaultDoseComp,"        << endl;
       oIndDriver << "                                         NonmemPars::defaultObservationComp," << endl;
-      oIndDriver << "                                         NonmemPars::initialOff," << endl;
-      oIndDriver << "                                         NonmemPars::noOff," << endl;
-      oIndDriver << "                                         NonmemPars::noDose," << endl;
-      oIndDriver << "                                         NonmemPars::relTol" << endl;
+      oIndDriver << "                                         NonmemPars::initialOff,"             << endl;
+      oIndDriver << "                                         NonmemPars::noOff,"                  << endl;
+      oIndDriver << "                                         NonmemPars::noDose,"                 << endl;
+      oIndDriver << "                                         NonmemPars::relTol"                  << endl;
       oIndDriver << "                                       );" << endl;
     }
   oIndDriver << "      IndPredModel model( mPred, "                  << endl;
@@ -190,27 +190,27 @@ void NonmemTranslator::generateIndDriver( ) const
     }
   else // ADVAN3
     {
-      oIndDriver << "      OdePred<CppAD::AD<double> > predForDisposal( &set, " << endl;
-      oIndDriver << "                                         nPop, " << endl;
-      oIndDriver << "                                         NonmemPars::isPkFunctionOfT," << endl;
-      oIndDriver << "                                         NonmemPars::nCompartments," << endl;
-      oIndDriver << "                                         NonmemPars::nParameters," << endl;
-      oIndDriver << "                                         NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "      OdePred<CppAD::AD<double> > predForDisposal( &set, "                    << endl;
+      oIndDriver << "                                         nPop, "                              <<  endl;
+      oIndDriver << "                                         NonmemPars::isPkFunctionOfT,"        << endl;
+      oIndDriver << "                                         NonmemPars::nCompartments,"          << endl;
+      oIndDriver << "                                         NonmemPars::nParameters,"            << endl;
+      oIndDriver << "                                         NonmemPars::defaultDoseComp,"        << endl;
       oIndDriver << "                                         NonmemPars::defaultObservationComp," << endl;
-      oIndDriver << "                                         NonmemPars::initialOff," << endl;
-      oIndDriver << "                                         NonmemPars::noOff," << endl;
-      oIndDriver << "                                         NonmemPars::noDose," << endl;
-      oIndDriver << "                                         NonmemPars::relTol" << endl;
+      oIndDriver << "                                         NonmemPars::initialOff,"             << endl;
+      oIndDriver << "                                         NonmemPars::noOff,"                  << endl;
+      oIndDriver << "                                         NonmemPars::noDose,"                 << endl;
+      oIndDriver << "                                         NonmemPars::relTol"                  << endl;
       oIndDriver << "                                       );" << endl;
     }
-  oIndDriver << "      IndPredModel modelForDisposal( predForDisposal, "                       << endl;
-  oIndDriver << "                          NonmemPars::nTheta, "     << endl;
-  oIndDriver << "                          NonmemPars::thetaLow, "   << endl;
-  oIndDriver << "                          NonmemPars::thetaUp, "    << endl;
-  oIndDriver << "                          NonmemPars::thetaIn, "    << endl;
-  oIndDriver << "                          NonmemPars::nEta, "       << endl;
-  oIndDriver << "                          NonmemPars::omegaStruct," << endl;
-  oIndDriver << "                          NonmemPars::omegaIn );"   << endl;
+  oIndDriver << "      IndPredModel modelForDisposal( predForDisposal, " << endl;
+  oIndDriver << "                          NonmemPars::nTheta, "         << endl;
+  oIndDriver << "                          NonmemPars::thetaLow, "       << endl;
+  oIndDriver << "                          NonmemPars::thetaUp, "        << endl;
+  oIndDriver << "                          NonmemPars::thetaIn, "        << endl;
+  oIndDriver << "                          NonmemPars::nEta, "           << endl;
+  oIndDriver << "                          NonmemPars::omegaStruct,"     << endl;
+  oIndDriver << "                          NonmemPars::omegaIn );"       << endl;
   oIndDriver << "      //" << endl;
   oIndDriver << "      //////////////////////////////////////////////////////////////////////" << endl;
   oIndDriver << endl;
@@ -266,7 +266,7 @@ void NonmemTranslator::generateIndDriver( ) const
 
   oIndDriver << "      timeval statBegin, statEnd;"                         << endl;
   oIndDriver << "      double statTimeSec = 0.0;"                           << endl;
-  oIndDriver << "      const int nDegOfFreedom = nY - nB;"                  << endl;
+  oIndDriver << "      const int nDegOfFreedom = nObservs - nB;"            << endl;
   oIndDriver << "      valarray<double> bCov( nB * nB );"                   << endl;
   oIndDriver << "      valarray<double> stdPar( nB );"                      << endl;
   oIndDriver << "      valarray<double> stdPar_b( nB * nB );"               << endl;
@@ -283,18 +283,18 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      valarray<double> stdParConfidenceOut( 2 * nB );"   << endl;
   oIndDriver << "      valarray<double> stdParInvCovOut( nB * nB );"      << endl;
 	  
-  oIndDriver << "      valarray<double> f_bOut( nY * nB );"      << endl;
-  oIndDriver << "      valarray<double> R_bOut( nY * nY * nB );" << endl;
-  oIndDriver << "      valarray<double> RInvOut( nY * nY );"     << endl;
+  oIndDriver << "      valarray<double> f_bOut( nObservs * nB );"      << endl;
+  oIndDriver << "      valarray<double> R_bOut( nObservs * nObservs * nB );" << endl;
+  oIndDriver << "      valarray<double> RInvOut( nObservs * nObservs );"     << endl;
   oIndDriver << endl;
 
   oIndDriver << "      const int nRecords = set.getNRecords(0);" << endl;
-  oIndDriver << "      valarray<double> iPredOut              ( nRecords );"      << endl;
-  oIndDriver << "      valarray<double> iResOut               ( nRecords );"      << endl;
-  oIndDriver << "      valarray<double> iResWtdOut            ( nRecords );"    << endl;
-  oIndDriver << "      valarray<double> iPredTrancatedOut     ( nY );"      << endl;
-  oIndDriver << "      valarray<double> iResTrancatedOut      ( nY );"      << endl;
-  oIndDriver << "      valarray<double> iResWtdTrancatedOut   ( nY );"    << endl;
+  oIndDriver << "      valarray<double> iPredOut              ( nRecords );"  << endl;
+  oIndDriver << "      valarray<double> iResOut               ( nRecords );"  << endl;
+  oIndDriver << "      valarray<double> iResWtdOut            ( nRecords );"  << endl;
+  oIndDriver << "      valarray<double> iPredTrancatedOut     ( nObservs );"  << endl;
+  oIndDriver << "      valarray<double> iResTrancatedOut      ( nObservs );"  << endl;
+  oIndDriver << "      valarray<double> iResWtdTrancatedOut   ( nObservs );"  << endl;
   oIndDriver << endl;
 
   oIndDriver << "      ofstream oResults;" << endl;
@@ -318,10 +318,10 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         /*******************************************************************/" << endl;
   oIndDriver << "         if( isSimRequested )" << endl;
   oIndDriver << "         {" << endl;
-  oIndDriver << "            valarray<double> yOut( nY );" << endl;
+  oIndDriver << "            valarray<double> yOut( nObservs );" << endl;
   oIndDriver << "            try" << endl;
   oIndDriver << "            {" << endl;
-  oIndDriver << "               simulate( model, nY, bIn, yOut );" << endl;
+  oIndDriver << "               simulate( model, nObservs, bIn, yOut );" << endl;
   oIndDriver << "               set.replaceAllMeasurements( yOut );" << endl;
   oIndDriver << "               y = yOut;" << endl;
   oIndDriver << "               haveCompleteData = true;" << endl;
@@ -430,13 +430,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            optTimeSec = difftime( optEnd.tv_sec, optBegin.tv_sec );" << endl;
   oIndDriver << "         }" << endl;
   oIndDriver << endl;
-  // Statistics can be only computed when the parameter estimation has been done.
-  oIndDriver << "STATISTICS:" << endl;
-  oIndDriver << "         /*******************************************************************/" << endl;
-  oIndDriver << "         /*                                                                 */" << endl;
-  oIndDriver << "         /*   Statistics                                                    */" << endl;
-  oIndDriver << "         /*                                                                 */" << endl;
-  oIndDriver << "         /*******************************************************************/" << endl;
   oIndDriver << "         if( isOptRequested && isOptSuccess )" << endl;
   oIndDriver << "         {" << endl;
   oIndDriver << "            assert( haveCompleteData );" << endl;
@@ -474,7 +467,15 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            set.replaceRes  ( iResOut );"    << endl;
   oIndDriver << "            set.replaceWRes ( iResWtdOut );" << endl;
   oIndDriver << "         }" << endl;
-  oIndDriver << "         if( isStatRequested && isOptRequested && isOptSuccess )" << endl;
+ 
+  // Statistics can be only computed when the parameter estimation has been done.
+  oIndDriver << "STATISTICS:" << endl;
+  oIndDriver << "         /*******************************************************************/" << endl;
+  oIndDriver << "         /*                                                                 */" << endl;
+  oIndDriver << "         /*   Statistics                                                    */" << endl;
+  oIndDriver << "         /*                                                                 */" << endl;
+  oIndDriver << "         /*******************************************************************/" << endl;
+ oIndDriver << "         if( isStatRequested && isOptRequested && isOptSuccess )" << endl;
   oIndDriver << "         {" << endl;
   oIndDriver << "            gettimeofday( &statBegin, NULL );"     << endl;
   oIndDriver << "            try" << endl;

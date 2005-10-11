@@ -24,11 +24,11 @@
 #include "pop_advan6Test.h"
 #include "ind_dataSetTest.h"
 #include "pop_dataSetTest.h"
+#include "pop_insertDataItemsTest.h"
 
 #include "countStrInLhsTest.h"
 #include "linInterpTest.h"
 #include "linInterpTest.h"
-
 using namespace std;
 using namespace CppUnit;
 
@@ -110,6 +110,9 @@ int main( int argc, const char * argv[] )
   // Test for Linear Interpolation
   master[ "ind_dataSetTest" ] = ind_dataSetTest::suite();
   master[ "pop_dataSetTest" ] = pop_dataSetTest::suite();
+
+  // Inserting missing data items
+  master[ "pop_insertDataItemsTest" ] = pop_insertDataItemsTest::suite();
 
   if( argc == 1 )
     {

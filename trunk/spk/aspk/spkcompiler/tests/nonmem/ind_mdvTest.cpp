@@ -635,7 +635,6 @@ void ind_mdvTest::testIndDataClass()
   o << "   vector<double> a_time(nRecords);" << endl;
   o << "   vector<double> a_dv(nRecords);" << endl;
   o << "   vector<double> a_mdv(nRecords);" << endl;
-  o << "   vector<double> a_amt(nRecords);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
@@ -643,10 +642,9 @@ void ind_mdvTest::testIndDataClass()
     o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
     o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
     o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
-    o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
   }
 
-  o << "   IndData<double> A( nRecords, a_id, a_dv, a_time, a_mdv, a_amt );" << endl;
+  o << "   IndData<double> A( nRecords, a_id, a_dv, a_time, a_mdv );" << endl;
 
   o << "   MY_ASSERT_EQUAL( nRecords, A.getNRecords() );" << endl;
   o << "   MY_ASSERT_EQUAL( nObservs, A.getNObservs() );" << endl;

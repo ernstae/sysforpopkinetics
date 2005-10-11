@@ -82,5 +82,7 @@ testall_SOURCES      = \
                        ind_dataSetTest.h \
                        pop_dataSetTest.cpp \
                        pop_dataSetTest.h \
+                       pop_insertDataItemsTest.cpp \
+                       pop_insertDataItemsTest.h \
 		       ../../config.h
 

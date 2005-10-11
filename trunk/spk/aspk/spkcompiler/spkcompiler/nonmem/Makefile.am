@@ -21,6 +21,7 @@ dist_libnonmem_a_SOURCES = \
         NonmemTranslator.cpp \
         NonmemTranslator.h \
 	NM_detAnalysisType.cpp \
+	NM_detModelType.cpp \
 	NM_parseData.cpp \
 	NM_parseSource.cpp \
         NM_parseMonte.cpp \

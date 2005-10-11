@@ -686,7 +686,6 @@ void pop_mdvTest::testIndDataClass()
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_mdv(n);" << endl;
-  o << "   vector<double> a_amt(n);" << endl;
  
   for( int i=0; i<nRecords; i++ )
   {
@@ -694,17 +693,15 @@ void pop_mdvTest::testIndDataClass()
     o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
     o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
     o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
-    o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv, a_amt );" << endl;
+  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv );" << endl;
 
   // { ID, DV=CP, TIME, MDV }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strMDV  << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << 0.0 << ", A." << strAMT  << "[" << i << "] );" << endl;
       o << endl;
     }
   o << endl;  
