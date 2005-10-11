@@ -22,36 +22,7 @@ using namespace xercesc;
  */
 int NonmemTranslator::whereis( DOMElement * dataset, const XMLCh* x_label ) const
 {
-  /*
-  //
-  // Precondition: The number of individuals has been determined.
-  //
-  if( getPopSize() <= 0 )
-    {
-      char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Programming error!  The population size must have been determined!" );
-      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
-    }
 
-  //
-  // Precondition: The type of analysis has been determined.
-  //
-  if( getTarget() != POP && getTarget() != IND )
-    {
-      char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Programming error!  The analysis type (individual/population) must have been determined!" );
-      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
-    }
-  */
-  //
-  // Determine if there's the ID field in the data set or not.
-  //
-  /*
-  DOMElement * spkdata   = getDataTree()->getDocumentElement();
-  DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
-  assert( datasets->getLength() == 1 );
-  DOMElement  * dataset  = dynamic_cast<DOMElement*>( datasets->item(0) );
-  */
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   unsigned int recordNum = 0;
   for( int i=0; i<records->getLength(); i++ )
@@ -165,170 +136,6 @@ int NonmemTranslator::insertID( DOMElement * dataset )
   return 0;
 }
 /*
- * Insert the MDV field if the data set lacks the field.
- *
- * Initialize MDV in the following way:
- *    MDV(i) = 0 for no EVID.
- *    MDV(i) = (EVID(i)==0? 0 : 1) if EVID is given.
- * The initial values may be altered later once this data is
- * passed to a specific client translator.
- *
- * Returns the location (>=0) in which the ID field can be found.
- */
-int NonmemTranslator::insertMDV( DOMElement * dataset )
-{
-  // If MDV is defined in the data set, don't need to do anything.
-  int posMDV;
-  assert( whereis( dataset, X_MDV ) < 0 );
-
-  // Determine if EVID exists in the data set.  If exists, where?
-  int posEVID = whereis( dataset, X_EVID );
-
-  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
-  //
-  // Case 1: no EVID in the data set
-  // Assign 0 (no) to all values of MDV.
-  // 
-  // Case 2: EVID presents
-  // Assign 0 to these MDV values if the corresponding EVID!=0 (EVID=0 is observation)
-  // and 1 to the rest (i.e. non-observations).
-  //
-  unsigned int recordNum=0;
-  const XMLCh* x_mdv_val;
-  const XMLCh* X_0 = XMLString::transcode( "0" );
-  const XMLCh* X_1 = XMLString::transcode( "1" );
-  for( int i=0; i<records->getLength(); i++ )
-    {
-      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
-      XMLString::textToBin( x_position, recordNum );
-      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
-      if( recordNum == 1 )
-	{
-	  x_mdv_val = X_MDV;
-	}
-      else
-	{
-	  if( posEVID >= 0 )
-	  {
-	    unsigned int evid = 0;
-	    // Converting the value of EVID on i-th record to an integer.
-	    XMLString::textToBin( dynamic_cast<DOMElement*>(values->item(posEVID))->getFirstChild()->getNodeValue(), evid );
-	    if( evid == 1 )
-	      x_mdv_val = X_1;
-	  }
-	  else
-	    {
-	      x_mdv_val = X_0;
-	    }
-	}
-
-      //  values  -> item(0)          
-      //             <value>ID</value>
-      //          -> item(1)
-      //             <value>TIME</value>
-      //          -> item(2)
-      //             <value>DV</value>
-      //          -> item(3)
-      //             <value>EVID</value>
-      DOMNode     * firstValueNode  = values->item(0);
-      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
-      DOMText     * newTerminalNode = getDataTree()->createTextNode( x_mdv_val );
-      newValueNode->appendChild( newTerminalNode );
-      records->item(i)->appendChild( newValueNode );
-    }
-  
-  unsigned int nItems = 0;
-  char c_nItemsPlus1[ 56 ];
-  if( !dataset->hasAttribute( X_COLUMNS ) )
-    {
-      char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
-      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
-    }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
-			    nItems );
-  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
-
-  // The MDV was appended at the last.
-  return nItems;
-}
-/*
- * Insert the EVID field if the data set lacks the field.
- *
- * EVID(i) = 0 if no MDV
- * EVID(i) = MDV(i) if MDV is given.
- *
- * Returns the location (>=0) in which the EVID field can be found.
- */
-int NonmemTranslator::insertEVID( DOMElement * dataset )
-{
-  // If EVID is defined in the data set, don't need to do anything.
-  int posEVID;
-  assert( whereis( dataset, X_EVID ) < 0 );
-
-  // Determine if MDV exists in the data set.  MDV must exist when EVID is not present.
-  int posMDV = whereis( dataset, X_MDV );
-  if( posMDV < 0 )
-    {
-      char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "MDV must be present (or inserted by SPK Compiler) in the data set when EVID is not given by the user!" );
-      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
-    }
-
-  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
-  unsigned int recordNum=0;
-  const XMLCh* x_evid_val;
-  const XMLCh* X_0 = XMLString::transcode( "0" );
-  const XMLCh* X_1 = XMLString::transcode( "1" );
-  for( int i=0; i<records->getLength(); i++ )
-    {
-      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
-      XMLString::textToBin( x_position, recordNum );
-      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
-      if( recordNum == 1 )
-	{
-	  x_evid_val = X_EVID;
-	}
-      else
-	{
-	  unsigned int mdv = 0;
-	  // Copy the value of MDV on i-th record to an integer.
-	  x_evid_val = dynamic_cast<DOMElement*>(values->item(posMDV))->getFirstChild()->getNodeValue();
-	}
-
-      //  values  -> item(0)          
-      //             <value>ID</value>
-      //          -> item(1)
-      //             <value>TIME</value>
-      //          -> item(2)
-      //             <value>DV</value>
-      //          -> item(3)
-      //             <value>MDV</value>
-      DOMNode     * firstValueNode  = values->item(0);
-      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
-      DOMText     * newTerminalNode = getDataTree()->createTextNode( x_evid_val );
-      newValueNode->appendChild( newTerminalNode );
-      records->item(i)->appendChild( newValueNode );
-    }
-  
-  unsigned int nItems = 0;
-  char c_nItemsPlus1[ 56 ];
-  if( !dataset->hasAttribute( X_COLUMNS ) )
-    {
-      char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
-      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
-    }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
-			    nItems );
-  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
-
-  // The EVID was appended at the last.
-  return nItems;
-}
-/*
  * Insert the AMT field if the data set lacks the field.
  *
  * AMT(i) = 0
@@ -338,7 +145,6 @@ int NonmemTranslator::insertEVID( DOMElement * dataset )
 int NonmemTranslator::insertAMT( DOMElement * dataset )
 {
   // If AMT is defined in the data set, don't need to do anything.
-  int posAMT;
   assert( whereis( dataset, X_AMT ) < 0 );
 
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
@@ -387,10 +193,202 @@ int NonmemTranslator::insertAMT( DOMElement * dataset )
   sprintf( c_nItemsPlus1, "%d", nItems + 1 );
   dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
 
-  // The EVID was appended at the last.
+  // The AMT was appended at the last.
   return nItems;
 }
 
+/*
+ * Insert the MDV field if the data set lacks the field.
+ *
+ * Initialize MDV in the following way:
+ *
+ *  If EVID is given:
+ *    MDV(i) = 0 if EVID(i) == 0
+ *           = 1 if EVID(i) > 0
+ *  When AMT is given but not EVID:
+ *    MDV(i) = 0 for AMT(i) == 0
+ *           = 1 for AMT(i) == 1
+ *  No AMT, no EVID:
+ *    MDV(i) = 0
+ *
+ * Returns the location (>=0) at which the MDV field is inserted.
+ */
+int NonmemTranslator::insertMDV( DOMElement * dataset, int posAMT, int posEVID )
+{
+  assert( whereis( dataset, X_MDV ) < 0 );
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+
+  unsigned int recordNum=0;
+  const XMLCh* x_mdv_val;
+  const XMLCh* X_0 = XMLString::transcode( "0" );
+  const XMLCh* X_1 = XMLString::transcode( "1" );
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      if( recordNum == 1 )
+	{
+	  x_mdv_val = X_MDV;
+	}
+      else
+	{
+	  const char *c_amt = XMLString::transcode( 
+			      dynamic_cast<DOMElement*>(values->item(posAMT))->getFirstChild()->getNodeValue() );
+	  double amt = atof( c_amt );
+	  if( amt == 0.0 )
+	    x_mdv_val = X_0;
+	  else
+	    x_mdv_val = X_1;
+
+	  if( posEVID >= 0 )
+	    {
+	      unsigned int evid = 0;
+	      // Converting the value of EVID on i-th record to an integer.
+	      XMLString::textToBin( dynamic_cast<DOMElement*>(values->item(posEVID))->getFirstChild()->getNodeValue(), evid );
+	      if( evid == 0 )
+		x_mdv_val = X_0;
+	      else
+		x_mdv_val = X_1;
+	    }
+	  else if( posAMT >= 0 )
+	    {
+	      const char *c_amt = XMLString::transcode( 
+				     dynamic_cast<DOMElement*>(values->item(posAMT))->getFirstChild()->getNodeValue() );
+              double amt = atof( c_amt );
+	      if( amt == 0.0 )
+		x_mdv_val = X_0;
+	      else
+		x_mdv_val = X_1;
+	    }
+	  else
+	    {
+	      x_mdv_val = X_0;
+	    }
+	}
+
+      //  values  -> item(0)          
+      //             <value>ID</value>
+      //          -> item(1)
+      //             <value>TIME</value>
+      //          -> item(2)
+      //             <value>DV</value>
+      //          -> item(3)
+      //             <value>EVID</value>
+      DOMNode     * firstValueNode  = values->item(0);
+      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMText     * newTerminalNode = getDataTree()->createTextNode( x_mdv_val );
+      newValueNode->appendChild( newTerminalNode );
+      records->item(i)->appendChild( newValueNode );
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1) );
+
+  // The MDV was appended at the last.
+  return nItems;
+}
+/*
+ * Insert the EVID field if the data set lacks the field.
+ *
+ * If MDV is given:
+ *   EVID=MDV
+ *
+ * If AMT is given but not MDV:
+ *   EVID=0 if AMT=0
+ *       =1 if AMT>0
+ * Fill with 0 if neighther AMT or MDV is given.
+ *
+ * Returns the location (>=0) in which the EVID field can be found.
+ */
+int NonmemTranslator::insertEVID( DOMElement * dataset, int posAMT, int posMDV )
+{
+  assert( whereis( dataset, X_EVID ) < 0 );
+
+  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  unsigned int recordNum=0;
+  const XMLCh* x_evid_val;
+  const XMLCh* X_0 = XMLString::transcode( "0" );
+  const XMLCh* X_1 = XMLString::transcode( "1" );
+  for( int i=0; i<records->getLength(); i++ )
+    {
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      XMLString::textToBin( x_position, recordNum );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      if( recordNum == 1 )
+	{
+	  x_evid_val = X_EVID;
+	}
+      else
+	{
+	  if( posMDV >= 0 )
+	    {
+	      unsigned int mdv = 0;
+	      // Converting the value of EVID on i-th record to an integer.
+	      XMLString::textToBin( dynamic_cast<DOMElement*>(values->item(posMDV))->getFirstChild()->getNodeValue(), mdv );
+	      if( mdv == 0 )
+		x_evid_val = X_0;
+	      else
+		x_evid_val = X_1;
+	    }
+	  else if( posAMT >= 0 )
+	    {
+	      const char *c_amt = XMLString::transcode( 
+				     dynamic_cast<DOMElement*>(values->item(posAMT))->getFirstChild()->getNodeValue() );
+              double amt = atof( c_amt );
+	      if( amt == 0.0 )
+		x_evid_val = X_0;
+	      else
+		x_evid_val = X_1;
+	    }
+	  else
+	    {
+	      x_evid_val = X_0;
+	    }
+	}
+
+      //  values  -> item(0)          
+      //             <value>ID</value>
+      //          -> item(1)
+      //             <value>TIME</value>
+      //          -> item(2)
+      //             <value>DV</value>
+      //          -> item(3)
+      //             <value>MDV</value>
+      DOMNode     * firstValueNode  = values->item(0);
+      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMText     * newTerminalNode = getDataTree()->createTextNode( x_evid_val );
+      newValueNode->appendChild( newTerminalNode );
+      records->item(i)->appendChild( newValueNode );
+    }
+  
+  unsigned int nItems = 0;
+  char c_nItemsPlus1[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      sprintf( m, "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			    nItems );
+  sprintf( c_nItemsPlus1, "%d", nItems + 1 );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
+
+  // The EVID was appended at the last.
+  return nItems;
+}
 
 void NonmemTranslator::parseData()
 {
@@ -463,22 +461,73 @@ void NonmemTranslator::parseData()
       DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
 
       // Warning: Do not change the order of the following three calls.
-      int  locID, locAMT, locMDV, locEVID;
-      bool isID   = ( ( locID   = whereis( dataset, X_ID )   ) >= 0 );
-      bool isAMT  = ( ( locAMT  = whereis( dataset, X_AMT )  ) >= 0 );
-      bool isMDV  = ( ( locMDV  = whereis( dataset, X_MDV )  ) >= 0 );
-      bool isEVID = ( ( locEVID = whereis( dataset, X_EVID ) ) >= 0 );
+      int  posID, posAMT, posMDV, posEVID;
+      bool isID   = ( ( posID   = whereis( dataset, X_ID )   ) >= 0 );
+      bool isAMT  = ( ( posAMT  = whereis( dataset, X_AMT )  ) >= 0 );
+      bool isMDV  = ( ( posMDV  = whereis( dataset, X_MDV )  ) >= 0 );
+      bool isEVID = ( ( posEVID = whereis( dataset, X_EVID ) ) >= 0 );
      
+      // If ID is missing, add it with a value = 1.
       if( !isID )
-	locID = insertID( dataset );
-      if( !isAMT )
-	locAMT = insertAMT( dataset );
-      /*
-      if( !isMDV )
-	locMDV = insertMDV( dataset );
-      if( !isEVID )
-	locEVID = insertEVID( dataset );
-      */
+	{
+	  posID = insertID( dataset );
+	}
+
+      if( detModelType() != PRED )
+	{
+	  // If MDV is missing, there are more than one way to determine the default value.
+	  // Follow the following logic:
+	  //
+	  //          Input                     Output
+	  // (-=missing, x=present)       (0=0, 1=1, x=as_is)
+	  // 
+	  //   AMT     MDV    EVID        AMT     MDV    EVID
+	  //    -       -       -          0       0       0
+	  //    -       -       x          0      EVID     x
+	  //    -       x       -          0       x      MDV
+	  //    -       x       x          0       x       x
+	  //    x       -       -          x      AMT     AMT
+	  //    x       -       x          x      EVID     x 
+	  //    x       x       -          x       x      MDV 
+	  //    x       x       x          x       x       x 
+	  // If AMT is missing, add it with a value = 0.0.
+	  if( !isAMT )
+	    {
+	      posAMT = insertAMT( dataset );
+	    }
+	  /*
+	  if( !isMDV )
+	    {
+	      //
+	      // use EVID if EVID is present.
+              //   MDV=0 if EVID=0
+              //      =1 if EVID!=0
+              // use AMT if EVID is not present and AMT is present
+	      //   AMT=0 -> MDV=0
+	      //      =1 -> MDV=1
+	      // fill with 0 if neither AMT or EVID is present
+	      //
+	      posMDV = insertMDV( dataset, posAMT, posEVID );
+	    }
+	  if( !isEVID )
+	    {
+	      //
+	      // Insert the EVID field if the data set lacks the field.
+	      //
+	      // If MDV is given:
+	      //   EVID=MDV
+	      //
+	      // If AMT is given but not MDV:
+	      //   EVID=0 if AMT=0
+	      //       =1 if AMT>0
+	      // Fill with 0 if neighther AMT or MDV is given.
+	      //
+	      // Returns the location (>=0) in which the EVID field can be found.
+	      //	     
+	      posEVID = insertEVID( dataset, posAMT, posMDV );
+	    }
+	  */
+	}
 
       unsigned int nFields;
       if( !dataset->hasAttribute( X_COLUMNS ) )
@@ -552,7 +601,7 @@ void NonmemTranslator::parseData()
 	  // At the first iteration, k=0, the value of *id is set and it is used for the
 	  // rest of iterations.
 	  //
-	  const XMLCh* xml_value = values->item(locID)->getFirstChild()->getNodeValue();
+	  const XMLCh* xml_value = values->item(posID)->getFirstChild()->getNodeValue();
 	  XMLCh* xml_value_noWS = XMLString::replicate( xml_value );
 	  XMLString::removeWS( xml_value_noWS );
 	  char * id = XMLString::transcode( xml_value_noWS );
@@ -619,7 +668,7 @@ void NonmemTranslator::parseData()
               // If this item is an ID, check if the value changed since the previous iteration.
               // If it does, increment the #of subjects and keep the new ID for future reference.
 	      //
-	      if( k == locID )
+	      if( k == posID )
 		{
 		  id = XMLString::transcode( xml_value_noWS );
 		  if( find( tmp_ids.begin(), tmp_ids.end(), id ) == tmp_ids.end() )

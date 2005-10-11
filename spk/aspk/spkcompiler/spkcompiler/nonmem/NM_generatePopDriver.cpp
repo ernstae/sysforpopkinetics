@@ -142,8 +142,9 @@ void NonmemTranslator::generatePopDriver() const
 
   oPopDriver << "      DataSet< CppAD::AD<double> > set;" << endl;
   oPopDriver << "      const int           nPop      = set.getPopSize();" << endl;
-  oPopDriver << "      const valarray<int> N         = set.getN();" << endl;
-  oPopDriver << "      const int           nY        = N.sum();" << endl;
+  oPopDriver << "      const valarray<int> NObservs  = set.getNObservs();" << endl;
+  oPopDriver << "      const valarray<int> NRecords  = set.getNRecords();" << endl;
+  oPopDriver << "      const int           nY        = NObservs.sum();" << endl;
   oPopDriver << "      valarray<double>    y( nY );" << endl;
   oPopDriver << endl;
 
@@ -380,7 +381,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            valarray<double> yOut( nY );" << endl;
   oPopDriver << "            try" << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               simulate( model, alpIn, N, bLow, bUp, yOut, bOut );" << endl;
+  oPopDriver << "               simulate( model, alpIn, NObservs, bLow, bUp, yOut, bOut );" << endl;
   oPopDriver << "               bIn = bOut;" << endl;
   oPopDriver << "               set.replaceAllMeasurements( yOut );" << endl;
   oPopDriver << "               y   = yOut;" << endl;
@@ -424,7 +425,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            {" << endl;
   oPopDriver << "               fitPopulation( model,"         << endl;
   oPopDriver << "                              objective, "    << endl;
-  oPopDriver << "                              N,"             << endl;
+  oPopDriver << "                              NObservs,"             << endl;
   oPopDriver << "                              y,"             << endl;
   oPopDriver << "                              popOpt,"        << endl;
   oPopDriver << "                              alpLow,"        << endl;
@@ -538,16 +539,16 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            valarray<double> iiResTrancatedOut; "       << endl;
   oPopDriver << "            valarray<double> iiResWtdTrancatedOut;"     << endl;
   oPopDriver << "            modelForDisposal.setPopPar( alpOut );"      << endl;
-  oPopDriver << "            for( int i=0, k=0; i<nPop; k+=N[i++] )"     << endl;
+  oPopDriver << "            for( int i=0, k=0; i<nPop; k+=NRecords[i++] )"     << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               yi.resize         ( N[i] );"             << endl;
+  oPopDriver << "               yi.resize         ( NObservs[i] );"             << endl;
   oPopDriver << "               iiPredOut.resize  ( dataForDisposal.getNRecords(i) );" << endl;
   oPopDriver << "               iiResOut.resize   ( dataForDisposal.getNRecords(i) );" << endl;
   oPopDriver << "               iiResWtdOut.resize( dataForDisposal.getNRecords(i) );" << endl;
-  oPopDriver << "               iiPredTrancatedOut.resize  ( N[i] );"    << endl;
-  oPopDriver << "               iiResTrancatedOut.resize   ( N[i] );"    << endl;
-  oPopDriver << "               iiResWtdTrancatedOut.resize( N[i] );"    << endl;
-  oPopDriver << "               yi = y[ slice( k, N[i], 1 ) ]; "         << endl;
+  oPopDriver << "               iiPredTrancatedOut.resize  ( NObservs[i] );"    << endl;
+  oPopDriver << "               iiResTrancatedOut.resize   ( NObservs[i] );"    << endl;
+  oPopDriver << "               iiResWtdTrancatedOut.resize( NObservs[i] );"    << endl;
+  oPopDriver << "               yi = y[ slice( k, NObservs[i], 1 ) ]; "         << endl;
   oPopDriver << "               bi = bOut[ slice( i*nB, nB, 1 ) ];"      << endl;
   oPopDriver << "               modelForDisposal.selectIndividual( i );" << endl;
   oPopDriver << "               modelForDisposal.setIndPar( bi );"       << endl;
@@ -599,7 +600,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               objForDisposal = FIRST_ORDER;"           << endl;
   oPopDriver << "               popResiduals( modelForDisposal, "        << endl;
   oPopDriver << "                             objForDisposal, "          << endl;
-  oPopDriver << "                             N,"                        << endl;
+  oPopDriver << "                             NObservs,"                 << endl;
   oPopDriver << "                             y,"                        << endl;
   oPopDriver << "                             alpOut,"                   << endl;
   oPopDriver << "                             bOut,"                     << endl;
@@ -637,7 +638,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            try{" << endl;
   oPopDriver << "               popResiduals( modelForDisposal, "        << endl;
   oPopDriver << "                             objForDisposal, "          << endl;
-  oPopDriver << "                             N,"                        << endl;
+  oPopDriver << "                             NObservs,"                 << endl;
   oPopDriver << "                             y,"                        << endl;
   oPopDriver << "                             alpOut,"                   << endl;
   oPopDriver << "                             bOut,"                     << endl;
@@ -718,7 +719,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               model.getStandardPar_popPar( stdPar_alp );" << endl;
   oPopDriver << "               popStatistics(    modelForDisposal, "                  << endl;
   oPopDriver << "                                 objective,"               << endl;
-  oPopDriver << "                                 N,"                       << endl;
+  oPopDriver << "                                 NObservs,"                << endl;
   oPopDriver << "                                 y,"                       << endl;
   oPopDriver << "                                 alpOut, "                 << endl;
   oPopDriver << "                                 alpMask,"                 << endl;

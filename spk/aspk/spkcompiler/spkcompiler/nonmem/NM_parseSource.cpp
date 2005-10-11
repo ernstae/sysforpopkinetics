@@ -87,6 +87,10 @@ void NonmemTranslator::parseSource()
   // NOTE: <pred> and the combination of {<pk>, <diffeqn>, <error>} are allowed.
   //       Default to <pred>.
   //---------------------------------------------------------------------------------------
+  bool myIsModelDone = false;
+
+  myModelSpec = detModelType();
+
   DOMNodeList * models = nonmem->getElementsByTagName( X_MODEL );
   if( models->getLength() != 1 )
     {
@@ -98,13 +102,12 @@ void NonmemTranslator::parseSource()
 
   DOMElement  * model = dynamic_cast<DOMElement*>( models->item(0) );
 
-  bool myIsModelDone = false;
   unsigned int advan, trans;
 
   //
   // All ADVANs fit to the compartmental modeling framework.
   //
-  if( model->hasAttribute( X_ADVAN ) )
+  if( myModelSpec != PRED )
     {
       XMLString::textToBin( model->getAttribute( X_ADVAN ), advan );
       assert( advan > 0 );
@@ -115,7 +118,6 @@ void NonmemTranslator::parseSource()
 	  XMLString::textToBin( model->getAttribute( X_TRANS ), trans );
 	  myTrans = static_cast<TRANS>( trans );
 	}
-      myModelSpec = static_cast<MODEL_SPEC>( advan );
       parseAdvan( myModelSpec, myTrans, model );
     }
   else
@@ -129,11 +131,10 @@ void NonmemTranslator::parseSource()
 				  mess, __LINE__, __FILE__ );
 	  throw e;
 	}
-      myModelSpec = PRED;
       DOMElement  * pred = dynamic_cast<DOMElement*>( preds->item(0) );
       parsePred( pred ); 
     }
-  
+
   myIsModelDone = true;
  
   //---------------------------------------------------------------------------------------

@@ -225,6 +225,11 @@ class NonmemTranslator : public ClientTranslator
    */
   virtual int detAnalysisType();
 
+  /**
+   * Determine the type of model specifications, PRED or ADVAN.
+   */
+  enum MODEL_SPEC detModelType();
+
  protected:
   NonmemTranslator();
   NonmemTranslator( const NonmemTranslator & );
@@ -478,14 +483,14 @@ class NonmemTranslator : public ClientTranslator
    * Insert the MDV field (ie. node) in each record (subtree) if the data set lacks of it.
    * Returns the location in which the MDV field can be found.
    */
-  int insertMDV( xercesc::DOMElement* dataset );
+  int insertMDV( xercesc::DOMElement* dataset, int posAMT, int posEVID );
 
   /**
    * Insert the EVID field (ie. node) in each record (subtree) if the data set lacks of it.
    * Returns the location in which the EVID field can be found.
    * This routine assumes MDV is present or has been inserted by SPK Compiler in the data set.
    */
-  int insertEVID( xercesc::DOMElement* dataset );
+  int insertEVID( xercesc::DOMElement* dataset, int posAMT, int posMDV );
 
   /**
    * Insert the AMT field (ie. node) in each record (subtree) if the data set lacks of it.

@@ -713,17 +713,15 @@ void pop_basicTest::testIndDataClass()
   o << "   vector<char*>  a_id(n);" << endl;
   o << "   vector<double> a_time(n);" << endl;
   o << "   vector<double> a_dv(n);" << endl;
-  o << "   vector<double> a_amt(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
     o << "   a_id  [" << i << "] = \"" << record[i][0] << "\";" << endl;
     o << "   a_time[" << i << "] = "   << record[i][1] << ";" << endl;
     o << "   a_dv  [" << i << "] = "   << record[i][2] << ";" << endl;
-    o << "   a_amt [" << i << "] = 0.0;" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_time, a_dv, a_amt );" << endl;
+  o << "   IndData<double> A( n, a_id, a_time, a_dv );" << endl;
 
   // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
