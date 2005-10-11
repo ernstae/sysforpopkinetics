@@ -865,9 +865,37 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
   oPopDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
+  /*
   oPopDriver << "            for( int i=0; i<NonmemPars::sigmaOrder; i++ )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               oResults << \"<value>\" << sigmaIn[i] << \"</value>\" << endl;" << endl;
+  oPopDriver << "            }" << endl;
+  */
+  oPopDriver << "            if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               for( int i=0; i<NonmemPars::sigmaDim; i++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  oResults << \"<value>\" << sigmaIn[i] << \"</value>\" << endl;" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "            }" << endl;
+  oPopDriver << "            else // full" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               valarray<double> sigmaFullTemp( (NonmemPars::sigmaDim * (NonmemPars::sigmaDim+1)) / 2 );" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::sigmaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=j; i<NonmemPars::sigmaDim; i++, cnt++ ) // lower only" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     sigmaFullTemp[ i + j * NonmemPars::sigmaDim ] = sigmaIn[cnt];" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::sigmaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=0; i<=j; i++, cnt++ )" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     oResults << \"<value>\" << sigmaFullTemp[ j+i*NonmemPars::sigmaDim ];" << endl;
+  oPopDriver << "                     oResults << \"</value>\" << endl;" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            oResults << \"</sigma_in>\" << endl;" << endl;
   // sigma out
@@ -878,9 +906,38 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
   oPopDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
+  /*
   oPopDriver << "            for( int i=0; i<NonmemPars::sigmaOrder; i++ )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
+  oPopDriver << "            }" << endl;
+  oPopDriver << "            oResults << \"</sigma_out>\" << endl;" << endl;
+  */
+  oPopDriver << "            if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               for( int i=0; i<NonmemPars::sigmaDim; i++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  oResults << \"<value>\" << sigmaOut[i] << \"</value>\" << endl;" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "            }" << endl;
+  oPopDriver << "            else // full" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               valarray<double> sigmaFullTemp( (NonmemPars::sigmaDim * (NonmemPars::sigmaDim+1)) / 2 );" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::sigmaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=j; i<NonmemPars::sigmaDim; i++, cnt++ ) // lower only" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     sigmaFullTemp[ i + j * NonmemPars::sigmaDim ] = sigmaOut[cnt];" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::sigmaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=0; i<=j; i++, cnt++ )" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     oResults << \"<value>\" << sigmaFullTemp[ j+i*NonmemPars::sigmaDim ];" << endl;
+  oPopDriver << "                     oResults << \"</value>\" << endl;" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            oResults << \"</sigma_out>\" << endl;" << endl;
 
@@ -892,10 +949,38 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
   oPopDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
+  oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  oResults << \"<value>\" << omegaIn[i] << \"</value>\" << endl;" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "            }" << endl;
+  oPopDriver << "            else // full" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               valarray<double> omegaFullTemp( (NonmemPars::omegaDim * (NonmemPars::omegaDim+1)) / 2 );" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=j; i<NonmemPars::omegaDim; i++, cnt++ ) // lower only" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     omegaFullTemp[ i + j * NonmemPars::omegaDim ] = omegaIn[cnt];" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=0; i<=j; i++, cnt++ )" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     oResults << \"<value>\" << omegaFullTemp[ j+i*NonmemPars::omegaDim ];" << endl;
+  oPopDriver << "                     oResults << \"</value>\" << endl;" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "            }" << endl;
+  /*
   oPopDriver << "            for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               oResults << \"<value>\" << omegaIn[i] << \"</value>\" << endl;" << endl;
   oPopDriver << "            }" << endl;
+  */
   oPopDriver << "            oResults << \"</omega_in>\" << endl;" << endl;
   // omega out
   oPopDriver << "            oResults << \"<omega_out dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
@@ -905,9 +990,37 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
   oPopDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
+  /*
   oPopDriver << "            for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
+  oPopDriver << "            }" << endl;
+  */
+  oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "            }" << endl;
+  oPopDriver << "            else // full" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               valarray<double> omegaFullTemp( (NonmemPars::omegaDim * (NonmemPars::omegaDim+1)) / 2 );" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=j; i<NonmemPars::omegaDim; i++, cnt++ ) // lower only" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     omegaFullTemp[ i + j * NonmemPars::omegaDim ] = omegaOut[cnt];" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  for( int i=0; i<=j; i++, cnt++ )" << endl;
+  oPopDriver << "                  {" << endl;
+  oPopDriver << "                     oResults << \"<value>\" << omegaFullTemp[ j+i*NonmemPars::omegaDim ];" << endl;
+  oPopDriver << "                     oResults << \"</value>\" << endl;" << endl;
+  oPopDriver << "                  }" << endl;
+  oPopDriver << "               }" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            oResults << \"</omega_out>\" << endl;" << endl;
   oPopDriver << "            //" << endl;

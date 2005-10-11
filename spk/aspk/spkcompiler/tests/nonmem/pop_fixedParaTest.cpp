@@ -7,6 +7,7 @@
 #include <map>
 
 #include "pop_fixedParaTest.h"
+#include "DOMPrint.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
@@ -1207,6 +1208,7 @@ void pop_fixedParaTest::testReportML()
     }
 
   DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
+
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
   okToClean = true;
