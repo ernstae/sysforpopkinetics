@@ -71,7 +71,9 @@ void NonmemTranslator::generateIndData( ) const
   if( cnt != 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "There may be one and only one \"%s\" label.", pID->name.c_str() );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"There may be one and only one \"%s\" label.", pID->name.c_str() );
       SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -104,7 +106,9 @@ void NonmemTranslator::generateIndData( ) const
   if( !oIndData_h.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create a file, %s.", fIndData_h );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create a file, %s.", fIndData_h );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -257,7 +261,9 @@ void NonmemTranslator::generateIndData( ) const
 	  if( !( keyVarName == KeyStr.OMEGA || keyVarName == KeyStr.SIGMA ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
-	      sprintf( m, "Matrix(%s) is not allowed here!", varName.c_str() );
+	      snprintf( m, 
+			SpkCompilerError::maxMessageLen(),
+			"Matrix(%s) is not allowed here!", varName.c_str() );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
 	}

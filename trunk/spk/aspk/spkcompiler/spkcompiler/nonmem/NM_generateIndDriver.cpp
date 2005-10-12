@@ -15,7 +15,9 @@ void NonmemTranslator::generateIndDriver( ) const
   if( !oIndDriver.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.", fFitDriver_cpp );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.", fFitDriver_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -242,7 +244,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      if( isRestartRequested && !iCheckpoint.good() )" << endl;
   oIndDriver << "      {" << endl;
   oIndDriver << "         char m[ SpkError::maxMessageLen()];" << endl;
-  oIndDriver << "         sprintf( m, \"Warm start is requested but no checkpoint file found.\" );" << endl;
+  oIndDriver << "         snprintf( m, " << endl;
+  oIndDriver << "                   SpkError::maxMessageLen()," << endl;
+  oIndDriver << "                  \"Warm start is requested but no checkpoint file found.\" );" << endl;
   oIndDriver << "         SpkError e( SpkError::SPK_STD_ERR, m, __LINE__, __FILE__);" << endl;
   oIndDriver << "         errors.push( e );" << endl;
   oIndDriver << "         ret = FILE_ACCESS_FAILURE;" << endl;
@@ -404,7 +408,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "                  if( !oLongError.good() )" << endl;
   oIndDriver << "                  {" << endl;
   oIndDriver << "                     char m[ SpkError::maxMessageLen() ];" << endl;
-  oIndDriver << "                     sprintf( m, \"Failed to create a temporary file, %s, for writing.\", " << endl;
+  oIndDriver << "                     snprintf( m," << endl;
+  oIndDriver << "                               SpkError::maxMessageLen()," << endl;
+  oIndDriver << "                              \"Failed to create a temporary file, %s, for writing.\", " << endl;
   oIndDriver << "                              \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
   oIndDriver << "                     SpkError e( SpkError::SPK_STD_ERR, m, __LINE__, __FILE__ );" << endl;
   oIndDriver << "                     errors.push( e );" << endl;

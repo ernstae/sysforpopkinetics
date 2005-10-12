@@ -88,7 +88,9 @@ void NonmemTranslator::generateDataSet( ) const
   if( !oDataSet_h.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create a file, %s.", fDataSet_h );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create a file, %s.", fDataSet_h );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -282,7 +284,7 @@ void NonmemTranslator::generateDataSet( ) const
   for( int who=0, sofar=0, nRecords=0; who < getPopSize(); who++, sofar+=nRecords )
     {
       char c_who[256];
-      sprintf( c_who, "%d", who );
+      snprintf( c_who, 256,"%d", who );
       int nRecords = pID->initial[who].size();
       int nDVs = 0;
       const string id = pID->initial[who][0];
@@ -978,7 +980,9 @@ void NonmemTranslator::generateDataSet( ) const
   if( pID == Symbol::empty() )
     {
       char mess [ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "\"ID\" is not defined." );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"\"ID\" is not defined." );
       SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -1149,8 +1153,10 @@ void NonmemTranslator::generateDataSet( ) const
   if( cntColumns != nColumns )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "The number of data items (%d) does not match the number of labels (%d).",
-	       cntColumns, nColumns );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"The number of data items (%d) does not match the number of labels (%d).",
+		cntColumns, nColumns );
       SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -1252,8 +1258,10 @@ void NonmemTranslator::generateDataSet( ) const
   if( cntColumns != nColumns )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "The number of data items (%d), does not the number of labels (%d).",
-	       cntColumns, nColumns );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"The number of data items (%d), does not the number of labels (%d).",
+		cntColumns, nColumns );
       SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

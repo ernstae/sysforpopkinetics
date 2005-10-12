@@ -15,7 +15,8 @@ void NonmemTranslator::generatePopDriver() const
   if( !oPopDriver.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.",
+      snprintf( mess, SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.",
 	       fFitDriver_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -284,7 +285,9 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      if( isRestartRequested && !iCheckpoint.good() )" << endl;
   oPopDriver << "      {" << endl;
   oPopDriver << "         char m[ SpkError::maxMessageLen()];" << endl;
-  oPopDriver << "         sprintf( m, \"Warm start is request but no checkpoint file found.\" );" << endl;
+  oPopDriver << "         snprintf( m, " << endl;
+  oPopDriver << "                   SpkError::maxMessageLen()," << endl;
+  oPopDriver << "                   \"Warm start is request but no checkpoint file found.\" );" << endl;
   oPopDriver << "         SpkError e( SpkError::SPK_STD_ERR, m, __LINE__, __FILE__);" << endl;
   oPopDriver << "         errors.push( e );" << endl;
   oPopDriver << "         ret = FILE_ACCESS_FAILURE;" << endl;
@@ -475,7 +478,9 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               if( !oLongError.good() )" << endl;
   oPopDriver << "               {" << endl;
   oPopDriver << "                  char m[ SpkError::maxMessageLen() ];" << endl;
-  oPopDriver << "                  sprintf( m, \"Failed to create a temporary file, %s, for writing.\", " << endl;
+  oPopDriver << "                  snprintf( m, " << endl;
+  oPopDriver << "                            SpkError::maxMessageLen()," << endl;
+  oPopDriver << "                            \"Failed to create a temporary file, %s, for writing.\", " << endl;
   oPopDriver << "                           \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
   oPopDriver << "                  SpkError e( SpkError::SPK_STD_ERR, m, __LINE__, __FILE__ );" << endl;
   oPopDriver << "                  errors.push( e );" << endl;
@@ -567,8 +572,10 @@ void NonmemTranslator::generatePopDriver() const
    oPopDriver << "               }" << endl;
   oPopDriver << "               catch( SpkException& e )" << endl;
   oPopDriver << "               {" << endl;
-  oPopDriver << "                  char message[256];" << endl;
-  oPopDriver << "                  sprintf( message, \"Failed during the calculation of %i-th individual's residuals!\", i );" << endl;
+  oPopDriver << "                  char message[SpkError::maxMessageLen()];" << endl;
+  oPopDriver << "                  snprintf( message, " << endl;
+  oPopDriver << "                            SpkError::maxMessageLen()," << endl;
+  oPopDriver <<"                            \"Failed during the calculation of %i-th individual's residuals!\", i );" << endl;
   oPopDriver << "                  SpkError ee( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "                  e.push( ee );" << endl;
   oPopDriver << "                  errors.cat( e );" << endl;
@@ -577,8 +584,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               }" << endl;
   oPopDriver << "               catch( ... )" << endl;
   oPopDriver << "               {" << endl;
-  oPopDriver << "                  char message[256];" << endl;
-  oPopDriver << "                  sprintf( message, \"Unknown exception: failed during the calculation of %i-th individual's residuals!!!\", i );" << endl;
+  oPopDriver << "                  char message[SpkError::maxMessageLen()];" << endl;
+  oPopDriver << "                  snprintf( message, " << endl;
+  oPopDriver << "                            SpkError::maxMessageLen()," << endl;
+  oPopDriver << "                           \"Unknown exception: failed during the calculation of %i-th individual's residuals!!!\", i );" << endl;
   oPopDriver << "                  SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
   oPopDriver << "                  errors.push( e );" << endl;
   oPopDriver << "                  isStatSuccess &= false;" << endl;
@@ -752,7 +761,9 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               char mess[ SpkError::maxMessageLen() ];" << endl;
-  oPopDriver << "               sprintf( mess, \"Failed to compute statistics value(s).\\n\" );" << endl;
+  oPopDriver << "               snprintf( mess, " << endl;
+  oPopDriver << "                         SpkError::maxMessageLen()," << endl;
+  oPopDriver << "                        \"Failed to compute statistics value(s).\\n\" );" << endl;
   oPopDriver << "               e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );" << endl;
   oPopDriver << "               errors.cat( e );" << endl;
   oPopDriver << "               isStatSuccess &= false;" << endl;

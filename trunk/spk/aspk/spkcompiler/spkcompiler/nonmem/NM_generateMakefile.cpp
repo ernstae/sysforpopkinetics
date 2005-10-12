@@ -31,7 +31,9 @@ void NonmemTranslator::generateMakefile() const
   if( !oMakefile.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.", fMakefile ); 
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.", fMakefile ); 
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

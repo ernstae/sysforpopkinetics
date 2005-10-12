@@ -50,7 +50,9 @@ void NonmemTranslator::parseAdvan(
   if( advan != ADVAN6 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "ADVAN%d is not supported!", (int)advan );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"ADVAN%d is not supported!", (int)advan );
       throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
     }
 
@@ -75,7 +77,9 @@ void NonmemTranslator::parseAdvan(
   if( pks->getLength() < 1 || errors->getLength() < 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <pk> and/or <error>!" );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <pk> and/or <error>!" );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 			      mess, __LINE__, __FILE__ );
       throw e;
@@ -85,7 +89,9 @@ void NonmemTranslator::parseAdvan(
   if( !pk )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "<%s> block is missing!", C_PK );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"<%s> block is missing!", C_PK );
       throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  m, __LINE__, __FILE__ );
     }
@@ -93,7 +99,9 @@ void NonmemTranslator::parseAdvan(
   if( !error )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "<%s> block is missing!", C_ERROR );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"<%s> block is missing!", C_ERROR );
       throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  m, __LINE__, __FILE__ );
     }
@@ -104,7 +112,9 @@ void NonmemTranslator::parseAdvan(
       if( comp_models->getLength() < 1 )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "<comp_model> must be specified when ADVAN 5-9 is used!" );
+	  snprintf( mess, 
+		    SpkCompilerError::maxMessageLen(),
+		    "<comp_model> must be specified when ADVAN 5-9 is used!" );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  mess, __LINE__, __FILE__ );
 	  throw e;
@@ -117,7 +127,9 @@ void NonmemTranslator::parseAdvan(
 	  if( diffeqns->getLength() < 1 )
 	    {
 	      char mess[ SpkCompilerError::maxMessageLen() ];
-	      sprintf( mess, "<diffeqn> must be specified when ADVAN 6, 8 or 9 is used!" );
+	      snprintf( mess, 
+			SpkCompilerError::maxMessageLen(),
+			"<diffeqn> must be specified when ADVAN 6, 8 or 9 is used!" );
 	      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 				      mess, __LINE__, __FILE__ );
 	      throw e;
@@ -156,7 +168,9 @@ void NonmemTranslator::parseAdvan(
 	  if( !XMLString::textToBin( x_tol, sig_digits ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
-	      sprintf( m, "Invalid %s: %s", C_TOLERANCE, XMLString::transcode( x_tol ) );
+	      snprintf( m, 
+			SpkCompilerError::maxMessageLen(),
+			"Invalid %s: %s", C_TOLERANCE, XMLString::transcode( x_tol ) );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
 	    }
 	  relTol = pow( 10.0, -(sig_digits+1.0) );
@@ -184,11 +198,21 @@ void NonmemTranslator::parseAdvan(
       for( int i=0; i<myCompModel->getNCompartments(); i++ )
 	{
 	  char tmp_s[ 32 ], tmp_f[ 32 ], tmp_r[ 32 ], tmp_d[ 32 ], tmp_alag[ 32 ];
-	  sprintf( tmp_r,    "%s%d", UserStr.R.c_str(), i+1 );    // infusion rate for i-th comp
-	  sprintf( tmp_d,    "%s%d", UserStr.D.c_str(), i+1 );    // infusion duration for i-th comp
-	  sprintf( tmp_alag, "%s%d", UserStr.ALAG.c_str(), i+1 ); // absorption lag time for i-th comp
-	  sprintf( tmp_s,    "%s%d", UserStr.S.c_str(), i+1 );    // scale for i-th comp
-	  sprintf( tmp_f,  "%s%d", UserStr.F.c_str(), i+1 ); 
+	  snprintf( tmp_r,    
+		    SpkCompilerError::maxMessageLen(),
+		    "%s%d", UserStr.R.c_str(), i+1 );    // infusion rate for i-th comp
+	  snprintf( tmp_d,    
+		    SpkCompilerError::maxMessageLen(),
+		    "%s%d", UserStr.D.c_str(), i+1 );    // infusion duration for i-th comp
+	  snprintf( tmp_alag, 
+		    SpkCompilerError::maxMessageLen(),
+		    "%s%d", UserStr.ALAG.c_str(), i+1 ); // absorption lag time for i-th comp
+	  snprintf( tmp_s,    
+		    SpkCompilerError::maxMessageLen(),
+		    "%s%d", UserStr.S.c_str(), i+1 );    // scale for i-th comp
+	  snprintf( tmp_f,    
+		    SpkCompilerError::maxMessageLen(),
+		    "%s%d", UserStr.F.c_str(), i+1 ); 
 
 	  table->insertScalar( tmp_r, Symbol::SYSTEM, Symbol::READWRITE );
 	  table->insertScalar( tmp_d, Symbol::SYSTEM, Symbol::READWRITE ); 
@@ -234,18 +258,20 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
       if( ! XMLString::textToBin( x_ncompartments, nUserCompartments ) )
 	{
           char mess[ SpkCompilerError::maxMessageLen() ];
-          sprintf( mess,
-                   "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NCOMPARTMENTS,
-                   XMLString::transcode(x_ncompartments) );
+          snprintf( mess,
+		    SpkCompilerError::maxMessageLen(),
+		    "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NCOMPARTMENTS,
+		    XMLString::transcode(x_ncompartments) );
           SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__);
           throw e;
 	} 
       if( nUserCompartments != compartment_list->getLength() )
 	{
           char mess[ SpkCompilerError::maxMessageLen() ];
-          sprintf( mess,
-                   "The number of compartments specified in <%s::%s> does not match with the number of <%s> incidents!",
-                   C_COMP_MODEL, C_NCOMPARTMENTS, C_COMPARTMENT );
+          snprintf( mess,
+		    SpkCompilerError::maxMessageLen(),
+		    "The number of compartments specified in <%s::%s> does not match with the number of <%s> incidents!",
+		    C_COMP_MODEL, C_NCOMPARTMENTS, C_COMPARTMENT );
           throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__ );
 	}
     }
@@ -262,9 +288,10 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
       if( ! XMLString::textToBin( x_nequilibrims, nEquilibrims ) )
 	{
           char mess[ SpkCompilerError::maxMessageLen() ];
-          sprintf( mess,
-                   "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NEQUILIBRIMS,
-                   XMLString::transcode(x_nequilibrims) );
+          snprintf( mess,
+		    SpkCompilerError::maxMessageLen(),
+		    "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NEQUILIBRIMS,
+		    XMLString::transcode(x_nequilibrims) );
           SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__);
           throw e;
 	} 
@@ -277,9 +304,10 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
       if( ! XMLString::textToBin( x_nparameters, nParameters ) )
 	{
           char mess[ SpkCompilerError::maxMessageLen() ];
-          sprintf( mess,
-                   "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NPARAMETERS,
-                   XMLString::transcode(x_nparameters) );
+          snprintf( mess,
+		    SpkCompilerError::maxMessageLen(),
+		    "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NPARAMETERS,
+		    XMLString::transcode(x_nparameters) );
           SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__);
           throw e;
 	} 
@@ -411,8 +439,10 @@ void NonmemTranslator::parsePK( const DOMElement* pk )
   if( gSpkExpErrors > 0 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Syntax error(s) found in <pk> definition.\n%s", 
-	       gSpkExpErrorMessages );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"Syntax error(s) found in <pk> definition.\n%s", 
+		gSpkExpErrorMessages );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, 
 			      m, __LINE__, __FILE__ );
       throw e;
@@ -445,7 +475,9 @@ void NonmemTranslator::parseDiffEqn( const DOMElement* diffeqn )
   if( nCompsInDES != myCompModel->getNCompartments()-1 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "The number of DADT elements appear on the left hand side of equations does not match with the number given in SpkSourceML document." );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"The number of DADT elements appear on the left hand side of equations does not match with the number given in SpkSourceML document." );
       throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
     }
   
@@ -469,8 +501,10 @@ void NonmemTranslator::parseDiffEqn( const DOMElement* diffeqn )
   if( gSpkExpErrors > 0 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Syntax error(s) found in <diffeqn> definition.\n%s", 
-	       gSpkExpErrorMessages );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"Syntax error(s) found in <diffeqn> definition.\n%s", 
+		gSpkExpErrorMessages );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, 
 			      m, __LINE__, __FILE__ );
       throw e;
@@ -509,8 +543,10 @@ void NonmemTranslator::parseError( const DOMElement* error )
   if( gSpkExpErrors > 0 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Syntax error(s) found in <error> definition.\n%s", 
-	       gSpkExpErrorMessages );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"Syntax error(s) found in <error> definition.\n%s", 
+		gSpkExpErrorMessages );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, 
 			      m, __LINE__, __FILE__ );
       throw e;

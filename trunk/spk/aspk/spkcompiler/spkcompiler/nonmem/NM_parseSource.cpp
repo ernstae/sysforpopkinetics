@@ -38,7 +38,9 @@ void NonmemTranslator::parseSource()
   if( !nonmems->getLength() > 0 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <%s> element.", C_NONMEM );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <%s> element.", C_NONMEM );
       SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -51,7 +53,9 @@ void NonmemTranslator::parseSource()
   if( constraints->getLength() != 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen()];
-      sprintf( mess, "Missing <%s> element.", C_CONSTRAINT );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <%s> element.", C_CONSTRAINT );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -59,9 +63,11 @@ void NonmemTranslator::parseSource()
   if(  !constraint->hasChildNodes() )
     {
       char mess[ SpkCompilerError::maxMessageLen()];
-      sprintf( mess, "Missing <%s> or <%s> element.", 
-	       C_POP_ANALYSIS, 
-	       C_IND_ANALYSIS );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <%s> or <%s> element.", 
+		C_POP_ANALYSIS, 
+		C_IND_ANALYSIS );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -95,7 +101,9 @@ void NonmemTranslator::parseSource()
   if( models->getLength() != 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <%s> element.", C_MODEL );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <%s> element.", C_MODEL );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -126,7 +134,9 @@ void NonmemTranslator::parseSource()
       if( preds->getLength() < 1 )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Missing <pred>!" );
+	  snprintf( mess, 
+		    SpkCompilerError::maxMessageLen(),
+		    "Missing <pred>!" );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  mess, __LINE__, __FILE__ );
 	  throw e;
@@ -158,7 +168,9 @@ void NonmemTranslator::parseSource()
       // if( myIsEstimate )
       // {
       //    char mess[ SpkCompilerError::maxMessageLen() ];
-      //    sprintf( mess, "The parameter estimation and the post-interation requests are mutually exclusive." );
+      //    snprintf( mess, 
+      //              SpkCompilerError::maxMessageLen(),
+      //              "The parameter estimation and the post-interation requests are mutually exclusive." );
       //    SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
       //        mess, __LINE__, __FILE__ );
       //    throw e;
@@ -167,7 +179,9 @@ void NonmemTranslator::parseSource()
       if( getTarget() != POP )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Integral methods are only valid for the population analysis results.");
+	  snprintf( mess, 
+		    SpkCompilerError::maxMessageLen(),
+		    "Integral methods are only valid for the population analysis results.");
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  mess, __LINE__, __FILE__ );
 	  throw e;
@@ -185,17 +199,21 @@ void NonmemTranslator::parseSource()
   if( !myIsModelDone )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "<%s> must be parsed before parsing <%s>.", 
-	       C_PRED, C_PRESENTATION);
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"<%s> must be parsed before parsing <%s>.", 
+		C_PRED, C_PRESENTATION);
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
   if( !isAnalysisDone )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "<%s> must be parsed before parsing <%s>", 
-	       (getTarget()==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ), 
-	       C_PRESENTATION );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"<%s> must be parsed before parsing <%s>", 
+		(getTarget()==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ), 
+		C_PRESENTATION );
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -204,7 +222,9 @@ void NonmemTranslator::parseSource()
   if( presentations->getLength() > 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Multiple <%s> elements are found.", C_PRESENTATION ); 
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Multiple <%s> elements are found.", C_PRESENTATION ); 
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -216,7 +236,9 @@ void NonmemTranslator::parseSource()
   if( id == NULL || id == Symbol::empty() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "\"%s\" data item seems missing from the data set.", 
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"\"%s\" data item seems missing from the data set.", 
 	       DefaultStr.ID.c_str() ); 
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
@@ -652,7 +674,9 @@ void NonmemTranslator::parseSource()
   else
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Invalid model specification!." );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Invalid model specification!." );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
 			      __LINE__, __FILE__ );
       throw e;

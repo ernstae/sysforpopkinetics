@@ -39,9 +39,10 @@ int NonmemTranslator::detAnalysisType()
       if( ind_analysises->getLength() > 0 )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, 
-		   "<%s> and <%s> elements cannot be found together in a sourceML document.", 
-		   C_POP_ANALYSIS, C_IND_ANALYSIS );
+	  snprintf( mess, 
+		    SpkCompilerError::maxMessageLen(),
+		    "<%s> and <%s> elements cannot be found together in a sourceML document.", 
+		    C_POP_ANALYSIS, C_IND_ANALYSIS );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	  throw e;
 	}
@@ -55,7 +56,9 @@ int NonmemTranslator::detAnalysisType()
       if( !analysis->hasAttribute( X_POP_SIZE ) )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "Missing <%s::%s> attribute specification.", C_POP_ANALYSIS, C_POP_SIZE );
+	  snprintf( mess, 
+		    SpkCompilerError::maxMessageLen(),
+		    "Missing <%s::%s> attribute specification.", C_POP_ANALYSIS, C_POP_SIZE );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
 	  throw e;
 	}
@@ -63,7 +66,8 @@ int NonmemTranslator::detAnalysisType()
       if( !XMLString::textToBin( xml_pop_size, popSize ) )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, 
+	  snprintf( mess, 
+		    SpkCompilerError::maxMessageLen(),
 		   "Invalid <%s::%s> attribute value: \"%s\"", C_POP_ANALYSIS, C_POP_SIZE,
 		   XMLString::transcode(xml_pop_size) );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);

@@ -19,7 +19,9 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   if( !oNonmemPars.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.", fNonmemPars_h );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.", fNonmemPars_h );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

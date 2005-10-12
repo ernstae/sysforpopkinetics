@@ -42,7 +42,9 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
   else
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <%s::%s> attribute.", C_MONTE_CARLO, C_METHOD );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <%s::%s> attribute.", C_MONTE_CARLO, C_METHOD );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
 			      __LINE__, __FILE__ );
       throw e;
@@ -51,7 +53,9 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
   if( number_evals->getLength() < 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <%s> element!", C_NUMBEREVAL );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <%s> element!", C_NUMBEREVAL );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 			      mess, __LINE__, __FILE__ );
       throw e;
@@ -62,7 +66,9 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
   if( myIntegNEvals < 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Missing <%s> element!",
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing <%s> element!",
 	       C_VALUE );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 			      mess, __LINE__, __FILE__ );
@@ -76,7 +82,9 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
       if( myIntegNEvals != myEtaLen )
         {
 	  char mess[ SpkCompilerError::maxMessageLen() ];
-	  sprintf( mess, "The number <%s> elements must be equal to the length of ETA (%d) for grid and miser approximation!", 
+	  snprintf( mess, 
+		    SpkCompilerError::maxMessageLen(),
+		    "The number <%s> elements must be equal to the length of ETA (%d) for grid and miser approximation!", 
 		   C_VALUE, myEtaLen );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  mess, __LINE__, __FILE__ );
