@@ -426,19 +426,19 @@ namespace {
 	void OutputErrorMsg(const char *msg)
 	{	using std::cout;
 		using std::endl;
-		cout << "<error_list>" << endl;
-		cout << msg            << endl;
-		cout << "<error_list>" << endl;
-		cout << "</spkreport>" << endl;
+		cout << "<error_list>"  << endl;
+		cout << msg             << endl;
+		cout << "</error_list>" << endl;
+		cout << "</spkreport>"  << endl;
 	}
 
 	void OutputSpkException(const SpkException &e)
 	{	using std::cout;
 		using std::endl;
-		cout << "<error_list>" << endl;
-		cout << e              << endl;
-		cout << "<error_list>" << endl;
-		cout << "</spkreport>" << endl;
+		cout << "<error_list>"  << endl;
+		cout << e               << endl;
+		cout << "</error_list>" << endl;
+		cout << "</spkreport>"  << endl;
 	}
 }
 
