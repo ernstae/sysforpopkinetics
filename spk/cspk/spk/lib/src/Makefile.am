@@ -78,7 +78,9 @@ libspk_la_SOURCES = \
 	isEndOfSpk.cpp \
 	isGreaterThanOrEqualTo.cpp \
 	isLessThanOrEqualTo.cpp \
+	isNotANumber.cpp \
 	isSymmetric.cpp \
+	isUnnormNumber.cpp \
 	lambda.cpp \
 	lambdaDiff.cpp \
 	lambda2diff.cpp \
@@ -188,7 +190,9 @@ libspk_la_SOURCES = \
 	isEndOfSpk.h \
 	isGreaterThanOrEqualTo.h \
 	isLessThanOrEqualTo.h \
+	isNotANumber.h \
 	isSymmetric.h \
+	isUnnormNumber.h \
 	lambda.h \
 	lambdaDiff.h \
 	lambda2diff.h \
@@ -311,7 +315,9 @@ pkginclude_HEADERS = \
 	isEndOfSpk.h \
 	isGreaterThanOrEqualTo.h \
 	isLessThanOrEqualTo.h \
+	isNotANumber.h \
 	isSymmetric.h \
+	isUnnormNumber.h \
 	lTilde.h \
 	lambda.h \
 	lambdaDiff.h \
