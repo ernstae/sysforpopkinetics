@@ -111,8 +111,12 @@ testall_SOURCES = \
 	isGreaterThanOrEqualToTest.h \
 	isLessThanOrEqualToTest.cpp \
 	isLessThanOrEqualToTest.h \
+	isNotANumberTest.cpp \
+	isNotANumberTest.h \
 	isSymmetricTest.cpp \
 	isSymmetricTest.h \
+	isUnnormNumberTest.cpp \
+	isUnnormNumberTest.h \
 	lambda2diffTest.cpp \
 	lambda2diffTest.h \
 	lambdaTest.cpp \
@@ -255,7 +259,9 @@ pkginclude_HEADERS = \
 	isDmatEpsEqualTest.h \
 	isGreaterThanOrEqualToTest.h \
 	isLessThanOrEqualToTest.h \
+	isNotANumberTest.h \
 	isSymmetricTest.h \
+	isUnnormNumberTest.h \
 	lambda2diffTest.h \
 	lambdaTest.h \
 	linearInterpolateTest.h \
