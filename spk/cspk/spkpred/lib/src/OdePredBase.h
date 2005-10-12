@@ -832,6 +832,36 @@ protected:
 
     using namespace std;
 
+
+    //----------------------------------------------------------
+    // Validate the default compartment numbers.
+    //----------------------------------------------------------
+
+    // Check that the default observation compartment is greater than 1.
+    if ( defaultObservComp < 1 )
+    {
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        "The number for the default observation compartment was less than one.",
+        __LINE__, 
+        __FILE__ );
+    }
+
+    // Check that the default dose compartment is greater than 1.
+    if ( defaultDoseComp < 1 )
+    {
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        "The number for the default dose compartment was less than one.",
+        __LINE__, 
+        __FILE__ );
+    }
+
+
+    //----------------------------------------------------------
+    // Prepare the individual's experiment design information.
+    //----------------------------------------------------------
+
     // Get the total number of data records for this individual.
     nDataRec = getNRecords( i );
 
@@ -839,11 +869,6 @@ protected:
     // observation indices.
     dataRecOdeSolnIndex.resize( nDataRec );
     dataRecObservIndex .resize( nDataRec );
-
-
-    //----------------------------------------------------------
-    // Prepare the individual's experiment design information.
-    //----------------------------------------------------------
 
     nObserv        = 0;
     nNonObservPred = 0;
