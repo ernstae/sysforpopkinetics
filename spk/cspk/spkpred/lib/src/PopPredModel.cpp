@@ -45,6 +45,8 @@
 #include <spk/AkronBtimesC.h>
 #include <spk/allZero.h>
 #include <spk/intToOrdinalString.h>
+#include <spk/isNotANumber.h>
+#include <spk/isUnnormNumber.h>
 #include <spk/multiply.h>
 #include <spk/replaceSubblock.h>
 #include <spk/SpkException.h>
@@ -1029,7 +1031,7 @@ void PopPredModel::evalAllPred() const
   {
     taskMessage = "during the evaluation of the predicted value for the \n" + 
       intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record" + 
-      "for the " + intToOrdinalString( iCurr, ZERO_IS_FIRST_INT ) +
+      " for the " + intToOrdinalString( iCurr, ZERO_IS_FIRST_INT ) +
       " individual.";
 
     // Evaluate the Pred block expressions for this data record.
@@ -1080,12 +1082,39 @@ void PopPredModel::evalAllPred() const
         __FILE__ );
     }
 
-    // If the current record is an observation record,
-    // then increment the counter.
+    // If the current record is an observation record, then check the
+    // calculated predicted value to see if it is valid.
     if ( isObsRecord )
     {
+      // Make sure that the value is finite.
+      if ( isUnnormNumber( wCurr[ nPredValSet ] ) )
+      {
+        // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
+        // This error code should be replaced with one that is accurate.
+        throw SpkException(
+          SpkError::SPK_MODEL_DATA_MEAN_ERR,
+          ( "An infinite value was generated " + taskMessage ).c_str(),
+          __LINE__,
+          __FILE__ );
+      }
+    
+      // Make sure that the value is not a NaN.
+      if ( isNotANumber( wCurr[ nPredValSet ] ) )
+      {
+        // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
+        // This error code should be replaced with one that is accurate.
+        throw SpkException(
+          SpkError::SPK_MODEL_DATA_MEAN_ERR,
+          ( "A value that is Not a Number (NaN) was generated " + 
+            taskMessage ).c_str(),
+          __LINE__,
+          __FILE__ );
+      }
+
+      // Increment the counter.
       nPredValSet++;
     }
+
   }
 
   // See if there was the correct number of observation records.
@@ -1920,13 +1949,8 @@ void PopPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const
       "for the " + intToOrdinalString( iCurr, ZERO_IS_FIRST_INT ) + 
       " individual's data.";
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Infinite Macro Does Not Seem to Work - Mitch]
-    // Remove the comments from this block once it is determined
-    // how to detect values of -inf or +inf
-    /*
-    // Make sure that the value is not infinite.
-    if ( fabs( dataMeanCurr[j] ) == numeric_limits<double>::infinity() )
+    // Make sure that the value is finite.
+    if ( isUnnormNumber( dataMeanCurr[j] ) )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
       // This error code should be replaced with one that is accurate.
@@ -1936,11 +1960,9 @@ void PopPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const
         __LINE__,
         __FILE__ );
     }
-    */
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Make sure that the value is not a NaN.
-    if ( dataMeanCurr[j] != dataMeanCurr[j] )
+    if ( isNotANumber( dataMeanCurr[j] ) )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
       // This error code should be replaced with one that is accurate.
@@ -2320,14 +2342,8 @@ void PopPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
   //
   for ( j = 0; j < nObsRecordCurr; j++ )
   {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Infinite Macro Does Not Seem to Work - Mitch]
-    // Remove the comments from this block once it is determined
-    // how to detect values of -inf or +inf
-    /*
-    // Make sure that the value is not infinite.
-    if ( fabs( dataVarianceCurr[j + j * nObsRecordCurr] ) == 
-         numeric_limits<double>::infinity() )
+    // Make sure that the value is finite.
+    if ( isUnnormNumber( dataVarianceCurr[j + j * nObsRecordCurr] ) )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
       // This error code should be replaced with one that is accurate.
@@ -2337,12 +2353,9 @@ void PopPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
         __LINE__,
         __FILE__ );
     }
-    */
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Make sure that the value is not a NaN.
-    if ( dataVarianceCurr[j + j * nObsRecordCurr] != 
-         dataVarianceCurr[j + j * nObsRecordCurr] )
+    if ( isNotANumber( dataVarianceCurr[j + j * nObsRecordCurr] ) )
     {
       // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
       // This error code should be replaced with one that is accurate.
@@ -2353,7 +2366,7 @@ void PopPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
         __LINE__,
         __FILE__ );
     }
-}
+  }
 
 
   //------------------------------------------------------------
