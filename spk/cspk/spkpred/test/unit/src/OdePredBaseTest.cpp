@@ -258,9 +258,6 @@ namespace // [Begin: unnamed namespace]
       // Set the current values for the Pk block parameters.
       //--------------------------------------------------------
 
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
-
       int p = 0;
       Value compScaleParam_p;
 
@@ -299,9 +296,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Evaluate the differential equations.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       // Get the current amount in compartment 1.
       int p = 0;
@@ -360,9 +354,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Set the current values for the intra-individual error.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       Value f_i_j;
       Value y_i_j;
@@ -596,9 +587,6 @@ namespace // [Begin: unnamed namespace]
       // Set the current values for the Pk block parameters.
       //--------------------------------------------------------
 
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
-
       int p = 0;
       Value compScaleParam_p;
 
@@ -637,9 +625,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Evaluate the differential equations.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       // Get the current amount in compartment 1.
       int p = 0;
@@ -698,9 +683,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Set the current values for the intra-individual error.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       Value f_i_j;
       Value y_i_j;
@@ -954,9 +936,6 @@ namespace // [Begin: unnamed namespace]
       // Set the current values for the Pk block parameters.
       //--------------------------------------------------------
 
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
-
       Value compScaleParam_p;
       Value compBioavailFrac_p;
 
@@ -1002,9 +981,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Evaluate the differential equations.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       // Since f has no explicit time dependence,
       //
@@ -1052,9 +1028,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Set the current values for the intra-individual error.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       Value f_i_j;
       Value y_i_j;
@@ -1292,9 +1265,6 @@ namespace // [Begin: unnamed namespace]
       // Set the current values for the Pk block parameters.
       //--------------------------------------------------------
 
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
-
       Value compScaleParam_p;
       Value compBioavailFrac_p;
 
@@ -1340,9 +1310,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Evaluate the differential equations.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       // Since f has no explicit time dependence,
       //
@@ -1390,9 +1357,6 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
       // Set the current values for the intra-individual error.
       //--------------------------------------------------------
-
-      // Get the data items for the current data record.
-      readDataRecord( i, j );
 
       Value f_i_j;
       Value y_i_j;
