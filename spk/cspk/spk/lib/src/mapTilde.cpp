@@ -882,7 +882,32 @@ void mapTilde(
                 //
                 // Find a vector that projects -(g_x) back to g.
                 //
-                dvecPosNewtonDirTemp =  backDiv(mulByScalar(g_x, -1.0), g);
+                try
+                {
+                    dvecPosNewtonDirTemp =  backDiv(mulByScalar(g_x, -1.0), g);
+                }
+                catch( SpkException& e )
+                {
+                    throw e.push(
+                        SpkError::SPK_OPT_ERR,
+                        "Determination of the Newton direction failed.", 
+                        __LINE__,
+                        __FILE__);
+                }
+                catch( const std::exception& e )
+                {
+                    throw SpkException(e,
+                        "A standard exception was thrown during the determination of the Newton direction.", 
+                        __LINE__,
+                        __FILE__);
+                }
+                catch( ... )
+                {
+                    throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
+                        "An exception of unknown type was thrown during the determination of the Newton direction.", 
+                        __LINE__,
+                        __FILE__);
+                }
 
                 //
                 // Set newtonDirection[i], where 0 <= i < nB, to some non-zero value
