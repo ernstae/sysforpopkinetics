@@ -181,7 +181,7 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
            if( !isDblEpsEqual( a, at, (fabs(a)>fabs(at)? fabs(a) : fabs(at) ) ) )
            {
               sprintf( mess, 
-              "The difference between two reflecting elements is too large: a(%d, %d)=%f - a(%d, %d)=%f = %f.\n",
+              "Inversion using the Cholesky factorization failed because the difference between two reflecting \nelements is too large: a(%d, %d)=%f - a(%d, %d)=%f = %f.",
               i+1, j+1, A[i], j+1, i+1, At[i], fabs(a-at) );
                                                                                                                          
               throw SpkException( SpkError::SPK_NOT_SYMMETRIC_ERR, mess, __LINE__, __FILE__ );
@@ -226,14 +226,14 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
   if( cholStatus < 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: the %s argument had an illegal value.\n", 
+     sprintf( mess, "Inversion using the Cholesky factorization failed: \nthe %s argument had an illegal value.", 
               intToOrdinalString( -cholStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
   if( cholStatus > 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: the leading minor of order %d is not positive definite.\n", cholStatus );
+     sprintf( mess, "Inversion using the Cholesky factorization failed: \nthe leading minor of order %d is not positive definite.", cholStatus );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
   // 
@@ -269,14 +269,14 @@ const DoubleMatrix inverse(const DoubleMatrix& dmatA)
   if( invStatus < 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based upon Choleksy factorization failed: \nthe %s argument had an illegal value.\n", 
+     sprintf( mess, "Inversion using the Choleksy factorization failed: \nthe %s argument had an illegal value.", 
               intToOrdinalString( -invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
   if( invStatus > 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based on Cholesky factorization failed: \nthe %s diagonal element of the Cholesky factor is zero.\n",
+     sprintf( mess, "Inversion using the Cholesky factorization failed: \nthe %s diagonal element of the Cholesky factor is zero.",
               intToOrdinalString( invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
@@ -306,14 +306,14 @@ const valarray<double> inverse( const valarray<double> &A, int n )
   if( cholStatus < 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: the %s argument had an illegal value.\n", 
+     sprintf( mess, "Inversion using the Cholesky factorization failed: \nthe %s argument had an illegal value.", 
               intToOrdinalString( -cholStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
   if( cholStatus > 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Cholesky factorization failed: the leading minor of order %d is not positive definite.\n", cholStatus );
+     sprintf( mess, "Inversion using the Cholesky factorization failed: \nthe leading minor of order %d is not positive definite.", cholStatus );
      throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
   }
 
@@ -322,14 +322,14 @@ const valarray<double> inverse( const valarray<double> &A, int n )
   if( invStatus < 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based upon Choleksy factorization failed: \nthe %s argument had an illegal value.\n", 
+     sprintf( mess, "Inversion using the Choleksy factorization failed: \nthe %s argument had an illegal value.", 
               intToOrdinalString( -invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
   if( invStatus > 0 )
   {
      char mess[ SpkError::maxMessageLen() ];
-     sprintf( mess, "Inversion based on Cholesky factorization failed: \nthe %s diagonal element of the Cholesky factor is zero.\n",
+     sprintf( mess, "Inversion using the Cholesky factorization failed: \nthe %s diagonal element of the Cholesky factor is zero.",
               intToOrdinalString( invStatus, ONE_IS_FIRST_INT ).c_str() );
      throw SpkException( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
   }
