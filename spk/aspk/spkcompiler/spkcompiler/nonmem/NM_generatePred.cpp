@@ -62,7 +62,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   if( !oPred_h.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.", fPred_h );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.", fPred_h );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -223,7 +225,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	    {
 	      // There should be no vectors except the ones above.
 	      char m[ SpkCompilerError::maxMessageLen() ];
-	      sprintf( m, "%s is a vector.  It should not appear here.", varName.c_str() );
+	      snprintf( m, 
+			SpkCompilerError::maxMessageLen(),
+			"%s is a vector.  It should not appear here.", varName.c_str() );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
 	  else
@@ -244,7 +248,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	    {
 	      // There should be no matrices except the ones above.
 	      char m[ SpkCompilerError::maxMessageLen() ];
-	      sprintf( m, "%s is a matrix.  It should not appear here.", varName.c_str() );
+	      snprintf( m, 
+			SpkCompilerError::maxMessageLen(),
+			"%s is a matrix.  It should not appear here.", varName.c_str() );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
 	}
@@ -467,7 +473,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   if( !iPredEqn.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to open %s file.", fPredEqn_cpp );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to open %s file.", fPredEqn_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

@@ -62,8 +62,10 @@ void NonmemTranslator::parsePred( DOMElement * pred )
   if( gSpkExpErrors > 0 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
-      sprintf( m, "Syntax error(s) found in PRED definition.\n%s", 
-	       gSpkExpErrorMessages );
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"Syntax error(s) found in PRED definition.\n%s", 
+		gSpkExpErrorMessages );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, 
 			      m, __LINE__, __FILE__ );
       throw e;

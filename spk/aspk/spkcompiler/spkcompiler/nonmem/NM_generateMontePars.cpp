@@ -19,7 +19,9 @@ void NonmemTranslator::generateMonteParsNamespace() const
   if( !oMontePars.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.", fMontePars_h );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.", fMontePars_h );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

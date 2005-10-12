@@ -80,7 +80,7 @@ CompModelInfo::CompModelInfo( int nCompartmentsIn,
   for( int i=0; i<nCompartments; i++ )
   {
      char c_name[56];
-     sprintf( c_name, "COMP%d", i+1 );
+     snprintf( c_name, 56, "COMP%d", i+1 );
      std::string name = c_name;
      compartments[i].setName( name );
       if( i==0 )

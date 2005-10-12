@@ -90,7 +90,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   if( !oOdePred_h.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to create %s file.", fOdePred_h );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.", fOdePred_h );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -373,10 +375,10 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
      char ALAGi[64];
      char Si[64];
      char Fi[64];
-     sprintf( Ri, "R%d", i+1 );
-     sprintf( Di, "D%d", i+1 );
-     sprintf( ALAGi, "ALAG%d", i+1 );
-     sprintf( Si, "S%d", i+1 );
+     snprintf( Ri,    64, "R%d", i+1 );
+     snprintf( Di,    64, "D%d", i+1 );
+     snprintf( ALAGi, 64, "ALAG%d", i+1 );
+     snprintf( Si,    64, "S%d", i+1 );
      oOdePred_h << "  " << Ri << "               ( getCompInfusRate("     << i << ") )," << endl;
      oOdePred_h << "  " << Di << "               ( getCompInfusDurat("    << i << ") )," << endl;
      oOdePred_h << "  " << ALAGi << "            ( getCompAbsorpLagTime(" << i << ") )," << endl;
@@ -384,7 +386,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 
      if( i < myCompModel->getNCompartments()-1 )
      {
-        sprintf( Fi, "F%d", i+1 );
+        snprintf( Fi, 64, "F%d", i+1 );
         oOdePred_h << "  " << Fi << "               ( getCompBioavailFrac(" << i << ") )," << endl;
      }
   }
@@ -647,10 +649,10 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
      char ALAGi[64];
      char Si[64];
      char Fi[64];
-     sprintf( Ri, "R%d", i+1 );
-     sprintf( Di, "D%d", i+1 );
-     sprintf( ALAGi, "ALAG%d", i+1 );
-     sprintf( Si, "S%d", i+1 );
+     snprintf( Ri,    64, "R%d", i+1 );
+     snprintf( Di,    64, "D%d", i+1 );
+     snprintf( ALAGi, 64, "ALAG%d", i+1 );
+     snprintf( Si,    64, "S%d", i+1 );
      oOdePred_h << "   " << Ri << "    = getCompInfusRate    ( " << i << " );" << endl;
      oOdePred_h << "   " << Di << "    = getCompInfusDurat ( " << i << " );" << endl;
      oOdePred_h << "   " << ALAGi << " = getCompAbsorpLagTime( " << i << " );" << endl;
@@ -658,7 +660,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 
      if( i < myCompModel->getNCompartments()-1 )
      {
-        sprintf( Fi, "F%d", i+1 );
+        snprintf( Fi, 64, "F%d", i+1 );
         oOdePred_h << "   " << Fi << "    = getCompBioavailFrac ( " << i << " );" << endl;
      }
   }
@@ -1001,7 +1003,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   if( !iPkEqn.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to open %s file.", fPkEqn_cpp );
+      snprintf( mess, SpkCompilerError::maxMessageLen(),
+		"Failed to open %s file.", fPkEqn_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -1037,7 +1040,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   if( !iDiffEqn.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to open %s file.", fDiffEqn_cpp );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to open %s file.", fDiffEqn_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -1079,7 +1084,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   if( !iErrorEqn.good() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
-      sprintf( mess, "Failed to open %s file.", fErrorEqn_cpp );
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Failed to open %s file.", fErrorEqn_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
