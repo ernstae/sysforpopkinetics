@@ -406,8 +406,8 @@ if( actual != expected ) \\\n \
   // The size of this vector is determined by
   // the order of Omega matrix.
   //============================================
-  const int    etaLen = 1;
-  const double eta_in  [ etaLen ] = { 0.0 };
+  const int    etaLen = 2;
+  const double eta_in  [ etaLen ] = { 0.0, 0.0 };
   const bool   eta_fix [ etaLen ] = { false };
 
   //============================================
@@ -417,17 +417,17 @@ if( actual != expected ) \\\n \
   // diagonal matrix.
   //============================================
   const int    omegaDim                = etaLen;
-  const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
+  const Symbol::Structure omegaStruct  = Symbol::FULL;
   const int    omegaOrder              = (omegaStruct==Symbol::DIAGONAL? 
-					  omegaDim : omegaDim * (omegaDim+1)/2 );
-  const double omega_in [ omegaOrder ] = { 0.09 };
-  const bool   omega_fix[ omegaOrder ] = { false };
+					  omegaDim : (omegaDim * (omegaDim+1))/2 );
+  const double omega_in [ omegaOrder ] = { 0.09, 0.02, 0.01 };
+  const bool   omega_fix[ omegaOrder ] = { false, false, false };
 
   //============================================
   // EPS is irrevalent in the individual 
   // analysis case.  It'll be ignored.
   //============================================
-  const int epsLen = 1;
+  const int epsLen = 3;
    
   //============================================
   // The SPK Compiler decides the constraints
@@ -436,11 +436,11 @@ if( actual != expected ) \\\n \
   // diagonal matrix.
   //============================================
   const int    sigmaDim                = epsLen;
-  const Symbol::Structure sigmaStruct  = Symbol::DIAGONAL;
+  const Symbol::Structure sigmaStruct  = Symbol::FULL;
   const int    sigmaOrder              = (sigmaStruct==Symbol::DIAGONAL? 
-					  sigmaDim : sigmaDim * (sigmaDim+1)/2 );
-  const double sigma_in [ sigmaOrder ] = { 0.03 };
-  const bool   sigma_fix[ sigmaOrder ] = { false };
+					  sigmaDim : (sigmaDim * (sigmaDim+1))/2 );
+  const double sigma_in [ sigmaOrder ] = { 0.01, 0.02, 0.03, 0.04, 0.05, 0.06 };
+  const bool   sigma_fix[ sigmaOrder ] = { false, false, false, false, false, false };
 
   //============================================
   // Make requests for statistics.
@@ -1739,7 +1739,7 @@ void pop_insertDataItemsTest::createSourceML( const char* fSourceML,
     }
   o << "          </up>" << endl;
   o << "        </theta>" << endl;
-  o << "        <omega dimension=\"" << omegaDim << "\" struct=\"" << (omegaStruct==Symbol::DIAGONAL? "diagonal":"full")       << "\">" << endl;
+  o << "        <omega dimension=\"" << omegaDim << "\" struct=\"" << (omegaStruct==Symbol::DIAGONAL? "diagonal":"block")       << "\">" << endl;
   o << "          <in>" << endl;
   for( int i=0; i<omegaOrder; i++ )
     {
@@ -1747,7 +1747,7 @@ void pop_insertDataItemsTest::createSourceML( const char* fSourceML,
     }
   o << "          </in>" << endl;
   o << "        </omega>" << endl;
-  o << "        <sigma dimension=\"" << sigmaDim << "\" struct=\"" << (sigmaStruct==Symbol::DIAGONAL? "diagonal":"full") << "\">" << endl;
+  o << "        <sigma dimension=\"" << sigmaDim << "\" struct=\"" << (sigmaStruct==Symbol::DIAGONAL? "diagonal":"block") << "\">" << endl;
   o << "          <in>" << endl;
   for( int i=0; i<sigmaOrder; i++ )
     {
