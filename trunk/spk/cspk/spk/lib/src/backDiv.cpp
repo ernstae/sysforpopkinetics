@@ -275,14 +275,15 @@ const DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB)
   if( info < 0 )
     {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "Programming error!!!  The %s argument to DGETRF() is illegal!", 
+      sprintf( mess, "Solution of a system of linear equations using the LU decomposition failed: \n the %s argument to the function that performs the LU decomposition  had an illegal value.", 
                intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }
   else if( info > 0 )
     {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "U(%d,%d) is exactly zero, which means the matrix is not positive definite!", info, info );
+      sprintf( mess, "Solution of a system of linear equations using the LU decomposition failed: \nthe %s diagonal element of U is exactly zero.", 
+               intToOrdinalString( info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
     }
 
@@ -315,7 +316,7 @@ const DoubleMatrix backDiv(const DoubleMatrix &dmatA, const DoubleMatrix &dmatB)
   if( info < 0 )
     {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "Programming error!!!  The %s argument to DGETRF() is illegal!", 
+      sprintf( mess, "Solution of a system of linear equations using the LU decomposition failed: \nthe %s argument to the function that solves the equations had an illegal value.", 
                intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }

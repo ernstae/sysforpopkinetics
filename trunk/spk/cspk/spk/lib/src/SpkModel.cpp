@@ -438,17 +438,17 @@ void SpkModel::selectIndividual(int base0)
   {
     throw e.push(
         SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "User-implemented selectIndividual() threw an SpkException",
+        "The selection of the current individual failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doSelectIndividual() threw an std::exception", __LINE__, __FILE__);
+    SpkException e(stde, "The selection of the current individual failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "User-implemented doSelectIndividual() threw an std::exception",
+        "The selection of the current individual failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );
@@ -457,7 +457,7 @@ void SpkModel::selectIndividual(int base0)
   {
     throw SpkException(
         SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "User-implemented doSelectIndividual() threw an unknown exception",
+        "The selection of the current individual failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -470,17 +470,17 @@ void SpkModel::selectIndividual(int base0)
   {
     throw e.push(
         SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "Data Covariance's selectCovIndividual() threw an SpkException",
+        "The selection of the current individual for the individual data covariance failed.",
         __LINE__, 
         __FILE__
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "Data Covariance's setIndex() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The selection of the current individual for the individual data covariance failed \nbecause it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "User-implemented selectCovIndividual() threw an std::exception",
+        "The selection of the current individual failed because it threw a standard exception.",
         __LINE__, 
         __FILE__ 
         );
@@ -489,7 +489,7 @@ void SpkModel::selectIndividual(int base0)
   {
     throw SpkException(
         SpkError::SPK_MODEL_SET_INDEX_ERR, 
-        "Data Covariance's selectCovIndividual() threw an unknown exception",
+        "The selection of the current individual for the individual data covariance failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -599,17 +599,17 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
     {
       throw e.push(
           SpkError::SPK_MODEL_SET_POP_ERR, 
-          "User-implemented doSetPopPar() threw an SpkException",
+          "The setting of the current population parameter failed.",
           __LINE__, 
           __FILE__ 
         );
     }
     catch(const std::exception& stde)
     {
-      SpkException e(stde, "User-implemented doSetPopPar() threw std::exception", __LINE__, __FILE__);
+      SpkException e(stde, "The setting of the current population parameter failed because it threw a standard exception", __LINE__, __FILE__);
       throw e.push(
             SpkError::SPK_MODEL_SET_POP_ERR, 
-            "User-implemented doSetPopPar() threw an std::exception",
+            "The setting of the current population parameter failed because it threw a standard exception.",
             __LINE__, 
             __FILE__ 
             );
@@ -618,7 +618,7 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
     {
       throw SpkException(
           SpkError::SPK_MODEL_SET_POP_ERR, 
-          "User-implemented doSetPopPar() threw an unknown exception",
+          "The setting of the current population parameter failed because it threw an unknown exception.",
           __LINE__, 
           __FILE__
         );
@@ -633,17 +633,17 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
     {
       throw e.push(
           SpkError::SPK_MODEL_SET_POP_ERR, 
-          "Data Covariance's setCovPopPar() threw an SpkException",
+          "The setting of the current population parameter for the individual data covariance failed.",
           __LINE__, 
           __FILE__
         );
     }
     catch(const std::exception& stde)
     {
-      SpkException e(stde, "Data Covariance's setCovPopPar() threw std::exception", __LINE__, __FILE__);
+      SpkException e(stde, "The setting of the current population parameter for the individual data covariance failed \nbecause it threw a standard exception", __LINE__, __FILE__);
       throw e.push(
             SpkError::SPK_MODEL_SET_POP_ERR, 
-            "User-implemented setCovPopPar() threw an std::exception",
+            "The setting of the current population parameter failed because it threw a standard exception.",
             __LINE__, 
             __FILE__ 
             );
@@ -652,7 +652,7 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
     {
       throw SpkException(
           SpkError::SPK_MODEL_SET_POP_ERR, 
-          "Data Covariance's setCovPopPar() threw an unknown exception",
+          "The setting of the current population parameter for the individual data covariance failed \nbecause it threw an unknown exception.",
           __LINE__, 
           __FILE__
         );
@@ -664,17 +664,17 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
     {
       throw e.push(
           SpkError::SPK_MODEL_SET_POP_ERR, 
-          "Individual Parameter Covariance's setCovPopPar() threw an SpkException",
+          "The setting of the current population parameter for the individual parameter covariance parameter failed.",
           __LINE__, 
           __FILE__
         );
     }
     catch(const std::exception& stde)
     {
-      SpkException e(stde, "Individual Parameter Covariance's setCovPopPar() threw std::exception.", __LINE__, __FILE__);
+      SpkException e(stde, "The setting of the current population parameter for the individual parameter covariance parameter failed \nbecause it threw a standard exception.", __LINE__, __FILE__);
       throw e.push(
             SpkError::SPK_MODEL_SET_POP_ERR, 
-            "User-implemented setCovPopPar() threw an std::exception",
+            "The setting of the current population parameter failed because it threw a standard exception.",
             __LINE__, 
             __FILE__ 
             );
@@ -685,7 +685,7 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
     {
       throw SpkException(
           SpkError::SPK_MODEL_SET_POP_ERR, 
-          "Individual Parameter Covariance's setCovPopPar() threw an unknown exception",
+          "The setting of the current population parameter for the individual parameter covariance parameter failed \nbecause it threw an unknown exception.",
           __LINE__, 
           __FILE__ 
         );
@@ -787,17 +787,17 @@ void SpkModel::setIndPar(const valarray<double> &indPar)
     {
       throw e.push(
           SpkError::SPK_MODEL_SET_IND_ERR, 
-          "User-implemented doSetIndPar() threw an SpkException",
+          "The setting of the current individual parameter failed.",
           __LINE__, 
           __FILE__
         );
     }
     catch(const std::exception& stde)
     {
-      SpkException e(stde, "User-implemented doSetIndPar() threw std::exception.", __LINE__, __FILE__);
+      SpkException e(stde, "The setting of the current individual parameter failed because it threw a standard exception.", __LINE__, __FILE__);
       throw e.push(
             SpkError::SPK_MODEL_SET_IND_ERR, 
-            "User-implemented doSetIndPar() threw an std::exception",
+            "The setting of the current individual parameter failed because it threw a standard exception.",
             __LINE__, 
             __FILE__
             );
@@ -806,7 +806,7 @@ void SpkModel::setIndPar(const valarray<double> &indPar)
     {
       throw SpkException(
           SpkError::SPK_MODEL_SET_IND_ERR, 
-          "User-implemented doSetIndPar() threw an unknown exception",
+          "The setting of the current individual parameter failed because it threw an unknown exception.",
           __LINE__, 
           __FILE__ 
         );
@@ -820,17 +820,17 @@ void SpkModel::setIndPar(const valarray<double> &indPar)
     {
       throw e.push(
           SpkError::SPK_MODEL_SET_IND_ERR, 
-          "Data Covariance's setCovIndPar() threw an SpkException",
+          "The setting of the current individual parameter for the individual data covariance failed.",
           __LINE__, 
           __FILE__
         );
     }
     catch(const std::exception& stde)
     {
-      SpkException e(stde, "Data Covariance's setCovIndPar() threw std::exception.", __LINE__, __FILE__);
+      SpkException e(stde, "The setting of the current individual parameter for the individual data covariance failed \nbecause it threw a standard exception.", __LINE__, __FILE__);
       throw e.push(
             SpkError::SPK_MODEL_SET_IND_ERR, 
-            "User-implemented setCovIndPar() threw an std::exception",
+            "The setting of the current individual parameter failed because it threw a standard exception.",
             __LINE__, 
             __FILE__
             );
@@ -839,7 +839,7 @@ void SpkModel::setIndPar(const valarray<double> &indPar)
     {
       throw SpkException(
           SpkError::SPK_MODEL_SET_IND_ERR, 
-          "Data Covariance's setCovIndPar() threw an unknown exception",
+          "The setting of the current individual parameter for the individual data covariance failed \nbecause it threw an unknown exception.",
           __LINE__, 
           __FILE__ 
         );
@@ -961,17 +961,17 @@ void SpkModel::dataMean( valarray<double> & ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_ERR, 
-        "User-implemented doDataMean() threw an SpkException",
+        "The evaluation of the mean of the individual's data failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataMean() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the mean of the individual's data failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_ERR, 
-        "User-implemented doDataMean() threw an std::exception",
+        "The evaluation of the mean of the individual's data failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );
@@ -980,7 +980,7 @@ void SpkModel::dataMean( valarray<double> & ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_ERR, 
-        "User-implemented doDataMean() threw an unknown exception",
+        "The evaluation of the mean of the individual's data failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -1112,17 +1112,17 @@ bool SpkModel::dataMean_indPar( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_IND_ERR, 
-        "User-implemented doDataMean_indPar() threw an SpkException",
+        "The evaluation of the derivative of the mean of the individual's data with respect to \nthe individual parameter failed.",
         __LINE__, 
         __FILE__
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataMean_indPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the mean of the individual's data with respect to \nthe individual parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_IND_ERR, 
-        "User-implemented doDataMean_indPar() threw an std::exception",
+        "The evaluation of the derivative of the mean of the individual's data with respect to \nthe individual parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );
@@ -1131,7 +1131,7 @@ bool SpkModel::dataMean_indPar( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_IND_ERR, 
-        "User-implemented doDataMean_indPar() threw an unknown exception",
+        "The evaluation of the derivative of the mean of the individual's data with respect to \nthe individual parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -1270,17 +1270,17 @@ bool SpkModel::dataMean_popPar( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_POP_ERR, 
-        "User-implemented doDataMean_popPar() threw an SpkException",
+        "The evaluation of the derivative of the mean of the individual's data with respect to \nthe population parameter failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataMean_popPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the mean of the individual's data with respect to \nthe population parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_DATA_MEAN_POP_ERR, 
-        "User-implemented doDataMean_popPar() threw an std::exception",
+        "The evaluation of the derivative of the mean of the individual's data with respect to \nthe population parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__ 
         );  
@@ -1289,7 +1289,7 @@ bool SpkModel::dataMean_popPar( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_DATA_MEAN_POP_ERR, 
-        "User-implemented doDataMean_popPar() threw an unknown exception",
+        "The evaluation of the derivative of the mean of the individual's data with respect to \nthe population parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -1411,17 +1411,17 @@ void SpkModel::dataVariance( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_DATA_VARIANCE_ERR, 
-        "User-implemented doDataVariance() threw an SpkException",
+        "The evaluation of the individual's data covariance failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataVariance() threw std::exception", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the individual's data covariance failed because it threw a standard exception", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_DATA_VARIANCE_ERR, 
-        "User-implemented doDataVariance() threw an std::exception",
+        "The evaluation of the individual's data covariance failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );  
@@ -1430,7 +1430,7 @@ void SpkModel::dataVariance( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_DATA_VARIANCE_ERR, 
-        "User-implemented doDataVariance() threw an unknown exception",
+        "The evaluation of the individual's data covariance failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__ 
       );
@@ -1563,17 +1563,17 @@ bool SpkModel::dataVariance_indPar( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_DATA_VARIANCE_IND_ERR, 
-        "User-implemented doDataVariance_indPar() threw an SpkException",
+        "The evaluation of the derivative of the individual's data covariance with respect to \nthe individual parameter failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataVariance_indPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the individual's data covariance with respect to \nthe individual parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_DATA_VARIANCE_IND_ERR, 
-        "User-implemented doDataVariance_indPar() threw an std::exception",
+        "The evaluation of the derivative of the individual's data covariance with respect to \nthe individual parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );  
@@ -1582,7 +1582,7 @@ bool SpkModel::dataVariance_indPar( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_DATA_VARIANCE_IND_ERR, 
-        "User-implemented doDataVariance_indPar() threw an unknown exception",
+        "The evaluation of the derivative of the individual's data covariance with respect to \nthe individual parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__ 
       );
@@ -1722,17 +1722,17 @@ bool SpkModel::dataVariance_popPar( valarray<double> & ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_DATA_VARIANCE_POP_ERR, 
-        "User-implemented doDataVariance_popPar() threw an SpkException",
+        "The evaluation of the derivative of the individual's data covariance with respect to \nthe population parameter failed.",
         __LINE__, 
         __FILE__
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataVariance_popPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the individual's data covariance with respect to \nthe population parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_DATA_VARIANCE_POP_ERR, 
-        "User-implemented doDataVariance_popPar() threw an std::exception",
+        "The evaluation of the derivative of the individual's data covariance with respect to \nthe population parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );   
@@ -1741,7 +1741,7 @@ bool SpkModel::dataVariance_popPar( valarray<double> & ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_DATA_VARIANCE_POP_ERR, 
-        "User-implemented doDataVariance_popPar() threw an unknown exception",
+        "The evaluation of the derivative of the individual's data covariance with respect to \nthe population parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -1872,17 +1872,17 @@ void SpkModel::dataVarianceInv( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_ERR, 
-        "User-implemented doDataVarianceInv() threw an SpkException",
+        "The evaluation of the inverse of the individual's data covariance failed.",
         __LINE__, 
         __FILE__
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataVarianceInv() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the inverse of the individual's data covariance failed \nbecause it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_ERR, 
-        "User-implemented doDataVarianceInv() threw an std::exception",
+        "The evaluation of the inverse of the individual's data covariance failed \nbecause it threw a standard exception.",
         __LINE__, 
         __FILE__ 
         );   
@@ -1891,7 +1891,7 @@ void SpkModel::dataVarianceInv( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_ERR, 
-        "User-implemented doDataVarianceInv() threw an unknown exception",
+        "The evaluation of the inverse of the individual's data covariance failed \nbecause it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -2042,17 +2042,17 @@ bool SpkModel::dataVarianceInv_indPar( valarray<double> & ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_IND_ERR, 
-        "User-implemented doDataVarianceInv_indPar() threw an SpkException",
+        "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe individual parameter failed.",
         __LINE__, 
         __FILE__
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataVarianceInv_indPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe individual parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_IND_ERR, 
-        "User-implemented doDataVarianceInv_indPar() threw an std::exception",
+        "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe individual parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );   
@@ -2061,7 +2061,7 @@ bool SpkModel::dataVarianceInv_indPar( valarray<double> & ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_IND_ERR, 
-        "User-implemented doDataVarianceInv_indPar() threw an unknown exception",
+        "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe individual parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -2216,17 +2216,17 @@ bool SpkModel::dataVarianceInv_popPar( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_POP_ERR, 
-        "User-implemented doDataVarianceInv_popPar() threw an SpkException",
+        "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe population parameter failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doDataVarianceInv_popPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe population parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_POP_ERR, 
-        "User-implemented doDataVarianceInv_popPar() threw an std::exception",
+        "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe population parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__ 
         );   
@@ -2235,7 +2235,7 @@ bool SpkModel::dataVarianceInv_popPar( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_INV_DATA_VARIANCE_POP_ERR, 
-        "User-implemented doDataVarianceInv_popPar() threw an unknown exception",
+        "The evaluation of the derivative of the inverse of the individual's data covariance with respect to \nthe population parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__ 
       );
@@ -2365,17 +2365,17 @@ void SpkModel::indParVariance( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_IND_VARIANCE_ERR, 
-        "User-implemented doIndParVariance() threw an SpkException",
+        "The evaluation of the individual parameter covariance failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doIndParVariance() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the individual parameter covariance failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_IND_VARIANCE_ERR, 
-        "User-implemented doIndParVariance() threw an std::exception",
+        "The evaluation of the individual parameter covariance failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );   
@@ -2384,7 +2384,7 @@ void SpkModel::indParVariance( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_IND_VARIANCE_ERR, 
-        "User-implemented doIndParVariance() threw an unknown exception",
+        "The evaluation of the individual parameter covariance failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -2524,17 +2524,17 @@ bool SpkModel::indParVariance_popPar( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_IND_VARIANCE_POP_ERR, 
-        "User-implemented doIndParVariance_popPar() threw an SpkException",
+        "The evaluation of the derivative of the individual parameter covariance with respect to \nthe population parameter failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doIndParVariance_popPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the individual parameter covariance with respect to \nthe population parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_IND_VARIANCE_POP_ERR, 
-        "User-implemented doIndParVariance_popPar() threw an std::exception",
+        "The evaluation of the derivative of the individual parameter covariance with respect to \nthe population parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__ 
         );   
@@ -2543,7 +2543,7 @@ bool SpkModel::indParVariance_popPar( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_IND_VARIANCE_POP_ERR, 
-        "User-implemented doIndParVariance_popPar() threw an unknown exception",
+        "The evaluation of the derivative of the individual parameter covariance with respect to \nthe population parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__ 
       );
@@ -2669,17 +2669,17 @@ void SpkModel::indParVarianceInv( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_INV_IND_VARIANCE_ERR, 
-        "User-implemented doIndParVarianceInv() threw an SpkException",
+        "The evaluation of the inverse of the individual parameter covariance failed.",
         __LINE__, 
         __FILE__
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doIndParVarianceInv() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the inverse of the individual parameter covariance failed \nbecause it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_INV_IND_VARIANCE_ERR, 
-        "User-implemented doIndParVarianceInv() threw an std::exception",
+        "The evaluation of the inverse of the individual parameter covariance failed \nbecause it threw a standard exception.",
         __LINE__, 
         __FILE__
         );   
@@ -2688,7 +2688,7 @@ void SpkModel::indParVarianceInv( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_INV_IND_VARIANCE_ERR, 
-        "User-implemented doIndParVarianceInv() threw an unknown exception",
+        "The evaluation of the inverse of the individual parameter covariance failed \nbecause it threw an unknown exception.",
         __LINE__, 
         __FILE__
       );
@@ -2824,17 +2824,17 @@ bool SpkModel::indParVarianceInv_popPar( valarray<double>& ret ) const
   {
     throw e.push(
         SpkError::SPK_MODEL_INV_IND_VARIANCE_POP_ERR, 
-        "User-implemented doIndParVarianceInv_popPar() threw an SpkException",
+        "The evaluation of the derivative of the inverse of the individual parameter covariance with respect to \nthe population parameter failed.",
         __LINE__, 
         __FILE__ 
       );
   }
   catch(const std::exception& stde)
   {
-    SpkException e(stde, "User-implemented doIndParVarianceInv_popPar() threw std::exception.", __LINE__, __FILE__);
+    SpkException e(stde, "The evaluation of the derivative of the inverse of the individual parameter covariance with respect to \nthe population parameter failed because it threw a standard exception.", __LINE__, __FILE__);
     throw e.push(
         SpkError::SPK_MODEL_INV_IND_VARIANCE_POP_ERR, 
-        "User-implemented doIndParVarianceInv_popPar() threw an std::exception",
+        "The evaluation of the derivative of the inverse of the individual parameter covariance with respect to \nthe population parameter failed because it threw a standard exception.",
         __LINE__, 
         __FILE__
         );   
@@ -2843,7 +2843,7 @@ bool SpkModel::indParVarianceInv_popPar( valarray<double>& ret ) const
   {
     throw SpkException(
         SpkError::SPK_MODEL_INV_IND_VARIANCE_POP_ERR, 
-        "User-implemented doIndParVarianceInv_popPar() threw an unknown exception",
+        "The evaluation of the derivative of the inverse of the individual parameter covariance with respect to \nthe population parameter failed because it threw an unknown exception.",
         __LINE__, 
         __FILE__ 
       );
