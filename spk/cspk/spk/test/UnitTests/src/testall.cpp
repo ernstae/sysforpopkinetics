@@ -54,7 +54,9 @@
 #include "src/isDmatEpsEqualTest.h"
 #include "src/isGreaterThanOrEqualToTest.h"
 #include "src/isLessThanOrEqualToTest.h"
+#include "src/isNotANumberTest.h"
 #include "src/isSymmetricTest.h"
+#include "src/isUnnormNumberTest.h"
 #include "src/lambda2diffTest.h"
 #include "src/lambdaTest.h"
 #include "src/linearInterpolateTest.h"
@@ -171,7 +173,9 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "isDmatEpsEqualTest" ]               = isDmatEpsEqualTest::suite();
   master_list_of_tests[ "isGreaterThanOrEqualToTest" ]       = isGreaterThanOrEqualToTest::suite();
   master_list_of_tests[ "isLessThanOrEqualToTest" ]          = isLessThanOrEqualToTest::suite();
+  master_list_of_tests[ "isNotANumberTest" ]                 = isNotANumberTest::suite();
   master_list_of_tests[ "isSymmetricTest" ]                  = isSymmetricTest::suite();
+  master_list_of_tests[ "isUnnormNumberTest" ]               = isUnnormNumberTest::suite();
   master_list_of_tests[ "lambda2diffTest" ]                  = lambda2diffTest::suite();
   master_list_of_tests[ "lambdaTest" ]                       = lambdaTest::suite();
   master_list_of_tests[ "linearInterpolateTest" ]            = linearInterpolateTest::suite();
