@@ -528,6 +528,8 @@ $end
 #include "quasiNewtonAnyBox.h"
 #include "DoubleMatrix.h"
 #include "isLessThanOrEqualTo.h"
+#include "isNotANumber.h"
+#include "isUnnormNumber.h"
 #include "allTrue.h"
 #include "SpkException.h"
 #include "cholesky.h"
@@ -763,11 +765,21 @@ namespace // [Begin: unnamed namespace]
       }
 
       // Make sure that the objective function value is not a Nan.
-      if ( fScaledOut != fScaledOut )
+      if ( isNotANumber( fScaledOut ) )
       {
         throw SpkException(
           SpkError::SPK_OPT_ERR, 
           "A value that is Not a Number (NaN) was generated for the objective function.",
+          __LINE__,
+          __FILE__ );
+      }
+
+      // Make sure that the objective function value is finite.
+      if ( isUnnormNumber( fScaledOut ) )
+      {
+        throw SpkException(
+          SpkError::SPK_OPT_ERR, 
+          "An infinite value was generated for the objective function.",
           __LINE__,
           __FILE__ );
       }
