@@ -744,8 +744,33 @@ void estimateB(
         drowMapObj_b.resize(1,n);
         dmatMapObj_b_b.resize(n,n);
 
-        mapTilde( model, dvecY, optimizer, *dvecBhatOut, dvecBlow, dvecBup, 
-            dvecBtildeTemp, dvecBstep, dvecNorm, &drowMapObj_b, &dmatMapObj_b_b, true );
+        try
+        {
+            mapTilde( model, dvecY, optimizer, *dvecBhatOut, dvecBlow, dvecBup, 
+                dvecBtildeTemp, dvecBstep, dvecNorm, &drowMapObj_b, &dmatMapObj_b_b, true );
+        }
+        catch( SpkException& e )
+        {
+            throw e.push(
+                SpkError::SPK_OPT_ERR,
+               "Solution of the individual level first order necessary conditions failed.", 
+                __LINE__,
+                __FILE__);
+        }
+        catch( const std::exception& e )
+        {
+            throw SpkException(e,
+                "A standard exception was thrown during the solution of the individual level \nfirst order necessary conditions.", 
+                __LINE__,
+                __FILE__);
+        }
+        catch( ... )
+        {
+            throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
+                "An exception of unknown type was thrown during the solution of the individual level \nfirst order necessary conditions.", 
+                __LINE__,
+                __FILE__);
+        }
 
         *dvecBtildeOut = dvecBtildeTemp;
     }    
