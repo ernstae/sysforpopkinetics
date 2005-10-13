@@ -960,6 +960,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
   oPopDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
+  /*
   oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
@@ -986,12 +987,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                  }" << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "            }" << endl;
-  /*
+  */
   oPopDriver << "            for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               oResults << \"<value>\" << omegaIn[i] << \"</value>\" << endl;" << endl;
   oPopDriver << "            }" << endl;
-  */
+  
   oPopDriver << "            oResults << \"</omega_in>\" << endl;" << endl;
   // omega out
   oPopDriver << "            oResults << \"<omega_out dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
@@ -1001,12 +1002,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
   oPopDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
-  /*
+  
   oPopDriver << "            for( int i=0; i<NonmemPars::omegaOrder; i++ )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
   oPopDriver << "            }" << endl;
-  */
+  /*
   oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
@@ -1033,6 +1034,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                  }" << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "            }" << endl;
+  */
   oPopDriver << "            oResults << \"</omega_out>\" << endl;" << endl;
   oPopDriver << "            //" << endl;
 
