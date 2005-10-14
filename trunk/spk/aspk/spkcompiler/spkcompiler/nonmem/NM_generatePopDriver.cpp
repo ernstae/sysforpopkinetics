@@ -810,11 +810,11 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            // Print out a long error message if exists." << endl;
-  oPopDriver << "            char buf[ 128 ];" << endl;
+  oPopDriver << "            char ch;" << endl;
   oPopDriver << "            ifstream iLongError( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
-  oPopDriver << "            while( iLongError.getline(buf, 128) )" << endl;
+  oPopDriver << "            while( iLongError.get(ch) )" << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               oResults << buf << endl;" << endl;
+  oPopDriver << "               oResults << ch;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << endl;
   oPopDriver << "            // Print out ordinary-length error messages" << endl;

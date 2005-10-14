@@ -565,11 +565,11 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oIndDriver << "         {" << endl;
   oIndDriver << "            // Print out a long error message if exists." << endl;
-  oIndDriver << "            char buf[ 128 ];" << endl;
+  oIndDriver << "            char ch;" << endl;
   oIndDriver << "            ifstream iLongError( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
-  oIndDriver << "            while( iLongError.getline(buf, 128) )" << endl;
+  oIndDriver << "            while( iLongError.get(ch) )" << endl;
   oIndDriver << "            {" << endl;
-  oIndDriver << "               oResults << buf << endl;" << endl;   // Write a long error to the SpkReportML document.
+  oIndDriver << "               oResults << ch;" << endl;   // Write a long error to the SpkReportML document.
   oIndDriver << "            }" << endl;
   oIndDriver << endl;
   oIndDriver << "            // Print out ordinary-length error messages" << endl;
