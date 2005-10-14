@@ -8,14 +8,11 @@
   <articleinfo>
     <abstract>
       <para>
-      This document demonstrates how to install/update CppAD for SPK
-      that is different from the procedure given by the author of 
-      the package.  Our procedure enables us to treat CppAD
-      as part of SPK so that it is installed into our test environment
-      first.
+      This document demonstrates how to install/update CppAD
+      as part of SPK test environment.
       </para>
       <para>
-	The information in this document is targeted primarily towards
+	This document is written for members of
 	the RFPK Software Team and associates and is specific to the
 	computer systems and network installed in the RFPK Laboratory
 	of the &dept; of the &uw;.  RFPK is the Resource for
@@ -29,8 +26,8 @@
     </abstract>
     <revhistory>
       <revision>
-	<revnumber>1.0</revnumber>
-	<date>July 4, 1776</date>
+	<revnumber>2.0</revnumber>
+	<date>Oct 14, 2005</date>
 	<authorinitials></authorinitials>
 	<revremark></revremark>
       </revision>
@@ -54,65 +51,43 @@
     </para>
   </sect1>
   <sect1>
-    <title>Installation (specific to SPK)</title>
-    <para>
-    If we follow the original author's installation procedure, CppAD is 
-    installed in the following directories:
-    <screen>
-    headers      - $PREFIX/include/CppAD/
-    libraries    - $PREFIX/lib/
-    </screen>
-    $PREFIX is an arbitrary path.
-    </para>
-    <para>
-    On the other hand, SPK components installation requires the following
-    directory structures:
-    <screen>
-    headers      - $PREFIX/include/$INST_ENV/CppAD/
-    libraries    - $PREFIX/lib/$INST_ENV/
-    </screen>
-    $INST_ENV is either "spktest" for the test environment or
-    "spkprod" for the production environment.
-    </para>
-    <para>
-    We like to install CppAD just like other SPK components so that
-    we can test fully under the test environment and move it to
-    the production when it is really ready.  To do that, we ignore 
-    the author's installation procedure and follow the procedure below:
-    </para>
+    <title>Installation</title>
     <orderedlist>
       <listitem>
-        <para>
-        Download a copy of CppAD (CppAD.unix.tar.gz) from 
-        <ulink url="http://www.seanet.com/~bradbell">
-        http://www.seanet.com/~bradbell</ulink> into /tmp on the
-        installation machine.
-        </para>
+	<literallayout>Download current version of CppAD from the web page
+        <ulink url="http://www.coin-or.org/CppAD/Doc/installunix.htm">
+        http://www.coin-or.org/CppAD/Doc/installunix.htm
+        </ulink> 
+	into /tmp on the installation machine.
+	</literallayout>
       </listitem>
       <listitem>
         <para>
-        Unpack the downloaded package:
+        Extraction
         <screen>
-  cd /tmp
-  tar xvzf CppAD.unix.tar.gz
+        cd /tmp
+        tar -xvzf CppAD-yy-mm-dd.tar.gz
         </screen>
+        where yy is the year, 
+        mm is the month,
+        and dd is the day 
+        (each as two decimal digits) corresponding to the version of CppAD.
         This will extract files into a new directory 
-        whose name begins with "cppad" followed by a release date/version.
-        We denote it as "cppadXXX" for the rest of the document.
+        whose name is cppad-yy-mm-dd.
         </para>
       </listitem>
       <listitem>
         <para>
-        Create Makefiles tuned to the installation machine:
+        Configure
         <screen>
-        cd cppadXXX
-        ./configure
+        cd cppad-yy-mm-dd
+        ./configure --prefix=/usr/local POSTFIX_DIR=spktest
         </screen>
         </para>
       </listitem>
       <listitem>
         <para>
-        Build the package:
+        Make
         <screen>
         make
         </screen>
@@ -120,19 +95,10 @@
       </listitem>
       <listitem>
         <para>
-        We copy the headers along with its containing directory into
-        /usr/local/include/spktest/:
+        Final Installation
         <screen>
         su
-        cp -r CppAD /usr/local/include/spktest/CppAD
-        </screen>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-        Finally copy the library, libCppAD.a, to /usr/local/lib/spktest/:
-        <screen>
-        cp lib/lib* /usr/local/lib/spktest/
+        make install
         </screen>
         </para>
       </listitem>
