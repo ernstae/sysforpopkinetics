@@ -620,22 +620,24 @@ public class TestSpkdb {
                 case 46:
                     target = true;
                     s = "abortJob case 1 - q2c";
-                    b = Spkdb.abortJob(conn, 1L);                    
+                    String state = Spkdb.abortJob(conn, 1L);                    
                     rs = Spkdb.getJob(conn, 1L);
                     if(rs.next())
                         b = b && rs.getString("state_code").equals("end")
-                            && rs.getString("end_code").equals("abrt");
+                            && rs.getString("end_code").equals("abrt")
+                            && state.equals("end");
                     else
 	                b = false;
                     break;
 		case 47:
                     target = true;
                     s = "abortJob case 2 - q2r";
-                    b = Spkdb.abortJob(conn, 3L);
+                    state = Spkdb.abortJob(conn, 3L);
                     rs = Spkdb.getJob(conn, 3L);
                     if(rs.next())
                         b = b && rs.getString("state_code").equals("end")
-                            && rs.getString("end_code").equals("abrt");
+                            && rs.getString("end_code").equals("abrt")
+                            && state.equals("end");
                     else
                         b = false;
                     break;
@@ -643,10 +645,11 @@ public class TestSpkdb {
                     target = true;
                     s = "abortJob case 3 - cmp";
                     Spkdb.setStateCode(conn, 1L, "cmp");
-                    b = Spkdb.abortJob(conn, 1L);
+                    state = Spkdb.abortJob(conn, 1L);
                     rs = Spkdb.getJob(conn, 1L);
                     if(rs.next())
-                        b = b && rs.getString("state_code").equals("q2ac");
+                        b = b && rs.getString("state_code").equals("q2ac")
+                            && state.equals("q2ac");
                     else
                         b = false;
                     break;
@@ -654,40 +657,44 @@ public class TestSpkdb {
                     target = true;
                     s = "abortJob case 4 - run";
                     Spkdb.setStateCode(conn, 3L, "run");
-                    b = Spkdb.abortJob(conn, 3L);
+                    state = Spkdb.abortJob(conn, 3L);
                     rs = Spkdb.getJob(conn, 3L);
                     if(rs.next())
-                        b = b && rs.getString("state_code").equals("q2ar");
+                        b = b && rs.getString("state_code").equals("q2ar")
+                            && state.equals("q2ar");
                     else
                         b = false;
                     break;
                 case 50:
                     target = true;
                     s = "abortJob case 5 - end";
-                    b = Spkdb.abortJob(conn, 2L);
+                    state = Spkdb.abortJob(conn, 2L);
                     rs = Spkdb.getJob(conn, 2L);
                     if(rs.next())
-                        b = !b && rs.getString("state_code").equals("end");
+                        b = rs.getString("state_code").equals("end")
+                            && state == null;
                     else
                         b = false;
 		    break;
                 case 51:
                     target = true;
                     s = "abortJob case 6 - q2ac";
-                    b = Spkdb.abortJob(conn, 1L);
+                    state = Spkdb.abortJob(conn, 1L);
                     rs = Spkdb.getJob(conn, 1L);
                     if(rs.next())
-                        b = !b && rs.getString("state_code").equals("q2ac");
+                        b = rs.getString("state_code").equals("q2ac")
+                            && state == null;
                     else
                         b = false;
 		    break;
                 case 52:
                     target = true;
                     s = "abortJob case 7 - q2ar";
-                    b = Spkdb.abortJob(conn, 3L);
+                    state = Spkdb.abortJob(conn, 3L);
                     rs = Spkdb.getJob(conn, 3L);
                     if(rs.next())
-                        b = !b && rs.getString("state_code").equals("q2ar");
+                        b = rs.getString("state_code").equals("q2ar")
+                            && state == null;
                     else
                         b = false;
 		    break;
@@ -695,10 +702,11 @@ public class TestSpkdb {
                     target = true;
                     s = "abortJob case 8 - acmp";
                     Spkdb.setStateCode(conn, 1L, "acmp");
-                    b = Spkdb.abortJob(conn, 1L);
+                    state = Spkdb.abortJob(conn, 1L);
                     rs = Spkdb.getJob(conn, 1L);
                     if(rs.next())
-                        b = !b && rs.getString("state_code").equals("acmp");
+                        b = rs.getString("state_code").equals("acmp")
+                            && state == null;
                     else
                         b = false;
 		    break;
@@ -706,10 +714,11 @@ public class TestSpkdb {
                     target = true;
                     s = "abortJob case 9 - arun";
                     Spkdb.setStateCode(conn, 3L, "arun");
-                    b = Spkdb.abortJob(conn, 3L);
+                    state = Spkdb.abortJob(conn, 3L);
                     rs = Spkdb.getJob(conn, 3L);
                     if(rs.next())
-                        b = !b && rs.getString("state_code").equals("arun");
+                        b = rs.getString("state_code").equals("arun")
+                            && state == null;
                     else
                         b = false;
 		    break;
