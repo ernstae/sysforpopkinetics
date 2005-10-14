@@ -45,6 +45,16 @@
     <job>505</job><!-- Population, FO, mares POP011 -->
     <job>506</job><!-- Population, LAPLACE, mares POP012 -->
     <job>543</job><!-- Population, FO, MATRIX=R, orangetrees POP017 -->
+    <!--job>987</job--><!-- Population POP033, Indomethicin TWO COMPARTMENT ODE -->
+    <!--job>988</job--><!-- Population POP034, Indomethicin TWO COMPARTMENT ODE -->
+    <!--job>991</job--><!-- Population POP035, Indomethicin TWO COMPARTMENT ODE -->
+    <job>992</job><!-- Population POP036, Indomethicin TWO COMPARTMENT ODE -->
+    <!--job>960</job--><!-- Population POP040, Argatroban 1 cpt ODE -->
+    <!--job>972</job--><!-- Population POP041, Argatroban 1 cpt ODE -->
+    <!--job>961</job--><!-- Population POP042, Argatroban 1 cpt ODE -->
+    <job>969</job><!-- Population POP043, Argatroban 1 cpt ODE -->
+    <job>962</job><!-- Population POP045, Argatroban 1 cpt ODE -->
+    <job>993</job><!-- Individual IND035, 2 Comp ODE -->  
     <ignore>elapsedtime</ignore>
   </srun>
   <serr>
