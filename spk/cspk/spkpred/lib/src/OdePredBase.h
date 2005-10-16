@@ -43,6 +43,7 @@
 
 // SPK library header files.
 #include <spk/intToOrdinalString.h>
+#include <spk/SpkValarray.h>
 
 // Standard library header files.
 #include <algorithm>
@@ -2058,9 +2059,9 @@ private:
     // ODE solution times by solving the differential equations from
     // the DES block numerically.
     try
-    {	std::string method = "Runge45";
+    { std::string method = "Runge45";
       OdeBreak(
-	method,
+        method,
         odeBreakEvalClass,
         breakTime,
         odeSolnTime,
@@ -2197,8 +2198,16 @@ protected:
       // Get the ODE solution index for this data record.
       int s = dataRecOdeSolnIndex[ j ];
 
+      // Set the current amounts in all of the compartments equal to
+      // their amounts at the time for this data record.
+      int p;
+      for ( p = 0; p < nComp; p++ )
+      {
+        compAmount[p] = compAmountAllOdeSoln[p + s * nComp];
+      }
+
       // Get the compartment index for this ODE solution.
-      int p = compIndex( odeSolnComp[ s ] );
+      p = compIndex( odeSolnComp[ s ] );
 
       // Set the scaled amount in the observation compartment.
       f_i_j = compAmountAllOdeSoln[p + s * nComp] /
@@ -2223,7 +2232,24 @@ protected:
         // Get the observation index for this data record.
         int m = dataRecObservIndex[ j ];
 
-        depVar[ fOffset + m ] = f_i_j;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // [Revisit - Take out Redundant y Values in Dependent Variables - Mitch]
+        // In the near future take out the redundant y values in the
+        // vector of dependent variables, i.e., set
+        //
+        //     w( z )  =  y( theta, eta, eps )  .
+        //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //
+        // Set the dependent variables,
+	//
+        //                 -                      -
+        //                |  y( theta, eta, eps )  |
+        //     w( z )  =  |                        |  .
+        //                |  y( theta, eta, eps )  |
+        //                 -                      -
+	//
+        depVar[ fOffset + m ] = y_i_j;
         depVar[ yOffset + m ] = y_i_j;
 
         isObsEvent = true;
