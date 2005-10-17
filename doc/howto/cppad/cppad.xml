@@ -26,10 +26,22 @@
     </abstract>
     <revhistory>
       <revision>
-	<revnumber>2.0</revnumber>
-	<date>Oct 14, 2005</date>
-	<authorinitials></authorinitials>
-	<revremark></revremark>
+	<revnumber>1.1</revnumber>
+	<date>Jul 25, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Initial version</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.2</revnumber>
+	<date>Aug 26, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Add libCppAD.a installation</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.4</revnumber>
+	<date>Oct 17, 2005</date>
+	<authorinitials>bmb</authorinitials>
+	<revremark>Use new CppAD install capabilities</revremark>
       </revision>
     </revhistory>
   </articleinfo>
