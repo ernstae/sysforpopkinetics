@@ -859,7 +859,7 @@ sub stop {
 # become a daemon
 Proc::Daemon::Init();
 
-# initialize
+# Initialize, connect to the database
 start();
 
 # Add directories of shared libraries to the load path
@@ -879,6 +879,9 @@ $SIG{'QUIT'} = 'IGNORE';
 
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
+
+# Wait for a while till things settle down
+sleep(10);
 
 # Abort any jobs of queued to abort run or aborting run
 # state, which was left by the last termination of this daemon.
