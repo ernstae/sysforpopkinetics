@@ -284,7 +284,6 @@ void NonmemTranslator::parseSource()
   // Ones that may have been appeared 
   // in the model definition.
   //+++++++++++++++++++++++++++++++++++++
-
   // MDV
   if( (p = table->findi( KeyStr.MDV ))  != Symbol::empty() )
     myIsMissingMdv = false;
@@ -304,6 +303,23 @@ void NonmemTranslator::parseSource()
   // RATE
   if( (p = table->findi( KeyStr.RATE )) != Symbol::empty() )
     myIsMissingRate = false;
+
+  if( myModelSpec != PRED )
+    {
+      if( myIsMissingMdv )
+	{
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
+				      "MDV data item is missing",
+				      __LINE__, __FILE__ );
+	}
+      if( (p = table->findi( KeyStr.AMT ))  == Symbol::empty() )
+	{
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
+				      "AMT data item is missing",
+				      __LINE__, __FILE__ );
+	}
+    }
+
 
   // PRED
   if( (p = table->findi( KeyStr.PRED )) != Symbol::empty() )

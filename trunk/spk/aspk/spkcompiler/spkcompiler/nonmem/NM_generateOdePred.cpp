@@ -483,27 +483,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       
       pLabel++;
     }
-  if( myIsMissingMdv && myIsMissingEvid )
-    {
-      if( table->findi( KeyStr.AMT ) == Symbol::empty() )
-	{
-	  oOdePred_h << "   assert( nRecords == nObservs );" << endl;
-	  oOdePred_h << "   depVar = depVarRecords;" << endl;
-	}
-      else
-	{
-	  oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
-	  oOdePred_h << "   {" << endl;
-	  oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.AMT << "[j] == 0 )" << endl;
-	  oOdePred_h << "      {" << endl;
-	  oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
-	  oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
-          oOdePred_h << "         k++;" << endl;
-	  oOdePred_h << "      }" << endl;
-	  oOdePred_h << "   }" << endl;
-	}
-    }
-  else if( !myIsMissingMdv && myIsMissingEvid )
+  if( myIsMissingEvid )
     {
       oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
       oOdePred_h << "   {" << endl;
@@ -515,20 +495,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       oOdePred_h << "      }" << endl;
       oOdePred_h << "   }" << endl;
     }
-  else if( myIsMissingMdv && !myIsMissingEvid )
-    {
-      oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
-      oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0" << endl;
-      oOdePred_h << "         || spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 2 )" << endl;
-      oOdePred_h << "      {" << endl;
-      oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
-      oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
-      oOdePred_h << "         k++;" << endl;
-      oOdePred_h << "      }" << endl;
-      oOdePred_h << "   }" << endl;
-    }
-  else // !myIsMissingMdv && !myIsMissingEvid
+  else //!myIsMissingEvid
     {
       oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
       oOdePred_h << "   {" << endl;
@@ -560,31 +527,10 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "  setDV  ( spk_perm->data[spk_i]->DV[spk_j] );"   << endl;
   oOdePred_h << "  setTIME( spk_perm->data[spk_i]->TIME[spk_j] );" << endl;
   oOdePred_h << "  setAMT ( spk_perm->data[spk_i]->AMT[spk_j] );"  << endl;
-
-  if( myIsMissingMdv )
-    {
-      oOdePred_h << "  if( spk_perm->data[spk_i]->AMT[spk_j] > 0 )" << endl;
-      oOdePred_h << "    setMDV( 1 );" << endl;
-      oOdePred_h << "  else" << endl;
-      oOdePred_h << "    setMDV( 0 );" << endl;
-    }
-  else
-    {
-      oOdePred_h << "  setMDV( spk_perm->data[spk_i]->MDV[spk_j] );" << endl;
-    }
+  oOdePred_h << "  setMDV ( spk_perm->data[spk_i]->MDV[spk_j] );" << endl;
   if( myIsMissingEvid )
     {
-      if( myIsMissingMdv )
-	{
-	  oOdePred_h << "  if( spk_perm->data[spk_i]->AMT[spk_j] > 0 )" << endl;
-	  oOdePred_h << "    setEVID( 1 );" << endl;
-	  oOdePred_h << "  else" << endl;
-	  oOdePred_h << "    setEVID( 0 );" << endl;
-	}
-      else
-	{
-	  oOdePred_h << "  setEVID( (spk_perm->data[spk_i]->MDV[spk_j] == 1? 1 : 0 ) );" << endl;
-	}
+      oOdePred_h << "  setEVID( (spk_perm->data[spk_i]->MDV[spk_j] == 1? 1 : 0 ) );" << endl;
     }
   else
     {

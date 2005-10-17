@@ -89,6 +89,7 @@ if( actual != expected ) \\\n \
   const char *strDV   = "DV";
   const char *strCP   = "CP";
   const char *strMDV  = "MDV";
+  const char *strAMT  = "AMT";
   const char *label[] = { strID, strDV, strTIME, strMDV };
   map<const char*, const char*> label_alias;
   int nLabels         = 4;
@@ -634,6 +635,7 @@ void ind_mdvTest::testIndDataClass()
   o << "   vector<char*>  a_id(nRecords);" << endl;
   o << "   vector<double> a_time(nRecords);" << endl;
   o << "   vector<double> a_dv(nRecords);" << endl;
+  o << "   vector<double> a_amt(nRecords);" << endl;
   o << "   vector<double> a_mdv(nRecords);" << endl;
 
   for( int i=0; i<nRecords; i++ )
@@ -642,9 +644,10 @@ void ind_mdvTest::testIndDataClass()
     o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
     o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
     o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
+    o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
   }
 
-  o << "   IndData<double> A( nRecords, a_id, a_dv, a_time, a_mdv );" << endl;
+  o << "   IndData<double> A( nRecords, a_id, a_dv, a_time, a_mdv, a_amt );" << endl;
 
   o << "   MY_ASSERT_EQUAL( nRecords, A.getNRecords() );" << endl;
   o << "   MY_ASSERT_EQUAL( nObservs, A.getNObservs() );" << endl;
@@ -712,6 +715,7 @@ void ind_mdvTest::testDataSetClass()
   for( int i=0; i<nRecords; i++ )
     {
       o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", set.data[0]->" << strMDV  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << 0.0 << ", set.data[0]->" << strAMT  << "[" << i << "] );" << endl;
       o << "   if( set.data[0]->" << strMDV  << "[" << i << "] == 0 )" << endl;
     }
 

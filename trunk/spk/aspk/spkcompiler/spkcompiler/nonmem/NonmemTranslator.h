@@ -316,7 +316,7 @@ class NonmemTranslator : public ClientTranslator
   // constant strings used as <tag> names and values
   //---------------------------------------------------------
 
-  int whereis( xercesc::DOMElement* dataset, const XMLCh* label ) const;
+  int whereis( xercesc::DOMNodeList* labels, const XMLCh* label ) const;
 
   // SpkDataML tags & attributes;
   XMLCh* X_SPKDATA;                    static const char * C_SPKDATA;
@@ -477,26 +477,26 @@ class NonmemTranslator : public ClientTranslator
    * Insert the ID field (ie. node) in each record (subtree) if the data set lacks of it.
    * Returns the location in which the ID field can be found.
    */
-  int insertID( xercesc::DOMElement* dataset );
+  int insertID( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
 
   /**
    * Insert the MDV field (ie. node) in each record (subtree) if the data set lacks of it.
    * Returns the location in which the MDV field can be found.
    */
-  int insertMDV( xercesc::DOMElement* dataset, int posAMT, int posEVID );
+  int insertMDV( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels, int posAMT, int posEVID );
 
   /**
    * Insert the EVID field (ie. node) in each record (subtree) if the data set lacks of it.
    * Returns the location in which the EVID field can be found.
    * This routine assumes MDV is present or has been inserted by SPK Compiler in the data set.
    */
-  int insertEVID( xercesc::DOMElement* dataset, int posAMT, int posMDV );
+  int insertEVID( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels, int posAMT, int posMDV );
 
   /**
    * Insert the AMT field (ie. node) in each record (subtree) if the data set lacks of it.
    * Returns the location in which the AMT field can be found.
    */
-  int insertAMT( xercesc::DOMElement* dataset );
+  int insertAMT( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
 
   //
   // Analyze the <pop_analysis> subtree.

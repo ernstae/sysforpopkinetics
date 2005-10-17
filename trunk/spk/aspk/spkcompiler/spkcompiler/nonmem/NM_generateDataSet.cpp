@@ -396,56 +396,14 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "      int n = data[i]->getNRecords();" << endl;
   oDataSet_h << "      for( int k=0; k<n; k++, j++ )" << endl;
   oDataSet_h << "      {" << endl;
-  if( myIsMissingMdv )
-    {
-      if( table->findi( KeyStr.EVID ) == Symbol::empty() )
-	{
-      
-	  if( table->findi( KeyStr.AMT ) == Symbol::empty() )
-	    {
-	      oDataSet_h << "        jPrimeToj[jPrime] = j;" << endl;
-	      oDataSet_h << "        jTojPrime[j] = jPrime;" << endl;
-	      oDataSet_h << "        jPrime++;" << endl;
-	    }
-	  else
-	    {
-	      oDataSet_h << "        if( data[i]->" << UserStr.AMT << "[k] == 0 )" << endl;
-	      oDataSet_h << "        {" << endl;
-	      oDataSet_h << "           jPrimeToj[jPrime] = j;" << endl;
-	      oDataSet_h << "           jTojPrime[j] = jPrime;" << endl;
-	      oDataSet_h << "           jPrime++;" << endl;
-	      oDataSet_h << "        }" << endl;
-	      oDataSet_h << "        else" << endl;
-	      oDataSet_h << "        {" << endl;
-	      oDataSet_h << "           jTojPrime[j] = -1;" << endl;
-	      oDataSet_h << "        }" << endl;
-	    }
-	}
-      else
-	{
-	  oDataSet_h << "        if( data[i]->" << UserStr.EVID << "[j] == 0 )" << endl;
-	  oDataSet_h << "        {" << endl;
-	  oDataSet_h << "           jPrimeToj[jPrime] = j;" << endl;
-	  oDataSet_h << "           jTojPrime[j] = jPrime;" << endl;
-	  oDataSet_h << "           jPrime++;" << endl;
-	  oDataSet_h << "        }" << endl;
-	  oDataSet_h << "        else" << endl;
-	  oDataSet_h << "        {" << endl;
-	  oDataSet_h << "           jTojPrime[j] = -1;" << endl;
-	  oDataSet_h << "        }" << endl;
-	}
-    }
-  else
-    {
-      oDataSet_h << "         if( data[i]->" << UserStr.MDV << "[k] == 0 )" << endl;
-      oDataSet_h << "         {" << endl;
-      oDataSet_h << "            jPrimeToj[jPrime] = j;" << endl;
-      oDataSet_h << "            jTojPrime[j] = jPrime;" << endl;
-      oDataSet_h << "            jPrime++;" << endl;
-      oDataSet_h << "         }" << endl;
-      oDataSet_h << "         else" << endl;
-      oDataSet_h << "            jTojPrime[j] = -1;" << endl;
-    }
+  oDataSet_h << "         if( data[i]->" << UserStr.MDV << "[k] == 0 )" << endl;
+  oDataSet_h << "         {" << endl;
+  oDataSet_h << "            jPrimeToj[jPrime] = j;" << endl;
+  oDataSet_h << "            jTojPrime[j] = jPrime;" << endl;
+  oDataSet_h << "            jPrime++;" << endl;
+  oDataSet_h << "         }" << endl;
+  oDataSet_h << "         else" << endl;
+  oDataSet_h << "            jTojPrime[j] = -1;" << endl;
   oDataSet_h << "      }" << endl;
   oDataSet_h << "   }" << endl;
 
