@@ -566,51 +566,15 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 
   ///////////////////////////////////////////////////////////////////////////////////
 
-  // Pred::eval() returns true if MDV(i,j)=0, 
-  // where MDV=0 is interpreted that the statement "Missing Dependent Variable" is false.
-  // In ver 0.1, it is assumed that MDV=true for all data records, 
-  // so return true unconditionally.
-  if( !myIsMissingMdv )
-  {
-    oPred_h << "   // MDV data item found in the data set." << endl;
-    oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
-    oPred_h << "   {" << endl;
-    oPred_h << "      spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
-    oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
-    oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
-    oPred_h << "      return true;" << endl;
-    oPred_h << "   }" << endl;
-    oPred_h << "   else" << endl;
-    oPred_h << "      return false;" << endl;
-  }
-  else
-    {
-      if( table->findi( KeyStr.AMT ) )
-	{
-	  oPred_h << "   // No MDV data item found in the data set but AMT was found." << endl;
-	  oPred_h << "   // Assume MDV = 0 if AMT = 0 and MDV = 1 if AMT > 0." << endl;
-	  oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.AMT << "[ spk_j ] == 0 )" << endl;
-	  oPred_h << "   {" << endl;
-	  oPred_h << "      spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
-	  oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
-	  oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
-	  oPred_h << "      return true;" << endl;
-	  oPred_h << "   }" << endl;
-	  oPred_h << "   else" << endl;
-	  oPred_h << "   {" << endl;
-	  oPred_h << "      return false;" << endl;
-	  oPred_h << "   }" << endl;
-	}
-      else
-	{
-	  oPred_h << "   // No MDV or AMT found in the data set.  Asuume all MDV=0." << endl;
-	  oPred_h << "   spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
-	  oPred_h << "   spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
-	  oPred_h << "   spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
-	  oPred_h << "   return true;" << endl;
-	}
-    }
-
+  oPred_h << "   if( spk_perm->data[ spk_i ]->" << UserStr.MDV << "[ spk_j ] == 0 )" << endl;
+  oPred_h << "   {" << endl;
+  oPred_h << "      spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
+  oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << UserStr.F << ";" << endl;
+  oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << UserStr.Y << ";" << endl;
+  oPred_h << "      return true;" << endl;
+  oPred_h << "   }" << endl;
+  oPred_h << "   else" << endl;
+  oPred_h << "      return false;" << endl;
   oPred_h << "}" << endl;
 
   oPred_h << "template <class spk_ValueType>" << endl;

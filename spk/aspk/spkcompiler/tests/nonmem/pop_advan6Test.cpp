@@ -29,113 +29,8 @@ using namespace CppUnit;
 using namespace xercesc;
 /*
 ===================================================================================
-   NONMEM Control File
+  Test POP033: INDOMETH1A
 ===================================================================================
-$DATA Cadralazine.dat
-$INPUT ID TIME DV AMT=DOSE
-$SUBROUTINES ADVAN6 TOL=4
-$MODEL NCOMPARTMENTS=1 NEQUILIBRIUM=0 NPARAMETERS=0
-COMP=(CENTRAL)
-$PK
-CL = THETA(1)*EXP(ETA(1))
-V = THETA(2)
-K = CL/V
-S1 = V
-$THETA
-(0.3,3,30)
-(0.5,5,50.0)
-$OMEGA DIAGONAL(1)
-0.09 ;[P]
-$DES
-DADT(1)=-K*A(1)
-$ERROR
-Y = F*(1 + EPS(1))
-$SIGMA DIAGONAL(1)
-0.03 ;[P]
-$ESTIMATION METHOD=1 INTERACTION SIGDIGITS=3 MAXEVALS=450 PRINT=5
-$COVARIANCE
-====================================================================================
-*/
-/*
-====================================================================================
-   NONMEM DATA file
-====================================================================================
-1,0,0,30
-1,2.00E+00,1.09E+00,0
-1,4.00E+00,7.50E-01,0
-1,6.00E+00,5.30E-01,0
-1,8.00E+00,3.40E-01,0
-1,1.00E+01,2.30E-01,0
-1,2.40E+01,2.00E-02,0
-2,0,0,30
-2,2.00E+00,2.03E+00,0
-2,4.00E+00,1.28E+00,0
-2,6.00E+00,1.20E+00,0
-2,8.00E+00,1.02E+00,0
-2,1.00E+01,8.30E-01,0
-2,2.40E+01,2.80E-01,0
-3,0,0,30
-3,2.00E+00,1.44E+00,0
-3,4.00E+00,1.30E+00,0
-3,6.00E+00,9.50E-01,0
-3,8.00E+00,6.80E-01,0
-3,1.00E+01,5.20E-01,0
-3,2.40E+01,6.00E-02,0
-4,0,0,30
-4,2.00E+00,1.55E+00,0
-4,4.00E+00,9.60E-01,0
-4,6.00E+00,8.00E-01,0
-4,8.00E+00,6.20E-01,0
-4,1.00E+01,4.60E-01,0
-4,2.40E+01,8.00E-02,0
-5,0,0,30
-5,2.00E+00,1.35E+00,0
-5,4.00E+00,7.80E-01,0
-5,6.00E+00,5.00E-01,0
-5,8.00E+00,3.30E-01,0
-5,1.00E+01,1.80E-01,0
-5,2.40E+01,2.00E-02,0
-6,0,0,30
-6,2.00E+00,1.08E+00,0
-6,4.00E+00,5.90E-01,0
-6,6.00E+00,3.70E-01,0
-6,8.00E+00,2.30E-01,0
-6,1.00E+01,1.70E-01,0
-6,2.40E+01,0.00E+00,0
-7,0,0,30
-7,2.00E+00,1.32E+00,0
-7,4.00E+00,7.40E-01,0
-7,6.00E+00,4.60E-01,0
-7,8.00E+00,2.80E-01,0
-7,1.00E+01,2.70E-01,0
-7,2.40E+01,3.00E-02,0
-7,2.80E+01,2.00E-02,0
-7,3.20E+01,0.00E+00,0
-8,0,0,30
-8,2.00E+00,1.63E+00,0
-8,4.00E+00,1.01E+00,0
-8,6.00E+00,7.30E-01,0
-8,8.00E+00,5.50E-01,0
-8,1.00E+01,4.10E-01,0
-8,2.40E+01,1.00E-02,0
-8,2.80E+01,6.00E-02,0
-8,3.20E+01,2.00E-02,0
-9,0,0,30
-9,2.00E+00,1.26E+00,0
-9,4.00E+00,7.30E-01,0
-9,6.00E+00,4.00E-01,0
-9,8.00E+00,3.00E-01,0
-9,1.00E+01,2.10E-01,0
-9,2.40E+01,0.00E+00,0
-10,0,0,30
-10,2.00E+00,1.30E+00,0
-10,4.00E+00,7.00E-01,0
-10,6.00E+00,4.00E-01,0
-10,8.00E+00,2.50E-01,0
-10,1.00E+01,1.40E-01,0
-10,2.40E+01,0.00E+00,0
-
-====================================================================================
 */
 namespace{ 
   const unsigned int MAXCHARS = 64;
@@ -204,91 +99,89 @@ if( actual != expected ) \\\n \
   const char *strAMT        = "AMT";
   const char *strJUNK       = "JUNK";
   const char *strMDV        = "MDV";
-  const char *label[]       = { strID, strTIME, strDV, strDOSE };
-  const int    nLabels      = 4;
-  const int    nIndividuals = 10;
-  const int    nRecords     = 7+7+7+7+7+7+9+9+7+7;
+  const char *strEVID       = "EVID";
+  const char *label[]       = { strID, strTIME, strDV, strDOSE, strMDV, strEVID };
+  const int    nLabels      = 6;
+  const int    nIndividuals = 6;
+  const int    nRecords     = 12 + 12 + 11 + 12 + 12 + 12;
   const int    nFixed       = 0;
-  const int    nMDV         = 10;
+  const int    nMDV         = 6;
   const int    nItems       = nLabels;
-  const int    c_N[]        = { 6, 6, 6, 6, 6, 6, 8, 8, 6, 6 };
+  const int    c_N[]        = { 11, 11, 10, 11, 11, 11 };
   valarray<int> N( c_N, nIndividuals );
-  const int    c_NRecords[] = { 7, 7, 7, 7, 7, 7, 9, 9, 7, 7 };
+  const int    c_NRecords[] = { 12, 12, 11, 12, 12, 12 };
   valarray<int> NRecords( c_NRecords, nIndividuals );
-  const double record0 [] = { 1,  0,        0,        30,  1.0 };
-  const double record1 [] = { 1,  2.00E+00, 1.09E+00,  0,  1.1 };
-  const double record2 [] = { 1,  4.00E+00, 7.50E-01,  0,  1.2 };
-  const double record3 [] = { 1,  6.00E+00, 5.30E-01,  0,  1.3 };
-  const double record4 [] = { 1,  8.00E+00, 3.40E-01,  0,  1.4 };
-  const double record5 [] = { 1,  1.00E+01, 2.30E-01,  0,  1.5 };
-  const double record6 [] = { 1,  2.40E+01, 2.00E-02,  0,  1.6 };
-  const double record7 [] = { 2,  0,        0,        30,  2.0 };
-  const double record8 [] = { 2,  2.00E+00, 2.03E+00,  0,  2.1 };
-  const double record9 [] = { 2,  4.00E+00, 1.28E+00,  0,  2.2 };
-  const double record10[] = { 2,  6.00E+00, 1.20E+00,  0,  2.3 };
-  const double record11[] = { 2,  8.00E+00, 1.02E+00,  0,  2.4 };
-  const double record12[] = { 2,  1.00E+01, 8.30E-01,  0,  2.5 };
-  const double record13[] = { 2,  2.40E+01, 2.80E-01,  0,  2.6 };
-  const double record14[] = { 3,  0,        0,        30,  3.0 };
-  const double record15[] = { 3,  2.00E+00, 1.44E+00,  0,  3.1 };
-  const double record16[] = { 3,  4.00E+00, 1.30E+00,  0,  3.2 };
-  const double record17[] = { 3,  6.00E+00, 9.50E-01,  0,  3.3 };
-  const double record18[] = { 3,  8.00E+00, 6.80E-01,  0,  3.4 };
-  const double record19[] = { 3,  1.00E+01, 5.20E-01,  0,  3.5 };
-  const double record20[] = { 3,  2.40E+01, 6.00E-02,  0,  3.6 };
-  const double record21[] = { 4,  0,        0,        30,  4.0 };
-  const double record22[] = { 4,  2.00E+00, 1.55E+00,  0,  4.1 };
-  const double record23[] = { 4,  4.00E+00, 9.60E-01,  0,  4.2 };
-  const double record24[] = { 4,  6.00E+00, 8.00E-01,  0,  4.3 };
-  const double record25[] = { 4,  8.00E+00, 6.20E-01,  0,  4.4 };
-  const double record26[] = { 4,  1.00E+01, 4.60E-01,  0,  4.5 };
-  const double record27[] = { 4,  2.40E+01, 8.00E-02,  0,  4.6 };
-  const double record28[] = { 5,  0,        0,        30,  5.0 };
-  const double record29[] = { 5,  2.00E+00, 1.35E+00,  0,  5.1 };
-  const double record30[] = { 5,  4.00E+00, 7.80E-01,  0,  5.2 };
-  const double record31[] = { 5,  6.00E+00, 5.00E-01,  0,  5.3 };
-  const double record32[] = { 5,  8.00E+00, 3.30E-01,  0,  5.4 };
-  const double record33[] = { 5,  1.00E+01, 1.80E-01,  0,  5.5 };
-  const double record34[] = { 5,  2.40E+01, 2.00E-02,  0,  5.6 };
-  const double record35[] = { 6,  0,        0,        30,  6.0 };
-  const double record36[] = { 6,  2.00E+00, 1.08E+00,  0,  6.1 };
-  const double record37[] = { 6,  4.00E+00, 5.90E-01,  0,  6.1 };
-  const double record38[] = { 6,  6.00E+00, 3.70E-01,  0,  6.2 };
-  const double record39[] = { 6,  8.00E+00, 2.30E-01,  0,  6.3 };
-  const double record40[] = { 6,  1.00E+01, 1.70E-01,  0,  6.4 };
-  const double record41[] = { 6,  2.40E+01, 0.00E+00,  0,  6.5 };
-  const double record42[] = { 7,  0,        0,        30,  7.0 };
-  const double record43[] = { 7,  2.00E+00, 1.32E+00,  0,  7.1 };
-  const double record44[] = { 7,  4.00E+00, 7.40E-01,  0,  7.2 };
-  const double record45[] = { 7,  6.00E+00, 4.60E-01,  0,  7.3 };
-  const double record46[] = { 7,  8.00E+00, 2.80E-01,  0,  7.4 };
-  const double record47[] = { 7,  1.00E+01, 2.70E-01,  0,  7.5 };
-  const double record48[] = { 7,  2.40E+01, 3.00E-02,  0,  7.6 };
-  const double record49[] = { 7,  2.80E+01, 2.00E-02,  0,  7.7 };
-  const double record50[] = { 7,  3.20E+01, 0.00E+00,  0,  7.8 };
-  const double record51[] = { 8,  0,        0,        30,  8.0 };
-  const double record52[] = { 8,  2.00E+00, 1.63E+00,  0,  8.1 };
-  const double record53[] = { 8,  4.00E+00, 1.01E+00,  0,  8.2 };
-  const double record54[] = { 8,  6.00E+00, 7.30E-01,  0,  8.3 };
-  const double record55[] = { 8,  8.00E+00, 5.50E-01,  0,  8.4 };
-  const double record56[] = { 8,  1.00E+01, 4.10E-01,  0,  8.5 };
-  const double record57[] = { 8,  2.40E+01, 1.00E-02,  0,  8.6 };
-  const double record58[] = { 8,  2.80E+01, 6.00E-02,  0,  8.7 };
-  const double record59[] = { 8,  3.20E+01, 2.00E-02,  0,  8.8 };
-  const double record60[] = { 9,  0,        0,        30,  9.0 };
-  const double record61[] = { 9,  2.00E+00, 1.26E+00,  0,  9.1 };
-  const double record62[] = { 9,  4.00E+00, 7.30E-01,  0,  9.2 };
-  const double record63[] = { 9,  6.00E+00, 4.00E-01,  0,  9.3 };
-  const double record64[] = { 9,  8.00E+00, 3.00E-01,  0,  9.4 };
-  const double record65[] = { 9,  1.00E+01, 2.10E-01,  0,  9.5 };
-  const double record66[] = { 9,  2.40E+01, 0.00E+00,  0,  9.6 };
-  const double record67[] = { 10, 0,        0,        30, 10.0 };
-  const double record68[] = { 10, 2.00E+00, 1.30E+00  ,0, 10.1 };
-  const double record69[] = { 10, 4.00E+00, 7.00E-01,  0, 10.2 };
-  const double record70[] = { 10, 6.00E+00, 4.00E-01,  0, 10.3 };
-  const double record71[] = { 10, 8.00E+00, 2.50E-01,  0, 10.4 };
-  const double record72[] = { 10, 1.00E+01, 1.40E-01,  0, 10.5 };
-  const double record73[] = { 10, 2.40E+01, 0.00E+00,  0, 10.6 };
+  const double record0 [] = {1,0,0,1,1,1};
+  const double record1 [] = {1,0.25,1.5,0,0,0};
+  const double record2 [] = {1,0.5,0.94,0,0,0};
+  const double record3 [] = {1,0.75,0.78,0,0,0};
+  const double record4 [] = {1,1,0.48,0,0,0};
+  const double record5 [] = {1,1.25,0.37,0,0,0};
+  const double record6 [] = {1,2,0.19,0,0,0};
+  const double record7 [] = {1,3,0.12,0,0,0};
+  const double record8 [] = {1,4,0.11,0,0,0};
+  const double record9 [] = {1,5,0.08,0,0,0};
+  const double record10[] = {1,6,0.07,0,0,0};
+  const double record11[] = {1,8,0.05,0,0,0};
+  const double record12[] = {2,0,0,1,1,1};
+  const double record13[] = {2,0.25,2.03,0,0,0};
+  const double record14[] = {2,0.5,1.63,0,0,0};
+  const double record15[] = {2,0.75,0.71,0,0,0};
+  const double record16[] = {2,1,0.7,0,0,0};
+  const double record17[] = {2,1.25,0.64,0,0,0};
+  const double record18[] = {2,2,0.36,0,0,0};
+  const double record19[] = {2,3,0.32,0,0,0};
+  const double record20[] = {2,4,0.2,0,0,0};
+  const double record21[] = {2,5,0.25,0,0,0};
+  const double record22[] = {2,6,0.12,0,0,0};
+  const double record23[] = {2,8,0.08,0,0,0};
+  const double record24[] = {3,0,0,1,1,1};
+  const double record25[] = {3,0.5,1.49,0,0,0};
+  const double record26[] = {3,0.75,1.16,0,0,0};
+  const double record27[] = {3,1,0.8,0,0,0};
+  const double record28[] = {3,1.25,0.8,0,0,0};
+  const double record29[] = {3,2,0.39,0,0,0};
+  const double record30[] = {3,3,0.22,0,0,0};
+  const double record31[] = {3,4,0.12,0,0,0};
+  const double record32[] = {3,5,0.11,0,0,0};
+  const double record33[] = {3,6,0.08,0,0,0};
+  const double record34[] = {3,8,0.08,0,0,0};
+  const double record35[] = {4,0,0,1,1,1};
+  const double record36[] = {4,0.25,1.85,0,0,0};
+  const double record37[] = {4,0.5,1.39,0,0,0};
+  const double record38[] = {4,0.75,1.02,0,0,0};
+  const double record39[] = {4,1,0.89,0,0,0};
+  const double record40[] = {4,1.25,0.59,0,0,0};
+  const double record41[] = {4,2,0.4,0,0,0};
+  const double record42[] = {4,3,0.16,0,0,0};
+  const double record43[] = {4,4,0.11,0,0,0};
+  const double record44[] = {4,5,0.1,0,0,0};
+  const double record45[] = {4,6,0.07,0,0,0};
+  const double record46[] = {4,8,0.07,0,0,0};
+  const double record47[] = {5,0,0,1,1,1};
+  const double record48[] = {5,0.25,2.05,0,0,0};
+  const double record49[] = {5,0.5,1.04,0,0,0};
+  const double record50[] = {5,0.75,0.81,0,0,0};
+  const double record51[] = {5,1,0.39,0,0,0};
+  const double record52[] = {5,1.25,0.3,0,0,0};
+  const double record53[] = {5,2,0.23,0,0,0};
+  const double record54[] = {5,3,0.13,0,0,0};
+  const double record55[] = {5,4,0.11,0,0,0};
+  const double record56[] = {5,5,0.08,0,0,0};
+  const double record57[] = {5,6,0.1,0,0,0};
+  const double record58[] = {5,8,0.06,0,0,0};
+  const double record59[] = {6,0,0,1,1,1};
+  const double record60[] = {6,0.25,2.31,0,0,0};
+  const double record61[] = {6,0.5,1.44,0,0,0};
+  const double record62[] = {6,0.75,1.03,0,0,0};
+  const double record63[] = {6,1,0.84,0,0,0};
+  const double record64[] = {6,1.25,0.64,0,0,0};
+  const double record65[] = {6,2,0.42,0,0,0};
+  const double record66[] = {6,3,0.24,0,0,0};
+  const double record67[] = {6,4,0.17,0,0,0};
+  const double record68[] = {6,5,0.13,0,0,0};
+  const double record69[] = {6,6,0.1,0,0,0};
+  const double record70[] = {6,8,0.09,0,0,0};
 
   double const * record[nRecords];
 
@@ -337,10 +230,10 @@ if( actual != expected ) \\\n \
   // the constraints and initial values for
   // theta.
   //============================================
-  const int    thetaLen = 2;
-  const double theta_in [ thetaLen ]   = {  3.0,  5.0 };
-  const double theta_up [ thetaLen ]   = { 30.0, 50.0 };
-  const double theta_low[ thetaLen ]   = {  0.3,  0.5 };
+  const int    thetaLen = 4;
+  const double theta_in [ thetaLen ]   = { 0.25,  0.75,  0.5,  0.5 };
+  const double theta_up [ thetaLen ]   = { 2.5,   7.5,   5.0,  5.0 };
+  const double theta_low[ thetaLen ]   = { 0.025, 0.075, 0.05, 0.05 };
   const bool   theta_fix[ thetaLen ]   = { false, false };
 
   //============================================
@@ -364,7 +257,7 @@ if( actual != expected ) \\\n \
   const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
   const int    omegaOrder              = (omegaStruct==Symbol::DIAGONAL? 
 					  omegaDim : omegaDim * (omegaDim+1)/2 );
-  const double omega_in [ omegaOrder ] = { 0.09 };
+  const double omega_in [ omegaOrder ] = { 0.1 };
   const bool   omega_fix[ omegaOrder ] = { false };
 
   //============================================
@@ -423,19 +316,18 @@ if( actual != expected ) \\\n \
   // What is basic PK parameters???
   // The length of P vector?
   const int nPkParams = 0;
-  const char PK[] = "CL=THETA(1)*EXP(ETA(1))\nV=THETA(2)\nK=CL/V\nS1=V\n";
+  const char PK[] = "K-12=THETA(1)*EXP(ETA(1))\nK01=THETA(2)\nK21=THETA(3)\nVOL=THETA(4)\nS1=VOL\n";
 
   //============================================
   // $DES model
   //
   // DADT(1)=-K*A(1)
   //============================================
-  const int  nComps       = 1;
+  const int  nComps       = 2;
   
-  // user defined comps + 1 (NONMEM adds the output comp)
   const int  nonmemNComps = nComps + 1;
   const int  nEquilibrims = 0;
-  const char DIFFEQN[]    = "DADT(1) = -K*A(1)\n";
+  const char DIFFEQN[]    = "DADT(1) = - (K21 +K01)*A(1) +K12*A(2)\nDADT(2)= K21*A(1)- K12*A(2)\n";
 
   //============================================
   // $ERROR model
@@ -447,23 +339,31 @@ if( actual != expected ) \\\n \
   //============================================
   // Results
   //============================================
-  double nm_theta    [] = { 3.07, 18.37 };
-  double nm_omega    [] = { 1.16E-01 };
-  double nm_sigma    [] = { 1.23E-01 };
+  double nm_theta    [] = { 2.49E-01, 7.81E-01, 5.07E-01, 4.12E-01 };
+  double nm_omega    [] = { 5.48E-01 };
+  double nm_sigma    [] = { 4.46E-02 };
 
-  double nm_stderr   [] = { 4.24E-01, 1.08E+00, 5.20E-02, 3.33E-02 };
-  double nm_cov      [] = { 1.79E-01, 
-                           2.94E-01, 1.17E+00,
-		 	  -1.25E-02,-3.28E-02, 2.70E-03,
-                           9.69E-03, 1.81E-02,-2.48E-04, 1.11E-03 }; 
-  double nm_corr     [] = { 1.00E+00,
-                           6.42E-01, 1.00E-00,
-		  	  -5.55E-01,-5.83E-01, 1.00E+00,
-                           6.87E-01, 5.01E-01,-1.43E-01, 1.00E+00 };
-  double nm_invCov   [] = { 1.86E+01,
-                          -8.13E-01, 1.81E+00,
-                           6.36E+01, 1.65E+01, 8.04E+02,
-		  	  -1.35E+02,-1.87E+01,-6.44E+02, 2.24E+03 };
+  double nm_stderr   [] = { 0.0314398, 0.0627952, 0.0582593, 0.0331642,
+                            0.373946,  0.00918988 };
+
+  double nm_cov      [] = { 0.000988461,
+                           -5.24604e-05,  0.00394323,
+                            0.000544309,  0.00227364,  0.00339415,
+                           -2.06129e-05, -0.0017772,  -0.00131102,  0.00109986,  
+                           -0.00200745,   0.00483583, -0.00157015, -0.000278204,  0.139836,   
+                           -6.08046e-05,  0.000112836, 1.04971e-05, 5.69998e-06,  0.000486753, 8.4454e-05 }; 
+  double nm_corr     [] = { 1,
+                           -0.0265721,    1,
+                            0.297167,     0.621484,    1,
+                           -0.0197693,   -0.853375,   -0.67854,     1,
+                           -0.170748,     0.205938,   -0.0720722,  -0.0224329,    1,
+                           -0.210449,     0.195529,    0.0196062,   0.0187023,    0.141641,    1 };
+  double nm_invCov   [] = { 1280.7,
+			       8.7812,  1286.42,
+                            -362.532,   -134.114,    672.074,
+                            -396.203,   1918.1,      581.218,     4697.75,      
+                              10.0048,   -36.4285,      9.02958,   -45.7978,    8.53482,  
+			     924.473,   -1615.25,     -256.632,  -2973.31,      8.65214,  14847.2  };
 };
 void pop_advan6Test::setUp()
 {
@@ -620,9 +520,6 @@ void pop_advan6Test::setUp()
   record[68]   = record68;
   record[69]   = record69;
   record[70]   = record70;
-  record[71]   = record71;
-  record[72]   = record72;
-  record[73]   = record73;
 
   createDataML();
   createSourceML();
@@ -693,6 +590,11 @@ void pop_advan6Test::parse()
       assert( strcmp( compmodel[i].getName().c_str(), "CENTRAL" ) == 0 );
       assert( compmodel[i].is_default_observation() );
       assert( compmodel[i].is_default_dose() );
+      break;
+    case 1: 
+      assert( strcmp( compmodel[i].getName().c_str(), "PERIPH" ) == 0 );
+      assert( !compmodel[i].is_default_observation() );
+      assert( !compmodel[i].is_default_dose() );
       break;
     default: 
       assert( strcmp( compmodel[i].getName().c_str(), name ) == 0 );
@@ -821,6 +723,7 @@ void pop_advan6Test::tearDown()
 #include "DOMPrint.h"
 void pop_advan6Test::createDataML()
 {
+  /*
   ofstream o( fDataML );
   assert( o.good() );
 
@@ -845,6 +748,8 @@ void pop_advan6Test::createDataML()
   o << "</table>" << endl;
   o << "</spkdataml>" << endl;
   o.close();
+  */
+
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
   // Parse a data set 
@@ -858,14 +763,14 @@ void pop_advan6Test::createDataML()
   dataParser->setCreateEntityReferenceNodes( true );
   
   try{
-    ifstream junk( fDataML );
-    //ifstream junk( "pop_advan6Test.data.xml" );
-     CPPUNIT_ASSERT_MESSAGE( "Failed to open a data xml.", junk.good() );
+    //ifstream junk( fDataML );
+    ifstream junk( "pop_advan6Test.data.xml" );
+    CPPUNIT_ASSERT_MESSAGE( "Failed to open a data xml.", junk.good() );
     junk.close();
-    //dataParser->parse( "pop_advan6Test.data.xml" );
-    dataParser->parse( fDataML );
+    dataParser->parse( "pop_advan6Test.data.xml" );
+    //dataParser->parse( fDataML );
     data = dataParser->getDocument();
-    DOMPrint( data );
+    //DOMPrint( data );
     CPPUNIT_ASSERT_MESSAGE( "Failed to obtain a pointer to DOM parse tree for the data set.", 
                             data != NULL);
   }
@@ -902,6 +807,7 @@ void pop_advan6Test::createDataML()
  
 void pop_advan6Test::createSourceML()
 {
+  /*
   ofstream o( fSourceML );
   CPPUNIT_ASSERT_MESSAGE( "Failed to create a source xml", o.good() );
   
@@ -975,8 +881,8 @@ void pop_advan6Test::createSourceML()
   o << "  </nonmem>" << endl;
   o << "</spksource>" << endl;
 
-
   o.close();
+  */
 
   //============================================
   // Build a parse tree from the sourceML
@@ -990,12 +896,12 @@ void pop_advan6Test::createSourceML()
   sourceParser->setCreateEntityReferenceNodes( true );
   
   try{
-    ifstream junk( fSourceML );
-    //ifstream junk( "pop_advan6Test.source.xml" );
+    //ifstream junk( fSourceML );
+    ifstream junk( "pop_advan6Test.source.xml" );
     CPPUNIT_ASSERT_MESSAGE( "Failed to open CAD1996A1.source.xml", junk.good() );
     junk.close();
-    //sourceParser->parse( "pop_advan6Test.source.xml" );
-    sourceParser->parse( fSourceML );
+    sourceParser->parse( "pop_advan6Test.source.xml" );
+    //sourceParser->parse( fSourceML );
     source = sourceParser->getDocument();
   }
   catch( const XMLException& e )
@@ -1083,7 +989,8 @@ void pop_advan6Test::testIndDataClass()
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_dose(n);" << endl;
   o << "   vector<double> a_amt(n);" << endl;
-  o << "   vector<double> a_junk(n);" << endl;
+  o << "   vector<double> a_mdv(n);" << endl;
+  o << "   vector<int> a_evid(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
@@ -1092,30 +999,30 @@ void pop_advan6Test::testIndDataClass()
     o << "   a_dv  [" << i << "] = "   << record[i][2] << ";" << endl;
     o << "   a_dose[" << i << "] = "   << record[i][3] << ";" << endl;
     o << "   a_amt [" << i << "] = "   << record[i][3] << ";" << endl;
-    o << "   a_junk[" << i << "] = "   << record[i][4] << ";" << endl;
+    o << "   a_mdv [" << i << "] = "   << record[i][4] << ";" << endl;
+    o << "   a_evid[" << i << "] = "   << record[i][5] << ";" << endl;
   }
 
-  //  o << "   IndData<double> A( n, a_id, a_time, a_dv, a_dose, a_junk );" << endl;
-  o << "   IndData<double> A( n, a_id, a_time, a_dv, a_dose );" << endl;
+  o << "   IndData<double> A( n, a_id, a_time, a_dv, a_dose, a_mdv, a_evid );" << endl;
 
   // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strTIME << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strDV   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strDOSE << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strAMT  << "[" << i << "] );" << endl;
-      //      o << "   MY_ASSERT_EQUAL(  " << record[i][4] << ", A." << strJUNK << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL( " << record[i][1] << ", A." << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL( " << record[i][2] << ", A." << strDV   << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL( " << record[i][3] << ", A." << strDOSE << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL( " << record[i][3] << ", A." << strAMT  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL( " << record[i][4] << ", A." << strMDV  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL( " << record[i][5] << ", A." << strEVID << "[" << i << "] );" << endl;
 
       // There have to be placeholders for the current values of theta/eta for
       // each call to ODEPred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen,    A." << strTHETA << "[" << i << "].size() );" << endl;
       o << "   MY_ASSERT_EQUAL( etaLen,      A." << strETA   << "[" << i << "].size() );" << endl;
       o << "   MY_ASSERT_EQUAL( epsLen,      A." << strEPS   << "[" << i << "].size() );" << endl;
-
-      o << "   MY_ASSERT_EQUAL( nonmemComps, A." << strDADT   << "[" << i << "].size() );" << endl;
-      o << "   MY_ASSERT_EQUAL( nonmemComps, A." << strA      << "[" << i << "].size() );" << endl;
+      o << "   MY_ASSERT_EQUAL( nonmemComps, A." << strDADT  << "[" << i << "].size() );" << endl;
+      o << "   MY_ASSERT_EQUAL( nonmemComps, A." << strA     << "[" << i << "].size() );" << endl;
 
       // REVISIT Sachiko 08/11/2005
       // What is "#of basic PK parameters?  What is NPARAMETERS good for?
@@ -1373,13 +1280,13 @@ void pop_advan6Test::testNonmemPars()
   o << "int main()" << endl;
   o << "{" << endl;
   o << "   MY_ASSERT_EQUAL( 0, NonmemPars::isPkFunctionOfT );" << endl;
-  o << "   MY_ASSERT_EQUAL( 2, NonmemPars::nCompartments );" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nonmemNComps << ", NonmemPars::nCompartments );" << endl;
   o << "   MY_ASSERT_EQUAL( 0, NonmemPars::nParameters );" << endl;
   o << "   MY_ASSERT_EQUAL( 1, NonmemPars::defaultDoseComp );" << endl;
   o << "   MY_ASSERT_EQUAL( 1, NonmemPars::defaultObservationComp );" << endl;
-  o << "   MY_ASSERT_EQUAL( 2, NonmemPars::initialOff.size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( 2, NonmemPars::noOff.size() );" << endl;
-  o << "   MY_ASSERT_EQUAL( 2, NonmemPars::noDose.size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nonmemNComps << ", NonmemPars::initialOff.size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nonmemNComps << ", NonmemPars::noOff.size() );" << endl;
+  o << "   MY_ASSERT_EQUAL( " << nonmemNComps << ", NonmemPars::noDose.size() );" << endl;
   o << "   for( int i=0; i< NonmemPars::nCompartments; i++ )" << endl;
   o << "   {" << endl;
   o << "      MY_ASSERT_EQUAL( 0, NonmemPars::initialOff[i] );" << endl;
@@ -1719,7 +1626,7 @@ void pop_advan6Test::testReportML()
 	if( x_val != NULL )
 	  inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
 	//printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], inv_cov_val[i], tol );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_invCov[i], inv_cov_val[i], tol );
       }
     }
 

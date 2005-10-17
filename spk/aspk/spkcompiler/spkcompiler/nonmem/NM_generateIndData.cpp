@@ -566,54 +566,13 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << endl;
 
   oIndData_h << "{" << endl;
-
-  if( myIsMissingMdv && myIsMissingEvid )
-    {
-      if( table->findi( KeyStr.AMT ) == Symbol::empty() )
-	{
-	  oIndData_h << "   nY = nRecords;" << endl;
-	}
-      else
-	{
-	  oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
-	  oIndData_h << "   {" << endl;
-	  oIndData_h << "      if( " << UserStr.AMT << "[j] == 0 )" << endl;
-	  oIndData_h << "      {" << endl;
-	  oIndData_h << "         nY++;" << endl;
-	  oIndData_h << "      }" << endl;
-	  oIndData_h << "   }" << endl;
-	}
-    }
-  else if( !myIsMissingMdv && myIsMissingEvid )
-    {
-      oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
-      oIndData_h << "   {" << endl;
-      oIndData_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
-      oIndData_h << "      {" << endl;
-      oIndData_h << "         nY++;" << endl;
-      oIndData_h << "      }" << endl;
-      oIndData_h << "   }" << endl;
-    }
-  else if( myIsMissingMdv && !myIsMissingEvid )
-    {
-      oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
-      oIndData_h << "   {" << endl;
-      oIndData_h << "      if( " << UserStr.EVID << "[j] == 0 )" << endl;
-      oIndData_h << "      {" << endl;
-      oIndData_h << "         nY++;" << endl;
-      oIndData_h << "      }" << endl;
-      oIndData_h << "   }" << endl;
-    }
-  else // !myIsMissingMdv && !myIsMissingEvid
-    {
-      oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
-      oIndData_h << "   {" << endl;
-      oIndData_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
-      oIndData_h << "      {" << endl;
-      oIndData_h << "         nY++;" << endl;
-      oIndData_h << "      }" << endl;
-      oIndData_h << "   }" << endl;
-    }
+  oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
+  oIndData_h << "   {" << endl;
+  oIndData_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+  oIndData_h << "      {" << endl;
+  oIndData_h << "         nY++;" << endl;
+  oIndData_h << "      }" << endl;
+  oIndData_h << "   }" << endl;
   oIndData_h << "   measurements.resize( nY );" << endl;
 
   // Initialize place holders for scalar variables.
@@ -741,61 +700,17 @@ void NonmemTranslator::generateIndData( ) const
       
     }
   
-  if( myIsMissingMdv )
-    {
-      if( table->findi( KeyStr.EVID ) == Symbol::empty() )
-	{
-	  if( table->findi( KeyStr.AMT ) == Symbol::empty() )
-	    {
-	      oIndData_h << "        assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
-	      oIndData_h << "        jPrimeToj[jPrime] = j;" << endl;
-	      oIndData_h << "        jTojPrime[j] = jPrime;" << endl;
-	      oIndData_h << "        jPrime++;" << endl;
-	    }
-	  else
-	    {
-	      oIndData_h << "        if( " << UserStr.AMT << "[j] == 0 )" << endl;
-	      oIndData_h << "        {" << endl;
-	      oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
-	      oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
-	      oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
-	      oIndData_h << "           jPrime++;" << endl;
-	      oIndData_h << "        }" << endl;
-	      oIndData_h << "        else" << endl;
-	      oIndData_h << "        {" << endl;
-	      oIndData_h << "           jTojPrime[j] = -1;" << endl;
-	      oIndData_h << "        }" << endl;
-	    }
-	}
-      else
-	{
-	  oIndData_h << "        if( " << UserStr.EVID << "[j] == 0 )" << endl;
-	  oIndData_h << "        {" << endl;
-	  oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
-	  oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
-	  oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
-	  oIndData_h << "           jPrime++;" << endl;
-	  oIndData_h << "        }" << endl;
-	  oIndData_h << "        else" << endl;
-	  oIndData_h << "        {" << endl;
-	  oIndData_h << "           jTojPrime[j] = -1;" << endl;
-	  oIndData_h << "        }" << endl;
-	}
-    }
-  else
-    {
-      oIndData_h << "        if( " << UserStr.MDV << "[j] == 0 )" << endl;
-      oIndData_h << "        {" << endl;
-      oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
-      oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
-      oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
-      oIndData_h << "           jPrime++;" << endl;
-      oIndData_h << "        }" << endl;
-      oIndData_h << "        else" << endl;
-      oIndData_h << "        {" << endl;
-      oIndData_h << "           jTojPrime[j] = -1;" << endl;
-      oIndData_h << "        }" << endl;
-    }
+  oIndData_h << "        if( " << UserStr.MDV << "[j] == 0 )" << endl;
+  oIndData_h << "        {" << endl;
+  oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
+  oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
+  oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
+  oIndData_h << "           jPrime++;" << endl;
+  oIndData_h << "        }" << endl;
+  oIndData_h << "        else" << endl;
+  oIndData_h << "        {" << endl;
+  oIndData_h << "           jTojPrime[j] = -1;" << endl;
+  oIndData_h << "        }" << endl;
   oIndData_h << "   } // end of FOR loop over vector variables" << endl;
   oIndData_h << "}" << endl;
   oIndData_h << endl;
@@ -894,25 +809,14 @@ void NonmemTranslator::generateIndData( ) const
   bool hasAlias = ( pDV->synonym != "" );
   oIndData_h << "   for( int i=0, k=0; i<nRecords; i++ )" << endl;
   oIndData_h << "   {" << endl;
-  if( myIsMissingMdv )
-    {
-      oIndData_h << "      " << UserStr.ORGDV << "[i] = " << UserStr.DV << "[i];" << endl;
-      oIndData_h << "      " << UserStr.DV << "[i] = yyi[k];" << endl;
-      if( hasAlias )
-	oIndData_h << "      " << pDV->synonym << "[i] = yyi[k];" << endl;
-      oIndData_h << "      k++;" << endl;
-    }
-  else
-    {
-      oIndData_h << "      if( " << UserStr.MDV << "[i] == 0 )" << endl;
-      oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.ORGDV << "[i] = " << UserStr.DV << "[i];" << endl;
-      oIndData_h << "         " << UserStr.DV << "[i] = yyi[k];" << endl;
-      if( hasAlias )
-	oIndData_h << "         " << pDV->synonym << "[i] = yyi[k];" << endl;
-      oIndData_h << "         k++;" << endl;
-      oIndData_h << "      }" << endl;
-    }
+  oIndData_h << "      if( " << UserStr.MDV << "[i] == 0 )" << endl;
+  oIndData_h << "      {" << endl;
+  oIndData_h << "         " << UserStr.ORGDV << "[i] = " << UserStr.DV << "[i];" << endl;
+  oIndData_h << "         " << UserStr.DV << "[i] = yyi[k];" << endl;
+  if( hasAlias )
+    oIndData_h << "         " << pDV->synonym << "[i] = yyi[k];" << endl;
+  oIndData_h << "         k++;" << endl;
+  oIndData_h << "      }" << endl;
   oIndData_h << "   }" << endl;
   oIndData_h << "}" << endl;
  

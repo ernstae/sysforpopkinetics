@@ -20,6 +20,41 @@ using namespace xercesc;
  * Look for a label/item.  If the label is found, return the position from the left (>=0).
  * If not found, return -1.
  */
+int NonmemTranslator::whereis( DOMNodeList * labels, const XMLCh* x_label ) const
+{
+  int nLabels = labels->getLength();
+  for( int i=0; i<nLabels; i++ )
+    {
+      const DOMElement* elem = dynamic_cast<DOMElement*>( labels->item(i) );
+      if( !elem->hasAttribute( X_NAME ) )
+	{
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
+				      "\"name\" attribute is missing in <label> tag",
+				      __LINE__, __FILE__ );
+	}
+      const XMLCh* x_name = elem->getAttribute( X_NAME );
+      // If there's the label, return immediately.
+      if( XMLString::compareIString( x_name, x_label ) == 0 )
+	{
+	  // The ID field is found in the j-th column.
+	  return i;
+	}
+
+      if( elem->hasAttribute( X_SYNONYM ) )
+	{
+	  const XMLCh* x_synonym = elem->getAttribute( X_SYNONYM );
+	  if( XMLString::compareIString( x_synonym, x_label ) == 0 )
+	    {
+	      // The ID field is found in the j-th column.
+	      return i;
+	    }
+
+	}
+    }
+
+  return -1;
+}
+/*
 int NonmemTranslator::whereis( DOMElement * dataset, const XMLCh* x_label ) const
 {
 
@@ -34,7 +69,8 @@ int NonmemTranslator::whereis( DOMElement * dataset, const XMLCh* x_label ) cons
 	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
 	  for( int j=0; j<values->getLength(); j++ )
 	    {
-	      const XMLCh* x_value = values->item(j)->getFirstChild()->getNodeValue();
+	      const DOMElement* elem = dynamic_cast<DOMElement*>( values->item(j) );
+	      const XMLCh* x_value = elem->getFirstChild()->getNodeValue();
 
 	      // If there's the label, return immediately.
 	      if( XMLString::compareIString( x_value, x_label ) == 0 )
@@ -42,22 +78,33 @@ int NonmemTranslator::whereis( DOMElement * dataset, const XMLCh* x_label ) cons
 		  // The ID field is found in the j-th column.
 		  return j;
 		}
+              if( elem->hasAttribute( X_SYNONYM ) )
+                {
+                  const XMLCh* x_synonym = elem->getAttribute( X_SYNONYM );
+                  if( XMLString::compareIString( x_synonym, x_label ) == 0 )
+                    {
+                      // The ID field is found in the j-th column.
+                      return j;
+                    }
+
+                }
 	    }
 	  break;
 	}      
     }
   return -1;
 }
+*/
 /*
  * Insert the ID field if the data set lacks the field.
  * Returns the location (>=0) in which the ID field can be found.
  */
 
-int NonmemTranslator::insertID( DOMElement * dataset )
+int NonmemTranslator::insertID( DOMElement * dataset, DOMNodeList * labels  )
 {
   // If ID is defined in the data set, don't need to do anything.
-  int posID;
-  assert( whereis( dataset, X_ID ) < 0 );
+  const int posID = 0;
+  assert( whereis( labels, X_ID ) < 0 );
 
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   //
@@ -134,8 +181,15 @@ int NonmemTranslator::insertID( DOMElement * dataset )
   snprintf( c_nItemsPlus1, 56,"%d", nItems + 1 );
   dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
 
-  // The ID was inserted into the 1st column.
-  return 0;
+  // Insert "ID" as the first entry of <data_labels> list in source.xml
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNode     * firstValueNode  = values->item(0);
+  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
+  newValueNode->setAttribute( X_NAME, X_ID );
+  data_labels->item(0)->insertBefore( newValueNode, firstValueNode );
+
+  return posID;
 }
 /*
  * Insert the AMT field if the data set lacks the field.
@@ -144,10 +198,10 @@ int NonmemTranslator::insertID( DOMElement * dataset )
  *
  * Returns the location (>=0) in which the AMT field can be found.
  */
-int NonmemTranslator::insertAMT( DOMElement * dataset )
+int NonmemTranslator::insertAMT( DOMElement * dataset, DOMNodeList * labels )
 {
   // If AMT is defined in the data set, don't need to do anything.
-  assert( whereis( dataset, X_AMT ) < 0 );
+  assert( whereis( labels, X_AMT ) < 0 );
 
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   unsigned int recordNum=0;
@@ -197,8 +251,17 @@ int NonmemTranslator::insertAMT( DOMElement * dataset )
   snprintf( c_nItemsPlus1, 56, "%d", nItems + 1 );
   dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
 
-  // The AMT was appended at the last.
-  return nItems;
+  const int pos = nItems;
+
+  // Insert "AMT" as the first entry of <data_labels> list in source.xml
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNode     * firstValueNode  = values->item(0);
+  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
+  newValueNode->setAttribute( X_NAME, X_AMT );
+  data_labels->item(0)->appendChild( newValueNode );
+
+  return pos;
 }
 
 /*
@@ -217,9 +280,9 @@ int NonmemTranslator::insertAMT( DOMElement * dataset )
  *
  * Returns the location (>=0) at which the MDV field is inserted.
  */
-int NonmemTranslator::insertMDV( DOMElement * dataset, int posAMT, int posEVID )
+int NonmemTranslator::insertMDV( DOMElement * dataset, DOMNodeList * labels, int posAMT, int posEVID )
 {
-  assert( whereis( dataset, X_MDV ) < 0 );
+  assert( whereis( labels, X_MDV ) < 0 );
 
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
 
@@ -238,14 +301,6 @@ int NonmemTranslator::insertMDV( DOMElement * dataset, int posAMT, int posEVID )
 	}
       else
 	{
-	  const char *c_amt = XMLString::transcode( 
-			      dynamic_cast<DOMElement*>(values->item(posAMT))->getFirstChild()->getNodeValue() );
-	  double amt = atof( c_amt );
-	  if( amt == 0.0 )
-	    x_mdv_val = X_0;
-	  else
-	    x_mdv_val = X_1;
-
 	  if( posEVID >= 0 )
 	    {
 	      unsigned int evid = 0;
@@ -302,8 +357,17 @@ int NonmemTranslator::insertMDV( DOMElement * dataset, int posAMT, int posEVID )
   snprintf( c_nItemsPlus1, 56, "%d", nItems + 1 );
   dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1) );
 
-  // The MDV was appended at the last.
-  return nItems;
+  const int pos = nItems;
+
+  // Insert "MDV" as the first entry of <data_labels> list in source.xml
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNode     * firstValueNode  = values->item(0);
+  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
+  newValueNode->setAttribute( X_NAME, X_MDV );
+  data_labels->item(0)->appendChild( newValueNode );
+
+  return pos;
 }
 /*
  * Insert the EVID field if the data set lacks the field.
@@ -318,9 +382,9 @@ int NonmemTranslator::insertMDV( DOMElement * dataset, int posAMT, int posEVID )
  *
  * Returns the location (>=0) in which the EVID field can be found.
  */
-int NonmemTranslator::insertEVID( DOMElement * dataset, int posAMT, int posMDV )
+int NonmemTranslator::insertEVID( DOMElement * dataset, DOMNodeList * labels, int posAMT, int posMDV )
 {
-  assert( whereis( dataset, X_EVID ) < 0 );
+  assert( whereis( labels, X_EVID ) < 0 );
 
   DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
   unsigned int recordNum=0;
@@ -394,8 +458,17 @@ int NonmemTranslator::insertEVID( DOMElement * dataset, int posAMT, int posMDV )
   snprintf( c_nItemsPlus1, 56, "%d", nItems + 1 );
   dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
 
-  // The EVID was appended at the last.
-  return nItems;
+  const int pos = nItems;
+
+  // Insert "EVID" as the first entry of <data_labels> list in source.xml
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNode     * firstValueNode  = values->item(0);
+  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
+  newValueNode->setAttribute( X_NAME, X_EVID );
+  data_labels->item(0)->appendChild( newValueNode );
+
+  return pos;
 }
 
 void NonmemTranslator::parseData()
@@ -456,6 +529,8 @@ void NonmemTranslator::parseData()
   // Process through n number of <table>s, where n >= 0.
   // NOTE: For v0.1, n == 1.
   //
+  DOMElement * spksource = dynamic_cast<DOMElement*>( getSourceTree()->getDocumentElement() );
+
   DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
   int nDataSets = datasets->getLength();
   if( nDataSets < 1 )
@@ -480,74 +555,124 @@ void NonmemTranslator::parseData()
     {
       DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
 
-      // Warning: Do not change the order of the following three calls.
       int  posID, posAMT, posMDV, posEVID;
-      bool isID   = ( ( posID   = whereis( dataset, X_ID )   ) >= 0 );
-      bool isAMT  = ( ( posAMT  = whereis( dataset, X_AMT )  ) >= 0 );
-      bool isMDV  = ( ( posMDV  = whereis( dataset, X_MDV )  ) >= 0 );
-      bool isEVID = ( ( posEVID = whereis( dataset, X_EVID ) ) >= 0 );
-     
+      DOMNodeList * data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
+      if( data_labels_list->getLength() < 1 )
+      {
+         throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
+	                             "<data_labels> tag is missing in source.xml",
+				     __LINE__, __FILE__ );
+      }
+      DOMNodeList * labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+      if( labels->getLength() < 1 )
+      {
+         throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
+	                             "<label> tag is missing in source.xml",
+				     __LINE__, __FILE__ );
+      }
+      bool isID   = ( ( posID   = whereis( labels, X_ID )   ) >= 0 );
+      bool isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
+      bool isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
+      bool isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
+
+
+      // Warning: Do not change the order of the following three insert calls.
+
       // If ID is missing, add it with a value = 1.
       if( !isID )
 	{
-	  posID = insertID( dataset );
+	  posID = insertID( dataset, labels );
+          // Update the list of labels.
+          data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
+          labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+
+          // Update the other label positions.
+          posAMT = whereis( labels, X_AMT );
+          posMDV  = whereis( labels, X_MDV );
+          posEVID = whereis( labels, X_EVID );
 	}
 
-      if( detModelType() != PRED )
+      // If MDV is missing, there are more than one way to determine the default value.
+      // Follow the following logic:
+      //
+      //          Input                     Output
+      // (-=missing, x=present)       (0=0, 1=1, x=as_is)
+      // 
+      //   AMT     MDV    EVID        AMT     MDV    EVID
+      //    -       -       -          0       0       0
+      //    -       -       x          0      EVID     x
+      //    -       x       -          0       x      MDV
+      //    -       x       x          0       x       x
+      //    x       -       -          x      AMT     AMT
+      //    x       -       x          x      EVID     x 
+      //    x       x       -          x       x      MDV 
+      //    x       x       x          x       x       x 
+      // If AMT is missing, add it with a value = 0.0.
+      if( !isAMT )
 	{
-	  // If MDV is missing, there are more than one way to determine the default value.
-	  // Follow the following logic:
-	  //
-	  //          Input                     Output
-	  // (-=missing, x=present)       (0=0, 1=1, x=as_is)
-	  // 
-	  //   AMT     MDV    EVID        AMT     MDV    EVID
-	  //    -       -       -          0       0       0
-	  //    -       -       x          0      EVID     x
-	  //    -       x       -          0       x      MDV
-	  //    -       x       x          0       x       x
-	  //    x       -       -          x      AMT     AMT
-	  //    x       -       x          x      EVID     x 
-	  //    x       x       -          x       x      MDV 
-	  //    x       x       x          x       x       x 
-	  // If AMT is missing, add it with a value = 0.0.
-	  if( !isAMT )
-	    {
-	      posAMT = insertAMT( dataset );
-	    }
-	  /*
-	  if( !isMDV )
-	    {
-	      //
-	      // use EVID if EVID is present.
-              //   MDV=0 if EVID=0
-              //      =1 if EVID!=0
-              // use AMT if EVID is not present and AMT is present
-	      //   AMT=0 -> MDV=0
-	      //      =1 -> MDV=1
-	      // fill with 0 if neither AMT or EVID is present
-	      //
-	      posMDV = insertMDV( dataset, posAMT, posEVID );
-	    }
-	  if( !isEVID )
-	    {
-	      //
-	      // Insert the EVID field if the data set lacks the field.
-	      //
-	      // If MDV is given:
-	      //   EVID=MDV
-	      //
-	      // If AMT is given but not MDV:
-	      //   EVID=0 if AMT=0
-	      //       =1 if AMT>0
-	      // Fill with 0 if neighther AMT or MDV is given.
-	      //
-	      // Returns the location (>=0) in which the EVID field can be found.
-	      //	     
-	      posEVID = insertEVID( dataset, posAMT, posMDV );
-	    }
-	  */
+	  posAMT = insertAMT( dataset, labels );
+
+          // Update the list of labels.
+          data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
+          labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+
+          // Update the other label positions.
+          posAMT = whereis( labels, X_AMT );
+          posMDV  = whereis( labels, X_MDV );
+          posEVID = whereis( labels, X_EVID );
 	}
+
+      if( !isMDV )
+	{
+	  //
+	  // use EVID if EVID is present.
+	  //   MDV=0 if EVID=0
+	  //      =1 if EVID!=0
+	  // use AMT if EVID is not present and AMT is present
+	  //   AMT=0 -> MDV=0
+	  //      =1 -> MDV=1
+	  // fill with 0 if neither AMT or EVID is present
+	  //
+	  posMDV = insertMDV( dataset, labels, posAMT, posEVID );
+
+          // Update the list of labels.
+          data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
+          labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+
+          // Update the other label positions.
+          posAMT = whereis( labels, X_AMT );
+          posMDV  = whereis( labels, X_MDV );
+          posEVID = whereis( labels, X_EVID );
+	}
+      /*
+	if( !isEVID )
+	{
+	   //
+	   // Insert the EVID field if the data set lacks the field.
+	   //
+	   // If MDV is given:
+	   //   EVID=MDV
+	   //
+	   // If AMT is given but not MDV:
+	   //   EVID=0 if AMT=0
+	   //       =1 if AMT>0
+  	   // Fill with 0 if neighther AMT or MDV is given.
+	   //
+	   // Returns the location (>=0) in which the EVID field can be found.
+	   //	     
+	   posEVID = insertEVID( dataset, labels, posAMT, posMDV );
+
+           // Update the list of labels.
+           data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
+           labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+
+           // Update the other label positions.
+           posAMT = whereis( labels, X_AMT );
+           posMDV  = whereis( labels, X_MDV );
+           posEVID = whereis( labels, X_EVID );
+	}
+	  */
+
 
       unsigned int nFields;
       if( !dataset->hasAttribute( X_COLUMNS ) )

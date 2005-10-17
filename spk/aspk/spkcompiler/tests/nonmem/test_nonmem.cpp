@@ -87,7 +87,7 @@ int main( int argc, const char * argv[] )
 
   // test for NonmemTranslator: ability to handle Differential Equations
   //  master[ "ind_advan6Test" ] = ind_advan6Test::suite();
-  //  master[ "pop_advan6Test" ] = pop_advan6Test::suite();
+  master[ "pop_advan6Test" ] = pop_advan6Test::suite();
 
   // test for NonmemTranslator: ability to handle a request 
   // to repeat the whole process.
