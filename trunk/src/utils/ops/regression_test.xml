@@ -52,7 +52,7 @@
     <!--job>960</job--><!-- Population POP040, Argatroban 1 cpt ODE -->
     <!--job>972</job--><!-- Population POP041, Argatroban 1 cpt ODE -->
     <!--job>961</job--><!-- Population POP042, Argatroban 1 cpt ODE -->
-    <job>969</job><!-- Population POP043, Argatroban 1 cpt ODE -->
+    <!--job>969</job--><!-- Very expensive! 30 minutes! Population POP043, Argatroban 1 cpt ODE -->
     <job>962</job><!-- Population POP045, Argatroban 1 cpt ODE -->
     <job>993</job><!-- Individual IND035, 2 Comp ODE -->  
     <ignore>elapsedtime</ignore>
