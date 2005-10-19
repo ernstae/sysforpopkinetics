@@ -234,7 +234,7 @@ su -
 	</listitem>
 	<listitem>
 	  <para>
-	    Use the most recent deployment candidate to initialize the test environment.
+	    Use the most recent deployment candidate to initialize the test environment; for example, /usr/local/include/spktest/* on all relevant machines.
 	  </para>
 	  <para>
 	    In your <emphasis>aspkserver</emphasis> root window:
@@ -242,6 +242,20 @@ su -
 deploy_candidate.pl --test
 	    </screen>
 	  </para>
+	</listitem>
+	<listitem>
+          <para>
+           You may want to test the (supposedly) initialized test environment
+           is clean before you add your new modifications.  Run the regresssion
+           test suite in the test environment if you prefer.
+          </para>
+          <para>
+           Continuing on <emphasis>aspkserver</emphasis>:
+          <screen>
+regression_test --ignore-candiate
+          </screen>
+          </para>
+          
 	</listitem>
 	<listitem>
 	  <para>
@@ -260,15 +274,18 @@ deploy_candidate.pl --test
 	</listitem>
 	<listitem>
 	  <para>
-	    Take a test snapshot of the production database.
-	    Let's assume that you want copies of jobs
-	    with job_id numbers 256, 23, 45, 1834 from the production database.
+	    Take a test snapshot of the production database. 
+	    Pick jobs that are related to the bug fix or enhancement.
+            For example, Job 382 is an individual analysis and
+            Job 390 is a population analysis.
+            You may want to change to a temporary directory.
 	  </para>
 	  <para>
 	    In an ordinary user terminal window:
 	    <screen>
 ssh dbserver
-take_snapshot.pl 256 23 45 1834
+cd /tmp
+take_snapshot.pl 382 390
 	    </screen>
 	    If you do not want any jobs that have previously run, use 
 	    <command>take_snapshot.pl</command>
@@ -300,7 +317,10 @@ take_snapshot.pl 256 23 45 1834
 	    Create a test database from the <filename>.sql</filename> files
 	    that were created by <command>take_snapshot.pl</command> and,
 	    only if you are modifying the structure of the database,
-	    a <filename>modscript.sql</filename> file.
+	     <filename>modscript.sql</filename> file.
+            </para>
+            <para>       
+            Continuing on <emphasis>dbserver</emphasis>:
 	    <screen>
 load_spktest.pl
 	    </screen>
@@ -319,7 +339,7 @@ load_spktest.pl
 	    your tests several times before your modifications work correctly.
 	  </para>
 	  <para>
-	    As an ordinary user on <emphasis>dbserver</emphasis>:
+	    Continuing on <emphasis>dbserver</emphasis>:
 	    <screen>
 dump_spktest.pl
 	    </screen>
@@ -327,7 +347,7 @@ dump_spktest.pl
 	</listitem>
 	<listitem>
 	  <para>
-	    Transfer source code to the target hosts.  Consider these two distinct
+	    Transfer source code to the target host(s).  Consider these two distinct
 	    cases:
 	    <orderedlist>
 	      <listitem>
@@ -403,7 +423,7 @@ tail -n 40 /var/log/messages
 		<para>
 		  Check the status of your jobs by examining the database.  
 		  As an ordinary user on your workstation, open up a 
-		  window and run the MySQL client:
+		  window and run the MySQL client on any machine:
 		  <screen>
 mysql -hdbserver -ureader -preader
 use spktest;
@@ -454,6 +474,8 @@ select * from history where job_id=n;
 tail -n40 /var/log/messages
 		  </screen>
 		</para>
+              </listitem>
+              <listitem>
 		<para>
 		  Now you can also examine the contents of the working directory,
 		  which will be named
@@ -466,6 +488,19 @@ tail -n40 /var/log/messages
 		  The working directory contains inputs, outputs, source code and object code.
 		</para>
 	      </listitem>
+              <listitem>
+                <para>
+                Now you may want to run a comprehensive list of system tests, which may take up to 1 hour to complete.  This is not mandatory but highly recommended to make sure your will-be candidate is in a correct state.  
+                </para>
+                <para>
+                On <emphasis>dbserver</emphasis> as a root (i.e. 'su -')
+                <screen>
+regression_test --ignore-candidate
+                </screen>
+                The option "--ignore-candidate" forces the system to retain
+                the installation of your modifications.
+                </para>
+              </listitem>
 	      <listitem>
 		<para>
 		  Log into the test web site (find the URL to use in
