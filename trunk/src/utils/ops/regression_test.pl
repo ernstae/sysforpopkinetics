@@ -41,7 +41,10 @@ if (defined $opt{'dump-config'}) {
 }
 $| = 1;
 my $bit_bucket;
-if (! defined $opt{'ignore-candidate'}) {
+
+# Sachiko 10/19/2005
+# $opt{'...'} returns a boolean value.
+if (! $opt{'ignore-candidate'}) {
     print "executing 'deploy_candidate.pl --test' (this will take a while)";
     $bit_bucket = `deploy_candidate.pl --test`;
     $? == 0
