@@ -64,7 +64,7 @@ my $logrotate_command = "/usr/sbin/logrotate";
 
 my $tmp_dir = "/tmp/deploy_candidate-$$";
 
-my $test = 0;
+my $test = 1;
 
 my %opt = ();
 GetOptions (\%opt, 'test', 'help') 
@@ -73,7 +73,7 @@ GetOptions (\%opt, 'test', 'help')
 defined $opt{'help'} == 0
     or die "$usage\n";
 
-$test = 1 if defined $opt{'test'};
+$test = 0 if defined $opt{'prod'};
 
 $EFFECTIVE_USER_ID == 0 
     or die "You must be root to run this program\n";
@@ -137,13 +137,16 @@ foreach my $s ("aspkserver", "cspkserver") {
 
 exit 0 if (not $test);
 
-# Sachiko 01/07/2005
-# Added "src" structure to be deployed as well.  "src" at this point
-# contains Brad's Monte Carlo source code files to be copied
-# into a job-working directory and built into a job-driver.
-foreach my $d ("bin", "lib", "include", "src") {
-    rename "$tmp_dir/usr/local/$d/spkprod", "$tmp_dir/usr/local/$d/spktest";
+# Sachiko 10/9/2005
+# The originating directory name was constructed incorrectly.  Fixed it.
+# Added "or die" in case renaming fails.
+foreach my $s ("aspkserver", "cspkserver") {
+   foreach my $d ("bin", "lib", "include", "src") {
+       rename( "$tmp_dir/$s/$d/spkprod", "$tmp_dir/$s/$d/spktest")
+         or die "'renaming from $tmp_dir/$s/$d/spkprod' to '$tmp_dir/$s/$d/spktest' failed";
+    }
 }
+
 
 foreach my $s ("aspkserver", "cspkserver") {
     my $sdir = "$tmp_dir/$s";
