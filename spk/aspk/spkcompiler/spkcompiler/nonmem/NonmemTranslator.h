@@ -640,8 +640,6 @@ private:
   bool              myIsMonte;
   bool              myIndWriteCheckpoint;
   bool              myPopWriteCheckpoint;
-  bool              myIsMissingMdv;
-  bool              myIsMissingEvid;
   bool              myIsMissingCmt;  // for ADVANs
   bool              myIsMissingPcmt; // for ADVANs
   bool              myIsMissingRate; // for ADVANs

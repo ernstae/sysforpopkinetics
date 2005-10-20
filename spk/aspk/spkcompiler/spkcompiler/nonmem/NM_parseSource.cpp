@@ -284,14 +284,6 @@ void NonmemTranslator::parseSource()
   // Ones that may have been appeared 
   // in the model definition.
   //+++++++++++++++++++++++++++++++++++++
-  // MDV
-  if( (p = table->findi( KeyStr.MDV ))  != Symbol::empty() )
-    myIsMissingMdv = false;
-
-  // EVID
-  if( (p = table->findi( KeyStr.EVID )) != Symbol::empty() )
-    myIsMissingEvid = false;
-
   // CMT
   if( (p = table->findi( KeyStr.CMT ))  != Symbol::empty() )
     myIsMissingCmt = false;
@@ -306,7 +298,7 @@ void NonmemTranslator::parseSource()
 
   if( myModelSpec != PRED )
     {
-      if( myIsMissingMdv )
+      if( (p = table->findi( KeyStr.MDV ))  == Symbol::empty() )
 	{
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
 				      "MDV data item is missing",
@@ -318,6 +310,13 @@ void NonmemTranslator::parseSource()
 				      "AMT data item is missing",
 				      __LINE__, __FILE__ );
 	}
+      if( (p = table->findi( KeyStr.EVID ))  == Symbol::empty() )
+	{
+	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
+				      "EVID data item is missing",
+				      __LINE__, __FILE__ );
+	}
+
     }
 
 

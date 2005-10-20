@@ -439,8 +439,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "{" << endl;
   oOdePred_h << "   const int nObservs  = getNObservs( spk_curWho );" << endl;
   oOdePred_h << "   const int nRecords  = getNRecords( spk_curWho );" << endl;
-  oOdePred_h << "   std::vector<spk_ValueType> indVar( nObservs );" << endl;
-  oOdePred_h << "   std::vector<spk_ValueType> depVar( nObservs );" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType> indVar( ( depVarName == \"" << UserStr.DV << "\"? nObservs:nRecords) );" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType> depVar( ( depVarName == \"" << UserStr.DV << "\"? nObservs:nRecords) );" << endl;
   oOdePred_h << "   std::vector<spk_ValueType> depVarRecords( nRecords );" << endl;
   pLabel = labels->begin();
   while( pLabel != labels->end() )
@@ -483,32 +483,29 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       
       pLabel++;
     }
-  if( myIsMissingEvid )
-    {
-      oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
-      oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.MDV << "[j] == 0 )" << endl;
-      oOdePred_h << "      {" << endl;
-      oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
-      oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
-      oOdePred_h << "         k++;" << endl;
-      oOdePred_h << "      }" << endl;
-      oOdePred_h << "   }" << endl;
-    }
-  else //!myIsMissingEvid
-    {
-      oOdePred_h << "   for( int j=0, k=0; j<nRecords; j++ )" << endl;
-      oOdePred_h << "   {" << endl;
-      oOdePred_h << "      if( spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0" << endl;
-      oOdePred_h << "         && (spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 0" << endl;
-      oOdePred_h << "             || spk_perm->data[spk_curWho]->" << UserStr.EVID << "[j] == 2 ) )" << endl;
-      oOdePred_h << "      {" << endl;
-      oOdePred_h << "         indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
-      oOdePred_h << "         depVar[k] = depVarRecords[j];" << endl;
-      oOdePred_h << "         k++;" << endl;
-      oOdePred_h << "      }" << endl;
-      oOdePred_h << "   }" << endl;
-    }
+  oOdePred_h << "   if( depVarName == \"" << UserStr.DV << "\" )" << endl;
+  oOdePred_h << "   {" << endl;
+  oOdePred_h << "      for( int j=0, k=0; j<nRecords; j++ )" << endl;
+  oOdePred_h << "      {" << endl;
+  oOdePred_h << "         if( spk_perm->data[spk_curWho]->" << UserStr.MDV << "[j] == 0 )" << endl;
+  oOdePred_h << "         {" << endl;
+  oOdePred_h << "            indVar[k] = spk_perm->data[spk_curWho]->" << UserStr.TIME << "[j];" << endl;
+  oOdePred_h << "            if( TIME < indVar[k] )" << endl;
+  oOdePred_h << "            {" << endl;
+  oOdePred_h << "               char m[ SpkError::maxMessageLen() ];" << endl;
+  oOdePred_h << "               snprintf( m, SpkError::maxMessageLen(), " << endl;
+  oOdePred_h << "                        \"The evaluation point specified for linear interpolation is less than the %d-th data point time for the %d-th individual.\", spk_curWho );" << endl;
+  oOdePred_h << "            }" << endl;
+  oOdePred_h << "            depVar[k] = depVarRecords[j];" << endl;
+  oOdePred_h << "            k++;" << endl;
+  oOdePred_h << "         }" << endl;
+  oOdePred_h << "      }" << endl;
+  oOdePred_h << "   }" << endl;
+  oOdePred_h << "   else" << endl;
+  oOdePred_h << "   {" << endl;
+  oOdePred_h << "      indVar = spk_perm->data[spk_curWho]->" << UserStr.TIME << ";" << endl;
+  oOdePred_h << "      depVar = depVarRecords;" << endl;
+  oOdePred_h << "   }" << endl;
   oOdePred_h << "   linearInterpolate( TIME, " << endl;
   oOdePred_h << "                      indVar," << endl;
   oOdePred_h << "                      depVar );" << endl;
@@ -528,14 +525,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "  setTIME( spk_perm->data[spk_i]->TIME[spk_j] );" << endl;
   oOdePred_h << "  setAMT ( spk_perm->data[spk_i]->AMT[spk_j] );"  << endl;
   oOdePred_h << "  setMDV ( spk_perm->data[spk_i]->MDV[spk_j] );" << endl;
-  if( myIsMissingEvid )
-    {
-      oOdePred_h << "  setEVID( (spk_perm->data[spk_i]->MDV[spk_j] == 1? 1 : 0 ) );" << endl;
-    }
-  else
-    {
-      oOdePred_h << "  setEVID( spk_perm->data[spk_i]->EVID[spk_j] );" << endl;
-    }
+  oOdePred_h << "  setEVID( spk_perm->data[spk_i]->EVID[spk_j] );" << endl;
+
   if( myIsMissingCmt )
     {
       oOdePred_h << "  setCMT ( 0 ); // implying the default compartment" << endl;
@@ -648,23 +639,17 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       oOdePred_h << "   getTIME  ( " << s->synonym << " );" << endl;
     }
 
-  if( !myIsMissingMdv )
+  s = table->findi( KeyStr.MDV );
+  oOdePred_h << "   getMDV   ( " << s->name << " );" << endl;
+  if( s->synonym != "" )
     {
-      s = table->findi( KeyStr.MDV );
-      oOdePred_h << "   getMDV   ( " << s->name << " );" << endl;
-      if( s->synonym != "" )
-	{
-	  oOdePred_h << "   getMDV   ( " << s->synonym << " );" << endl;
-	}
+      oOdePred_h << "   getMDV   ( " << s->synonym << " );" << endl;
     }
-  if( !myIsMissingEvid )
+  s = table->findi( KeyStr.EVID );
+  oOdePred_h << "   " << s->name << " = getEVID();" << endl;
+  if( s->synonym != "" )
     {
-      s = table->findi( KeyStr.EVID );
-      oOdePred_h << "   " << s->name << " = getEVID();" << endl;
-      if( s->synonym != "" )
-	{
-	  oOdePred_h << "   getEVID  ( " << s->synonym << " );" << endl;
-	}
+      oOdePred_h << "   getEVID  ( " << s->synonym << " );" << endl;
     }
   if( !myIsMissingCmt )
     {
