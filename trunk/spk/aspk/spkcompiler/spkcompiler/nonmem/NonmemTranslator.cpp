@@ -264,8 +264,6 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIsCoefficient         ( true ),
     myRecordNums            ( 1 ),
     myCompModel             ( NULL ),
-    myIsMissingMdv          ( true ),
-    myIsMissingEvid         ( true ),
     myIsMissingCmt          ( true ),
     myIsMissingPcmt         ( true ),
     myIsMissingRate         ( true )

@@ -587,9 +587,9 @@ void NonmemTranslator::parseData()
           labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
 
           // Update the other label positions.
-          posAMT = whereis( labels, X_AMT );
-          posMDV  = whereis( labels, X_MDV );
-          posEVID = whereis( labels, X_EVID );
+	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
 	}
 
       // If MDV is missing, there are more than one way to determine the default value.
@@ -617,9 +617,9 @@ void NonmemTranslator::parseData()
           labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
 
           // Update the other label positions.
-          posAMT = whereis( labels, X_AMT );
-          posMDV  = whereis( labels, X_MDV );
-          posEVID = whereis( labels, X_EVID );
+	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
 	}
 
       if( !isMDV )
@@ -640,38 +640,36 @@ void NonmemTranslator::parseData()
           labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
 
           // Update the other label positions.
-          posAMT = whereis( labels, X_AMT );
-          posMDV  = whereis( labels, X_MDV );
-          posEVID = whereis( labels, X_EVID );
+	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
 	}
-      /*
 	if( !isEVID )
 	{
-	   //
-	   // Insert the EVID field if the data set lacks the field.
-	   //
-	   // If MDV is given:
-	   //   EVID=MDV
-	   //
-	   // If AMT is given but not MDV:
-	   //   EVID=0 if AMT=0
-	   //       =1 if AMT>0
-  	   // Fill with 0 if neighther AMT or MDV is given.
-	   //
-	   // Returns the location (>=0) in which the EVID field can be found.
-	   //	     
-	   posEVID = insertEVID( dataset, labels, posAMT, posMDV );
-
-           // Update the list of labels.
-           data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
-           labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
-
-           // Update the other label positions.
-           posAMT = whereis( labels, X_AMT );
-           posMDV  = whereis( labels, X_MDV );
-           posEVID = whereis( labels, X_EVID );
+	  //
+	  // Insert the EVID field if the data set lacks the field.
+	  //
+	  // If MDV is given:
+	  //   EVID=MDV
+	  //
+	  // If AMT is given but not MDV:
+	  //   EVID=0 if AMT=0
+	  //       =1 if AMT>0
+	  // Fill with 0 if neighther AMT or MDV is given.
+	  //
+	  // Returns the location (>=0) in which the EVID field can be found.
+	  //	     
+	  posEVID = insertEVID( dataset, labels, posAMT, posMDV );
+	  
+	  // Update the list of labels.
+	  data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
+	  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+	  
+	  // Update the other label positions.
+	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
 	}
-	  */
 
 
       unsigned int nFields;
