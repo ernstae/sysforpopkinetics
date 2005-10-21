@@ -45,7 +45,7 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "CPP_FLAGS = -g" << endl;
   oMakefile << endl;                                        
 
-  oMakefile << "LIBS      = -lspk -lspkopt -lspkpred";
+  oMakefile << "LIBS      = -lspk -lQN01Box -lspkpred -lCppAD";
   oMakefile << (myIsMonte? " -lgsl" : "" ) << " -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c" << endl;
   oMakefile << endl;
 

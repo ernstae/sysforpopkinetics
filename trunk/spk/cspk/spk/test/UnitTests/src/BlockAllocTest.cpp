@@ -107,19 +107,19 @@ static bool BlockAlloc_Ok()
 }
 
 #include <cmath>
+#include <climits>
 void BlockAllocTest::testInsufficientMemory()
 {
     //
-    // Request a block of memory large enough to
-    // force the routine to generate an error.
+    // Request a large enough to so that there is not sufficient memory
     //
-  int size = static_cast<int>(128e6);
+  int nbyte = INT_MAX;
 
     // memory block with space for the double-precision numbers
     // which occupies twice as much memory as integer.
   double * p = 0;
     try{
-      p = (double *) BlockAlloc(size * sizeof(double));
+      p = (double *) BlockAlloc(nbyte * sizeof(char));
       /*
 	if( p == NULL )
 	{

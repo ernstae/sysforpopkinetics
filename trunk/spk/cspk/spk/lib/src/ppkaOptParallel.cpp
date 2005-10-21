@@ -1337,7 +1337,7 @@ $end
 #include "namespace_population_analysis.h"
 
 // SPK optimizer header files.
-#include <spkopt/PlusInfinity.h>
+#include <QN01Box/PlusInfinity.h>
 
 // Standard library header files.
 #include <cmath>
@@ -1614,7 +1614,7 @@ namespace // [Begin: unnamed namespace]
 
           // Set the population objective value that indicates
           // to the population optimizer that it should back up.
-          *pdLTildeOut = PlusInfinity( double( 0 ) );
+          *pdLTildeOut = QN01Box::PlusInfinity( double( 0 ) );
 
           return;
         }

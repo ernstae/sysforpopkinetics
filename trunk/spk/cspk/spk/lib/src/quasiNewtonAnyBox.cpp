@@ -535,10 +535,10 @@ $end
 #include "cholesky.h"
 
 // SPK optimizer header files.
-#include <spkopt/QuasiNewton01Box.h>
-#include <spkopt/MaxAbs.h>
-#include <spkopt/Memory.h>
-#include <spkopt/PlusInfinity.h>
+#include <QN01Box/QuasiNewton01Box.h>
+#include <QN01Box/MaxAbs.h>
+#include <QN01Box/Memory.h>
+#include <QN01Box/PlusInfinity.h>
 
 // Standard library header files.
 #include <iostream>
@@ -948,14 +948,14 @@ void quasiNewtonAnyBox(
   // Allocate all of the memory at the same time.
   //------------------------------------------------------------
 
-  Memory<int> memoryInt( 1 * nObjPar + 1 * nObjParFree );
+  QN01Box::Memory<int> memoryInt( 1 * nObjPar + 1 * nObjParFree );
 
   // These store the indices for the free x elements in Y and the
   // indices for all of the y elements in x.
   int* indexXFreeInY = memoryInt( nObjPar );
   int* indexYInX     = memoryInt( nObjParFree );
 
-  Memory<double> memoryDbl( 6 * nObjParFree + 1 * ( nObjParFree * nObjParFree ) );
+  QN01Box::Memory<double> memoryDbl( 6 * nObjParFree + 1 * ( nObjParFree * nObjParFree ) );
 
   // The various y vectors are scaled versions of their x counterparts.
   double* yLow  = memoryDbl( nObjParFree );
@@ -1148,7 +1148,7 @@ void quasiNewtonAnyBox(
   // Throw an exception if the initial value for the objective
   // function is equal to positive infinity, which is a special value
   // used to indicate to the optimizer that it should try to back up.
-  if ( fScaled == PlusInfinity( double( 0 ) ) )
+  if ( fScaled == QN01Box::PlusInfinity( double( 0 ) ) )
   {
     throw SpkException(
       SpkError::SPK_OPT_ERR, 
@@ -1224,7 +1224,7 @@ void quasiNewtonAnyBox(
       // Set delta so that the optimizer will be able to perform at
       // least one Quasi-Newton iteration and so that the quadratic
       // subproblems will be solved with sufficient accuracy.
-      delta = MaxAbs( nObjParFree, gScaledProj ) / 100.0;
+      delta = QN01Box::MaxAbs( nObjParFree, gScaledProj ) / 100.0;
 
       // The current sScaled is no longer valid because it depends
       // on the value for delta.
@@ -1233,8 +1233,8 @@ void quasiNewtonAnyBox(
       // If the scaled projected gradient is close to zero relative
       // to the Hessian and the smallest double value, then the
       // current y value is a local minimizer of the objective.
-      if ( MaxAbs( nObjParFree, gScaledProj ) < 
-        MaxAbs( nObjParFree * nObjParFree, hScaled ) * 1000.0 * DBL_EPSILON )
+      if ( QN01Box::MaxAbs( nObjParFree, gScaledProj ) < 
+        QN01Box::MaxAbs( nObjParFree * nObjParFree, hScaled ) * 1000.0 * DBL_EPSILON )
       {
         // If the scaled projected gradient is small enough, then
         // accept the current y value.
@@ -1254,7 +1254,7 @@ void quasiNewtonAnyBox(
           quadCurr = 0;
     
           // Try to get the current sScaled value.
-          charMessage = QuasiNewton01Box(
+          charMessage = QN01Box::QuasiNewton01Box(
             outputStream,
             level,
             iterMax,
@@ -1302,7 +1302,7 @@ void quasiNewtonAnyBox(
             // subproblem uses a quadratic approximation for the objective, 
             // which may not necessarily be accurate for the current y value.  
             //
-            if ( MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
+            if ( QN01Box::MaxAbs( nObjParFree, sScaled ) < epsilon / 5.0 )
             {
               // If sScaled is not too large, increment the counter.
               nSScaledAccept++;
@@ -1373,7 +1373,7 @@ void quasiNewtonAnyBox(
       quadCurr   = 0;
 
       // Optimize the scaled objective function.
-      charMessage = QuasiNewton01Box(
+      charMessage = QN01Box::QuasiNewton01Box(
         outputStream,
         level,
         iterMax,

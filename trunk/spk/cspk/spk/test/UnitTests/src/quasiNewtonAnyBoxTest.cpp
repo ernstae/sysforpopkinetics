@@ -42,8 +42,8 @@
 #include <spk/DoubleMatrix.h>
 
 // SPK optimizer header files.
-#include <spkopt/QuasiNewton01Box.h>
-#include <spkopt/MaxAbs.h>
+#include <QN01Box/QuasiNewton01Box.h>
+#include <QN01Box/MaxAbs.h>
 
 // CppUnit framework header files.
 #include <cppunit/TestSuite.h>
