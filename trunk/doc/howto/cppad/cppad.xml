@@ -66,12 +66,14 @@
     <title>Installation</title>
     <orderedlist>
       <listitem>
-	<literallayout>Download current version of CppAD from the web page
-        <ulink url="http://www.coin-or.org/CppAD/Doc/installunix.htm">
-        http://www.coin-or.org/CppAD/Doc/installunix.htm
-        </ulink> 
-	into /tmp on the installation machine.
+	<literallayout>copy most recent version of
+		whitechuck:/opt/downlaod/CppAD-yy-mm-dd.tar.gz
+	to /tmp on the installation machine.
 	</literallayout>
+	<para>
+	Here and below yy is the year, mm is the month, and dd is the day 
+	(each as two decimal digits) corresponding to the version of CppAD.
+	</para>
       </listitem>
       <listitem>
         <para>
@@ -80,13 +82,7 @@
         cd /tmp
         tar -xvzf CppAD-yy-mm-dd.tar.gz
         </screen>
-        where yy is the year, 
-        mm is the month,
-        and dd is the day 
-        (each as two decimal digits) corresponding to the version of CppAD.
-        This will extract files into a new directory 
-        whose name is cppad-yy-mm-dd.
-        </para>
+	</para>
       </listitem>
       <listitem>
         <para>
