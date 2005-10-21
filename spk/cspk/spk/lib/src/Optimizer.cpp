@@ -84,7 +84,7 @@
 #include "SpkValarray.h"
 
 // SPK optimizer header files.
-#include <spkopt/Memory.h>
+#include <QN01Box/Memory.h>
 
 // Xerces XML parser header files.
 #include <xercesc/util/PlatformUtils.hpp>
@@ -5134,7 +5134,7 @@ void Optimizer::getErrorInfo(
   ostringstream message;
   message << headerStr;
 
-  Memory<double> memoryDbl( stateInfo.m );
+  QN01Box::Memory<double> memoryDbl( stateInfo.m );
   double* diff = memoryDbl( stateInfo.m );
 
   double xOrig;
