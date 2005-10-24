@@ -1,5 +1,8 @@
 $begin jobid2source$$
 $spell
+	ps
+	efl
+	grep
 	utester
 	ptester
 	scp
@@ -59,7 +62,10 @@ $syntax%
 	%whitechuck-root-password%
 	cd /tmp
 	/etc/rc.d/init.d/spkcmptestd stop
+	ps -efl | grep spktest
 %$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
 
 $lnext
 In a separate window, log onto cspk and change user to root,
@@ -70,7 +76,10 @@ $syntax%
 	%cspk-root-password%
 	cd /tmp
 	 /etc/rc.d/init.d/spkruntestd stop
+	ps -efl | grep spktest
 %$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
 
 $lnext
 In the $code whitechuck$$ window,
@@ -80,14 +89,20 @@ $syntax%
 	take_snapshot.pl %JobIdNumber%
 	load_spktest.pl
 	/etc/rc.d/init.d/spkcmptestd start
+	ps -efl | grep spktest
 %$$
+Now there should be two lines of output,
+one for the $code ps$$ command and one for the $code spkcmptestd$$ command.
 
 $lnext
 In the $code cspk$$ window,
 start the demon:
 $syntax%
 	/etc/rc.d/init.d/spkruntestd start
+	ps -efl | grep spktest
 %$$
+Now there should be two lines of output,
+one for the $code ps$$ command and one for the $code spkruntestd$$ command.
 
 $lnext
 In the $code whitechuck$$ window,
@@ -103,26 +118,31 @@ repeat the second command until it is $code end$$.
 
 $lnext
 In the $code whitechuck$$ window,
-quit $code mysql$$ and
-copy the resulting source code directory to your home directory.
-Then change the owner of the directory,
-stop the demon, 
-and terminate log in as root:
+quit $code mysql$$ and stop the demon.
 $syntax%
 	quit
-	scp -r cspk:/tmp/spkruntest-job-%JobIdNumber% ~%UserId%
-	chown %UserId% ~%UserId%/spkruntest-job-%JobIdNumber%
-	chown %UserId% ~%UserId%/spkruntest-job-%JobIdNumber%/*
 	/etc/rc.d/init.d/spkcmptestd stop
-	exit
+	ps -efl | grep spktest
 %$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
 
 $lnext
-In the $code cspk$$ window,
-stop the demon and terminate log in as root: 
+In the $code cspk$$ window, stop the demon. 
 $syntax%
 	/etc/rc.d/init.d/spkruntestd stop
-	exit
+	ps -efl | grep spktest
+%$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
+
+$lnext
+In the $code whitechuck$$ window,
+copy the resulting source code directory to your home directory.
+Then change the owner of the directory.
+$syntax%
+	scp -r cspk:/tmp/spkruntest-job-%JobIdNumber% ~%UserId%
+	chown -R %UserId% ~%UserId%/spkruntest-job-%JobIdNumber%
 %$$
 
 $lnext
