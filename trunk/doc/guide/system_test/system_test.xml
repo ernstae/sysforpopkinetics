@@ -252,7 +252,7 @@ deploy_candidate.pl --test
           <para>
            Continuing on <emphasis>aspkserver</emphasis>:
           <screen>
-regression_test --ignore-candiate
+regression_test --ignore-candidate
           </screen>
           </para>
           
