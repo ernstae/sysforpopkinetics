@@ -419,6 +419,10 @@ Optimizer::Optimizer(
   stateInfo.up              = 0;
   stateInfo.pos             = 0;
   stateInfo.acceptStepCount = 0;
+
+  // link QN01Box to Spk version of its error handler
+  extern void QN01BoxErrorSetup(void);
+  QN01BoxErrorSetup();
 }
 
 
