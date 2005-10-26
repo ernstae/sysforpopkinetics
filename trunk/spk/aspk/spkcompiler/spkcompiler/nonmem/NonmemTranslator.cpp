@@ -73,6 +73,7 @@ const char* NonmemTranslator::C_ID         ( "ID" );
 const char* NonmemTranslator::C_MDV        ( "MDV" );
 const char* NonmemTranslator::C_EVID       ( "EVID" );
 const char* NonmemTranslator::C_AMT        ( "AMT" );
+const char* NonmemTranslator::C_DROP       ( "DROP" );
 
 const char* NonmemTranslator::C_YES                        ( "yes" );
 const char* NonmemTranslator::C_NO                         ( "no" );
@@ -426,22 +427,23 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   KeyStr.S                     = SymbolTable::key( DefaultStr.S );
 
   // SpkDataML tags & attributes;
-    X_SPKDATA    = XMLString::transcode( C_SPKDATA );
-    X_VERSION    = XMLString::transcode( C_VERSION );
-    X_POINTONE   = XMLString::transcode( C_POINTONE );
-    X_TABLE      = XMLString::transcode( C_TABLE );
-    X_COLUMNS    = XMLString::transcode( C_COLUMNS );
-    X_ROWS       = XMLString::transcode( C_ROWS );
-    X_DESCRIPTION= XMLString::transcode( C_DESCRIPTION );
-    X_ROW        = XMLString::transcode( C_ROW );
-    X_POSITION   = XMLString::transcode( C_POSITION );
-    X_VALUE      = XMLString::transcode( C_VALUE );
-    X_TYPE       = XMLString::transcode( C_TYPE );
-    X_NUMERIC    = XMLString::transcode( C_NUMERIC );
-    X_ID         = XMLString::transcode( C_ID );
-    X_MDV        = XMLString::transcode( C_MDV );
-    X_EVID       = XMLString::transcode( C_EVID );
-    X_AMT        = XMLString::transcode( C_AMT );
+  X_SPKDATA                    = XMLString::transcode( C_SPKDATA );
+  X_VERSION                    = XMLString::transcode( C_VERSION );
+  X_POINTONE                   = XMLString::transcode( C_POINTONE );
+  X_TABLE                      = XMLString::transcode( C_TABLE );
+  X_COLUMNS                    = XMLString::transcode( C_COLUMNS );
+  X_ROWS                       = XMLString::transcode( C_ROWS );
+  X_DESCRIPTION                = XMLString::transcode( C_DESCRIPTION );
+  X_ROW                        = XMLString::transcode( C_ROW );
+  X_POSITION                   = XMLString::transcode( C_POSITION );
+  X_VALUE                      = XMLString::transcode( C_VALUE );
+  X_TYPE                       = XMLString::transcode( C_TYPE );
+  X_NUMERIC                    = XMLString::transcode( C_NUMERIC );
+  X_ID                         = XMLString::transcode( C_ID );
+  X_MDV                        = XMLString::transcode( C_MDV );
+  X_EVID                       = XMLString::transcode( C_EVID );
+  X_AMT                        = XMLString::transcode( C_AMT );
+  X_DROP                       = XMLString::transcode( C_DROP );
 
   // SpkSourceML tags
     //  X_DESCRIPTION                = XMLString::transcode( C_DESCRIPTION );
@@ -630,6 +632,7 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_MDV );
   XMLString::release( &X_EVID );
   XMLString::release( &X_AMT );
+  XMLString::release( &X_DROP );
 
   //  XMLString::release( &X_DESCRIPTION );
   XMLString::release( &X_YES );

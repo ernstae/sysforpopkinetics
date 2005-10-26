@@ -57,7 +57,8 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char SPKOPTLIB[]  = "spkopt";
+  char CPPADLIB[]   = "CppAD";
+  char SPKOPTLIB[]  = "QN01Box";
   char ATLASLIB[]   = "atlas_lapack";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
@@ -269,8 +270,8 @@ void ind_subprobTest::setUp()
   sprintf( fXml3_xml,             "%s_xml3.xml",             fPrefix );
 
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // TIME doesn't have an alias
   label_alias[strTIME] = NULL;

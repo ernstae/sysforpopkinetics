@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spksource>
+   <nonmem version="0.1">
+      <constraint>
+         <ind_analysis abort="yes" is_estimation="yes" mitr="450" sig_digits="3">
+            <description>RISE AND WASHOUT EXAMPLE</description>
+            <data_labels>
+               <label name="TIME"/>
+               <label name="DV"/>
+            </data_labels>
+            <theta length="5">
+               <low>
+                  <value fixed="no">-10000</value>
+                  <value fixed="no">-50000</value>
+                  <value fixed="no">.05</value>
+                  <value fixed="no">.007</value>
+                  <value fixed="no">.001</value>
+               </low>
+               <in>
+                  <value fixed="no">-1000</value>
+                  <value fixed="no">-5000</value>
+                  <value fixed="no">0.5</value>
+                  <value fixed="no">0.07</value>
+                  <value fixed="no">0.01</value>
+               </in>
+               <up>
+                  <value fixed="no">-100.0</value>
+                  <value fixed="no">-500.0</value>
+                  <value fixed="no">5.</value>
+                  <value fixed="no">0.7</value>
+                  <value fixed="no">0.1</value>
+               </up>
+            </theta>
+            <omega dimension="1" same_as_previous="no" struct="diagonal">
+               <in>
+                  <value fixed="no">0.04</value>
+               </in>
+            </omega>
+            <ind_stat covariance_form="rsr"/>
+         </ind_analysis>
+      </constraint>
+      <model>
+         <pred>
+; MODEL PARAMETERS
+A1 = THETA(1)
+A2 = THETA(2)
+B1 = THETA(3)
+L1 = THETA(4)
+L2 = THETA(5)
+; USEFUL PARAMETER DEFINITIONS
+T = TIME
+A0 = -(A1 + A2)
+B2=1-B1
+; MODEL FUNCTIONS
+YAR = A0 + A1*EXP(-L1*T) + A2*EXP(-L2*T)
+YAR300 = A0 + A1*EXP(-L1*300) + A2*EXP(-L2*300)
+YAW = YAR300*(B1*EXP(-L1*(T-300)) + B2*EXP(-L2*(T-300)))
+IF (TIME.LT.300) THEN
+   F = YAR
+ELSE
+   F = YAW
+ENDIF
+Y = F * (1 + ETA(1))
+         </pred>
+      </model>
+   </nonmem>
+</spksource>
+<?xml version="1.0" encoding="UTF-8"?>
+<spkdata version="0.1">
+   <table columns="2" rows="35">
+      <description>DATA.TXT</description>
+      <row position="1">
+         <value type="string">TIME</value>
+         <value type="string">DV</value>
+      </row>
+      <row position="2">
+         <value>1</value>
+         <value>111</value>
+      </row>
+      <row position="3">
+         <value>2</value>
+         <value>264</value>
+      </row>
+      <row position="4">
+         <value>3</value>
+         <value>324</value>
+      </row>
+      <row position="5">
+         <value>4</value>
+         <value>391</value>
+      </row>
+      <row position="6">
+         <value>5</value>
+         <value>490</value>
+      </row>
+      <row position="7">
+         <value>6</value>
+         <value>569</value>
+      </row>
+      <row position="8">
+         <value>8</value>
+         <value>763</value>
+      </row>
+      <row position="9">
+         <value>10</value>
+         <value>879</value>
+      </row>
+      <row position="10">
+         <value>15</value>
+         <value>1210</value>
+      </row>
+      <row position="11">
+         <value>20</value>
+         <value>1377</value>
+      </row>
+      <row position="12">
+         <value>25</value>
+         <value>1728</value>
+      </row>
+      <row position="13">
+         <value>30</value>
+         <value>1815</value>
+      </row>
+      <row position="14">
+         <value>40</value>
+         <value>2238</value>
+      </row>
+      <row position="15">
+         <value>50</value>
+         <value>2613</value>
+      </row>
+      <row position="16">
+         <value>60</value>
+         <value>2829</value>
+      </row>
+      <row position="17">
+         <value>90</value>
+         <value>3366</value>
+      </row>
+      <row position="18">
+         <value>120</value>
+         <value>4015</value>
+      </row>
+      <row position="19">
+         <value>150</value>
+         <value>4446</value>
+      </row>
+      <row position="20">
+         <value>180</value>
+         <value>4678</value>
+      </row>
+      <row position="21">
+         <value>210</value>
+         <value>4850</value>
+      </row>
+      <row position="22">
+         <value>240</value>
+         <value>5214</value>
+      </row>
+      <row position="23">
+         <value>270</value>
+         <value>5463</value>
+      </row>
+      <row position="24">
+         <value>300</value>
+         <value>5319</value>
+      </row>
+      <row position="25">
+         <value>305</value>
+         <value>5228</value>
+      </row>
+      <row position="26">
+         <value>310</value>
+         <value>4879</value>
+      </row>
+      <row position="27">
+         <value>315</value>
+         <value>4361</value>
+      </row>
+      <row position="28">
+         <value>320</value>
+         <value>4286</value>
+      </row>
+      <row position="29">
+         <value>325</value>
+         <value>3792</value>
+      </row>
+      <row position="30">
+         <value>330</value>
+         <value>3781</value>
+      </row>
+      <row position="31">
+         <value>360</value>
+         <value>2842</value>
+      </row>
+      <row position="32">
+         <value>390</value>
+         <value>2230</value>
+      </row>
+      <row position="33">
+         <value>420</value>
+         <value>1707</value>
+      </row>
+      <row position="34">
+         <value>450</value>
+         <value>1281</value>
+      </row>
+      <row position="35">
+         <value>480</value>
+         <value>932</value>
+      </row>
+   </table>
+</spkdata>
+<?xml version="1.0" encoding="UTF-8"?>
+<spkmodel>
+$PROBLEM RISE AND WASHOUT EXAMPLE
+$DATA DATA.TXT
+$INPUT TIME DV
+$PRED 
+; MODEL PARAMETERS
+A1 = THETA(1)
+A2 = THETA(2)
+B1 = THETA(3)
+L1 = THETA(4)
+L2 = THETA(5)
+; USEFUL PARAMETER DEFINITIONS
+T = TIME
+A0 = -(A1 + A2)
+B2=1-B1
+; MODEL FUNCTIONS
+YAR = A0 + A1*EXP(-L1*T) + A2*EXP(-L2*T)
+YAR300 = A0 + A1*EXP(-L1*300) + A2*EXP(-L2*300)
+YAW = YAR300*(B1*EXP(-L1*(T-300)) + B2*EXP(-L2*(T-300)))
+IF (TIME.LT.300) THEN
+   F = YAR
+ELSE
+   F = YAW
+ENDIF
+Y = F * (1 + ETA(1))
+$THETA 
+(-10000,-1000,-100.0)
+(-50000,-5000,-500.0)
+(.05,0.5,5.)
+(.007,0.07,0.7)
+(.001,0.01,0.1)
+$OMEGA DIAGONAL(1) 0.04
+$ESTIMATION METHOD=0 NOPOSTHOC SIGDIGITS=3 MAXEVALS=450 PRINT=5
+$COVARIANCE
+</spkmodel>

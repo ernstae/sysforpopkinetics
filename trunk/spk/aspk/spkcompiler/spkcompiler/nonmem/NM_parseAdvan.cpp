@@ -180,21 +180,21 @@ void NonmemTranslator::parseAdvan(
       assert( myCompModel != NULL );
       
       // P(n), A(m) and DADT(m) may appear on the left hand side of
-      // assignment statements in model equations, where 
+      // assignment statements in model equations. 
       // n = NPARAMETERS (assumed so for now), m = NCOMPARTMENTS+1.
       // Currently our expression compiler cannot figure out
       // the size of a vector as it parses through.
       // So, provide the vectors before hand. 
       //  
-      table->insertVector( UserStr.P, myCompModel->getNParameters(), Symbol::SYSTEM, Symbol::READWRITE );
-      table->insertVector( UserStr.A, myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READONLY );
+      table->insertVector( UserStr.P,    myCompModel->getNParameters(),   Symbol::SYSTEM, Symbol::READWRITE );
       table->insertVector( UserStr.DADT, myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertVector( UserStr.A,    myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READONLY );
 
-      table->insertScalar( UserStr.T, Symbol::SYSTEM, Symbol::READONLY );
-      table->insertScalar( UserStr.TSCALE, Symbol::SYSTEM, Symbol::READONLY );
-      table->insertScalar( UserStr.FO, Symbol::SYSTEM, Symbol::READONLY ); // ef-oh
-      table->insertScalar( UserStr.F0, Symbol::SYSTEM, Symbol::READONLY ); // ef-zero
-      table->insertScalar( UserStr.S0, Symbol::SYSTEM, Symbol::READONLY ); // es-zero
+      table->insertScalar( UserStr.T,      Symbol::SYSTEM, Symbol::READONLY );
+      table->insertScalar( UserStr.TSCALE, Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertScalar( UserStr.FO,     Symbol::SYSTEM, Symbol::READWRITE ); // ef-oh
+      table->insertScalar( UserStr.F0,     Symbol::SYSTEM, Symbol::READWRITE ); // ef-zero
+      table->insertScalar( UserStr.S0,     Symbol::SYSTEM, Symbol::READWRITE ); // es-zero
       for( int i=0; i<myCompModel->getNCompartments(); i++ )
 	{
 	  char tmp_s[ 32 ], tmp_f[ 32 ], tmp_r[ 32 ], tmp_d[ 32 ], tmp_alag[ 32 ];
@@ -214,14 +214,11 @@ void NonmemTranslator::parseAdvan(
 		    SpkCompilerError::maxMessageLen(),
 		    "%s%d", UserStr.F.c_str(), i+1 ); 
 
-	  table->insertScalar( tmp_r, Symbol::SYSTEM, Symbol::READWRITE );
-	  table->insertScalar( tmp_d, Symbol::SYSTEM, Symbol::READWRITE ); 
+	  table->insertScalar( tmp_r,    Symbol::SYSTEM, Symbol::READWRITE );
+	  table->insertScalar( tmp_d,    Symbol::SYSTEM, Symbol::READWRITE ); 
 	  table->insertScalar( tmp_alag, Symbol::SYSTEM, Symbol::READWRITE ); 
-	  table->insertScalar( tmp_s, Symbol::SYSTEM, Symbol::READWRITE );
-          if( i < myCompModel->getNCompartments() - 1 ) 
-             table->insertScalar( tmp_f, Symbol::SYSTEM, Symbol::READWRITE ); 
-          else
-             table->insertScalar( tmp_f, Symbol::SYSTEM, Symbol::READONLY ); 
+	  table->insertScalar( tmp_s,    Symbol::SYSTEM, Symbol::READWRITE );
+	  table->insertScalar( tmp_f,    Symbol::SYSTEM, Symbol::READWRITE ); 
 	}
 
       parsePK( pk );

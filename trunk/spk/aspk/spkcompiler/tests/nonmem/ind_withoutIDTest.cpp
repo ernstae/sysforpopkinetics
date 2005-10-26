@@ -52,7 +52,8 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char SPKOPTLIB[]  = "spkopt";
+  char CPPADLIB[]   = "CppAD";
+  char SPKOPTLIB[]  = "QN01Box";
   char ATLASLIB[]   = "atlas_lapack";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
@@ -85,97 +86,56 @@ if( actual != expected ) \\\n \
   // labels for internal (test) use.
   //============================================
   const char *strID   = "ID";
-  const char *strTIME = "TiMe";
+  const char *strTIME = "TIME";
   const char *strDV   = "DV";
   const char *strCP   = "CP";
   const char *strAMT  = "AMT";
   const char *strMDV  = "MDV";
-  const char *label[] = { strDV, strTIME };
+  const char *strEVID = "EVID";
+  const char *label[] = { strTIME, strDV };
   map<const char*, const char*> label_alias;
   int nLabels         = 2;
 
   //============================================
-  // <Data Set>  --- SKIP ID
-  //
-  //   ID       DV=CP    TIME
-  /*
-        (1)       0.1     0.2
-        (1)     338.8   337.4
-        (1)     118.1   118.2
-        (1)     888.0   884.6
-        (1)       9.2    10.1
-        (1)     228.1   226.5
-        (1)     668.5   666.3
-        (1)     998.5   996.3
-        (1)     449.1   448.6
-        (1)     778.9   777.0
-        (1)     559.2   558.2
-        (1)       0.3     0.4
-        (1)       0.1     0.6
-        (1)     778.1   775.5
-        (1)     668.8   666.9
-        (1)     339.3   338.0
-        (1)     448.9   447.5
-        (1)      10.8    11.6
-        (1)     557.7   556.0
-        (1)     228.3   228.1
-        (1)     998.0   995.8
-        (1)     888.0   887.6
-        (1)     119.6   120.2
-        (1)       0.3     0.3
-        (1)       0.6     0.3
-        (1)     557.6   556.8
-        (1)     339.3   339.1
-        (1)     888.0   887.2
-        (1)     998.5   999.0
-        (1)     778.9   779.0
-        (1)      10.2    11.1
-        (1)     117.6   118.3
-        (1)     228.9   229.2
-        (1)     668.4   669.1
-        (1)     449.2   448.9
-        (1)       0.2     0.5
-   */
+  // <Data Set>  --- no ID
   //============================================
-  const int    nRecords   =  36;
+  const int    nRecords   =  34;
   const int    nFixed     =  0;
   const int    nItems     =  2;
-  const double record0[]  = {   0.1,   0.2 };
-  const double record1[]  = { 338.8, 337.4 };
-  const double record2[]  = { 118.1, 118.2 };
-  const double record3[]  = { 888.0, 884.6 };
-  const double record4[]  = {   9.2,  10.1 };
-  const double record5[]  = { 228.1, 226.5 };
-  const double record6[]  = { 668.5, 666.3 };
-  const double record7[]  = { 998.5, 996.3 };
-  const double record8[]  = { 449.1, 448.6 };
-  const double record9[]  = { 778.9, 777.0 };
-  const double record10[] = { 559.2, 558.2 };
-  const double record11[] = {   0.3,   0.4 };
-  const double record12[] = {   0.1,   0.6 };
-  const double record13[] = { 778.1, 775.5 };
-  const double record14[] = { 668.8, 666.9 };
-  const double record15[] = { 339.3, 338.0 };
-  const double record16[] = { 448.9, 447.5 };
-  const double record17[] = {  10.8, 11.6,  0 };
-  const double record18[] = { 557.7, 556.0 };
-  const double record19[] = { 228.3, 228.1 };
-  const double record20[] = { 998.0, 995.8 };
-  const double record21[] = { 888.8, 887.6 };
-  const double record22[] = { 119.6, 120.2 };
-  const double record23[] = {   0.3,   0.3 };
-  const double record24[] = {   0.6,   0.3 };
-  const double record25[] = { 557.6, 556.8 };
-  const double record26[] = { 339.3, 339.1 };
-  const double record27[] = { 888.0, 887.2 };
-  const double record28[] = { 998.5, 999.0 };
-  const double record29[] = { 778.9, 779.0 };
-  const double record30[] = {  10.2 , 11.1 };
-  const double record31[] = { 117.6, 118.3 };
-  const double record32[] = { 228.9, 229.2 };
-  const double record33[] = { 668.4, 669.1 };
-  const double record34[] = { 449.2, 448.9 };
-  const double record35[] = {  0.2,   0.5 };
+  const double record0[]  = { 1.0000E+00,  1.1100E+02 };
+  const double record1[]  = { 2.0000E+00,  2.6400E+02 };
+  const double record2[]  = { 3.0000E+00,  3.2400E+02 };
+  const double record3[]  = { 4.0000E+00,  3.9100E+02 };
+  const double record4[]  = { 5.0000E+00,  4.9000E+02 };
+  const double record5[]  = { 6.0000E+00,  5.6900E+02 };
+  const double record6[]  = { 8.0000E+00,  7.6300E+02 };
+  const double record7[]  = { 1.0000E+01,  8.7900E+02 };
+  const double record8[]  = { 1.5000E+01,  1.2100E+03 };
+  const double record9[]  = { 2.0000E+01,  1.3770E+03 };
+  const double record10[] = { 2.5000E+01,  1.7280E+03 };
+  const double record11[] = { 3.0000E+01,  1.8150E+03 };
+  const double record12[] = { 4.0000E+01,  2.2380E+03 };
+  const double record13[] = { 5.0000E+01,  2.6130E+03 };
+  const double record14[] = { 6.0000E+01,  2.8290E+03 };
+  const double record15[] = { 9.0000E+01,  3.3660E+03 };
+  const double record16[] = { 1.2000E+02,  4.0150E+03 };
+  const double record17[] = { 1.5000E+02,  4.4460E+03 };
+  const double record18[] = { 1.8000E+02,  4.6780E+03 };
+  const double record19[] = { 2.1000E+02,  4.8500E+03 };
+  const double record20[] = { 2.4000E+02,  5.2140E+03 };
+  const double record21[] = { 2.7000E+02,  5.4630E+03 };
+  const double record22[] = { 3.0000E+02,  5.3190E+03 };
+  const double record23[] = { 3.0500E+02,  5.2280E+03 };
+  const double record24[] = { 3.1000E+02,  4.8790E+03 };
+  const double record25[] = { 3.1500E+02,  4.3610E+03 };
+  const double record26[] = { 3.2000E+02,  4.2860E+03 };
+  const double record27[] = { 3.2500E+02,  3.7920E+03 };
+  const double record28[] = { 3.3000E+02,  3.7810E+03 };
+  const double record29[] = { 3.6000E+02,  2.8420E+03 };
+  const double record30[] = { 3.9000E+02,  2.2300E+03 };
+  const double record31[] = { 4.2000E+02,  1.7070E+03 };
+  const double record32[] = { 4.5000E+02,  1.2810E+03 };
+  const double record33[] = { 4.8000E+02,  9.3200E+02 };
 
   double const * record[nRecords];
 
@@ -199,11 +159,11 @@ if( actual != expected ) \\\n \
   // the constraints and initial values for
   // theta.
   //============================================
-  const int    thetaLen = 2;
-  const double theta_in [ thetaLen ]   = { 0.2,  1.0 };
-  const double theta_up [ thetaLen ]   = { 2.0, 10.0 };
-  const double theta_low[ thetaLen ]   = { 0.02, 0.1 };
-  const bool   theta_fix[ thetaLen ]   = { false, false };
+  const int    thetaLen = 5;
+  const double theta_in [ thetaLen ]   = { -1000, -5000, 0.5, 0.07, 0.01 };
+  const double theta_up [ thetaLen ]   = { -100, -500, 5.0, 0.7, 0.1 };
+  const double theta_low[ thetaLen ]   = { -100000, -50000,0.05, 0.007, 0.001 };
+  const bool   theta_fix[ thetaLen ]   = { false, false, false, false, false };
 
   //============================================
   // The SPK Compiler decides the constraints
@@ -214,7 +174,7 @@ if( actual != expected ) \\\n \
   const int    omegaDim                = 1;
   const Symbol::Structure omegaStruct  = Symbol::DIAGONAL;
   const int    omegaOrder              = 1;
-  const double omega_in[ omegaOrder ]  = { 1.0 };
+  const double omega_in[ omegaOrder ]  = { 0.04 };
   const bool   omega_fix[ omegaOrder ] = { false };
 
   //============================================
@@ -260,20 +220,62 @@ if( actual != expected ) \\\n \
   // F = b0 + b1 * x = THETA(1) + THETA(2)*TIME
   // Y = F + ETA(1)
   //============================================
-  const char PREDEQN[] = "b0 = THETA(1)\nb1 = THETA(2)\nx = TiMe\nF = b0 + b1 * x\nY = F + ETA(1)\n";
+  const char PREDEQN[] = "\
+; MODEL PARAMETERS\n \
+A1 = THETA(1)\n \
+A2 = THETA(2)\n \
+B1 = THETA(3)\n \
+L1 = THETA(4)\n \
+L2 = THETA(5)\n \
+; USEFUL PARAMETER DEFINITIONS\n \
+T = TIME\n \
+A0 = -(A1 + A2)\n \
+B2=1-B1\n \
+; MODEL FUNCTIONS\n \
+YAR = A0 + A1*EXP(-L1*T) + A2*EXP(-L2*T)\n \
+YAR300 = A0 + A1*EXP(-L1*300) + A2*EXP(-L2*300)\n \
+YAW = YAR300*(B1*EXP(-L1*(T-300)) + B2*EXP(-L2*(T-300)))\n \
+IF (TIME.LT.300) THEN\n \
+   F = YAR\n \
+ELSE\n \
+   F = YAW\n \
+ENDIF\n \
+Y = F * (1 + ETA(1))\n";
+
 
 
   //============================================
-  // NONMEM's answers
-  //
-  // NOTE: NONMEM's matrices are placed
-  // in the row-major order.
+  // Expected answers
   //============================================
-  const double nm_obj       =  46.4087;
-  const double nm_theta[]   = { 0.02, 1.00171 };
-  const double nm_omega[]   = { 0.771353 };
+  const double expected_obj       =  196.303;
+  const double expected_theta[]   = { -635.833, -5098.27, 0.0744154, 0.11792, 0.0091904, 0.02, 1.00171 };
+  const double expected_omega[]   = { 0.00177816 };
 
-  const double nm_pred[]    = {  };
+  const double expected_cov[]     = {6039.76,
+				    -7267.53,       12129.1,
+				       -0.504495,      -0.371147,    0.000446305,
+				        1.63914,       -1.95422,    -0.000123562,  0.00048802,
+				        0.00858761,    -0.00424078, -3.30934e-06,  2.10117e-06, 3.51234e-08,
+				        0.0402825,     -0.0485068,  -2.05308e-06,  1.32007e-05, 4.5624e-08,  6.07912e-07 };
+
+  const double expected_inv_cov[] = {  0.00589221,
+				       0.00178331, 0.00104611,
+				       2.64315,    2.60085,    15981.1,
+				     -11.5089,    -1.09058,     1717.05,          40256.4,
+				    -334.269,      3.86033,        1.11585e+06,   760269,    1.74731e+08,
+				      35.7815,    -2.52172,   -34674.7,          -249819,   -3.39632e+06,  4.6353e+06 };
+  const double expected_stderr[]  = {  77.7159, 110.132, 0.0211259, 0.0220912, 0.000187412, 0.000779687 };
+  const double expected_corr[]    = { 1,
+				     -0.849106,   1,   
+			   	     -0.307278,   -0.15952,   1,
+			  	      0.954744,   -0.80323,   -0.26476,   1,
+				      0.589609,   -0.205462,   -0.835848,   0.507511,   1,
+				      0.664793,   -0.564894,   -0.124643,   0.766405,   0.31223,   1 };
+
+  const double expected_coeff[]   = { 12.2227, 2.16019, 28.3892, 18.734, 2.03922, 43.848 };
+  const double expected_conf[]    = { -794.995, -5323.82, 0.0311495, 0.0726772, 0.00880658, 0.000181362,
+				      -476.671, -4872.71, 0.117681,  0.163163,  0.00957422, 0.00337496 };
+
 };
 
 void ind_withoutIDTest::setUp()
@@ -314,8 +316,8 @@ void ind_withoutIDTest::setUp()
   sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
   sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // TIME doesn't have an alias
   label_alias[strTIME] = NULL;
@@ -371,9 +373,6 @@ void ind_withoutIDTest::setUp()
   record[31]  = record31;
   record[32]  = record32;
   record[33]  = record33;
-  record[34]  = record34;
-  record[35]  = record35;
-  //  record[36]  = record36;
 
 
   createDataML();
@@ -458,9 +457,8 @@ void ind_withoutIDTest::createDataML()
   // Values
   for( int i=0; i<nRecords; i++ )
     {
-      oData << "<row position=\"" << i+2 << "\">" << endl;
-      oData << "<value type=\"string\">"  << record[i][0] << "</value>" << endl;
-      for( int j=1; j<nItems; j++ )
+      oData << "<row position=\"" << i+1+1 << "\">" << endl;
+      for( int j=0; j<nItems; j++ )
 	{
 	  oData << "<value type=\"numeric\">" << record[i][j] << "</value>" << endl;
 	}
@@ -478,7 +476,7 @@ void ind_withoutIDTest::createDataML()
   dataParser->setCreateEntityReferenceNodes( true );
   
   try{
-    dataParser->parse( fDataML );
+    dataParser->parse( "ind_withoutIDTest.data.xml" );
     data = dataParser->getDocument();
   }
   catch( const XMLException& e )
@@ -626,7 +624,7 @@ void ind_withoutIDTest::createSourceML()
   sourceParser->setCreateEntityReferenceNodes( true );
   
   try{
-    sourceParser->parse( fSourceML );
+    sourceParser->parse( "ind_withoutIDTest.source.xml" );
     source = sourceParser->getDocument();
   }
   catch( const XMLException& e )
@@ -732,27 +730,29 @@ void ind_withoutIDTest::testIndDataClass()
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_amt(n);" << endl;
   o << "   vector<double> a_mdv(n);" << endl;
+  o << "   vector<int>    a_evid(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
     o << "   a_id  [" << i << "] = \"" << 1 << "\";" << endl;
-    o << "   a_dv  [" << i << "] = "   << record[i][0] << ";" << endl;
-    o << "   a_time[" << i << "] = "   << record[i][1] << ";" << endl;
+    o << "   a_time[" << i << "] = "   << record[i][0] << ";" << endl;
+    o << "   a_dv  [" << i << "] = "   << record[i][1] << ";" << endl;
     o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
     o << "   a_mdv [" << i << "] = "   << 0.0 << ";" << endl;
+    o << "   a_mdv [" << i << "] = "   << 0 << ";" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_amt, a_mdv );" << endl;
+  o << "   IndData<double> A( n, a_id, a_time, a_dv, a_amt, a_mdv, a_evid );" << endl;
 
   // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << 1 << "\" ) == 0 );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", A." << strCP   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", A." << strDV   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", A." << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strDV   << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << 0.0          << ", A." << strAMT  << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << 0.0          << ", A." << strMDV  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << 0            << ", A." << strEVID << "[" << i << "] );" << endl;
       // There have to be placeholders for the current values of theta/eta for
       // each call to Pred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;
@@ -829,9 +829,8 @@ void ind_withoutIDTest::testDataSetClass()
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( set.data[0]->" << strID << "[" << i << "], \"" << 1 << "\" ) == 0 );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", set.data[0]->" << strCP   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", set.data[0]->" << strDV   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][0] << ", set.data[0]->" << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", set.data[0]->" << strDV   << "[" << i << "] );" << endl;
     }
 
   o << "   for( int j=0; j<n; j++ )" << endl;
@@ -936,7 +935,124 @@ void ind_withoutIDTest::testDriver()
     }
    okToClean = true;
 }
+void ind_withoutIDTest::testReportML()
+{
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Parse the generated reportML document.
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  xercesc::XercesDOMParser *reportParser = new xercesc::XercesDOMParser;
+  reportParser->setValidationScheme( XercesDOMParser::Val_Auto );
+  reportParser->setDoNamespaces( true );
+  reportParser->setDoSchema( true );
+  reportParser->setValidationSchemaFullChecking( true );
+  reportParser->setCreateEntityReferenceNodes( true );
+  
+  try{
+    reportParser->parse( fSavedReportML );
+  }
+  catch( const XMLException& e )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[MAXCHARS + 1];
+      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+	       fReportML, XMLString::transcode(e.getMessage() ) );
+      
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  catch( const DOMException& e )
+    {
+      
+      XMLCh errText[MAXCHARS + 1]; 
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, MAXCHARS))
+	{
+	  XMLPlatformUtils::Terminate();
+	  char buf[MAXCHARS + 1];
+	  sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+		   fReportML, e.code, XMLString::transcode(errText) );
+	  CPPUNIT_ASSERT_MESSAGE( buf, false );
+	}
+    }
+  catch( ... )
+    {
+      XMLPlatformUtils::Terminate();
+      char buf[MAXCHARS + 1];
+      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSavedReportML );
+      
+      CPPUNIT_ASSERT_MESSAGE( buf, false );
+    }
+  
+  report = reportParser->getDocument();
+  CPPUNIT_ASSERT( report );
 
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Verify if any error was caught during the runtime.
+  // The <eroor_list> tag should appear even when there's no error.
+  // However, it should not contain any error message.
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  DOMNodeList *error_list;
+  
+  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
+  DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
+  const XMLCh* error_message = error->getFirstChild()->getNodeValue();
+  CPPUNIT_ASSERT_MESSAGE( "<error_list> should have been empty.", XMLString::isAllWhiteSpace( error_message ) );
+   
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Verify the final estimate for objective function
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  double obj_out;
+  DOMNodeList * objOut_list = report->getElementsByTagName( X_IND_OBJ_OUT );
+  if( objOut_list->getLength() > 0 )
+    {
+      DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
+      DOMNodeList* value_list = objOut->getElementsByTagName( X_VALUE );
+
+      obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( expected_obj, obj_out, expected_obj / 1000.0 * 5.0 );
+
+    }
+
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Verify the final estimate for theta
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  double theta_out[thetaLen];
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( X_THETA_OUT );
+  if( thetaOut_list->getLength() > 0 )
+    {
+      DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
+      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      CPPUNIT_ASSERT_EQUAL( thetaLen, n );
+      for( int i=0; i<n; i++ )
+	{
+	  theta_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( expected_theta[i], theta_out[i], expected_theta[i] / 1000.0 * 5.0 );
+	}
+    }
+
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // Verify the final estimate for Omega
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  double omega_out[omegaOrder];
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( X_OMEGA_OUT );
+  if( omegaOut_list->getLength() > 0 )
+    {
+      DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
+      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
+      int n = value_list->getLength();
+      CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
+      for( int i=0; i<+n; i++ )
+	{
+	  omega_out[i] = atof( XMLString::transcode( value_list->item(i)->getFirstChild()->getNodeValue() ) );
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( expected_omega[i], omega_out[i], expected_omega[i] / 1000.0 * 5.0 );
+	}
+    }
+
+  DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
+  CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
+
+  okToClean = true;
+}
 
 CppUnit::Test * ind_withoutIDTest::suite()
 {

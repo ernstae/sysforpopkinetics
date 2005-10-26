@@ -139,7 +139,8 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char SPKOPTLIB[]  = "spkopt";
+  char CPPADLIB[]   = "CppAD";
+  char SPKOPTLIB[]  = "QN01Box";
   char ATLASLIB[]   = "atlas_lapack";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
@@ -177,6 +178,7 @@ namespace{
   const char *strCP   = "CP";
   const char *strAMT  = "AMT";
   const char *strMDV  = "MDV";
+  const char *strEVID = "EVID";
   const char *label[] = { strID, strDV, strTIME };
   map<const char*, const char*> label_alias;
   int nLabels         = 3;
@@ -345,8 +347,8 @@ void ind_withIDTest::setUp()
   sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
   sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // ID doesn't have an alias
   label_alias[strID]   = NULL;
@@ -872,6 +874,7 @@ void ind_withIDTest::testIndDataClass()
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_amt(n);" << endl;
   o << "   vector<double> a_mdv(n);" << endl;
+  o << "   vector<int>    a_evid(n);" << endl;
 
   for( int i=0; i<nRecords; i++ )
     {
@@ -880,19 +883,21 @@ void ind_withIDTest::testIndDataClass()
       o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
       o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
       o << "   a_mdv [" << i << "] = "   << 0.0 << ";" << endl;
+      o << "   a_evid[" << i << "] = "   << 0  << ";" << endl;
     }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_amt, a_mdv );" << endl;
+  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_amt, a_mdv, a_evid );" << endl;
 
   // { ID, DV=CP, TIME }
   for( int i=0; i<nRecords; i++ )
     {
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strCP   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A." << strDV   << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A." << strTIME << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << 0.0 << ", A." << strAMT << "[" << i << "] );" << endl;
-      o << "   MY_ASSERT_EQUAL(  " << 0.0 << ", A." << strMDV << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A."   << strCP   << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][1] << ", A."   << strDV   << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << record[i][2] << ", A."   << strTIME << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << 0.0 << ", A." << strAMT  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << 0.0 << ", A." << strMDV  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << 0   << ", A." << strEVID << "[" << i << "] );" << endl;
       // There have to be placeholders for the current values of theta/eta for
       // each call to Pred::eval().
       o << "   MY_ASSERT_EQUAL( thetaLen, A." << strTHETA << "[" << i << "].size() );" << endl;

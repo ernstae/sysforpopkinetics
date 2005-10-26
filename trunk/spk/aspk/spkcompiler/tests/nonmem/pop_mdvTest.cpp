@@ -52,7 +52,8 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char SPKOPTLIB[]  = "spkopt";
+  char CPPADLIB[]   = "CppAD";
+  char SPKOPTLIB[]  = "QN01Box";
   char ATLASLIB[]   = "atlas_lapack";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
@@ -108,6 +109,7 @@ if( actual != expected ) \\\n \
   const char *strCP         = "CP";
   const char *strMDV        = "MDV";
   const char *strAMT        = "AMT";
+  const char *strEVID       = "EVID";
   const char *label[]       = { strID, strDV, strTIME, strMDV };
   const int    nLabels      = 4;
   const int    nIndividuals = 4;
@@ -302,8 +304,8 @@ void pop_mdvTest::setUp()
   X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
   X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // ID doesn't have an alias
   label_alias[strID]   = NULL;
@@ -687,6 +689,7 @@ void pop_mdvTest::testIndDataClass()
   o << "   vector<double> a_dv(n);" << endl;
   o << "   vector<double> a_mdv(n);" << endl;
   o << "   vector<double> a_amt(n);" << endl;
+  o << "   vector<int>    a_evid(n);" << endl;
  
   for( int i=0; i<nRecords; i++ )
   {
@@ -695,9 +698,10 @@ void pop_mdvTest::testIndDataClass()
     o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
     o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
     o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
+    o << "   a_evid[" << i << "] = "   << 0   << ";" << endl;
   }
 
-  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv, a_amt );" << endl;
+  o << "   IndData<double> A( n, a_id, a_dv, a_time, a_mdv, a_amt, a_evid );" << endl;
 
   // { ID, DV=CP, TIME, MDV }
   for( int i=0; i<nRecords; i++ )
@@ -705,6 +709,7 @@ void pop_mdvTest::testIndDataClass()
       o << "   assert( strcmp( A." << strID << "[" << i << "], \"" << record[i][0] << "\" ) == 0 );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << record[i][3] << ", A." << strMDV  << "[" << i << "] );" << endl;
       o << "   MY_ASSERT_EQUAL(  " << 0.0          << ", A." << strAMT  << "[" << i << "] );" << endl;
+      o << "   MY_ASSERT_EQUAL(  " << 0            << ", A." << strEVID << "[" << i << "] );" << endl;
       o << endl;
     }
   o << endl;  
