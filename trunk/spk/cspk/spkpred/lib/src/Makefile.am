@@ -5,7 +5,7 @@ INST_BASE = /usr/local
 libdir        = $(INST_BASE)/lib/spktest
 pkgincludedir = $(INST_BASE)/include/spktest/spkpred
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I$(INST_BASE)/include/spktest/CppAD
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest 
 
 libspkpred_la_CXXFLAGS         = -g
 libspkpred_release_la_CXXFLAGS = -O3
