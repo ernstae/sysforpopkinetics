@@ -41,7 +41,7 @@ class CompModelInfo{
   /**
    * Constructor.  Initialize the model with the given attribute values.
    *
-   * @param nCompartmentsIn The number of compartments in this system.
+   * @param nCompartmentsIn The number of compartments in this system including the output compartment.
    * @param nParametersIn   The number of basic PK parameters.
    * @param nEquilibrimIn   The number of quilibrim compartments.
    * @param compartmentsIn  Compartments making up the system.
@@ -54,7 +54,7 @@ class CompModelInfo{
 		 const std::vector<CompartmentInfo>& compartmentsIn );
 
   /**
-   * Get the number of compartments in this system.
+   * Get the number of compartments in this system including the output comp.
    */
   int getNCompartments() const;
 

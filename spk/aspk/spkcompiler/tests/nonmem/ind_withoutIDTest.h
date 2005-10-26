@@ -32,6 +32,7 @@ public:
     void testIndDataClass();
     void testDataSetClass();
     void testDriver();
+    void testReportML();
 };
 
 #endif

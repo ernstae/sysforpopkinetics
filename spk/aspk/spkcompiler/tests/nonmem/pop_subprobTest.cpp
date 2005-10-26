@@ -52,7 +52,8 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char SPKOPTLIB[]  = "spkopt";
+  char CPPADLIB[]   = "CppAD";
+  char SPKOPTLIB[]  = "QN01Box";
   char ATLASLIB[]   = "atlas_lapack";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
@@ -315,8 +316,8 @@ void pop_subprobTest::setUp()
   X_SIMULATION                 = XMLString::transcode( C_SIMULATION );
   X_SUBPROBLEM                 = XMLString::transcode( C_SUBPROBLEM );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // ID doesn't have an alias
   label_alias[strID]   = NULL;
@@ -824,6 +825,9 @@ void pop_subprobTest::testReportML()
       int nPresentations = presentation_data_list->getLength();
     }
 
+  remove( "xml1.xml" );
+  remove( "xml2.xml" );
+  remove( "xml3.xml" );
   okToClean = true;
 }
 

@@ -24,7 +24,7 @@
 #include "pop_advan6Test.h"
 #include "ind_dataSetTest.h"
 #include "pop_dataSetTest.h"
-#include "pop_insertDataItemsTest.h"
+#include "pop_modifyDataItemsTest.h"
 
 #include "countStrInLhsTest.h"
 #include "linInterpTest.h"
@@ -112,7 +112,7 @@ int main( int argc, const char * argv[] )
   master[ "pop_dataSetTest" ] = pop_dataSetTest::suite();
 
   // Inserting missing data items
-  master[ "pop_insertDataItemsTest" ] = pop_insertDataItemsTest::suite();
+  master[ "pop_modifyDataItemsTest" ] = pop_modifyDataItemsTest::suite();
 
   if( argc == 1 )
     {

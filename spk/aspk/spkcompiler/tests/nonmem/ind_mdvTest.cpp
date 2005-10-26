@@ -52,7 +52,8 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char SPKOPTLIB[]  = "spkopt";
+  char CPPADLIB[]   = "CppAD";
+  char SPKOPTLIB[]  = "QN01Box";
   char ATLASLIB[]   = "atlas_lapack";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
@@ -257,8 +258,8 @@ void ind_mdvTest::setUp()
   sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
   sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // TIME doesn't have an alias
   label_alias[strTIME] = NULL;
@@ -637,6 +638,7 @@ void ind_mdvTest::testIndDataClass()
   o << "   vector<double> a_dv(nRecords);" << endl;
   o << "   vector<double> a_amt(nRecords);" << endl;
   o << "   vector<double> a_mdv(nRecords);" << endl;
+  o << "   vector<int>    a_evid(nRecords);" << endl;
 
   for( int i=0; i<nRecords; i++ )
   {
@@ -645,9 +647,10 @@ void ind_mdvTest::testIndDataClass()
     o << "   a_time[" << i << "] = "   << record[i][2] << ";" << endl;
     o << "   a_mdv [" << i << "] = "   << record[i][3] << ";" << endl;
     o << "   a_amt [" << i << "] = "   << 0.0 << ";" << endl;
+    o << "   a_evid[" << i << "] = "   << 0   << ";" << endl;
   }
 
-  o << "   IndData<double> A( nRecords, a_id, a_dv, a_time, a_mdv, a_amt );" << endl;
+  o << "   IndData<double> A( nRecords, a_id, a_dv, a_time, a_mdv, a_amt, a_evid );" << endl;
 
   o << "   MY_ASSERT_EQUAL( nRecords, A.getNRecords() );" << endl;
   o << "   MY_ASSERT_EQUAL( nObservs, A.getNObservs() );" << endl;
@@ -810,20 +813,20 @@ void ind_mdvTest::testPredClass()
   o << "   return 0;" << endl;
   o << "}" << endl;
 
-  char command[256];
-  sprintf( command, "g++ -g %s -o %s %s %s", fPredDriver_cpp, fPredDriver, LDFLAG, CPPFLAG );
+  char command[512];
+  snprintf( command, 512, "g++ -g %s -o %s %s %s", fPredDriver_cpp, fPredDriver, LDFLAG, CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fPredDriver_cpp );
+      char message[512];
+      snprintf( message, 512, "Compilation of the generated %s failed!", fPredDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   sprintf( command, "./%s", fPredDriver );
   if( system( command ) != 0 )
     {
-      char message[256];
-      sprintf( message, "A test driver, %s, failed!", fPredDriver );
+      char message[512];
+      snprintf( message, 512, "A test driver, %s, failed!", fPredDriver );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }

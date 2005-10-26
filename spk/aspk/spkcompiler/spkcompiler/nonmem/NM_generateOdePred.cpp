@@ -21,14 +21,6 @@ using namespace xercesc;
 //    RATE
 //    TIME
 //
-// <system's responsibility to compute>
-//
-//    T
-//    F
-//    FO  (ef-oh)
-//    F0  (ef-zero)
-//    S0  (es-zero)
-//
 // <user's responsiblity to compute>
 //
 //    Y
@@ -43,6 +35,13 @@ using namespace xercesc;
 //    F1 ... Fm  // m = n-1
 //    P(1) ... P(x)
 //    A(1) ... A(n)
+//    T
+//    TSCALE
+//    F
+//    FO  (ef-oh)
+//    F0  (ef-zero)
+//    S0  (es-zero)
+
 //
 //=========================================================================================
 void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp, 
@@ -212,6 +211,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                      int spk_i,"                                        << endl;
   oOdePred_h << "                      int spk_j,"                                        << endl;
   oOdePred_h << "                      const std::vector<spk_ValueType>& spk_indepVar );" << endl;
+  oOdePred_h << "   void evalPk( const spk_ValueType & t );" << endl;
   oOdePred_h << endl;
 
   oOdePred_h << "   virtual void evalDes( " << endl;
@@ -219,6 +219,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                      int spk_i,"                                        << endl;
   oOdePred_h << "                      int spk_j,"                                        << endl;
   oOdePred_h << "                      const std::vector<spk_ValueType>& spk_indepVar );" << endl;
+  oOdePred_h << "   void evalDes(      const spk_ValueType & t," << endl;
+  oOdePred_h << "                      typename std::vector<spk_ValueType>::const_iterator a );"  << endl;
   oOdePred_h << endl;
 
   //----------------------------------------
@@ -259,74 +261,74 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       
       if( owner == Symbol::DATASET )
         {
-	   if( keyVarName == KeyStr.ID )
-             {
-                oOdePred_h << "   std::string " << varName << ";" << endl;
-                if( pT->second.synonym != "" )
-                   oOdePred_h << "   std::string " << pT->second.synonym << ";" << endl;
-             }
-           else if( keyVarName == KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT )
-             {
-                oOdePred_h << "   int " << varName << ";" << endl;
-                if( pT->second.synonym != "" )
-                   oOdePred_h << "   int " << pT->second.synonym << ";" << endl;
-             }
-           else
-             {
-                oOdePred_h << "   spk_ValueType " << varName << ";" << endl;
-                if( pT->second.synonym != "" )
-                   oOdePred_h << "   spk_ValueType " << pT->second.synonym << ";" << endl;
-             }
+	  if( keyVarName == KeyStr.ID )
+	    {
+	      oOdePred_h << "   std::string " << varName << ";" << endl;
+	      if( pT->second.synonym != "" )
+		oOdePred_h << "   std::string " << pT->second.synonym << ";" << endl;
+	    }
+	  else if( keyVarName == KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT )
+	    {
+	      oOdePred_h << "   int " << varName << ";" << endl;
+	      if( pT->second.synonym != "" )
+		oOdePred_h << "   int " << pT->second.synonym << ";" << endl;
+	    }
+	  else
+	    {
+	      oOdePred_h << "   spk_ValueType " << varName << ";" << endl;
+	      if( pT->second.synonym != "" )
+		oOdePred_h << "   spk_ValueType " << pT->second.synonym << ";" << endl;
+	    }
         }
       else if( owner == Symbol::SYSTEM )
         {
-           if( objType == Symbol::MATRIX )
-             {
-                continue;
-             }
-           else if( objType == Symbol::VECTOR )
-             {
-                if( keyVarName == KeyStr.DADT || keyVarName == KeyStr.P 
-                    || keyVarName == KeyStr.A
-                    || keyVarName == KeyStr.THETA || keyVarName == KeyStr.ETA || keyVarName == KeyStr.EPS )
-                  {
-                    if( access == Symbol::READWRITE ) // A
-                      oOdePred_h << "   typename std::vector<spk_ValueType>::iterator " << varName << ";" << endl;
-                    else // DADT, P, THETA, ETA, EPS
-                      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << varName << ";" << endl;
-                  }
-                else
-                   continue;
-             }
-           else // Scalars
-             {
-                if( access == Symbol::READONLY )
-                   oOdePred_h << "   spk_ValueType " << varName << ";" << endl;
-                else if( access == Symbol::READWRITE )
-                   oOdePred_h << "   spk_ValueType & " << varName << ";" << endl;
-                else
-                   continue;
-             }
+	  if( objType == Symbol::MATRIX )
+	    {
+	      continue;
+	    }
+	  else if( objType == Symbol::VECTOR )
+	    {
+	      if( keyVarName == KeyStr.DADT || keyVarName == KeyStr.P 
+		  || keyVarName == KeyStr.A
+		  || keyVarName == KeyStr.THETA || keyVarName == KeyStr.ETA || keyVarName == KeyStr.EPS )
+		{
+		  if( access == Symbol::READWRITE ) // A
+		    oOdePred_h << "   typename std::vector<spk_ValueType>::iterator " << varName << ";" << endl;
+		  else // DADT, P, THETA, ETA, EPS
+		    oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << varName << ";" << endl;
+		}
+	      else
+		continue;
+	    }
+	  else // Scalars
+	    {
+	      if( access == Symbol::READONLY )
+		oOdePred_h << "   spk_ValueType " << varName << ";" << endl;
+	      else if( access == Symbol::READWRITE )
+		oOdePred_h << "   spk_ValueType & " << varName << ";" << endl;
+	      else
+		continue;
+	    }
         }
       else // objType == Symbol::USER
         {
-           if( objType == Symbol::MATRIX )
-             {
-                // can't be! error!
-             }
-           else if( objType == Symbol::VECTOR )
-             {
-                if( access == Symbol::READONLY )
-                   oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << varName << ";" << endl;
-                else if( access == Symbol::READWRITE )
-                   oOdePred_h << "   typename std::vector<spk_ValueType>::iterator " << varName << ";" << endl;
-                else
-                   continue;
-             }
-           else // Scalars
-             {
-                oOdePred_h << "   spk_ValueType " << varName << ";" << endl;
-             }
+	  if( objType == Symbol::MATRIX )
+	    {
+	      // can't be! error!
+	    }
+	  else if( objType == Symbol::VECTOR )
+	    {
+	      if( access == Symbol::READONLY )
+		oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << varName << ";" << endl;
+	      else if( access == Symbol::READWRITE )
+		oOdePred_h << "   typename std::vector<spk_ValueType>::iterator " << varName << ";" << endl;
+	      else
+		continue;
+	    }
+	  else // Scalars
+	    {
+	      oOdePred_h << "   spk_ValueType " << varName << ";" << endl;
+	    }
         }
     }
 
@@ -366,30 +368,32 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                              noDoseIn,"                    << endl; 
   oOdePred_h << "                              tolRelIn"                     << endl;
   oOdePred_h << "                            )," << endl;
-  oOdePred_h << "  F                 ( getF() )," << endl;
-  oOdePred_h << "  Y                 ( getY() )," << endl;
-  for( int i=0; i<myCompModel->getNCompartments(); i++ )
-  {
-     char Ri[64];
-     char Di[64];
-     char ALAGi[64];
-     char Si[64];
-     char Fi[64];
-     snprintf( Ri,    64, "R%d", i+1 );
-     snprintf( Di,    64, "D%d", i+1 );
-     snprintf( ALAGi, 64, "ALAG%d", i+1 );
-     snprintf( Si,    64, "S%d", i+1 );
-     oOdePred_h << "  " << Ri << "               ( getCompInfusRate("     << i << ") )," << endl;
-     oOdePred_h << "  " << Di << "               ( getCompInfusDurat("    << i << ") )," << endl;
-     oOdePred_h << "  " << ALAGi << "            ( getCompAbsorpLagTime(" << i << ") )," << endl;
-     oOdePred_h << "  " << Si << "               ( getCompScaleParam("    << i << ") )," << endl;
+  oOdePred_h << "  F                  ( getF() )," << endl;
+  oOdePred_h << "  Y                  ( getY() )," << endl;
+  oOdePred_h << "  F0                 ( getCompBioavailFrac(" << myCompModel->getNCompartments()-1 << ") )," << endl;
+  oOdePred_h << "  FO                 ( getFO() )," << endl;
+  oOdePred_h << "  S0                 ( getCompScaleParam(" << myCompModel->getNCompartments()-1 << ") )," << endl;
+  oOdePred_h << "  T                  ( getT() )," << endl;
+  oOdePred_h << "  TSCALE             ( getTSCALE() )," << endl;
 
-     if( i < myCompModel->getNCompartments()-1 )
-     {
-        snprintf( Fi, 64, "F%d", i+1 );
-        oOdePred_h << "  " << Fi << "               ( getCompBioavailFrac(" << i << ") )," << endl;
-     }
-  }
+  for( int i=0; i<myCompModel->getNCompartments(); i++ )
+    {
+      char Ri[64];
+      char Di[64];
+      char ALAGi[64];
+      char Si[64];
+      char Fi[64];
+      snprintf( Ri,    64, "R%d", i+1 );
+      snprintf( Di,    64, "D%d", i+1 );
+      snprintf( ALAGi, 64, "ALAG%d", i+1 );
+      snprintf( Si,    64, "S%d", i+1 );
+      snprintf( Fi,    64, "F%d", i+1 );
+      oOdePred_h << "  " << Ri << "                 ( getCompInfusRate("     << i << ") )," << endl;
+      oOdePred_h << "  " << Di << "                 ( getCompInfusDurat("    << i << ") )," << endl;
+      oOdePred_h << "  " << ALAGi << "              ( getCompAbsorpLagTime(" << i << ") )," << endl;
+      oOdePred_h << "  " << Si << "                 ( getCompScaleParam("    << i << ") )," << endl;
+      oOdePred_h << "  " << Fi << "                 ( getCompBioavailFrac(" << i << ") )," << endl;
+    }
   oOdePred_h << "  spk_perm           ( dataIn ),"                    << endl;
   oOdePred_h << "  spk_nIndividuals   ( nPopSizeIn ),"                << endl;
   oOdePred_h << "  spk_isIterCompleted( true ),"                      << endl;
@@ -506,9 +510,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "      indVar = spk_perm->data[spk_curWho]->" << UserStr.TIME << ";" << endl;
   oOdePred_h << "      depVar = depVarRecords;" << endl;
   oOdePred_h << "   }" << endl;
-  oOdePred_h << "   linearInterpolate( TIME, " << endl;
-  oOdePred_h << "                      indVar," << endl;
-  oOdePred_h << "                      depVar );" << endl;
+  oOdePred_h << "   return linearInterpolate( T, " << endl;
+  oOdePred_h << "                             indVar," << endl;
+  oOdePred_h << "                             depVar );" << endl;
   oOdePred_h << "}" << endl;
 
   // ----------------
@@ -520,12 +524,32 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "  spk_curWho = spk_i;" << endl;
   oOdePred_h << "  spk_curWhichRecord = spk_j;" << endl;
   oOdePred_h << endl;
-  oOdePred_h << "  // these ones are absolutely necessary." << endl;
-  oOdePred_h << "  setDV  ( spk_perm->data[spk_i]->DV[spk_j] );"   << endl;
-  oOdePred_h << "  setTIME( spk_perm->data[spk_i]->TIME[spk_j] );" << endl;
-  oOdePred_h << "  setAMT ( spk_perm->data[spk_i]->AMT[spk_j] );"  << endl;
-  oOdePred_h << "  setMDV ( spk_perm->data[spk_i]->MDV[spk_j] );" << endl;
-  oOdePred_h << "  setEVID( spk_perm->data[spk_i]->EVID[spk_j] );" << endl;
+
+  for( pT = t->begin(); pT != t->end(); pT++ )
+    {
+      const string varName            = pT->second.name;
+      const string keyVarName         = SymbolTable::key( varName );
+      const string synonym            = pT->second.synonym;
+      const string keySynonym         = SymbolTable::key( synonym );
+      enum Symbol::Ownership  owner   = pT->second.owner;
+      enum Symbol::ObjectType objType = pT->second.object_type;
+      enum Symbol::Access     access  = pT->second.access;
+      
+      if( owner == Symbol::DATASET )
+        {
+	  oOdePred_h << "  " << varName << "= spk_perm->data[spk_i]->" << varName << "[spk_j];" << endl;
+	  if( pT->second.synonym != "" )
+	    {
+	      oOdePred_h << "  " << pT->second.synonym << " = spk_perm->data[spk_i]->";
+	      oOdePred_h << pT->second.synonym << "[spk_j];" << endl;
+	    }
+        }
+    }
+  oOdePred_h << "  setDV  ( DV );"   << endl;
+  oOdePred_h << "  setTIME( TIME );" << endl;
+  oOdePred_h << "  setAMT ( AMT );"  << endl;
+  oOdePred_h << "  setMDV ( MDV );" << endl;
+  oOdePred_h << "  setEVID( EVID );" << endl;
 
   if( myIsMissingCmt )
     {
@@ -551,6 +575,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
     {
       oOdePred_h << "  setRATE( spk_perm->data[spk_i]->RATE[spk_j] );" << endl;
     }
+
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
 
@@ -576,101 +601,42 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << endl;
 
   oOdePred_h << "   // Get non-const references" << endl;
-  oOdePred_h << "   F    = getF();" << endl;
-  oOdePred_h << "   Y    = getY();" << endl;
-  oOdePred_h << "   S0   = getCompScaleParam( " << myCompModel->getNCompartments() << " );" << endl;
+  oOdePred_h << "   F      = getF();" << endl;
+  oOdePred_h << "   Y      = getY();" << endl;
+  oOdePred_h << "   F0     = getCompBioavailFrac(" << myCompModel->getNCompartments()-1 << ");" << endl;
+  oOdePred_h << "   FO     = getFO();" << endl;
+  oOdePred_h << "   S0     = getCompScaleParam  (" << myCompModel->getNCompartments()-1 << ");" << endl;
+  oOdePred_h << "   T      = getT();" << endl;
+  oOdePred_h << "   TSCALE = getTSCALE();" << endl;
+
   for( int i=0; i<myCompModel->getNCompartments(); i++ )
-  {
-     char Ri[64];
-     char Di[64];
-     char ALAGi[64];
-     char Si[64];
-     char Fi[64];
-     snprintf( Ri,    64, "R%d", i+1 );
-     snprintf( Di,    64, "D%d", i+1 );
-     snprintf( ALAGi, 64, "ALAG%d", i+1 );
-     snprintf( Si,    64, "S%d", i+1 );
-     oOdePred_h << "   " << Ri << "    = getCompInfusRate    ( " << i << " );" << endl;
-     oOdePred_h << "   " << Di << "    = getCompInfusDurat ( " << i << " );" << endl;
-     oOdePred_h << "   " << ALAGi << " = getCompAbsorpLagTime( " << i << " );" << endl;
-     oOdePred_h << "   " << Si << "    = getCompScaleParam   ( " << i << " );" << endl;
-
-     if( i < myCompModel->getNCompartments()-1 )
-     {
-        snprintf( Fi, 64, "F%d", i+1 );
-        oOdePred_h << "   " << Fi << "    = getCompBioavailFrac ( " << i << " );" << endl;
-     }
-  }
+    {
+      char Ri[64];
+      char Di[64];
+      char ALAGi[64];
+      char Si[64];
+      char Fi[64];
+      snprintf( Ri,    64, "R%d", i+1 );
+      snprintf( Di,    64, "D%d", i+1 );
+      snprintf( ALAGi, 64, "ALAG%d", i+1 );
+      snprintf( Si,    64, "S%d", i+1 );
+      snprintf( Fi,    64, "F%d", i+1 );
+      oOdePred_h << "   " << Ri << "     = getCompInfusRate    (" << i << ");" << endl;
+      oOdePred_h << "   " << Di << "     = getCompInfusDurat   (" << i << ");" << endl;
+      oOdePred_h << "   " << ALAGi << "  = getCompAbsorpLagTime(" << i << ");" << endl;
+      oOdePred_h << "   " << Si << "     = getCompScaleParam   (" << i << ");" << endl;
+      oOdePred_h << "   " << Fi << "     = getCompBioavailFrac (" << i << ");" << endl;
+    }
   oOdePred_h << endl;
-
-  oOdePred_h << "   // Get non-const iterators" << endl;
+  oOdePred_h << "   // Get const iterators" << endl;
   oOdePred_h << "   A     = getCompAmountIterator();" << endl;
+  oOdePred_h << endl;
+  oOdePred_h << "   // Get non-const iterators" << endl;
   oOdePred_h << "   DADT  = getCompAmount_tIterator();" << endl;
   oOdePred_h << endl;
-
-  oOdePred_h << "   // Get system computed values" << endl;
-  oOdePred_h << "   getFO    ( " << UserStr.FO << " );" << endl;
-  oOdePred_h << "   getFO    ( " << UserStr.F0 << " );" << endl;
-  oOdePred_h << "   getFO    ( F" << myCompModel->getNCompartments() << " );" << endl;
-  oOdePred_h << "   getTSCALE( " << UserStr.TSCALE << " );" << endl;
-  oOdePred_h << "   getT     ( " << UserStr.T  << " );" << endl; 
+  oOdePred_h << "   // Get a constant value" << endl;
+  oOdePred_h << "   T     = getT();" << endl;
   oOdePred_h << endl;
-
-  Symbol * s;
-  oOdePred_h << "   // Get current data record items" << endl;
-  s = table->findi( KeyStr.DV );
-  oOdePred_h << "   getDV    ( " << s->name << " );" << endl;
-  if( s->synonym != "" )
-    {
-      oOdePred_h << "   getDV( " << s->synonym << " );" << endl;
-    }
-
-  s = table->findi( KeyStr.AMT );
-  oOdePred_h << "   getAMT   ( " << s->name << " );" << endl;
-  if( s->synonym != "" )
-    {
-      oOdePred_h << "   getAMT   ( " << s->synonym << " );" << endl;
-    }
-
-  s = table->findi( KeyStr.TIME );
-  oOdePred_h << "   getTIME  ( " << s->name << " );" << endl;
-  if( s->synonym != "" )
-    {
-      oOdePred_h << "   getTIME  ( " << s->synonym << " );" << endl;
-    }
-
-  s = table->findi( KeyStr.MDV );
-  oOdePred_h << "   getMDV   ( " << s->name << " );" << endl;
-  if( s->synonym != "" )
-    {
-      oOdePred_h << "   getMDV   ( " << s->synonym << " );" << endl;
-    }
-  s = table->findi( KeyStr.EVID );
-  oOdePred_h << "   " << s->name << " = getEVID();" << endl;
-  if( s->synonym != "" )
-    {
-      oOdePred_h << "   getEVID  ( " << s->synonym << " );" << endl;
-    }
-  if( !myIsMissingCmt )
-    {
-      s = table->findi( KeyStr.CMT );
-      oOdePred_h << "   " << s->name << " = getCMT();" << endl;
-      if( s->synonym != "" )
-	{
-	  oOdePred_h << "   getCMT   ( " << s->synonym << " );" << endl;
-	}
-    }
-  if( !myIsMissingPcmt )
-    {
-      s = table->findi( KeyStr.PCMT );
-      oOdePred_h << "   " << s->name << " = getPCMT();" << endl;
-      if( s->synonym != "" )
-	{
-	  oOdePred_h << "   getPCMT  ( " << s->synonym << " );" << endl;
-	}
-    }
-  oOdePred_h << endl;
-
 
   //
   // THETA: This value is given by the system through the eval() interface.
@@ -683,8 +649,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   // 
   for( int i=0; i<myThetaLen; i++ )
     {
-      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1;
-      oOdePred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
+      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.THETA << i+1 << endl;
+      oOdePred_h << "   = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
     }
 
   //
@@ -698,8 +664,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   // 
   for( int i=0; i<myEtaLen; i++ )
     {
-      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1;
-      oOdePred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
+      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.ETA << i+1 << endl;
+      oOdePred_h << "   = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
     }
 
   if( getTarget() == POP )
@@ -715,46 +681,11 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       // 
       for( int i=0; i<myEpsLen; i++ )
 	{
-	  oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS << i+1;
-	  oOdePred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
+	  oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << UserStr.EPS << i+1 << endl;
+	  oOdePred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl; 
 	}
     }
   oOdePred_h << endl;
-
-  for( pT = t->begin(); pT != t->end(); pT++ )
-    {
-      const string varName            = pT->second.name;
-      const string keyVarName         = SymbolTable::key( varName );
-      const string synonym            = pT->second.synonym;
-      const string keySynonym         = SymbolTable::key( synonym );
-      enum Symbol::Ownership  owner   = pT->second.owner;
-      enum Symbol::ObjectType objType = pT->second.object_type;
-      enum Symbol::Access     access  = pT->second.access;
-      
-      if( owner == Symbol::DATASET )
-        {
-	  if(    !( keyVarName == KeyStr.TIME
-		    || keyVarName == KeyStr.DV
-		    || keyVarName == KeyStr.AMT
-		    || keyVarName == KeyStr.CMT
-		    || keyVarName == KeyStr.PCMT )
-	      && !( keySynonym == KeyStr.TIME
-		    || keySynonym == KeyStr.DV
-		    || keySynonym == KeyStr.AMT
-		    || keySynonym == KeyStr.CMT
-		    || keySynonym == KeyStr.PCMT ) )
-	    {
-                oOdePred_h << "   " << varName << "= spk_perm->data[spk_i]->" << varName << "[spk_j];" << endl;
-                if( pT->second.synonym != "" )
-                   oOdePred_h << "   " << pT->second.synonym << " = spk_perm->data[spk_i]->" << pT->second.synonym << "[spk_j];" << endl;
-             }
-	   else
-	     {
-	       // ignore.
-	     }
-        }
-    }
-
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
 
@@ -790,7 +721,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       enum Symbol::ObjectType objectType = pT->second.object_type;
 
       if( owner == Symbol::DATASET )
-         continue;
+	continue;
 
       else if( owner == Symbol::SYSTEM )
         {
@@ -831,15 +762,15 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	      oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
 	      oOdePred_h << " = " << label << ";" << endl;
 	    }
-	  }
-	else // User
-          {
-            if( objectType == Symbol::SCALAR )
-              {
-                oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
-                oOdePred_h << " = " << label << ";" << endl;
-              }
-          }
+	}
+      else // User
+	{
+	  if( objectType == Symbol::SCALAR )
+	    {
+	      oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
+	      oOdePred_h << " = " << label << ";" << endl;
+	    }
+	}
     }   
   oOdePred_h << endl;
 
@@ -867,34 +798,40 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
         continue;
       else if( owner == Symbol::SYSTEM )
         {
-           if( objectType == Symbol::MATRIX )
-             continue;
-           else if( objectType == Symbol::VECTOR )
-             {
-               if( keyLabel == KeyStr.THETA 
-                   || keyLabel == KeyStr.ETA 
-                   || keyLabel == KeyStr.EPS 
-                   || keyLabel == KeyStr.DADT 
-                   || keyLabel == KeyStr.P 
-                   || keyLabel == KeyStr.A )
-                 {
-	           oOdePred_h << "       spk_perm->data[ i ]->" << label;
-	           oOdePred_h << " = spk_temp.data[ i ]->";
-	           oOdePred_h << label << ";" << endl;
-                 }
-             }
-           else // scalar
-             {
-             }
+	  if( objectType == Symbol::MATRIX )
+	    continue;
+	  else if( objectType == Symbol::VECTOR )
+	    {
+	      if( keyLabel == KeyStr.THETA 
+		  || keyLabel == KeyStr.ETA 
+		  || keyLabel == KeyStr.EPS 
+		  || keyLabel == KeyStr.DADT 
+		  || keyLabel == KeyStr.P 
+		  || keyLabel == KeyStr.A )
+		{
+		  oOdePred_h << "       spk_perm->data[ i ]->" << label;
+		  oOdePred_h << " = spk_temp.data[ i ]->";
+		  oOdePred_h << label << ";" << endl;
+		}
+	    }
+          else if( objectType == Symbol::MATRIX )
+            {
+              continue;
+	    }
+          else // Scalar
+	    {
+	      oOdePred_h << "         spk_perm->data[ spk_i ]->" << label;
+	      oOdePred_h << " = spk_temp.data[ i ]->" << label << ";" << endl;
+	    }
         }
       else // User
         { 
-           if( objectType == Symbol::SCALAR )
-             {
-	       oOdePred_h << "       spk_perm->data[ i ]->" << label;
-	       oOdePred_h << " = spk_temp.data[ i ]->";
-	       oOdePred_h << label << ";" << endl;
-             }
+	  if( objectType == Symbol::SCALAR )
+	    {
+	      oOdePred_h << "       spk_perm->data[ i ]->" << label;
+	      oOdePred_h << " = spk_temp.data[ i ]->";
+	      oOdePred_h << label << ";" << endl;
+	    }
         }
     }      
   oOdePred_h << "     }" << endl;
@@ -920,12 +857,14 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                                int spk_j,"                                       << endl;
   oOdePred_h << "                                const std::vector<spk_ValueType>& spk_indepVar )" << endl;
   oOdePred_h << "{" << endl;
+  oOdePred_h << "   evalPk( getT() );" << endl;
+  oOdePred_h << "}" << endl;
 
-  oOdePred_h << "   assert( spk_curWho == spk_i );" << endl;
-  oOdePred_h << "   //assert( spk_curWhichRecord == spk_j );" << endl;
-
-  oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-  oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen << " );"   << endl;
+  oOdePred_h << "template <class spk_ValueType>" << endl;
+  oOdePred_h << "void " << endl;
+  oOdePred_h << "OdePred<spk_ValueType>::evalPk( const spk_ValueType & t )" << endl;
+  oOdePred_h << "{" << endl;
+  oOdePred_h << "   T = t;" << endl;
   oOdePred_h << endl;
   oOdePred_h << "   //=========================================" << endl;
   oOdePred_h << "   // Begin User Code for $PK                 " << endl;
@@ -959,10 +898,17 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                                   int spk_i, int spk_j,"                            << endl;
   oOdePred_h << "                                   const std::vector<spk_ValueType>& spk_indepVar )" << endl;
   oOdePred_h << "{" << endl;
+  oOdePred_h << "   evalDes( getT(), getCompAmountIterator() );" << endl;
+  oOdePred_h << "}" << endl;
+  oOdePred_h << endl;
 
-  oOdePred_h << "   assert( spk_curWho == spk_i );" << endl;
-  oOdePred_h << "   //assert( spk_curWhichRecord == spk_j );" << endl;
-  oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
+  oOdePred_h << "template <class spk_ValueType>" << endl;
+  oOdePred_h << "void " << endl;
+  oOdePred_h << "OdePred<spk_ValueType>::evalDes( const spk_ValueType & t," << endl;
+  oOdePred_h << "                                typename std::vector<spk_ValueType>::const_iterator a )" << endl;
+  oOdePred_h << "{" << endl;
+  oOdePred_h << "   T = t;" << endl;
+  oOdePred_h << "   A = a;" << endl;
   oOdePred_h << endl;
   oOdePred_h << "   //=========================================" << endl;
   oOdePred_h << "   // Begin User Code for $DES                " << endl;

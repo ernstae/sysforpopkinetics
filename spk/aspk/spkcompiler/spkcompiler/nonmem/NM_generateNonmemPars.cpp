@@ -264,7 +264,8 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // ODE related" << endl;
       oNonmemPars << "   //-------------------------------------------" << endl;  
       oNonmemPars << "   const bool isPkFunctionOfT        = " << myCompModel->isPkFunctionOfT()       << ";" << endl;
-      oNonmemPars << "   const int  nCompartments          = " << myCompModel->getNCompartments()      << ";" << endl;
+      oNonmemPars << "   const int  nCompartments          = " << myCompModel->getNCompartments()      << ";";
+      oNonmemPars << "  // including the output compartment (i.e. the user specified nCompartments + 1)" << endl;
       oNonmemPars << "   const int  nParameters            = " << myCompModel->getNParameters()        << ";" << endl;
       oNonmemPars << "   const int  defaultDoseComp        = " << myCompModel->getDefaultDose()        << ";" << endl;
       oNonmemPars << "   const int  defaultObservationComp = " << myCompModel->getDefaultObservation() << ";" << endl;

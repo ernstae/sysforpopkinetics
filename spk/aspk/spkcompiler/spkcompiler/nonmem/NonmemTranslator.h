@@ -335,6 +335,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_MDV;                        static const char * C_MDV;
   XMLCh* X_EVID;                       static const char * C_EVID;
   XMLCh* X_AMT;                        static const char * C_AMT;
+  XMLCh* X_DROP;                       static const char * C_DROP;
 
   // SpkSourceML attributes  
   XMLCh* X_YES;                        static const char* C_YES;             
@@ -497,6 +498,12 @@ class NonmemTranslator : public ClientTranslator
    * Returns the location in which the AMT field can be found.
    */
   int insertAMT( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
+
+  /**
+   * Remove data columns labeled as "DROP" or "SKIP" from the data set.  
+   * Returns the number of columns removed.
+   */
+  int removeDropSkip( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
 
   //
   // Analyze the <pop_analysis> subtree.
