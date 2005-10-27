@@ -5,6 +5,8 @@
 $begin OdeBreak$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	oleft
+	Bool
 	btime
 	otime
 	Runge
@@ -26,7 +28,8 @@ $section Multiple Break Point and Output Point Ode Integrator$$
 
 $table
 $bold Syntax$$ $cnext
-$syntax%OdeBreak(%method%, %eval%, %btime%, %otime%, %eabs%, %erel%, %xout%)%$$ 
+$syntax%OdeBreak(%eval%, %xout%,
+	%method%, %btime%, %otime%, %oleft%, %eabs%, %erel%)%$$ 
 $tend
 
 $fend 20$$
@@ -74,43 +77,26 @@ $latex \[
 	X(t) = {\rm lim} \; X(s) \; {\rm as} \; s \uparrow t
 \] $$.
 
-$head Vector$$
-The type $italic Vector$$ must be a
+$head FloatVector$$
+The type $italic FloatVector$$ must be a
 $href%
 	http://www.seanet.com/~bradbell/CppAD/simplevector.xml%
 	SimpleVector
 %$$
 class with elements of type $italic Scalar$$.
 
+$head BoolVector$$
+The type $italic BoolVector$$ must be a
+$href%
+	http://www.seanet.com/~bradbell/CppAD/simplevector.xml%
+	SimpleVector
+%$$
+class with elements of type $code bool$$.
+
 $head Scalar$$
 The type $italic Scalar$$ is either 
 $code double$$, $code CppAD::AD<double>$$ or
 $code CppAD::AD< CppAD::AD<double> >$$.
-
-$head method$$
-The argument $italic method$$ has prototype
-$syntax%
-	const std::string &%method%
-%$$ 
-It's value must be equal to one of the following
-$table
-$bold method$$    $cnext $bold Description$$
-$rnext
-$code "Runge45"$$ $cnext 
-	a 5-th order Runge-Kutta solver with 4-th order error estimation 
-$rnext
-$code "Rosen34"$$ $cnext 
-	a 4-th order Rosenbrock solver with 3-rd order error estimation 
-$tend
-Note that if $italic method$$ is equal to $code "Runge45"$$,
-the functions 
-$syntax%%eval%.Ode_ind%$$ and $syntax%%eval%.Ode_dep%$$ 
-will not be called.
-In this case these functions only need have the correct prototypes; i.e.,
-it is not necessary to compute the corresponding derivatives
-$italic f_ind$$ and $italic f_dep$$.
-(One could use an assert in the corresponding functions
-to assure they are not called.)
 
 $head eval$$
 The class $italic Eval$$ and 
@@ -132,7 +118,7 @@ $subhead g$$
 The argument $italic g$$ to $syntax%%eval%.Break%$$ 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
-	%Vector% &%g%
+	%FloatVector% &%g%
 %$$
 The input value of its elements does not matter.
 The output value of its elements is equal to 
@@ -166,7 +152,7 @@ $subhead f$$
 The argument $italic f$$ to $syntax%%eval%.Ode%$$ 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
-	%Vector% &%f%
+	%FloatVector% &%f%
 %$$
 The input value of its elements does not matter.
 The output value of its elements is equal to 
@@ -189,7 +175,7 @@ $subhead f_ind$$
 The argument $italic f_ind$$ to $syntax%%eval%.Ode_ind%$$ 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
-	%Vector% &%f_ind%
+	%FloatVector% &%f_ind%
 %$$
 The input value of its elements does not matter.
 The output value of its elements is equal to 
@@ -212,7 +198,7 @@ $subhead f_dep$$
 The argument $italic f_dep$$ to $syntax%%eval%.Ode_dep%$$ 
 is a vector with $latex N^2$$ elements and has prototype
 $syntax%
-	%Vector% &%f_dep%
+	%FloatVector% &%f_dep%
 %$$
 The input value of its elements does not matter.
 The output value of the element 
@@ -243,14 +229,50 @@ $syntax%%eval%.Ode_ind%$$,  and
 $syntax%%eval%.Ode_dep%$$, 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
-	const %Vector% &%x%
+	const %FloatVector% &%x%
 %$$
+
+$head xout$$
+The argument $italic xout$$ is a vector of length $latex N * J$$
+and has prototype
+$syntax%
+	%FloatVector% &%xout%
+%$$
+For $latex i = 0 , \ldots , N-1$$ and $latex j = 0 , \ldots , J-1$$,
+the value $latex xout[ i + j * N ]$$ is an approximation
+for $latex X_i ( otime[j] )$$ 
+(see $italic erel$$ above for more details).
+
+$head method$$
+The argument $italic method$$ has prototype
+$syntax%
+	const std::string &%method%
+%$$ 
+It's value must be equal to one of the following
+$table
+$bold method$$    $cnext $bold Description$$
+$rnext
+$code "Runge45"$$ $cnext 
+	a 5-th order Runge-Kutta solver with 4-th order error estimation 
+$rnext
+$code "Rosen34"$$ $cnext 
+	a 4-th order Rosenbrock solver with 3-rd order error estimation 
+$tend
+Note that if $italic method$$ is equal to $code "Runge45"$$,
+the functions 
+$syntax%%eval%.Ode_ind%$$ and $syntax%%eval%.Ode_dep%$$ 
+will not be called.
+In this case these functions only need have the correct prototypes; i.e.,
+it is not necessary to compute the corresponding derivatives
+$italic f_ind$$ and $italic f_dep$$.
+(One could use an assert in the corresponding functions
+to assure they are not called.)
 
 $head btime$$
 The argument $italic btime$$ 
 is a vector with $latex K$$ elements and has prototype
 $syntax%
-	const %Vector% &%btime%
+	const %FloatVector% &%btime%
 %$$
 It specifies the break point times for the differential equation; i.e.,
 for $latex k < K, b_k = btime[k]$$.
@@ -266,22 +288,49 @@ $head otime$$
 The argument $italic otime$$ is a vector with $latex J$$ elements
 and has prototype
 $syntax%
-	const %Vector% &%otime%
+	const %FloatVector% &%otime%
 %$$
 It specifies the times corresponding to the output values
 for the solution of the differential equation; i.e. $latex X(t)$$.
 It is assumed that 
 $latex \[ 
-	t_0 < t_1 < \ldots < t_{J-1}
+\begin{array}{c}
+b_0 \leq t_0 
+\\
+b_{K-1} \leq t_{J-1}
+\\
+t_0 \leq t_1 \leq \ldots \leq t_{J-1}
+\\
+t_j = t_{j+1} \Rightarrow 
+	L_j {\rm \; is \; true \; and \;} 
+	L_{j+1} {\rm \; is \; false} 
+\end{array}
 \] $$
-and $latex b_0 < t_0$$, $latex b_{K-1} < t_{J-1}$$.
-where $latex t_j$$ is $syntax%%otime%[%j%]%$$.
+where $latex t_j$$ is $syntax%%otime%[%j%]%$$
+and $latex L_j$$ is $syntax%%oleft%[%j%]%$$.
+
+$head oleft$$
+The argument $italic oleft$$ is a vector with $latex J$$ elements
+and has prototype
+$syntax%
+	const %BoolVector% &%oleft%
+%$$
+It specifies if the output values correspond to the left (or right)
+solution of the differential equation.
+The left solution is defined by
+$latex \[ 
+	xout[ i + j * N ] \approx \lim_{t \uparrow otime[j]} X(t)
+\] $$
+The right solution is defined by
+$latex \[ 
+	xout[ i + j * N ] \approx \lim_{t \downarrow otime[j]} X(t)
+\] $$
 
 $head eabs$$
 The argument $italic eabs$$ is a vector of length $latex N$$
 and has prototype
 $syntax%
-	const %Vector% &%eabs%
+	const %FloatVector% &%eabs%
 %$$
 This specifies the desired absolute accuracy in the output values
 (see $italic erel$$ below for more details).
@@ -300,17 +349,6 @@ eabs[i] + erel * \left| X_i ( t_j ) \right|
 \] $$
 where $latex t_j$$ is $syntax%%otime%[%j%]%$$.
 
-
-$head xout$$
-The argument $italic xout$$ is a vector of length $latex N * J$$
-and has prototype
-$syntax%
-	%Vector% &%xout%
-%$$
-For $latex i = 0 , \ldots , N-1$$ and $latex j = 0 , \ldots , J-1$$,
-the value $latex xout[ i + j * N ]$$ is an approximation
-for $latex X_i ( otime[j] )$$ 
-(see $italic erel$$ above for more details).
 
 $children%
 	test/unit/src/OdeBreakTest.cpp
@@ -347,7 +385,7 @@ namespace {
 	{	return	std::fabs(x); }
 }
 
-template <typename Scalar, typename Vector, typename Eval>
+template <class Eval, class Scalar, class FloatVector>
 class StepMethod {
 private:
 	Eval *F;
@@ -376,9 +414,9 @@ public:
 	void step(
 		const Scalar &ta, 
 		const Scalar &tb, 
-		const Vector &xa, 
-		Vector &xb      ,
-		Vector &eb      )
+		const FloatVector &xa, 
+		FloatVector &xb      ,
+		FloatVector &eb      )
 	{	size_t M = 1;
 		if( method == runge45 )
 			xb = CppAD::Runge45(*F, M, ta, tb, xa, eb); 
@@ -386,15 +424,16 @@ public:
 	};
 };
 
-template <typename Scalar, typename Vector, typename Eval>
+template <class Eval, class Scalar, class FloatVector, class BoolVector>
 void OdeBreak(
-	const std::string &method,
-	Eval &eval, 
-	const Vector &btime, 
-	const Vector &otime , 
-	const Vector &eabs , 
-	const Scalar &erel , 
-	Vector &xout       )
+	Eval              &eval    , 
+	FloatVector       &xout    ,
+	const std::string &method  ,
+	const FloatVector &btime   , 
+	const FloatVector &otime   , 
+	const BoolVector  &oleft   , 
+	const FloatVector &eabs    , 
+	const Scalar      &erel    )
 {
 	// Dimensions for this problem
 	const size_t K = btime.size();
@@ -407,9 +446,8 @@ void OdeBreak(
 	// message
 	const char *message;
 
-
 	if( K == 0 )  // number of break times must be greater than zero
-	{	message = "Number of break times for the ODE solver is zero.";
+	{	message = "OdeBreak: number of break times is zero.";
 		throw SpkException(
 			SpkError::SPK_USER_INPUT_ERR,
 			message ,
@@ -418,7 +456,7 @@ void OdeBreak(
 		);
 	}
 	if( J == 0 )  // number of output times must be greater than zero
-	{	message = "Number of output times for the ODE solver is zero.";
+	{	message = "OdeBreak: number of output times is zero.";
 		throw SpkException(
 			SpkError::SPK_USER_INPUT_ERR,
 			message ,
@@ -427,7 +465,7 @@ void OdeBreak(
 		);
 	}
 	if( N == 0 )  // state space dimension must be greater than zero
-	{	message = "Number of ODE dependent variables is zero.";
+	{	message = "OdeBreak: number of dependent variables is zero.";
 		throw SpkException(
 			SpkError::SPK_USER_INPUT_ERR,
 			message ,
@@ -438,7 +476,7 @@ void OdeBreak(
 	// result vector must have size equal to state space dimension
 	// times the number of output times
 	if( N * J != xout.size() )
-	{	message = "ODE solution vector has the wrong size.";
+	{	message = "OdeBreak: solution vector has the wrong size.";
 		throw SpkException(
 			SpkError::SPK_PROGRAMMER_ERR,
 			message ,
@@ -448,32 +486,30 @@ void OdeBreak(
 	}
 
 	// local vectors with same length as x 
-	Vector x(N), g(N), e(N), enext(N), xnext(N), maxnext(N), maxabs(N);
+	FloatVector x(N), g(N), e(N), enext(N), xnext(N), maxnext(N), maxabs(N);
 
 	size_t k, j;
+
 	// break point times 
-	if( K > 1 )
-	{	// values in btime vector must be monatone non-decreasing
-		for(k = 0; k < K-2; k++)
-		{
-			if( btime[k] > btime[k+1] )
-			{	message = "Ode break times must be"
-					" in non-decreasing order.";
-				throw SpkException(
-					SpkError::SPK_PROGRAMMER_ERR,
-					message ,
-					__LINE__,
-					__FILE__
-				);
-			}
+	k = K;
+	while( k > 1 )
+	{	k--;
+		if( btime[k-1] > btime[k] )
+		{	message =  "OdeBreak: "
+			"break point times must be monotone non-decreasing";
+			throw SpkException(
+				SpkError::SPK_PROGRAMMER_ERR,
+				message ,
+				__LINE__,
+				__FILE__
+			);
 		}
 	}
 
-	
 	// first break time must be less than first output time
-	if( btime[0] >= otime[0] )
-	{	message =
-		"Ode first break time must be less than first output time.";
+	if( otime[0] < btime[0] )
+	{	message = "OdeBreak: "
+		"first output time must be greater or equal first break time.";
 		throw SpkException(
 			SpkError::SPK_PROGRAMMER_ERR,
 			message ,
@@ -481,26 +517,37 @@ void OdeBreak(
 			__FILE__
 		);
 	}
-	if( J > 1 )
-	{	// values in the otime vector must be monatone increasing
-		for(j = 0; j < J-2; j++)
-		{
-			if( otime[j] >= otime[j+1] )
-			{	message = "Ode output times must be"
-					" in increasing order.";
-				throw SpkException(
-					SpkError::SPK_PROGRAMMER_ERR,
-					message ,
-					__LINE__,
-					__FILE__
-				);
-			}
+
+	// check order of output times
+	j = J;
+	while( j > 1 )
+	{	j--;
+		if( otime[j-1] > otime[j] )
+		{	message = "OdeBreak: "
+			"output times must be monotone non-decreasing.";
+			throw SpkException(
+				SpkError::SPK_PROGRAMMER_ERR,
+				message ,
+				__LINE__,
+				__FILE__
+			);
+		}
+		if( otime[j-1] == otime[j] && ((! oleft[j-1]) || oleft[j]) )
+		{	message = "OdeBreak: "
+			"equal output times do not obey rule for oleft.";
+			throw SpkException(
+				SpkError::SPK_PROGRAMMER_ERR,
+				message ,
+				__LINE__,
+				__FILE__
+			);
 		}
 	}
-	// last break time must be less than last output time
-	if( btime[K-1] >= otime[J-1] )
-	{	message = "Last Ode break time must be"
-				" less than last output time.";
+
+	// last break time must be less than or equal last output time
+	if( btime[K-1] > otime[J-1] )
+	{	message = "OdeBreak: "
+		"last break time must be less or equal last output time.";
 		throw SpkException(
 			SpkError::SPK_PROGRAMMER_ERR,
 			message ,
@@ -510,7 +557,7 @@ void OdeBreak(
 	}
 
 	// integration method
-	StepMethod<Scalar, Vector, Eval> stepMethod(&eval, method);
+	StepMethod<Eval, Scalar, FloatVector> stepMethod(&eval, method);
 
 	// total integration time
 	Scalar total = otime[J-1] - btime[0];
@@ -532,11 +579,67 @@ void OdeBreak(
 
 	// repeat until all output points are calculated
 	while( j < J )
-	{	message = "An OdeBreak internal consistency check failed.";
+	{	if( t > otime[j] )
+		{	message = 
+			"OdeBreak: an internal consistency check failed.";
+			throw SpkException(
+				SpkError::SPK_PROGRAMMER_ERR,
+		  		message ,
+				__LINE__,
+				__FILE__
+			);
+		}
+		if( k < K && t > btime[k] )
+		{	message = 
+			"OdeBreak: an internal consistency check failed.";
+			throw SpkException(
+				SpkError::SPK_PROGRAMMER_ERR,
+		  		message ,
+				__LINE__,
+				__FILE__
+			);
+		}
+		// check for output point (before break point)
+		if( t == otime[j] && oleft[j] )
+		{	for(i = 0; i < N; i++)
+				xout[ i + j * N ] = x[i];
+			j++; // index of next output time
 
-		// internal consistency check in OdeBreak
-		if( t >= otime[j] )
-		{	throw SpkException(
+			// check if we are done
+			if( j == J )
+				return;
+		}
+		// check if this is a break point
+		while( k < K && btime[k] == t )
+		{	eval.Break(k, x, g);
+			for(i = 0; i < N; i++)
+			{	x[i] += g[i];
+				if( abs(x[i]) > maxabs[i] )
+					maxabs[i] = abs(x[i]);
+			}
+			k++;
+		}
+		// check for output point (after break point)
+		if( t == otime[j] && (! oleft[j]) )
+		{	for(i = 0; i < N; i++)
+				xout[ i + j * N ] = x[i];
+			j++; // index of next output time
+
+			// check if we are done
+			if( j == J )
+				return;
+		}
+
+		// determine next integration time limit
+		Scalar tnext;
+		if( k < K && j < J && btime[k] < otime[j] )
+			tnext = btime[k];
+		else	tnext = otime[j];
+
+		if( tnext <= t )
+		{	message = 
+			"OdeBreak: an internal consistency check failed.";
+			throw SpkException(
 				SpkError::SPK_PROGRAMMER_ERR,
 		  		message ,
 				__LINE__,
@@ -544,48 +647,9 @@ void OdeBreak(
 			);
 		}
 
-		if( k < K )
-		{	// internal consistency check in OdeBreak
-			if( t > btime[k] )
-			{	throw SpkException(
-					SpkError::SPK_PROGRAMMER_ERR,
-			  		message ,
-					__LINE__,
-					__FILE__
-				);
-			}
-
-			// check if this is a break point
-			while( k < K && btime[k] == t )
-			{	eval.Break(k, x, g);
-				for(i = 0; i < N; i++)
-				{	x[i] += g[i];
-					if( abs(x[i]) > maxabs[i] )
-						maxabs[i] = abs(x[i]);
-				}
-				k++;
-			}
-		}
-
-		// determine next integration time limit
-		Scalar tnext;
-		if( k < K && btime[k] < otime[j] )
-			tnext = btime[k];
-		else	tnext = otime[j];
-
 		// max sure smin is not to small for next interval
 		if( smin < (tnext - t) / Scalar(MaxNumberOdeStep) )
 			smin = (tnext - t) / Scalar(MaxNumberOdeStep);
-
-		// internal consistency check in OdeBreak
-		if( tnext <= t )
-		{	throw SpkException(
-				SpkError::SPK_PROGRAMMER_ERR,
-				message ,
-				__LINE__,
-				__FILE__
-			);
-		}
 
 		// absolute error bound for this interval (number of intervals
 		// must be less than or equal btime.size() + otime.size() )
@@ -600,10 +664,7 @@ void OdeBreak(
 		// solve the ODE from t to tnext
 		bool ok = false;
 		while( ! ok )
-		{
-# if 0
-			// Use new version of CppAD
-			xnext = CppAD::OdeErrControl(stepMethod, 
+		{	xnext = CppAD::OdeErrControl(stepMethod, 
 				t, 
 				tnext, 
 				x, 
@@ -615,34 +676,18 @@ void OdeBreak(
 				enext,
 				maxnext
 			);
-			// End use new version CppAD
-# endif
-			// Begin use old version of CppAD
-			xnext = CppAD::OdeErrControl(stepMethod, 
-				t, 
-				tnext, 
-				x, 
-				smin, 
-				smax, 
-				scur, 
-				e, 
-				fraction * erel / Scalar(2), 
-				enext
-			);
-			for(i = 0; i < N; i++)
-				maxnext[i] = abs(xnext[i]);
-			// End use old version CppAD
 
 			// check if error criteria is satisfied at time tnext
 			bool shrink = false;
 			ok          = true;
 			for(i = 0; i < N; i++)
 			{	// update maxabs
-				if( maxnext[i] > maxabs[i] )
-					maxabs[i] = maxnext[i];
+				Scalar maxabsi = maxabs[i];
+				if( maxnext[i] > maxabsi )
+					maxabsi = maxnext[i];
 
-				// assume that x(t) is monatone over interval
-				Scalar bnd = maxabs[i] * erel + eabs[i];
+				// combine relative and absolute error
+				Scalar bnd = maxabsi * erel + eabs[i];
 				ok         &= (enext[i] <= bnd * fraction);
 			}
 			shrink  = ! ok;
@@ -664,19 +709,28 @@ void OdeBreak(
 					std::cout << message << std::endl;	
 				OdeBreakWarning = true;
 			}
+
+			// only use ok steps to update maxabs
+			if( ok )
+			{	for(i = 0; i < N; i++)
+				{	// update maxabs
+					if( maxnext[i] > maxabs[i] )
+						maxabs[i] = maxnext[i];
+				}
+			}
 		}
 
 		// advance t
 		t = tnext;
 		x = xnext;
-
-		// check for output point
-		if( t == otime[j] )
-		{	for(i = 0; i < N; i++)
-				xout[ i + j * N ] = x[i];
-			j++; // index of next output time
-		}
 	}
+	message = "OdeBreak: an internal consistency check failed.";
+	throw SpkException(
+		SpkError::SPK_PROGRAMMER_ERR,
+		message ,
+		__LINE__,
+		__FILE__
+	);
 }
 
 # endif

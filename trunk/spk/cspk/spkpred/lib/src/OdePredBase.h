@@ -697,6 +697,7 @@ private:
   std::vector<int>   odeSolnComp;                 ///< ODE solution compartments.
   std::vector<int>   odeSolnBreakIndex;           ///< ODE solution break point indices.
   std::vector<Value> odeSolnTime;                 ///< ODE solution times.
+  std::vector<bool>  odeSolnLeft;                 /// left continuous sol ?
 
   int nObserv;                                    ///< Number of observations.
   int nNonObservPred;                             ///< Number of nonobservation predictions.
@@ -876,6 +877,7 @@ protected:
 
     odeSolnComp         .resize( 0 );
     odeSolnTime         .resize( 0 );
+    odeSolnLeft         .resize( 0 );
 
     breakPoint          .resize( 0 );
     breakTime           .resize( 0 );
@@ -961,6 +963,7 @@ protected:
 
         // Set the time.
         odeSolnTime.push_back( time );
+        odeSolnLeft.push_back( true );
 
         // If this observation event is for the output compartment,
         // then see if it needs to be turned off after the
@@ -1244,6 +1247,7 @@ protected:
   
           // Set the time.
           odeSolnTime.push_back( time );
+          odeSolnLeft.push_back( true );
   
           // Set this data record's index in the vector of
           // ODE solutions.
@@ -2061,13 +2065,15 @@ private:
     try
     { std::string method = "Runge45";
       OdeBreak(
-        method,
         odeBreakEvalClass,
+        compAmountAllOdeSoln, 
+        method,
         breakTime,
         odeSolnTime,
+	odeSolnLeft,
         tolAbs,
-        tolRel,
-        compAmountAllOdeSoln );
+        tolRel
+      );
     }
     catch( SpkException& e )
     {

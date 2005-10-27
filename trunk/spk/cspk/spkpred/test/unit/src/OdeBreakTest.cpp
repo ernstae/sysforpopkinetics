@@ -120,8 +120,12 @@ Test* OdeBreakTest::suite()
     &OdeBreakTest::ZeroBreakOk_Test ));
 
   suiteOfTests->addTest(new TestCaller<OdeBreakTest>(
-    "OdeBreakStiff_Test", 
-    &OdeBreakTest::OdeBreakStiff_Test ));
+    "StiffBreakOk_Test", 
+    &OdeBreakTest::StiffBreakOk_Test ));
+
+  suiteOfTests->addTest(new TestCaller<OdeBreakTest>(
+    "RightBreakOk_Test", 
+    &OdeBreakTest::RightBreakOk_Test ));
 
   return suiteOfTests;
 }
@@ -253,7 +257,10 @@ void OdeBreakTest::FourBolus_OneInfus_Test()
         // output grid
         size_t J = 15;
         std::vector<double> outputTime(J);
+	std::vector<bool>   outputLeft(J);
         size_t k;
+	for(k = 0; k < J; k++)
+		outputLeft[k] = true;
         for(k = 0; k < K - 1; k++)
         {       outputTime[3 * k    ] = breakTime[k + 1] - 0.1;
                 outputTime[3 * k + 1] = breakTime[k + 1];
@@ -273,8 +280,8 @@ void OdeBreakTest::FourBolus_OneInfus_Test()
 
         // numerical solution of differential equation
 	std::string method = "Runge45";
-        OdeBreak(method,
-		eval, breakTime, outputTime, errorAbs, errorRel, concenOut);
+        OdeBreak(eval, concenOut,
+		method, breakTime, outputTime, outputLeft, errorAbs, errorRel);
 
         // get the pharmacokinetic parameters
         double clearance = eval.clearance;
@@ -341,6 +348,7 @@ void OdeBreakTest::FourBolus_OneInfus_Test()
 $begin OdeBreakOk$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	oleft
 	ind
 	dep
 	Runge
@@ -543,9 +551,12 @@ void OdeBreakTest::OdeBreakOk_Test()
 
 	// output grid
 	vector<double> otime(J);
+	vector<bool>   oleft(J);
 	size_t j;
 	for(j = 0; j < J; j++)
-	otime[j] = double(j+1) / double(J);
+	{	otime[j] = double(j+1) / double(J);
+		oleft[j] = true;
+	}
 
 	// absolute error 
 	vector<double> eabs(2);
@@ -560,7 +571,7 @@ void OdeBreakTest::OdeBreakOk_Test()
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
-	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
+	OdeBreak(eval, xout, method, btime, otime, oleft, eabs, erel);
 
 	// check the output values
 	for(j = 0; j < J; j++)
@@ -602,6 +613,7 @@ $end
 $begin OneBreakOk$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	oleft
 	ind
 	dep
 	std
@@ -726,8 +738,10 @@ void OdeBreakTest::OneBreakOk_Test()
 
 	// output grid
 	vector<double> otime(J);
+	vector<bool>   oleft(J);
 	size_t j;
 	otime[0] = .5;
+	oleft[0] = true;
 
 	// absolute error 
 	vector<double> eabs(n);
@@ -743,7 +757,7 @@ void OdeBreakTest::OneBreakOk_Test()
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
-	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
+	OdeBreak(eval, xout, method, btime, otime, oleft, eabs, erel);
 
 	// check the output values
 	double tip2 = otime[0];
@@ -772,6 +786,7 @@ $end
 $begin ZeroBreakOk$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	oleft
 	ind
 	dep
 	std
@@ -902,8 +917,10 @@ void OdeBreakTest::ZeroBreakOk_Test()
 
 	// output grid
 	vector<double> otime(J);
+	vector<bool>   oleft(J);
 	size_t j;
 	otime[0] = .5;
+	oleft[0] = true;
 
 	// absolute error 
 	vector<double> eabs(n);
@@ -919,7 +936,7 @@ void OdeBreakTest::ZeroBreakOk_Test()
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
-	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
+	OdeBreak(eval, xout, method, btime, otime, oleft, eabs, erel);
 
 	// check the output values
 	double tpower = 0.;
@@ -941,14 +958,17 @@ $end
 
 //------------------------------------------------------------------------
 //
-// Test Case: OdeBreakStiff
+// Test Case: StiffBreakOk
 //
 //------------------------------------------------------------------------
 
 /*
-$begin OdeBreakStiff$$
+$begin StiffBreakOk$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	oleft
+	df
+	dt
 	ind
 	dep
 	std
@@ -996,7 +1016,7 @@ $codep */
 
 /*************************************************************************
  *
- * Class:  OdeBreakStiff_Eval
+ * Class:  StiffBreakOk_Eval
  *
  *************************************************************************/
 
@@ -1008,11 +1028,11 @@ using CppAD::vector;
 
 namespace { // Begin empty namespace
 
-class OdeBreakStiff_Eval {
+class StiffBreakOk_Eval {
 private:
 	const vector<double> a;
 public:
-	OdeBreakStiff_Eval(const vector<double> &a_) : a(a_) 
+	StiffBreakOk_Eval(const vector<double> &a_) : a(a_) 
 	{ } 
 	void Break(size_t k, const vector<double> &x, vector<double> &g)
 	{	assert( g.size() == 2 );
@@ -1102,7 +1122,7 @@ public:
 };
 
 } // End empty namespace
-void OdeBreakTest::OdeBreakStiff_Test()
+void OdeBreakTest::StiffBreakOk_Test()
 {	bool ok = true;
 	size_t K = 1; // number of break point times
 	size_t J = 2; // number of output point times
@@ -1111,7 +1131,7 @@ void OdeBreakTest::OdeBreakStiff_Test()
 	vector<double> a(2);
 	a[0] = 1e1;
 	a[1] = 1.;
-	OdeBreakStiff_Eval eval(a);
+	StiffBreakOk_Eval eval(a);
 
 	// break point times
 	vector<double> btime(K);
@@ -1119,8 +1139,11 @@ void OdeBreakTest::OdeBreakStiff_Test()
 
 	// output grid
 	vector<double> otime(J);
+	vector<bool>   oleft(J);
 	otime[0] = 1. / a[0];
 	otime[1] = 1. / a[1];
+	oleft[0] = true;
+	oleft[1] = true;
 
 	// absolute error 
 	vector<double> eabs(2);
@@ -1135,7 +1158,7 @@ void OdeBreakTest::OdeBreakStiff_Test()
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
-	OdeBreak(method, eval, btime, otime, eabs, erel, xout);
+	OdeBreak(eval, xout, method, btime, otime, oleft, eabs, erel);
 
 	// check the output values
 	size_t j;
@@ -1152,6 +1175,209 @@ void OdeBreakTest::OdeBreakStiff_Test()
 	"Numerical ODE solution does not agree with analytic solution.",
 	ok
 	);
+}
+
+/* $$
+$end
+*/
+
+//------------------------------------------------------------------------
+//
+// Test Case: RightBreakOk
+//
+//------------------------------------------------------------------------
+
+/*
+$begin RightBreakOk$$
+$latex \newcommand{\R}{{\bf R}}$$
+$spell
+	dep
+	Eval eval
+	vector vector
+	Dirac
+	oleft
+	Eval
+	CppAD
+	namespace
+	const
+	ind
+	bool
+	btime
+	otime
+	eabs
+	erel
+	xout
+	std
+	Runge
+$$
+
+$section Example Using OdeBreak Right Continuous Solution$$
+
+$head Differential Equation$$
+Suppose that we wish to solve the following differential equation:
+$latex \[
+\begin{array}{rcl}
+	x_0 ( 0 ) & = & 1                        \\
+	x_1 ( 0 ) & = & 0.                       \\
+	x_0^\prime (t) & = & 1 + \delta ( t - 1) \\
+	x_1^\prime (t) & = & x_0 (t)
+\end{array}
+\] $$
+where $latex \delta ( \cdot ) $$ is the Dirac delta function.
+
+$head Analytic Solution$$
+
+$subhead x_0 (t)$$
+The function $latex x_0 (t)$$ is given by
+$latex \[
+x_0 (t) = \left\{ \begin{array}{ll}
+	1 + t & {\rm if} \; t < 1  \\
+	2 + t & {\rm if} \; 1 < t
+\end{array} \right.
+\] $$
+
+$subhead x_1 (t)$$
+The function $latex x_1 (t)$$ is given by
+$latex \[
+x_1 (t) = \left\{ \begin{array}{ll}
+	t + t^2 / 2 & {\rm if} \; t < 1  \\
+	1.5 + 2 (t - 1) + (t^2 - 1) / 2 & {\rm if} \; 1 < t
+\end{array} \right.
+\] $$
+
+$codep */
+
+/*************************************************************************
+ *
+ * Class:  RightBreakOk_Eval
+ *
+ *************************************************************************/
+
+# include <assert.h>
+# include <CppAD/CppAD_vector.h>
+# include <CppAD/NearEqual.h>
+
+using CppAD::vector;
+
+namespace { // Begin empty namespace
+
+class RightBreakOk_Eval {
+private:
+	size_t k;  // previous index passed to Break method
+public:
+	RightBreakOk_Eval(void)
+	{	k = 2; } // initialize as invalid break point index value
+	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	{	assert( g.size() == 2 );
+		assert( x.size() == 2 );
+		k = k_;
+		g[0] = g[1] = 0.;
+		switch(k)
+		{	case 0:
+			g[0] = 1.;
+			break;
+
+			case 1:
+			g[0] = 1.;
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+	void Ode(double t, const vector<double> &x, vector<double> &f)
+	{	assert( f.size() == 2 );
+		assert( x.size() == 2 );
+		switch(k)
+		{	case 0:
+			case 1:
+			f[0] = 1;
+			f[1] = x[0];
+			break;
+
+			default:
+			assert(0);
+		}
+		return;
+	}
+	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	{	assert(0); }
+	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	{	assert(0); }
+};
+
+
+} // End empty namespace
+
+
+/*************************************************************************
+ *
+ * Function: RightBreakOk_Test
+ *
+ *************************************************************************/
+
+void OdeBreakTest::RightBreakOk_Test()
+{	bool ok = true;
+	size_t K = 2;  // number of break point times
+	size_t J = 5;  // number of output point times
+	size_t j;      // temporary index
+
+	// evaluation method
+	RightBreakOk_Eval eval;
+
+	// break point times
+	vector<double> btime(K);
+	btime[0] = 0.;
+	btime[1] = 1.;
+
+	// output grid
+	vector<double> otime(J);
+	otime[0] = 0.; otime[1] = 0.;
+	otime[2] = 1.; otime[3] = 1.;
+	otime[4] = 2.;
+
+	// left or right continuous version of solution
+	vector<bool>   oleft(J);
+	oleft[0] = true; oleft[1] = false;
+	oleft[2] = true; oleft[3] = false;
+	oleft[4] = true;
+
+	// analytic solution
+	vector<double> solution(2 * J);
+
+	// x_0 (t)        x_1 (t)
+	solution[0] = 0.; solution[1] = 0.;   // left  continuous t = 0
+	solution[2] = 1.; solution[3] = 0.;   // right continuous t = 0
+	solution[4] = 2.; solution[5] = 1.5;  // left  continuous t = 1
+	solution[6] = 3.; solution[7] = 1.5;  // right continuous t = 1
+	solution[8] = 4.; solution[9] = 5.;   // left  continuous t = 2
+
+
+	// absolute error 
+	vector<double> eabs(2);
+	eabs[0] = 1e-6;
+	eabs[1] = 1e-6;
+
+	// relative error
+	double erel = 0.;
+
+	// results vector
+	vector<double> xout(2 * J);
+
+	// numerical solution of differential equation
+	std::string method = "Runge45";
+	OdeBreak(eval, xout, method, btime, otime, oleft, eabs, erel);
+
+	// check the output values
+	for(j = 0; j < 2 * J; j++)
+		ok &= CppAD::NearEqual(xout[j], solution[j], 1e-6, 1e-6);
+
+	CPPUNIT_ASSERT_MESSAGE( "RightBreakOk: "
+		"calculated and analytic values for solution do not agree.",
+		ok
+	);
+
 }
 
 /* $$
