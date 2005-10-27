@@ -281,7 +281,7 @@ regression_test --ignore-candidate
             You may want to change to a temporary directory.
 	  </para>
 	  <para>
-	    In an ordinary user terminal window:
+	    Continue as root:
 	    <screen>
 ssh dbserver
 cd /tmp
@@ -397,7 +397,7 @@ dump_spktest.pl
 	  <para>
 	    On <emphasis>aspkserver</emphasis>
 	    <screen>
-ps -efl | grep spk
+ps -efl | grep spktest
 	    </screen>
 	    should show you that <command>spktest/spkcmpd.pl</command> is running.
 	  </para>
