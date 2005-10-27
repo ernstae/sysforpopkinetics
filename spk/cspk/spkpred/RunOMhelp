@@ -8,4 +8,4 @@ fi
 mkdir htm
 #
 cd htm
-omhelp ../SpkPred.omh -xml
+omhelp ../SpkPred.omh -xml -debug

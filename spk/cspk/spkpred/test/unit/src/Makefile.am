@@ -6,7 +6,7 @@ libdir = $(INST_BASE)/lib/spktest
 
 AM_CXXFLAGS = -g
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I$(INST_BASE)/cppunit/include -I$(INST_BASE)/include/spktest/CppAD
+AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I$(INST_BASE)/cppunit/include 
 AM_LDFLAGS  = -L/usr/local/lib -L$(INST_BASE)/lib/spktest -lspkpred -lCppAD -lspk -lQN01Box -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit -lxerces-c
 
 testall_SOURCES = \
