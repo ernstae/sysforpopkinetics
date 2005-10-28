@@ -555,6 +555,9 @@ private:
   const int defaultDoseComp;               ///< Default dose compartment.
   const int defaultObservComp;             ///< Default observation compartment.
 
+  int nCompToSolve;                        ///< Number of compartments to calculate ODE solutions for.
+  bool isOutputCompUsed;                   ///< Indicates if output compartment is used and an ODE solution should be calculated for it.
+
   std::vector<Value> compAmount;           ///< Current amount in each compartment.
   std::vector<Value> compAmount_t;         ///< Current time derivative of the amount in each compartment.
   std::vector<Value> compInfusRate;        ///< Current infusion rate for each compartment.
@@ -568,7 +571,8 @@ private:
   std::valarray<bool> compNoDose;          ///< Indicates which compartments may not receive a dose.
   std::valarray<bool> compIsOff;           ///< Indicates which compartments are currently off.
 
-  std::vector<Value> compAmountAllOdeSoln; ///< Amount in each compartment for all of the ODE solution times.
+  std::vector<Value> compAmountAllOdeSoln;             ///< Amount in each compartment for all of the ODE solution times.
+  std::vector<Value> compAmountAllOdeSolnNoOutputComp; ///< Amount in each compartment except the output for all of the ODE solution times.
 
 
   //------------------------------------------------------------
@@ -587,32 +591,35 @@ private:
 protected:
   void turnCompOn( int comp )
   {
+    //----------------------------------------------------------
+    // Preliminaries.
+    //----------------------------------------------------------
+
+    using namespace std;
+
+
+    //----------------------------------------------------------
+    // Turn the compartment on.
+    //----------------------------------------------------------
+
     // Get the index of the compartment to turn on.
     int pOn = compIndex( comp );
 
     // Set the initial amount in this compartment equal to zero.
     compAmount[pOn] = 0.0;
 
-    // If the compartment being turned on is the output compartment,
-    // then set its initial amount equal to the sum of the amounts in
-    // all of the other compartments,
-    //
-    //             On         ---         On 
-    //     A     (t  )  =     \       A (t  )  ,
-    //      nComp             /        p     
-    //                        ---            
-    //                     p < nComp         
-    //
-    // where nComp is the number for the output compartment.
-    if ( comp == nComp )
+    // Only turn on the output compartment if it is being used.
+    if ( comp == nComp && ! isOutputCompUsed )
     {
-      int m = compIndex( nComp );
-
-      int p;
-      for ( p = 0; p < nComp - 1; p++ )
-      {
-        compAmount[m] += compAmount[p];
-      }
+      string message = "A request was made to turn on the output compartment, which had been \nremoved from the ODE's for the " +
+        intToOrdinalString( iCurr, ZERO_IS_FIRST_INT ) +
+        " individual.";
+    
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        message.c_str(),
+        __LINE__, 
+        __FILE__ );
     }
 
     // Set the initial derivative with respect to time of the amount
@@ -635,8 +642,33 @@ protected:
 
   void turnCompOff( int comp )
   {
+    //----------------------------------------------------------
+    // Preliminaries.
+    //----------------------------------------------------------
+
+    using namespace std;
+
+
+    //----------------------------------------------------------
+    // Turn the compartment off.
+    //----------------------------------------------------------
+
     // Get the index of the compartment to turn off.
     int pOff = compIndex( comp );
+
+    // Only turn off the output compartment if it is being used.
+    if ( comp == nComp && !isOutputCompUsed )
+    {
+      string message = "A request was made to turn off the output compartment, which had been \nremoved from the ODE's for the " +
+        intToOrdinalString( iCurr, ZERO_IS_FIRST_INT ) +
+        " individual.";
+    
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        message.c_str(),
+        __LINE__, 
+        __FILE__ );
+    }
 
     // Zero the amount in the compartment and its derivative with
     // respect to time.
@@ -676,30 +708,18 @@ protected:
 private:
   int nDataRec;                                   ///< Number of data records.
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Unset Indices are Dangerous - Mitch ]
-  //
-  // Having unset indices for non ODE solution events and non
-  // observation events seems dangerous since small subscripting
-  // errors could easily cause the p to access catastropic data.
-  //
-  // Consider a different approach, e.g. only storing indices for
-  // the events that are ODE solution events and having a second
-  // array that shows where the index a given ODE solution record
-  // is located in the first vector (like the optimizer parameter
-  // array for elements that are not constrained.)
-  //
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   std::vector<int>   dataRecOdeSolnIndex;         ///< Indices for data records in the vector of ODE solutions.
   std::vector<int>   dataRecObservIndex;          ///< Indices for data records in the vector of observations.
+  std::vector<bool>  dataRecHasOdeSoln;           ///< Indicates if data record has an ODE solution.
 
   int nOdeSoln;                                   ///< Number of ODE solutions to calculate.
+  int nOdeSolnRemoved;                            ///< Number of duplicate ODE solution times removed.
   std::vector<int>   odeSolnComp;                 ///< ODE solution compartments.
   std::vector<int>   odeSolnBreakIndex;           ///< ODE solution break point indices.
   std::vector<Value> odeSolnTime;                 ///< ODE solution times.
-  std::vector<bool>  odeSolnLeft;                 /// left continuous sol ?
 
   int nObserv;                                    ///< Number of observations.
+  int nDosePred;                                  ///< Number of predictions at dose times.
   int nNonObservPred;                             ///< Number of nonobservation predictions.
 
   class BreakInfo                                 ///< Break point information.
@@ -867,17 +887,20 @@ protected:
     // Get the total number of data records for this individual.
     nDataRec = getNRecords( i );
 
-    // Set the sizes for the vectors of ODE solution indices and
-    // observation indices.
+    // Set the sizes for the vectors of ODE solution indices,
+    // observation indices, and the flags that indicate is the data
+    // record has an ODE solution.
     dataRecOdeSolnIndex.resize( nDataRec );
     dataRecObservIndex .resize( nDataRec );
+    dataRecHasOdeSoln  .resize( nDataRec );
 
-    nObserv        = 0;
-    nNonObservPred = 0;
+    nOdeSolnRemoved = 0;
+    nObserv         = 0;
+    nDosePred       = 0;
+    nNonObservPred  = 0;
 
     odeSolnComp         .resize( 0 );
     odeSolnTime         .resize( 0 );
-    odeSolnLeft         .resize( 0 );
 
     breakPoint          .resize( 0 );
     breakTime           .resize( 0 );
@@ -934,6 +957,10 @@ protected:
         j,
         indepVar );
 
+      // Initially assume that the data record does not have an ODE
+      // solution.
+      dataRecHasOdeSoln[j] = false;
+
 
       //--------------------------------------------------------
       // Handle observation events.
@@ -947,6 +974,7 @@ protected:
 
         // If this is an observation event, then get its experiment
         // design related information.
+        //
         // Set the compartment.
         if ( cmt == 0 )
         {
@@ -963,7 +991,6 @@ protected:
 
         // Set the time.
         odeSolnTime.push_back( time );
-        odeSolnLeft.push_back( true );
 
         // If this observation event is for the output compartment,
         // then see if it needs to be turned off after the
@@ -978,6 +1005,7 @@ protected:
         // Set this data record's index in the vector of
         // ODE solutions.
         dataRecOdeSolnIndex[j] = ( odeSolnTime.size() - 1 );
+        dataRecHasOdeSoln  [j] = true;
 
         // Set this data record's index in the vector of observations.
         dataRecObservIndex[j] = nObserv;
@@ -1098,7 +1126,6 @@ protected:
                                            infusDurat.back(), false, j ) );
         }
 
-
         //------------------------------------------------------
         // Handle zero-order bolus doses.
         //------------------------------------------------------
@@ -1171,6 +1198,51 @@ protected:
           // dose that does not correspond to a date record .
           breakPoint.push_back( BreakInfo( zeroOrderBolusTime.back() +
                                            zeroOrderBolusDurat.back(), false, j ) );
+        }
+
+        //------------------------------------------------------
+        // Add an ODE solution time for doses with nonzero amounts.
+        //------------------------------------------------------
+
+        // If this dose has a nonzero amount, then add an ODE solution
+        // time at the same time as the dose.
+        //
+        // This will cause a prediction evaluation to be calculated
+        // there, but it won't appear in the objective function
+        // calculation.
+        if ( amt > 0.0 )
+        {
+          // Set the compartment.
+          if ( pcmt > 0 )
+          {
+            // If the PCMT data item is present in the data record, if
+            // its value has been reset from its initial value, and if
+            // the prediction compartment is specified, then the
+            // prediction evaluation will be for that compartment.
+            odeSolnComp.push_back( pcmt );
+          }
+          else
+          {
+            // If the predicition compartment is not specified, then
+            // the prediction evaluation will be for the default
+            // observation compartment.
+            odeSolnComp.push_back( defaultObservComp );
+          }
+
+          // Set the time.
+          odeSolnTime.push_back( time );
+
+          // Set this data record's index in the vector of
+          // ODE solutions.
+          dataRecOdeSolnIndex[j] = ( odeSolnTime.size() - 1 );
+          dataRecHasOdeSoln  [j] = true;
+
+          nDosePred++;
+
+          // Add another break point for this nonobservation
+          // prediction evaluation event.  There are now two break
+          // points at the same time for this dose.
+          breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j ) );
         }
 
       }
@@ -1247,11 +1319,11 @@ protected:
   
           // Set the time.
           odeSolnTime.push_back( time );
-          odeSolnLeft.push_back( true );
   
           // Set this data record's index in the vector of
           // ODE solutions.
           dataRecOdeSolnIndex[j] = ( odeSolnTime.size() - 1 );
+          dataRecHasOdeSoln  [j] = true;
 
           nNonObservPred++;
 
@@ -1260,6 +1332,60 @@ protected:
           breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j ) );
         }
 
+      }
+
+
+      //--------------------------------------------------------
+      // Handle multiple ODE solutions at the same time.
+      //--------------------------------------------------------
+
+      int jReset;
+      bool keepGoingBack;
+
+      // Get the current number of ODE solutions.
+      nOdeSoln = odeSolnTime.size();
+
+      // Remove any ODE solution times that are equal.
+      if ( nOdeSoln > 1 )
+      {
+        if ( odeSolnTime[nOdeSoln - 1] == odeSolnTime[nOdeSoln - 2] )
+        {
+          // If the last two ODE solution times are equal, then remove
+          // the last one.
+          odeSolnTime.pop_back();
+          odeSolnComp.pop_back();
+
+          nOdeSoln--;
+	  nOdeSolnRemoved++;
+    
+          // Find any data records with ODE solution indices equal to
+          // the removed ODE solution time's index and reset them to
+          // point to the ODE solution that was not removed.
+          jReset = j;
+          keepGoingBack = true;
+          while ( jReset >= 0 && keepGoingBack )
+          {
+            // Only check the data records that have ODE solutions.
+            if ( dataRecHasOdeSoln[jReset] )
+            {
+              if ( dataRecOdeSolnIndex[jReset] == nOdeSoln )
+              {
+                // If the ODE solution index is for the removed
+                // solution time, change it to be the time that was
+                // not removed.
+                dataRecOdeSolnIndex[jReset] = nOdeSoln - 1;
+              }
+              else
+              {
+                // If the ODE solution index is not for the removed
+                // solution time, there is no need to keep going back.
+                keepGoingBack = false;
+              }
+            }
+            jReset--;
+          }
+
+        }
       }
 
     }
@@ -1287,10 +1413,75 @@ protected:
 
 
     //----------------------------------------------------------
-    // Get the regular infusion dose off times and sort them.
+    // See if the output compartment is used or not.
     //----------------------------------------------------------
 
     int q;
+    int s;
+
+    // This will be set equal to true if the output compartment is
+    // used in this experiment design.
+    isOutputCompUsed = false;
+
+    // See if the output compartment is initially on.
+    if ( !compInitialOff[ compIndex( nComp ) ] )
+    {
+      isOutputCompUsed = true;
+    }
+    else
+    {
+      // If the output compartment is initially off, see if it is
+      // turned on at a later time.
+      for ( q = 0; q < nTurnOnOrOff; q++ )
+      {
+        if ( turnOnOrOffComp[q] == nComp && turnOnOrOffComp[q] > 0 )
+        {
+          isOutputCompUsed = true;
+        }
+      }
+    }
+
+    // Do preparations related to whether or not the output
+    // compartment is used.
+    if ( isOutputCompUsed )
+    {
+      // Include the output compartment in the number of compartments
+      // to integrate.
+      nCompToSolve = nComp;
+    }
+    else
+    {
+      // Don't include the output compartment in the number of
+      // compartments to integrate.
+      nCompToSolve = nComp - 1;
+
+      // Resize the matrix of amounts in all of compartments for all
+      // of the ODE solution times except for the output compartment .
+      compAmountAllOdeSolnNoOutputComp.resize( nCompToSolve * nOdeSoln );
+
+      // Make sure that no ODE solutions are requested for the output
+      // compartment.
+      for ( s = 0; s < nOdeSoln; s++ )
+      {
+        if ( odeSolnComp[s] == nComp )
+        {
+          string message = "An ODE solution was requested for the output compartment, which was \nnever turned on for the " + 
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
+            " individual.";
+        
+          throw SpkException(
+            SpkError::SPK_USER_INPUT_ERR, 
+            message.c_str(),
+            __LINE__, 
+            __FILE__ );
+        }
+      }
+    }
+
+
+    //----------------------------------------------------------
+    // Get the regular infusion dose off times and sort them.
+    //----------------------------------------------------------
 
     // If there are any regular infusion doses, then get their off
     // times and sort them.
@@ -1446,6 +1637,7 @@ protected:
     // Check that there have been the proper number of break point
     // indices assigned.
     if ( nBreak                  != odeSolnCounter           +
+                                    nOdeSolnRemoved          +
                                     bolusCounter             +
                                     infusOnCounter           +
                                     infusOffCounter          +
@@ -1501,7 +1693,7 @@ protected:
     // Check the sizes of the experiment design information.
     //----------------------------------------------------------
 
-    assert( nOdeSoln                   == nObserv + nNonObservPred );
+    assert( nOdeSoln == nObserv + nDosePred + nNonObservPred - nOdeSolnRemoved );
 
     assert( odeSolnComp        .size() == nOdeSoln );
 
@@ -1573,8 +1765,8 @@ public:
 
     assert( kIn >= 0 && kIn < nBreak );
 
-    assert( compAmountIn  .size() == nComp );
-    assert( bolusAmountOut.size() == nComp );
+    assert( compAmountIn  .size() == nCompToSolve );
+    assert( bolusAmountOut.size() == nCompToSolve );
 
 
     //----------------------------------------------------------
@@ -1602,7 +1794,7 @@ public:
 
     // Zero the instantaneous bolus doses for all of the compartments.
     int p;
-    for ( p = 0; p < nComp; p++ )
+    for ( p = 0; p < nCompToSolve; p++ )
     {
       bolusAmountOut[p] = 0.0;
     }
@@ -1724,55 +1916,6 @@ public:
       q++;
     }
 
-
-    //----------------------------------------------------------
-    // Add the sum of the instantaneous bolus doses to the output compartment.
-    //----------------------------------------------------------
-
-    int m = compIndex( nComp );
-
-    // The output compartment contains the total amount eliminated
-    // from the system since the time tOn when the output compartment
-    // was turned on,
-    //
-    //                               -                                         -
-    //                      ---     |      On      ---          On              | 
-    //     A     (t)  =     \       |  A (t  )     \    doses (t   <= t  <  t)  |  ,
-    //      nComp           /       |   p       +  /         p         q        | 
-    //                      ---     |              ---                          |   
-    //                   p < nComp  |               q                           |   
-    //                               -                                         -
-    //
-    //                       ---         
-    //                   -   \       A (t)  
-    //                       /        p        
-    //                       ---            
-    //                     p < nComp          
-    //
-    // where nComp is the number for the output compartment and the
-    // sum over doses represents all of the doses to a particular
-    // compartment between time tOn and the current time t.
-    //
-    // The amount in the output compartment is the total of the
-    // amounts in all of the compartments at tOn plus the total amount
-    // added to all of the compartments since that time minus the
-    // total of the amounts in all of the compartments at time t.
-    //
-    // If the output compartment is turned on, then add all of the
-    // instantaneous bolus doses to the instantaneous bolus dose that
-    // it will receive.
-    if ( !compIsOff[m] )
-    {
-      for ( p = 0; p < nComp - 1; p++ )
-      {
-        bolusAmountOut[m] += bolusAmountOut[p];
-      }
-  
-      // Set the fraction of the bolus dose that actually makes it to
-      // the output compartment.
-      bolusAmountOut[m] *= fo;
-    }
-
   }
 
 
@@ -1830,15 +1973,37 @@ public:
 
     using namespace std;
 
-    assert( compAmountIn   .size() == nComp );
-    assert( compAmount_tOut.size() == nComp );
+    assert( compAmountIn   .size() == nCompToSolve );
+    assert( compAmount_tOut.size() == nCompToSolve );
+
+
+    //----------------------------------------------------------
+    // Do any preparations required for this time.
+    //----------------------------------------------------------
 
     // Set the current value for the continuous time variable that
     // appears in the ordinary differential equations.
     tCurr = tIn;
 
+    int p;
+
     // Set the current value for the amounts in the compartments.
-    compAmount = compAmountIn;
+    if ( isOutputCompUsed )
+    {
+      // Set all of the compartments.
+      compAmount = compAmountIn;
+    }
+    else
+    {
+      // Set all of the compartments except the output compartment.
+      for ( p = 0; p < nCompToSolve; p++ )
+      {
+        compAmount[p] = compAmountIn[p];
+      }
+
+      // Set the output compartment.
+      compAmount[nComp - 1] = 0.0;
+    }
 
 
     //----------------------------------------------------------
@@ -1868,7 +2033,19 @@ public:
 
     // Set the current derivative with respect to time of the amounts
     // in the compartments.
-    compAmount_tOut = compAmount_t;
+    if ( isOutputCompUsed )
+    {
+      // Set all of the compartments.
+      compAmount_tOut = compAmount_t;
+    }
+    else
+    {
+      // Set all of the compartments except the output compartment.
+      for ( p = 0; p < nCompToSolve; p++ )
+      {
+        compAmount_tOut[p] = compAmount_t[p];
+      }
+    }
 
 
     //----------------------------------------------------------
@@ -1883,7 +2060,7 @@ public:
       // If this infusion is active, then add in its contribution.
       if ( infusOnBreakIndex[q] <= kCurr && infusOffBreakIndex[q] > kCurr )
       {
-        int p = compIndex( infusComp[q] );
+        p = compIndex( infusComp[q] );
 
         // Add the rate for this infusion, multiplied by its
         // bioavailability fraction, to the derivative of its
@@ -1925,8 +2102,7 @@ public:
 
     // If any compartments are currently turned off, then zero the
     // derivatives with respect to time of their amounts.
-    int p;
-    for ( p = 0; p < nComp - 1; p++ )
+    for ( p = 0; p < nCompToSolve - 1; p++ )
     {
       if ( compIsOff[p] )
       {
@@ -1943,28 +2119,29 @@ public:
     // Calculate the derivative of the output compartment.
     //----------------------------------------------------------
 
+    // Get the index for the output compartment.
     int m = compIndex( nComp );
-  
-    // Zero the derivative of the output compartment. 
-    compAmount_tOut[m] = 0.0;
   
     // The output compartment contains the total amount eliminated
     // from the system from the time tOn when the output compartment
     // was turned on.  Its derivative with respect to time is
     //
-    //      d                    ---     d          
-    //     ---  A     (t)  =     \    - ---  A (t)  ,
-    //      dt   nComp           /       dt   p        
-    //                           ---                   
-    //                        p < nComp                  
+    //                           ---
+    //      d                    \         d          
+    //     ---  A     (t)  =     /      - ---  A (t)  ,
+    //      dt   nComp           ---       dt   p        
+    //                        p < nComp
     //
     // where nComp is the number for the output compartment.
     //
-    // If the output compartment is turned on, then set its derivative
-    // equal to minus the sum of the derivatives for all of the other
-    // compartments.
-    if ( !compIsOff[m] )
+    // If the output compartment is being used and is turned on, then
+    // set its derivative equal to minus the sum of the derivatives
+    // for all of the other compartments.
+    if ( isOutputCompUsed && !compIsOff[m] )
     {
+      // Zero the derivative of the output compartment. 
+      compAmount_tOut[m] = 0.0;
+  
       for ( p = 0; p < nComp - 1; p++ )
       {
         // Note that the output compartment derivative is the negative
@@ -2049,10 +2226,17 @@ private:
     // functions and members.
     OdePredBase& odeBreakEvalClass = *this;
 
+    // Set the flags that specify whether or not the ODE solutions
+    // correspond to the left continuous solution as opposed to being
+    // right continuous.
+    //
+    // For now, they will all be considered to be left continuous.
+    std::vector<bool> isLeftOdeSoln( nOdeSoln, true );
+
     // Since only the relative tolerance is currently provided to this
     // class, set the absolute tolerances for integration of the
     // ordinary differential equations equal to zero.
-    std::vector<Value> tolAbs( nComp, 0.0 );
+    std::vector<Value> tolAbs( nCompToSolve, 0.0 );
 
     // This message will be used if an error occurs.
     string message = "during the evaluation of the compartment amounts for \nall of the requested times for the " +
@@ -2063,17 +2247,33 @@ private:
     // ODE solution times by solving the differential equations from
     // the DES block numerically.
     try
-    { std::string method = "Runge45";
-      OdeBreak(
-        odeBreakEvalClass,
-        compAmountAllOdeSoln, 
-        method,
-        breakTime,
-        odeSolnTime,
-	odeSolnLeft,
-        tolAbs,
-        tolRel
-      );
+    {
+      std::string method = "Runge45";
+
+      if ( isOutputCompUsed )
+      {
+        OdeBreak(
+          odeBreakEvalClass,
+          compAmountAllOdeSoln,
+          method,
+          breakTime,
+          odeSolnTime,
+          isLeftOdeSoln,
+          tolAbs,
+          tolRel );
+      }
+      else
+      {
+        OdeBreak(
+          odeBreakEvalClass,
+          compAmountAllOdeSolnNoOutputComp,
+          method,
+          breakTime,
+          odeSolnTime,
+          isLeftOdeSoln,
+          tolAbs,
+          tolRel );
+      }
     }
     catch( SpkException& e )
     {
@@ -2098,6 +2298,38 @@ private:
         ( "An unknown exception was thrown " + message ).c_str(),
         __LINE__, 
         __FILE__ );
+    }
+
+
+    //----------------------------------------------------------
+    // Set the values for the output compartment if necessary.
+    //----------------------------------------------------------
+
+    // If the output compartment isn't used, then the amounts in all
+    // of the compartments at all of the ODE solution times still need
+    // to be set.
+    if ( !isOutputCompUsed )
+    {
+      int p;
+      int s;
+
+      // Copy all of the compartment values except the output
+      // compartment's.
+      for ( p = 0; p < nComp - 1; p++ )
+      {
+        for ( s = 0; s < nOdeSoln; s++ )
+        {
+          compAmountAllOdeSoln[p + s * nComp] = 
+            compAmountAllOdeSolnNoOutputComp[p + s * nCompToSolve];
+        }
+      }
+
+      // Set the output compartment's values equal to zero.
+      p = nComp - 1;
+      for ( s = 0; s < nOdeSoln; s++ )
+      {
+        compAmountAllOdeSoln[p + s * nComp] = 0.0;
+      }
     }
 
   }
@@ -2173,34 +2405,41 @@ protected:
 
 
     //----------------------------------------------------------
+    // Prepare to set the calculated values for the dependent variables.
+    //----------------------------------------------------------
+
+    // Get the data items for the current data record.
+    readDataRecord( i, j );
+
+    // Set current values for any variables defined in the PK block.
+    evalPk(
+      thetaOffset,
+      thetaLen,
+      etaOffset,
+      etaLen,
+      i,
+      j,
+      indepVar );
+
+    // Set current values for any variables defined in the DES block.
+    evalDes(
+      thetaOffset,
+      thetaLen,
+      iCurr,
+      jCurr,
+      indepVar );
+
+
+    //----------------------------------------------------------
     // Set the calculated values for the dependent variables.
     //----------------------------------------------------------
 
     bool isObsEvent = false;
 
-    // Get the data items for the current data record.
-    readDataRecord( i, j );
-
-    // If this is an observation event or a nonobservation prediction
-    // evaluation event, then calculate the values for F and Y.
-    if ( evid == OBSERV_EVENT || 
-       ( evid == OTHER_TYPE_EVENT && pcmt >= 0 ) )
+    // If this is data record has an ODE solution, then calculate the
+    // values for F and Y.
+    if ( dataRecHasOdeSoln[j] )
     {
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // [Revisit - Unset Indices are Dangerous - Mitch ]
-      //
-      // Having unset indices for non ODE solution events and non
-      // observation events seems dangerous since small subscripting
-      // errors could easily cause the p to access catastropic data.
-      //
-      // Consider a different approach, e.g. only storing indices for
-      // the events that are ODE solution events and having a second
-      // array that shows where the index a given ODE solution record
-      // is located in the first vector (like the optimizer parameter
-      // array for elements that are not constrained.)
-      //
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
       // Get the ODE solution index for this data record.
       int s = dataRecOdeSolnIndex[ j ];
 
@@ -2215,7 +2454,7 @@ protected:
       // Get the compartment index for this ODE solution.
       p = compIndex( odeSolnComp[ s ] );
 
-      // Set the scaled amount in the observation compartment.
+      // Set F equal to the scaled amount in the observation compartment.
       f_i_j = compAmountAllOdeSoln[p + s * nComp] /
         compScaleParam[p];
 
@@ -2231,6 +2470,14 @@ protected:
         j,
         indepVar );
 
+      // Set F equal to the predicted value for the data,
+      //
+      //                                 |
+      //     F  =  y( theta, eta, eps )  |          .
+      //                                 | eps = 0
+      //
+      f_i_j = y_i_j;
+
       // If this is an observation event, then set the calculated
       // values for f_i_j and y_i_j in the vector of dependent variables.
       if ( evid == OBSERV_EVENT )
@@ -2240,21 +2487,32 @@ protected:
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // [Revisit - Take out Redundant y Values in Dependent Variables - Mitch]
-        // In the near future take out the redundant y values in the
-        // vector of dependent variables, i.e., set
+        // Take out the redundant y values in the vector of dependent
+        // variables, i.e., set
         //
         //     w( z )  =  y( theta, eta, eps )  .
+        //
+        // This would require changing the following lines from
+        // IndPredModel and PopPredmodel:
+        //
+        //     nW         = 2 * nObsRecordCurr;
+        //     yOffsetInW = nObsRecordCurr;
+        //
+        // to be
+        //
+        //     nW         = nObsRecordCurr;
+        //     yOffsetInW = 0;
         //
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //
         // Set the dependent variables,
-	//
+        //
         //                 -                      -
         //                |  y( theta, eta, eps )  |
         //     w( z )  =  |                        |  .
         //                |  y( theta, eta, eps )  |
         //                 -                      -
-	//
+        //
         depVar[ fOffset + m ] = y_i_j;
         depVar[ yOffset + m ] = y_i_j;
 
