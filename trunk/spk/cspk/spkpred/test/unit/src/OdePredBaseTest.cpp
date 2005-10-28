@@ -83,6 +83,14 @@ namespace oneexpf_onebolus_odepredbasetest
   double wt       = 79.6;
 }
 
+namespace threecomp_onebolus_odepredbasetest
+{
+  double timeStep = 0.25;
+
+  double bolus1 = 200.0;
+  double bolus2 = 100.0;
+}
+
 namespace fourcomp_multinfus_odepredbasetest
 {
   double timeStep = 0.25;
@@ -734,6 +742,619 @@ namespace // [Begin: unnamed namespace]
     OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred(){}
     OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred( const OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred& ){}
     OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred & operator=( const OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred& ){}
+  };
+
+
+  //**********************************************************************
+  //
+  // Class:  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred
+  //
+  //
+  // This class provides an ODE-based version of the Pred block
+  // expression evaluator.
+  //
+  // For this test, compartments 1 and 2 receive bolus doses at time
+  // zero (t = 0).
+  //
+  // In particular, it evaluates PK, DES, and ERROR block expressions
+  // that correspond to the following model for the mean of the
+  // individuals' data,
+  //
+  //     f    (theta, eta)  =  A1(t)  +  A2(t)
+  //      i(j)
+  //
+  //                                    - k1 * t             - k2 * t
+  //                        =  bolus1 e           +  bolus2 e          ,
+  //
+  // where
+  //
+  //     k1  =  theta1 + eta1 ,
+  //
+  //     k2  =  theta2 + eta2 ,
+  //
+  //     t  =  ( j + 1 ) * timeStep  ,
+  //
+  // and that correspond to model based weighting of the data using
+  // an exponential parameterization,
+  //
+  //    y  =  f * exp[ eps(0) ]  
+  //
+  //       =  [ A1(t) + A2(t) ] * exp[ eps(0) ]  .
+  //
+  //**********************************************************************
+
+  template<class Value>
+  class ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred : public OdePredBase<Value>
+  {
+    //------------------------------------------------------------
+    // Constructor.
+    //------------------------------------------------------------
+
+  public:
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred(
+      int                        nY_iIn,
+      bool                       isPkBlockAFuncOfTIn,
+      int                        nCompIn,
+      int                        defaultDoseCompIn,
+      int                        defaultObservCompIn,
+      const std::valarray<bool>& compInitialOffIn,
+      const std::valarray<bool>& compNoOffIn,
+      const std::valarray<bool>& compNoDoseIn,
+      double                     tolRelIn )
+    :
+    OdePredBase<Value> ( isPkBlockAFuncOfTIn,
+                         nCompIn,
+                         defaultDoseCompIn,
+                         defaultObservCompIn,
+                         compInitialOffIn,
+                         compNoOffIn,
+                         compNoDoseIn,
+                         tolRelIn ),
+    nY_i               ( nY_iIn ),
+    nComp              ( nCompIn )
+    {}
+
+    ~ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred(){}
+
+
+    //------------------------------------------------------------
+    // Model related quantities.
+    //------------------------------------------------------------
+
+  private:
+    const int nY_i;
+    const int nComp;
+
+  public:
+    Value k1;
+    Value k2;
+
+
+    //**********************************************************
+    // 
+    // Function: readDataRecord
+    //
+    //**********************************************************
+
+  protected:
+    void readDataRecord( int i, int j )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest ;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the predefined data items.
+      //--------------------------------------------------------
+
+      // Set an arbitrary value for the observed value.
+      setDV( 123456789.0 );
+
+      // Set the type of event.
+      if ( j < 2 )
+      {
+        //------------------------------------------------------
+        // Instantaneous bolus dose events.
+        //------------------------------------------------------
+
+        // If this is one of the first 2 data records, then set these
+        // flags to indicate this is a dose event.
+        setMDV ( 1 );
+        setEVID( DOSE_EVENT );
+
+        // Set the amount for this instantaneous bolus dose.
+        if ( j == 0  )
+        {
+          setAMT( bolus1 );
+          setCMT( 1 );
+        }
+        else
+        {
+          setAMT( bolus2 );
+          setCMT( 2 );
+        }
+
+        // Set the time for all of the infusions to be time zero.
+        setTIME( 0.0 );
+      }
+      else
+      {
+        //------------------------------------------------------
+        // Observation events.
+        //------------------------------------------------------
+
+        // Set these flags to indicate this is an observation event.
+        setMDV ( 0 );
+        setEVID( OBSERV_EVENT );
+
+        // Set the time to be greater than zero.
+        setTIME( ( j - 1 ) * timeStep );
+      }
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalPk
+    //
+    //**********************************************************
+
+    void evalPk(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the Pk block parameters.
+      //--------------------------------------------------------
+
+        k1 = indepVar[thetaOffset + 0] + indepVar[etaOffset + 0];
+        k2 = indepVar[thetaOffset + 1] + indepVar[etaOffset + 1];
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalDes
+    //
+    //**********************************************************
+
+    void evalDes(
+      int thetaOffset, int thetaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Evaluate the differential equations.
+      //--------------------------------------------------------
+
+      // Get the current amount in compartment 1.
+      Value compAmount1;
+      getCompAmount( 0, compAmount1 );
+
+      // Get the current amount in compartment 2.
+      Value compAmount2;
+      getCompAmount( 1, compAmount2 );
+
+      // The derivatives with respect to T of each compartment are
+      //
+      //     d   A1(t)  =  - k1 * A1(t)  ,
+      //      t
+      //
+      //     d   A2(t)  =  - k2 * A1(t)  .
+      //      t
+      //
+      setCompAmount_t( 0, - k1 * compAmount1 );
+      setCompAmount_t( 1, - k2 * compAmount2 );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalError
+    //
+    //**********************************************************
+
+    void evalError(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int epsOffset,   int epsLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the intra-individual error.
+      //--------------------------------------------------------
+
+      // Get the current amount in compartment 1.
+      Value compAmount1;
+      getCompAmount( 0, compAmount1 );
+
+      // Get the current amount in compartment 2.
+      Value compAmount2;
+      getCompAmount( 1, compAmount2 );
+
+      Value y_i_j;
+
+      // Set
+      //
+      //    y  =  [ A1(t)  +  A2(t) ] * exp[ eps(0) ]  .
+      //
+      y_i_j = ( compAmount1 + compAmount2 ) * exp(indepVar[epsOffset + 0]);
+      setY( y_i_j );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNRecords
+    //
+    //**********************************************************
+
+  public:
+    int getNRecords( int i ) const
+    {
+      // For this test, there is one instantaneous bolus dose for
+      // every compartment except the output compartment.
+      return 2 +           // Instantaneous bolus dose records.
+             nY_i;         // Observation records.
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNObservs
+    //
+    //**********************************************************
+
+    int getNObservs( int i ) const
+    {
+      return nY_i;     // Observation records.
+    }
+
+
+    //------------------------------------------------------------
+    // Disallowed, implicitly generated member functions.
+    //------------------------------------------------------------
+
+  protected:
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred(){}
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred( const ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred& ){}
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred & operator=( const ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred& ){}
+  };
+
+
+  //**********************************************************************
+  //
+  // Class:  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred
+  //
+  //
+  // This class provides an ODE-based version of the Pred block
+  // expression evaluator.
+  //
+  // For this test, compartments 1 and 2 receive bolus doses at time
+  // zero (t = 0), and the observed values come from the output
+  // compartment (number 3).
+  //
+  // In particular, it evaluates PK, DES, and ERROR block expressions
+  // that correspond to the following model for the mean of the
+  // individuals' data,
+  //
+  //     f    (theta, eta)  =  A3(t)
+  //      i(j)
+  //                                           - k1 * t  
+  //                        =  bolus1 * [ 1 - e         ]
+  //
+  //                                                - k2 * t
+  //                             +  bolus2 * [ 1 - e         ] ,
+  //
+  // where
+  //
+  //     k1  =  theta1 + eta1 ,
+  //
+  //     k2  =  theta2 + eta2 ,
+  //
+  //     t  =  ( j + 1 ) * timeStep  ,
+  //
+  // and that correspond to model based weighting of the data using
+  // an exponential parameterization,
+  //
+  //    y  =  f * exp[ eps(0) ]  
+  //
+  //       =  [ A1(t) + A2(t) ] * exp[ eps(0) ]  .
+  //
+  //**********************************************************************
+
+  template<class Value>
+  class ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred : public OdePredBase<Value>
+  {
+    //------------------------------------------------------------
+    // Constructor.
+    //------------------------------------------------------------
+
+  public:
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred(
+      int                        nY_iIn,
+      bool                       isPkBlockAFuncOfTIn,
+      int                        nCompIn,
+      int                        defaultDoseCompIn,
+      int                        defaultObservCompIn,
+      const std::valarray<bool>& compInitialOffIn,
+      const std::valarray<bool>& compNoOffIn,
+      const std::valarray<bool>& compNoDoseIn,
+      double                     tolRelIn )
+    :
+    OdePredBase<Value> ( isPkBlockAFuncOfTIn,
+                         nCompIn,
+                         defaultDoseCompIn,
+                         defaultObservCompIn,
+                         compInitialOffIn,
+                         compNoOffIn,
+                         compNoDoseIn,
+                         tolRelIn ),
+    nY_i               ( nY_iIn ),
+    nComp              ( nCompIn )
+    {}
+
+    ~ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred(){}
+
+
+    //------------------------------------------------------------
+    // Model related quantities.
+    //------------------------------------------------------------
+
+  private:
+    const int nY_i;
+    const int nComp;
+
+  public:
+    Value k1;
+    Value k2;
+
+
+    //**********************************************************
+    // 
+    // Function: readDataRecord
+    //
+    //**********************************************************
+
+  protected:
+    void readDataRecord( int i, int j )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest ;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the predefined data items.
+      //--------------------------------------------------------
+
+      // Set an arbitrary value for the observed value.
+      setDV( 123456789.0 );
+
+      // Set the type of event.
+      if ( j < 2 )
+      {
+        //------------------------------------------------------
+        // Instantaneous bolus dose events.
+        //------------------------------------------------------
+
+        // If this is one of the first 2 data records, then set these
+        // flags to indicate this is a dose event.
+        setMDV ( 1 );
+        setEVID( DOSE_EVENT );
+
+        // Set the amount for this instantaneous bolus dose.
+        if ( j == 0  )
+        {
+          setAMT( bolus1 );
+          setCMT( 1 );
+        }
+        else
+        {
+          setAMT( bolus2 );
+          setCMT( 2 );
+        }
+
+        // Set the time for all of the infusions to be time zero.
+        setTIME( 0.0 );
+      }
+      else
+      {
+        //------------------------------------------------------
+        // Observation events.
+        //------------------------------------------------------
+
+        // Set these flags to indicate this is an observation event.
+        setMDV ( 0 );
+        setEVID( OBSERV_EVENT );
+
+        // Set the time to be greater than zero.
+        setTIME( ( j - 1 ) * timeStep );
+      }
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalPk
+    //
+    //**********************************************************
+
+    void evalPk(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the Pk block parameters.
+      //--------------------------------------------------------
+
+        k1 = indepVar[thetaOffset + 0] + indepVar[etaOffset + 0];
+        k2 = indepVar[thetaOffset + 1] + indepVar[etaOffset + 1];
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalDes
+    //
+    //**********************************************************
+
+    void evalDes(
+      int thetaOffset, int thetaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Evaluate the differential equations.
+      //--------------------------------------------------------
+
+      // Get the current amount in compartment 1.
+      Value compAmount1;
+      getCompAmount( 0, compAmount1 );
+
+      // Get the current amount in compartment 2.
+      Value compAmount2;
+      getCompAmount( 1, compAmount2 );
+
+      // The derivatives with respect to T of each compartment are
+      //
+      //     d   A1(t)  =  - k1 * A1(t)  ,
+      //      t
+      //
+      //     d   A2(t)  =  - k2 * A1(t)  .
+      //      t
+      //
+      setCompAmount_t( 0, - k1 * compAmount1 );
+      setCompAmount_t( 1, - k2 * compAmount2 );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalError
+    //
+    //**********************************************************
+
+    void evalError(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int epsOffset,   int epsLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace threecomp_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the intra-individual error.
+      //--------------------------------------------------------
+
+      // Get the current amount in compartment 3.
+      Value compAmount3;
+      getCompAmount( 2, compAmount3 );
+
+      Value y_i_j;
+
+      // Set
+      //
+      //    y  =  [ A3(t) ] * exp[ eps(0) ]  .
+      //
+      y_i_j = compAmount3 * exp(indepVar[epsOffset + 0]);
+      setY( y_i_j );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNRecords
+    //
+    //**********************************************************
+
+  public:
+    int getNRecords( int i ) const
+    {
+      // For this test, there is one instantaneous bolus dose for
+      // every compartment except the output compartment.
+      return 2 +           // Instantaneous bolus dose records.
+             nY_i;         // Observation records.
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNObservs
+    //
+    //**********************************************************
+
+    int getNObservs( int i ) const
+    {
+      return nY_i;     // Observation records.
+    }
+
+
+    //------------------------------------------------------------
+    // Disallowed, implicitly generated member functions.
+    //------------------------------------------------------------
+
+  protected:
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred(){}
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred( const ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred& ){}
+    ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred & operator=( const ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred& ){}
   };
 
 
@@ -1466,6 +2087,14 @@ Test* OdePredBaseTest::suite()
     &OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test ));
 
   suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
+    "ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test", 
+    &OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test ));
+
+  suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
+    "ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_Test", 
+    &OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_Test ));
+
+  suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
     "FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_Test", 
     &OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_Test ));
 
@@ -1528,9 +2157,14 @@ void OdePredBaseTest::NoEta_OneExpF_OneBolus_ModelBasedExpY_Test()
   std::valarray<bool> compNoDose    ( nComp );
 
   // Set the flags for compartment 1.
-  compInitialOff[0] = false;
-  compNoOff     [0] = false;
-  compNoDose    [0] = false;
+  compInitialOff[1 - 1] = false;
+  compNoOff     [1 - 1] = false;
+  compNoDose    [1 - 1] = false;
+
+  // Set the flags for compartment 2 (the output compartment).
+  compInitialOff[2 - 1] = true;
+  compNoOff     [2 - 1] = false;
+  compNoDose    [2 - 1] = true;
 
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
@@ -2083,9 +2717,14 @@ void OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test(
   std::valarray<bool> compNoDose    ( nComp );
 
   // Set the flags for compartment 1.
-  compInitialOff[0] = false;
-  compNoOff     [0] = false;
-  compNoDose    [0] = false;
+  compInitialOff[1 - 1] = false;
+  compNoOff     [1 - 1] = false;
+  compNoDose    [1 - 1] = false;
+
+  // Set the flags for compartment 2 (the output compartment).
+  compInitialOff[2 - 1] = true;
+  compNoOff     [2 - 1] = false;
+  compNoDose    [2 - 1] = true;
 
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
@@ -2833,6 +3472,1390 @@ void OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test(
 
 /*************************************************************************
  *
+ * Function: ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test
+ *
+ *
+ * The goal of this test is to check that the ODE-based version of the
+ * Pred block expression evaluator works for the case of
+ *
+ *     ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred. 
+ *
+ *************************************************************************/
+
+void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace threecomp_onebolus_odepredbasetest;
+
+  int j;
+  int k;
+
+
+  //------------------------------------------------------------
+  // Prepare the Pred block expression evaluator.
+  //------------------------------------------------------------
+
+  // Set the number of compartments, including the output compartment.
+  int nComp = 3;
+
+  // Set the number of data values for this individual.
+  int nY_iKnown = 5;
+
+  // Set this equal to false since the PK block expressions are not
+  // functions of T.
+  bool isPkBlockAFuncOfTime = false;
+
+  // Set the default compartments for doses and observations.
+  int defaultDoseComp   = 1;
+  int defaultObservComp = 1;
+
+  // These flags indicate which compartments are initially off, cannot
+  // be turned off, and cannot receive a dose.
+  std::valarray<bool> compInitialOff( nComp );
+  std::valarray<bool> compNoOff     ( nComp );
+  std::valarray<bool> compNoDose    ( nComp );
+
+  // Set the flags for compartment 1.
+  compInitialOff[1 - 1] = false;
+  compNoOff     [1 - 1] = false;
+  compNoDose    [1 - 1] = false;
+
+  // Set the flags for compartment 2.
+  compInitialOff[2 - 1] = false;
+  compNoOff     [2 - 1] = false;
+  compNoDose    [2 - 1] = false;
+
+  // Set the flags for compartment 3 (the output compartment).
+  compInitialOff[3 - 1] = true;
+  compNoOff     [3 - 1] = false;
+  compNoDose    [3 - 1] = true;
+
+  // Set the relative tolerance for the ODE integration.
+  double tolRel = 1.0e-6;
+
+  // Construct the ODE-based version of the Pred block evaluator.
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred< AD<double> > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+
+  //------------------------------------------------------------
+  // Prepare the variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of independent variables.
+  const int nTheta = 2;
+  const int nEta   = 2;
+  const int nEps   = 1;
+
+  // Set the current value for theta.
+  valarray<double> thetaCurr( nTheta );
+  thetaCurr[0] = 10.0;
+  thetaCurr[1] =  5.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = -100.0;
+  thetaUp [0] = +100.0;
+  thetaLow[1] = -100.0;
+  thetaUp [1] = +100.0;
+
+  // Set the current value for eta.
+  valarray<double> etaCurr( nEta );
+  etaCurr[0] = 0.0;
+  etaCurr[1] = 0.0;
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the covariance matrices.
+  //------------------------------------------------------------
+
+  // Set the structure of omega, the covariance matrix for eta.
+  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nOmegaPar = nEta;
+
+  // Set the diagonal elements for the current value for omega.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 0.0001;
+  omegaMinRep[1] = 0.02;
+
+  // Set the structure of sigma, the covariance matrix for eps.
+  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nSigmaPar = nEps;
+
+  // Set the diagonal elements for the current value for sigma.
+  valarray<double> sigmaMinRep( nSigmaPar );
+  sigmaMinRep[0] = 0.25;
+
+
+  //------------------------------------------------------------
+  // Construct the population level Pred model.
+  //------------------------------------------------------------
+
+  PopPredModel model(
+    predEvaluator,
+    nTheta,
+    thetaLow,
+    thetaUp,
+    thetaCurr,
+    nEta,
+    etaCurr,
+    nEps,
+    omegaStruct,
+    omegaMinRep,
+    sigmaStruct,
+    sigmaMinRep );
+
+
+  //------------------------------------------------------------
+  // Get information related to the individual.
+  //------------------------------------------------------------
+
+  // Get the number elements in the population parameter.
+  int nPopPar = model.getNPopPar();
+
+  // Get the number elements in the individual parameter.
+  int nIndPar = model.getNIndPar();
+
+  // Get the number of observations for this individual.
+  int iCurr = 0;
+  int nY_i = predEvaluator.getNObservs( iCurr );
+
+
+  //------------------------------------------------------------
+  // Prepare various quantities for the test.
+  //------------------------------------------------------------
+
+  // Get the current value for the population parameter.
+  valarray<double> alphaCurr( nPopPar );
+  model.getPopPar( alphaCurr );
+
+  // Get the current value for the individual parameter.
+  valarray<double> bCurr( nIndPar );
+  model.getIndPar( bCurr );
+
+  valarray<double> dataMean       ( nY_i );
+  valarray<double> dataMean_popPar( nY_i * nPopPar );
+  valarray<double> dataMean_indPar( nY_i * nIndPar );
+
+  valarray<double> dataVariance          ( nY_i * nY_i );
+  valarray<double> dataVariance_popPar   ( nY_i * nY_i * nPopPar );
+  valarray<double> dataVariance_indPar   ( nY_i * nY_i * nIndPar );
+  valarray<double> dataVarianceInv       ( nY_i * nY_i );
+  valarray<double> dataVarianceInv_popPar( nY_i * nY_i * nPopPar );
+  valarray<double> dataVarianceInv_indPar( nY_i * nY_i * nIndPar );
+
+  bool ok;
+
+  // Evaluate these quantities at the current population and 
+  // individual parameter values, which are set when the model
+  // is constructed.
+  model.dataMean         ( dataMean );
+  model.dataVariance     ( dataVariance );
+  model.dataVarianceInv  ( dataVarianceInv );
+
+  ok = model.dataMean_popPar( dataMean_popPar );
+  ok = model.dataMean_indPar( dataMean_indPar );
+
+  ok = model.dataVariance_popPar   ( dataVariance_popPar );
+  ok = model.dataVariance_indPar   ( dataVariance_indPar );
+  ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
+  ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
+
+  valarray<double> popParLow ( nPopPar );
+  valarray<double> popParUp  ( nPopPar );
+  valarray<double> popParStep( nPopPar );
+
+  // Get the limits for the population parameters.
+  model.getPopParLimits( popParLow, popParUp );
+
+  // Get the step sizes for the population parameters.
+  model.getPopParStep( popParStep );
+
+  valarray<double> indParLow ( nIndPar );
+  valarray<double> indParUp  ( nIndPar );
+  valarray<double> indParStep( nIndPar );
+
+  // Get the limits for the individual parameters.
+  model.getIndParLimits( indParLow, indParUp );
+
+  // Get the step sizes for the individual parameters.
+  model.getIndParStep( indParStep );
+
+
+  //------------------------------------------------------------
+  // Prepare known values related to the population parameter.
+  //------------------------------------------------------------
+
+  valarray<double> omegaCurr( nEta * nEta );
+
+  // Create a covariance matrix that is equal to the one that the
+  // OdePredBase is maintaining internally.
+  DiagCov omega( nEta );
+  omega.expandCovMinRep( omegaMinRep, omegaCurr );
+  omega.setCov( omegaCurr );
+
+  valarray<double> omegaKnown         ( nEta * nEta );
+  valarray<double> omegaParKnown      ( nOmegaPar );
+  valarray<double> omegaParLowKnown   ( nOmegaPar );
+  valarray<double> omegaParUpKnown    ( nOmegaPar );
+  valarray<double> omega_omegaParKnown( nEta * nEta * nOmegaPar );
+
+  // Get known values for omega and its derivative.
+  omega.cov    ( omegaKnown );
+  omega.cov_par( omega_omegaParKnown );
+
+  // Get known values for omega's parameter and its limits.
+  omega.calcPar     ( omegaCurr,        omegaParKnown );
+  omega.getParLimits( omegaParLowKnown, omegaParUpKnown );
+
+  valarray<double> sigmaCurr( nEps * nEps );
+
+  // Create a covariance matrix that is equal to the one that the
+  // OdePredBase is maintaining internally.
+  DiagCov sigma( nEps );
+  sigma.expandCovMinRep( sigmaMinRep, sigmaCurr );
+  sigma.setCov( sigmaCurr );
+
+  valarray<double> sigmaKnown         ( nEps * nEps );
+  valarray<double> sigmaParKnown      ( nSigmaPar );
+  valarray<double> sigmaParLowKnown   ( nSigmaPar );
+  valarray<double> sigmaParUpKnown    ( nSigmaPar );
+  valarray<double> sigma_sigmaParKnown( nEps * nEps * nSigmaPar );
+
+  // Get known values for sigma and its derivative.
+  sigma.cov    ( sigmaKnown );
+  sigma.cov_par( sigma_sigmaParKnown );
+
+  // Get known values for sigma's parameter and its limits.
+  sigma.calcPar     ( sigmaCurr,        sigmaParKnown );
+  sigma.getParLimits( sigmaParLowKnown, sigmaParUpKnown );
+
+  // The population parameter is composed of the parameters that are
+  // optimized over when performing population level estimation,
+  //
+  //                -          -
+  //               |   theta    |
+  //               |            |
+  //     alpha  =  |  omegaPar  |  .
+  //               |            |
+  //               |  sigmaPar  |
+  //                -          -
+  //
+  int nPopParKnown = nTheta + nOmegaPar + nSigmaPar;
+
+  int thetaOffsetInPopPar    = 0;
+  int omegaParOffsetInPopPar = nTheta;
+  int sigmaParOffsetInPopPar = nTheta + nOmegaPar;
+
+  valarray<double> alphaCurrKnown( nPopParKnown );
+
+  // Set the known value for the population parameter.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    alphaCurrKnown[k + thetaOffsetInPopPar] = thetaCurr[k];
+  }
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    alphaCurrKnown[k + omegaParOffsetInPopPar] = omegaParKnown[k];
+  }
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    alphaCurrKnown[k + sigmaParOffsetInPopPar] = sigmaParKnown[k];
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare known values related to the individual parameter.
+  //------------------------------------------------------------
+
+  // The individual parameter is the parameter that is optimized
+  // over when performing individual level estimation,
+  //
+  //     b   =  eta  .
+  //      i
+  //
+  int nIndParKnown = nEta;
+
+  valarray<double> bCurrKnown( nIndParKnown );
+
+  // Set the known value for the individual parameter.
+  bCurrKnown = etaCurr;
+
+
+  //------------------------------------------------------------
+  // Prepare known values related to the model functions.
+  //------------------------------------------------------------
+
+  valarray<double> dataMeanKnown       ( nY_i );
+  valarray<double> dataMean_popParKnown( nY_i * nPopPar );
+  valarray<double> dataMean_indParKnown( nY_i * nIndPar );
+
+  valarray<double> dataVarianceKnown          ( nY_i * nY_i );
+  valarray<double> dataVariance_popParKnown   ( nY_i * nY_i * nPopPar );
+  valarray<double> dataVariance_indParKnown   ( nY_i * nY_i * nIndPar );
+  valarray<double> dataVarianceInvKnown       ( nY_i * nY_i );
+  valarray<double> dataVarianceInv_popParKnown( nY_i * nY_i * nPopPar );
+  valarray<double> dataVarianceInv_indParKnown( nY_i * nY_i * nIndPar );
+
+  double T;
+  double ds;
+  double w;
+  double ka;
+  double ke;
+  double cl;
+  double d;
+  double e;
+
+  // For this test, both compartments receive bolus doses at time zero
+  // (t = 0).
+  //
+  // Calculate the known value for the mean of the data:
+  //
+  //     f    (theta, eta)  =  A1(t)  +  A2(t)
+  //      i(j)
+  //
+  //                                    - k1 * t             - k2 * t
+  //                        =  bolus1 e           +  bolus2 e          ,
+  //
+  // where
+  //
+  //     k1  =  theta1 + eta1 ,
+  //
+  //     k2  =  theta2 + eta2 ,
+  //
+  // and
+  //
+  //     t  =  ( j + 1 ) * timeStep  .
+  //
+  int comp;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep; 
+
+    // Set the known value.
+    dataMeanKnown[j] = bolus1 * std::exp( - ( thetaCurr[0] + etaCurr[0] ) * T ) +
+                       bolus2 * std::exp( - ( thetaCurr[1] + etaCurr[1] ) * T );
+  }
+
+  int col;
+
+  // Calculate the known value for the derivative of the data mean
+  // with respect to the population parameter.
+  dataMean_popParKnown = 0.0;
+  k = 0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (0)                                              - k1 * t
+    //     d       f    ( alpha, b  )  =  - t  *  bolus1 *  e         . 
+    //      theta   i(j)          i               
+    //
+    col = k + thetaOffsetInPopPar;
+
+    dataMean_popParKnown[j + col * nY_i] = - T * bolus1 *
+      std::exp( - ( thetaCurr[0] + etaCurr[0] ) * T );
+  }
+  k = 1;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (1)                                              - k2 * t
+    //     d       f    ( alpha, b  )  =  - t  *  bolus2 *  e         . 
+    //      theta   i(j)          i               
+    //
+    col = k + thetaOffsetInPopPar;
+
+    dataMean_popParKnown[j + col * nY_i] = - T * bolus2 * 
+      std::exp( - ( thetaCurr[1] + etaCurr[1] ) * T );
+  }
+
+  // Calculate the known value for the derivative of the data mean
+  // with respect to the individual parameter.
+  dataMean_indParKnown = 0.0;
+  k = 0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (0)                                            - k1 * t
+    //     d     f    ( alpha, b  )  =  - t  *  bolus1 *  e         . 
+    //      eta   i(j)          i               
+    //
+    col = k;
+
+    dataMean_indParKnown[j + col * nY_i] = - T * bolus1 *
+      std::exp( - ( thetaCurr[0] + etaCurr[0] ) * T );
+  }
+  k = 1;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (1)                                            - k2 * t
+    //     d     f    ( alpha, b  )  =  - t  *  bolus2 *  e         . 
+    //      eta   i(j)          i               
+    //
+    col = k;
+
+    dataMean_indParKnown[j + col * nY_i] = - T * bolus2 *
+      std::exp( - ( thetaCurr[1] + etaCurr[1] ) * T );
+  }
+
+  // Calculate the known value for the variance of the data.
+  dataVarianceKnown = 0.0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the values for the diagonal elements of the data variance:
+    //
+    //                                                                 2
+    //     R      ( alpha, b  )  =  sigma       [ f    ( alpha, b  ) ]   .
+    //      i(j,j)          i            (0,0)     i(j)          i
+    //
+    dataVarianceKnown[j + j * nY_i] = sigmaKnown[0 + 0 * nEps] *
+      dataMeanKnown[j] * dataMeanKnown[j];
+  }
+
+  // Calculate the known value for the derivative of the variance
+  // of the data with respect to the population parameter.
+  dataVariance_popParKnown = 0.0;
+  int nRow = nY_i * nY_i;
+  int row;
+  for ( k = 0; k < nTheta; k++ )
+  {
+    for ( j = 0; j < nY_i; j++ )
+    {
+      // Set the known values for this column,
+      //
+      //      (k)
+      //     d       R      ( alpha, b  )
+      //      theta   i(j,j)          i
+      //
+      //                                                (k)               
+      //         =  2  sigma       f    ( alpha, b  )  d       f    ( alpha, b  )  .
+      //                    (0,0)   i(j)          i     theta   i(j)          i
+      //
+      row = j * nY_i + j;
+      col = k + thetaOffsetInPopPar;
+    
+      dataVariance_popParKnown[row + col * nRow] = 
+        2 * sigmaKnown[0 + 0 * nEps] * 
+        dataMean_popParKnown[j + k * nY_i] * dataMeanKnown[j];
+    }
+  }
+  int nSigma_sigmaParRow = nEps * nEps;
+  int sigma_sigmaParRow;
+  int sigma_sigmaParCol;
+  k = 0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the known values for this column,
+    //
+    //      (k)
+    //     d          R      ( alpha, b  )  =  
+    //      sigmaPar   i(j,j)          i
+    //
+    //             -                    -  2   
+    //            |                      |     (k)               
+    //         =  |  f    ( alpha, b  )  |    d         sigma     ( sigmaPar )  .
+    //            |   i(j)          i    |     sigmaPar      (k,k)
+    //             -                    -    
+    //
+    row = j * nY_i + j;
+    col = k + sigmaParOffsetInPopPar;
+
+    sigma_sigmaParRow = k * nEps + k;
+    sigma_sigmaParCol = k;
+    
+    dataVariance_popParKnown[row + col * nRow] = 
+      dataMeanKnown[j] * dataMeanKnown[j] *
+      sigma_sigmaParKnown[sigma_sigmaParRow + sigma_sigmaParCol * nSigma_sigmaParRow];
+  }
+
+  // Calculate the known value for the derivative of the variance
+  // of the data with respect to the individual parameter.
+  dataVariance_indParKnown = 0.0;
+  nRow = nY_i * nY_i;
+  for ( k = 0; k < nEta; k++ )
+  {
+    for ( j = 0; j < nY_i; j++ )
+    {
+      // Set the known values for this column,
+      //
+      //      (k)
+      //     d     R      ( alpha, b  )
+      //      eta   i(j,j)          i
+      //
+      //                                                (k)               
+      //         =  2  sigma       f    ( alpha, b  )  d     f    ( alpha, b  )  .
+      //                    (0,0)   i(j)          i     eta   i(j)          i
+      //
+      row = j * nY_i + j;
+      col = k;
+    
+      dataVariance_indParKnown[row + col * nRow] = 
+        2 * sigmaKnown[0 + 0 * nEps] * 
+        dataMean_indPar[j + k * nY_i] * dataMean[j];
+    }
+  }
+
+  // Calculate the known value for the inverse of the variance
+  // of the data.
+  dataVarianceInvKnown = inverse( dataVarianceKnown, nY_i );
+
+  // Calculate the known value for the derivative of the inverse
+  // of the variance of the data using Lemma 10 of B. M. Bell, 
+  // "Approximating the marginal likelihood estimate for models
+  // with random parameters", Applied Mathematics and Computation, 
+  // 119 (2001), pp. 57-73, which states that
+  //
+  //          -1               -1              -1
+  //     d   A  ( x )  =  - [ A  ( x )  kron  A  ( x ) ]  d   A ( x )  .
+  //      x                                                x
+  //
+  dataVarianceInv_popParKnown = AkronBtimesC(
+    dataVarianceInvKnown,     nY_i,
+    dataVarianceInvKnown,     nY_i,
+    dataVariance_popParKnown, nPopPar );
+  dataVarianceInv_popParKnown *= -1.0;
+
+  // Calculate the known value for the derivative with respect
+  // to the individual parameter of the inverse of the variance
+  // of the data using Lemma 10 of B. M. Bell, "Approximating
+  // the marginal likelihood estimate for models with random
+  // parameters", Applied Mathematics and Computation, 119 
+  // (2001), pp. 57-73, which states that
+  //
+  //          -1               -1              -1
+  //     d   A  ( x )  =  - [ A  ( x )  kron  A  ( x ) ]  d   A ( x )  .
+  //      x                                                x
+  //
+  dataVarianceInv_indParKnown = AkronBtimesC(
+    dataVarianceInvKnown,     nY_i,
+    dataVarianceInvKnown,     nY_i,
+    dataVariance_indParKnown, nIndPar );
+  dataVarianceInv_indParKnown *= -1.0;
+
+
+  //------------------------------------------------------------
+  // Compare the calculated and known values.
+  //------------------------------------------------------------
+
+  double tol = 1.0e-14;
+
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The number of population parameters is not correct.",
+    nPopPar == nPopParKnown );
+
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The number of individual parameters is not correct.",
+    nIndPar == nIndParKnown );
+
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The number of data values for this individual is not correct.",
+    nY_i == nY_iKnown );
+
+  compareToKnown( 
+    alphaCurr,
+    alphaCurrKnown,
+    "alphaCurr",
+    tol );
+
+  compareToKnown( 
+    bCurr,
+    bCurrKnown,
+    "bCurr",
+    tol );
+
+  // Set the tolerance for the model function comparisions to be equal
+  // to the tolerance for the integration of the ODE's.
+  tol = tolRel;
+
+  compareToKnown( 
+    dataMean,
+    dataMeanKnown,
+    "dataMean",
+    tol );
+
+  tol = 10.0 * tolRel;
+
+  compareToKnown( 
+    dataMean_popPar,
+    dataMean_popParKnown,
+    "dataMean_popPar",
+    tol );
+
+  compareToKnown( 
+    dataMean_indPar,
+    dataMean_indParKnown,
+    "dataMean_indPar",
+    tol );
+
+  compareToKnown( 
+    dataVariance,
+    dataVarianceKnown,
+    "dataVariance",
+    tol );
+
+  compareToKnown( 
+    dataVariance_popPar,
+    dataVariance_popParKnown,
+    "dataVariance_popPar",
+    tol );
+
+  compareToKnown( 
+    dataVariance_indPar,
+    dataVariance_indParKnown,
+    "dataVariance_indPar",
+    tol );
+
+  compareToKnown( 
+    dataVarianceInv,
+    dataVarianceInvKnown,
+    "dataVarianceInv",
+    tol );
+
+  compareToKnown( 
+    dataVarianceInv_popPar,
+    dataVarianceInv_popParKnown,
+    "dataVarianceInv_popPar",
+    tol );
+
+  compareToKnown( 
+    dataVarianceInv_indPar,
+    dataVarianceInv_indParKnown,
+    "dataVarianceInv_indPar",
+    tol );
+}
+
+
+/*************************************************************************
+ *
+ * Function: ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_Test
+ *
+ *
+ * The goal of this test is to check that the ODE-based version of the
+ * Pred block expression evaluator works for the case of
+ *
+ *     ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred. 
+ *
+ *************************************************************************/
+
+void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace threecomp_onebolus_odepredbasetest;
+
+  int j;
+  int k;
+
+
+  //------------------------------------------------------------
+  // Prepare the Pred block expression evaluator.
+  //------------------------------------------------------------
+
+  // Set the number of compartments, including the output compartment.
+  int nComp = 3;
+
+  // Set the number of data values for this individual.
+  int nY_iKnown = 5;
+
+  // Set this equal to false since the PK block expressions are not
+  // functions of T.
+  bool isPkBlockAFuncOfTime = false;
+
+  // Set the default compartments for doses and observations.
+  int defaultDoseComp   = 1;
+  int defaultObservComp = 1;
+
+  // These flags indicate which compartments are initially off, cannot
+  // be turned off, and cannot receive a dose.
+  std::valarray<bool> compInitialOff( nComp );
+  std::valarray<bool> compNoOff     ( nComp );
+  std::valarray<bool> compNoDose    ( nComp );
+
+  // Set the flags for compartment 1.
+  compInitialOff[1 - 1] = false;
+  compNoOff     [1 - 1] = false;
+  compNoDose    [1 - 1] = false;
+
+  // Set the flags for compartment 2.
+  compInitialOff[2 - 1] = false;
+  compNoOff     [2 - 1] = false;
+  compNoDose    [2 - 1] = false;
+
+  // Set the flags for compartment 3 (the output compartment).
+  compInitialOff[3 - 1] = false;
+  compNoOff     [3 - 1] = false;
+  compNoDose    [3 - 1] = true;
+
+  // Set the relative tolerance for the ODE integration.
+  double tolRel = 1.0e-6;
+
+  // Construct the ODE-based version of the Pred block evaluator.
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred< AD<double> > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+
+  //------------------------------------------------------------
+  // Prepare the variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of independent variables.
+  const int nTheta = 2;
+  const int nEta   = 2;
+  const int nEps   = 1;
+
+  // Set the current value for theta.
+  valarray<double> thetaCurr( nTheta );
+  thetaCurr[0] = 10.0;
+  thetaCurr[1] =  5.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = -100.0;
+  thetaUp [0] = +100.0;
+  thetaLow[1] = -100.0;
+  thetaUp [1] = +100.0;
+
+  // Set the current value for eta.
+  valarray<double> etaCurr( nEta );
+  etaCurr[0] = 0.0;
+  etaCurr[1] = 0.0;
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the covariance matrices.
+  //------------------------------------------------------------
+
+  // Set the structure of omega, the covariance matrix for eta.
+  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nOmegaPar = nEta;
+
+  // Set the diagonal elements for the current value for omega.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 0.0001;
+  omegaMinRep[1] = 0.02;
+
+  // Set the structure of sigma, the covariance matrix for eps.
+  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nSigmaPar = nEps;
+
+  // Set the diagonal elements for the current value for sigma.
+  valarray<double> sigmaMinRep( nSigmaPar );
+  sigmaMinRep[0] = 0.25;
+
+
+  //------------------------------------------------------------
+  // Construct the population level Pred model.
+  //------------------------------------------------------------
+
+  PopPredModel model(
+    predEvaluator,
+    nTheta,
+    thetaLow,
+    thetaUp,
+    thetaCurr,
+    nEta,
+    etaCurr,
+    nEps,
+    omegaStruct,
+    omegaMinRep,
+    sigmaStruct,
+    sigmaMinRep );
+
+
+  //------------------------------------------------------------
+  // Get information related to the individual.
+  //------------------------------------------------------------
+
+  // Get the number elements in the population parameter.
+  int nPopPar = model.getNPopPar();
+
+  // Get the number elements in the individual parameter.
+  int nIndPar = model.getNIndPar();
+
+  // Get the number of observations for this individual.
+  int iCurr = 0;
+  int nY_i = predEvaluator.getNObservs( iCurr );
+
+
+  //------------------------------------------------------------
+  // Prepare various quantities for the test.
+  //------------------------------------------------------------
+
+  // Get the current value for the population parameter.
+  valarray<double> alphaCurr( nPopPar );
+  model.getPopPar( alphaCurr );
+
+  // Get the current value for the individual parameter.
+  valarray<double> bCurr( nIndPar );
+  model.getIndPar( bCurr );
+
+  valarray<double> dataMean       ( nY_i );
+  valarray<double> dataMean_popPar( nY_i * nPopPar );
+  valarray<double> dataMean_indPar( nY_i * nIndPar );
+
+  valarray<double> dataVariance          ( nY_i * nY_i );
+  valarray<double> dataVariance_popPar   ( nY_i * nY_i * nPopPar );
+  valarray<double> dataVariance_indPar   ( nY_i * nY_i * nIndPar );
+  valarray<double> dataVarianceInv       ( nY_i * nY_i );
+  valarray<double> dataVarianceInv_popPar( nY_i * nY_i * nPopPar );
+  valarray<double> dataVarianceInv_indPar( nY_i * nY_i * nIndPar );
+
+  bool ok;
+
+  // Evaluate these quantities at the current population and 
+  // individual parameter values, which are set when the model
+  // is constructed.
+  model.dataMean         ( dataMean );
+  model.dataVariance     ( dataVariance );
+  model.dataVarianceInv  ( dataVarianceInv );
+
+  ok = model.dataMean_popPar( dataMean_popPar );
+  ok = model.dataMean_indPar( dataMean_indPar );
+
+  ok = model.dataVariance_popPar   ( dataVariance_popPar );
+  ok = model.dataVariance_indPar   ( dataVariance_indPar );
+  ok = model.dataVarianceInv_popPar( dataVarianceInv_popPar );
+  ok = model.dataVarianceInv_indPar( dataVarianceInv_indPar );
+
+  valarray<double> popParLow ( nPopPar );
+  valarray<double> popParUp  ( nPopPar );
+  valarray<double> popParStep( nPopPar );
+
+  // Get the limits for the population parameters.
+  model.getPopParLimits( popParLow, popParUp );
+
+  // Get the step sizes for the population parameters.
+  model.getPopParStep( popParStep );
+
+  valarray<double> indParLow ( nIndPar );
+  valarray<double> indParUp  ( nIndPar );
+  valarray<double> indParStep( nIndPar );
+
+  // Get the limits for the individual parameters.
+  model.getIndParLimits( indParLow, indParUp );
+
+  // Get the step sizes for the individual parameters.
+  model.getIndParStep( indParStep );
+
+
+  //------------------------------------------------------------
+  // Prepare known values related to the population parameter.
+  //------------------------------------------------------------
+
+  valarray<double> omegaCurr( nEta * nEta );
+
+  // Create a covariance matrix that is equal to the one that the
+  // OdePredBase is maintaining internally.
+  DiagCov omega( nEta );
+  omega.expandCovMinRep( omegaMinRep, omegaCurr );
+  omega.setCov( omegaCurr );
+
+  valarray<double> omegaKnown         ( nEta * nEta );
+  valarray<double> omegaParKnown      ( nOmegaPar );
+  valarray<double> omegaParLowKnown   ( nOmegaPar );
+  valarray<double> omegaParUpKnown    ( nOmegaPar );
+  valarray<double> omega_omegaParKnown( nEta * nEta * nOmegaPar );
+
+  // Get known values for omega and its derivative.
+  omega.cov    ( omegaKnown );
+  omega.cov_par( omega_omegaParKnown );
+
+  // Get known values for omega's parameter and its limits.
+  omega.calcPar     ( omegaCurr,        omegaParKnown );
+  omega.getParLimits( omegaParLowKnown, omegaParUpKnown );
+
+  valarray<double> sigmaCurr( nEps * nEps );
+
+  // Create a covariance matrix that is equal to the one that the
+  // OdePredBase is maintaining internally.
+  DiagCov sigma( nEps );
+  sigma.expandCovMinRep( sigmaMinRep, sigmaCurr );
+  sigma.setCov( sigmaCurr );
+
+  valarray<double> sigmaKnown         ( nEps * nEps );
+  valarray<double> sigmaParKnown      ( nSigmaPar );
+  valarray<double> sigmaParLowKnown   ( nSigmaPar );
+  valarray<double> sigmaParUpKnown    ( nSigmaPar );
+  valarray<double> sigma_sigmaParKnown( nEps * nEps * nSigmaPar );
+
+  // Get known values for sigma and its derivative.
+  sigma.cov    ( sigmaKnown );
+  sigma.cov_par( sigma_sigmaParKnown );
+
+  // Get known values for sigma's parameter and its limits.
+  sigma.calcPar     ( sigmaCurr,        sigmaParKnown );
+  sigma.getParLimits( sigmaParLowKnown, sigmaParUpKnown );
+
+  // The population parameter is composed of the parameters that are
+  // optimized over when performing population level estimation,
+  //
+  //                -          -
+  //               |   theta    |
+  //               |            |
+  //     alpha  =  |  omegaPar  |  .
+  //               |            |
+  //               |  sigmaPar  |
+  //                -          -
+  //
+  int nPopParKnown = nTheta + nOmegaPar + nSigmaPar;
+
+  int thetaOffsetInPopPar    = 0;
+  int omegaParOffsetInPopPar = nTheta;
+  int sigmaParOffsetInPopPar = nTheta + nOmegaPar;
+
+  valarray<double> alphaCurrKnown( nPopParKnown );
+
+  // Set the known value for the population parameter.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    alphaCurrKnown[k + thetaOffsetInPopPar] = thetaCurr[k];
+  }
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    alphaCurrKnown[k + omegaParOffsetInPopPar] = omegaParKnown[k];
+  }
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    alphaCurrKnown[k + sigmaParOffsetInPopPar] = sigmaParKnown[k];
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare known values related to the individual parameter.
+  //------------------------------------------------------------
+
+  // The individual parameter is the parameter that is optimized
+  // over when performing individual level estimation,
+  //
+  //     b   =  eta  .
+  //      i
+  //
+  int nIndParKnown = nEta;
+
+  valarray<double> bCurrKnown( nIndParKnown );
+
+  // Set the known value for the individual parameter.
+  bCurrKnown = etaCurr;
+
+
+  //------------------------------------------------------------
+  // Prepare known values related to the model functions.
+  //------------------------------------------------------------
+
+  valarray<double> dataMeanKnown       ( nY_i );
+  valarray<double> dataMean_popParKnown( nY_i * nPopPar );
+  valarray<double> dataMean_indParKnown( nY_i * nIndPar );
+
+  valarray<double> dataVarianceKnown          ( nY_i * nY_i );
+  valarray<double> dataVariance_popParKnown   ( nY_i * nY_i * nPopPar );
+  valarray<double> dataVariance_indParKnown   ( nY_i * nY_i * nIndPar );
+  valarray<double> dataVarianceInvKnown       ( nY_i * nY_i );
+  valarray<double> dataVarianceInv_popParKnown( nY_i * nY_i * nPopPar );
+  valarray<double> dataVarianceInv_indParKnown( nY_i * nY_i * nIndPar );
+
+  double T;
+  double ds;
+  double w;
+  double ka;
+  double ke;
+  double cl;
+  double d;
+  double e;
+
+  // For this test, both compartments receive bolus doses at time zero
+  // (t = 0).
+  //
+  // Calculate the known value for the mean of the data:
+  //
+  //     f    (theta, eta)  =  A3(t)
+  //      i(j)
+  //                                           - k1 * t  
+  //                        =  bolus1 * [ 1 - e         ]
+  //
+  //                                                - k2 * t
+  //                             +  bolus2 * [ 1 - e         ] ,
+  //
+  // where
+  //
+  //     k1  =  theta1 + eta1 ,
+  //
+  //     k2  =  theta2 + eta2 ,
+  //
+  // and
+  //
+  //     t  =  ( j + 1 ) * timeStep  .
+  //
+  int comp;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep; 
+
+    // Set the known value.
+    dataMeanKnown[j] = bolus1 * ( 1.0 - std::exp( - ( thetaCurr[0] + etaCurr[0] ) * T ) ) +
+                       bolus2 * ( 1.0 - std::exp( - ( thetaCurr[1] + etaCurr[1] ) * T ) );
+  }
+
+  int col;
+
+  // Calculate the known value for the derivative of the data mean
+  // with respect to the population parameter.
+  dataMean_popParKnown = 0.0;
+  k = 0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (0)                                            - k1 * t
+    //     d       f    ( alpha, b  )  =  t  *  bolus1 *  e         . 
+    //      theta   i(j)          i               
+    //
+    col = k + thetaOffsetInPopPar;
+
+    dataMean_popParKnown[j + col * nY_i] = T * bolus1 *
+      std::exp( - ( thetaCurr[0] + etaCurr[0] ) * T );
+  }
+  k = 1;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (1)                                            - k2 * t
+    //     d       f    ( alpha, b  )  =  t  *  bolus2 *  e         . 
+    //      theta   i(j)          i               
+    //
+    col = k + thetaOffsetInPopPar;
+
+    dataMean_popParKnown[j + col * nY_i] = T * bolus2 * 
+      std::exp( - ( thetaCurr[1] + etaCurr[1] ) * T );
+  }
+
+  // Calculate the known value for the derivative of the data mean
+  // with respect to the individual parameter.
+  dataMean_indParKnown = 0.0;
+  k = 0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (0)                                          - k1 * t
+    //     d     f    ( alpha, b  )  =  t  *  bolus1 *  e         . 
+    //      eta   i(j)          i               
+    //
+    col = k;
+
+    dataMean_indParKnown[j + col * nY_i] = T * bolus1 *
+      std::exp( - ( thetaCurr[0] + etaCurr[0] ) * T );
+  }
+  k = 1;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the time.
+    T = ( j + 1 ) * timeStep;
+
+    // Set the known values for this column,
+    //
+    //      (1)                                          - k2 * t
+    //     d     f    ( alpha, b  )  =  t  *  bolus2 *  e         . 
+    //      eta   i(j)          i               
+    //
+    col = k;
+
+    dataMean_indParKnown[j + col * nY_i] = T * bolus2 *
+      std::exp( - ( thetaCurr[1] + etaCurr[1] ) * T );
+  }
+
+  // Calculate the known value for the variance of the data.
+  dataVarianceKnown = 0.0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the values for the diagonal elements of the data variance:
+    //
+    //                                                                 2
+    //     R      ( alpha, b  )  =  sigma       [ f    ( alpha, b  ) ]   .
+    //      i(j,j)          i            (0,0)     i(j)          i
+    //
+    dataVarianceKnown[j + j * nY_i] = sigmaKnown[0 + 0 * nEps] *
+      dataMeanKnown[j] * dataMeanKnown[j];
+  }
+
+  // Calculate the known value for the derivative of the variance
+  // of the data with respect to the population parameter.
+  dataVariance_popParKnown = 0.0;
+  int nRow = nY_i * nY_i;
+  int row;
+  for ( k = 0; k < nTheta; k++ )
+  {
+    for ( j = 0; j < nY_i; j++ )
+    {
+      // Set the known values for this column,
+      //
+      //      (k)
+      //     d       R      ( alpha, b  )
+      //      theta   i(j,j)          i
+      //
+      //                                                (k)               
+      //         =  2  sigma       f    ( alpha, b  )  d       f    ( alpha, b  )  .
+      //                    (0,0)   i(j)          i     theta   i(j)          i
+      //
+      row = j * nY_i + j;
+      col = k + thetaOffsetInPopPar;
+    
+      dataVariance_popParKnown[row + col * nRow] = 
+        2 * sigmaKnown[0 + 0 * nEps] * 
+        dataMean_popParKnown[j + k * nY_i] * dataMeanKnown[j];
+    }
+  }
+  int nSigma_sigmaParRow = nEps * nEps;
+  int sigma_sigmaParRow;
+  int sigma_sigmaParCol;
+  k = 0;
+  for ( j = 0; j < nY_i; j++ )
+  {
+    // Set the known values for this column,
+    //
+    //      (k)
+    //     d          R      ( alpha, b  )  =  
+    //      sigmaPar   i(j,j)          i
+    //
+    //             -                    -  2   
+    //            |                      |     (k)               
+    //         =  |  f    ( alpha, b  )  |    d         sigma     ( sigmaPar )  .
+    //            |   i(j)          i    |     sigmaPar      (k,k)
+    //             -                    -    
+    //
+    row = j * nY_i + j;
+    col = k + sigmaParOffsetInPopPar;
+
+    sigma_sigmaParRow = k * nEps + k;
+    sigma_sigmaParCol = k;
+    
+    dataVariance_popParKnown[row + col * nRow] = 
+      dataMeanKnown[j] * dataMeanKnown[j] *
+      sigma_sigmaParKnown[sigma_sigmaParRow + sigma_sigmaParCol * nSigma_sigmaParRow];
+  }
+
+  // Calculate the known value for the derivative of the variance
+  // of the data with respect to the individual parameter.
+  dataVariance_indParKnown = 0.0;
+  nRow = nY_i * nY_i;
+  for ( k = 0; k < nEta; k++ )
+  {
+    for ( j = 0; j < nY_i; j++ )
+    {
+      // Set the known values for this column,
+      //
+      //      (k)
+      //     d     R      ( alpha, b  )
+      //      eta   i(j,j)          i
+      //
+      //                                                (k)               
+      //         =  2  sigma       f    ( alpha, b  )  d     f    ( alpha, b  )  .
+      //                    (0,0)   i(j)          i     eta   i(j)          i
+      //
+      row = j * nY_i + j;
+      col = k;
+    
+      dataVariance_indParKnown[row + col * nRow] = 
+        2 * sigmaKnown[0 + 0 * nEps] * 
+        dataMean_indPar[j + k * nY_i] * dataMean[j];
+    }
+  }
+
+  // Calculate the known value for the inverse of the variance
+  // of the data.
+  dataVarianceInvKnown = inverse( dataVarianceKnown, nY_i );
+
+  // Calculate the known value for the derivative of the inverse
+  // of the variance of the data using Lemma 10 of B. M. Bell, 
+  // "Approximating the marginal likelihood estimate for models
+  // with random parameters", Applied Mathematics and Computation, 
+  // 119 (2001), pp. 57-73, which states that
+  //
+  //          -1               -1              -1
+  //     d   A  ( x )  =  - [ A  ( x )  kron  A  ( x ) ]  d   A ( x )  .
+  //      x                                                x
+  //
+  dataVarianceInv_popParKnown = AkronBtimesC(
+    dataVarianceInvKnown,     nY_i,
+    dataVarianceInvKnown,     nY_i,
+    dataVariance_popParKnown, nPopPar );
+  dataVarianceInv_popParKnown *= -1.0;
+
+  // Calculate the known value for the derivative with respect
+  // to the individual parameter of the inverse of the variance
+  // of the data using Lemma 10 of B. M. Bell, "Approximating
+  // the marginal likelihood estimate for models with random
+  // parameters", Applied Mathematics and Computation, 119 
+  // (2001), pp. 57-73, which states that
+  //
+  //          -1               -1              -1
+  //     d   A  ( x )  =  - [ A  ( x )  kron  A  ( x ) ]  d   A ( x )  .
+  //      x                                                x
+  //
+  dataVarianceInv_indParKnown = AkronBtimesC(
+    dataVarianceInvKnown,     nY_i,
+    dataVarianceInvKnown,     nY_i,
+    dataVariance_indParKnown, nIndPar );
+  dataVarianceInv_indParKnown *= -1.0;
+
+
+  //------------------------------------------------------------
+  // Compare the calculated and known values.
+  //------------------------------------------------------------
+
+  double tol = 1.0e-14;
+
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The number of population parameters is not correct.",
+    nPopPar == nPopParKnown );
+
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The number of individual parameters is not correct.",
+    nIndPar == nIndParKnown );
+
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The number of data values for this individual is not correct.",
+    nY_i == nY_iKnown );
+
+  compareToKnown( 
+    alphaCurr,
+    alphaCurrKnown,
+    "alphaCurr",
+    tol );
+
+  compareToKnown( 
+    bCurr,
+    bCurrKnown,
+    "bCurr",
+    tol );
+
+  // Set the tolerance for the model function comparisions to be equal
+  // to the tolerance for the integration of the ODE's.
+  tol = tolRel;
+
+  compareToKnown( 
+    dataMean,
+    dataMeanKnown,
+    "dataMean",
+    tol );
+
+  tol = 10.0 * tolRel;
+
+  compareToKnown( 
+    dataMean_popPar,
+    dataMean_popParKnown,
+    "dataMean_popPar",
+    tol );
+
+  compareToKnown( 
+    dataMean_indPar,
+    dataMean_indParKnown,
+    "dataMean_indPar",
+    tol );
+
+  compareToKnown( 
+    dataVariance,
+    dataVarianceKnown,
+    "dataVariance",
+    tol );
+
+  compareToKnown( 
+    dataVariance_popPar,
+    dataVariance_popParKnown,
+    "dataVariance_popPar",
+    tol );
+
+  compareToKnown( 
+    dataVariance_indPar,
+    dataVariance_indParKnown,
+    "dataVariance_indPar",
+    tol );
+
+  compareToKnown( 
+    dataVarianceInv,
+    dataVarianceInvKnown,
+    "dataVarianceInv",
+    tol );
+
+  compareToKnown( 
+    dataVarianceInv_popPar,
+    dataVarianceInv_popParKnown,
+    "dataVarianceInv_popPar",
+    tol );
+
+  compareToKnown( 
+    dataVarianceInv_indPar,
+    dataVarianceInv_indParKnown,
+    "dataVarianceInv_indPar",
+    tol );
+}
+
+
+/*************************************************************************
+ *
  * Function: FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_Test
  *
  *
@@ -3303,12 +5326,13 @@ void OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_Additiv
   for ( j = 0; j < nY_i; j++ )
   {
     // Set the known values for this column,
-    //                                          f    ( alpha, b  )
-    //      (1)                                  i(j)          i
-    //     d       f    ( alpha, b  )  =  -------------------------------  .
-    //      theta   i(j)          i  
-    //                                     [ theta      +  eta    ]
-    //                                            (1)         (1)
+    //
+    //                                        f    ( alpha, b  )
+    //      (1)                                i(j)          i
+    //     d     f    ( alpha, b  )  =  -------------------------------  .
+    //      eta   i(j)          i  
+    //                                   [ theta      +  eta    ]
+    //                                          (1)         (1)
     //
     dataMean_indParKnown[j + k * nY_i] = dataMeanKnown[j] /
       ( thetaCurr[1] + etaCurr[1] );
@@ -4015,12 +6039,13 @@ void OdePredBaseTest::FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_Addit
   for ( j = 0; j < nY_i; j++ )
   {
     // Set the known values for this column,
-    //                                          f    ( alpha, b  )
-    //      (1)                                  i(j)          i
-    //     d       f    ( alpha, b  )  =  -------------------------------  .
-    //      theta   i(j)          i  
-    //                                     [ theta      +  eta    ]
-    //                                            (1)         (1)
+    //
+    //                                        f    ( alpha, b  )
+    //      (1)                                i(j)          i
+    //     d     f    ( alpha, b  )  =  -------------------------------  .
+    //      eta   i(j)          i  
+    //                                   [ theta      +  eta    ]
+    //                                          (1)         (1)
     //
     dataMean_indParKnown[j + k * nY_i] = dataMeanKnown[j] /
       ( thetaCurr[1] + etaCurr[1] );
