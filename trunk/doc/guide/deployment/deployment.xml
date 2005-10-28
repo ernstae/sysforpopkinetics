@@ -313,8 +313,9 @@ su -
 	  <para>
 	    <command>Deploy</command> the software to the production environment by running
 	    <screen>
-deploy_candidate.pl
+deploy_candidate.pl --prod
 	    </screen>
+            Note that without the "--prod" option, the script install the latest candidate into the test environment by default.
 	  </para>
 	</listitem>
 	<listitem>
