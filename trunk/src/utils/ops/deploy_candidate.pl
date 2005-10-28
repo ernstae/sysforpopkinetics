@@ -41,14 +41,18 @@ use Candidate('make_directory');
 
 =head1 OPTIONS
 
-    --test    If this option is provided, the most recent candidate will 
+    --prod    If this option is provided, the most recent candidate will 
+              be copied into the production environment.
+
+    --test    This is the default option.  
+              If this option is provided, the most recent candidate will 
               be copied into the test environment, rather than the 
               production environment.  This should be used to restore the
               test environment after a failed session of system testing.
 
 =cut
 
-my $usage = "usage: deploy_candidate.pl [--test] --[help]";
+my $usage = "usage: deploy_candidate.pl [--prod or --test] --[help]";
 
 my $ops_root = "/usr/local/spk/ops";
 my $candidate_dir = "$ops_root/candidate";
@@ -67,13 +71,14 @@ my $tmp_dir = "/tmp/deploy_candidate-$$";
 my $test = 1;
 
 my %opt = ();
-GetOptions (\%opt, 'test', 'help') 
+GetOptions (\%opt, 'prod', 'test', 'help') 
     or die "$usage\n";
 
 defined $opt{'help'} == 0
     or die "$usage\n";
 
 $test = 0 if defined $opt{'prod'};
+print( 'production' );
 
 $EFFECTIVE_USER_ID == 0 
     or die "You must be root to run this program\n";
