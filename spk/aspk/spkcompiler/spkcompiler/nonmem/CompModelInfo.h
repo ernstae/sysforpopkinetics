@@ -36,22 +36,7 @@ class CompModelInfo{
   CompModelInfo( int nCompartmentsIn, 
 		 int nParametersIn, 
 		 int nEquilibrimsIn,
-		 double relTol );
-
-  /**
-   * Constructor.  Initialize the model with the given attribute values.
-   *
-   * @param nCompartmentsIn The number of compartments in this system including the output compartment.
-   * @param nParametersIn   The number of basic PK parameters.
-   * @param nEquilibrimIn   The number of quilibrim compartments.
-   * @param compartmentsIn  Compartments making up the system.
-   * @param relTolIn        The relative tolerance (10^-(TOL+1)) where TOL is the #of sigs user provide.
-   */
-  CompModelInfo( int nCompartmentsIn, 
-		 int nParametersIn, 
-		 int nEquilibrimsIn, 
-		 double relTol,
-		 const std::vector<CompartmentInfo>& compartmentsIn );
+		 double relTolIn );
 
   /**
    * Get the number of compartments in this system including the output comp.
