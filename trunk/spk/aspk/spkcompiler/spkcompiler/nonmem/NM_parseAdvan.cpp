@@ -376,7 +376,7 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_default_observation( tempVal );
 	}
-      if( compartment->hasAttribute(X_DEFAULT_DOSE ) )
+      if( compartment->hasAttribute( X_DEFAULT_DOSE ) )
 	{
 	  const XMLCh * yn = compartment->getAttribute( X_DEFAULT_DOSE );
 	  if( XMLString::equals( yn, X_YES ) )
@@ -384,17 +384,8 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
 	  else
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_default_dose( tempVal );
-	}
+	}  
     }
-  // For the output compartment which is added implicitely by NONMEM.
-  myCompModel->getCompartment(nUserCompartments).set_initial_off        ( false );
-  myCompModel->getCompartment(nUserCompartments).set_no_off             ( false );
-  myCompModel->getCompartment(nUserCompartments).set_no_dose            ( false );
-  myCompModel->getCompartment(nUserCompartments).set_equilibrim         ( false );
-  myCompModel->getCompartment(nUserCompartments).set_exclude            ( false );
-  myCompModel->getCompartment(nUserCompartments).set_default_observation( false );
-  myCompModel->getCompartment(nUserCompartments).set_default_dose       ( false );
-  
   return nUserCompartments + 1;
 }
 void NonmemTranslator::parsePK( const DOMElement* pk )

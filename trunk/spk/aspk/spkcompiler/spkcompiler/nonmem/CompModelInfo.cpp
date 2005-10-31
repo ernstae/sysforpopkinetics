@@ -45,26 +45,6 @@ CompModelInfo& CompModelInfo::operator=( const CompModelInfo& right )
     compartments[i] = right.compartments[i];
   }
 }
-CompModelInfo::CompModelInfo( int nCompartmentsIn,
-			      int nParametersIn,
-			      int nEquilibrimsIn,
-			      double relTolIn,
-                      const std::vector<CompartmentInfo>& compartmentsIn )
-: nCompartments   ( nCompartmentsIn ),
-  nParameters     ( nParametersIn ),
-  nEquilibrims    ( nEquilibrimsIn ),
-  compartments    ( compartmentsIn ),
-  is_pkFunctionOfT( true ),
-  relTol          ( relTolIn )
-{
-  for( int i=0; i<nCompartments; i++ )
-  {
-     if( compartments[i].getName() == "CENTRAL" )
-        compartments[i].set_default_observation( true );
-     if( compartments[i].getName() == "DOSE" )
-        compartments[i].set_default_dose( true );
-  }
-}
 #include <iostream>
 CompModelInfo::CompModelInfo( int nCompartmentsIn,
 			      int nParametersIn,
@@ -78,17 +58,35 @@ CompModelInfo::CompModelInfo( int nCompartmentsIn,
   relTol          ( relTolIn )
 {
   for( int i=0; i<nCompartments; i++ )
-  {
-     char c_name[56];
-     snprintf( c_name, 56, "COMP%d", i+1 );
-     std::string name = c_name;
-     compartments[i].setName( name );
+    {
+      char c_name[56];
+      snprintf( c_name, 56, "COMP%d", i+1 );
+      std::string name = c_name;
+      compartments[i].setName( name );
       if( i==0 )
-     {
-        compartments[i].set_default_observation( true );
-        compartments[i].set_default_dose( true );
-     }
-  }
+	{
+	  compartments[i].set_default_observation( true );
+	  compartments[i].set_default_dose       ( true );
+	}
+      else
+	{
+	  compartments[i].set_default_observation( false );
+	  compartments[i].set_default_dose       ( false );
+	}
+      compartments[i].set_no_off                 ( false );
+      compartments[i].set_no_dose                ( false );
+      compartments[i].set_equilibrim             ( false );
+      compartments[i].set_exclude                ( false );
+
+      if( i==nCompartments-1 ) // last (output) compartment
+	{
+	  compartments[i].set_initial_off        ( true );
+	}
+      else
+	{
+	  compartments[i].set_initial_off        ( false );
+	}
+    }
 }
 
 int CompModelInfo::getNCompartments() const
