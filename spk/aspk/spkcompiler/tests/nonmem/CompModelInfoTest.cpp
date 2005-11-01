@@ -39,7 +39,9 @@ void CompModelInfoTest::testConstructorsWithCompartments()
   vector<CompartmentInfo> compartments;
   compartments.push_back( comp1 );
   compartments.push_back( comp2 );
-  CompModelInfo model( nComps, nParams, nEquilibrims, relTol, compartments );
+  CompModelInfo model( nComps, nParams, nEquilibrims, relTol );
+  model.getCompartment(0) = comp1;
+  model.getCompartment(1) = comp2;
   model.setPkFunctionOfT ( isPkFunctionOfT );
   
   vector<bool> initial_off( nComps );
@@ -118,7 +120,7 @@ void CompModelInfoTest::testConstructorsWithoutCompartments()
   vector<bool> initial_off( nComps );
   model.getInitialOff( initial_off );
   CPPUNIT_ASSERT( initial_off[0] == false );
-  CPPUNIT_ASSERT( initial_off[1] == false );
+  CPPUNIT_ASSERT( initial_off[1] == true );
   vector<bool> no_off( nComps );
   model.getNoOff( no_off );
   CPPUNIT_ASSERT( no_off[0] == false );
@@ -132,7 +134,7 @@ void CompModelInfoTest::testConstructorsWithoutCompartments()
   CPPUNIT_ASSERT( "COMP2" == model[1].getName() );
 
   CPPUNIT_ASSERT( model[0].is_initial_off()          == false );
-  CPPUNIT_ASSERT( model[1].is_initial_off()          == false );
+  CPPUNIT_ASSERT( model[1].is_initial_off()          == true );
   CPPUNIT_ASSERT( model[0].is_no_off()               == false );
   CPPUNIT_ASSERT( model[1].is_no_off()               == false );
   CPPUNIT_ASSERT( model[0].is_no_dose()              == false );
@@ -147,7 +149,7 @@ void CompModelInfoTest::testConstructorsWithoutCompartments()
   CPPUNIT_ASSERT( model[1].is_default_dose()         == false );
 
   CPPUNIT_ASSERT( model.getCompartment(0).is_initial_off()          == false );
-  CPPUNIT_ASSERT( model.getCompartment(1).is_initial_off()          == false );
+  CPPUNIT_ASSERT( model.getCompartment(1).is_initial_off()          == true );
   CPPUNIT_ASSERT( model.getCompartment(0).is_no_off()               == false );
   CPPUNIT_ASSERT( model.getCompartment(1).is_no_off()               == false );
   CPPUNIT_ASSERT( model.getCompartment(0).is_no_dose()              == false );
@@ -180,7 +182,9 @@ void CompModelInfoTest::testCopy()
   vector<CompartmentInfo> compartments;
   compartments.push_back( comp1 );
   compartments.push_back( comp2 );
-  CompModelInfo model1( nComps, nParams, nEquilibrims, relTol, compartments );
+  CompModelInfo model1( nComps, nParams, nEquilibrims, relTol );
+  model1.getCompartment(0) = comp1;
+  model1.getCompartment(1) = comp2;
   model1.setPkFunctionOfT( isPkFunctionOfT );
 
   CompModelInfo model_copy( model1 );
@@ -242,7 +246,9 @@ void CompModelInfoTest::testDestruct()
   compartments.push_back( comp1 );
   compartments.push_back( comp2 );
   {
-     CompModelInfo *model = new CompModelInfo( nComps, nParams, nEquilibrims, relTol, compartments );
+     CompModelInfo *model = new CompModelInfo( nComps, nParams, nEquilibrims, relTol );
+     model->getCompartment(0) = comp1;
+     model->getCompartment(1) = comp2;
      CompModelInfo model_copy( *model );
      CPPUNIT_ASSERT_EQUAL( nComps,        model_copy.getNCompartments() );
      CPPUNIT_ASSERT_EQUAL( nParams,       model_copy.getNParameters() );
