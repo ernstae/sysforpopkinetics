@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <map>
 
-#include "pop_insertDataItemsTest.h"
+#include "pop_modifyDataItemsTest.h"
 #include "DOMPrint.h"
 
 #include <cppunit/TestFixture.h>
@@ -83,7 +83,8 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char SPKOPTLIB[]  = "spkopt";
+  char CPPADLIB[]   = "CppAD";
+  char SPKOPTLIB[]  = "QN01Box";
   char ATLASLIB[]   = "atlas_lapack";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
@@ -113,6 +114,7 @@ if( actual != expected ) \\\n \
   const char *strAMT        = "AMT";
   const char *strMDV        = "MDV";
   const char *strEVID       = "EVID";
+  const char *strDROP       = "DROP";
 
   //============================================
   // Optimizer controls
@@ -324,7 +326,7 @@ if( actual != expected ) \\\n \
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::noAMT_noMDV_noEVID()
+void pop_modifyDataItemsTest::noAMT_noMDV_noEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -469,7 +471,7 @@ void pop_insertDataItemsTest::noAMT_noMDV_noEVID()
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::noAMT_noMDV_yesEVID()
+void pop_modifyDataItemsTest::noAMT_noMDV_yesEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -616,7 +618,7 @@ void pop_insertDataItemsTest::noAMT_noMDV_yesEVID()
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::noAMT_yesMDV_noEVID()
+void pop_modifyDataItemsTest::noAMT_yesMDV_noEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -762,7 +764,7 @@ void pop_insertDataItemsTest::noAMT_yesMDV_noEVID()
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::noAMT_yesMDV_yesEVID()
+void pop_modifyDataItemsTest::noAMT_yesMDV_yesEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -909,7 +911,7 @@ void pop_insertDataItemsTest::noAMT_yesMDV_yesEVID()
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::yesAMT_noMDV_noEVID()
+void pop_modifyDataItemsTest::yesAMT_noMDV_noEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -1059,7 +1061,7 @@ void pop_insertDataItemsTest::yesAMT_noMDV_noEVID()
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::yesAMT_noMDV_yesEVID()
+void pop_modifyDataItemsTest::yesAMT_noMDV_yesEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -1189,30 +1191,30 @@ void pop_insertDataItemsTest::yesAMT_noMDV_yesEVID()
    Data set 7 [ AMT=yes, MDV=yes, EVID=no ]
 ====================================================================================
                     AMT  MDV
-1,2.00E+00,1.09E+00,30,   1
-1,4.00E+00,7.50E-01, 0,   0
-1,6.00E+00,5.30E-01, 0,   0
-1,8.00E+00,3.40E-01, 0,   0
-1,1.00E+01,2.30E-01, 0,   0
-1,2.40E+01,2.00E-02, 0,   0
+1,2.00E+00,1.09E+00,30,   1       (1)
+1,4.00E+00,7.50E-01, 0,   0       (0)
+1,6.00E+00,5.30E-01, 0,   0       (0)
+1,8.00E+00,3.40E-01, 0,   0       (0)
+1,1.00E+01,2.30E-01, 0,   0       (0)
+1,2.40E+01,2.00E-02, 0,   0       (0)
 
-2,2.00E+00,2.03E+00,30,   0
-2,4.00E+00,1.28E+00, 0,   1
-2,6.00E+00,1.20E+00, 0,   0
-2,8.00E+00,1.02E+00, 0,   0
-2,1.00E+01,8.30E-01, 0,   0
-2,2.40E+01,2.80E-01, 0,   0
+2,2.00E+00,2.03E+00,30,   0       (0)
+2,4.00E+00,1.28E+00, 0,   1       (2)
+2,6.00E+00,1.20E+00, 0,   0       (0)
+2,8.00E+00,1.02E+00, 0,   0       (0)
+2,1.00E+01,8.30E-01, 0,   0       (0)
+2,2.40E+01,2.80E-01, 0,   0       (0)
 
-3,2.00E+00,1.44E+00,30,   0
-3,4.00E+00,1.30E+00, 0,   0
-3,6.00E+00,9.50E-01, 0,   1
-3,8.00E+00,6.80E-01, 0,   0
-3,1.00E+01,5.20E-01, 0,   0
-3,2.40E+01,6.00E-02, 0,   0
+3,2.00E+00,1.44E+00,30,   0       (0)
+3,4.00E+00,1.30E+00, 0,   0       (0)
+3,6.00E+00,9.50E-01, 0,   1       (2)
+3,8.00E+00,6.80E-01, 0,   0       (0)
+3,1.00E+01,5.20E-01, 0,   0       (0)
+3,2.40E+01,6.00E-02, 0,   0       (0)
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::yesAMT_yesMDV_noEVID()
+void pop_modifyDataItemsTest::yesAMT_yesMDV_noEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -1293,6 +1295,15 @@ void pop_insertDataItemsTest::yesAMT_yesMDV_noEVID()
 	{
 	  o << "   MY_ASSERT_EQUAL( " << set[k][3] << ", set.data[" << i << "]->AMT[" << j << "] );" << endl;
 	  o << "   MY_ASSERT_EQUAL( " << set[k][4] << ", set.data[" << i << "]->MDV[" << j << "] );" << endl;
+	  if( set[k][4] == 1 )
+	    {
+	      if( set[k][3] == 0.0 )
+		o << "   MY_ASSERT_EQUAL( " << 2 << ", set.data[" << i << "]->EVID[" << j << "] );" << endl;
+	      else
+		o << "   MY_ASSERT_EQUAL( " << 1 << ", set.data[" << i << "]->EVID[" << j << "] );" << endl;
+	    }
+	  else
+	    o << "   MY_ASSERT_EQUAL( " << 0 << ", set.data[" << i << "]->EVID[" << j << "] );" << endl;
 	}
     }
   o << "}" << endl;
@@ -1359,7 +1370,7 @@ void pop_insertDataItemsTest::yesAMT_yesMDV_noEVID()
 
 ====================================================================================
 */
-void pop_insertDataItemsTest::yesAMT_yesMDV_yesEVID()
+void pop_modifyDataItemsTest::yesAMT_yesMDV_yesEVID()
 {
   const int    nIndividuals = 3;
   valarray<int> N(nIndividuals);
@@ -1478,8 +1489,93 @@ void pop_insertDataItemsTest::yesAMT_yesMDV_yesEVID()
   remove( fDataSetDriver );
   remove( fDataSetDriver_cpp );
 }
+/*
+====================================================================================
+   Data set 9 [ ID, TIME, DV, DROP ]
+====================================================================================
+                     DROP
+1,2.00E+00,1.09E+00,  999
+1,4.00E+00,7.50E-01,  999
+1,6.00E+00,5.30E-01,  999
+1,8.00E+00,3.40E-01,  999
+1,1.00E+01,2.30E-01,  999
++01,2.00E-02,  999
 
-void pop_insertDataItemsTest::setUp()
+2,2.00E+00,2.03E+00,  999
+2,4.00E+00,1.28E+00,  999 
+2,6.00E+00,1.20E+00,  999
+2,8.00E+00,1.02E+00,  999
+2,1.00E+01,8.30E-01,  999
+2,2.40E+01,2.80E-01,  999
+
+3,2.00E+00,1.44E+00,  999
+3,4.00E+00,1.30E+00,  999
+3,6.00E+00,9.50E-01,  999
+3,8.00E+00,6.80E-01,  999
+3,1.00E+01,5.20E-01,  999
+3,2.40E+01,6.00E-02,  999
+
+====================================================================================
+*/
+void pop_modifyDataItemsTest::drop()
+{
+  const int    nIndividuals = 3;
+  valarray<int> N(nIndividuals);
+  N[0] = 6;
+  N[1] = 6;
+  N[2] = 6;
+  const int    nRecords     = N.sum();
+  const int    nItems       = 5;
+
+  const char * label[] = { strID, strTIME, strDV, strDROP, strDROP }; 
+  vector< vector<double> > set(nRecords);
+  for( int i=0; i<nRecords; i++ )
+    {
+      set[i].resize( nItems );
+    }
+  set[0] [0] = 1; set[0] [1] = 2.00E+00; set[0] [2] = 1.09E+00; set[0] [3] = 999; set[0] [4] = 999;
+  set[1] [0] = 1; set[1] [1] = 4.00E+00; set[1] [2] = 7.50E-01; set[1] [3] = 999; set[1] [4] = 999;
+  set[2] [0] = 1; set[2] [1] = 6.00E+00; set[2] [2] = 5.30E-01; set[2] [3] = 999; set[2] [4] = 999;
+  set[3] [0] = 1; set[3] [1] = 8.00E+00; set[3] [2] = 3.40E-01; set[3] [3] = 999; set[3] [4] = 999;
+  set[4] [0] = 1; set[4] [1] = 1.00E+01; set[4] [2] = 2.30E-01; set[4] [3] = 999; set[4] [4] = 999;
+  set[5] [0] = 1; set[5] [1] = 2.40E+01; set[5] [2] = 2.00E-02; set[5] [3] = 999; set[5] [4] = 999;
+  set[6] [0] = 2; set[6] [1] = 2.00E+00; set[6] [2] = 2.03E+00; set[6] [3] = 999; set[6] [4] = 999;
+  set[7] [0] = 2; set[7] [1] = 4.00E+00; set[7] [2] = 1.28E+00; set[7] [3] = 999; set[7] [4] = 999;
+  set[8] [0] = 2; set[8] [1] = 6.00E+00; set[8] [2] = 1.20E+00; set[8] [3] = 999; set[8] [4] = 999;
+  set[9] [0] = 2; set[9] [1] = 8.00E+00; set[9] [2] = 1.02E+00; set[9] [3] = 999; set[9] [4] = 999;
+  set[10][0] = 2; set[10][1] = 1.00E+01; set[10][2] = 8.30E-01; set[10][3] = 999; set[10][4] = 999;
+  set[11][0] = 2; set[11][1] = 2.40E+01; set[11][2] = 2.80E-01; set[11][3] = 999; set[11][4] = 999;
+  set[12][0] = 3; set[12][1] = 2.00E+00; set[12][2] = 1.44E+00; set[12][3] = 999; set[12][4] = 999;
+  set[13][0] = 3; set[13][1] = 4.00E+00; set[13][2] = 1.30E+00; set[13][3] = 999; set[13][4] = 999;
+  set[14][0] = 3; set[14][1] = 6.00E+00; set[14][2] = 9.50E-01; set[14][3] = 999; set[14][4] = 999;
+  set[15][0] = 3; set[15][1] = 8.00E+00; set[15][2] = 6.80E-01; set[15][3] = 999; set[15][4] = 999;
+  set[16][0] = 3; set[16][1] = 1.00E+01; set[16][2] = 5.20E-01; set[16][3] = 999; set[16][4] = 999;
+  set[17][0] = 3; set[17][1] = 2.40E+01; set[17][2] = 6.00E-02; set[17][3] = 999; set[17][4] = 999;
+
+  createDataML( "drop.data.xml", nIndividuals, nItems, label, nRecords, set );
+  createSourceML( "drop.source.xml", nIndividuals, nItems, label );
+  parseDataML( dataParser, "drop.data.xml", nIndividuals );
+  parseSourceML( sourceParser, "drop.source.xml", nIndividuals );
+
+  NonmemTranslator nm( source, data );
+  try{
+    nm.translate();
+  }
+  catch ( const SpkCompilerException& e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT( false );
+    }
+  catch ( ... )
+    {
+      CPPUNIT_ASSERT_MESSAGE( "Compilation failed due to a unknown error", false );
+    }
+
+  const SymbolTable * table = nm.getSymbolTable();
+  CPPUNIT_ASSERT_MESSAGE( "DROP hasn't been removed", table->find( strDROP ) == Symbol::empty() );
+}
+
+void pop_modifyDataItemsTest::setUp()
 {
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
@@ -1548,8 +1644,8 @@ void pop_insertDataItemsTest::setUp()
   X_DEFAULT_OBSERVATION        = XMLString::transcode( C_DEFAULT_OBSERVATION );
   X_DEFAULT_DOSE               = XMLString::transcode( C_DEFAULT_DOSE );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   dataParser = new xercesc::XercesDOMParser;
   dataParser->setValidationScheme( XercesDOMParser::Val_Auto );
@@ -1567,7 +1663,7 @@ void pop_insertDataItemsTest::setUp()
 
 }
 
-void pop_insertDataItemsTest::tearDown()
+void pop_modifyDataItemsTest::tearDown()
 {
   XMLString::release( &X_ERROR_LIST );
   XMLString::release( &X_VALUE );
@@ -1627,7 +1723,7 @@ void pop_insertDataItemsTest::tearDown()
     }
   XMLPlatformUtils::Terminate();
 }
-void pop_insertDataItemsTest::createDataML( const char * fDataML, 
+void pop_modifyDataItemsTest::createDataML( const char * fDataML, 
 					    int nIndividuals,
 					    int nItems, 
 					    const char* label[],
@@ -1659,7 +1755,7 @@ void pop_insertDataItemsTest::createDataML( const char * fDataML,
   o << "</spkdataml>" << endl;
   o.close();
 }
-void pop_insertDataItemsTest::parseDataML( xercesc::XercesDOMParser *dataParser, 
+void pop_modifyDataItemsTest::parseDataML( xercesc::XercesDOMParser *dataParser, 
 					   const char * fDataML,
 					   int nIndividuals )
 {
@@ -1705,7 +1801,7 @@ void pop_insertDataItemsTest::parseDataML( xercesc::XercesDOMParser *dataParser,
     }
 }
  
-void pop_insertDataItemsTest::createSourceML( const char* fSourceML, 
+void pop_modifyDataItemsTest::createSourceML( const char* fSourceML, 
 					      int nIndividuals,
 					      int nLabels, 
 					      const char* label[] )
@@ -1785,7 +1881,7 @@ void pop_insertDataItemsTest::createSourceML( const char* fSourceML,
 
   o.close();
 }
-void pop_insertDataItemsTest::parseSourceML( xercesc::XercesDOMParser *sourceParser, 
+void pop_modifyDataItemsTest::parseSourceML( xercesc::XercesDOMParser *sourceParser, 
 					     const char* fSourceML,
 					     int nIndividuals )
 {
@@ -1795,10 +1891,10 @@ void pop_insertDataItemsTest::parseSourceML( xercesc::XercesDOMParser *sourcePar
   //============================================
   try{
     ifstream sourceML( fSourceML );
-    //ifstream sourceML( "pop_insertDataItemsTest.source.xml" );
+    //ifstream sourceML( "pop_modifyDataItemsTest.source.xml" );
     CPPUNIT_ASSERT_MESSAGE( "Failed to open CAD1996A1.source.xml", sourceML.good() );
     sourceML.close();
-    //sourceParser->parse( "pop_insertDataItemsTest.source.xml" );
+    //sourceParser->parse( "pop_modifyDataItemsTest.source.xml" );
     sourceParser->reset();
     sourceParser->parse( fSourceML );
     source = sourceParser->getDocument();
@@ -1836,41 +1932,48 @@ void pop_insertDataItemsTest::parseSourceML( xercesc::XercesDOMParser *sourcePar
 }
 
 
-CppUnit::Test * pop_insertDataItemsTest::suite()
+CppUnit::Test * pop_modifyDataItemsTest::suite()
 {
-  CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "pop_insertDataItemsTest" );
+  CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "pop_modifyDataItemsTest" );
+
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "noAMT_noMDV_noEVID", 
-	 &pop_insertDataItemsTest::noAMT_noMDV_noEVID ) );
+	 &pop_modifyDataItemsTest::noAMT_noMDV_noEVID ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "noAMT_noMDV_yesEVID", 
-	 &pop_insertDataItemsTest::noAMT_noMDV_yesEVID ) );
+	 &pop_modifyDataItemsTest::noAMT_noMDV_yesEVID ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "noAMT_yesMDV_noEVID", 
-	 &pop_insertDataItemsTest::noAMT_yesMDV_noEVID ) );
+	 &pop_modifyDataItemsTest::noAMT_yesMDV_noEVID ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "noAMT_yesMDV_yesEVID", 
-	 &pop_insertDataItemsTest::noAMT_yesMDV_yesEVID ) );
+	 &pop_modifyDataItemsTest::noAMT_yesMDV_yesEVID ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "yesAMT_noMDV_noEVID", 
-	 &pop_insertDataItemsTest::yesAMT_noMDV_noEVID ) );
+	 &pop_modifyDataItemsTest::yesAMT_noMDV_noEVID ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "yesAMT_noMDV_yesEVID", 
-	 &pop_insertDataItemsTest::yesAMT_noMDV_yesEVID ) );
+	 &pop_modifyDataItemsTest::yesAMT_noMDV_yesEVID ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "yesAMT_yesMDV_noEVID", 
-	 &pop_insertDataItemsTest::yesAMT_yesMDV_noEVID ) );
+	 &pop_modifyDataItemsTest::yesAMT_yesMDV_noEVID ) );
   suiteOfTests->addTest( 
-     new CppUnit::TestCaller<pop_insertDataItemsTest>(
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
          "yesAMT_yesMDV_yesEVID", 
-	 &pop_insertDataItemsTest::yesAMT_yesMDV_yesEVID ) );
+	 &pop_modifyDataItemsTest::yesAMT_yesMDV_yesEVID ) );
+
+  suiteOfTests->addTest( 
+     new CppUnit::TestCaller<pop_modifyDataItemsTest>(
+         "drop", 
+	 &pop_modifyDataItemsTest::drop ) );
+
   return suiteOfTests;
 }
 

@@ -1,10 +1,10 @@
 /**
- * \file pop_insertDataItemsTest.h
+ * \file pop_modifyDataItemsTest.h
  * \brief Tests the NonmemTranslator's ability to handle the
  * data sets missing AMT, MDV or/and EVID.
  */
-#ifndef POP_INSERTDATAITEMS_TEST_H
-#define POP_INSERTDATAITEMS_TEST_H
+#ifndef POP_MODIFYDATAITEMS_TEST_H
+#define POP_MODIFYDATAITEMS_TEST_H
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
@@ -15,7 +15,7 @@
 
 #include <vector>
 
-class pop_insertDataItemsTest 
+class pop_modifyDataItemsTest 
 : public CppUnit::TestFixture,
   public NonmemTranslator
 {
@@ -58,6 +58,7 @@ public:
     void yesAMT_noMDV_yesEVID();
     void yesAMT_yesMDV_noEVID();
     void yesAMT_yesMDV_yesEVID();
+    void drop();
 };
 
 #endif
