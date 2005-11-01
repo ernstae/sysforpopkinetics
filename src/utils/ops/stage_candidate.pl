@@ -105,14 +105,14 @@ chdir $new_dir;
 &stage_directory("cspkserver", "/usr/local/lib");
 &stage_directory("cspkserver", "/usr/local/src");
 
-my $srce = "webserver:/usr/local/tomcat/instance/testssl/webapps/user.war";
-my $dest =  "webserver/usr/local/tomcat/instance/prodssl/webapps/user.war";
-my @args = ($scp_command, "-r", $srce, $dest);
-system(@args);
-my $exit_status = $? >> 8;
-if ($exit_status != 0) {
-    die "'scp -r $srce $dest' failed\n";
-}
+#my $srce = "webserver:/usr/local/tomcat/instance/testssl/webapps/user.war";
+#my $dest =  "webserver/usr/local/tomcat/instance/prodssl/webapps/user.war";
+#my @args = ($scp_command, "-r", $srce, $dest);
+#system(@args);
+#my $exit_status = $? >> 8;
+#if ($exit_status != 0) {
+#    die "'scp -r $srce $dest' failed\n";
+#}
 # create a notes file to be edited by the developer
 my $notes = "$candidate_dir/notes-$version";
 my $template = "$candidate_dir/notes_template.txt";
