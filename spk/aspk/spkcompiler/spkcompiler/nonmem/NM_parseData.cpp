@@ -116,7 +116,8 @@ void NonmemTranslator::parseData()
 				     __LINE__, __FILE__ );
       }
 
-      removeDropSkip( dataset, labels );
+      removeDrop( dataset, labels );
+      removeSkip( dataset, labels );
 
       bool isID   = ( ( posID   = whereis( labels, X_ID )   ) >= 0 );
       bool isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
@@ -430,13 +431,14 @@ void NonmemTranslator::parseData()
     }
 }
 /*
- * Remove data items labeled as DROP or SKIP.  Returns the number of columns
+ * Remove data items labeled as DROP.  Returns the number of columns
  * that have been removed.
  */
-int NonmemTranslator::removeDropSkip( DOMElement * dataset, DOMNodeList * labels  )
+int NonmemTranslator::removeDrop( DOMElement * dataset, DOMNodeList * labels  )
 {
   int pos = -1;
   int nDropped = 0;
+
   DOMNodeList * data_labels_list;
 
   for( nDropped = 0; (pos = whereis( labels, X_DROP )) >= 0; ++nDropped )
@@ -454,6 +456,7 @@ int NonmemTranslator::removeDropSkip( DOMElement * dataset, DOMNodeList * labels
       data_labels_list->item(0)->removeChild( labels->item(pos) );
       labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
     }
+
   unsigned int nOriginalItems = 0;
   char c_nAdjustedItems[ 56 ];
   if( !dataset->hasAttribute( X_COLUMNS ) )
@@ -470,6 +473,49 @@ int NonmemTranslator::removeDropSkip( DOMElement * dataset, DOMNodeList * labels
   dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nAdjustedItems ) );
 
   return nOriginalItems-nDropped;
+}
+/*
+ * Remove data items labeled as SKIP.  Returns the number of columns
+ * that have been removed.
+ */
+int NonmemTranslator::removeSkip( DOMElement * dataset, DOMNodeList * labels  )
+{
+  int pos = -1;
+  int nSkipped = 0;
+
+  DOMNodeList * data_labels_list;
+
+  for( nSkipped = 0; (pos = whereis( labels, X_SKIP )) >= 0; ++nSkipped )
+    {
+      DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+      
+      for( int i=0; i<records->getLength(); i++ )
+	{
+	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  records->item(i)->removeChild( values->item(pos));
+	}
+
+      data_labels_list = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
+      // Remove the SKIP label from source.xml
+      data_labels_list->item(0)->removeChild( labels->item(pos) );
+      labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+    }
+  unsigned int nOriginalItems = 0;
+  char c_nAdjustedItems[ 56 ];
+  if( !dataset->hasAttribute( X_COLUMNS ) )
+    {
+      char m[ SpkCompilerError::maxMessageLen() ];
+      snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
+    }
+  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+			nOriginalItems );
+  snprintf( c_nAdjustedItems, 56, "%d", nOriginalItems-nSkipped );
+  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nAdjustedItems ) );
+
+  return nOriginalItems-nSkipped;
 }
 
 /*

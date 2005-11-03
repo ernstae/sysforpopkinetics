@@ -106,6 +106,8 @@ class NonmemTranslator : public ClientTranslator
     std::string RATE;
     std::string TIME;
     std::string TSCALE;
+    std::string DROP;
+    std::string SKIP;
   };
 
   /**
@@ -336,6 +338,7 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_EVID;                       static const char * C_EVID;
   XMLCh* X_AMT;                        static const char * C_AMT;
   XMLCh* X_DROP;                       static const char * C_DROP;
+  XMLCh* X_SKIP;                       static const char * C_SKIP;
 
   // SpkSourceML attributes  
   XMLCh* X_YES;                        static const char* C_YES;             
@@ -500,10 +503,11 @@ class NonmemTranslator : public ClientTranslator
   int insertAMT( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
 
   /**
-   * Remove data columns labeled as "DROP" or "SKIP" from the data set.  
+   * Remove data columns labeled as "DROP" from the data set.  
    * Returns the number of columns removed.
    */
-  int removeDropSkip( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
+  int removeDrop( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
+  int removeSkip( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
 
   //
   // Analyze the <pop_analysis> subtree.
