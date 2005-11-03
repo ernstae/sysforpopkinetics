@@ -935,16 +935,6 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "std::ostream& operator<<( std::ostream& o, const DataSet<spk_ValueType>& A )" << endl;
   oDataSet_h << "{" << endl;
 
-  if( pID == Symbol::empty() )
-    {
-      char mess [ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess, 
-		SpkCompilerError::maxMessageLen(),
-		"\"ID\" is not defined." );
-      SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-
   // Compute the number of items that are supposed to be printed out in <presentation_data>.
   // This includes User defined scalar variables, NONMEM (scalar/vector/matrix)
   // and RES/WRES.
@@ -988,6 +978,10 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  if( s->object_type == Symbol::VECTOR )
 	    nColumns += myCompModel->getNParameters()-1;
+	}
+      if( ( s = table->findi( KeyStr.T ) ) != Symbol::empty() )
+	{
+	  nColumns--;
 	}
     }
 
@@ -1092,6 +1086,12 @@ void NonmemTranslator::generateDataSet( ) const
 		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
 		      cntColumns++;
 		    }
+		}
+
+	      // T should be omitted from print out if it means the ODE's T.
+	      else if( myCompModel && (pEntry->first == KeyStr.T) ) 
+		{
+		  // ignore
 		}
 
 	      // scalar variables (user-defined variables & NONMEM reserved variables).
@@ -1205,6 +1205,10 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
+      else if( myCompModel && (keyWhatGoesIn == KeyStr.T) )
+        {
+          // ignore
+        }
       else
 	{
 	  oDataSet_h << "         o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
