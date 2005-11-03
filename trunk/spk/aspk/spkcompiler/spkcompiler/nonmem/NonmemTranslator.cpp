@@ -74,6 +74,7 @@ const char* NonmemTranslator::C_MDV        ( "MDV" );
 const char* NonmemTranslator::C_EVID       ( "EVID" );
 const char* NonmemTranslator::C_AMT        ( "AMT" );
 const char* NonmemTranslator::C_DROP       ( "DROP" );
+const char* NonmemTranslator::C_SKIP       ( "SKIP" );
 
 const char* NonmemTranslator::C_YES                        ( "yes" );
 const char* NonmemTranslator::C_NO                         ( "no" );
@@ -320,6 +321,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   DefaultStr.TIME              = "TIME";
   DefaultStr.TSCALE            = "TSCALE";
   DefaultStr.S                 = "S";
+  DefaultStr.DROP              = "DROP";
+  DefaultStr.SKIP              = "SKIP";
 
   UserStr.THETA                = DefaultStr.THETA;
   UserStr.ETA                  = DefaultStr.ETA;
@@ -371,6 +374,9 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   UserStr.TIME                 = DefaultStr.TIME;
   UserStr.TSCALE               = DefaultStr.TSCALE;
   UserStr.S                    = DefaultStr.S;
+  UserStr.DROP                 = DefaultStr.DROP;
+  UserStr.SKIP                 = DefaultStr.SKIP;
+
 
   // These are used as insensitive search keys to find the values of
   // NONMEM-predefined variables in the symbol table or to be extracted
@@ -425,6 +431,8 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   KeyStr.TIME                  = SymbolTable::key( DefaultStr.TIME );
   KeyStr.TSCALE                = SymbolTable::key( DefaultStr.TSCALE );
   KeyStr.S                     = SymbolTable::key( DefaultStr.S );
+  KeyStr.DROP                  = SymbolTable::key( DefaultStr.DROP );
+  KeyStr.SKIP                  = SymbolTable::key( DefaultStr.SKIP );
 
   // SpkDataML tags & attributes;
   X_SPKDATA                    = XMLString::transcode( C_SPKDATA );
@@ -444,6 +452,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   X_EVID                       = XMLString::transcode( C_EVID );
   X_AMT                        = XMLString::transcode( C_AMT );
   X_DROP                       = XMLString::transcode( C_DROP );
+  X_SKIP                       = XMLString::transcode( C_SKIP );
 
   // SpkSourceML tags
     //  X_DESCRIPTION                = XMLString::transcode( C_DESCRIPTION );
@@ -633,6 +642,7 @@ NonmemTranslator::~NonmemTranslator()
   XMLString::release( &X_EVID );
   XMLString::release( &X_AMT );
   XMLString::release( &X_DROP );
+  XMLString::release( &X_SKIP );
 
   //  XMLString::release( &X_DESCRIPTION );
   XMLString::release( &X_YES );
