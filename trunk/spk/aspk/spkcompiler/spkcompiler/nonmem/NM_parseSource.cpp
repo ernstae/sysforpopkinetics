@@ -97,6 +97,89 @@ void NonmemTranslator::parseSource()
 
   myModelSpec = detModelType();
 
+  
+  // PRED
+  table->insertScalar( DefaultStr.PRED, Symbol::SYSTEM, Symbol::READONLY );
+  UserStr.PRED = DefaultStr.PRED;
+
+  // RES
+  table->insertScalar( DefaultStr.RES, Symbol::SYSTEM, Symbol::READONLY );
+  UserStr.RES = DefaultStr.RES;
+
+  // WRES
+  table->insertScalar( DefaultStr.WRES, Symbol::SYSTEM, Symbol::READONLY );
+  UserStr.WRES = DefaultStr.WRES;
+
+  // IPRED
+  table->insertScalar( DefaultStr.IPRED, Symbol::SYSTEM, Symbol::READONLY );
+  UserStr.IPRED = DefaultStr.IPRED;
+
+  // IRES
+  table->insertScalar( DefaultStr.IRES, Symbol::SYSTEM, Symbol::READONLY );
+  UserStr.IRES = DefaultStr.IRES;
+
+  // IWRES
+  table->insertScalar( DefaultStr.IWRES, Symbol::SYSTEM, Symbol::READONLY );
+  UserStr.IWRES = DefaultStr.IWRES;
+
+  if( getTarget() == POP )
+    {
+      // ETARES
+      table->insertVector( DefaultStr.ETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.ETARES = DefaultStr.ETARES;
+
+      // WETARES
+      table->insertVector( DefaultStr.WETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.WETARES = DefaultStr.WETARES;
+
+      // IETARES
+      table->insertVector( DefaultStr.IETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.IETARES = DefaultStr.IETARES;
+
+      // IWETARES
+      table->insertVector( DefaultStr.IWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.IWETARES = DefaultStr.IWETARES;
+
+      // PPRED
+      table->insertScalar( DefaultStr.PPRED, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.PPRED = DefaultStr.PPRED;
+      
+      // PRES
+      table->insertScalar( DefaultStr.PRES, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.PRES = DefaultStr.PRES;
+      
+      // PWRES
+      table->insertScalar( DefaultStr.PWRES, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.PWRES = DefaultStr.PWRES;
+
+      // PETARES
+      table->insertVector( DefaultStr.PETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.PETARES = DefaultStr.PETARES;
+
+      // PWETARES
+      table->insertVector( DefaultStr.PWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.PWETARES = DefaultStr.PWETARES;
+
+      // CPRED
+      table->insertScalar( DefaultStr.CPRED, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.CPRED = DefaultStr.CPRED;
+      
+      // CRES
+      table->insertScalar( DefaultStr.CRES, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.CRES = DefaultStr.CRES;
+      
+      // CWRES
+      table->insertScalar( DefaultStr.CWRES, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.CWRES = DefaultStr.CWRES;
+
+      // CETARES
+      table->insertVector( DefaultStr.CETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.CETARES = DefaultStr.CETARES;
+
+      // CWETARES
+      table->insertVector( DefaultStr.CWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+      UserStr.CWETARES = DefaultStr.CWETARES;
+    } 
   DOMNodeList * models = nonmem->getElementsByTagName( X_MODEL );
   if( models->getLength() != 1 )
     {
@@ -320,187 +403,6 @@ void NonmemTranslator::parseSource()
     }
 
 
-  // PRED
-  if( (p = table->findi( KeyStr.PRED )) != Symbol::empty() )
-    UserStr.PRED = p->name;
-  else
-    {
-      table->insertScalar( DefaultStr.PRED, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.PRED = DefaultStr.PRED;
-    }
-
-  // RES
-  if( (p = table->findi( KeyStr.RES )) != Symbol::empty() )
-    UserStr.RES = p->name;
-  else
-    {
-      table->insertScalar( DefaultStr.RES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.RES = DefaultStr.RES;
-    }
-
-  // WRES
-  if( (p = table->findi( KeyStr.WRES )) != Symbol::empty() )
-    UserStr.WRES = p->name;
-  else
-    {
-      table->insertScalar( DefaultStr.WRES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.WRES = DefaultStr.WRES;
-    }
-
-  // IPRED
-  if( (p = table->findi( KeyStr.IPRED )) != Symbol::empty() )
-    UserStr.IPRED = p->name;
-  else
-    {
-      table->insertScalar( DefaultStr.IPRED, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.IPRED = DefaultStr.IPRED;
-    }
-
-  // IRES
-  if( (p = table->findi( KeyStr.IRES )) != Symbol::empty() )
-    UserStr.IRES = p->name;
-  else
-    {
-      table->insertScalar( DefaultStr.IRES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.IRES = DefaultStr.IRES;
-    }
-
-  // IWRES
-  if( (p = table->findi( KeyStr.IWRES )) != Symbol::empty() )
-    UserStr.IWRES = p->name;
-  else
-    {
-      table->insertScalar( DefaultStr.IWRES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.IWRES = DefaultStr.IWRES;
-    }
-
-  if( getTarget() == POP )
-    {
-      // ETARES
-      if( (p = table->findi( KeyStr.ETARES )) != Symbol::empty() )
-	UserStr.ETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.ETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.ETARES = DefaultStr.ETARES;
-	}
-
-      // WETARES
-      if( (p = table->findi( KeyStr.WETARES )) != Symbol::empty() )
-	UserStr.WETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.WETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.WETARES = DefaultStr.WETARES;
-	}
-
-      // IETARES
-      if( (p = table->findi( KeyStr.IETARES )) != Symbol::empty() )
-	UserStr.IETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.IETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.IETARES = DefaultStr.IETARES;
-	}
-
-      // IWETARES
-      if( (p = table->findi( KeyStr.IWETARES )) != Symbol::empty() )
-	UserStr.IWETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.IWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.IWETARES = DefaultStr.IWETARES;
-	}
-      // PPRED
-      if( (p = table->findi( KeyStr.PPRED )) != Symbol::empty() )
-	UserStr.PPRED = p->name;
-      else
-	{
-	  table->insertScalar( DefaultStr.PPRED, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.PPRED = DefaultStr.PPRED;
-	}
-      
-      // PRES
-      if( (p = table->findi( KeyStr.PRES )) != Symbol::empty() )
-	UserStr.PRES = p->name;
-      else
-	{
-	  table->insertScalar( DefaultStr.PRES, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.PRES = DefaultStr.PRES;
-	}
-      
-      // PWRES
-      if( (p = table->findi( KeyStr.PWRES )) != Symbol::empty() )
-	UserStr.PWRES = p->name;
-      else
-	{
-	  table->insertScalar( DefaultStr.PWRES, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.PWRES = DefaultStr.PWRES;
-	}
-
-      // PETARES
-      if( (p = table->findi( KeyStr.PETARES )) != Symbol::empty() )
-	UserStr.PETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.PETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.PETARES = DefaultStr.PETARES;
-	}
-
-      // PWETARES
-      if( (p = table->findi( KeyStr.PWETARES )) != Symbol::empty() )
-	UserStr.PWETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.PWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.PWETARES = DefaultStr.PWETARES;
-	}
-
-      // CPRED
-      if( (p = table->findi( KeyStr.CPRED )) != Symbol::empty() )
-	UserStr.CPRED = p->name;
-      else
-	{
-	  table->insertScalar( DefaultStr.CPRED, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.CPRED = DefaultStr.CPRED;
-	}
-      
-      // CRES
-      if( (p = table->findi( KeyStr.CRES )) != Symbol::empty() )
-	UserStr.CRES = p->name;
-      else
-	{
-	  table->insertScalar( DefaultStr.CRES, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.CRES = DefaultStr.CRES;
-	}
-      
-      // CWRES
-      if( (p = table->findi( KeyStr.CWRES )) != Symbol::empty() )
-	UserStr.CWRES = p->name;
-      else
-	{
-	  table->insertScalar( DefaultStr.CWRES, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.CWRES = DefaultStr.CWRES;
-	}
-
-      // CETARES
-      if( (p = table->findi( KeyStr.CETARES )) != Symbol::empty() )
-	UserStr.CETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.CETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.CETARES = DefaultStr.CETARES;
-	}
-
-      // CWETARES
-      if( (p = table->findi( KeyStr.CWETARES )) != Symbol::empty() )
-	UserStr.CWETARES = p->name;
-      else
-	{
-	  table->insertVector( DefaultStr.CWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-	  UserStr.CWETARES = DefaultStr.CWETARES;
-	}
-    } 
 
   //+++++++++++++++++++++++++++++++++++++
   // Ones that should have been 
@@ -520,36 +422,6 @@ void NonmemTranslator::parseSource()
 				  __LINE__,
 				  __FILE__ );
     }
-
-  /*
-  // MDV is required in a data set.
-  // The field should have been inserted even if 
-  // the original data set lacked it.
-
-  if( (p = table->findi( KeyStr.MDV )) != Symbol::empty() )
-    UserStr.MDV = p->name;
-  else
-    {
-      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
-				  "MDV should have been defined by now!",
-				  __LINE__,
-				  __FILE__ );
-    }
-
-  // EVID is required in a data set.
-  // The field should have been inserted even if 
-  // the original data set lacked it.
-
-  if( (p = table->findi( KeyStr.EVID )) != Symbol::empty() )
-    UserStr.EVID = p->name;
-  else
-    {
-      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
-				  "EVID should have been defined by now!",
-				  __LINE__,
-				  __FILE__ );
-    }
-  */
 
   // DV is always required in a data set and
   // should have appeared in the model definition as well.
