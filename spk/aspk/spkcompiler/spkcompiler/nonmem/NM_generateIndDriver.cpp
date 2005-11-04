@@ -193,7 +193,7 @@ void NonmemTranslator::generateIndDriver( ) const
     }
   else // ADVAN3
     {
-      oIndDriver << "      OdePred<CppAD::AD<double> > predForDisposal( &set, "                    << endl;
+      oIndDriver << "      OdePred<CppAD::AD<double> > predForDisposal( &dataForDisposal, "                    << endl;
       oIndDriver << "                                         nPop, "                              <<  endl;
       oIndDriver << "                                         NonmemPars::isPkFunctionOfT,"        << endl;
       oIndDriver << "                                         NonmemPars::nCompartments,"          << endl;
@@ -470,8 +470,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            set.replaceIPred( iPredOut );"   << endl;
   oIndDriver << "            set.replaceIRes ( iResOut );"    << endl;
   oIndDriver << "            set.replaceIWRes( iResWtdOut );" << endl;
-  oIndDriver << "            set.replacePred ( iPredOut );"   << endl;
-  oIndDriver << "            set.replaceRes  ( iResOut );"    << endl;
+  //  oIndDriver << "            set.replacePred ( iPredOut );"   << endl;
+  //  oIndDriver << "            set.replaceRes  ( iResOut );"    << endl;
   oIndDriver << "            set.replaceWRes ( iResWtdOut );" << endl;
   oIndDriver << "         }" << endl;
  

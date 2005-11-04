@@ -709,7 +709,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 
   // Store the current values in temporary storage and also copy into the supper classes.
   oOdePred_h << "   " << UserStr.PRED << " = " << UserStr.F << ";" << endl;
+  oOdePred_h << "   " << UserStr.RES  << " = (" << UserStr.MDV << "==0?" << UserStr.DV << "-" << UserStr.PRED << " : 0 );" << endl;
 
+  // Keep computed values in a temporary location.
   for( pT = t->begin(); pT != t->end(); pT++ )
     {
       // THETA, ETA, EPS are given OdePred::eval() as vectors by the caller.
@@ -719,7 +721,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       const string keyLabel              = SymbolTable::key( label );
       enum Symbol::Ownership owner       = pT->second.owner;
       enum Symbol::ObjectType objectType = pT->second.object_type;
+      enum Symbol::Access access         = pT->second.access;
 
+      // Data items are constant, so we don't need to keep them.
       if( owner == Symbol::DATASET )
 	continue;
 
@@ -752,6 +756,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	          oOdePred_h << "   copy( " << label << ", " << label << "+spk_nCompartments, ";
 	          oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	        }
+	      else
+		{}
 	    }
           else if( objectType == Symbol::MATRIX )
             {
@@ -759,14 +765,17 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    }
           else // Scalar
 	    {
-	      oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
-	      oOdePred_h << " = " << label << ";" << endl;
+	      if( keyLabel == KeyStr.PRED || keyLabel == KeyStr.RES || access == Symbol::READWRITE )
+		{
+		  oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
+		  oOdePred_h << " = " << label << ";" << endl;
+		}
 	    }
 	}
       else // User
 	{
-	  if( objectType == Symbol::SCALAR )
-	    {
+	  if( objectType == Symbol::SCALAR && access == Symbol::READWRITE )
+	    {  
 	      oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
 	      oOdePred_h << " = " << label << ";" << endl;
 	    }
@@ -793,6 +802,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       const string keyLabel              = SymbolTable::key( label );
       enum Symbol::Ownership  owner      = pT->second.owner;
       enum Symbol::ObjectType objectType = pT->second.object_type;
+      enum Symbol::Access access         = pT->second.access;
 
       if( owner == Symbol::DATASET )
         continue;
@@ -820,19 +830,22 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    }
           else // Scalar
 	    {
-	      oOdePred_h << "         spk_perm->data[ spk_i ]->" << label;
-	      oOdePred_h << " = spk_temp.data[ i ]->" << label << ";" << endl;
+	      if( keyLabel == KeyStr.PRED || keyLabel == KeyStr.RES || access == Symbol::READWRITE )
+		{
+		  oOdePred_h << "         spk_perm->data[ i ]->" << label;
+		  oOdePred_h << " = spk_temp.data[ i ]->" << label << ";" << endl;
+		}
 	    }
         }
       else // User
         { 
-	  if( objectType == Symbol::SCALAR )
+	  if( objectType == Symbol::SCALAR && access == Symbol::READWRITE )
 	    {
 	      oOdePred_h << "       spk_perm->data[ i ]->" << label;
 	      oOdePred_h << " = spk_temp.data[ i ]->";
 	      oOdePred_h << label << ";" << endl;
 	    }
-        }
+	}
     }      
   oOdePred_h << "     }" << endl;
   oOdePred_h << "   }" << endl;

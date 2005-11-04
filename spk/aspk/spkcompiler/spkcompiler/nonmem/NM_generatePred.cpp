@@ -232,7 +232,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	    }
 	  else
 	    {
-	      // The other vectors (PRES, PWRES, ORGDV...) are irrelevant in this class
+	      // The other vectors if there's any are irrelevant in this class
 	      // because they are computed outside of Pred.
 	      continue;
 	    }
@@ -491,9 +491,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
   oPred_h << UserStr.PRED << " = " << UserStr.F << ";" << endl;
+  oPred_h << UserStr.RES  << " = (" << UserStr.MDV << "==0? " << UserStr.DV << "-" << UserStr.PRED << " : 0 );" << endl;
 
   for( pT = t->begin(); pT != t->end(); pT++ )
     {
+      /*
       // THETA, ETA, EPS are given Pred::eval() as vectors by the caller.
       // So, we have to treat these guys a bit different from the user variables
       // which are scalar values.
@@ -527,6 +529,63 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  oPred_h << "[ spk_j ]";
 	  oPred_h << " = " << label << ";" << endl;
 	}
+      */
+      // THETA, ETA, EPS are given OdePred::eval() as vectors by the caller.
+      // So, we have to treat these guys a bit different from the user variables
+      // which are scalar values.
+      const string label                 = pT->second.name;
+      const string keyLabel              = SymbolTable::key( label );
+      enum Symbol::Ownership owner       = pT->second.owner;
+      enum Symbol::ObjectType objectType = pT->second.object_type;
+      enum Symbol::Access access         = pT->second.access;
+
+      // Data items are constant, so we don't need to keep them.
+      if( owner == Symbol::DATASET )
+	continue;
+
+      else if( owner == Symbol::SYSTEM )
+        {
+          if( objectType == Symbol::VECTOR )
+            {
+              if( keyLabel == KeyStr.THETA )
+	        {
+	          oPred_h << "   copy( " << label << ", " << label << "+spk_thetaLen, ";
+	          oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+                }
+              else if( keyLabel == KeyStr.ETA )
+	        {
+	          oPred_h << "   copy( " << label << ", " << label << "+spk_etaLen, ";
+	          oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+	        }
+              else if( keyLabel == KeyStr.EPS )
+	        {
+	          oPred_h << "   copy( " << label << ", " << label << "+spk_epsLen, ";
+	          oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+	        }
+	      else
+		{}
+ 	    }
+          else if( objectType == Symbol::MATRIX )
+            {
+              continue;
+	    }
+          else // Scalar
+	    {
+	      if( keyLabel == KeyStr.PRED || keyLabel == KeyStr.RES || access == Symbol::READWRITE )
+		{
+		  oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
+		  oPred_h << " = " << label << ";" << endl;
+		}
+	    }
+	}
+      else // User
+	{
+	  if( objectType == Symbol::SCALAR && access == Symbol::READWRITE )
+	    {
+	      oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
+	      oPred_h << " = " << label << ";" << endl;
+	    }	 
+	}
     }   
   oPred_h << endl;
 
@@ -541,10 +600,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "     spk_isIterCompleted = true;" << endl;
   oPred_h << "     for( int i=0; i < spk_nIndividuals; i++ )" << endl;
   oPred_h << "     {" << endl;
-  // User defined variables spk_temp(current) => spk_permanent
-  // The user defined scalar variables
+
+  // Move spk_temp(current) => spk_permanent for all user defined variables and THETA/ETA/EPS vectors.
   for( pT = t->begin(); pT != t->end(); pT++ )
     {
+      /*
       const string label     = pT->second.name;
       const string keyLabel = SymbolTable::key( label );
       enum Symbol::Access access = pT->second.access;
@@ -555,6 +615,51 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  oPred_h << " = spk_temp.data[ i ]->";
 	  oPred_h << label << ";" << endl;
 	}
+      */
+      const string label                 = pT->second.name;
+      const string keyLabel              = SymbolTable::key( label );
+      enum Symbol::Ownership  owner      = pT->second.owner;
+      enum Symbol::ObjectType objectType = pT->second.object_type;
+      enum Symbol::Access access         = pT->second.access;
+      if( owner == Symbol::DATASET )
+        continue;
+      else if( owner == Symbol::SYSTEM )
+        {
+	  if( objectType == Symbol::MATRIX )
+	    continue;
+	  else if( objectType == Symbol::VECTOR )
+	    {
+	      if( keyLabel == KeyStr.THETA 
+		  || keyLabel == KeyStr.ETA 
+		  || keyLabel == KeyStr.EPS )
+		{
+		  oPred_h << "       spk_perm->data[ i ]->" << label;
+		  oPred_h << " = spk_temp.data[ i ]->";
+		  oPred_h << label << ";" << endl;
+		}
+	    }
+          else if( objectType == Symbol::MATRIX )
+            {
+              continue;
+	    }
+          else // Scalar
+	    {
+	      if( keyLabel == KeyStr.PRED || keyLabel == KeyStr.RES || access == Symbol::READWRITE )
+		{
+		  oPred_h << "       spk_perm->data[ i ]->" << label;
+		  oPred_h << " = spk_temp.data[ i ]->" << label << ";" << endl;
+		}
+	    }
+        }
+      else // User
+        { 
+	  if( objectType == Symbol::SCALAR && access == Symbol::READWRITE )
+	    {
+	      oPred_h << "       spk_perm->data[ i ]->" << label;
+	      oPred_h << " = spk_temp.data[ i ]->";
+	      oPred_h << label << ";" << endl;
+	    }
+        }
     }      
   oPred_h << "     }" << endl;
   oPred_h << "   }" << endl;

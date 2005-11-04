@@ -521,15 +521,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         }" << endl;
   oPopDriver << endl;
 
-  // Statistics can be only computed when the parameter estimation has been done.
-  oPopDriver << "STATISTICS:" << endl;
-  oPopDriver << "         /*******************************************************************/" << endl;
-  oPopDriver << "         /*                                                                 */" << endl;
-  oPopDriver << "         /*   Statistics                                                    */" << endl;
-  oPopDriver << "         /*                                                                 */" << endl;
-  oPopDriver << "         /*******************************************************************/" << endl;
-  oPopDriver << "         ///////////////////////////////////////////////////////////////////" << endl;
-  oPopDriver << "         //   NONMEM Specific" << endl;
   oPopDriver << "         if( isOptRequested && isOptSuccess )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            assert( haveCompleteData );" << endl;
@@ -686,8 +677,8 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << endl;
   oPopDriver << "            if( isPostHoc )" << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               set.replacePred    ( iPredOut );"        << endl;
-  oPopDriver << "               set.replaceRes     ( iResOut );"         << endl;
+  //  oPopDriver << "               set.replacePred    ( iPredOut );"        << endl;
+  //  oPopDriver << "               set.replaceRes     ( iResOut );"         << endl;
   oPopDriver << "               set.replaceWRes    ( iResWtdOut );"      << endl;
   oPopDriver << "               set.replaceEtaRes  ( iParResOut );"      << endl;
   oPopDriver << "               set.replaceWEtaRes ( iParResWtdOut );"   << endl;
@@ -696,26 +687,32 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            {" << endl;
   oPopDriver << "               if( objective == FIRST_ORDER )" << endl;
   oPopDriver << "               {" << endl;
-  oPopDriver << "                  set.replacePred    ( pPredOut );"        << endl;
-  oPopDriver << "                  set.replaceRes     ( pResOut );"         << endl;
+  //  oPopDriver << "                  set.replacePred    ( pPredOut );"        << endl;
+  //  oPopDriver << "                  set.replaceRes     ( pResOut );"         << endl;
   oPopDriver << "                  set.replaceWRes    ( pResWtdOut );"      << endl;
   oPopDriver << "                  set.replaceEtaRes  ( pParResOut );"      << endl;
   oPopDriver << "                  set.replaceWEtaRes ( pParResWtdOut );"   << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "               else // conditional" << endl;
   oPopDriver << "               {" << endl;
-  oPopDriver << "                  set.replacePred    ( cPredOut );"        << endl;
-  oPopDriver << "                  set.replaceRes     ( cResOut );"         << endl;
+  //  oPopDriver << "                  set.replacePred    ( cPredOut );"        << endl;
+  //  oPopDriver << "                  set.replaceRes     ( cResOut );"         << endl;
   oPopDriver << "                  set.replaceWRes    ( cResWtdOut );"      << endl;
   oPopDriver << "                  set.replaceEtaRes  ( cParResOut );"      << endl;
   oPopDriver << "                  set.replaceWEtaRes ( cParResWtdOut );"   << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "         }" << endl;
-  oPopDriver << "         ////" << endl;
-  oPopDriver << "         //////////////////////////////////////////////////////////////////////" << endl;    
+
   oPopDriver << endl;
  
+  // Statistics can be only computed when the parameter estimation has been done.
+  oPopDriver << "STATISTICS:" << endl;
+  oPopDriver << "         /*******************************************************************/" << endl;
+  oPopDriver << "         /*                                                                 */" << endl;
+  oPopDriver << "         /*   Statistics                                                    */" << endl;
+  oPopDriver << "         /*                                                                 */" << endl;
+  oPopDriver << "         /*******************************************************************/" << endl;
   oPopDriver << "         if( isStatRequested && isOptRequested && isOptSuccess )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            gettimeofday( &statBegin, NULL );" << endl;
