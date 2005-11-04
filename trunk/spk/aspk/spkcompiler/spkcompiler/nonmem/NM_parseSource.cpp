@@ -97,12 +97,11 @@ void NonmemTranslator::parseSource()
 
   myModelSpec = detModelType();
 
-  
-  // PRED
+  // PRED - computed within Pred::eval() or OdePred::eval()
   table->insertScalar( DefaultStr.PRED, Symbol::SYSTEM, Symbol::READONLY );
   UserStr.PRED = DefaultStr.PRED;
 
-  // RES
+  // RES - computed within Pred::eval() or OdePred::eval()
   table->insertScalar( DefaultStr.RES, Symbol::SYSTEM, Symbol::READONLY );
   UserStr.RES = DefaultStr.RES;
 
