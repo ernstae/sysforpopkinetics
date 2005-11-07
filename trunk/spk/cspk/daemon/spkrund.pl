@@ -47,6 +47,12 @@ The program expects the following arguments:
         job table
     $dbpasswd
         The password associated with the username
+    $mode
+        The test mode indicator being "test" for test mode
+    $shost
+        The host on which the Job-queue server resides
+    $port
+        The port number of the Job-queue server uses 
 
 =head2 OPERATION
 
@@ -213,17 +219,19 @@ use Fcntl qw(:DEFAULT :flock);
 use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
-use Spkdb('connect', 'disconnect', 'de_q2r', 'en_q2r', 'get_run_jobs', 'end_job',
-	  'job_history', 'email_for_job', 'de_q2ar', 'get_job_ids', 'get_mail_notice');
+use Spkdb('connect', 'disconnect', 'get_q2r_job', 'set_state_code', 'end_job',
+	  'job_history', 'email_for_job', 'get_mail_notice');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
-use IO::Socket::INET;
 use Sys::Hostname;
+use IO::Socket;
 
 my $database = shift;
 my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
+my $shost    = "localhost";
+my $port = "9000";
 
 my $mailserver = "smtp.washington.edu:25";
 my $hostname = hostname();
@@ -243,12 +251,15 @@ my $retain_working_dir = 0;
 my $dbh;
 my $build_failure_exit_value = 101;
 my $database_open = 0;
+my $sh;
+my $server_open = 0;
 
 my $filename_checkpoint = "checkpoint.xml";
 my $filename_data = "data.xml";
 my $filename_driver = "driver";
 my $filename_job_id = "job_id";
 my %jobid_pid = ();
+my %pid_abort = ();
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
@@ -294,6 +305,11 @@ sub death {
 	&disconnect($dbh)
     }
 
+    # Close the connection to the job-queue server
+    if ($server_open) {
+	close($sh);
+    }
+
     # remove the lockfile 
     if ($lockfile_exists) {
 	unlink($lockfile_path);
@@ -309,7 +325,7 @@ sub fork_driver {
     use Errno qw(EAGAIN);
 
     my $jrow = shift;
-    my $job_id = $jrow->{'job_id'};
+    my $job_id = shift;
     my $cpp_source = $jrow->{'cpp_source'};
     my $checkpoint = $jrow->{'checkpoint'};
     my $pid;
@@ -550,6 +566,12 @@ sub reaper {
 
     # Assume success, then look for errors
     $end_code = "srun"; 
+syslog('info', "end_code: srun  pid: $child_pid");
+    if(exists $pid_abort{$child_pid}) {
+        $end_code = "abrt";
+        $submit_to_bugzilla = 0;
+        delete($pid_abort{$child_pid});
+    }
 
     # $submit_to_bugzilla must be re-initialized every time
     # this routine is called because it is taking now AND operation.
@@ -654,7 +676,6 @@ sub reaper {
         $submit_to_bugzilla &= 1;
     }
 
-
     if ($child_signal_number == SIGABRT) {
 	$end_code = "serr";
 	$err_msg .= "software bug asserted; ";
@@ -663,7 +684,7 @@ sub reaper {
     elsif ($child_signal_number == SIGTERM) {
 	$end_code = "abrt";
 	$err_msg .= "killed by operator; ";
-        $submit_to_bugzilla &= 1;
+        $submit_to_bugzilla &= 0;
     }
     elsif ($child_signal_number == SIGSEGV) {
 	$end_code = "herr";
@@ -736,41 +757,43 @@ sub reaper {
 
 	# Submit runtime bugs to bugzilla only if the end_code is either "serr" or "herr".
 	if ($submit_to_bugzilla ) {
-	    my $summary = $end_code eq "serr" ? "soft" : "hard";
-	    my @args = ($pathname_bugzilla_submit);
-	    push @args, "--product",     $bugzilla_product;
-	    push @args, "--version",     $spk_version;
-	    push @args, "--component",   "CSPK";
-	    push @args, "--priority",    "P4";
-	    push @args, "--severity",    "critical";
-	    push @args, "--summary",     "'job_id=$job_id, runtime $summary error'";
-	    if (defined $email) {
-		push @args, "--cc", $email;
-	    }
-	    push @args, "--description", $err_msg;
-	    push @args, "--no-stdin";
-	    push @args, "$bugzilla_url";
-	    system(@args);
-	    my $exit_status = $? >> 8;
-	    if ($exit_status != 0) {
-		syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
-	    }
+            my $summary = $end_code eq "serr" ? "soft" : "hard";
+            my @args = ($pathname_bugzilla_submit);
+            push @args, "--product",     $bugzilla_product;
+            push @args, "--version",     $spk_version;
+            push @args, "--component",   "CSPK";
+            push @args, "--priority",    "P4";
+            push @args, "--severity",    "critical";
+            push @args, "--summary",     "'job_id=$job_id, runtime $summary error'";
+            if (defined $email) {
+	        push @args, "--cc", $email;
+            }
+            push @args, "--description", $err_msg;
+            push @args, "--no-stdin";
+            push @args, "$bugzilla_url";
+            system(@args);
+            my $exit_status = $? >> 8;
+            if ($exit_status != 0) {
+	        syslog('emerg', "bugzilla-submit failed with exit_status=$exit_status");
+            }
             else{
                 syslog('info', "submitted a bugzilla report for job_id=$job_id: $exit_status");
             }
 	}
     }
     # Replace/write results in report file
-    open(FH, ">$filename_results")
-       or death( 'emerg', "can't open $working_dir/$filename_results");
-    print FH $report;
-    close(FH);
+    if ($end_code ne "abrt") {
+        open(FH, ">$filename_results")
+            or death( 'emerg', "can't open $working_dir/$filename_results");
+        print FH $report;
+        close(FH);
+    }
 
     # Remove working directory if not needed
     if ($remove_working_dir && !$retain_working_dir) {
 	File::Path::rmtree($working_dir);
     }
-    if (length($optimizer_trace) > 0) {
+    if ($end_code ne "abrt" && length($optimizer_trace) > 0) {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
     &end_job($dbh, $job_id, $end_code, $report, $checkpoint)
@@ -830,6 +853,12 @@ sub start {
 	or death("emerg", "can't connect to database=$database, host=$host");
     syslog("info", "connected to database=$database, host=$host");
     $database_open = 1;
+
+    # Open a connection to the job-queue server
+    $sh = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $shost, PeerPort => $port)
+        or death("emerg", "can't connect to port $port on $shost: $!");
+    $sh->autoflush(1);
+    $server_open = 1;
 }
 sub stop {
     # We have received the TERM signal. 
@@ -844,6 +873,16 @@ sub stop {
 	$lockfile_exists = 0;
     } 
 
+    # Close the connection to the database
+    if ($database_open) {
+	&disconnect($dbh)
+    }
+
+    # Close the connection to the job-queue server
+    if ($server_open) {
+	close($sh);
+    }
+
     # send the TERM signal to every member of our process group
     kill('TERM', -$$);
 
@@ -855,7 +894,37 @@ sub stop {
     # now we can die
     death('info', 'received the TERM signal (normal mode of termination)');
 }
+# Abort a non-running job, which is in queued to abort run or aborting run
+# state left by the last termination of this daemon).
+sub abort_job {
+    my $jobid = shift;
 
+    # Form the working directory path of the job
+    my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
+    my $working_dir = "$tmp_dir/$unique_name";
+    my $checkpoint;
+    if ( -e $working_dir ) {
+        # Change to the working directory
+        chdir $working_dir;
+
+        # Read checkpoint file to $checkpoint variable
+        if ( -f $filename_checkpoint && -s $filename_checkpoint > 0 ){
+            open(FH, $filename_checkpoint)
+	        or death('emerg', "can't open $working_dir/$filename_checkpoint");
+	    read(FH, $checkpoint, -s FH);
+            close(FH);
+        }
+
+        # Remove working directory if it is not needed
+        if (!$retain_working_dir) {
+            File::Path::rmtree($working_dir);
+        }
+    }
+
+    # End the job
+    &end_job($dbh, $jobid, "abrt", undef, $checkpoint)
+        or death('emerg', "job_id=$jobid: $Spkdb::errstr");
+}
 # become a daemon
 Proc::Daemon::Init();
 
@@ -880,107 +949,86 @@ $SIG{'QUIT'} = 'IGNORE';
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
-# Wait for a while till things settle down
-sleep(10);
-
-# Abort any jobs of queued to abort run or aborting run
-# state, which was left by the last termination of this daemon.
-my @jobs = &get_job_ids($dbh, "q2ar");
-my $jobid;
-if(!(@jobs == 1 && not defined $jobs[0])) {
-    foreach $jobid (@jobs) {
-        &end_job($dbh, $jobid, "abrt", undef, undef)
-            or death('emerg', "job_id=$jobid: $Spkdb::errstr");
-    }
-}
-else {
-    death("emerg", "error reading database: $Spkdb::errstr");
-}
-@jobs = &get_job_ids($dbh, "arun");
-if(!(@jobs == 1 && not defined $jobs[0])) {
-    my $checkpoint;
-    foreach $jobid (@jobs) {
-        # Change to the working directory of the job
-        my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
-        my $working_dir = "$tmp_dir/$unique_name";
-        chdir $working_dir;
-
-        # Read checkpoint file to $checkpoint variable
-        if( -f $filename_checkpoint && -s $filename_checkpoint > 0 ){
-	    # Read the checkpoint file into the checkpoint variable
-	    open(FH, $filename_checkpoint)
-	        or death('emerg', "can't open $working_dir/$filename_checkpoint");
-	    read(FH, $checkpoint, -s FH);
-	    close(FH);
-        }
-
-        # Remove working directory if it is not needed
-        if (!$retain_working_dir) {
-            File::Path::rmtree($working_dir);
-        }
-
-        &end_job($dbh, $jobid, "abrt", undef, $checkpoint)
-            or death('emerg', "job_id=$jobid: $Spkdb::errstr");
-    }
-}
-else {
-    death("emerg", "error reading database: $Spkdb::errstr");
-}
-
 # rerun any jobs that were interrupted when we last terminated
-my $job_array = &get_run_jobs($dbh);
-syslog('info', "looking for interrupted computational runs");
-if (defined $job_array) {
-    foreach my $job_row (@$job_array) {
-	my $history_array = &job_history($dbh, $job_row->{'job_id'});
-	my $history_row = $history_array->[@$history_array - 1];
-	print "host = $history_row->{'host'}\n";
-	if ($history_row->{'host'} eq hostname) {
-	    &fork_driver($job_row);
-	}
-    }
-}
-else {
-    death("emerg", "error reading database: $Spkdb::errstr");
-}
+#my $job_array = &get_run_jobs($dbh);
+#syslog('info', "looking for interrupted computational runs");
+#if (defined $job_array) {
+#    foreach my $job_row (@$job_array) {
+#	my $history_array = &job_history($dbh, $job_row->{'job_id'});
+#	my $history_row = $history_array->[@$history_array - 1];
+#	print "host = $history_row->{'host'}\n";
+#	if ($history_row->{'host'} eq hostname) {
+#	    &fork_driver($job_row);
+#	}
+#    }
+#}
+#else {
+#    death("emerg", "error reading database: $Spkdb::errstr");
+#}
 
 # loop until interrupted by a signal
 use POSIX ":sys_wait_h";
 my $child_pid;
+my $jobid;
 syslog('info', "processing new computational runs");
 
 while(1) {
     # if there is a job queued-to-run, fork the driver
     if ($concurrent < $max_concurrent) {
-	my $job_row = &de_q2r($dbh);
-	if (defined $job_row) {
-	    if ($job_row) {
-		&fork_driver($job_row);
-	    }
-	}
-	else {
-	    death("emerg", "error reading database: $Spkdb::errstr");
-	}
+        print $sh "get-q2r\n";
+        $jobid = <$sh>;
+        if (defined $jobid) {
+            chop($jobid);
+            if ($jobid ne "none") {    
+                my $job_row = &get_q2r_job($dbh, $jobid);
+	        if (defined $job_row && $job_row) {
+		    &fork_driver($job_row, $jobid);
+	        }
+	        else {
+	            death("emerg", "error reading database: $Spkdb::errstr");
+	        }
+            }
+        }
+        else {
+            death("emerg", "error reading job-queue to get q2r job_id");
+        }
     }
 
     # If there is a job queued-to-abort-run, kill the process
-    my $jobid = &de_q2ar($dbh);
+    print $sh "get-q2ar\n";
+    $jobid = <$sh>;
     if (defined $jobid) {
-	if ($jobid) {
-            my $cpid = $jobid_pid{jobid};
-            $SIG{'TERM'} = 'IGNORE';
-	    kill('TERM', $cpid);
-            $SIG{'TERM'} = \&stop;
+        chop($jobid);
+        if ($jobid ne "none") {
+            if (&set_state_code($dbh, $jobid, "arun") == 1) {
+                if (exists $jobid_pid{$jobid}) {
+                    my $cpid = $jobid_pid{$jobid};
+                    $pid_abort{$cpid} = $cpid;
+                    $SIG{'TERM'} = 'IGNORE';
+	            kill('TERM', $cpid);
+                    $SIG{'TERM'} = \&stop;
+                }
+                else {
+                    abort_job($jobid);
+                }
+            }
+            else {
+	        death("emerg", "error reading database: $Spkdb::errstr");
+            }
         }
     }
     else {
-	death("emerg", "error reading database: $Spkdb::errstr");
+        death("emerg", "error reading job-queue to get q2ar job");
     }
 
     # process child processes that have terminated
-    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) { 
+    while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {
 	reaper($child_pid, $?);
-        delete($jobid_pid{'jobid'});
+
+        # Get the job_id from the child pid
+        my %pid_jobid = reverse %jobid_pid;
+        $jobid = $pid_jobid{$child_pid};
+        delete($jobid_pid{$jobid});
     }
     # sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE

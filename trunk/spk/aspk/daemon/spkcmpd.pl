@@ -40,13 +40,19 @@ The program expects the following arguments:
 
     $database
         The name of the SPK database
-    $host
+    $dbhost
         The host on which the SPK database resides
     $dbuser
         A database username which has read/write access to the 
         job table
     $dbpasswd
         The password associated with the username
+    $mode
+        The test mode indicator being "test" for test mode
+    $shost
+        The host on which the Job-queue server resides
+    $port
+        The port number of the Job-queue server uses 
 
 The first think that spkcmp.pl does after starting up is to call
 Proc::Daemon::Init to make it into a daemon, by shedding its 
@@ -172,16 +178,18 @@ use Fcntl qw(:DEFAULT :flock);
 use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
-use Spkdb('connect', 'disconnect', 'de_q2c', 'de_q2ac', 'en_q2r', 'get_job_ids',
-          'end_job', 'get_cmp_jobs', 'get_dataset', 'email_for_job');
+use Spkdb('connect', 'disconnect', 'get_q2c_job', 'set_state_code', 'en_q2r',
+          'end_job', 'get_dataset', 'email_for_job');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
-
+use IO::Socket;
 
 my $database = shift;
-my $host     = shift;
+my $dbhost   = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
+my $shost    = "localhost";
+my $port = "9000";
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.2.2:8081/";
@@ -193,6 +201,9 @@ my $retain_working_dir = 0;
 
 my $dbh;
 my $database_open = 0;
+my $sh;
+my $server_open = 0;
+
 my $filename_cerr_report = "compilation_error.xml";
 my $filename_job_id = "job_id";
 my %jobid_pid = ();
@@ -236,6 +247,11 @@ sub death {
 	&disconnect($dbh)
     }
 
+    # Close the connection to the job-queue server
+    if ($server_open) {
+	close($sh);
+    }
+
     # Remove the lockfile
     if ($lockfile_exists) {
 	unlink($lockfile_path);
@@ -250,10 +266,10 @@ sub death {
 sub fork_compiler {
     use Errno qw(EAGAIN);
     my $jrow = shift;
+    my $job_id = shift;
 
     my $drow;
     my $dataset_id = $jrow->{"dataset_id"};
-    my $job_id     = $jrow->{"job_id"};
     my $pid;
 
     # NOTE: Working Directory Name
@@ -487,7 +503,20 @@ sub reaper {
 	# tar file in the cpp_source field of the job table entry
 	&en_q2r($dbh, $job_id, $buf)
 	    or death('emerg', "job_id=$job_id: errstr: $Spkdb::errstr");
-	syslog('info', "job_id=$job_id compiled and has moved to run queue");
+        print $sh "add-q2r-$job_id\n";
+        my $answer = <$sh>;
+        if (defined $answer) {
+            chop($answer);
+            if ($answer eq "done") {
+                syslog('info', "job_id=$job_id compiled and has moved to run queue");
+            }
+            else {
+                death('emerg', "job_id=$job_id: could not add q2r to job-queue");
+            }
+	}
+        else {
+            death("emerg", "job_id=$job_id: could not add q2r to job-queue");
+        }
 
 	#remove the (now redundant) tar file from the working directory
 	File::Path::rmtree("cpp_source.tar");
@@ -518,7 +547,7 @@ sub reaper {
 	elsif ($child_signal_number == SIGTERM) {
 	    $end_code = "abrt";
 	    $err_msg .= "killed by operator; ";
-            $submit_to_bugzilla &= 1;
+            $submit_to_bugzilla &= 0;
 	}
 	elsif ($child_signal_number == SIGSEGV) {
 	    $end_code = "herr";
@@ -559,7 +588,7 @@ sub reaper {
            $end_code = "serr";
            $err_msg .= "core dump in $working_dir; ";
            $remove_working_dir = 0;
-            $submit_to_bugzilla &= 1;
+           $submit_to_bugzilla &= 1;
            $report = format_error_report( "$err_msg $err_rpt" );     
         }
         # Remove the empty STDERR captured file
@@ -567,13 +596,18 @@ sub reaper {
            unlink($filename_serr);
         }
        
-        open(FH, ">result.xml")
-           or death( 'emerg', "can't open $working_dir/result.xml");
-        print FH $report;
-        close(FH);
+        if ($end_code ne "abrt") {
+            open(FH, ">result.xml")
+                or death( 'emerg', "can't open $working_dir/result.xml");
+            print FH $report;
+            close(FH);
+        }
 
 	# Get email address of user
-	my $email = &email_for_job($dbh, $job_id);	
+	my $email;
+        if ($end_code ne "abrt") {
+            $email = &email_for_job($dbh, $job_id);	
+        }
 
         # End the job
 	&end_job($dbh, $job_id, $end_code, $report)
@@ -630,10 +664,16 @@ sub start {
     $lockfile_exists = 1;
 
     # Open a connection to the database
-    $dbh = &connect($database, $host, $dbuser, $dbpasswd)
-	or death("emerg", "can't connect to database=$database, host=$host");
-    syslog("info", "connected to database=$database, host=$host");
+    $dbh = &connect($database, $dbhost, $dbuser, $dbpasswd)
+	or death("emerg", "can't connect to database=$database, host=$dbhost");
+    syslog("info", "connected to database=$database, host=$dbhost");
     $database_open = 1;
+
+    # Open a connection to the job-queue server
+    $sh = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $shost, PeerPort => $port)
+        or death("emerg", "can't connect to port $port on $shost: $!");
+    $sh->autoflush(1);
+    $server_open = 1;
 }
 sub stop {
     # We have received the TERM signal. 
@@ -653,6 +693,11 @@ sub stop {
     # Close the connection to the database
     if ($database_open) {
 	&disconnect($dbh)
+    }
+
+    # Close the connection to the job-queue server
+    if ($server_open) {
+	close($sh);
     }
 
     # Send the TERM signal to every member of our process group
@@ -694,69 +739,77 @@ $SIG{'QUIT'} = 'IGNORE';
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
-# Abort any jobs of 'queued to abort compile' or 'aborting compilation'
-# state, which was left by the last temination of this daemon.
-my @jobs = &get_job_ids($dbh, "q2ac");
-my $job;
-if (@jobs) {
-    foreach $job (@jobs) {
-        &end_job($dbh, $job, "abrt", undef, undef)
-    }
-}
-@jobs = &get_job_ids($dbh, "acmp");
-if (@jobs) {
-    foreach $job (@jobs) {
-        &end_job($dbh, $job, "abrt", undef, undef)
-    }
-}
-
 # Rerun any compiles that were interrupted when we last terminated
-$row_array = &get_cmp_jobs($dbh);
-syslog('info', "looking for interrupted compiler jobs");
-if (defined $row_array) {
-    foreach $row (@$row_array) {
-	&fork_compiler($row);
-    }
-}
-else {
-    death("emerg", "error reading database: $Spkdb::errstr");
-}
+#$row_array = &get_cmp_jobs($dbh);
+#syslog('info', "looking for interrupted compiler jobs");
+#if (defined $row_array) {
+#    foreach $row (@$row_array) {
+#	&fork_compiler($row);
+#    }
+#}
+#else {
+#    death("emerg", "error reading database: $Spkdb::errstr");
+#}
 
 # Loop until interrupted by a signal
 use POSIX ":sys_wait_h";
 
 my $child_pid;
+my $jobid;
 
 syslog('info', "compiling jobs from the queue");
 
 while(1) {
     # If there is a job queued-to-compile, fork the compiler
-    $row = &de_q2c($dbh);
-    if (defined $row) {
-	if ($row) {
-	    &fork_compiler($row);
-	}
-    }
-    else {
-	death("emerg", "error reading database: $Spkdb::errstr");
-    }
-    # If there is a job queued-to-abort-compile, kill the process
-    my $jobid = &de_q2ac($dbh);
+    print $sh "get-q2c\n";
+    $jobid = <$sh>;
     if (defined $jobid) {
-	if ($jobid) {
-            my $cpid = $jobid_pid{jobid};
-            $SIG{'TERM'} = 'IGNORE';
-	    kill('TERM', $cpid);
-            $SIG{'TERM'} = \&stop;
-	}
+        chop($jobid);
+        if ($jobid ne "none") {
+            $row = &get_q2c_job($dbh, $jobid);
+            if (defined $row && $row) {
+	        &fork_compiler($row, $jobid)
+            }
+            else {
+	        death("emerg", "error reading database: $Spkdb::errstr");
+            }
+        }
     }
     else {
-	death("emerg", "error reading database: $Spkdb::errstr");
+        death("emerg", "error reading job-queue to get q2c job");
     }
+
+    # If there is a job queued-to-abort-compile, kill the process
+    print $sh "get-q2ac\n";
+    $jobid = <$sh>;
+    if (defined $jobid) {
+        chop($jobid);
+        if ($jobid ne "none") {
+            if (&set_state_code($dbh, $jobid, "acmp") == 1) {
+                if (exists $jobid_pid{$jobid}) {
+                    my $cpid = $jobid_pid{$jobid};
+                    $SIG{'TERM'} = 'IGNORE';
+	            kill('TERM', $cpid);
+                    $SIG{'TERM'} = \&stop;
+                }
+            }
+            else {
+	        death("emerg", "error reading database: $Spkdb::errstr");
+            }
+        }
+    }
+    else {
+        death("emerg", "error reading job-queue to get q2ac job");
+    }
+
     # Process any child processes which have terminated
     while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {   
 	reaper($child_pid, $?);
-        delete($jobid_pid{'jobid'});
+
+        # Get the job_id from the child pid
+        my %pid_jobid = reverse %jobid_pid;
+        $jobid = $pid_jobid{$child_pid};
+        delete($jobid_pid{$jobid});
     }
     # Sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE 
