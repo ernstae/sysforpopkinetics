@@ -8,6 +8,7 @@ use XML::Simple;
 use Data::Dumper;
 use Getopt::Long qw(:config no_auto_abbrev);
 use Pod::Usage;
+use IO::Socket;
 
 use Spkdb ('connect', 'disconnect', 'job_status');
 
@@ -64,6 +65,12 @@ $? == 0
     or die "could not execute '/etc/rc.d/init.d/spkruntestd stop'\n";
 print "\t\t\t\t\tOK\n";
 
+print "stopping the job-queue server test daemon:";
+$bit_bucket = `ssh webserver '/etc/rc.d/init.d/jobqtestd stop'`;
+$? == 0
+    or die "could not execute '/etc/rc.d/init.d/jobqtestd stop'\n";
+print "\t\t\t\tOK\n";
+
 my $job =  $config->{'cerr'}[0]{'job'};
 my @alljobs = @$job;
 $job =  $config->{'srun'}[0]{'job'};
@@ -80,6 +87,20 @@ print "loading test database with snapshot";
 $cmd = "load_spktest.pl";
 $bit_bucket = `$cmd`;
 print "\t\t\t\t\tOK\n";
+
+print "starting the job-queue server test daemon";
+$bit_bucket = `ssh webserver '/etc/rc.d/init.d/jobqtestd start'`;
+$? == 0
+    or die "could not execute '/etc/rc.d/init.d/jobqtestd start'\n";
+print "\t\t\t\tOK\n";
+
+my $handle;
+do {
+    sleep 1;
+    $handle = IO::Socket::INET->new(Proto => "tcp",
+                                    PeerAddr => "webserver",
+                                    PeerPort => 9001);
+} until defined $handle;
 
 my $start_time = time();
 my $elapsed_time = 0;
