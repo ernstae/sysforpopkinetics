@@ -78,7 +78,15 @@ defined $opt{'help'} == 0
     or die "$usage\n";
 
 $test = 0 if defined $opt{'prod'};
-print( 'production' );
+
+print("Deploying into ");
+if( $test ) {
+  print("test");
+}
+else {
+  print("production");
+}
+print(" environment.\n");
 
 $EFFECTIVE_USER_ID == 0 
     or die "You must be root to run this program\n";
