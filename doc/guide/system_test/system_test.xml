@@ -392,14 +392,21 @@ dump_spktest.pl
 	</listitem>
 	<listitem>
 	  <para>
-	    Start the Job-queue server the daemons, so that the jobs will compile and run.
+	    Start the Job-queue server and the daemons, so that the jobs will compile and run.
 	  </para>
 	  <para>
 	    In your root window to <emphasis>jobqserver</emphasis>:
 	    <screen>
 /etc/rc.d/init.d/jobqtestd start
 	    </screen>
-	    and in your root window to <emphasis>aspkserver</emphasis>:
+            then wait for the server initialization.  The length of the initialization time
+            depends on the total number of jobs in the test database.  To check the status,
+            enter a command in your root window to <emphasis>jobqserver</emphasis>:
+            <screen>
+/usr/local/bin/spktest/pingjobqtestd
+            </screen>
+	    After the initialization is completed, 
+            in your root window to <emphasis>aspkserver</emphasis>:
 	    <screen>
 /etc/rc.d/init.d/spkcmptestd start
 	    </screen>
