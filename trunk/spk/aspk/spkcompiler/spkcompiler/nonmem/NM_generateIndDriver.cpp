@@ -382,8 +382,11 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( const SpkException& e )" << endl;
   oIndDriver << "            {" << endl;
+  oIndDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) )" << endl;
+  oIndDriver << "                  ret = OPTIMIZATION_ERROR;" << endl;
+  oIndDriver << "               else" << endl;
+  oIndDriver << "                  ret = USER_INPUT_ERROR;" << endl;
   oIndDriver << "               errors.cat( e );" << endl;
-  oIndDriver << "               ret = OPTIMIZATION_ERROR;" << endl;
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( ... )" << endl;
   oIndDriver << "            {" << endl;
@@ -564,6 +567,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
   oIndDriver << "         if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oIndDriver << "         {" << endl;
+  oIndDriver << "            // Print out ordinary-length error messages" << endl;
+  oIndDriver << "            oResults << errors << endl;" << endl;
+  oIndDriver << endl;
   oIndDriver << "            // Print out a long error message if exists." << endl;
   oIndDriver << "            char ch;" << endl;
   oIndDriver << "            ifstream iLongError( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
@@ -571,9 +577,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            {" << endl;
   oIndDriver << "               oResults << ch;" << endl;   // Write a long error to the SpkReportML document.
   oIndDriver << "            }" << endl;
-  oIndDriver << endl;
-  oIndDriver << "            // Print out ordinary-length error messages" << endl;
-  oIndDriver << "            oResults << errors << endl;" << endl;
   oIndDriver << "            iLongError.close();" << endl;
   oIndDriver << "         }" << endl;
   oIndDriver << "         oResults << \"</error_list>\" << endl;" << endl;
@@ -722,34 +725,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "                  oResults << \"</value>\" << endl;" << endl;
   oIndDriver << "               }" << endl;
   oIndDriver << "            }" << endl;
-  /*
-  oIndDriver << "            if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
-  oIndDriver << "            {" << endl;
-  oIndDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
-  oIndDriver << "               {" << endl;
-  oIndDriver << "                  oResults << \"<value>\" << omegaOut[i] << \"</value>\" << endl;" << endl;
-  oIndDriver << "               }" << endl;
-  oIndDriver << "            }" << endl;
-  oIndDriver << "            else // full" << endl;
-  oIndDriver << "            {" << endl;
-  oIndDriver << "               valarray<double> omegaFullTemp( (NonmemPars::omegaDim * (NonmemPars::omegaDim+1)) / 2 );" << endl;
-  oIndDriver << "               for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
-  oIndDriver << "               {" << endl;
-  oIndDriver << "                  for( int i=j; i<NonmemPars::omegaDim; i++, cnt++ ) // lower only" << endl;
-  oIndDriver << "                  {" << endl;
-  oIndDriver << "                     omegaFullTemp[ i + j * NonmemPars::omegaDim ] = omegaOut[cnt];" << endl;
-  oIndDriver << "                  }" << endl;
-  oIndDriver << "               }" << endl;
-  oIndDriver << "               for( int j=0, cnt=0; j<NonmemPars::omegaDim; j++ )" << endl;
-  oIndDriver << "               {" << endl;
-  oIndDriver << "                  for( int i=0; i<=j; i++, cnt++ )" << endl;
-  oIndDriver << "                  {" << endl;
-  oIndDriver << "                     oResults << \"<value>\" << omegaFullTemp[ j+i*NonmemPars::omegaDim ];" << endl;
-  oIndDriver << "                     oResults << \"</value>\" << endl;" << endl;
-  oIndDriver << "                  }" << endl;
-  oIndDriver << "               }" << endl;
-  oIndDriver << "            }" << endl;
-  */
   oIndDriver << "            oResults << \"</omega_out>\" << endl;" << endl;
 
   oIndDriver << "            //" << endl;
