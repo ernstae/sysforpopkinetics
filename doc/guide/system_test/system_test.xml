@@ -85,6 +85,9 @@
 	  <para>Web server (webserver)</para>
 	</listitem>
 	<listitem>
+	  <para>Job-queue server (jobqserver)</para>
+	</listitem>
+	<listitem>
 	  <para>Application server for population kinetics (aspkserver)</para>
 	</listitem>
 	<listitem>
@@ -220,6 +223,13 @@
 	  <para>
 	    In a new terminal window:
 	    <screen>
+ssh jobqserver
+su -
+	    </screen>
+	  </para>
+	  <para>
+	    In another new terminal window:
+	    <screen>
 ssh aspkserver
 su -
 	    </screen>
@@ -269,6 +279,10 @@ regression_test --ignore-candidate
 	    and in your root window to <emphasis>cspkserver</emphasis>
 	    <screen>
 /etc/rc.d/init.d/spkruntestd stop
+	    </screen>
+	    and in your root window to <emphasis>jobqserver</emphasis>
+	    <screen>
+/etc/rc.d/init.d/jobqtestd stop
 	    </screen>
 	  </para>
 	</listitem>
@@ -378,10 +392,14 @@ dump_spktest.pl
 	</listitem>
 	<listitem>
 	  <para>
-	    Start the daemons, so that the jobs will compile and run.
+	    Start the Job-queue server the daemons, so that the jobs will compile and run.
 	  </para>
 	  <para>
-	    In your root window to <emphasis>aspkserver</emphasis>:
+	    In your root window to <emphasis>jobqserver</emphasis>:
+	    <screen>
+/etc/rc.d/init.d/jobqtestd start
+	    </screen>
+	    and in your root window to <emphasis>aspkserver</emphasis>:
 	    <screen>
 /etc/rc.d/init.d/spkcmptestd start
 	    </screen>
@@ -513,7 +531,7 @@ regression_test --ignore-candidate
 	</listitem>
 	<listitem>
 	  <para>
-	    Stop both test daemons when the database shows that all your jobs have
+	    Stop both test daemons and Job-queue server when the database shows that all your jobs have
 	    <emphasis>end</emphasis> as the value for <emphasis>state_code</emphasis>.
 	  </para>
 	  <para>
@@ -524,6 +542,10 @@ regression_test --ignore-candidate
 	    and in your root window to <emphasis>cspkserver</emphasis>
 	    <screen>
 /etc/rc.d/init.d/spkruntestd stop
+	    </screen>
+	    and in your root window to <emphasis>jobqserver</emphasis>
+	    <screen>
+/etc/rc.d/init.d/jobqtestd stop
 	    </screen>
 	  </para>
 	</listitem>
@@ -625,6 +647,15 @@ stage_candidate.pl
   <sect1>
     <title id="prod_dirs">Appendix A: Production Files</title>
     <sect2>
+      <title>Jobqserver</title>
+      <para>
+	All files in the following directory:
+	<screen>
+/usr/local/bin/spkprod
+	</screen>	
+      </para>
+    </sect2>
+    <sect2>
       <title>Aspkserver</title>
       <para>
 	All files in the following directories:
@@ -658,6 +689,15 @@ stage_candidate.pl
   </sect1>
   <sect1>
     <title id="test_dirs">Appendix B: Test Files</title>
+    <sect2>
+      <title>Jobqserver</title>
+      <para>
+	All files in the following directory:
+	<screen>
+/usr/local/bin/spktest
+	</screen>	
+      </para>
+    </sect2>
     <sect2>
       <title>Aspkserver</title>
       <para>
