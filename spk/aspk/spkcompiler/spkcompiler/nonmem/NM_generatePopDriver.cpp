@@ -450,8 +450,11 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
+  oPopDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) )" << endl;
+  oPopDriver << "                  ret = OPTIMIZATION_ERROR;" << endl;
+  oPopDriver << "               else" << endl;
+  oPopDriver << "                  ret = USER_INPUT_ERROR;" << endl;
   oPopDriver << "               errors.cat( e );" << endl;
-  oPopDriver << "               ret = OPTIMIZATION_ERROR;" << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( ... )" << endl;
   oPopDriver << "            {" << endl;
@@ -806,6 +809,9 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         oResults << \"<error_list length=\\\"\" << errors.size() << \"\\\">\" << endl;" << endl;
   oPopDriver << "         if( !(haveCompleteData && isOptSuccess && isStatSuccess) )" << endl;
   oPopDriver << "         {" << endl;
+  oPopDriver << "            // Print out ordinary-length error messages" << endl;
+  oPopDriver << "            oResults << errors << endl;" << endl;
+  oPopDriver << endl;
   oPopDriver << "            // Print out a long error message if exists." << endl;
   oPopDriver << "            char ch;" << endl;
   oPopDriver << "            ifstream iLongError( \"" << fSpkRuntimeLongError_tmp << "\" );" << endl;
@@ -813,9 +819,6 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            {" << endl;
   oPopDriver << "               oResults << ch;" << endl;
   oPopDriver << "            }" << endl;
-  oPopDriver << endl;
-  oPopDriver << "            // Print out ordinary-length error messages" << endl;
-  oPopDriver << "            oResults << errors << endl;" << endl;
   oPopDriver << "            iLongError.close();" << endl;
   oPopDriver << "         }" << endl;
   oPopDriver << "         oResults << \"</error_list>\" << endl;" << endl;
