@@ -66,6 +66,12 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // Size of the population" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   const int nIndividuals = " << getPopSize() << ";" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // THETA" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // The length of THETA vector." << endl;
