@@ -42,7 +42,10 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "TEST_DIR  = spktest" << endl;
   oMakefile << endl;                                   
 
-  oMakefile << "CPP_FLAGS = -g" << endl;
+  oMakefile << "CPP_FLAGS = -g ";
+  if( myModelSpec == ADVAN6 )
+    oMakefile << "-DODEPRED"; // Define "ODEPRED" macro
+  oMakefile << endl;
   oMakefile << endl;                                        
 
   oMakefile << "LIBS      = -lspk -lQN01Box -lspkpred -lCppAD";
@@ -52,7 +55,7 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "COMMON_INCLUDE = \\" << endl;
   if( myModelSpec == PRED )
      oMakefile << "\tPred.h \\" << endl;
-  else
+  else if( myModelSpec == ADVAN6 )
      oMakefile << "\tOdePred.h \\" << endl;
   oMakefile << "\tDataSet.h \\" << endl;
   oMakefile << "\tIndData.h \\" << endl;

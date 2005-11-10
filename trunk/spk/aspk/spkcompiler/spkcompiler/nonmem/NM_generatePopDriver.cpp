@@ -143,7 +143,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << endl;
 
   oPopDriver << "      DataSet< CppAD::AD<double> > set;" << endl;
-  oPopDriver << "      const int           nPop      = set.getPopSize();" << endl;
+  oPopDriver << "      const int           nPop      = NonmemPars::nIndividuals;" << endl;
   oPopDriver << "      const valarray<int> NObservs  = set.getNObservs();" << endl;
   oPopDriver << "      const valarray<int> NRecords  = set.getNRecords();" << endl;
   oPopDriver << "      const int           nY        = NObservs.sum();" << endl;
@@ -167,7 +167,7 @@ void NonmemTranslator::generatePopDriver() const
   else // ADVAN
     {
       oPopDriver << "      OdePred<CppAD::AD<double> > mPred( &set, " << endl;
-      oPopDriver << "                                         nPop, " << endl;
+      oPopDriver << "                                         NonmemPars::nIndividuals, " << endl;
       oPopDriver << "                                         NonmemPars::isPkFunctionOfT," << endl;
       oPopDriver << "                                         NonmemPars::nCompartments," << endl;
       oPopDriver << "                                         NonmemPars::nParameters," << endl;
@@ -206,7 +206,7 @@ void NonmemTranslator::generatePopDriver() const
   else
     {
       oPopDriver << "      OdePred< CppAD::AD<double> > predForDisposal( &dataForDisposal, " << endl;
-      oPopDriver << "                                         nPop, " << endl;
+      oPopDriver << "                                         NonmemPars::nIndividuals, " << endl;
       oPopDriver << "                                         NonmemPars::isPkFunctionOfT," << endl;
       oPopDriver << "                                         NonmemPars::nCompartments," << endl;
       oPopDriver << "                                         NonmemPars::nParameters," << endl;
