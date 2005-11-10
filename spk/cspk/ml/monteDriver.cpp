@@ -183,7 +183,12 @@ $end
 # include "MapMonte.h"
 # include "MapBay.h"
 
-# include "Pred.h"
+#ifdef ODEPRED
+   # include "OdePred.h"
+#else
+   # include "Pred.h"
+#endif
+
 # include "DataSet.h"
 # include "NonmemPars.h"
 # include "MontePars.h"
@@ -518,12 +523,29 @@ int main(int argc, const char *argv[])
 
 	// pointers to objects created inside of try block
 	std::auto_ptr< DataSet< CppAD::AD<double> > > set; 
+#ifdef ODEPRED
+	std::auto_ptr< OdePred< CppAD::AD<double> > > mPred;
+#else
 	std::auto_ptr< Pred< CppAD::AD<double> > > mPred;
-
+#endif
 	try { 
 		// data set
 		set.reset( new DataSet< CppAD::AD<double> > );
+#ifdef ODEPRED
+		mPred.reset( new OdePred< CppAD::AD<double> >(set.get(),
+                                                           NonmemPars::nIndividuals,
+                                                           NonmemPars::isPkFunctionOfT,
+                                                           NonmemPars::nCompartments,
+                                                           NonmemPars::nParameters,
+                                                           NonmemPars::defaultDoseComp,
+                                                           NonmemPars::defaultObservationComp,
+                                                           NonmemPars::initialOff,
+                                                           NonmemPars::noOff,
+                                                           NonmemPars::noDose,
+                                                           NonmemPars::relTol ) );
+#else
 		mPred.reset( new Pred< CppAD::AD<double> >(set.get()) );
+#endif
 	}
 	catch( SpkException& e )
 	{       e.push(SpkError::SPK_USER_INPUT_ERR,
