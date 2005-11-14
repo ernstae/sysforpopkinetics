@@ -848,7 +848,8 @@ void SpkError::initXmlParser()
   catch( ... )
     {
       char error_message[ SpkError::maxMessageLen() ];
-      sprintf( error_message, "Error during Xerces-c Initialization.\nException message: %s.\n" );
+      snprintf( error_message, SpkError::maxMessageLen(),
+                "Error during Xerces-c Initialization.\nException message: %s.\n" );
       cerr << error_message << "... terminating from " << __LINE__ << ", " << __FILE__ << endl;
       abort();
     }
@@ -951,8 +952,9 @@ const std::string& operator>>( const std::string& str, SpkError& e )
   catch (const XMLException& e)
     {
       char message[ SpkError::maxMessageLen() ];
-      sprintf( message, "An error occurred during parsing\n   Message: %s\n",
-	       XMLString::transcode(e.getMessage()) );
+      snprintf( message, SpkError::maxMessageLen(), 
+                "An error occurred during parsing\n   Message: %s\n",
+	        XMLString::transcode(e.getMessage()) );
       throw SpkException( SpkError::SPK_XMLDOM_ERR, message, __LINE__, __FILE__ );
     }
   catch (const DOMException& e)
@@ -960,9 +962,9 @@ const std::string& operator>>( const std::string& str, SpkError& e )
       XMLCh xMessage[SpkError::maxMessageLen()];
       
       char cMessage[ SpkError::maxMessageLen() ];
-      sprintf( cMessage, 
+      snprintf( cMessage, SpkError::maxMessageLen(),
 	       "DOM Error during parsing an SpkException.\nDOMException code is: %d\n",
-	       e.code );
+	        e.code );
 
       if (DOMImplementation::loadDOMExceptionMsg(e.code, xMessage, SpkError::maxMessageLen()))
 	{

@@ -431,8 +431,8 @@ void mapObjDiff(
         {
             const int max = SpkError::maxMessageLen();
             char buf[max];
-            sprintf( buf, "%s\nA standard error was thrown during an attempt to approximate the gradient.",
-              e.what() );
+            snprintf( buf, max,
+                      "A standard error was thrown during an attempt to approximate the gradient." );
             throw SpkException( e, buf, __LINE__, __FILE__ );
         }
         catch( ... )
@@ -461,8 +461,8 @@ void mapObjDiff(
         {
             const int max = SpkError::maxMessageLen();
             char buf[max];
-            sprintf( buf, "%s\nA standard error was thrown during an attempt to approximate the hessian.",
-              e.what() );
+            snprintf( buf, max, 
+                      "A standard error was thrown during an attempt to approximate the hessian." );
             throw SpkException( e, buf, __LINE__, __FILE__ );
         }
         catch( ... )

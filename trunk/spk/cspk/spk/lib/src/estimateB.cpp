@@ -822,9 +822,9 @@ void estimateB(
 				//
  			        const int max = SpkError::maxMessageLen();
                                 char buf[max];
-				sprintf( buf, "%s\nA standard error was thrown during an approximation \
-                                               of the first derivative of Lambda with respect to the population parameter.",
-					 e.what() );
+				snprintf( buf, SpkError::maxMessageLen(),
+                                               "A standard error was thrown during an approximation \
+                                               of the first derivative of Lambda with respect to the population parameter." );
 				throw SpkException( e, buf, __LINE__, __FILE__ );
 			}
 			catch( ... )

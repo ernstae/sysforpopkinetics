@@ -35,7 +35,7 @@ void QN01BoxErrorHandler(
 	if( strlen(message) > 0 )
 	{	int Len = strlen(routine) + strlen(message) + 4;
 		buffer = new char[Len];
-		sprintf(buffer, "\n%s: %s", routine, message);
+		snprintf(buffer, Len, "\n%s: %s", routine, message);
 	}
 	else	buffer = message;
 

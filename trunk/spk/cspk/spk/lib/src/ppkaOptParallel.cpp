@@ -1605,7 +1605,7 @@ namespace // [Begin: unnamed namespace]
         {
           const int max = SpkError::maxMessageLen();
           char mess[max];
-          sprintf( mess, 
+          snprintf( mess, max,
             "Backed up population optimization at iteration %d because the population \nobjective could not be calculated.",
             pPopOptInfo->getNIterCompleted() + 1 );
 

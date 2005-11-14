@@ -529,7 +529,8 @@ void SpkException::initXmlParser()
   catch( ... )
     {
       char error_message[ SpkError::maxMessageLen() ];
-      sprintf( error_message, "Error during Xerces-c Initialization.\nException message: %s.\n" );
+      snprintf( error_message, SpkError::maxMessageLen(), 
+                "Error during Xerces-c Initialization.\nException message: %s.\n" );
       throw SpkException( SpkError::SPK_XMLDOM_ERR,
 			  error_message,
 			  __LINE__, __FILE__ );
@@ -706,7 +707,7 @@ const string& operator>>( const string& str, SpkException& e)
   
   const int m = str.size() + strlen("<error_list>\n</error_list>\n");
   char s[ m + 1 ];
-  sprintf( s, "<error_list>\n%s</error_list>\n", str.c_str() );
+  snprintf( s, m+1, "<error_list>\n%s</error_list>\n", str.c_str() );
   MemBufInputSource* memBufIS = new MemBufInputSource( 
 						      reinterpret_cast<const XMLByte*>( s ),
 						      m,
@@ -718,8 +719,9 @@ const string& operator>>( const string& str, SpkException& e)
   catch (const XMLException& e)
     {
       char message[ SpkError::maxMessageLen() ];
-      sprintf( message, "An error occurred during parsing\n   Message: %s\n",
-	       XMLString::transcode(e.getMessage()) );
+      snprintf( message, SpkError::maxMessageLen(),
+                "An error occurred during parsing\n   Message: %s\n",
+	        XMLString::transcode(e.getMessage()) );
       throw SpkException( SpkError::SPK_XMLDOM_ERR, message, __LINE__, __FILE__ );
     }
   catch (const DOMException& e)
@@ -727,9 +729,9 @@ const string& operator>>( const string& str, SpkException& e)
       XMLCh xMessage[SpkError::maxMessageLen()];
       
       char cMessage[ SpkError::maxMessageLen() ];
-      sprintf( cMessage, 
+      snprintf( cMessage, SpkError::maxMessageLen(), 
 	       "DOM Error during parsing an SpkException.\nDOMException code is: %d\n",
-	       e.code );
+  	        e.code );
 
       if (DOMImplementation::loadDOMExceptionMsg(e.code, xMessage, SpkError::maxMessageLen()))
 	{
