@@ -40,7 +40,7 @@
 #pragma warning( disable : 4786 )  
 #include <iostream>
 #include <fstream>
-#include <strstream>
+#include <sstream>
 #include <string>
 #include <queue>
 #include <vector>
@@ -364,7 +364,7 @@ MasterEndChannel::MasterEndChannel(const File& sharedDiskSpace)
 {
     _id = System::pid();
     char buf[MAX_NODES];
-    sprintf( buf, "%s_%d", _id, _counter );
+    snprintf( buf, MAX_NODES, "%s_%d", _id, _counter );
     _strID = buf;
 
     _tempfile.setPath(sharedDiskSpace.getPath());
@@ -531,7 +531,7 @@ const PackageHandle MasterEndChannel::post(const IndInputDataPackage& inpack, bo
 {
     assert( !inpack.empty() );
     int  index = inpack.indVars.who();
-    strstream strIndex;
+    stringstream strIndex;
     strIndex.width(MAX_INDS_DIG);
     strIndex.fill('0');
     strIndex.flags(ios::right);
@@ -820,7 +820,7 @@ NodeEndChannel::NodeEndChannel(const File& sharedDiskSpace)
 {
     _id = System::pid();
     char buf[MAX_NODES];
-    sprintf( buf, "%d", _id );
+    snprintf( buf, MAX_NODES, "%d", _id );
     _strID = buf;
 
     _tempfile.setPath(sharedDiskSpace.getPath());
@@ -997,12 +997,13 @@ const IndInputDataPackage NodeEndChannel::get() const
 }
 const PackageHandle NodeEndChannel::post(SpkException& err) const
 {
-  strstream mess;
-  mess << "Process# " << _strID << " on ";
-  mess << System::machine() << " caught a SpkException." << endl;
-  mess << ends;
+  char mess[ SpkError::maxMessageLen() ];
+  snprintf( mess, SpkError::maxMessageLen(), "Process# %s on %s caught an exception.\n", 
+	    _strID.c_str(),
+            System::machine().c_str() );
+  //mess << ends;
 
-  err.push( SpkError::SPK_PARALLEL_ERR, mess.str(), __LINE__, __FILE__ );
+  err.push( SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
 
   File errfile( _workdir.getPath(), parallel_const::SPK_EXCEPTION+"."+SPK_NODE_SUFFIX);
   ofstream ofs(errfile.getFullname().c_str());
@@ -1015,12 +1016,12 @@ const PackageHandle NodeEndChannel::post(const IndOutputDataPackage& pack) const
     assert(!pack.empty());
 
     int index = pack.indResults.getIndex();
-    strstream strIndex;
+    stringstream strIndex;
     strIndex.width(MAX_INDS_DIG);
     strIndex.fill('0');
     strIndex.flags(ios::right);
     strIndex << index;
-    strIndex.put(NULL);
+    strIndex.put('\0');
 
     // post the IndOutputDataPackage package.
     File outfile( _workdir.getPath(), SPK_INDOUTPUT+strIndex.str()+"."+SPK_NODE_SUFFIX);

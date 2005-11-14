@@ -775,7 +775,8 @@ void lTilde(
       {         
 	const int max = SpkError::maxMessageLen();
 	char message[max];
-	sprintf( message, "The population objective function calculation failed during the analysis for the %s individual.",
+	snprintf( message, max,
+                  "The population objective function calculation failed during the analysis for the %s individual.",
 		 intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
         throw e.push(
@@ -788,7 +789,8 @@ void lTilde(
       {
 	const int max = SpkError::maxMessageLen();
 	char message[max];
-	sprintf( message, "The population objective function calculation failed because a standard exception \nwas thrown during the analysis for the %s individual.",
+	snprintf( message, max, 
+                  "The population objective function calculation failed because a standard exception \nwas thrown during the analysis for the %s individual.",
 		 intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
 	throw SpkException(
@@ -802,7 +804,8 @@ void lTilde(
       {
 	const int max = SpkError::maxMessageLen();
 	char message[max];
-	sprintf( message, "The population objective function calculation failed because an unknown exception \nwas thrown during the analysis for the %s individual.",
+	snprintf( message, max,
+                  "The population objective function calculation failed because an unknown exception \nwas thrown during the analysis for the %s individual.",
 		 intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
 	throw SpkException(
@@ -1070,7 +1073,7 @@ void lTilde(
   if( cntPopItrs == 0 )
     {
       char session[50];
-      sprintf( session, "%d", SESSION_ID );
+      snprintf( session, 50, "%d", SESSION_ID );
       channel.write("session.id", session);
     }
 
@@ -1084,7 +1087,7 @@ void lTilde(
   // knowing the exact name.
   //
   char str_number[ 100 ];
-  sprintf( str_number, "%d", cntPopItrs );
+  snprintf( str_number, 100, "%d", cntPopItrs );
   channel.write("pop.itr", str_number);
 
   StatusList checklist(num_subjects);
@@ -1112,7 +1115,7 @@ void lTilde(
         {
             const int max = SpkError::maxMessageLen();
             char message[max];
-            sprintf( message, "An attempt to post the %s individual's data failed.",
+            snprintf( message, max, "An attempt to post the %s individual's data failed.",
 		     intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
 
             throw e.push(
@@ -1125,7 +1128,8 @@ void lTilde(
         {
 	  const int max = SpkError::maxMessageLen();
 	  char message[max];
-          sprintf( message, "A standard:exception was thrown during an attempt to post the %s individual's data.",
+          snprintf( message, max,
+                    "A standard:exception was thrown during an attempt to post the %s individual's data.",
 		   intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
           throw SpkException( SpkError::SPK_PARALLEL_ERR, message, __LINE__, __FILE__ );
         }
@@ -1133,7 +1137,8 @@ void lTilde(
         {
 	  const int max = SpkError::maxMessageLen();
 	  char message[max];
-          sprintf( message, "An unknown exception was thrown during an attempt to post the %s individual's data.",
+          snprintf( message, max,
+                    "An unknown exception was thrown during an attempt to post the %s individual's data.",
 		   intToOrdinalString( id, ZERO_IS_FIRST_INT ).c_str() );
           throw SpkException( SpkError::SPK_PARALLEL_ERR, message, __LINE__, __FILE__ );
         }
@@ -1188,21 +1193,24 @@ void lTilde(
 	  {
 	    const int max = SpkError::maxMessageLen();
 	    char mess[max];
-	    sprintf( mess, "A failure occured during an attempt to obtain an individual analysis result." );
+	    snprintf( mess, max,
+                      "A failure occured during an attempt to obtain an individual analysis result." );
 	    throw e.push(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
 	  }
 	catch( const std::exception & stde )
 	  {
 	    const int max = SpkError::maxMessageLen();
 	    char mess[max];
-	    sprintf( mess, "A standard exception was thrown during an attempt to obtain an individual \nanalysis result." );
+	    snprintf( mess, max,
+                      "A standard exception was thrown during an attempt to obtain an individual \nanalysis result." );
 	    throw SpkException(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
 	  }
 	catch( ... )
 	  {
 	    const int max = SpkError::maxMessageLen();
 	    char mess[max];
-	    sprintf( mess, "An unknown exception was thrown during an attempt to obtain an individual \nanalysis result." );
+	    snprintf( mess, max,
+                      "An unknown exception was thrown during an attempt to obtain an individual \nanalysis result." );
 	    throw SpkException( SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__ );
 	  }
             
@@ -1224,7 +1232,7 @@ void lTilde(
                   {
 		    const int max = SpkError::maxMessageLen();
 		    char mess[max];
-		    sprintf( mess, "Touble re-posting the %s individual's data.", 
+		    snprintf( mess, max, "Touble re-posting the %s individual's data.", 
 			     intToOrdinalString( toBeReIssued, ZERO_IS_FIRST_INT ).c_str() );
                     throw e.push(SpkError::SPK_PARALLEL_ERR, mess, __LINE__, __FILE__);
                   }
@@ -1541,8 +1549,9 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "The Hessian of the %s individual's objective function could not be calculated.",
-	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+      snprintf( mess, max,
+                "The Hessian of the %s individual's objective function could not be calculated.",
+	        intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
       // Issue a warning.
       WarningsManager::addWarning( mess, __LINE__, __FILE__ );
@@ -1559,16 +1568,18 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "A standard exception was thrown during the calculation of the Hessian of \nthe %s individual's objective.",
-	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+      snprintf( mess, max,
+                "A standard exception was thrown during the calculation of the Hessian of \nthe %s individual's objective.",
+	        intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
       throw SpkException(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }
   catch( ... )
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "An unknown exception was thrown during the calculation of the Hessian of \nthe %s individual's objective.",
-	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
+      snprintf( mess, max,
+                "An unknown exception was thrown during the calculation of the Hessian of \nthe %s individual's objective.",
+	        intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }
     
@@ -1589,7 +1600,8 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
         {
 	  const int max = SpkError::maxMessageLen();
 	  char mess[max];
-	  sprintf( mess, "The Hessian of the %s individual's objective function was not positive definite.",
+	  snprintf( mess, max,
+                    "The Hessian of the %s individual's objective function was not positive definite.",
 		   intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
 	  // Issue a warning.
@@ -1610,7 +1622,8 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
 	  // objective to ask the population optimizer to back up.
 	  const int max = SpkError::maxMessageLen();
 	  char mess[max];
-	  sprintf( mess, "The calculation of the determinant of the Hessian of the %s \nindividual's objective function failed.",
+	  snprintf( mess, max,
+                    "The calculation of the determinant of the Hessian of the %s \nindividual's objective function failed.",
 		   intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 	  throw SpkException(
 			     SpkError::SPK_UNKNOWN_ERR,
@@ -1624,7 +1637,8 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "A standard exception was thrown during the calculation of the determinant \nof the Hessian of the %s individual's objective.",
+      snprintf( mess, max,
+                "A standard exception was thrown during the calculation of the determinant \nof the Hessian of the %s individual's objective.",
 	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
       throw SpkException(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }
@@ -1632,7 +1646,8 @@ const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackag
     {
       const int max = SpkError::maxMessageLen();
       char mess[max];
-      sprintf( mess, "An unknown exception was thrown during the calculation of the determinant \nof the Hessian of the %s individual's objective.",
+      snprintf( mess, max,
+                "An unknown exception was thrown during the calculation of the determinant \nof the Hessian of the %s individual's objective.",
 	       intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
     }

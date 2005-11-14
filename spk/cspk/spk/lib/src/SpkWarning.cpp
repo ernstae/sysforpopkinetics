@@ -222,7 +222,7 @@ const char * SpkWarning::FILENAME_FIELD_TITLE= "filename";
 int SpkWarning::push(const char* message, int line, const char* filename)
 {
   char buf[20];
-  sprintf(buf, "%d", line);
+  snprintf(buf, 20, "%d", line);
   size_in_bytes += strlen(MESSAGE_FIELD_TITLE) + 1 + strlen(message)           + 1
                 + strlen(LINENUM_FIELD_TITLE)  + 1 + strlen(buf)               + 1
                 + strlen(FILENAME_FIELD_TITLE) + 1 + strlen(filename)          + 1 + 1;

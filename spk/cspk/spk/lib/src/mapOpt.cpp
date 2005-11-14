@@ -1243,8 +1243,7 @@ void mapOpt(  SpkModel& model,
       //
       const int max = SpkError::maxMessageLen();
       char buf[max];
-      sprintf( buf, "%s\nAn attempt to approximate the derivative of mapObj_b with respect to b failed.",
-      e.what() );
+      snprintf( buf, max,  "An attempt to approximate the derivative of mapObj_b with respect to b failed." );
       throw SpkException( e, buf, __LINE__, __FILE__ );
     }
     catch( ... )

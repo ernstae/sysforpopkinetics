@@ -123,12 +123,14 @@ namespace{
 	char mess[ SpkError::maxMessageLen() ];
 	
 	valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
-	sprintf( mess, "The Hessian of the objective function could not be inverted.\n" );
+	snprintf( mess, SpkError::maxMessageLen(),
+                  "The Hessian of the objective function could not be inverted.\n" );
 	for( int i=0; i<nX; i++ )
 	  {
 	    if( diag[i] <= 0.0 )
-	      sprintf( mess, "The %s diagonal element of the Hessian is not positive.\n",
-		       intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+	      snprintf( mess, SpkError::maxMessageLen(),
+                        "The %s diagonal element of the Hessian is not positive.\n",
+		        intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  }
 	e.push( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
 	throw e;
@@ -138,12 +140,14 @@ namespace{
 	char mess[ SpkError::maxMessageLen() ];
 	
 	valarray<double> diag = h_x_x[ slice(0, nX, nX+1) ];
-	sprintf( mess, "The Hessian of the objective function could not be inverted.\n" );
+	snprintf( mess, SpkError::maxMessageLen(), 
+                  "The Hessian of the objective function could not be inverted.\n" );
 	for( int i=0; i<nX; i++ )
 	  {
 	    if( diag[i] < 0.0 )
-	      sprintf( mess, "The %s diagonal element of the Hessian is not positive.\n",
-		       intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+	      snprintf( mess, SpkError::maxMessageLen(), 
+                        "The %s diagonal element of the Hessian is not positive.\n",
+		        intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  }
 	SpkException e( SpkError::SPK_NOT_POS_DEF_ERR, mess, __LINE__, __FILE__ );
 	throw e;
@@ -660,7 +664,7 @@ void popStatistics( SpkModel&                popModel,
     if( popParCIOut && !nF )
 	{
 	  char message[ SpkError::maxMessageLen() ];
-          sprintf( message, 
+          snprintf( message, SpkError::maxMessageLen(),  
 		   "The number of degrees of freedom (#of measurements<%d> - #of fixed effects<%d>) must be positive.\n",
 		   nY, nAlp );
 
@@ -675,8 +679,9 @@ void popStatistics( SpkModel&                popModel,
     if( nY != nMeasurementsAll.sum() )
     {
       char message[ SpkError::maxMessageLen() ];
-      sprintf( message, "The sum <%d> of the values contained in nMeasurementsAll vector must match \nthe size <%d> of measurementsAll vector.\n",
-	       nMeasurementsAll.sum(), nY );
+      snprintf( message, SpkError::maxMessageLen(),
+                "The sum <%d> of the values contained in nMeasurementsAll vector must match \nthe size <%d> of measurementsAll vector.\n",
+	        nMeasurementsAll.sum(), nY );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
@@ -687,8 +692,9 @@ void popStatistics( SpkModel&                popModel,
     if( indParLow.size() != nB )
     {
       char message[ SpkError::maxMessageLen() ];
-      sprintf( message, "The length <%d> of indParLow vector must match the size <%d> of indPar vector.",
-	       indParLow.size(), nB );
+      snprintf( message, SpkError::maxMessageLen(),
+                "The length <%d> of indParLow vector must match the size <%d> of indPar vector.",
+	        indParLow.size(), nB );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
@@ -699,8 +705,9 @@ void popStatistics( SpkModel&                popModel,
     if( indParUp.size() != nB )
     {
       char message[ SpkError::maxMessageLen() ];
-      sprintf( message, "The length <%d> of indParUp vector must match the size <%d> of indPar vector.",
-	       indParUp.size(), nB );
+      snprintf( message, SpkError::maxMessageLen(),
+                "The length <%d> of indParUp vector must match the size <%d> of indPar vector.",
+	        indParUp.size(), nB );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
@@ -734,7 +741,7 @@ void popStatistics( SpkModel&                popModel,
     if ( popObj_popPar_popPar.size() != nAlp * nAlp )
     {
       char message[ SpkError::maxMessageLen() ];
-      sprintf( message,
+      snprintf( message, SpkError::maxMessageLen(),
 	       "Tilde_alp_alp vector that contains the Hessian of objective function must have n times n length, \nwhere n is the size of population parameter <%d>.", 
 	       popObj_popPar_popPar.size() );
 
@@ -757,7 +764,7 @@ void popStatistics( SpkModel&                popModel,
         if( nMeasurementsAll[i] < 0 )
         {
 	  char message[ SpkError::maxMessageLen() ];
-          sprintf( message, 
+          snprintf( message, SpkError::maxMessageLen(),
 		   "The number of measurements must be greater than zero.  The %s element, %d, is invalid.", 
 		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str(),
 		   nMeasurementsAll[i] );
@@ -777,7 +784,8 @@ void popStatistics( SpkModel&                popModel,
             if( indParAll[ i + j * nB ] < indParLow[i] || indParAll[ i + j * nB ] > indParUp[i] )
             {
 	      char message[ SpkError::maxMessageLen() ];
-              sprintf( message, "The initial value for the individual parameter must \
+              snprintf( message, SpkError::maxMessageLen(),
+                        "The initial value for the individual parameter must \
 be less than or equal to \nthe upper bound value and \
 greater than or equal to the lower bound value. \
 \nThe %s element, %f, is invalid.",
@@ -2310,14 +2318,16 @@ void popStatistics( const valarray<double>& y,
       catch( SpkException& e )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert the Hessian approximation for the information matrix.\n" );
+	 snprintf( mess, SpkError::maxMessageLen(),
+                   "Failed to invert the Hessian approximation for the information matrix.\n" );
 	 e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
 	 throw e;  
       }
       catch( ... )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert the Hessian approximation for the information matrix.\n" );
+	 snprintf( mess, SpkError::maxMessageLen(),
+                   "Failed to invert the Hessian approximation for the information matrix.\n" );
 	 SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
 	 throw e;  
       }
@@ -2331,14 +2341,16 @@ void popStatistics( const valarray<double>& y,
       catch( SpkException& e )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert the cross product gradient approximation for the information matrix.\n" );
+	 snprintf( mess, SpkError::maxMessageLen(),
+                   "Failed to invert the cross product gradient approximation for the information matrix.\n" );
          e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
       }
       catch( ... )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert the cross product gradient approximation for the information matrix.\n" );
+	 snprintf( mess, SpkError::maxMessageLen(),
+                   "Failed to invert the cross product gradient approximation for the information matrix.\n" );
          SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
          }
@@ -2354,14 +2366,16 @@ void popStatistics( const valarray<double>& y,
       catch( SpkException& e )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert the sandwich approximation for the information matrix.\n" );
+	 snprintf( mess, SpkError::maxMessageLen(),
+                   "Failed to invert the sandwich approximation for the information matrix.\n" );
          e.push( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
       }
       catch( ... )
       {
          char mess[ SpkError::maxMessageLen() ];
-	 sprintf( mess, "Failed to invert the sandwich approximation for the information matrix.\n" );
+	 snprintf( mess, SpkError::maxMessageLen(),
+                   "Failed to invert the sandwich approximation for the information matrix.\n" );
          SpkException e( SpkError::SPK_NOT_INVERTABLE_ERR, mess, __LINE__, __FILE__ );
          throw e;  
       }
@@ -2379,14 +2393,16 @@ void popStatistics( const valarray<double>& y,
    catch( SpkException& e )
    {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "Failed to compute some/all of the Statistics values.\n" );
+      snprintf( mess, SpkError::maxMessageLen(),
+                "Failed to compute some/all of the Statistics values.\n" );
       e.push( SpkError::SPK_STATISTICS_ERR, mess, __LINE__, __FILE__ );
       throw e;  
    }
    catch( ... )
    {
       char mess[ SpkError::maxMessageLen() ];
-      sprintf( mess, "Failed to compute some/all of the statistics values.\n" );
+      snprintf( mess, SpkError::maxMessageLen(),
+                "Failed to compute some/all of the statistics values.\n" );
       SpkException e( SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__ );
       throw e;  
    }

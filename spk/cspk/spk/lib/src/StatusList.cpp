@@ -189,7 +189,8 @@ StatusList::StatusList(int num_individuals)
     {
       const int max = SpkError::maxMessageLen();
       char message[max];
-      sprintf( message, "The value must be greater than 0 (received %d, instead).\0", num_individuals);
+      snprintf( message, max, 
+                "The value must be greater than 0 (received %d, instead).\0", num_individuals);
       throw SpkException( SpkError::SPK_USER_INPUT_ERR, message, __LINE__, __FILE__);
     }
     records.resize(nP);

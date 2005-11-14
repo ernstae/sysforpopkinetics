@@ -821,7 +821,7 @@ void popResiduals( SpkModel&                model,
     {         
       const int max = SpkError::maxMessageLen();
       char message[max];
-      sprintf( message, "The population residuals calculation failed for the %s individual.",
+      snprintf( message, max, "The population residuals calculation failed for the %s individual.",
                intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
       throw e.push(
@@ -834,7 +834,7 @@ void popResiduals( SpkModel&                model,
     {
       const int max = SpkError::maxMessageLen();
       char message[max];
-      sprintf( message, "The population residuals calculation failed for the %s individual because \na standard exception was thrown.",
+      snprintf( message, max, "The population residuals calculation failed for the %s individual because \na standard exception was thrown.",
                intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
       throw SpkException(
@@ -847,7 +847,7 @@ void popResiduals( SpkModel&                model,
     {
       const int max = SpkError::maxMessageLen();
       char message[max];
-      sprintf( message, "The population residuals calculation failed for the %s individual because \an unknown exception was thrown.",
+      snprintf( message, max, "The population residuals calculation failed for the %s individual because \an unknown exception was thrown.",
                intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 
       throw SpkException(

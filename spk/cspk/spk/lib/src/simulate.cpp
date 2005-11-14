@@ -628,16 +628,18 @@ void simulate( SpkModel &model,
       catch( SpkException& e )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate the %s individual's random effects.\n", 
-		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+	  snprintf( buf, SpkError::maxMessageLen(),
+                    "Failed to simulate the %s individual's random effects.\n", 
+		    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	  throw e;
 	}
       catch( ... )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate the %s individual's random effects.\n", 
-		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+	  snprintf( buf, SpkError::maxMessageLen(),
+                    "Failed to simulate the %s individual's random effects.\n", 
+		    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	}
            
@@ -683,16 +685,18 @@ void simulate( SpkModel &model,
       catch( SpkException& e )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate measurements for the %s individual.\n",
-		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+	  snprintf( buf, SpkError::maxMessageLen(),
+                    "Failed to simulate measurements for the %s individual.\n",
+		    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	  throw e;
 	}
       catch( ... )
 	{
 	  char buf[ SpkError::maxMessageLen() ];
-	  sprintf( buf, "Failed to simulate measurements for the %s individual.\n",
-		   intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+	  snprintf( buf, SpkError::maxMessageLen(),
+                    "Failed to simulate measurements for the %s individual.\n",
+		    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
 	  throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
 	} 
     }
@@ -1061,14 +1065,14 @@ void simulate( SpkModel               &indModel,
   catch( SpkException& e )
     {
       char buf[ SpkError::maxMessageLen() ];
-      sprintf( buf, "Failed to simulate measurements.\n" );
+      snprintf( buf, SpkError::maxMessageLen(), "Failed to simulate measurements.\n" );
       e.push( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
       throw e;
     }
   catch( ... )
     {
       char buf[ SpkError::maxMessageLen() ];
-      sprintf( buf, "Failed to simulate measurements.\n" );
+      snprintf( buf, SpkError::maxMessageLen(), "Failed to simulate measurements.\n" );
       throw SpkError( SpkError::SPK_UNKNOWN_ERR, buf, __LINE__, __FILE__ );
     } 
  

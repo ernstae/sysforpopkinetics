@@ -1295,7 +1295,7 @@ void sqpAnyBox( FVAL_PROTOTYPE fval,
   {
       const int max = SpkError::maxMessageLen();
       char message[max];
-      sprintf( message, "%d%s%d\0", fail.code, fail.message, fail.errnum );
+      snprintf( message, max, "%d%s%d\0", fail.code, fail.message, fail.errnum );
       SpkError err(errorcode, message, __LINE__, __FILE__ );
 
       throw info.exceptionOb.push(err);

@@ -342,7 +342,7 @@ void statistics( const SPK_VA::valarray<double>& x,       // vector of which qua
 	{
 	  const int max = SpkError::maxMessageLen();
 	  char message[max];
-	  sprintf( message, "The degree of freedom must be positive.", degFree );
+	  snprintf( message, max, "The degree of freedom must be positive.", degFree );
 	  
 	  throw SpkException(
 			     SpkError::SPK_USER_INPUT_ERR, 

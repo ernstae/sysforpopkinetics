@@ -283,7 +283,8 @@ void det( const DoubleMatrix &A, double* pdB, long int* plC )
   if( info > 0 )
     {
       char mess[SpkError::maxMessageLen()];
-      sprintf( mess, "The leading minor of order %d is not positive definite, and the factorization \ncould not be completed!",
+      snprintf( mess, SpkError::maxMessageLen(), 
+                "The leading minor of order %d is not positive definite, and the factorization \ncould not be completed!",
 	       info );
       throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
 			  mess,
@@ -292,7 +293,8 @@ void det( const DoubleMatrix &A, double* pdB, long int* plC )
   else if( info < 0 )
     {
       char mess[SpkError::maxMessageLen()];
-      sprintf( mess, "Programming error!  The %s argument to clapack_dgetrf() is illegal.", 
+      snprintf( mess, SpkError::maxMessageLen(),
+                "Programming error!  The %s argument to clapack_dgetrf() is illegal.", 
                intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
       throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
 			  mess,
@@ -609,7 +611,8 @@ void det( const valarray<double> &A, int n, double* pdB, long int* plC )
     if( info > 0 )
       {
 	char mess[SpkError::maxMessageLen()];
-        sprintf( mess, "The leading minor of order %d is not positive definite, and the factorization \ncould not be completed!",
+        snprintf( mess, SpkError::maxMessageLen(),
+                  "The leading minor of order %d is not positive definite, and the factorization \ncould not be completed!",
 	         info );
 	throw SpkException( SpkError::SPK_NOT_POS_DEF_ERR, 
 			    mess,
@@ -618,7 +621,8 @@ void det( const valarray<double> &A, int n, double* pdB, long int* plC )
     else if( info < 0 )
       {
 	char mess[SpkError::maxMessageLen()];
-	sprintf( mess, "Programming error!  The %s argument to clapack_dgetrf() is illegal.", 
+	snprintf( mess, SpkError::maxMessageLen(), 
+                 "Programming error!  The %s argument to clapack_dgetrf() is illegal.", 
                  intToOrdinalString( -info, ONE_IS_FIRST_INT ).c_str() );
 	throw SpkException( SpkError::SPK_UNKNOWN_ERR, 
 			    mess,

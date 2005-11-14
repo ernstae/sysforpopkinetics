@@ -278,11 +278,11 @@ void node(const char* c_sharedDirectory, SpkModel& model)
 
         if( System::exist(sharedDiskSpace) )
         {
-          sprintf( mess, "Fatal error occured while accessing the shared directory.\n" );
+          snprintf( mess, max, "Fatal error occured while accessing the shared directory.\n" );
         }
         else
         {
-          sprintf( mess, "The shared directory is no longer accessible.\n" );
+          snprintf( mess, max, "The shared directory is no longer accessible.\n" );
         }
 
         e.push(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__);
@@ -296,11 +296,11 @@ void node(const char* c_sharedDirectory, SpkModel& model)
 
         if( System::exist(sharedDiskSpace) )
         {
-          sprintf( mess, "Fatal IO error occured while accessing the shared directory.\n" );
+          snprintf( mess, max, "Fatal IO error occured while accessing the shared directory.\n" );
         }
         else
         {
-          sprintf( mess, "The shared directory is no longer accessible.\n" );
+          snprintf( mess, max, "The shared directory is no longer accessible.\n" );
         }
 
         SpkException e(stde, mess, __LINE__, __FILE__);
@@ -314,11 +314,11 @@ void node(const char* c_sharedDirectory, SpkModel& model)
 
         if( System::exist(sharedDiskSpace) )
         {
-          sprintf( mess, "Fatal IO error occured while accessing the shared directory.\n" );
+          snprintf( mess, max, "Fatal IO error occured while accessing the shared directory.\n" );
         }
         else
         {
-          sprintf( mess, "The shared directory is no longer accessible.\n" );
+          snprintf( mess, max, "The shared directory is no longer accessible.\n" );
         }
 
         SpkException e(SpkError::SPK_UNKNOWN_ERR, mess, __LINE__, __FILE__);
@@ -377,7 +377,7 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       {
           const int max = SpkError::maxMessageLen();
           char buf[max];
-          sprintf( buf, "The analysis failed for the %s individual.",
+          snprintf( buf, max, "The analysis failed for the %s individual.",
                    intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
           channel.post(e.push(SpkError::SPK_UNKNOWN_ERR, buf, __LINE__,__FILE__));
@@ -387,7 +387,7 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       {
           const int max = SpkError::maxMessageLen();
           char buf[max];
-          sprintf( buf, "The analysis failed for the %s individual.",
+          snprintf( buf, max, "The analysis failed for the %s individual.",
                    intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
 	  // PARALLEL -- FIX LATER
@@ -401,7 +401,7 @@ void node(const char* c_sharedDirectory, SpkModel& model)
       {
           const int max = SpkError::maxMessageLen();
           char buf[max];
-          sprintf( buf, "The analysis failed for the %s individual.",
+          snprintf( buf, max, "The analysis failed for the %s individual.",
                    intToOrdinalString( who, ZERO_IS_FIRST_INT ).c_str() );
 
 	  //          channel.post(SpkException(
