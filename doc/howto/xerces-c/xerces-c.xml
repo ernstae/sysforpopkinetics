@@ -84,8 +84,12 @@ and previous built remenants:
     <orderedlist>
       <listitem>
         <para>
-        Get <ulink url="http://xml.apache.org/xerces-c/download.cgi?Preferred=http%3A%2F%2Fapache.gr-linux.com">
-          <filename>xerces-c-current.tar.gz</filename></ulink> from Apache website.     </para>
+        Obtain Xerces-C version 2.7.0.
+<screen>
+cd /tmp
+scp whitechuck:/opt/download/xerces-c-src_2_7_0.tar.gz .
+</screen>
+        </para>
       </listitem>
       <listitem>
         <para>
@@ -102,12 +106,12 @@ mkdir -p /usr/src/redhat/BUILD
         <para>
         Move the downloaded tar archive to the directly and extract it there as root:
           <screen>
-mv /usr/local/redhat/BUILD/
-tar xvzf xerces-c-current.tar.gz
+mv xerces-c-src_2_7_0.tar.gz /usr/src/redhat/BUILD/
+cd /usr/src/redhat/BUILD
+tar xvzf xerces-c-src_2_7_0.tar.gz
 exit
           </screen>
-        It will create a subdirectory <filename>xerces-c-X_X_X</filename>, 
-        where X_X_X reflects the version number, and extracts files in the subdirectory.
+        It will create a subdirectory <filename>xerces-c-2_7_0</filename>. 
         </para>
       </listitem>
       <listitem>
@@ -120,9 +124,8 @@ exit
 export LD_LIBRARY_PATH=/usr/local/lib
 
 # This variable is needed only for xerces-c build and installation.
-export XERCESCROOT=/usr/src/redhat/BUILD/xerces-c-src_X_X_X
+export XERCESCROOT=/usr/src/redhat/BUILD/xerces-c-src_2_7_0
           </screen>
-        <filename>xerces-c-src_X_X_X</filename> is the subdirectory just created in the previous step.
         <varname>XERCESCROOT</varname> is only needed during the build and installation process.
         </para>
       </listitem>
@@ -142,7 +145,7 @@ source .bash_profile
 su
 cd $XERCESCROOT/src/xercesc
 autoconf
-runConfigure -plinux -P/usr/local
+./runConfigure -plinux -P/usr/local
 make
 make install
           </screen>
