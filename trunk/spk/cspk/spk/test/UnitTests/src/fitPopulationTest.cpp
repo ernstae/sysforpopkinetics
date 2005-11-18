@@ -423,9 +423,9 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
 
   valarray<double> bLow ( -1.5e+1, nB );
   valarray<double> bUp  ( +1.0e+1, nB );
-  valarray<double> dvecBStep(  1.0e-2, nB );
+  valarray<double> bStep(  1.0e-2, nB );
 
-  valarray<double> dmatBIn ( 1., nB * nInd );
+  valarray<double> bIn ( 1., nB * nInd );
   valarray<double> bOut(     nB * nInd );
 
 
@@ -479,8 +479,8 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
                      indOptimizer,
                      bLow,
                      bUp,
-                     dmatBIn,            
-                     dvecBStep,
+                     bIn,            
+                     bStep,
                      &bOut,
                      &dLTildeOut,
                      &lTilde_alpOut,
@@ -908,9 +908,9 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 
   valarray<double> bLow (  -4., nB );
   valarray<double> bUp  (   4., nB );
-  valarray<double> dvecBStep( .001, nB );
+  valarray<double> bStep( .001, nB );
 
-  valarray<double> dmatBIn ( 2., nB * nInd );
+  valarray<double> bIn ( 2., nB * nInd );
   valarray<double> bOut(     nB * nInd );
 
 
@@ -1010,7 +1010,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 
       // Since the number of iterations for the individual level is
       // zero, bOut and bHat should both be equal to bIn.
-      bHat = dmatBIn;
+      bHat = bIn;
 
       break;
 
@@ -1032,7 +1032,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 
       // Since the number of iterations for the individual level is
       // zero, bOut and bHat should both be equal to bIn.
-      bHat = dmatBIn;
+      bHat = bIn;
 
       break;
     }
@@ -1058,8 +1058,8 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 					  indOptimizer,
 					  bLow,
 					  bUp,
-					  dmatBIn,            
-					  dvecBStep,
+					  bIn,            
+					  bStep,
 					  &bOut,
 					  &dLTildeOut,
 					  &lTilde_alpOut,
@@ -1100,8 +1100,8 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
     DoubleMatrix dvecAlpHat( alpHat );
     DoubleMatrix dvecBLow( bLow );
     DoubleMatrix dvecBUp( bUp );
-    DoubleMatrix dvecBStep( dvecBStep );
-	DoubleMatrix dmatBIn( dmatBIn, nInd );
+    DoubleMatrix dvecBStep( bStep );
+    DoubleMatrix dmatBIn( bIn, nInd );
     DoubleMatrix* pNull = 0;
     DoubleMatrix drowLTilde_alpKnown( lTilde_alpKnown, nAlp );
 
@@ -1708,9 +1708,9 @@ void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjecti
 
   valarray<double> bLow ( -1.5e+1, nB );
   valarray<double> bUp  ( +1.0e+1, nB );
-  valarray<double> dvecBStep(  1.0e-2, nB );
+  valarray<double> bStep(  1.0e-2, nB );
 
-  valarray<double> dmatBIn ( 1., nB * nInd );
+  valarray<double> bIn ( 1., nB * nInd );
   valarray<double> bOut(     nB * nInd );
 
 
@@ -1759,8 +1759,8 @@ void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjecti
                    indOptimizer,
                    bLow,
                    bUp,
-                   dmatBIn,            
-                   dvecBStep,
+                   bIn,            
+                   bStep,
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
@@ -1988,9 +1988,9 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
 
   valarray<double> bLow ( -1.5e+1, nB );
   valarray<double> bUp  ( +1.0e+1, nB );
-  valarray<double> dvecBStep(  1.0e-2, nB );
+  valarray<double> bStep(  1.0e-2, nB );
 
-  valarray<double> dmatBIn ( 1., nB * nInd );
+  valarray<double> bIn ( 1., nB * nInd );
   valarray<double> bOut(     nB * nInd );
 
 
@@ -2039,8 +2039,8 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
                    indOptimizer,
                    bLow,
                    bUp,
-                   dmatBIn,            
-                   dvecBStep,
+                   bIn,            
+                   bStep,
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
@@ -2275,9 +2275,9 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
 
   valarray<double> bLow ( -1.5e+1, nB );
   valarray<double> bUp  ( +1.0e+1, nB );
-  valarray<double> dvecBStep(  1.0e-2, nB );
+  valarray<double> bStep(  1.0e-2, nB );
 
-  valarray<double> dmatBIn ( 1., nB * nInd );
+  valarray<double> bIn ( 1., nB * nInd );
   valarray<double> bOut(     nB * nInd );
 
 
@@ -2354,8 +2354,8 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    indOptimizer,
                    bLow,
                    bUp,
-                   dmatBIn,            
-                   dvecBStep,
+                   bIn,            
+                   bStep,
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
@@ -2416,8 +2416,8 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    indOptimizer,
                    bLow,
                    bUp,
-                   dmatBIn,            
-                   dvecBStep,
+                   bIn,            
+                   bStep,
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
