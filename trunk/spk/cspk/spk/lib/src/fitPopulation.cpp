@@ -1226,10 +1226,8 @@ time_t SESSION_ID;
  *------------------------------------------------------------------------*/
 
 #include <iostream>
-#include <strstream>
 #include <iomanip>
 #include <sstream>
-#include <errno.h>
 
 #include "SpkValarray.h"
 #include "fitPopulation.h"
@@ -1318,97 +1316,113 @@ void fitPopulation(
   //===============[Begin: Vector lengths validation]===============
   if( nY != nMeasurementsAll.sum() )
   {
-    std::strstream message;
-    message << "The sum of the values contained in nMeasurementsAll vector ";
-    message << "must match the lentth of measurementsAll vector.  ";
-    message << nMeasurementsAll.sum() << " does not match " << nY << ". " << ends;
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
+    snprintf( message, max, 
+"The sum of the values contained in nMeasurementsAll vector \
+must match the lentth of measurementsAll vector.  %d does not match %d.",
+	nMeasurementsAll.sum(), nY );
 
     throw SpkException(
             SpkError::SPK_USER_INPUT_ERR, 
-            message.str(),
+            message,
             __LINE__, __FILE__
     );
   }
   if( popParLow.size() != nAlp )
   {
-    std::strstream message;
-    message << "The length of popParLow vector must match the length of the popParIn vector." << ends;
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
+    snprintf( message, max,
+              "The length of popParLow vector must match the length of the popParIn vector." );
 
     throw SpkException(
             SpkError::SPK_USER_INPUT_ERR, 
-            message.str(),
+            message,
             __LINE__, __FILE__
     );
   }
   if( popParUp.size() != nAlp )
   {
-    std::strstream message;
-    message << "The length of popParUp vector must match the length of the popParIn vector." << ends;
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
+    snprintf( message, max,
+	      "The length of popParUp vector must match the length of the popParIn vector." );
 
     throw SpkException(
             SpkError::SPK_USER_INPUT_ERR, 
-            message.str(),
+            message,
             __LINE__, __FILE__
     );
   }
   if( popParStep.size() != nAlp )
   {
-    std::strstream message;
-    message << "The length of popParStep vector must match the length of the popParIn vector." << ends;
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
+    snprintf( message, max,
+              "The length of popParStep vector must match the length of the popParIn vector." );
 
     throw SpkException(
             SpkError::SPK_USER_INPUT_ERR, 
-            message.str(),
+            message,
             __LINE__, __FILE__
     );
   }
   if( indParLow.size() != nB )
   {
-    std::strstream message;
-    message << "The length of indParLow vector must match the length of the indParStep vector." << ends;
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
+    snprintf( message, max,
+              "The length of indParLow vector must match the length of the indParStep vector." );
 
     throw SpkException(
             SpkError::SPK_USER_INPUT_ERR, 
-            message.str(),
+            message,
             __LINE__, __FILE__
     );
   }
   if( indParUp.size() != nB )
   {
-    std::strstream message;
-    message << "The length of indParUp vector must match the length of the indParStep vector." << ends;
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
+    snprintf( message, max,
+              "The length of indParUp vector must match the length of the indParStep vector." );
 
     throw SpkException(
             SpkError::SPK_USER_INPUT_ERR, 
-            message.str(),
+            message,
             __LINE__, __FILE__
     );
   }
   if( indParAllIn.size() != nB * nInd )
   {
-    std::strstream message;
-    message << "The length of indParAllIn vector must match the product of ";
-    message << "the length of the indParStep vector and the number of individuals." << ends;
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
+    snprintf( message, max,
+"The length of indParAllIn vector must match the product of  \
+the length of the indParStep vector and the number of individuals." );
 
     throw SpkException(
             SpkError::SPK_USER_INPUT_ERR, 
-            message.str(),
+            message,
             __LINE__, __FILE__
     );
   }
   // This is a column vector.
   if ( popParOut )
   {
+    int max = SpkError::maxMessageLen();
+    char message[ max ];
       if( popParOut->size() != nAlp )
       {
-        std::strstream message;
-        message << "popParOut vector that will contain the estimated population parameter ";
-        message << "must be preallocated and have n length, where n is the lenghth of popPar.  ";
-        message << popParOut->size() << " is invalid." << ends;
+        snprintf( message, max,
+"PopParOut vector that will contain the estimated population parameter \
+must be preallocated and have n length, where n is the lenghth of popPar.  %d is invalid.",
+                  popParOut->size() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );      
       }
@@ -1418,15 +1432,17 @@ void fitPopulation(
   {
       if( indParAllOut->size() != nB * nInd )
       {
-        std::strstream message;
-        message << "indParOut vector that will receive the estimated individuals parameters";
-        message << "must be preallocated and have m times n length, ";
-        message << "where m is the length of indPar and n is the # of individuals.  ";
-        message << indParAllOut->size() << " is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+        "indParOut vector that will receive the estimated individuals parameters \
+must be preallocated and have m times n length, \
+where m is the length of indPar and n is the # of individuals.  \
+%d is invalid.", indParAllOut->size() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );      
       }
@@ -1436,15 +1452,17 @@ void fitPopulation(
   {
       if( popObj_popParOut->size() != nAlp )
       {
-        std::strstream message;
-        message << "popObj_popParOut vector that will contain the derivative of objective function ";
-        message << "must be preallocated and have n length, ";
-        message << "where n is the size of population parameter.  ";
-        message << popObj_popParOut->size() << " is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"popObj_popParOut vector that will contain the derivative of objective function \
+must be preallocated and have n length, \
+where n is the size of population parameter.  %d is invalid.",
+                  popObj_popParOut->size() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
       }
@@ -1454,15 +1472,17 @@ void fitPopulation(
   {
       if( popObj_popPar_popParOut->size() != nAlp * nAlp )
       {
-        std::strstream message;
-        message << "Tilde_alp_alpOut vector that will contain the second derivative of objective function ";
-        message << "must be preallocated and have n times n length, ";
-        message << "where n is the size of population parameter.  ";
-        message << popObj_popPar_popParOut->size() << " is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"Tilde_alp_alpOut vector that will contain the second derivative of objective function \
+must be preallocated and have n times n length, \
+where n is the size of population parameter.  %d is invalid.",
+                  popObj_popPar_popParOut->size() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
       }
@@ -1473,73 +1493,88 @@ void fitPopulation(
 
   if( indOptimizer.getEpsilon() <= 0.0 || indOptimizer.getEpsilon() > 1.0 )
   {
-        std::strstream message;
-        message << "The epsilon value must be greater than 0.0 and less than or equal to 1.0.  ";
-        message << "The epsilon for individual optimization, " << indOptimizer.getEpsilon() << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The epsilon value must be greater than 0.0 and less than or equal to 1.0.  \
+The epsilon for individual optimization, %d, is invalid.", indOptimizer.getEpsilon() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
   }
 
   if( popOptimizer.getEpsilon() <= 0.0 || popOptimizer.getEpsilon() > 1.0 )
   {
-        std::strstream message;
-        message << "The epsilon value must be greater than 0.0 and less than or equal to 1.0.  ";
-        message << "The epsilon for population optimization , " << popOptimizer.getEpsilon() << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The epsilon value must be greater than 0.0 and less than or equal to 1.0.  \
+The epsilon for population optimization , %d, is invalid.", popOptimizer.getEpsilon() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
   }
   if( indOptimizer.getNMaxIter() < 0 )
   {
-        std::strstream message;
-        message << "The maximum number of iterations must be greater than or equal to zero.  ";
-        message << "The nMaxIter for individual optimization, " << indOptimizer.getNMaxIter() << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The maximum number of iterations must be greater than or equal to zero.  \
+The nMaxIter for individual optimization, %d, is invalid.", indOptimizer.getNMaxIter() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
   }
   if( popOptimizer.getNMaxIter() < 0 )
   {
-        std::strstream message;
-        message << "The maximum number of iterations must be greater than or equal to zero.  ";
-        message << "The nMaxIter for population optimization, " << popOptimizer.getNMaxIter() << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The maximum number of iterations must be greater than or equal to zero.  \
+The nMaxIter for population optimization, %d, is invalid.", 
+                  popOptimizer.getNMaxIter() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
   }
   if( indOptimizer.getLevel() < 0 )
   {
-        std::strstream message;
-        message << "The print level must be greater than or equal to zero.  ";
-        message << "The level for individual optimization, " << indOptimizer.getLevel() << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The print level must be greater than or equal to zero.  \
+The level for individual optimization, %d, is invalid.", 
+                  indOptimizer.getLevel() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__ );
   }
   if( popOptimizer.getLevel() < 0 )
   {
-        std::strstream message;
-        message << "The print level must be greater than or equal to zero.  ";
-        message << "The level for population optimization, " << popOptimizer.getLevel() << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The print level must be greater than or equal to zero.  \
+The level for population optimization, %d, is invalid.", 
+                  popOptimizer.getLevel() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__ );
   }
   // Check that values in N are consistent with the size of y, i.e.,
@@ -1550,13 +1585,15 @@ void fitPopulation(
   {
     if( nMeasurementsAll[i] < 0 )
     {
-        std::strstream message;
-        message << "The number of measurements must be greater than zero.  ";
-        message << i << "-th element, " << nMeasurementsAll[i] << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The number of measurements must be greater than zero.  %d-th element, %d, is invalid.",
+                  i, nMeasurementsAll[i] );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
     }
@@ -1569,15 +1606,17 @@ void fitPopulation(
   {
       if( popParIn[i] < popParLow[i] || popParIn[i] > popParUp[i] )
       {
-        std::strstream message;
-        message << "The initial value for the population parameter must ";
-        message << "be less than or equal to the upper bound value and ";
-        message << "greater than or equal to the lower boundary value.  ";
-        message << i << "-th element, " << popParIn[i] << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The initial value for the population parameter must \
+be less than or equal to the upper bound value and \
+greater than or equal to the lower boundary value.  %d-ith element, %d, is invalid.",
+                  i, popParIn[i] );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
             );
       }
@@ -1591,15 +1630,17 @@ void fitPopulation(
     {
       if( indParAllIn[ i + j * nB ] < indParLow[i] || indParAllIn[ i + j * nB ] > indParUp[i] )
       {
-        std::strstream message;
-        message << "The initial value for the individual parameter must ";
-        message << "be less than or equal to the upper bound value and ";
-        message << "greater than or equal to the lower boundary value.  ";
-        message << i << "-th element, " << indParAllIn[ i + j * nB ] << ", is invalid." << ends;
+        int max = SpkError::maxMessageLen();
+        char message[ max ];
+        snprintf( message, max,
+"The initial value for the individual parameter must \
+be less than or equal to the upper bound value and \
+greater than or equal to the lower boundary value.  %d-th element, %d, is invalid.",
+                  i, indParAllIn[ i + j * nB ] );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
       }
@@ -1703,16 +1744,16 @@ void fitPopulation(
   {
       if( pdvecAlpOut->nr() != nAlp || pdvecAlpOut->nc() != 1 )
       {
-        std::strstream message;
-        message << "The output vector that will contain the estimated population parameter \
-                    must be preallocated and have n by 1 dimensions, \
-                    where n is the size of population parameter." << endl;
-        message << pdvecAlpOut->nr() << " by " << pdvecAlpOut->nc() << " is invalid." << endl;
-        message.put('\0');
+	char message[ SpkError::maxMessageLen() ];
+        snprintf( message, SpkError::maxMessageLen(),
+"The output vector that will contain the estimated population parameter \
+must be preallocated and have n by 1 dimensions, \
+ where n is the size of population parameter.  %d by %d is invalid.",
+                  pdvecAlpOut->nr(), pdvecAlpOut->nc() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );      
       }
@@ -1723,17 +1764,18 @@ void fitPopulation(
   {
       if( pdmatBOut->nr() != nB || pdmatBOut->nc() != nInd )
       {
-        std::strstream message;
-        message << "The output matrix that will contain the estimated individuals parameters \
-                    must be preallocated and have m by n dimensions, \
-                    where m is the size of any individual's parameter and \
-                    n is the number of indviduals in the population." << endl;
-        message << pdmatBOut->nr() << " by " << pdmatBOut->nc() << " is invalid." << endl;
-        message.put('\0');
+	char message[ SpkError::maxMessageLen() ];
+        snprintf( message, SpkError::maxMessageLen(),
+"The output matrix that will contain the estimated individuals parameters \
+must be preallocated and have m by n dimensions, \
+where m is the size of any individual's parameter and \
+n is the number of indviduals in the population. \
+%d by %d is invalid.",
+        pdmatBOut->nr(), pdmatBOut->nc() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );      
       }
@@ -1744,16 +1786,18 @@ void fitPopulation(
   {
       if( pdrowLTilde_alpOut->nr() != 1 || pdrowLTilde_alpOut->nc() != nAlp )
       {
-        std::strstream message;
-        message << "The output row vector that will contain the derivative of objective function \
-                    must be preallocated and have n dimension, \
-                    where n is the size of population parameter." << endl;
-        message << pdrowLTilde_alpOut->nr() << " by " << pdrowLTilde_alpOut->nc() << " is invalid." << endl;
-        message.put('\0');
+
+	char message[ SpkError::maxMessageLen() ];
+        snprintf( message, SpkError::maxMessageLen(),
+"The output row vector that will contain the derivative of objective function \
+must be preallocated and have n dimension, \
+where n is the size of population parameter. \
+%d by %d is invalid.",
+                  pdrowLTilde_alpOut->nr(), pdrowLTilde_alpOut->nc() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR, 
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
       }
@@ -1764,16 +1808,17 @@ void fitPopulation(
   {
       if( pdmatLTilde_alp_alpOut->nr() != nAlp || pdmatLTilde_alp_alpOut->nc() != nAlp )
       {
-        std::strstream message;
-        message << "The output matrix that will contain the second derivative of objective function \
-                    must be preallocated and have n by n dimensions, \
-                    where n is the size of population parameter." << endl;
-        message << pdmatLTilde_alp_alpOut->nr() << " by " << pdrowLTilde_alpOut->nc() << " is invalid." << endl;
-        message.put('\0');
+	char message[ SpkError::maxMessageLen() ];
+        snprintf( message, SpkError::maxMessageLen(),
+"The output matrix that will contain the second derivative of objective function \
+must be preallocated and have n by n dimensions, \
+where n is the size of population parameter. \
+%d by %d is invalid.",
+                  pdmatLTilde_alp_alpOut->nr(), pdrowLTilde_alpOut->nc() );
 
         throw SpkException(
                 SpkError::SPK_USER_INPUT_ERR,  
-                message.str(),
+                message,
                 __LINE__, __FILE__
         );
       }
@@ -1848,7 +1893,7 @@ void fitPopulation(
           char *mutable_string = new char[strlen(coNodeCommand)+1];
           char buffer[512];
           strcpy(mutable_string, coNodeCommand);
-          std::strstream stream(mutable_string, strlen(mutable_string));
+          istringstream stream(mutable_string);
           int argc = 0;
           int i;
           while(stream.good())
