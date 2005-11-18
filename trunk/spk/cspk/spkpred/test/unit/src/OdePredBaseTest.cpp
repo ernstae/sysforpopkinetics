@@ -137,7 +137,9 @@ namespace // [Begin: unnamed namespace]
   template<class Value>
   class NoEta_OneExpF_OneBolus_ModelBasedExpY_OdePred : public OdePredBase<Value>
   {
-    //------------------------------------------------------------
+  public:
+
+ //------------------------------------------------------------
     // Constructor.
     //------------------------------------------------------------
 
@@ -202,7 +204,7 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       // Set an arbitrary value for the observed value.
-      setDV( 123456789.0 );
+      this->setDV( 123456789.0 );
     
       // Set the type of event.
       if ( j == 0 )
@@ -213,15 +215,15 @@ namespace // [Begin: unnamed namespace]
 
         // If this is the first time point, set these flags to
         // indicate this is a dose event.
-        setMDV ( 1 );
-        setEVID( DOSE_EVENT );
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
 
         // Save the values for the weighted dose and the weight.
         ds = dose * wt;
         w = wt;
 
         // Set the amount for this instantaneous bolus dose.
-        setAMT( ds );
+        this->setAMT( ds );
       }
       else
       {
@@ -230,15 +232,15 @@ namespace // [Begin: unnamed namespace]
         //------------------------------------------------------
 
         // Set these flags to indicate this is an observation event.
-        setMDV ( 0 );
-        setEVID( OBSERV_EVENT );
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
       }
 
       // Set the compartment number.
-      setCMT( 1 );
+      this->setCMT( 1 );
 
       // Set the time.
-      setTIME( timeStep * j );
+      this->setTIME( timeStep * j );
     }
 
 
@@ -384,7 +386,7 @@ namespace // [Begin: unnamed namespace]
     //**********************************************************
 
   public:
-    int getNRecords( int i ) const
+    virtual int getNRecords( int i ) const
     {
       return 1     +   // Instantanous bolus dose records.
              nY_i;     // Observation records.
@@ -443,6 +445,7 @@ namespace // [Begin: unnamed namespace]
   template<class Value>
   class OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred : public OdePredBase<Value>
   {
+  public:
     //------------------------------------------------------------
     // Constructor.
     //------------------------------------------------------------
@@ -509,7 +512,7 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       // Set an arbitrary value for the observed value.
-      setDV( 123456789.0 );
+      this->setDV( 123456789.0 );
 
       // Set the type of event.
       if ( j == 0 )
@@ -520,18 +523,18 @@ namespace // [Begin: unnamed namespace]
 
         // If this is the first time point, set these flags to
         // indicate this is a dose event.
-        setMDV ( 1 );
-        setEVID( DOSE_EVENT );
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
 
         // Set the compartment number.
-        setCMT( 1 );
+        this->setCMT( 1 );
 
         // Save the values for the weighted dose and the weight.
         ds = dose * wt;
         w = wt;
 
         // Set the amount for this instantaneous bolus dose.
-        setAMT( ds );
+        this->setAMT( ds );
       }
       else if ( j / 2 * 2 != j )
       {
@@ -541,11 +544,11 @@ namespace // [Begin: unnamed namespace]
 
         // if j is odd, then set these flags to indicate this is an
         // observation event.
-        setMDV ( 0 );
-        setEVID( OBSERV_EVENT );
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
 
         // Set the compartment number.
-        setCMT( 1 );
+        this->setCMT( 1 );
       }
       else
       {
@@ -555,19 +558,19 @@ namespace // [Begin: unnamed namespace]
 
         // Set these flags to indicate this is a prediction-at-a-
         // nonobservation-time other-type event.
-        setMDV ( 1 );
-        setEVID( OTHER_TYPE_EVENT );
+        this->setMDV ( 1 );
+        this->setEVID( this->OTHER_TYPE_EVENT );
 
         // Set the compartment number equal to zero so that none of
         // the compartments' states will change.
-        setCMT( 0 );
+        this->setCMT( 0 );
 
         // Set the prediction compartment number.
-        setPCMT( 1 );
+        this->setPCMT( 1 );
       }
 
       // Set the time.
-      setTIME( timeStep * j );
+      this->setTIME( timeStep * j );
     }
 
 
@@ -714,7 +717,7 @@ namespace // [Begin: unnamed namespace]
     //**********************************************************
 
   public:
-    int getNRecords( int i ) const
+    virtual int getNRecords( int i ) const
     {
       return 1     +   // Instantanous bolus dose records.
              nY_i  +   // Observation records.
@@ -786,6 +789,7 @@ namespace // [Begin: unnamed namespace]
   template<class Value>
   class ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred : public OdePredBase<Value>
   {
+  public:
     //------------------------------------------------------------
     // Constructor.
     //------------------------------------------------------------
@@ -851,7 +855,7 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       // Set an arbitrary value for the observed value.
-      setDV( 123456789.0 );
+      this->setDV( 123456789.0 );
 
       // Set the type of event.
       if ( j < 2 )
@@ -862,23 +866,23 @@ namespace // [Begin: unnamed namespace]
 
         // If this is one of the first 2 data records, then set these
         // flags to indicate this is a dose event.
-        setMDV ( 1 );
-        setEVID( DOSE_EVENT );
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
 
         // Set the amount for this instantaneous bolus dose.
         if ( j == 0  )
         {
-          setAMT( bolus1 );
-          setCMT( 1 );
+          this->setAMT( bolus1 );
+          this->setCMT( 1 );
         }
         else
         {
-          setAMT( bolus2 );
-          setCMT( 2 );
+          this->setAMT( bolus2 );
+          this->setCMT( 2 );
         }
 
         // Set the time for all of the infusions to be time zero.
-        setTIME( 0.0 );
+        this->setTIME( 0.0 );
       }
       else
       {
@@ -887,11 +891,11 @@ namespace // [Begin: unnamed namespace]
         //------------------------------------------------------
 
         // Set these flags to indicate this is an observation event.
-        setMDV ( 0 );
-        setEVID( OBSERV_EVENT );
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
 
         // Set the time to be greater than zero.
-        setTIME( ( j - 1 ) * timeStep );
+        this->setTIME( ( j - 1 ) * timeStep );
       }
     }
 
@@ -1020,7 +1024,7 @@ namespace // [Begin: unnamed namespace]
     //**********************************************************
 
   public:
-    int getNRecords( int i ) const
+    virtual int getNRecords( int i ) const
     {
       // For this test, there is one instantaneous bolus dose for
       // every compartment except the output compartment.
@@ -1096,6 +1100,8 @@ namespace // [Begin: unnamed namespace]
   template<class Value>
   class ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred : public OdePredBase<Value>
   {
+  public:
+
     //------------------------------------------------------------
     // Constructor.
     //------------------------------------------------------------
@@ -1161,7 +1167,7 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       // Set an arbitrary value for the observed value.
-      setDV( 123456789.0 );
+      this->setDV( 123456789.0 );
 
       // Set the type of event.
       if ( j < 2 )
@@ -1172,23 +1178,23 @@ namespace // [Begin: unnamed namespace]
 
         // If this is one of the first 2 data records, then set these
         // flags to indicate this is a dose event.
-        setMDV ( 1 );
-        setEVID( DOSE_EVENT );
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
 
         // Set the amount for this instantaneous bolus dose.
         if ( j == 0  )
         {
-          setAMT( bolus1 );
-          setCMT( 1 );
+          this->setAMT( bolus1 );
+          this->setCMT( 1 );
         }
         else
         {
-          setAMT( bolus2 );
-          setCMT( 2 );
+          this->setAMT( bolus2 );
+          this->setCMT( 2 );
         }
 
         // Set the time for all of the infusions to be time zero.
-        setTIME( 0.0 );
+        this->setTIME( 0.0 );
       }
       else
       {
@@ -1197,11 +1203,11 @@ namespace // [Begin: unnamed namespace]
         //------------------------------------------------------
 
         // Set these flags to indicate this is an observation event.
-        setMDV ( 0 );
-        setEVID( OBSERV_EVENT );
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
 
         // Set the time to be greater than zero.
-        setTIME( ( j - 1 ) * timeStep );
+        this->setTIME( ( j - 1 ) * timeStep );
       }
     }
 
@@ -1326,7 +1332,7 @@ namespace // [Begin: unnamed namespace]
     //**********************************************************
 
   public:
-    int getNRecords( int i ) const
+    virtual int getNRecords( int i ) const
     {
       // For this test, there is one instantaneous bolus dose for
       // every compartment except the output compartment.
@@ -1402,6 +1408,7 @@ namespace // [Begin: unnamed namespace]
   template<class Value>
   class FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_OdePred : public OdePredBase<Value>
   {
+
     //------------------------------------------------------------
     // Constructor.
     //------------------------------------------------------------
@@ -1468,12 +1475,12 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       // Set an arbitrary value for the observed value.
-      setDV( 123456789.0 );
+      this->setDV( 123456789.0 );
 
       // Set the compartment number so that it rotates among the first
       // 3 compartments.
       int comp = j % 3 + 1;
-      setCMT( comp );
+      this->setCMT( comp );
 
       // For this test there are no events for the output compartment.
       assert( comp < nComp );
@@ -1489,11 +1496,11 @@ namespace // [Begin: unnamed namespace]
         // not the output compartment (number 4), which cannot receive
         // doses, then set these flags to indicate this is a dose
         // event.
-        setMDV ( 1 );
-        setEVID( DOSE_EVENT );
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
 
         // Set the rate for this regular infusion dose.
-        setRATE( rate);
+        this->setRATE( rate);
 
         // Set the amount for this regular infusion dose so that the
         // infusions turn off at different times which are out of
@@ -1501,21 +1508,21 @@ namespace // [Begin: unnamed namespace]
         if ( comp == 1  )
         {
           // Compartment 1 should turn off at T = 2.0.
-          setAMT( 2.0 * rate );
+          this->setAMT( 2.0 * rate );
         }
         else if ( comp == 2  )
         {
           // Compartment 2 should turn off at T = 3.0.
-          setAMT( 3.0 * rate );
+          this->setAMT( 3.0 * rate );
         }
         else
         {
           // Compartment 3 should turn off at T = 1.0.
-          setAMT( 1.0 * rate );
+          this->setAMT( 1.0 * rate );
         }
 
         // Set the time for all of the infusions to be time zero.
-        setTIME( 0.0 );
+        this->setTIME( 0.0 );
       }
       else
       {
@@ -1524,11 +1531,11 @@ namespace // [Begin: unnamed namespace]
         //------------------------------------------------------
 
         // Set these flags to indicate this is an observation event.
-        setMDV ( 0 );
-        setEVID( OBSERV_EVENT );
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
 
         // Set the time to be greater than zero.
-        setTIME( ( j - 2 ) * timeStep );
+        this->setTIME( ( j - 2 ) * timeStep );
       }
     }
 
@@ -1620,7 +1627,7 @@ namespace // [Begin: unnamed namespace]
       int p;
       for ( p = 0; p < nComp; p++ )
       {
-        setCompAmount_t( p, 0.0 );
+        this->setCompAmount_t( p, 0.0 );
       }
     }
 
@@ -1671,7 +1678,7 @@ namespace // [Begin: unnamed namespace]
     //**********************************************************
 
   public:
-    int getNRecords( int i ) const
+    virtual int getNRecords( int i ) const
     {
       // For this test there is one infusion for every compartment
       // except the output compartment.
@@ -1815,12 +1822,12 @@ namespace // [Begin: unnamed namespace]
       //--------------------------------------------------------
 
       // Set an arbitrary value for the observed value.
-      setDV( 123456789.0 );
+      this->setDV( 123456789.0 );
 
       // Set the compartment number so that it rotates among all the 4
       // compartments.
       int comp = ( j + 4 ) / 4;
-      setCMT( comp );
+      this->setCMT( comp );
 
       // For this test there are no events for the output compartment.
       assert( comp < nComp );
@@ -1836,15 +1843,15 @@ namespace // [Begin: unnamed namespace]
         // records, and if this is not the output compartment (number
         // 4), which cannot receive doses, then set these flags to
         // indicate this is a dose event.
-        setMDV ( 1 );
-        setEVID( DOSE_EVENT );
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
 
         // Set the amount for this regular infusion dose.
-        setAMT ( amount );
-        setRATE( rate );
+        this->setAMT ( amount );
+        this->setRATE( rate );
 
         // Set the time.
-        setTIME( 4 * ( comp - 1 ) * timeStep );
+        this->setTIME( 4 * ( comp - 1 ) * timeStep );
       }
       else
       {
@@ -1853,11 +1860,11 @@ namespace // [Begin: unnamed namespace]
         //------------------------------------------------------
 
         // Set these flags to indicate this is an observation event.
-        setMDV ( 0 );
-        setEVID( OBSERV_EVENT );
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
 
         // Set the time.
-        setTIME( ( 4 * ( comp - 1 ) + j % 4) * timeStep );
+        this->setTIME( ( 4 * ( comp - 1 ) + j % 4) * timeStep );
       }
     }
 
@@ -1949,7 +1956,7 @@ namespace // [Begin: unnamed namespace]
       int p;
       for ( p = 0; p < nComp; p++ )
       {
-        setCompAmount_t( p, 0.0 );
+        this->setCompAmount_t( p, 0.0 );
       }
     }
 
@@ -2000,7 +2007,7 @@ namespace // [Begin: unnamed namespace]
     //**********************************************************
 
   public:
-    int getNRecords( int i ) const
+    virtual int getNRecords( int i ) const
     {
       // For this test there is one infusion for every compartment
       // except the output compartment.
