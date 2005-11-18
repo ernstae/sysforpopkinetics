@@ -934,6 +934,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "template <class spk_ValueType>" << endl;
   oDataSet_h << "std::ostream& operator<<( std::ostream& o, const DataSet<spk_ValueType>& A )" << endl;
   oDataSet_h << "{" << endl;
+  oDataSet_h << "   using std::endl;" << endl;
 
   // Compute the number of items that are supposed to be printed out in <presentation_data>.
   // This includes User defined scalar variables, NONMEM (scalar/vector/matrix)
@@ -1238,8 +1239,11 @@ void NonmemTranslator::generateDataSet( ) const
   //
   // Close <presentation_data>
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  oDataSet_h << "}" << endl;
+  oDataSet_h << "};" << endl;
 
+
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "std::ostream& operator<< <spk_ValueType>( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
 }

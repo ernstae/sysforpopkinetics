@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include "CompModelInfoTest.h"
 #include "../../spkcompiler/nonmem/CompModelInfo.h"
