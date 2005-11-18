@@ -885,7 +885,7 @@ protected:
     //----------------------------------------------------------
 
     // Get the total number of data records for this individual.
-    nDataRec = getNRecords( i );
+    nDataRec = this->getNRecords( i );
 
     // Set the sizes for the vectors of ODE solution indices,
     // observation indices, and the flags that indicate is the data

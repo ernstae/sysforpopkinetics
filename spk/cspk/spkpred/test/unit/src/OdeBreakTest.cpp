@@ -56,7 +56,6 @@
 #include <vector>
 
 using namespace CppUnit;
-using std::vector;
 using SPK_VA::valarray;
 
 
@@ -464,8 +463,6 @@ $codep */
 # include <CppAD/CppAD_vector.h>
 # include <CppAD/NearEqual.h>
 
-using CppAD::vector;
-
 namespace { // Begin empty namespace
 
 class OdeBreakOk_Eval {
@@ -474,7 +471,7 @@ private:
 public:
 	OdeBreakOk_Eval(void)
 	{	k = 3; } // initialize as invalid break point index value
-	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	void Break(size_t k_, const CppAD::vector<double> &x, CppAD::vector<double> &g)
 	{	assert( g.size() == 2 );
 		assert( x.size() == 2 );
 		k = k_;
@@ -496,7 +493,7 @@ public:
 		}
 		return;
 	}
-	void Ode(double t, const vector<double> &x, vector<double> &f)
+	void Ode(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f)
 	{	assert( f.size() == 2 );
 		assert( x.size() == 2 );
 		switch(k)
@@ -519,9 +516,9 @@ public:
 		}
 		return;
 	}
-	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	void Ode_ind(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_ind)
 	{	assert(0); }
-	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	void Ode_dep(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_dep)
 	{	assert(0); }
 };
 
@@ -544,14 +541,14 @@ void OdeBreakTest::OdeBreakOk_Test()
 	OdeBreakOk_Eval eval;
 
 	// break point times
-	vector<double> btime(K);
+	CppAD::vector<double> btime(K);
 	btime[0] = 0.;
 	btime[1] = .7;
 	btime[2] = .7;
 
 	// output grid
-	vector<double> otime(J);
-	vector<bool>   oleft(J);
+	CppAD::vector<double> otime(J);
+	CppAD::vector<bool>   oleft(J);
 	size_t j;
 	for(j = 0; j < J; j++)
 	{	otime[j] = double(j+1) / double(J);
@@ -559,15 +556,15 @@ void OdeBreakTest::OdeBreakOk_Test()
 	}
 
 	// absolute error 
-	vector<double> eabs(2);
+	CppAD::vector<double> eabs(2);
 	eabs[0] = 1e-6;
 	eabs[1] = 1e-6;
 
 	// relative error
 	double erel = 0.;
 
-	// results vector
-	vector<double> xout(2 * J);
+	// results CppAD::vector
+	CppAD::vector<double> xout(2 * J);
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
@@ -661,8 +658,6 @@ $codep */
 # include <CppAD/CppAD_vector.h>
 # include <CppAD/NearEqual.h>
 
-using CppAD::vector;
-
 namespace { // Begin empty namespace
 
 class OneBreakOk_Eval {
@@ -674,7 +669,7 @@ public:
 	{	n = n_;	 // dimension of this problem
 		k = 3;   // invalid index value 
 	} 
-	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	void Break(size_t k_, const CppAD::vector<double> &x, CppAD::vector<double> &g)
 	{	assert( g.size() == n );
 		assert( x.size() == n );
 		k = k_;
@@ -691,7 +686,7 @@ public:
 		}
 		return;
 	}
-	void Ode(double t, const vector<double> &x, vector<double> &f)
+	void Ode(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f)
 	{	assert( f.size() == n );
 		assert( x.size() == n );
 		switch(k)
@@ -708,9 +703,9 @@ public:
 		}
 		return;
 	}
-	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	void Ode_ind(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_ind)
 	{	assert(0); }
-	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	void Ode_dep(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_dep)
 	{	assert(0); }
 };
 
@@ -733,18 +728,18 @@ void OdeBreakTest::OneBreakOk_Test()
 	OneBreakOk_Eval eval(n);
 
 	// break point times
-	vector<double> btime(1);
+	CppAD::vector<double> btime(1);
 	btime[0] = 0.;
 
 	// output grid
-	vector<double> otime(J);
-	vector<bool>   oleft(J);
+	CppAD::vector<double> otime(J);
+	CppAD::vector<bool>   oleft(J);
 	size_t j;
 	otime[0] = .5;
 	oleft[0] = true;
 
 	// absolute error 
-	vector<double> eabs(n);
+	CppAD::vector<double> eabs(n);
 	size_t i;
 	for(i = 0; i < n; i++)
 		eabs[i] = 0.;
@@ -752,8 +747,8 @@ void OdeBreakTest::OneBreakOk_Test()
 	// relative error
 	double erel = 1e-10;
 
-	// results vector
-	vector<double> xout(n);
+	// results CppAD::vector
+	CppAD::vector<double> xout(n);
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
@@ -839,8 +834,6 @@ $codep */
 # include <CppAD/CppAD_vector.h>
 # include <CppAD/NearEqual.h>
 
-using CppAD::vector;
-
 namespace { // Begin empty namespace
 
 class ZeroBreakOk_Eval {
@@ -852,7 +845,7 @@ public:
 	{	n = n_;	 // dimension of this problem
 		k = 3;   // invalid index value 
 	} 
-	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	void Break(size_t k_, const CppAD::vector<double> &x, CppAD::vector<double> &g)
 	{	assert( g.size() == n );
 		assert( x.size() == n );
 		k = k_;
@@ -869,7 +862,7 @@ public:
 		}
 		return;
 	}
-	void Ode(double t, const vector<double> &x, vector<double> &f)
+	void Ode(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f)
 	{	assert( f.size() == n );
 		assert( x.size() == n );
 		switch(k)
@@ -887,9 +880,9 @@ public:
 		}
 		return;
 	}
-	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	void Ode_ind(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_ind)
 	{	assert(0); }
-	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	void Ode_dep(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_dep)
 	{	assert(0); }
 };
 
@@ -912,18 +905,18 @@ void OdeBreakTest::ZeroBreakOk_Test()
 	ZeroBreakOk_Eval eval(n);
 
 	// break point times
-	vector<double> btime(1);
+	CppAD::vector<double> btime(1);
 	btime[0] = 0.;
 
 	// output grid
-	vector<double> otime(J);
-	vector<bool>   oleft(J);
+	CppAD::vector<double> otime(J);
+	CppAD::vector<bool>   oleft(J);
 	size_t j;
 	otime[0] = .5;
 	oleft[0] = true;
 
 	// absolute error 
-	vector<double> eabs(n);
+	CppAD::vector<double> eabs(n);
 	size_t i;
 	for(i = 0; i < n; i++)
 		eabs[i] = 0.;
@@ -931,8 +924,8 @@ void OdeBreakTest::ZeroBreakOk_Test()
 	// relative error
 	double erel = 1e-10;
 
-	// results vector
-	vector<double> xout(n);
+	// results CppAD::vector
+	CppAD::vector<double> xout(n);
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
@@ -1024,17 +1017,15 @@ $codep */
 # include <CppAD/CppAD_vector.h>
 # include <CppAD/NearEqual.h>
 
-using CppAD::vector;
-
 namespace { // Begin empty namespace
 
 class StiffBreakOk_Eval {
 private:
-	const vector<double> a;
+	const CppAD::vector<double> a;
 public:
-	StiffBreakOk_Eval(const vector<double> &a_) : a(a_) 
+	StiffBreakOk_Eval(const CppAD::vector<double> &a_) : a(a_) 
 	{ } 
-	void Break(size_t k, const vector<double> &x, vector<double> &g)
+	void Break(size_t k, const CppAD::vector<double> &x, CppAD::vector<double> &g)
 	{	assert( g.size() == 2 );
 		assert( x.size() == 2 );
 		assert( k == 0 );
@@ -1045,7 +1036,7 @@ public:
 
 	// template so can use with Scalar equal to both double and AD<double>
 	template <class Scalar>
-	void Ode(Scalar t, const vector<Scalar> &x, vector<Scalar> &f)
+	void Ode(Scalar t, const CppAD::vector<Scalar> &x, CppAD::vector<Scalar> &f)
 	{	assert( f.size() == 2 );
 		assert( x.size() == 2 );
 		f[0] = - a[0] * x[0];
@@ -1054,12 +1045,12 @@ public:
 	}
 
 	// compute partial of f(t, x) with respect to t
-	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	void Ode_ind(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_ind)
 	{
 		size_t n = x.size();
-		vector< CppAD::AD<double> > T(1);
-		vector< CppAD::AD<double> > X(n);
-		vector< CppAD::AD<double> > F(n);
+		CppAD::vector< CppAD::AD<double> > T(1);
+		CppAD::vector< CppAD::AD<double> > X(n);
+		CppAD::vector< CppAD::AD<double> > F(n);
 
 		// set inputs to Ode_ind
 		T[0] = t;
@@ -1077,18 +1068,18 @@ public:
 		CppAD::ADFun<double> Fun(T, F);
 
 		// compute partial of f w.r.t. t
-		vector<double> dt(1);
+		CppAD::vector<double> dt(1);
 		dt[0] = 1.;
 		f_ind = Fun.Forward(1, dt);
 	}
 
 	// compute partial of f(t, x) with respect to x
-	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	void Ode_dep(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_dep)
 	{
 		size_t n = x.size();
-		vector< CppAD::AD<double> > T(1);
-		vector< CppAD::AD<double> > X(n);
-		vector< CppAD::AD<double> > F(n);
+		CppAD::vector< CppAD::AD<double> > T(1);
+		CppAD::vector< CppAD::AD<double> > X(n);
+		CppAD::vector< CppAD::AD<double> > F(n);
 
 		// set inputs to Ode_ind
 		T[0] = t;
@@ -1106,8 +1097,8 @@ public:
 		CppAD::ADFun<double> Fun(X, F);
 
 		// compute partial of f w.r.t. x
-		vector<double> dx(n);
-		vector<double> df(n);
+		CppAD::vector<double> dx(n);
+		CppAD::vector<double> df(n);
 		for(j = 0; j < n; j++)
 			dx[j] = 0.;
 		for(j = 0; j < n; j++)
@@ -1128,25 +1119,25 @@ void OdeBreakTest::StiffBreakOk_Test()
 	size_t J = 2; // number of output point times
 
 	// evaluation method
-	vector<double> a(2);
+	CppAD::vector<double> a(2);
 	a[0] = 1e1;
 	a[1] = 1.;
 	StiffBreakOk_Eval eval(a);
 
 	// break point times
-	vector<double> btime(K);
+	CppAD::vector<double> btime(K);
 	btime[0] = 0.;
 
 	// output grid
-	vector<double> otime(J);
-	vector<bool>   oleft(J);
+	CppAD::vector<double> otime(J);
+	CppAD::vector<bool>   oleft(J);
 	otime[0] = 1. / a[0];
 	otime[1] = 1. / a[1];
 	oleft[0] = true;
 	oleft[1] = true;
 
 	// absolute error 
-	vector<double> eabs(2);
+	CppAD::vector<double> eabs(2);
 	eabs[0] = 0.;
 	eabs[1] = 0.;
 
@@ -1154,7 +1145,7 @@ void OdeBreakTest::StiffBreakOk_Test()
 	double erel = 1e-3;
 
 	// results vector
-	vector<double> xout(2 * J);
+	CppAD::vector<double> xout(2 * J);
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";
@@ -1257,8 +1248,6 @@ $codep */
 # include <CppAD/CppAD_vector.h>
 # include <CppAD/NearEqual.h>
 
-using CppAD::vector;
-
 namespace { // Begin empty namespace
 
 class RightBreakOk_Eval {
@@ -1267,7 +1256,7 @@ private:
 public:
 	RightBreakOk_Eval(void)
 	{	k = 2; } // initialize as invalid break point index value
-	void Break(size_t k_, const vector<double> &x, vector<double> &g)
+	void Break(size_t k_, const CppAD::vector<double> &x, CppAD::vector<double> &g)
 	{	assert( g.size() == 2 );
 		assert( x.size() == 2 );
 		k = k_;
@@ -1286,7 +1275,7 @@ public:
 		}
 		return;
 	}
-	void Ode(double t, const vector<double> &x, vector<double> &f)
+	void Ode(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f)
 	{	assert( f.size() == 2 );
 		assert( x.size() == 2 );
 		switch(k)
@@ -1301,9 +1290,9 @@ public:
 		}
 		return;
 	}
-	void Ode_ind(double t, const vector<double> &x, vector<double> &f_ind)
+	void Ode_ind(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_ind)
 	{	assert(0); }
-	void Ode_dep(double t, const vector<double> &x, vector<double> &f_dep)
+	void Ode_dep(double t, const CppAD::vector<double> &x, CppAD::vector<double> &f_dep)
 	{	assert(0); }
 };
 
@@ -1327,24 +1316,24 @@ void OdeBreakTest::RightBreakOk_Test()
 	RightBreakOk_Eval eval;
 
 	// break point times
-	vector<double> btime(K);
+	CppAD::vector<double> btime(K);
 	btime[0] = 0.;
 	btime[1] = 1.;
 
 	// output grid
-	vector<double> otime(J);
+	CppAD::vector<double> otime(J);
 	otime[0] = 0.; otime[1] = 0.;
 	otime[2] = 1.; otime[3] = 1.;
 	otime[4] = 2.;
 
 	// left or right continuous version of solution
-	vector<bool>   oleft(J);
+	CppAD::vector<bool>   oleft(J);
 	oleft[0] = true; oleft[1] = false;
 	oleft[2] = true; oleft[3] = false;
 	oleft[4] = true;
 
 	// analytic solution
-	vector<double> solution(2 * J);
+	CppAD::vector<double> solution(2 * J);
 
 	// x_0 (t)        x_1 (t)
 	solution[0] = 0.; solution[1] = 0.;   // left  continuous t = 0
@@ -1355,15 +1344,15 @@ void OdeBreakTest::RightBreakOk_Test()
 
 
 	// absolute error 
-	vector<double> eabs(2);
+	CppAD::vector<double> eabs(2);
 	eabs[0] = 1e-6;
 	eabs[1] = 1e-6;
 
 	// relative error
 	double erel = 0.;
 
-	// results vector
-	vector<double> xout(2 * J);
+	// results CppAD::vector
+	CppAD::vector<double> xout(2 * J);
 
 	// numerical solution of differential equation
 	std::string method = "Runge45";

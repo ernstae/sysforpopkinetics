@@ -1229,6 +1229,7 @@ time_t SESSION_ID;
 #include <strstream>
 #include <iomanip>
 #include <sstream>
+#include <errno.h>
 
 #include "SpkValarray.h"
 #include "fitPopulation.h"
