@@ -827,8 +827,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePred( const SPK_VA::valarray<double>& predIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( predIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.PRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = predIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -917,8 +917,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePPred( const SPK_VA::valarray<double>& pPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.PPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -932,8 +932,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePRes( const SPK_VA::valarray<double>& pResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.PRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -947,8 +947,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePWRes( const SPK_VA::valarray<double>& pWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.PWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.PWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pWResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -962,8 +962,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCPred( const SPK_VA::valarray<double>& cPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.CPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.CPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.CPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << UserStr.CPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -977,8 +977,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCRes( const SPK_VA::valarray<double>& cResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.CRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.CRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.CRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << UserStr.CRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -992,8 +992,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCWRes( const SPK_VA::valarray<double>& cWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.CWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.CWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.CWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << UserStr.CWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cWResIn[i];" << endl;
   oIndData_h << "   }" << endl;

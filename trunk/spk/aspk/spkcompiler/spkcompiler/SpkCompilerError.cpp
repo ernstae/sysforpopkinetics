@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <cassert>
 #include <fstream>
+#include <cmath>
 
 #include "SpkCompilerError.h"
 
