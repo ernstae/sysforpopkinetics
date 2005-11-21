@@ -24,7 +24,7 @@ spkcmpd.pl -- the SPK Compiler Daemon
 
 =head1 SYNOPSIS
 
-spkcmpd.pl database host dbuser dbpasswd
+spkcmpd.pl database dbhost dbuser dbpasswd shost sport
 
 =head1 ABSTRACT
 
@@ -50,11 +50,11 @@ The program expects the following arguments:
     $mode
         The test mode indicator being "test" for test mode
     $shost
-        The host on which the Job-queue server resides
-    $port
-        The port number of the Job-queue server uses 
+        The host on which the job-queue server resides
+    $sport
+        The port number of the job-queue server uses 
 
-The first think that spkcmp.pl does after starting up is to call
+The first thing that spkcmp.pl does after starting up is to call
 Proc::Daemon::Init to make it into a daemon, by shedding its 
 inheirited environment and becoming a direct child of the system
 init process.
@@ -68,7 +68,7 @@ is atomic.  If the lock-file already exists, the program writes an
 error message to the system log and terminates, because only one 
 copy of spkcmpd.pl can be allowed run at any given time.
 
-Next, it opens the database.
+Next, it opens the database and connects to the job-queue server.
 
 The program designates itself to be a process group leader. This
 way it will be able to send signals to all of its descendents without
@@ -76,34 +76,25 @@ having to know their PIDs.
 
 The "stop" subroutine is designated to catch the TERM signal,
 when it is received. As explained below, this will allow for
-an orderly shutdown of the daemon and its sub-processes.
+an orderly shutdown of the daemon and its sub-processes.  It closes 
+the connection to the database and the connection to the job-queue 
+server.
 
-The next step is to select from the database all jobs with a state 
-code field set to 'q2ac'.  These jobs, if any exist, had been in the 
-abort-compile queue when the daemon last shut down. All such jobs are 
-set to be aborted by setting the state code field to 'end' and the end 
-code field to 'abrt'.
-
-The next step is to select from the database all jobs with a state 
-code field set to 'acmp'.  These jobs, if any exist, had been in the 
-process of aborting compilation when the daemon last shut down. All 
-such jobs are set to be aborted by setting the state code field to 'end' 
-and the end code field to 'abrt'.
-
-The last major step in the start-up sequence is to select from the
-database all jobs with a state_code field set to 'cmp'.  These
-jobs, if any exist, had been in the process of being compiled when 
-the daemon last shut down.  All such jobs are rerun.
+The last major step in the start-up sequence is to talk to the 
+job-queue server to put any compiling jobs back to compiler queue 
+that were interupted by the last termination of this daemon, and 
+to put any aborting jobs back to aborting compiler queue that were 
+interupted by the last termination of this daemon
 
 At this point, the program enters an endless loop from which it will
-escape only upon receipt of a signal. It queries the
-database to discover whether or not a job has been added to the compiler
+escape only upon receipt of a signal. It queries the job-queue server
+to discover whether or not a job has been added to the compiler
 queue.  If so, a copy of spkcompiler is started as an independent
 sub-process, working in its own directory on input provided by the
 job. 
 
-The program also queries the database to discover whether or not a
-job has been added to the abort-compilation queue.  If so, a 'TERM' 
+The program also queries the job-queue server to discover whether or not 
+a job has been added to the aborting compiler queue.  If so, a 'TERM' 
 signal is sent to the child process of the job to terminate the child 
 process.  To avoid the "stop" subroutine, which is for the termination 
 of the daemon, being called, the signal mask is temporarily set.
@@ -135,33 +126,19 @@ NOTE: Life-Cycle of the Working Directory Name
      "-job-jjjj" is appended to the name, where "jjjj" is the unique
      job_id that was assigned by the database management system when
      the job was created. 
-  2. Once the working directory has been created, the daemon writes
-     a file called "job_id" containing only the job_id number. This
-     will be useful later on to determine what job this directory
-     was created for.
-  3. When the process is forked into a parent process and a child
+  2. When the process is forked into a parent process and a child
      process, the Linux or Unix operating system assigns a process
      identifier (pid) number to the child.  Process identifiers are
      recycled, but only after a long time or when the system is 
-     rebooted.  The parent could find the working directories of its
-     children by maintaining a table relating pid to job_id. We take
-     a slightly different approach, which is simple and robust. As
-     soon as it is forked, the child changes the name of its working
-     directory to reflect its pid rather than its job_id.  The 
-     directory is renamed so that the name suffix is "-pid-pppp" where
-     "pppp" is the pid.
-  4. When a child process dies, the parent receives its pid as the 
+     rebooted.  The parent finds the working directories of its
+     children by maintaining a table relating pid to job_id.
+  3. When a child process dies, the parent receives its pid as the 
      value returned from the waitpid system call.  Using this, it
      easily constructs the name of the working directory. After 
      extracting results and placing them in the database, the 
      working directory is normally removed, unless the constant 
      $retain_working_directory has been initialized to be true, or
-     in case the run died due to an internal error. So that the
-     retained working directory can be easily identified by software
-     maintainers, the directory name is once again changed to 
-     have "-job-jjjj" as its suffix.  The parent gets the job_id by
-     reading the contents of the file named "job_id", which it created
-     shortly after it created the directory.
+     in case the run died due to an internal error. 
 
 =head1 RETURNS
 
@@ -188,8 +165,8 @@ my $dbhost   = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
-my $shost    = "localhost";
-my $port = "9000";
+my $shost    = shift;
+my $sport    = shift;
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.2.2:8081/";
@@ -310,10 +287,10 @@ sub fork_compiler {
 
     # Write the job_id to a file name "job_id"
     chdir $working_dir;
-    open(FH, ">job_id")
-	or death('emerg', "could not create the job_id file in $working_dir");
-    print FH "$job_id";
-    close(FH);
+#    open(FH, ">job_id")
+#	or death('emerg', "could not create the job_id file in $working_dir");
+#    print FH "$job_id";
+#    close(FH);
 
     # Write the xml_source field from the job row in the database to
     # a file called "source.xml"
@@ -370,16 +347,16 @@ sub fork_compiler {
 	  # When the child terminates, the parent will be provided with this pid,
 	  # and hence will be able to identify the working directory of the
 	  # child.  
-	  my $old_working_dir = $working_dir;
-	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
-	  if (-d $working_dir) {
-	      File::Path::rmtree($working_dir, 0, 0);
-	  }
-	  rename $old_working_dir, $working_dir
-	      or do {
-		  syslog("emerg", "couldn't rename working directory");
-		  die;
-	      };
+#	  my $old_working_dir = $working_dir;
+#	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
+#	  if (-d $working_dir) {
+#	      File::Path::rmtree($working_dir, 0, 0);
+#	  }
+#	  rename $old_working_dir, $working_dir
+#	      or do {
+#		  syslog("emerg", "couldn't rename working directory");
+#		  die;
+#	      };
 	  # Redirect Standard Error to a file
 	  open STDERR, ">$filename_serr";
 
@@ -462,23 +439,31 @@ sub reaper {
 
     # Get the job_id from the file we wrote to the working directory
     # of this process
-    my $unique_name = $prefix_working_dir . "-pid-" . $child_pid;
-    my $working_dir = "$tmp_dir/$unique_name";
-    chdir $working_dir;
-    open(FH, $filename_job_id)
-	or death('emerg', "can't open $working_dir/job_id");
-    read(FH, $job_id, -s FH);
-    close(FH);
+#    my $working_dir = "$tmp_dir/$unique_name";
+#    chdir $working_dir;
+#    open(FH, $filename_job_id)
+#	or death('emerg', "can't open $working_dir/job_id");
+#    read(FH, $job_id, -s FH);
+#    close(FH);
 
     # Rename working directory to make evidence easier to find
-    my $old_working_dir = $working_dir;
-    $unique_name = $prefix_working_dir . "-job-" . $job_id;
-    $working_dir = "$tmp_dir/$unique_name";
-    if (-d $working_dir) {
-	File::Path::rmtree($working_dir, 0, 0);
-    }
-    rename $old_working_dir, $working_dir
-	or death('emerg', "couldn't rename working directory");
+#    my $old_working_dir = $working_dir;
+#    $unique_name = $prefix_working_dir . "-job-" . $job_id;
+#    $working_dir = "$tmp_dir/$unique_name";
+#    if (-d $working_dir) {
+#	File::Path::rmtree($working_dir, 0, 0);
+#    }
+#    rename $old_working_dir, $working_dir
+#	or death('emerg', "couldn't rename working directory");
+
+    # Get the job_id from the child pid
+    my %pid_jobid = reverse %jobid_pid;
+    $job_id = $pid_jobid{$child_pid};
+
+    # Change to working directory
+    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
+    my $working_dir = "$tmp_dir/$unique_name";
+    chdir $working_dir;
 
     # Normal termination
     if ($child_exit_value == 0 && $child_signal_number == 0) {
@@ -610,8 +595,16 @@ sub reaper {
         }
 
         # End the job
-	&end_job($dbh, $job_id, $end_code, $report)
-	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+        print $sh "set-end-$job_id\n";
+        my $answer = <$sh>;
+        chop($answer);
+        if (defined $answer && $answer eq "done") {
+            &end_job($dbh, $job_id, $end_code, $report)
+               or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+        }
+        else {
+            death('emerg', "error ending job in job-queue: job_id=$job_id");
+        }
 	syslog('info', "job_id=$job_id $err_msg ($end_code)");
 
 	# Submit compiler bugs to bugzilla
@@ -670,8 +663,8 @@ sub start {
     $database_open = 1;
 
     # Open a connection to the job-queue server
-    $sh = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $shost, PeerPort => $port)
-        or death("emerg", "can't connect to port $port on $shost: $!");
+    $sh = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $shost, PeerPort => $sport)
+        or death("emerg", "can't connect to port $sport on $shost: $!");
     $sh->autoflush(1);
     $server_open = 1;
 }
@@ -710,6 +703,34 @@ sub stop {
     }
     # Now we must die
     death('info', 'received the TERM signal (normal mode of termination)');
+}
+# Abort a non-compiling job, which was queued to abort cmp or aborting cmp
+# state left by the last termination of this daemon).
+sub abort_job {
+    my $jobid = shift;
+
+    # Form the working directory path of the job
+    my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
+    my $working_dir = "$tmp_dir/$unique_name";
+    my $checkpoint;
+    if ( -e $working_dir ) {
+        # Remove working directory if it is not needed
+        if (!$retain_working_dir) {
+            File::Path::rmtree($working_dir);
+        }
+    }
+
+    # End the job
+    print $sh "set-end-$jobid\n";
+    my $answer = <$sh>;
+    chop($answer);
+    if (defined $answer && $answer eq "done") {
+        &end_job($dbh, $jobid, "abrt", undef, undef)
+            or death('emerg', "job_id=$jobid: $Spkdb::errstr");
+    }
+    else {
+        death('emerg', "error ending job in job-queue: job_id=$jobid");
+    }
 }
 my $row;
 my $row_array;
@@ -751,6 +772,24 @@ $SIG{'TERM'} = \&stop;
 #    death("emerg", "error reading database: $Spkdb::errstr");
 #}
 
+# Put any compiling jobs back to compiler queue that were interupted 
+# by the last termination of this daemon
+print $sh "get-cmp\n";
+my $answer = <$sh>;
+chop($answer);
+unless(defined $answer && $answer eq "done") {
+    death("emerg", "error reading job-queue to get cmp job");
+}
+
+# Put any aborting jobs back to aborting compilation queue that were interupted 
+# by the last termination of this daemon
+print $sh "get-acmp\n";
+$answer = <$sh>;
+chop($answer);
+unless(defined $answer && $answer eq "done") {
+    death("emerg", "error reading job-queue to get acmp job");
+}
+
 # Loop until interrupted by a signal
 use POSIX ":sys_wait_h";
 
@@ -791,6 +830,9 @@ while(1) {
                     $SIG{'TERM'} = 'IGNORE';
 	            kill('TERM', $cpid);
                     $SIG{'TERM'} = \&stop;
+                }
+                else {
+                    abort_job($jobid);
                 }
             }
             else {
