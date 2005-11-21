@@ -1,3 +1,4 @@
+#!/usr/bin/perl -w
 ########################################################################
 #
 # This file is part of the System for Population Kinetics (SPK), which
@@ -16,6 +17,64 @@
 #     University of Washington
 #     Seattle, WA 98195-2255
 ########################################################################
+
+=head1 NAME
+
+jobqd.pl -- the Job-queue Daemon
+
+=head1 SYNOPSIS
+
+jobqd.pl database dbhost dbuser dbpasswd shost sport
+
+=head1 ABSTRACT
+
+The Job-queue Daemon runs continuously on the Job-queue server. It
+first makes it into a deamon and creates a log file.  Then it starts 
+the Job-queue Server which written in java.
+
+=head1 DESCRIPTION
+
+The program expects the following arguments:
+
+    $dbhost
+        The host on which the SPK database resides
+    $database
+        The name of the SPK database
+    $dbuser
+        A database username which has read/write access to the 
+        job table
+    $dbpasswd
+        The password associated with the username
+    $mode
+        The test mode indicator being "test" for test mode and "prod" for production mode
+    $startjob
+        The starting job_id that the job-queue server uses to initilize itself with the 
+        database
+
+The first thing that jobq.pl does after starting up is to call
+Proc::Daemon::Init to make it into a daemon, by shedding its 
+inheirited environment and becoming a direct child of the system
+init process.
+
+It then opens the system log so that it has a place to record progress
+and error messages.
+
+It attempts to create a lock-file if one does not already exist. The
+method that is used assures that the process of query and creation
+is atomic.  If the lock-file already exists, the program writes an
+error message to the system log and terminates, because only one 
+copy of jobqd.pl can be allowed run at any given time.
+
+Next, it starts the job-queue server using the daemon process.
+
+=head1 RETURNS
+
+Nothing, because it has no parent (other than init) to which an exit
+code might be returned.  The program does, however, write event messages
+to the system log.
+
+=cut
+
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 use Proc::Daemon;
 use File::Path;
@@ -32,7 +91,7 @@ my $classpath = "-cp /usr/local/lib/mysql-connector-java-3.0.10-stable-bin.jar:/
 my $lockfile_exists = 0;
 my $jobqs_port = 9000;
 my $service_root = "jobq";
-if ($mode =~ "test") {
+if ($mode eq "test") {
    $service_root .= "test";
    $jobqs_port = 9001;
 }  

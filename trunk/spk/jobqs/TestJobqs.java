@@ -21,6 +21,7 @@ import rfpk.spk.spkdb.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
+import javax.swing.JOptionPane;
 
 /** This class defines unit tests for JobQueue server.
  * @author  Jiaji Du
@@ -37,8 +38,16 @@ public class TestJobqs
         String dbName = args[1];
         String dbUser = args[2];
         String dbPassword = args[3];
-        String classpath = args[4];    
-        final int maxTests = 18;
+        String classpath = args[4];
+        
+//        String host = "localhost";
+//        String dbName = "spktest";
+//        String dbUser = "tester";
+//        String dbPassword = "tester";
+//        String classpath = "/home/jiaji/r2/src/apps/spk/db/api/java/:/home/jiaji/r2/src/apps/spk/jobqs/:" + 
+//        "/home/jiaji/mysql-connector-java-3.0.10-stable/mysql-connector-java-3.0.10-stable-bin.jar:.";
+        
+        final int maxTests = 22;
         final int port = 9001;
 	boolean b = true;
 	boolean target = true;
@@ -50,6 +59,7 @@ public class TestJobqs
 	try
         {
             // Populate the test database job table
+            System.out.println("Connecting and populating the database ...");
 	    conn = Spkdb.connect(dbName, host, dbUser, dbPassword);
             long[] jobs = new long[8];
             for(int j = 0; j < 8; j++)
@@ -62,6 +72,7 @@ public class TestJobqs
             Spkdb.setStateCode(conn, jobs[5], "acmp");
             Spkdb.setStateCode(conn, jobs[6], "q2ar");
             Spkdb.setStateCode(conn, jobs[7], "arun");
+            System.out.println("Connecting and populating the database completed");
         }
         catch(Exception e)
         {
@@ -72,20 +83,25 @@ public class TestJobqs
         // Start job-queue server and connect to it
         String[] command = {"java", "-cp", classpath, "uw.rfpk.jobqs.JobQueue", 
                             host, dbName, dbUser, dbPassword, String.valueOf(port), "1"};
-        Process process;
-        Socket socket;
-        PrintWriter out;
-        BufferedReader in;
+        Process process = null;
+        Socket socket = null;
+        PrintWriter out = null;
+        BufferedReader in = null;
         try
         {
             s = "starting and connecting to server";
-            
+            System.out.println("Job-queue server starting ...");
             // Start the job-queue server
             process = Runtime.getRuntime().exec(command);
-            Thread.sleep(10000);
- 
+            System.out.println("Job-queue server stated");
             // Connect to the job-queue server
-	    socket = new Socket("localhost", port);
+            do
+            {
+                System.out.println("Job-queue server initializing ...");
+                Thread.sleep(1000);
+	        socket = new Socket("localhost", port);
+            } while(socket == null);
+            System.out.println("Job-queue server initialization completed");
             out = new PrintWriter(socket.getOutputStream(), true);            
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }
@@ -138,16 +154,14 @@ public class TestJobqs
                         s = "job 5 status after server initialization";
                         rs = Spkdb.getJob(conn, 5);
                         rs.next();
-                        b = rs.getString("state_code").equals("end");
-                        b = rs.getString("end_code").equals("abrt") && b;
+                        b = rs.getString("state_code").equals("q2ac");
                         break;
                     case 7:
                         target = true;
                         s = "job 6 status after server initialization";
                         rs = Spkdb.getJob(conn, 6);
                         rs.next();
-                        b = rs.getString("state_code").equals("end");
-                        b = rs.getString("end_code").equals("abrt") && b;
+                        b = rs.getString("state_code").equals("q2ac");
                         break;
                     case 8:
                         target = true;
@@ -187,7 +201,11 @@ public class TestJobqs
                         target = true;
                         s = "getting jobs from q2ac queue";
                         out.println("get-q2ac");
-                        b = in.readLine().equals("none");
+                        b = in.readLine().equals("5");
+                        out.println("get-q2ac");
+                        b = in.readLine().equals("6") && b;
+                        out.println("get-q2ac");
+                        b = in.readLine().equals("none") && b;
 		        break;
 		    case 13:
                         target = true;
@@ -272,6 +290,50 @@ public class TestJobqs
                         b = in.readLine().equals("none") && b;
 		        break;
                     case 18:
+                        target = true;
+                        s = "setting q2c job to end";
+                        out.println("add-q2c-1");
+                        b = in.readLine().equals("done");
+                        out.println("set-end-1");
+                        b = in.readLine().equals("done") && b;
+                        out.println("get-q2c");
+                        b = in.readLine().equals("none") && b;
+                        break;
+                    case 19:
+                        target = true;
+                        s = "setting q2r job to end";
+                        out.println("add-q2r-2");
+                        b = in.readLine().equals("done");
+                        out.println("set-end-2");
+                        b = in.readLine().equals("done") && b;
+                        out.println("get-q2r");
+                        b = in.readLine().equals("none") && b;
+                        break;
+                    case 20:
+                        target = true;
+                        s = "setting q2ac job to end";
+                        out.println("add-q2c-3");
+                        b = in.readLine().equals("done");
+                        out.println("get-q2c");
+                        b = in.readLine().equals("3") && b;
+                        out.println("set-end-3");
+                        b = in.readLine().equals("done") && b;
+                        out.println("get-q2ac");
+                        b = in.readLine().equals("none") && b;
+                        break;
+                    case 21:
+                        target = true;
+                        s = "setting q2ar job to end";
+                        out.println("add-q2r-4");
+                        b = in.readLine().equals("done");
+                        out.println("get-q2r");
+                        b = in.readLine().equals("4") && b;
+                        out.println("set-end-4");
+                        b = in.readLine().equals("done") && b;
+                        out.println("get-q2ar");
+                        b = in.readLine().equals("none") && b;
+                        break;
+                    case 22:
                         target = true;
                         s = "calling the server Hi";
                         out.println("Hi");

@@ -24,7 +24,7 @@ spkrund.pl -- the SPK Run Time Daemon
 
 =head1 SYNOPSIS
 
-spkrund.pl database host dbuser dbpasswd
+spkrund.pl database dbhost dbuser dbpasswd shost sport
 
 =head1 ABSTRACT
 
@@ -50,13 +50,13 @@ The program expects the following arguments:
     $mode
         The test mode indicator being "test" for test mode
     $shost
-        The host on which the Job-queue server resides
-    $port
-        The port number of the Job-queue server uses 
+        The host on which the job-queue server resides
+    $sport
+        The port number of the job-queue server uses 
 
 =head2 OPERATION
 
-The first think that spkcmp.pl does after starting up is to call
+The first thing that spkrun.pl does after starting up is to call
 Proc::Daemon::Init to make it into a daemon, by shedding its
 inheirited environment and becoming a direct child of the system init
 process.
@@ -70,7 +70,7 @@ atomic.  If the lock-file already exists, the program writes an error
 message to the system log and terminates, because only one copy of
 spkrund.pl can be allowed to run at any given time.
 
-Next, it opens the database.
+Next, it opens the database and connects to the job-queue server.
 
 The program designates itself to be a process group leader. This way
 it will be able to send signals to all of its descendents without
@@ -78,35 +78,25 @@ having to know their PIDs.
 
 The "stop" subroutine is designated to catch the TERM signal, when it
 is received. As explained below, this will allow for an orderly
-shutdown of the daemon and its sub-processes.
+shutdown of the daemon and its sub-processes.  It closes 
+the connection to the database and the connection to the job-queue 
+server.
 
-The next step is to select from the database all jobs with a state 
-code field set to 'q2ar'.  These jobs, if any exist, had been in the 
-abort-run queue when the daemon last shut down. All such jobs are 
-set to be aborted by setting the state code field to 'end' and the 
-end code field to 'abrt'.
-
-The next step is to select from the database all jobs with a state 
-code field set to 'arun'.  These jobs, if any exist, had been in the 
-process of aborting run when the daemon last shut down. All such jobs 
-are set to be aborted by setting the state code field to 'end' and the 
-end code field to 'abrt'.  If checkpoint file exists in any of these 
-jobs' working directory, its text content is copied to the database.
-
-The last major step in the start-up sequence is to select from the
-database all jobs with a state_code field set to 'run'.  These jobs,
-if any exist, had been in the process of running when the daemon last
-shut down.  All such jobs are rerun.
+The last major step in the start-up sequence is to talk to the 
+job-queue server to put any running jobs back to run queue 
+that were interupted by the last termination of this daemon, and 
+to put any aborting jobs back to aborting run queue that were 
+interupted by the last termination of this daemon
 
 At this point, the program enters an endless loop from which it will
-escape only upon receipt of a signal. It queries the database to
+escape only upon receipt of a signal. It queries the job-queue server to
 discover whether or not a job has been added to the run queue.  If so,
 a copy of the job's driver is started as an independent sub-process,
 working in its own directory.  
 
-The program also queries the database to discover whether or not a
-job has been added to the abort-run queue.  If so, a 'TERM' signal is
-sent to the child process of the job to terminate the child process. 
+The program also queries the job-queue server to discover whether or not 
+a job has been added to the aborting run queue.  If so, a 'TERM' signal 
+is sent to the child process of the job to terminate the child process. 
 To avoid the "stop" subroutine, which is for the termination of the 
 daemon, being called, the signal mask is temporarily set.
 
@@ -230,8 +220,8 @@ my $host     = shift;
 my $dbuser   = shift;
 my $dbpasswd = shift;
 my $mode     = shift;
-my $shost    = "localhost";
-my $port = "9000";
+my $shost    = shift;
+my $sport    = shift;
 
 my $mailserver = "smtp.washington.edu:25";
 my $hostname = hostname();
@@ -796,8 +786,16 @@ syslog('info', "end_code: srun  pid: $child_pid");
     if ($end_code ne "abrt" && length($optimizer_trace) > 0) {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
-    &end_job($dbh, $job_id, $end_code, $report, $checkpoint)
-	or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+    print $sh "set-end-$job_id\n";
+    my $answer = <$sh>;
+    chop($answer);
+    if (defined $answer && $answer eq "done") {
+        &end_job($dbh, $job_id, $end_code, $report, $checkpoint)
+	    or death('emerg', "job_id=$job_id: $Spkdb::errstr");
+    }
+    else {
+        death('emerg', "error ending job in job-queue: job_id=$job_id");
+    }
 
     # Send end-job email notice to the user if it is requested
     if ($end_code ne "abrt") {
@@ -855,8 +853,8 @@ sub start {
     $database_open = 1;
 
     # Open a connection to the job-queue server
-    $sh = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $shost, PeerPort => $port)
-        or death("emerg", "can't connect to port $port on $shost: $!");
+    $sh = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $shost, PeerPort => $sport)
+        or death("emerg", "can't connect to port $sport on $shost: $!");
     $sh->autoflush(1);
     $server_open = 1;
 }
@@ -894,7 +892,7 @@ sub stop {
     # now we can die
     death('info', 'received the TERM signal (normal mode of termination)');
 }
-# Abort a non-running job, which is in queued to abort run or aborting run
+# Abort a non-running job, which was queued to abort run or aborting run
 # state left by the last termination of this daemon).
 sub abort_job {
     my $jobid = shift;
@@ -922,8 +920,16 @@ sub abort_job {
     }
 
     # End the job
-    &end_job($dbh, $jobid, "abrt", undef, $checkpoint)
-        or death('emerg', "job_id=$jobid: $Spkdb::errstr");
+    print $sh "set-end-$jobid\n";
+    my $answer = <$sh>;
+    chop($answer);
+    if (defined $answer && $answer eq "done") {
+        &end_job($dbh, $jobid, "abrt", undef, $checkpoint)
+            or death('emerg', "job_id=$jobid: $Spkdb::errstr");
+    }
+    else {
+        death('emerg', "error ending job in job-queue: job_id=$jobid");
+    }
 }
 # become a daemon
 Proc::Daemon::Init();
@@ -965,6 +971,24 @@ $SIG{'TERM'} = \&stop;
 #else {
 #    death("emerg", "error reading database: $Spkdb::errstr");
 #}
+
+# Put any running jobs back to run queue that were interupted 
+# by the last termination of this daemon
+print $sh "get-run\n";
+my $answer = <$sh>;
+chop($answer);
+unless(defined $answer && $answer eq "done") {
+    death("emerg", "error reading job-queue to get run job");
+}
+
+# Put any aborting jobs back to aborting run queue that were interupted 
+# by the last termination of this daemon
+print $sh "get-arun\n";
+$answer = <$sh>;
+chop($answer);
+unless(defined $answer && $answer eq "done") {
+    death("emerg", "error reading job-queue to get arun job");
+}
 
 # loop until interrupted by a signal
 use POSIX ":sys_wait_h";
