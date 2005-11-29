@@ -351,7 +351,7 @@ where $latex t_j$$ is $syntax%%otime%[%j%]%$$.
 
 
 $children%
-	test/unit/src/OdeBreakTest.cpp
+	../test/unit/src/OdeBreakTest.cpp
 %$$
 $head Example$$
 The routine $xref/OdeBreakOk/$$ is an example and test of $code OdeBreak$$.
