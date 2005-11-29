@@ -63,7 +63,9 @@
 #include "client.h"
 #include "SpkCompilerException.h"
 #include "ClientTranslator.h"
+#include "upper.h"
 #include "nonmem/NonmemTranslator.h"
+#include "DOMPrint.h"
 
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -157,6 +159,25 @@ namespace{
   }
 };
 
+/* rename -- rename a file
+int rename (const char * old, const char * new)
+
+Renames a file from old to new.  If new already
+exists, it is removed.
+
+*/
+int rename (char* zfrom, char* zto)
+{
+  if (link (zfrom, zto) < 0)
+    {
+      if (errno != EEXIST)
+	return -1;
+      if (unlink (zto) < 0
+	  || link (zfrom, zto) < 0)
+	return -1;
+    }
+  return unlink (zfrom);
+}
 
 /**
  * This main() function is the SPK Compiler.  
@@ -192,7 +213,7 @@ int main( int argc, const char* argv[] )
   }  
   const char * gSource = argv[1];
   const char * gData   = argv[2];
-  
+
   try
     {
       XMLPlatformUtils::Initialize();

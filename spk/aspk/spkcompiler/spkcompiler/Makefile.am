@@ -4,6 +4,7 @@ bindir           = /usr/local/bin/spktest
 noinst_LIBRARIES = libcommon.a
 AM_CXXFLAGS      = -g -I./nonmem
 AM_LDFLAGS       = -lxerces-c nonmem/libnonmem.a ./libcommon.a
+spkcompiler_LDADD=@LEXLIB@
 
 MOSTLYCLEANFILES = libcommon.a 
 
