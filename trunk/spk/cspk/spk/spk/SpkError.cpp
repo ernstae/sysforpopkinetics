@@ -508,7 +508,7 @@
   $rend
 
   SPK_PROGRAMMER_ERR $cend
-  indicates the libarary implementator's programming error.
+  indicates the library implementor's programming error.
   $rend
 
   SPK_INSUFFICIENT_MEM_ERR     $cend
