@@ -21,7 +21,7 @@ package uw.rfpk.jobqs;
 import java.util.Vector;
 import java.util.Properties;
 
-/** This class object is the state of the jobs.
+/** This class object contains the states of the currently active jobs.
  *
  * @author  Jiaji Du
  */
