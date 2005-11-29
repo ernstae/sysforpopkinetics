@@ -20,11 +20,12 @@ package uw.rfpk.jobqs;
 
 import java.io.*;
 import java.net.*;
-import javax.swing.JOptionPane;
+import java.awt.*;
+import javax.swing.*;
 
 /** This class asks the user to wait for the job-queue server to initialize.  It says "Hi"
- * to the server every 10 seconds until it receives "Hi" from the server.  Then it tells
- * the user the initialization hs completed.
+ * to the server every second until it receives "Hi" from the server.  Then it tells
+ * the user the server initialization has completed.
  *
  * @author  Jiaji Du
  */
@@ -38,7 +39,17 @@ public class Ping
         Socket socket = null;
         PrintWriter out = null;
         BufferedReader in = null;
-        JOptionPane.showMessageDialog(null, "Please wait for job-queue server initialization.");
+        JDialog dialog = new JDialog();
+        JLabel label = new JLabel("The Job-queue server is initializing. Please wait.");
+        label.setHorizontalAlignment(JLabel.CENTER);
+        dialog.getContentPane().add(label, BorderLayout.CENTER);
+        dialog.setTitle("Message");
+        dialog.setSize(360, 100);
+        Toolkit theKit = dialog.getToolkit();           
+        Dimension wndSize = theKit.getScreenSize(); 
+        dialog.setLocation((int)wndSize.width / 2 - 180, (int)wndSize.height / 2 - 50);
+        dialog.setVisible(true);
+  
         while(true)
         {
             try
@@ -49,7 +60,10 @@ public class Ping
                 out.println("Hi");
                 String message = in.readLine();
                 if(message.equals("Hi"))
-                    JOptionPane.showMessageDialog(null, "Initialization has completed.");
+                {
+                    dialog.setVisible(false);
+                    JOptionPane.showMessageDialog(null, "Initialization has completed.");                    
+                }
                 in.close();
                 out.close();
                 socket.close();
@@ -73,7 +87,7 @@ public class Ping
             }
             try
             {
-                Thread.sleep(10000);
+                Thread.sleep(1000);
             }
             catch(InterruptedException e)
             {
