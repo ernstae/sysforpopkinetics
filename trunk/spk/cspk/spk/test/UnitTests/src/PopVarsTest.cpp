@@ -38,8 +38,8 @@
  *
  *************************************************************************/
 #include <sstream>
-#include <spk/PopVars.h>
-#include <spk/mulByScalar.h>
+#include "../../../spk/PopVars.h"
+#include "../../../spk/mulByScalar.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "PopVarsTest.h"

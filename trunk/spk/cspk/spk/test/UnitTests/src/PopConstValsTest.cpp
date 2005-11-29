@@ -31,9 +31,9 @@
  *************************************************************************/
 
 #include <sstream>
-#include <spk/PopConstVals.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/namespace_population_analysis.h>
+#include "../../../spk/PopConstVals.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/namespace_population_analysis.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "PopConstValsTest.h"

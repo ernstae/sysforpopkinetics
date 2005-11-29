@@ -36,14 +36,14 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/mapObj.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/mapObj.h"
 #include "mapObjTest.h"
-#include <spk/SpkModel.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/matmax.h>
-#include <spk/matabs.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/matmax.h"
+#include "../../../spk/matabs.h"
+#include "../../../spk/SpkValarray.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;

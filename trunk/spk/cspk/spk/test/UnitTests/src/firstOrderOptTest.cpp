@@ -48,18 +48,18 @@ extern "C"{
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/firstOrderOpt.h>
-#include <spk/namespace_population_analysis.h>
-#include <spk/SpkException.h>
-#include <spk/SpkValarray.h>
-#include <spk/Objective.h>
-#include <spk/lTilde.h>
-#include <spk/pi.h>
-#include <spk/SpkModel.h>
-#include <spk/EqIndModel.h>
-#include <spk/mapObj.h>
-#include <spk/randNormal.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/firstOrderOpt.h"
+#include "../../../spk/namespace_population_analysis.h"
+#include "../../../spk/SpkException.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/Objective.h"
+#include "../../../spk/lTilde.h"
+#include "../../../spk/pi.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/EqIndModel.h"
+#include "../../../spk/mapObj.h"
+#include "../../../spk/randNormal.h"
 
 #include "firstOrderOptTest.h"
 

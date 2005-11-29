@@ -44,19 +44,19 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 
-#include <spk/mapOpt.h>
+#include "../../../spk/mapOpt.h"
 #include "mapOptTest.h"
 
-#include <spk/SpkValarray.h>
-#include <spk/mapObj.h>
-#include <spk/SpkModel.h>
-#include <spk/identity.h>
-#include <spk/mulByScalar.h>
-#include <spk/pi.h>
-#include <spk/inverse.h>
-#include <spk/allZero.h>
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/mapObj.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/pi.h"
+#include "../../../spk/inverse.h"
+#include "../../../spk/allZero.h"
 
 
 using SPK_VA::valarray;

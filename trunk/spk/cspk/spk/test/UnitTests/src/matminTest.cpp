@@ -34,8 +34,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/matmin.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/matmin.h"
 #include "matminTest.h"
 
 #include <cfloat>

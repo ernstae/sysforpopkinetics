@@ -35,8 +35,8 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkModel.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkModel.h"
 
 
 class lambdaTest : public CppUnit::TestFixture

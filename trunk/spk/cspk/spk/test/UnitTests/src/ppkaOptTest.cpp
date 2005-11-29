@@ -36,12 +36,12 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/ppkaOpt.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/ppkaOpt.h"
 #include "ppkaOptTest.h"
-#include <spk/SpkException.h>
-#include <spk/SpkValarray.h>
-#include <spk/randNormal.h>
+#include "../../../spk/SpkException.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/randNormal.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;
@@ -81,9 +81,9 @@ void ppkaOptTest::expectedHessianTest()
  * Include Files
  *------------------------------------------------------------------------*/
 
-#include <spk/lTilde.h>
-#include <spk/pi.h>
-#include <spk/SpkModel.h>
+#include "../../../spk/lTilde.h"
+#include "../../../spk/pi.h"
+#include "../../../spk/SpkModel.h"
 
 #include <iostream>
 #include <iomanip>

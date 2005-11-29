@@ -35,7 +35,7 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 
 class firstOrderOptTest : public CppUnit::TestFixture
 {

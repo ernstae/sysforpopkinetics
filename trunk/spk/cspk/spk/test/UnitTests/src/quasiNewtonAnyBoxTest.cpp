@@ -38,8 +38,8 @@
 #include "quasiNewtonAnyBoxTest.h"
 
 // SPK library header files.
-#include <spk/quasiNewtonAnyBox.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/quasiNewtonAnyBox.h"
+#include "../../../spk/DoubleMatrix.h"
 
 // SPK optimizer header files.
 #include <QN01Box/QuasiNewton01Box.h>

@@ -37,8 +37,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/BlockAlloc.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/BlockAlloc.h"
 #include "BlockAllocTest.h"
 
 using namespace CppUnit;

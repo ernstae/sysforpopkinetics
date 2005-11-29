@@ -32,8 +32,8 @@
  *
  *************************************************************************/
 #include <iostream>
-#include <spk/getSubblock.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/getSubblock.h"
+#include "../../../spk/DoubleMatrix.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "getSubblockTest.h"

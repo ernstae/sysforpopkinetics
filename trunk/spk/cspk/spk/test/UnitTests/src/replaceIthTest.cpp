@@ -34,8 +34,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/replaceIth.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/replaceIth.h"
 #include "replaceIthTest.h"
 
 using namespace CppUnit;

@@ -33,35 +33,35 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
-#include <cppunit/TestSuite.h>
-#include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/mapObjDiff.h>
-#include "mapObjDiffTest.h"
-
 #include <cassert>
 #include <iomanip>
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
 #include <cfloat>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/mapObj.h>
-#include <spk/SpkModel.h>
-#include <spk/matmax.h>
-#include <spk/matabs.h>
-#include <spk/subtract.h>
-#include <spk/divByScalar.h>
-#include <spk/mulByScalar.h>
-#include <spk/transpose.h>
-#include <spk/AkronBtimesC.h>
-#include <spk/rvec.h>
-#include <spk/add.h>
-#include <spk/det.h>
-#include <spk/multiply.h>
-#include <spk/identity.h>
-#include <spk/SpkValarray.h>
+
+#include <cppunit/TestSuite.h>
+#include <cppunit/TestCaller.h>
+
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/mapObj.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/matmax.h"
+#include "../../../spk/matabs.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/divByScalar.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/AkronBtimesC.h"
+#include "../../../spk/rvec.h"
+#include "../../../spk/add.h"
+#include "../../../spk/det.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/mapObjDiff.h"
+#include "mapObjDiffTest.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;

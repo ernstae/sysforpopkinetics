@@ -37,13 +37,12 @@
 // SPK Pred test suite header files.
 #include "linearInterpolateTest.h"
 
-// SPK Pred library header files.
-#include "../../lib/src/linearInterpolate.h"
 
 // SPK library header files.
-#include <spk/identity.h>
-#include <spk/multiply.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/identity.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/linearInterpolate.h"
 
 // CppUnit framework header files.
 #include <cppunit/TestSuite.h>

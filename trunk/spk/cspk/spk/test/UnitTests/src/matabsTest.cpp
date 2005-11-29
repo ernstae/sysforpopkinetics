@@ -35,8 +35,8 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/matabs.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/matabs.h"
 #include "matabsTest.h"
 
 #include <cmath>

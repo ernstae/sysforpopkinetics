@@ -36,11 +36,11 @@
  *************************************************************************/
 
 #include <cmath>
-#include <spk/SpkValarray.h>
-#include <spk/allZero.h>
+#include "../../../../spk/SpkValarray.h"
+#include "../../../../spk/allZero.h"
 
-#include "src/DiffEqnModel.h"
-#include "src/gval.h"
+#include "DiffEqnModel.h"
+#include "gval.h"
 
 using SPK_VA::valarray;
 using SPK_VA::slice;

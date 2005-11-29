@@ -35,8 +35,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/placeRows.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/placeRows.h"
 #include "placeRowsTest.h"
 
 using namespace CppUnit;

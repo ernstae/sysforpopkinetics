@@ -34,11 +34,11 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/simulate.h>
-#include <spk/SpkValarray.h>
-#include <spk/calcMean.h>
+#include "../../../spk/simulate.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/calcMean.h"
 #include "simulateTest.h"
-#include <spk/identity.h>
+#include "../../../spk/identity.h"
 #include <cmath>
 
 
@@ -527,7 +527,7 @@ void simulateTest::ind_simple_noseed()
   CPPUNIT_ASSERT_MESSAGE( "Two sets of simulated data did not differ", ok );
 }
 
-#include <spk/printInMatrix.h>
+#include "../../../spk/printInMatrix.h"
 void simulateTest::pop_simple_seed()
 {
   using namespace std;

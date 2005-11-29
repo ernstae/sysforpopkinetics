@@ -39,7 +39,7 @@
 #include <cppunit/Test.h>
 
 #include <vector>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 
 class addTest : public CppUnit::TestFixture
 {

@@ -30,9 +30,9 @@
  *
  *************************************************************************/
 #include <iostream>
-#include <spk/getMulRows.h>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/getMulRows.h"
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/DoubleMatrix.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "getMulRowsTest.h"

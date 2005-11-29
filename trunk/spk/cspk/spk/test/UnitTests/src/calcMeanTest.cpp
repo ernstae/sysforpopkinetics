@@ -34,8 +34,8 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/calcMean.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/calcMean.h"
+#include "../../../spk/SpkValarray.h"
 #include "calcMeanTest.h"
 
 using SPK_VA::valarray;

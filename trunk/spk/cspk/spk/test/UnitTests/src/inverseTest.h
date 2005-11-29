@@ -38,7 +38,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 
 class inverseTest : public CppUnit::TestFixture
 {

@@ -36,7 +36,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 
 class ABA_xTest : public CppUnit::TestFixture
 {

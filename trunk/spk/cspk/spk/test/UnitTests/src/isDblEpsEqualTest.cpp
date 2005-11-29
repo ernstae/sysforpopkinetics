@@ -35,9 +35,9 @@
 #include <cfloat>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/isDblEpsEqual.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/isDblEpsEqual.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
 #include "isDblEpsEqualTest.h"
 
 using namespace CppUnit;

@@ -42,10 +42,10 @@
 #include <iostream>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/replaceSubblock.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/replaceSubblock.h"
 #include "replaceSubblockTest.h"
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkValarray.h"
 
 using namespace CppUnit;
 using SPK_VA::valarray;

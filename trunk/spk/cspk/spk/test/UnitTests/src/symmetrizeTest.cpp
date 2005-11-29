@@ -34,11 +34,11 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/symmetrize.h>
-#include <spk/transpose.h>
-#include <spk/SpkValarray.h>
-#include <spk/printInMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/symmetrize.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/printInMatrix.h"
 
 #include "symmetrizeTest.h"
 

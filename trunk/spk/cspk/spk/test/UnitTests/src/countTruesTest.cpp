@@ -35,11 +35,11 @@
 #include <algorithm>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/countTrues.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/countTrues.h"
 #include "countTruesTest.h"
 
-#include <spk/identity.h>
+#include "../../../spk/identity.h"
 
 using namespace CppUnit;
 

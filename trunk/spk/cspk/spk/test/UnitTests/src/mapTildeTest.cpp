@@ -41,23 +41,23 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkModel.h>
-#include <spk/transpose.h>
-#include <spk/matmax.h>
-#include <spk/matabs.h>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/subtract.h>
-#include <spk/mulByScalar.h>
-#include <spk/pi.h>
-#include <spk/mapObj.h>
-#include <spk/isLessThanOrEqualTo.h>
-#include <spk/allTrue.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/identity.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/matmax.h"
+#include "../../../spk/matabs.h"
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/pi.h"
+#include "../../../spk/mapObj.h"
+#include "../../../spk/isLessThanOrEqualTo.h"
+#include "../../../spk/allTrue.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/identity.h"
 
-#include <spk/mapTilde.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/mapTilde.h"
+#include "../../../spk/SpkValarray.h"
 
 #include "mapTildeTest.h"
 

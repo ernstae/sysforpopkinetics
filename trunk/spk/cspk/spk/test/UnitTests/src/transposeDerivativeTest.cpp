@@ -36,9 +36,9 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/transposeDerivative.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/transposeDerivative.h"
+#include "../../../spk/SpkValarray.h"
 #include "transposeDerivativeTest.h"
 
 using namespace CppUnit;

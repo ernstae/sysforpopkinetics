@@ -35,23 +35,23 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/elsq.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/elsq.h"
 #include "elsqTest.h"
 
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
-#include <spk/inverse.h>
-#include <spk/det.h>
-#include <spk/subtract.h>
-#include <spk/transpose.h>
-#include <spk/pi.h>
-#include <spk/SpkModel.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/multiply.h>
-#include <spk/allZero.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/inverse.h"
+#include "../../../spk/det.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/pi.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/allZero.h"
+#include "../../../spk/SpkValarray.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;

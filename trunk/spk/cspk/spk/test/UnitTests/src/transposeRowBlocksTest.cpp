@@ -34,13 +34,13 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/transposeRowBlocks.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/transposeRowBlocks.h"
 #include "transposeRowBlocksTest.h"
-#include <spk/isDmatEpsEqual.h>
-#include <spk/SpkValarray.h>
-#include <spk/getMulRows.h>
-#include <spk/transpose.h>
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/getMulRows.h"
+#include "../../../spk/transpose.h"
 
 using namespace CppUnit;
 using SPK_VA::valarray;

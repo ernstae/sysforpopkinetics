@@ -43,13 +43,13 @@
 #include <math.h>
 #include <float.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/AkronBtimesC.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/AkronBtimesC.h"
 
 #include "AkronBtimesCTest.h"
-#include <spk/multiply.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/multiply.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/SpkValarray.h"
 
 using SPK_VA::valarray;
 using namespace std;

@@ -38,7 +38,7 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/fitIndividual.h>
+#include "../../../spk/fitIndividual.h"
 #include "fitIndividualTest.h"
 
 #include <iomanip>
@@ -46,14 +46,14 @@
 #include <cstdlib>
 #include <cassert>
 
-#include <spk/mapObj.h>
-#include <spk/SpkModel.h>
-#include <spk/pi.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkValarray.h>
-#include <spk/allZero.h>
-#include <spk/identity.h>
-#include <spk/WarningsManager.h>
+#include "../../../spk/mapObj.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/pi.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/allZero.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/WarningsManager.h"
 
 using namespace CppUnit;
 

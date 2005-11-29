@@ -40,26 +40,26 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/centdiff.h>
-#include <spk/SpkValarray.h>
-#include <spk/inverse.h>
-#include <spk/SpkModel.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/det.h>
-#include <spk/elsq.h>
-#include <spk/elsq_x.h>
-#include <spk/identity.h>
-#include <spk/subtract.h>
-#include <spk/transposeRowBlocks.h>
-#include <spk/mapObj.h>
-#include <spk/mapObjDiff.h>
-#include <spk/lambda.h>
-#include <spk/Function.h>
-#include <spk/add.h>
-#include <spk/matabs.h>
-#include <spk/transpose.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/centdiff.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/inverse.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/det.h"
+#include "../../../spk/elsq.h"
+#include "../../../spk/elsq_x.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/transposeRowBlocks.h"
+#include "../../../spk/mapObj.h"
+#include "../../../spk/mapObjDiff.h"
+#include "../../../spk/lambda.h"
+#include "../../../spk/Function.h"
+#include "../../../spk/add.h"
+#include "../../../spk/matabs.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
 
 #include "centdiffTest.h"
 

@@ -34,12 +34,12 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/IkronBtimesC.h>
-#include <spk/symmetrize.h>
-#include <spk/identity.h>
-#include <spk/transpose.h>
-#include <spk/AkronBtimesC.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/IkronBtimesC.h"
+#include "../../../spk/symmetrize.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/AkronBtimesC.h"
 #include "IkronBtimesCTest.h"
 
 using namespace std;

@@ -34,13 +34,13 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/EqIndModel.h>
-#include <spk/SpkModel.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/EqIndModel.h"
+#include "../../../spk/SpkModel.h"
 #include <iostream>
 #include <iomanip>
 #include <cmath>
-#include <spk/SpkException.h>
+#include "../../../spk/SpkException.h"
 
 #include "EqIndModelTest.h"
 

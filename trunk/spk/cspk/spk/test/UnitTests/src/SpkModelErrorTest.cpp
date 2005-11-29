@@ -37,11 +37,11 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 #include "SpkModelErrorTest.h"
-#include <spk/SpkModel.h>
-#include <spk/SpkException.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/SpkException.h"
+#include "../../../spk/SpkValarray.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;

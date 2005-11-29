@@ -37,8 +37,8 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/Objective.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/Objective.h"
 
 class lTildeTest : public CppUnit::TestFixture
 {

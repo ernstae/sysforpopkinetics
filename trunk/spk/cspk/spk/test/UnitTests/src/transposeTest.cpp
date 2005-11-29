@@ -34,9 +34,9 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/transpose.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/transpose.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkValarray.h"
 #include "transposeTest.h"
 
 using SPK_VA::valarray;

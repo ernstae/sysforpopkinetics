@@ -36,11 +36,11 @@
 
 #include <cmath>
 #include <limits>
-#include <spk/SpkValarray.h>
-#include <spk/mulByScalar.h>
+#include "../../../../spk/SpkValarray.h"
+#include "../../../../spk/mulByScalar.h"
 #include "gval.h"
 
-#include "src/DiffEqnModel.h"
+#include "DiffEqnModel.h"
 
 using SPK_VA::valarray;
 

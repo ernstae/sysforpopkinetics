@@ -323,11 +323,11 @@ $end
 #include <limits>
 
 // SPK include files.
-#include <spk/DoubleMatrix.h>
-#include <spk/matmax.h>
+#include "../../../../spk/DoubleMatrix.h"
+#include "../../../../spk/matmax.h"
 
 // POP3CM include files.
-#include "src/gval.h"
+#include "gval.h"
 
 
 /*------------------------------------------------------------------------

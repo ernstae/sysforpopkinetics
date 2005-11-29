@@ -34,9 +34,9 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/getMulCols.h>
-#include <spk/isDmatEpsEqual.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/getMulCols.h"
+#include "../../../spk/isDmatEpsEqual.h"
 #include "getMulColsTest.h"
 
 using namespace CppUnit;

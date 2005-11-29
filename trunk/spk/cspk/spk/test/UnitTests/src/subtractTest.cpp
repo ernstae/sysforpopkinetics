@@ -36,15 +36,15 @@
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/subtract.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
 #include "subtractTest.h"
 
 #include <cstdlib>
 #include <cmath>
 #include <cfloat>
 #include <ctime>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
 
 using namespace CppUnit;
 

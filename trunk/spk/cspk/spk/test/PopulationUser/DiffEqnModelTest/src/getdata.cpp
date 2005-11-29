@@ -20,11 +20,11 @@
 
 */
 // This source code is stored in the file getdata.cpp
-# include <spk/SpkValarray.h>
+# include "../../../../spk/SpkValarray.h"
 # include <fstream>
 # include <iostream>
 
-# include "src/getdata.h"
+# include "getdata.h"
 
 using SPK_VA::valarray;
 

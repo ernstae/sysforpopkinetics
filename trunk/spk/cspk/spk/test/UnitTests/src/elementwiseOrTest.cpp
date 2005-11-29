@@ -24,9 +24,9 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/elementwiseOr.h>
+#include "../../../spk/elementwiseOr.h"
 #include "elementwiseOrTest.h"
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 
 using namespace CppUnit;
 void elementwiseOrTest::setUp()

@@ -26,8 +26,8 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/Test.h>
 
-#include <spk/allTrue.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/allTrue.h"
+#include "../../../spk/DoubleMatrix.h"
 #include "allTrueTest.h"
 
 using namespace CppUnit;

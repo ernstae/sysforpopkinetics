@@ -36,8 +36,8 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkValarray.h"
 
 class elsq_xTest : public CppUnit::TestFixture
 {

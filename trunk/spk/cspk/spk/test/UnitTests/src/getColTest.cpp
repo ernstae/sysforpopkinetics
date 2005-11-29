@@ -31,14 +31,14 @@
 #include <string>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/getCol.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/getCol.h"
 #include "getColTest.h"
 
 #include <cstdlib>
 #include <ctime>
 #include <list>
-#include <spk/isDmatEpsEqual.h>
+#include "../../../spk/isDmatEpsEqual.h"
 
 using namespace CppUnit;
 

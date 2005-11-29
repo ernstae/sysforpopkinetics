@@ -30,11 +30,11 @@
  *
  *************************************************************************/
 #include <sstream>
-#include <spk/IndDataPackage.h>
-#include <spk/PopConstVals.h>
-#include <spk/PopVars.h>
-#include <spk/IndVars.h>
-#include <spk/namespace_population_analysis.h>
+#include "../../../spk/IndDataPackage.h"
+#include "../../../spk/PopConstVals.h"
+#include "../../../spk/PopVars.h"
+#include "../../../spk/IndVars.h"
+#include "../../../spk/namespace_population_analysis.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "IndInputDataPackageTest.h"

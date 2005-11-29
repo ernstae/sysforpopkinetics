@@ -38,10 +38,10 @@
 #include "derParStatisticsTest.h"
 
 // SPK library header files.
-#include <spk/derParStatistics.h>
-#include <spk/multiply.h>
-#include <spk/SpkValarray.h>
-#include <spk/statistics.h>
+#include "../../../spk/derParStatistics.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/statistics.h"
 
 // CppUnit framework header files.
 #include <cppunit/TestSuite.h>

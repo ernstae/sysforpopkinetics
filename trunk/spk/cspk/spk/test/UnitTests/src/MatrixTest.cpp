@@ -30,9 +30,10 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 #include "MatrixTest.h"
-#include <spk/DoubleMatrix.h>
-#include <spk/System.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/System.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/multiply.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;
@@ -430,7 +431,6 @@ void MatrixTest::testAssign()
         }
 	}
 }
-#include <spk/multiply.h>
 void MatrixTest::testMultiply()
 {
 	int m, nn, k, p, i,j,s;

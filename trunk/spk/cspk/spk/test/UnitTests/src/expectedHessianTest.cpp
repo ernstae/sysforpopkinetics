@@ -38,19 +38,19 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/expectedHessian.h>
-#include <spk/SpkValarray.h>
-#include <spk/SpkModel.h>
-#include <spk/multiply.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/transpose.h>
-#include <spk/mulByScalar.h>
-#include <spk/AkronBtimesC.h>
-#include <spk/add.h>
-#include <spk/centdiff.h>
-#include <spk/Function.h>
-#include <spk/lambda2diff.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/expectedHessian.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/AkronBtimesC.h"
+#include "../../../spk/add.h"
+#include "../../../spk/centdiff.h"
+#include "../../../spk/Function.h"
+#include "../../../spk/lambda2diff.h"
 
 #include "expectedHessianTest.h"
 

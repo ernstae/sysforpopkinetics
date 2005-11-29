@@ -35,8 +35,8 @@
 
 #include <cppunit/TestFixture.h>
 
-#include <spk/Objective.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/Objective.h"
+#include "../../../spk/DoubleMatrix.h"
 
 class ppkaOptTest : public CppUnit::TestFixture
 {

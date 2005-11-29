@@ -40,22 +40,22 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/lambda2diff.h>
-#include <spk/subtract.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/SpkModel.h>
-#include <spk/inverse.h>
-#include <spk/matabs.h>
-#include <spk/matmax.h>
-#include <spk/identity.h>
-#include <spk/isGreaterThanOrEqualTo.h>
-#include <spk/isLessThanOrEqualTo.h>
-#include <spk/allTrue.h>
-#include <spk/mulByScalar.h>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/allZero.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/lambda2diff.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/inverse.h"
+#include "../../../spk/matabs.h"
+#include "../../../spk/matmax.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/isGreaterThanOrEqualTo.h"
+#include "../../../spk/isLessThanOrEqualTo.h"
+#include "../../../spk/allTrue.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/allZero.h"
+#include "../../../spk/SpkValarray.h"
 
 #include "lambda2diffTest.h"
 

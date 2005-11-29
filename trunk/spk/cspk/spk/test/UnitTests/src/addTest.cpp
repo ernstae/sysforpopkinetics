@@ -36,16 +36,16 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/add.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/add.h"
 #include "addTest.h"
 
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
 #include <cmath>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/subtract.h>
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/subtract.h"
 
 using namespace std;
 using namespace CppUnit;

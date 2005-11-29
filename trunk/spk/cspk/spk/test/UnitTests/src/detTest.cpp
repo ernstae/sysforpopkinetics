@@ -35,8 +35,8 @@
 #include <cmath>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/det.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/det.h"
 #include "detTest.h"
 
 using namespace CppUnit;

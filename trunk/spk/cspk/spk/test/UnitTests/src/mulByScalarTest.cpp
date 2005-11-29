@@ -33,8 +33,8 @@
 #include <fstream>
 #include <string>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/mulByScalar.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/mulByScalar.h"
 #include "mulByScalarTest.h"
 
 #include <cppunit/TestFixture.h>
@@ -43,7 +43,7 @@
 
 #include <ctime>
 #include <cmath>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
 
 using namespace CppUnit;
 

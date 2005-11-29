@@ -33,7 +33,7 @@
 #include <iostream>
 #include <cmath>
 #include <cfloat>
-#include <spk/inxToMax.h>
+#include "../../../spk/inxToMax.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "inxToMaxTest.h"
