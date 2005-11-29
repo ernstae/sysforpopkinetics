@@ -5,7 +5,13 @@ AM_LDFLAGS           = -lxerces-c \
 		       ../../spkcompiler/libcommon.a \
 		       ../../spkcompiler/nonmem/libnonmem.a
 
-AM_CPPFLAGS          = -I@top_srcdir@ -g
+AM_CXXFLAGS          = -I@top_srcdir@ 
+if SPK_RELEASE
+AM_CXXFLAGS         += -O3 -Dspk_release
+else
+AM_CXXFLAGS         += -g  -Dspk_debug
+endif
+
 
 testall_DEPENDENCIES = ../../spkcompiler/libcommon.a \
 		       ../../spkcompiler/nonmem/libnonmem.a
