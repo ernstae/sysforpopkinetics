@@ -34,8 +34,8 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
-#include <spk/SpkModel.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/DoubleMatrix.h"
 
 class estimateBTest : public CppUnit::TestFixture
 {

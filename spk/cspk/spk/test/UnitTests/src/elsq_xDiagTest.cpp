@@ -41,18 +41,18 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/centdiff.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/mulByScalar.h>
-#include <spk/divByScalar.h>
-#include <spk/det.h>
-#include <spk/SpkModel.h>
-#include <spk/elsq.h>
-#include <spk/elsq_xDiag.h>
-#include <spk/SpkValarray.h>
-#include <spk/matabs.h>
-#include <spk/subtract.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
+#include "../../../spk/centdiff.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/divByScalar.h"
+#include "../../../spk/det.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/elsq.h"
+#include "../../../spk/elsq_xDiag.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/matabs.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
 
 #include "elsq_xDiagTest.h"
 

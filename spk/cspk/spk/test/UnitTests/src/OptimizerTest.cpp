@@ -40,8 +40,8 @@
 #include <cstdio>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/Optimizer.h>
-#include <spk/quasiNewtonAnyBox.h>
+#include "../../../spk/Optimizer.h"
+#include "../../../spk/quasiNewtonAnyBox.h"
 #include "OptimizerTest.h"
 
 using namespace CppUnit;

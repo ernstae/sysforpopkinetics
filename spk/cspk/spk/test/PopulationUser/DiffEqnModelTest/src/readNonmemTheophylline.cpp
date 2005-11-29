@@ -267,8 +267,8 @@ $$
 $end
 */
 //BEGIN
-# include <spk/SpkValarray.h>
-# include "src/readNonmemTheophylline.h"
+# include "../../../../spk/SpkValarray.h"
+# include "readNonmemTheophylline.h"
 # include <fstream>
 # include <iostream>
 # include <cassert>

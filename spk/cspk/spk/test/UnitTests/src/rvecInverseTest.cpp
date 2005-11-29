@@ -34,12 +34,12 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/rvecInverse.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/rvecInverse.h"
 #include "rvecInverseTest.h"
-#include <spk/rvec.h>
-#include <spk/subtract.h>
-#include <spk/add.h>
+#include "../../../spk/rvec.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/add.h"
 
 using namespace std;
 using namespace CppUnit;

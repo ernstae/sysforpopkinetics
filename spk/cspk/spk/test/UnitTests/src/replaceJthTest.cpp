@@ -45,8 +45,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/replaceJth.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/replaceJth.h"
 #include "replaceJthTest.h"
 
 using namespace CppUnit;

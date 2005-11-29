@@ -24,9 +24,9 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/isLessThanOrEqualTo.h>
+#include "../../../spk/isLessThanOrEqualTo.h"
 #include "isLessThanOrEqualToTest.h"
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 
 using namespace CppUnit;
 

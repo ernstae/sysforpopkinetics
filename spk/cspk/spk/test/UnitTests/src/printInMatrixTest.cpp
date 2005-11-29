@@ -11,10 +11,10 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/printInMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/printInMatrix.h"
 #include "printInMatrixTest.h"
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkValarray.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;

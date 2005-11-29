@@ -38,15 +38,15 @@
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/divByScalar.h>
-#include <spk/isDblEpsEqual.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/divByScalar.h"
+#include "../../../spk/isDblEpsEqual.h"
 #include "divByScalarTest.h"
 
 #include <ctime>
 #include <cmath>
 #include <vector>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
 
 using namespace CppUnit;
 

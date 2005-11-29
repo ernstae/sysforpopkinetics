@@ -35,7 +35,6 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
-#include <spk/Objective.h>
 
 class indResidualsTest : public CppUnit::TestFixture
 {

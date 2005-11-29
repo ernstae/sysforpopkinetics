@@ -20,9 +20,9 @@
 
 */
 // This source code is stored in the file DiffEqnModelS.cpp
-# include <spk/SpkValarray.h>
+# include "../../../../spk/SpkValarray.h"
 
-# include "src/DiffEqnModel.h"
+# include "DiffEqnModel.h"
 
 using SPK_VA::valarray;
 

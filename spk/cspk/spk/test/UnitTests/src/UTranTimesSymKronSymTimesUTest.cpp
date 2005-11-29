@@ -34,18 +34,18 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/UTranTimesSymKronSymTimesU.h>
-#include <spk/symmetrize.h>
-#include <spk/rvec.h>
-#include <spk/AkronBtimesC.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/UTranTimesSymKronSymTimesU.h"
+#include "../../../spk/symmetrize.h"
+#include "../../../spk/rvec.h"
+#include "../../../spk/AkronBtimesC.h"
 #include <cmath>
-#include <spk/transpose.h>
-#include <spk/multiply.h>
-#include <spk/replaceJth.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/SpkException.h>
-#include <spk/FpErrorChecker.h>
+#include "../../../spk/transpose.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/replaceJth.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/SpkException.h"
+#include "../../../spk/FpErrorChecker.h"
 
 #include "UTranTimesSymKronSymTimesUTest.h"
 

@@ -23,8 +23,8 @@ $begin main$$
 
 $section System for Population Kinetics$$
 
-$path/..\..\lib\src/.cpp/$$
-$path/..\..\lib\src/.h/$$
+$path/..\..\spk/.cpp/$$
+$path/..\..\spk/.h/$$
 
 $childtable/
     notes.omh/

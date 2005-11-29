@@ -24,8 +24,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/elementwiseAnd.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/elementwiseAnd.h"
+#include "../../../spk/DoubleMatrix.h"
 #include "elementwiseAndTest.h"
 
 using namespace CppUnit;

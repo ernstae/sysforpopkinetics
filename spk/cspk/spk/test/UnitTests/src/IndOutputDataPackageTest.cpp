@@ -31,10 +31,10 @@
  *************************************************************************/
 
 #include <sstream>
-#include <spk/IndDataPackage.h>
-#include <spk/IndResults.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/Optimizer.h>
+#include "../../../spk/IndDataPackage.h"
+#include "../../../spk/IndResults.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/Optimizer.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "IndOutputDataPackageTest.h"

@@ -36,8 +36,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/blockDiagonalDerivative.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/blockDiagonalDerivative.h"
 #include "blockDiagonalDerivativeTest.h"
 
 using namespace CppUnit;

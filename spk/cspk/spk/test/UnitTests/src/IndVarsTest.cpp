@@ -32,8 +32,8 @@
 #pragma warning( disable : 4786 )
 
 #include <sstream>
-#include <spk/IndVars.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/IndVars.h"
+#include "../../../spk/DoubleMatrix.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "IndVarsTest.h"

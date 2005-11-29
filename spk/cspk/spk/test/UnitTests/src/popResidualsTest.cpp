@@ -38,13 +38,13 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/identity.h>
-#include <spk/isDblEpsEqual.h>
-#include <spk/multiply.h>
-#include <spk/Objective.h>
-#include <spk/popResiduals.h>
-#include <spk/SpkModel.h>
-#include <spk/transpose.h>
+#include "../../../spk/identity.h"
+#include "../../../spk/isDblEpsEqual.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/Objective.h"
+#include "../../../spk/popResiduals.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/transpose.h"
 #include "popResidualsTest.h"
 
 using namespace std;

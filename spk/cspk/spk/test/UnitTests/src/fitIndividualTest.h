@@ -39,7 +39,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkValarray.h"
 
 class fitIndividualTest : public CppUnit::TestFixture
 {

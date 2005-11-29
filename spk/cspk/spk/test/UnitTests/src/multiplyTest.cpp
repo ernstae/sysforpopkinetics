@@ -40,9 +40,9 @@
 #include <cppunit/TestSuite.h>
 
 #include "multiplyTest.h"
-#include <spk/multiply.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/multiply.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkValarray.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;

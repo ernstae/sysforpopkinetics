@@ -38,7 +38,7 @@
 #include "WarningsManagerTest.h"
 
 // SPK library header files.
-#include <spk/WarningsManager.h>
+#include "../../../spk/WarningsManager.h"
 
 // CppUnit framework header files.
 #include <cppunit/TestSuite.h>

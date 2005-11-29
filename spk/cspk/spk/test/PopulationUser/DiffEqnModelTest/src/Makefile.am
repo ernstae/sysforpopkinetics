@@ -1,4 +1,5 @@
 bin_PROGRAMS = genericDriver
+INST_BASE    = /usr/local
 
 genericDriver_SOURCES = \
 	convertStatisticsToNonmem.cpp \
@@ -19,9 +20,22 @@ genericDriver_SOURCES = \
 	ode4rk.h \
 	readNonmemTheophylline.cpp \
 	readNonmemTheophylline.h \
-	../config.h
+	$(top_builddir)/config.h
 
-genericDriver_LDFLAGS = -L/usr/local/lib/spktest -lspk -lspkopt -latlas_lapack -lcblas -latlas -lpthread -lm
+genericDriver_LDFLAGS = \
+	-L/usr/local/lib/spktest \
+	-L$(top_builddir)/spk \
+	-L$(INST_BASE)/include/spktest/CppAD \
+	-lspk \
+	-lQN01Box \
+ 	-lCppAD \
+	-llapack \
+	-latlas_lapack \
+	-lcblas \
+	-latlas \
+	-lpthread \
+	-lm \
+	-lxerces-c
 
 INCLUDES = -I@top_srcdir@/ \
 	   -I/usr/local/include/spktest

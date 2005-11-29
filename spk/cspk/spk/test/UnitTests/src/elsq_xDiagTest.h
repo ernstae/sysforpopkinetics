@@ -35,7 +35,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 class elsq_xDiagTest : public CppUnit::TestFixture
 {
     // compare results from running centdiff() to results from directly running the derivative routine

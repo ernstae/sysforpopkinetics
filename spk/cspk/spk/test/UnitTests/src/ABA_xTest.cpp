@@ -35,8 +35,8 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/ABA_x.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/ABA_x.h"
 #include "ABA_xTest.h"
 
 using namespace CppUnit;

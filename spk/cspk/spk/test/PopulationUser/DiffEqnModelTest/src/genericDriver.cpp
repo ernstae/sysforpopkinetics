@@ -213,22 +213,22 @@ there were any.
 #include <cstring>
 #include <map>
 
-#include <spk/SpkValarray.h>
-#include <spk/cholesky.h>
-#include <spk/Objective.h>
-#include <spk/multiply.h>
-#include <spk/transpose.h>
-#include <spk/printInMatrix.h>
-#include <spk/symmetrize.h>
-#include <spk/Optimizer.h>
-#include <spk/fitPopulation.h>
-#include <spk/pi.h>
-#include <spk/popStatistics.h>
+#include "../../../../spk/SpkValarray.h"
+#include "../../../../spk/cholesky.h"
+#include "../../../../spk/Objective.h"
+#include "../../../../spk/multiply.h"
+#include "../../../../spk/transpose.h"
+#include "../../../../spk/printInMatrix.h"
+#include "../../../../spk/symmetrize.h"
+#include "../../../../spk/Optimizer.h"
+#include "../../../../spk/fitPopulation.h"
+#include "../../../../spk/pi.h"
+#include "../../../../spk/popStatistics.h"
 
-#include "src/readNonmemTheophylline.h"
-#include "src/DiffEqnModel.h"
-#include "src/convertStatisticsToNonmem.h"
-#include "src/nonmemEqvContainers.h"
+#include "readNonmemTheophylline.h"
+#include "DiffEqnModel.h"
+#include "convertStatisticsToNonmem.h"
+#include "nonmemEqvContainers.h"
 
 using SPK_VA::valarray;
 using namespace nonmemEqvContainers;
@@ -1010,7 +1010,7 @@ int main( int argc, const char *const argv[] )
     valarray<double> popParCovNonmem( nPopPar * nPopPar );
     valarray<double> popParSeNonmem ( nPopPar );
     valarray<double> popParCorNonmem( nPopPar * nPopPar );
-
+    valarray<bool>   popParMask     ( true, nPopPar );
     if( status.isParamEstimateSucceeded )
     {
       try
@@ -1022,6 +1022,7 @@ int main( int argc, const char *const argv[] )
               model._N,
               data,
               popParOut,
+              popParMask,
               LTilde_a_aOut,
               indParOut,
               indParLow,
@@ -1031,8 +1032,8 @@ int main( int argc, const char *const argv[] )
               &popParCovOut,
               &popParSeOut,
               &popParCorOut,
-              0,
-              0
+              NULL,
+              NULL
               );
 
 		// Calculate accuracy of the optimization | Hessian^-1 * Gradient |.

@@ -39,7 +39,7 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <CppAD/CppAD.h>
-#include <spk/isNotANumber.h>
+#include "../../../spk/isNotANumber.h"
 #include "isNotANumberTest.h"
 
 using namespace std;

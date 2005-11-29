@@ -40,13 +40,13 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/SpkException.h>
-#include <spk/fitIndividual.h>
-#include <spk/indStatistics.h>
-#include <spk/SpkModel.h>
-#include <spk/inverse.h>
-#include <spk/multiply.h>
-#include <spk/transpose.h>
+#include "../../../spk/SpkException.h"
+#include "../../../spk/fitIndividual.h"
+#include "../../../spk/indStatistics.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/inverse.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/transpose.h"
 //#include "printInMatrix.h"
 
 #include "indStatisticsTest.h"

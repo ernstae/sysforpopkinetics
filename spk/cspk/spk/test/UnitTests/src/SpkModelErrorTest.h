@@ -35,8 +35,8 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
-#include <spk/SpkModel.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/SpkValarray.h"
 
 namespace spkmodelerrortest
 {

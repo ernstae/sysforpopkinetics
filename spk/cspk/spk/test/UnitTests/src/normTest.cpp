@@ -32,7 +32,7 @@
 
 #include <iostream>
 #include <cassert>
-#include <spk/norm.h>
+#include "../../../spk/norm.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "normTest.h"

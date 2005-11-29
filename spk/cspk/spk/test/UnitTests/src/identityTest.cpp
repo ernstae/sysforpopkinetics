@@ -34,9 +34,9 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/identity.h>
+#include "../../../spk/identity.h"
 #include "identityTest.h"
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkValarray.h"
 
 using SPK_VA::valarray;
 using SPK_VA::slice;

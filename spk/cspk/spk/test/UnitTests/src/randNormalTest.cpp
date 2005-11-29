@@ -33,9 +33,9 @@
 #include <iostream>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/randNormal.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/randNormal.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkValarray.h"
 #include "randNormalTest.h"
 
 using SPK_VA::valarray;

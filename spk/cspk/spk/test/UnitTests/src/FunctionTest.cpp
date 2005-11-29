@@ -35,13 +35,13 @@
 
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/Function.h>
-#include <spk/SpkModel.h>
-#include <spk/identity.h>
-#include <spk/allZero.h>
-#include <spk/mulByScalar.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/Function.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/allZero.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/SpkValarray.h"
 
 #include "FunctionTest.h"
 

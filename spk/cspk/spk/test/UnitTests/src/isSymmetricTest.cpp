@@ -36,10 +36,10 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/isSymmetric.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/isSymmetric.h"
 #include "isSymmetricTest.h"
-#include <spk/identity.h>
+#include "../../../spk/identity.h"
 
 using namespace std;
 using namespace CppUnit;

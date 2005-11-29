@@ -36,9 +36,9 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/IndResults.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/IndResults.h"
+#include "../../../spk/DoubleMatrix.h"
 
 #include "IndResultsTest.h"
 

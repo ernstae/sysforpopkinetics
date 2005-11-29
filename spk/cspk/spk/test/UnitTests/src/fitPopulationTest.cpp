@@ -34,12 +34,12 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/identity.h>
-#include <spk/fitPopulation.h>
-#include <spk/SpkException.h>
-#include <spk/Objective.h>
-#include <spk/NaiveFoModel.h>
-#include <spk/WarningsManager.h>
+#include "../../../spk/identity.h"
+#include "../../../spk/fitPopulation.h"
+#include "../../../spk/SpkException.h"
+#include "../../../spk/Objective.h"
+#include "../../../spk/NaiveFoModel.h"
+#include "../../../spk/WarningsManager.h"
 
 #include "fitPopulationTest.h"
 

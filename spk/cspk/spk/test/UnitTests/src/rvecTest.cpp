@@ -35,11 +35,11 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/rvec.h>
-#include <spk/isDblEpsEqual.h>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/transpose.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/rvec.h"
+#include "../../../spk/isDblEpsEqual.h"
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/transpose.h"
 #include "rvecTest.h"
 
 #include <cstdlib>

@@ -39,22 +39,22 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
-#include <spk/divByScalar.h>
-#include <spk/mulByScalar.h>
-#include <spk/add.h>
-#include <spk/subtract.h>
-#include <spk/pi.h>
-#include <spk/matabs.h>
-#include <spk/isLessThanOrEqualTo.h>
-#include <spk/allTrue.h>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/isDblEpsEqual.h>
-#include <spk/Objective.h>
-#include <spk/NaiveFoModel.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkValarray.h>
-#include <spk/SpkModel.h>
-#include <spk/lTilde.h>
+#include "../../../spk/divByScalar.h"
+#include "../../../spk/mulByScalar.h"
+#include "../../../spk/add.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/pi.h"
+#include "../../../spk/matabs.h"
+#include "../../../spk/isLessThanOrEqualTo.h"
+#include "../../../spk/allTrue.h"
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/isDblEpsEqual.h"
+#include "../../../spk/Objective.h"
+#include "../../../spk/NaiveFoModel.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/lTilde.h"
 
 #include "lTildeTest.h"
 

@@ -35,16 +35,16 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/estimateB.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/estimateB.h"
 #include "estimateBTest.h"
 
 #include <cstdlib>
-#include <spk/SpkModel.h>
-#include <spk/transpose.h>
-#include <spk/subtract.h>
-#include <spk/SpkValarray.h>
-#include <spk/NaiveFoModel.h>
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/NaiveFoModel.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;
@@ -418,11 +418,11 @@ void estimateBTest::testExample()
  *  Utility functions
  *-----------------------------------------------------------------------*/
 
-#include <spk/subtract.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/allTrue.h>
-#include <spk/matmax.h>
-#include <spk/matabs.h>
+#include "../../../spk/subtract.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/allTrue.h"
+#include "../../../spk/matmax.h"
+#include "../../../spk/matabs.h"
 #include <cmath>
 #include <cfloat>
 void estimateBTest::checkAns(

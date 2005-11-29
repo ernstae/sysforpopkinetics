@@ -22,11 +22,11 @@
 // This source code is stored in the file DiffEqnModelR.cpp
 #pragma warning( disable : 4786 )
 
-# include <spk/SpkValarray.h>
-# include <spk/allZero.h>
-# include <spk/inverse.h>
+# include "../../../../spk/SpkValarray.h"
+# include "../../../../spk/allZero.h"
+# include "../../../../spk/inverse.h"
 
-# include "src/DiffEqnModel.h"
+# include "DiffEqnModel.h"
 
 using namespace std;
 

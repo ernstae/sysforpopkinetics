@@ -33,7 +33,7 @@
 #ifndef QUASINEWTONANYBOX_TEST_H
 #define QUASINEWTONANYBOX_TEST_H
 
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/DoubleMatrix.h"
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
 

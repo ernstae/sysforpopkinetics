@@ -35,7 +35,7 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
-#include <spk/Objective.h>
+#include "../../../spk/Objective.h"
 
 class popResidualsTest : public CppUnit::TestFixture
 {

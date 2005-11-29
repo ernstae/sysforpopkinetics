@@ -36,12 +36,12 @@
 
 #include "popStatisticsTest.h"
 
-#include <spk/SpkException.h>
-#include <spk/Objective.h>
-#include <spk/NaiveFoModel.h>
-#include <spk/DirBasedParallelControls.h>
-#include <spk/fitPopulation.h>
-#include <spk/firstOrderOpt.h>
+#include "../../../spk/SpkException.h"
+#include "../../../spk/Objective.h"
+#include "../../../spk/NaiveFoModel.h"
+#include "../../../spk/DirBasedParallelControls.h"
+#include "../../../spk/fitPopulation.h"
+#include "../../../spk/firstOrderOpt.h"
 
 using namespace std;
 using namespace CppUnit;

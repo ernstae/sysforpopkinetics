@@ -38,7 +38,7 @@
  *------------------------------------------------------------------------*/
 
 // SPK library header files.
-#include <spk/SpkValarray.h>
+#include "../../../spk/SpkValarray.h"
 
 // CppUnit framework header files.
 #include <cppunit/TestFixture.h>

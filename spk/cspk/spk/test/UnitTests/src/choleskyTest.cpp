@@ -13,10 +13,10 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/SpkValarray.h>
-#include <spk/cholesky.h>
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/cholesky.h"
 #include "choleskyTest.h"
-#include <spk/printInMatrix.h>
+#include "../../../spk/printInMatrix.h"
 
 using SPK_VA::valarray;
 using namespace std;

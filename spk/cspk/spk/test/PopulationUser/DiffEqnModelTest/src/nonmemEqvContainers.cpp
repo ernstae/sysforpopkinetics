@@ -37,11 +37,11 @@
 #include <iostream>
 #include <cmath>
 #include <limits>
-#include <spk/SpkValarray.h>
-#include <spk/pi.h>
-#include <spk/Objective.h>
+#include "../../../../spk/SpkValarray.h"
+#include "../../../../spk/pi.h"
+#include "../../../../spk/Objective.h"
 
-#include "src/nonmemEqvContainers.h"
+#include "nonmemEqvContainers.h"
 
 #ifdef __GNUC__
     #include <sstream>

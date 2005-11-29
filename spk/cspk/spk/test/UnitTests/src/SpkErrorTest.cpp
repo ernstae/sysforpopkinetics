@@ -36,8 +36,8 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkError.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkError.h"
 #include "SpkErrorTest.h"
 
 using namespace CppUnit;

@@ -29,8 +29,8 @@
  * Author: Sachiko Honda
  */
 #include <iostream>
-#include <spk/getRow.h>
-#include <spk/DoubleMatrix.h>
+#include "../../../spk/getRow.h"
+#include "../../../spk/DoubleMatrix.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "getRowTest.h"

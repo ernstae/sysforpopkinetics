@@ -1,16 +1,40 @@
-bin_PROGRAMS = testall
+noinst_PROGRAMS = testall
 
 INST_BASE = /usr/local
 
 libdir = $(INST_BASE)/lib/spktest
 
-AM_CPPFLAGS = -I$(INST_BASE)/include/spktest -I/$(INST_BASE)/cppunit/include -I/$(INST_BASE)/include/spktest/CppAD
-AM_LDFLAGS  = -L/usr/local/lib -L$(INST_BASE)/lib/spktest -L$(INST_BASE)/lib/spktest/CppAD -lspk -lQN01Box -lCppAD -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lcppunit -lxerces-c
+# Set C++ compiler flags
+AM_CXXFLAGS = \
+	-I$(top_builddir)/spk \
+	-I$(INST_BASE)/include/spktest \
+	-I/$(INST_BASE)/cppunit/include \
+	-I/$(INST_BASE)/include/spktest/CppAD
 
-AM_CXXFLAGS   = -g
-AM_CFLAGS     = -g
+if SPK_RELEASE 
+AM_CXXFLAGS   += -O3 -Dspk_release
+else
+AM_CXXFLAGS   += -g -Dspk_debug
+endif
+
+AM_LDFLAGS  = \
+	-L/usr/local/lib \
+	-L$(INST_BASE)/lib/spktest \
+	-L$(INST_BASE)/lib/spktest/CppAD \
+	../../../spk/libspk.la \
+	-lQN01Box \
+	-lCppAD \
+	-llapack \
+	-latlas_lapack \
+	-lcblas \
+	-latlas \
+	-lpthread \
+	-lm \
+	-lcppunit \
+	-lxerces-c
 
 testall_SOURCES = \
+	$(top_builddir)/config.h \
 	ABA_xTest.cpp \
 	ABA_xTest.h \
 	addTest.cpp \
@@ -205,8 +229,7 @@ testall_SOURCES = \
 	UTranTimesSymKronSymTimesUTest.cpp \
 	UTranTimesSymKronSymTimesUTest.h \
 	WarningsManagerTest.cpp \
-	WarningsManagerTest.h \
-	../config.h
+	WarningsManagerTest.h
 
 pkginclude_HEADERS = \
 	ABA_xTest.h \

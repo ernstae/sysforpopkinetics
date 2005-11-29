@@ -36,10 +36,10 @@
 #include <iostream>
 #include <iomanip>
 #include <cfloat>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/inverse.h>
-#include <spk/multiply.h>
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/inverse.h"
+#include "../../../spk/multiply.h"
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>

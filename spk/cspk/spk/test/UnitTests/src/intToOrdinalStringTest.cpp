@@ -38,7 +38,7 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/intToOrdinalString.h>
+#include "../../../spk/intToOrdinalString.h"
 #include "intToOrdinalStringTest.h"
 
 using namespace std;

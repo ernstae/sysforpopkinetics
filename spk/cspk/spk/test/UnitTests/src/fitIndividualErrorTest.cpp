@@ -34,16 +34,16 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/fitIndividual.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/fitIndividual.h"
 #include "fitIndividualErrorTest.h"
 
 #include <cmath>
 
-#include <spk/SpkValarray.h>
-#include <spk/SpkModel.h>
-#include <spk/SpkException.h>
-#include <spk/mulByScalar.h>
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/SpkException.h"
+#include "../../../spk/mulByScalar.h"
 
 using SPK_VA::valarray;
 using namespace CppUnit;

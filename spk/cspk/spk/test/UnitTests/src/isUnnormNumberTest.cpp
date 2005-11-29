@@ -39,7 +39,7 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <CppAD/CppAD.h>
-#include <spk/isUnnormNumber.h>
+#include "../../../spk/isUnnormNumber.h"
 #include "isUnnormNumberTest.h"
 
 using namespace std;

@@ -37,25 +37,25 @@
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/UTranTimesSymKronSymTimesU_x.h>
-#include <spk/UTranTimesSymKronSymTimesU.h>
-#include <spk/symmetrize.h>
-#include <spk/rvec.h>
-#include <spk/AkronBtimesC.h>
-#include <spk/transpose.h>
-#include <spk/multiply.h>
-#include <spk/replaceJth.h>
-#include <spk/DBL_EPS_EQUAL_MULT.h>
-#include <spk/symmetrize.h>
-#include <spk/add.h>
-#include <spk/rvecInverse.h>
-#include <spk/getCol.h>
-#include <spk/subtract.h>
-#include <spk/identity.h>
-#include <spk/AkronItimesC.h>
-#include <spk/IkronBtimesC.h>
-#include <spk/transposeRowBlocks.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/UTranTimesSymKronSymTimesU_x.h"
+#include "../../../spk/UTranTimesSymKronSymTimesU.h"
+#include "../../../spk/symmetrize.h"
+#include "../../../spk/rvec.h"
+#include "../../../spk/AkronBtimesC.h"
+#include "../../../spk/transpose.h"
+#include "../../../spk/multiply.h"
+#include "../../../spk/replaceJth.h"
+#include "../../../spk/DBL_EPS_EQUAL_MULT.h"
+#include "../../../spk/symmetrize.h"
+#include "../../../spk/add.h"
+#include "../../../spk/rvecInverse.h"
+#include "../../../spk/getCol.h"
+#include "../../../spk/subtract.h"
+#include "../../../spk/identity.h"
+#include "../../../spk/AkronItimesC.h"
+#include "../../../spk/IkronBtimesC.h"
+#include "../../../spk/transposeRowBlocks.h"
 
 #include "UTranTimesSymKronSymTimesU_xTest.h"
 

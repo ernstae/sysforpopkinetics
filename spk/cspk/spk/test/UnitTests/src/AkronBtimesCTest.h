@@ -38,8 +38,8 @@
 #pragma warning( disable : 4786 )
 #include <vector>
 
-#include <spk/DoubleMatrix.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/SpkValarray.h"
 
 class AkronBtimesCTest : public CppUnit::TestFixture
 {

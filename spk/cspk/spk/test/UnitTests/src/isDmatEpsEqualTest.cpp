@@ -35,9 +35,9 @@
 #include <cfloat>
 #include <cmath>
 #include <vector>
-#include <spk/isDmatEpsEqual.h>
-#include <spk/isDblEpsEqual.h>
-#include <spk/divByScalar.h>
+#include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/isDblEpsEqual.h"
+#include "../../../spk/divByScalar.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "isDmatEpsEqualTest.h"

@@ -18,12 +18,12 @@
 #include <string>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
-#include <spk/DoubleMatrix.h>
-#include <spk/NaiveFoModel.h>
+#include "../../../spk/DoubleMatrix.h"
+#include "../../../spk/NaiveFoModel.h"
 #include "NaiveFoModelTest.h"
-#include <spk/SpkModel.h>
-#include <spk/SpkValarray.h>
-#include <spk/allZero.h>
+#include "../../../spk/SpkModel.h"
+#include "../../../spk/SpkValarray.h"
+#include "../../../spk/allZero.h"
 
 using SPK_VA::valarray;
 using namespace std;

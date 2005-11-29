@@ -38,8 +38,8 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
-#include <spk/Objective.h>
-#include <spk/SpkValarray.h>
+#include "../../../spk/Objective.h"
+#include "../../../spk/SpkValarray.h"
 
 class popStatisticsTest : public CppUnit::TestFixture
 {

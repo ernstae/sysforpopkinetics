@@ -22,15 +22,15 @@
 // This source code is stored in the file DiffEqnModelD.cpp
 #pragma warning( disable : 4786 )
 
-# include <spk/SpkValarray.h>
-# include <spk/AkronBtimesC.h>
-# include <spk/allZero.h>
-# include <spk/multiply.h>
-# include <spk/transpose.h>
-# include <spk/inverse.h>
-# include <spk/transposeDerivative.h>
+# include "../../../../spk/SpkValarray.h"
+# include "../../../../spk/AkronBtimesC.h"
+# include "../../../../spk/allZero.h"
+# include "../../../../spk/multiply.h"
+# include "../../../../spk/transpose.h"
+# include "../../../../spk/inverse.h"
+# include "../../../../spk/transposeDerivative.h"
 
-# include "src/DiffEqnModel.h"
+# include "DiffEqnModel.h"
 
 using SPK_VA::valarray;
 using SPK_VA::slice;

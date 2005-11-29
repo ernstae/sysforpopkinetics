@@ -39,8 +39,8 @@
 #include <iostream>
 #include <cassert>
 #include <valarray>
-#include <spk/isDblEpsEqual.h>
-#include <spk/wres.h>
+#include "../../../spk/isDblEpsEqual.h"
+#include "../../../spk/wres.h"
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include "wresTest.h"
