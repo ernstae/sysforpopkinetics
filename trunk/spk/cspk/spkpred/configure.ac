@@ -106,7 +106,7 @@ dnl Makefile's can switch its behavior and
 dnl build the SPK Library with compiler optimization
 dnl flags.
 dnl
-AM_CONDITIONAL(SPK_RELEASE, test $release_build=TRUE)
+AM_CONDITIONAL(SPK_RELEASE, test $release_build = TRUE)
 
 dnl
 dnl Display "checking for build mode ..." message on screen when 
@@ -120,7 +120,7 @@ dnl define SPK_RELEASE to be 1; otherwise to be 0.
 dnl Display a text, "release_build", followed after the 
 dnl "checking for build mode..." screen message.
 dnl
-if test $release_build=TRUE; then
+if test $release_build = TRUE; then
  	AC_DEFINE(SPK_RELEASE, 1, "build release")
         AC_MSG_RESULT( [release] )
 else
