@@ -2,7 +2,14 @@ SUBDIRS          = nonmem .
 bin_PROGRAMS     = spkcompiler
 bindir           = /usr/local/bin/spktest
 noinst_LIBRARIES = libcommon.a
-AM_CXXFLAGS      = -g -I./nonmem
+
+AM_CXXFLAGS = -I./nonmem
+if SPK_RELEASE
+AM_CXXFLAGS += -O3 -Dspk_release
+else
+AM_CXXFLAGS += -g  -Dspk_debug
+endif
+
 AM_LDFLAGS       = -lxerces-c nonmem/libnonmem.a ./libcommon.a
 spkcompiler_LDADD=@LEXLIB@
 
@@ -40,5 +47,5 @@ dist_libcommon_a_SOURCES = \
         SpkCompilerError.cpp \
         SpkCompilerError.h \
         SpkCompilerException.h \
-        SpkCompilerException.cpp 
-
+        SpkCompilerException.cpp \
+        ../config.h

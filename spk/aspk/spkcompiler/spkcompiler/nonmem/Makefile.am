@@ -1,7 +1,13 @@
 noinst_LIBRARIES = libnonmem.a
 AM_LFLAGS        = -i -Pnm_ -olex.yy.c
 AM_YFLAGS        = -d --verbose --debug -p nm_
-AM_CPPFLAGS      = -g -I./ -I../
+
+AM_CXXFLAGS = -I./ -I../
+if SPK_RELEASE
+AM_CXXFLAGS += -O3 -Dspk_release
+else
+AM_CXXFLAGS += -g  -Dspk_debug
+endif
 
 MOSTLYCLEANFILES = explang.output \
                    explang.cpp \
@@ -39,4 +45,5 @@ dist_libnonmem_a_SOURCES = \
 	NM_generateIndDriver.cpp \
 	NM_generatePopDriver.cpp \
         countStrInLhs.cpp \
-        countStrInLhs.h 
+        countStrInLhs.h \
+	../../config.h
