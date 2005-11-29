@@ -21,14 +21,16 @@ SPKPRED_SRC = \
 	IndPredModel.h \
 	isEqual.h \
 	PopPredModel.h \
+	OdeBreak.h \
 	PredBase.h
 
 all:	html
 
-html: Doxyfile $(SPKPRED_SRC)
+html: Doxyfile $(SPKPRED_SRC) 
 	rm -f *.cpp *.h
 	rm -f $(HTML_DIR)/*.png
 	doxygen Doxyfile
+	./RunOMhelp
 
 install:
 	scp $(HTML_DIR)/* $(WEB)

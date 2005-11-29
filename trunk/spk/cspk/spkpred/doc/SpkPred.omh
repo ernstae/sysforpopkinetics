@@ -13,7 +13,7 @@ $href%
 %$$
 
 $contents%
-	lib/src/OdeBreak.h
+	../spkpred/OdeBreak.h
 %$$
 
 $end
