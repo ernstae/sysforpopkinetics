@@ -39,7 +39,7 @@
 #include "compareToKnown.h"
 
 // SPK Pred library header files.
-#include <spkpred/DiagCov.h>
+#include "../../../spkpred/DiagCov.h"
 
 // SPK library header files.
 #include <spk/identity.h>

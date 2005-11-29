@@ -1,5 +1,3 @@
 AUTOMAKE_OPTIONS = gnu
-
-libdir = /usr/local/lib/spktest
-
-SUBDIRS = src
+SUBDIRS = src 
+pkginclude_HEADERS = ../../config.h

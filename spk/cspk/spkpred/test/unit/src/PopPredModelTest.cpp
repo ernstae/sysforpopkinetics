@@ -39,9 +39,9 @@
 #include "compareToKnown.h"
 
 // SPK Pred library header files.
-#include <spkpred/DiagCov.h>
-#include <spkpred/FullCov.h>
-#include <spkpred/PopPredModel.h>
+#include "../../../spkpred/DiagCov.h"
+#include "../../../spkpred/FullCov.h"
+#include "../../../spkpred/PopPredModel.h"
 
 // SPK library header files.
 #include <spk/AkronBtimesC.h>
