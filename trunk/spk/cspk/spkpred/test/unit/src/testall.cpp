@@ -4,12 +4,12 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include "src/DiagCovTest.h"
-#include "src/FullCovTest.h"
-#include "src/IndPredModelTest.h"
-#include "src/OdeBreakTest.h"
-#include "src/OdePredBaseTest.h"
-#include "src/PopPredModelTest.h"
+#include "DiagCovTest.h"
+#include "FullCovTest.h"
+#include "IndPredModelTest.h"
+#include "OdeBreakTest.h"
+#include "OdePredBaseTest.h"
+#include "PopPredModelTest.h"
 
 using namespace std;
 using namespace CppUnit;
