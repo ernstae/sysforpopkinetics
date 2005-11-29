@@ -24,10 +24,14 @@ MOSTLYCLEANFILES     = Pred.h \
                        monteDriver \
                        NonmemPars.h \
                        MontePars.h \
+                       OdePred.h \
                        result.xml \
                        Makefile.SPK \
                        spk_error.tmp \
                        sotware_error \
+		       xml1.xml \
+                       xml2.xml \
+                       xml3. xml \
 		       checkpoint.xml
 
 testall_SOURCES      = \

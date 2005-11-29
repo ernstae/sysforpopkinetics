@@ -115,6 +115,7 @@ if( actual != expected ) \\\n \
   const char *strMDV        = "MDV";
   const char *strEVID       = "EVID";
   const char *strDROP       = "DROP";
+  const char *strSKIP       = "SKIP";
 
   //============================================
   // Optimizer controls
@@ -1575,6 +1576,91 @@ void pop_modifyDataItemsTest::drop()
   CPPUNIT_ASSERT_MESSAGE( "DROP hasn't been removed", table->find( strDROP ) == Symbol::empty() );
 }
 
+/*
+====================================================================================
+   Data set 9 [ ID, TIME, DV, SKIP ]
+====================================================================================
+                     SKIP
+1,2.00E+00,1.09E+00,  999
+1,4.00E+00,7.50E-01,  999
+1,6.00E+00,5.30E-01,  999
+1,8.00E+00,3.40E-01,  999
+1,1.00E+01,2.30E-01,  999
++01,2.00E-02,  999
+
+2,2.00E+00,2.03E+00,  999
+2,4.00E+00,1.28E+00,  999 
+2,6.00E+00,1.20E+00,  999
+2,8.00E+00,1.02E+00,  999
+2,1.00E+01,8.30E-01,  999
+2,2.40E+01,2.80E-01,  999
+
+3,2.00E+00,1.44E+00,  999
+3,4.00E+00,1.30E+00,  999
+3,6.00E+00,9.50E-01,  999
+3,8.00E+00,6.80E-01,  999
+3,1.00E+01,5.20E-01,  999
+3,2.40E+01,6.00E-02,  999
+
+====================================================================================
+*/
+void pop_modifyDataItemsTest::skip()
+{
+  const int    nIndividuals = 3;
+  valarray<int> N(nIndividuals);
+  N[0] = 6;
+  N[1] = 6;
+  N[2] = 6;
+  const int    nRecords     = N.sum();
+  const int    nItems       = 5;
+
+  const char * label[] = { strID, strTIME, strDV, strSKIP, strSKIP }; 
+  vector< vector<double> > set(nRecords);
+  for( int i=0; i<nRecords; i++ )
+    {
+      set[i].resize( nItems );
+    }
+  set[0] [0] = 1; set[0] [1] = 2.00E+00; set[0] [2] = 1.09E+00; set[0] [3] = 999; set[0] [4] = 999;
+  set[1] [0] = 1; set[1] [1] = 4.00E+00; set[1] [2] = 7.50E-01; set[1] [3] = 999; set[1] [4] = 999;
+  set[2] [0] = 1; set[2] [1] = 6.00E+00; set[2] [2] = 5.30E-01; set[2] [3] = 999; set[2] [4] = 999;
+  set[3] [0] = 1; set[3] [1] = 8.00E+00; set[3] [2] = 3.40E-01; set[3] [3] = 999; set[3] [4] = 999;
+  set[4] [0] = 1; set[4] [1] = 1.00E+01; set[4] [2] = 2.30E-01; set[4] [3] = 999; set[4] [4] = 999;
+  set[5] [0] = 1; set[5] [1] = 2.40E+01; set[5] [2] = 2.00E-02; set[5] [3] = 999; set[5] [4] = 999;
+  set[6] [0] = 2; set[6] [1] = 2.00E+00; set[6] [2] = 2.03E+00; set[6] [3] = 999; set[6] [4] = 999;
+  set[7] [0] = 2; set[7] [1] = 4.00E+00; set[7] [2] = 1.28E+00; set[7] [3] = 999; set[7] [4] = 999;
+  set[8] [0] = 2; set[8] [1] = 6.00E+00; set[8] [2] = 1.20E+00; set[8] [3] = 999; set[8] [4] = 999;
+  set[9] [0] = 2; set[9] [1] = 8.00E+00; set[9] [2] = 1.02E+00; set[9] [3] = 999; set[9] [4] = 999;
+  set[10][0] = 2; set[10][1] = 1.00E+01; set[10][2] = 8.30E-01; set[10][3] = 999; set[10][4] = 999;
+  set[11][0] = 2; set[11][1] = 2.40E+01; set[11][2] = 2.80E-01; set[11][3] = 999; set[11][4] = 999;
+  set[12][0] = 3; set[12][1] = 2.00E+00; set[12][2] = 1.44E+00; set[12][3] = 999; set[12][4] = 999;
+  set[13][0] = 3; set[13][1] = 4.00E+00; set[13][2] = 1.30E+00; set[13][3] = 999; set[13][4] = 999;
+  set[14][0] = 3; set[14][1] = 6.00E+00; set[14][2] = 9.50E-01; set[14][3] = 999; set[14][4] = 999;
+  set[15][0] = 3; set[15][1] = 8.00E+00; set[15][2] = 6.80E-01; set[15][3] = 999; set[15][4] = 999;
+  set[16][0] = 3; set[16][1] = 1.00E+01; set[16][2] = 5.20E-01; set[16][3] = 999; set[16][4] = 999;
+  set[17][0] = 3; set[17][1] = 2.40E+01; set[17][2] = 6.00E-02; set[17][3] = 999; set[17][4] = 999;
+
+  createDataML( "skip.data.xml", nIndividuals, nItems, label, nRecords, set );
+  createSourceML( "skip.source.xml", nIndividuals, nItems, label );
+  parseDataML( dataParser, "skip.data.xml", nIndividuals );
+  parseSourceML( sourceParser, "skip.source.xml", nIndividuals );
+
+  NonmemTranslator nm( source, data );
+  try{
+    nm.translate();
+  }
+  catch ( const SpkCompilerException& e )
+    {
+      cerr << e << endl;
+      CPPUNIT_ASSERT( false );
+    }
+  catch ( ... )
+    {
+      CPPUNIT_ASSERT_MESSAGE( "Compilation failed due to a unknown error", false );
+    }
+
+  const SymbolTable * table = nm.getSymbolTable();
+  CPPUNIT_ASSERT_MESSAGE( "SKIP hasn't been removed", table->find( strSKIP ) == Symbol::empty() );
+}
 void pop_modifyDataItemsTest::setUp()
 {
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

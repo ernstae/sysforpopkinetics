@@ -59,6 +59,7 @@ public:
     void yesAMT_yesMDV_noEVID();
     void yesAMT_yesMDV_yesEVID();
     void drop();
+    void skip();
 };
 
 #endif

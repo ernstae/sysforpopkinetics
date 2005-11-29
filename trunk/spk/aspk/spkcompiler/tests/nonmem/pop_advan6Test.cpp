@@ -1290,7 +1290,14 @@ void pop_advan6Test::testNonmemPars()
   o << "   MY_ASSERT_EQUAL( " << nonmemNComps << ", NonmemPars::noDose.size() );" << endl;
   o << "   for( int i=0; i< NonmemPars::nCompartments; i++ )" << endl;
   o << "   {" << endl;
-  o << "      MY_ASSERT_EQUAL( 0, NonmemPars::initialOff[i] );" << endl;
+  o << "      if( i < NonmemPars::nCompartments - 1 )" << endl;
+  o << "      {" << endl;
+  o << "         MY_ASSERT_EQUAL( 0, NonmemPars::initialOff[i] );" << endl;
+  o << "      }" << endl;
+  o << "      else" << endl;
+  o << "      {" << endl;
+  o << "         MY_ASSERT_EQUAL( 1, NonmemPars::initialOff[i] );" << endl;
+  o << "      }" << endl;
   o << "      MY_ASSERT_EQUAL( 0, NonmemPars::noOff[i] );" << endl;
   o << "      MY_ASSERT_EQUAL( 0, NonmemPars::noDose[i] );" << endl;
   o << "   }" << endl;
