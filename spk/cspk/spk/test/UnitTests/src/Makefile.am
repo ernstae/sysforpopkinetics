@@ -12,7 +12,7 @@ AM_CXXFLAGS = \
 	-I/$(INST_BASE)/include/spktest/CppAD
 
 if SPK_RELEASE 
-AM_CXXFLAGS   += -O3 -Dspk_release
+AM_CXXFLAGS   += -O3 -Dspk_release -DNDEBUG
 else
 AM_CXXFLAGS   += -g -Dspk_debug
 endif

@@ -9,7 +9,7 @@ pkgincludedir = $(INST_BASE)/include/spktest/spkpred
 AM_CXXFLAGS = -I$(INST_BASE)/include/spktest
                                                                                 
 if SPK_RELEASE
-AM_CXXFLAGS += -O3 -Dspk_release
+AM_CXXFLAGS += -O3 -Dspk_release -DNDEBUG
 else
 AM_CXXFLAGS += -g  -Dspk_debug
 endif

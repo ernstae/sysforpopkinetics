@@ -27,7 +27,7 @@ AM_CPPFLAGS = -I@top_srcdir@ -I$(INST_BASE)/include/spktest -I$(INST_BASE)/cppun
 AM_CXXFLAGS = -I@top_srcdir@ -I$(INST_BASE)/include/spktest
                                                                                
 if SPK_RELEASE
-AM_CXXFLAGS += -O3 -Dspk_release
+AM_CXXFLAGS += -O3 -Dspk_release -DNDEBUG
 else
 AM_CXXFLAGS += -g  -Dspk_debug
 endif
