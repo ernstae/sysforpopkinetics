@@ -53,7 +53,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
-
+#include <errno.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
