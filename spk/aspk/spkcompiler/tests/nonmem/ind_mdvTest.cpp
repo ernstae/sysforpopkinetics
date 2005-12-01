@@ -61,7 +61,11 @@ namespace{
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
   char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+#ifndef SPK_RELEASE
   char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
+#else
+  char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
+#endif
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =
@@ -814,7 +818,7 @@ void ind_mdvTest::testPredClass()
   o << "}" << endl;
 
   char command[512];
-  snprintf( command, 512, "g++ -g %s -o %s %s %s", fPredDriver_cpp, fPredDriver, LDFLAG, CPPFLAG );
+  snprintf( command, 512, "g++ %s -o %s %s %s", fPredDriver_cpp, fPredDriver, LDFLAG, CPPFLAG );
   if( system( command ) != 0 )
     {
       char message[512];

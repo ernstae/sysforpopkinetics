@@ -7,7 +7,7 @@ AM_LDFLAGS           = -lxerces-c \
 
 AM_CXXFLAGS          = -I@top_srcdir@ 
 if SPK_RELEASE
-AM_CXXFLAGS         += -O3 -Dspk_release
+AM_CXXFLAGS         += -O3 -Dspk_release -DNDEBUG
 else
 AM_CXXFLAGS         += -g  -Dspk_debug
 endif

@@ -61,7 +61,11 @@ namespace{
   char XERCESCLIB[] = "xerces-c";
   char MLIB[]       = "m";
   char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+#ifndef SPK_RELEASE
   char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
+#else
+  char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
+#endif
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =
