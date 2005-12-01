@@ -42,7 +42,11 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "TEST_DIR  = spktest" << endl;
   oMakefile << endl;                                   
 
+#ifndef NDEBUG
   oMakefile << "CPP_FLAGS = -g ";
+#else
+  oMakefile << "CPP_FLAGS = -O3 -Dspk_release -DNDEBUG ";
+#endif
   if( myModelSpec == ADVAN6 )
     oMakefile << "-DODEPRED"; // Define "ODEPRED" macro
   oMakefile << endl;
