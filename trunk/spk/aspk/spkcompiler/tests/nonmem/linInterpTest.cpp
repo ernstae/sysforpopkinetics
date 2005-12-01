@@ -171,7 +171,11 @@ namespace{
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
   char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+#ifndef SPK_RELEASE
   char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD";
+#else
+  char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD";
+#endif
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =

@@ -148,7 +148,11 @@ namespace{
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
   char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+#ifndef SPK_RELEASE
   char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD";
+#else
+  char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG-I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD";
+#endif
   char LDFLAG[514];
 
   char MY_ASSERT_EQUAL[] =
@@ -1153,7 +1157,7 @@ void ind_withIDTest::testPredClass()
   o.close();
 
   char command[256];
-  sprintf( command, "g++ -g %s -o %s %s %s", fPredDriver_cpp, fPredDriver, LDFLAG, CPPFLAG );
+  sprintf( command, "g++ %s -o %s %s %s", fPredDriver_cpp, fPredDriver, LDFLAG, CPPFLAG );
   if( system( command ) != 0 )
     {
       char message[256];
