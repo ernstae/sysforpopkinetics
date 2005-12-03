@@ -57,6 +57,6 @@ and the header files into /usr/local/include/spktest/.
 The package was built with the following versions of packages:
 
 automake 1.9.3
-libtool 1.4.2
+libtoolize 1.5.10
 autoconf 2.5.9
 g++ 3.2
