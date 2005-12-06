@@ -58,6 +58,15 @@ dnl
 AC_PROG_CC
 
 dnl
+dnl <AC_F77_LIBRARY_LDFLAGS>
+dnl
+dnl Determine the linker flags (e.g., `-L' and `-l') for the Fortran 77 
+dnl intrinsic and run-time libraries that are required to successfully link 
+dnl a Fortran 77 program or shared library
+dnl 
+AC_F77_LIBRARY_LDFLAGS
+
+dnl
 dnl <AC_PROG_CXX>
 dnl
 dnl Checks for C++ compiler and load the package when it's found.
@@ -151,9 +160,7 @@ AC_CONFIG_FILES( [Makefile
                   test/Makefile
                   test/UnitTests/Makefile
 	          test/UnitTests/src/Makefile
-                  test/PopulationUser/Makefile
-                  test/PopulationUser/DiffEqnModelTest/Makefile
-	          test/PopulationUser/DiffEqnModelTest/src/Makefile] )
+                  test/PopulationUser/Makefile] )
 
 dnl
 dnl <AC_OUTPUT>

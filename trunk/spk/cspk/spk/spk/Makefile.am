@@ -1,23 +1,30 @@
+# Shared libraries
 lib_LTLIBRARIES = libspk.la
 
-INST_BASE = /usr/local
+# Static libraries
+lib_LIBRARIES   = libspk.a
+
+INST_BASE     = /usr/local
 libdir        = $(INST_BASE)/lib/spktest
 pkgincludedir = $(INST_BASE)/include/spktest/spk
 
-AM_LDFLAGS  = -llapack -lg2c
+# Set C pre-processor flags
+AM_CPPFLAGS = \
+	-I. \
+	-I$(top_builddir) \
+	-I$(INST_BASE)/include/spktest
 
 # Set C++ compiler flags
-AM_CXXFLAGS = -I$(INST_BASE)/include/spktest
-
 if SPK_RELEASE
-AM_CXXFLAGS += -O3 -Dspk_release -DNDEBUG
+AM_CXXFLAGS = -O3 -Dspk_release -DNDEBUG
 else
-AM_CXXFLAGS += -g  -Dspk_debug
+AM_CXXFLAGS = -g  -Dspk_debug
 endif
 
-F77COMPILE = -g
+# Set F77 compiler flags
+AM_FFLAGS = -g
 
-libspk_la_SOURCES = \
+libspk_a_SOURCES = \
 	ABA_x.cpp \
 	add.cpp \
 	AkronBtimesC.cpp \
@@ -378,3 +385,5 @@ pkginclude_HEADERS = \
 	UTranTimesSymKronSymTimesU.h \
 	UTranTimesSymKronSymTimesU_x.h \
 	WarningsManager.h
+
+libspk_la_SOURCES = libspk_a_SOURCES

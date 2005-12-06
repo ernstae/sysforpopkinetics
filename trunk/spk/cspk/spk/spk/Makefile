@@ -15,7 +15,8 @@
 
 
 
-SOURCES = $(libspk_la_SOURCES)
+
+SOURCES = $(libspk_a_SOURCES) $(libspk_la_SOURCES)
 
 srcdir = .
 top_srcdir = ..
@@ -38,8 +39,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = i686-pc-linux-gnu
 host_triplet = i686-pc-linux-gnu
-#am__append_1 = -O3 -Dspk_release -DNDEBUG
-am__append_2 = -g  -Dspk_debug
 subdir = spk
 DIST_COMMON = $(pkginclude_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -56,41 +55,66 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgincludedir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(libdir)" \
+	"$(DESTDIR)$(pkgincludedir)"
+libLIBRARIES_INSTALL = $(INSTALL_DATA)
+LIBRARIES = $(lib_LIBRARIES)
+ARFLAGS = cru
+libspk_a_AR = $(AR) $(ARFLAGS)
+libspk_a_LIBADD =
+am_libspk_a_OBJECTS = ABA_x.$(OBJEXT) add.$(OBJEXT) \
+	AkronBtimesC.$(OBJEXT) AkronItimesC.$(OBJEXT) \
+	allTrue.$(OBJEXT) allZero.$(OBJEXT) backDiv.$(OBJEXT) \
+	BlockAlloc.$(OBJEXT) blockDiagonalDerivative.$(OBJEXT) \
+	broadCastEndOfSpk.$(OBJEXT) c2dsyev.$(OBJEXT) \
+	calcMean.$(OBJEXT) centdiff.$(OBJEXT) Channel.$(OBJEXT) \
+	cholesky.$(OBJEXT) countTrues.$(OBJEXT) Covariance.$(OBJEXT) \
+	derParStatistics.$(OBJEXT) det.$(OBJEXT) \
+	DirBasedParallelControls.$(OBJEXT) divByScalar.$(OBJEXT) \
+	DoubleMatrix.$(OBJEXT) elementwiseAnd.$(OBJEXT) \
+	elementwiseOr.$(OBJEXT) elsq.$(OBJEXT) \
+	elsq_xBlockDiag.$(OBJEXT) elsq_x.$(OBJEXT) \
+	elsq_xDiag.$(OBJEXT) EqIndModel.$(OBJEXT) estimateB.$(OBJEXT) \
+	expectedHessian.$(OBJEXT) extractIndex.$(OBJEXT) \
+	File.$(OBJEXT) firstOrderOpt.$(OBJEXT) fitIndividual.$(OBJEXT) \
+	fitPopulation.$(OBJEXT) FpErrorChecker.$(OBJEXT) \
+	FullCovariance.$(OBJEXT) FullDataCovariance.$(OBJEXT) \
+	Function.$(OBJEXT) FullIndParCovariance.$(OBJEXT) \
+	getCol.$(OBJEXT) getMulCols.$(OBJEXT) getMulRows.$(OBJEXT) \
+	getRow.$(OBJEXT) getSubblock.$(OBJEXT) identity.$(OBJEXT) \
+	IkronBtimesC.$(OBJEXT) IndInputDataPackage.$(OBJEXT) \
+	IndOutputDataPackage.$(OBJEXT) indResiduals.$(OBJEXT) \
+	IndResults.$(OBJEXT) indStatistics.$(OBJEXT) IndVars.$(OBJEXT) \
+	inverse.$(OBJEXT) inxToMax.$(OBJEXT) \
+	intToOrdinalString.$(OBJEXT) isDmatEpsEqual.$(OBJEXT) \
+	isEndOfSpk.$(OBJEXT) isGreaterThanOrEqualTo.$(OBJEXT) \
+	isLessThanOrEqualTo.$(OBJEXT) isNotANumber.$(OBJEXT) \
+	isSymmetric.$(OBJEXT) isUnnormNumber.$(OBJEXT) \
+	lambda.$(OBJEXT) lambdaDiff.$(OBJEXT) lambda2diff.$(OBJEXT) \
+	lTilde.$(OBJEXT) mapObj.$(OBJEXT) mapObjDiff.$(OBJEXT) \
+	mapOpt.$(OBJEXT) mapTilde.$(OBJEXT) matabs.$(OBJEXT) \
+	matmax.$(OBJEXT) matmin.$(OBJEXT) mulByScalar.$(OBJEXT) \
+	multiply.$(OBJEXT) NaiveFoModel.$(OBJEXT) node.$(OBJEXT) \
+	norm.$(OBJEXT) Optimizer.$(OBJEXT) placeRows.$(OBJEXT) \
+	PopConstVals.$(OBJEXT) popResiduals.$(OBJEXT) \
+	popStatistics.$(OBJEXT) PopVars.$(OBJEXT) ppkaOpt.$(OBJEXT) \
+	ppkaOptParallel.$(OBJEXT) QN01BoxError.$(OBJEXT) \
+	quasiNewtonAnyBox.$(OBJEXT) randNormal.$(OBJEXT) \
+	replaceIth.$(OBJEXT) replaceJth.$(OBJEXT) \
+	replaceSubblock.$(OBJEXT) wres.$(OBJEXT) rvecInverse.$(OBJEXT) \
+	simulate.$(OBJEXT) statistics.$(OBJEXT) StatusList.$(OBJEXT) \
+	subtract.$(OBJEXT) symmetrize.$(OBJEXT) SpkError.$(OBJEXT) \
+	SpkException.$(OBJEXT) SpkModel.$(OBJEXT) SpkWarning.$(OBJEXT) \
+	System.$(OBJEXT) transpose.$(OBJEXT) \
+	transposeDerivative.$(OBJEXT) transposeRowBlocks.$(OBJEXT) \
+	UTranTimesSymKronSymTimesU.$(OBJEXT) \
+	UTranTimesSymKronSymTimesU_x.$(OBJEXT) \
+	WarningsManager.$(OBJEXT)
+libspk_a_OBJECTS = $(am_libspk_a_OBJECTS)
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libspk_la_LIBADD =
-am_libspk_la_OBJECTS = ABA_x.lo add.lo AkronBtimesC.lo AkronItimesC.lo \
-	allTrue.lo allZero.lo backDiv.lo BlockAlloc.lo \
-	blockDiagonalDerivative.lo broadCastEndOfSpk.lo c2dsyev.lo \
-	calcMean.lo centdiff.lo Channel.lo cholesky.lo countTrues.lo \
-	Covariance.lo derParStatistics.lo det.lo \
-	DirBasedParallelControls.lo divByScalar.lo DoubleMatrix.lo \
-	elementwiseAnd.lo elementwiseOr.lo elsq.lo elsq_xBlockDiag.lo \
-	elsq_x.lo elsq_xDiag.lo EqIndModel.lo estimateB.lo \
-	expectedHessian.lo extractIndex.lo File.lo firstOrderOpt.lo \
-	fitIndividual.lo fitPopulation.lo FpErrorChecker.lo \
-	FullCovariance.lo FullDataCovariance.lo Function.lo \
-	FullIndParCovariance.lo getCol.lo getMulCols.lo getMulRows.lo \
-	getRow.lo getSubblock.lo identity.lo IkronBtimesC.lo \
-	IndInputDataPackage.lo IndOutputDataPackage.lo indResiduals.lo \
-	IndResults.lo indStatistics.lo IndVars.lo inverse.lo \
-	inxToMax.lo intToOrdinalString.lo isDmatEpsEqual.lo \
-	isEndOfSpk.lo isGreaterThanOrEqualTo.lo isLessThanOrEqualTo.lo \
-	isNotANumber.lo isSymmetric.lo isUnnormNumber.lo lambda.lo \
-	lambdaDiff.lo lambda2diff.lo lTilde.lo mapObj.lo mapObjDiff.lo \
-	mapOpt.lo mapTilde.lo matabs.lo matmax.lo matmin.lo \
-	mulByScalar.lo multiply.lo NaiveFoModel.lo node.lo norm.lo \
-	Optimizer.lo placeRows.lo PopConstVals.lo popResiduals.lo \
-	popStatistics.lo PopVars.lo ppkaOpt.lo ppkaOptParallel.lo \
-	QN01BoxError.lo quasiNewtonAnyBox.lo randNormal.lo \
-	replaceIth.lo replaceJth.lo replaceSubblock.lo wres.lo \
-	rvecInverse.lo simulate.lo statistics.lo StatusList.lo \
-	subtract.lo symmetrize.lo SpkError.lo SpkException.lo \
-	SpkModel.lo SpkWarning.lo System.lo transpose.lo \
-	transposeDerivative.lo transposeRowBlocks.lo \
-	UTranTimesSymKronSymTimesU.lo UTranTimesSymKronSymTimesU_x.lo \
-	WarningsManager.lo
+am_libspk_la_OBJECTS =
 libspk_la_OBJECTS = $(am_libspk_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -103,6 +127,7 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 LTF77COMPILE = $(LIBTOOL) --tag=F77 --mode=compile $(F77) $(AM_FFLAGS) \
 	$(FFLAGS)
 F77LD = $(F77)
@@ -116,8 +141,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libspk_la_SOURCES)
-DIST_SOURCES = $(libspk_la_SOURCES)
+SOURCES = $(libspk_a_SOURCES) $(libspk_la_SOURCES)
+DIST_SOURCES = $(libspk_a_SOURCES) $(libspk_la_SOURCES)
 pkgincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(pkginclude_HEADERS)
 ETAGS = etags
@@ -153,6 +178,7 @@ EGREP = grep -E
 EXEEXT = 
 F77 = g77
 FFLAGS = 
+FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.2.3 -L/usr/lib/gcc-lib/i386-redhat-linux/3.2.3/../../.. -lfrtbegin -lg2c -lm -lgcc_s
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
@@ -223,14 +249,19 @@ sharedstatedir = ${prefix}/com
 sysconfdir = ${prefix}/etc
 target_alias = 
 lib_LTLIBRARIES = libspk.la
+lib_LIBRARIES = libspk.a
 INST_BASE = /usr/local
-AM_LDFLAGS = -llapack -lg2c
 
 # Set C++ compiler flags
-AM_CXXFLAGS = -I$(INST_BASE)/include/spktest $(am__append_1) \
-	$(am__append_2)
-F77COMPILE = -g
-libspk_la_SOURCES = \
+AM_CPPFLAGS = \
+	-I. \
+	-I$(top_builddir) \
+	-I$(INST_BASE)/include/spktest
+
+AM_CXXFLAGS = -g  -Dspk_debug
+#AM_CXXFLAGS = -O3 -Dspk_release -DNDEBUG
+AM_FFLAGS = -g
+libspk_a_SOURCES = \
 	ABA_x.cpp \
 	add.cpp \
 	AkronBtimesC.cpp \
@@ -591,6 +622,7 @@ pkginclude_HEADERS = \
 	UTranTimesSymKronSymTimesU_x.h \
 	WarningsManager.h
 
+libspk_la_SOURCES = libspk_a_SOURCES
 all: all-am
 
 .SUFFIXES:
@@ -624,6 +656,39 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+install-libLIBRARIES: $(lib_LIBRARIES)
+	@$(NORMAL_INSTALL)
+	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
+	@list='$(lib_LIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    f=$(am__strip_dir) \
+	    echo " $(libLIBRARIES_INSTALL) '$$p' '$(DESTDIR)$(libdir)/$$f'"; \
+	    $(libLIBRARIES_INSTALL) "$$p" "$(DESTDIR)$(libdir)/$$f"; \
+	  else :; fi; \
+	done
+	@$(POST_INSTALL)
+	@list='$(lib_LIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    p=$(am__strip_dir) \
+	    echo " $(RANLIB) '$(DESTDIR)$(libdir)/$$p'"; \
+	    $(RANLIB) "$(DESTDIR)$(libdir)/$$p"; \
+	  else :; fi; \
+	done
+
+uninstall-libLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(lib_LIBRARIES)'; for p in $$list; do \
+	  p=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(libdir)/$$p'"; \
+	  rm -f "$(DESTDIR)$(libdir)/$$p"; \
+	done
+
+clean-libLIBRARIES:
+	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
+libspk.a: $(libspk_a_OBJECTS) $(libspk_a_DEPENDENCIES) 
+	-rm -f libspk.a
+	$(libspk_a_AR) libspk.a $(libspk_a_OBJECTS) $(libspk_a_LIBADD)
+	$(RANLIB) libspk.a
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(libdir)" || $(mkdir_p) "$(DESTDIR)$(libdir)"
@@ -652,7 +717,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libspk.la: $(libspk_la_OBJECTS) $(libspk_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libspk_la_LDFLAGS) $(libspk_la_OBJECTS) $(libspk_la_LIBADD) $(LIBS)
+	$(LINK) -rpath $(libdir) $(libspk_la_LDFLAGS) $(libspk_la_OBJECTS) $(libspk_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -660,117 +725,117 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/ABA_x.Plo
-include ./$(DEPDIR)/AkronBtimesC.Plo
-include ./$(DEPDIR)/AkronItimesC.Plo
-include ./$(DEPDIR)/BlockAlloc.Plo
-include ./$(DEPDIR)/Channel.Plo
-include ./$(DEPDIR)/Covariance.Plo
-include ./$(DEPDIR)/DirBasedParallelControls.Plo
-include ./$(DEPDIR)/DoubleMatrix.Plo
-include ./$(DEPDIR)/EqIndModel.Plo
-include ./$(DEPDIR)/File.Plo
-include ./$(DEPDIR)/FpErrorChecker.Plo
-include ./$(DEPDIR)/FullCovariance.Plo
-include ./$(DEPDIR)/FullDataCovariance.Plo
-include ./$(DEPDIR)/FullIndParCovariance.Plo
-include ./$(DEPDIR)/Function.Plo
-include ./$(DEPDIR)/IkronBtimesC.Plo
-include ./$(DEPDIR)/IndInputDataPackage.Plo
-include ./$(DEPDIR)/IndOutputDataPackage.Plo
-include ./$(DEPDIR)/IndResults.Plo
-include ./$(DEPDIR)/IndVars.Plo
-include ./$(DEPDIR)/NaiveFoModel.Plo
-include ./$(DEPDIR)/Optimizer.Plo
-include ./$(DEPDIR)/PopConstVals.Plo
-include ./$(DEPDIR)/PopVars.Plo
-include ./$(DEPDIR)/QN01BoxError.Plo
-include ./$(DEPDIR)/SpkError.Plo
-include ./$(DEPDIR)/SpkException.Plo
-include ./$(DEPDIR)/SpkModel.Plo
-include ./$(DEPDIR)/SpkWarning.Plo
-include ./$(DEPDIR)/StatusList.Plo
-include ./$(DEPDIR)/System.Plo
-include ./$(DEPDIR)/UTranTimesSymKronSymTimesU.Plo
-include ./$(DEPDIR)/UTranTimesSymKronSymTimesU_x.Plo
-include ./$(DEPDIR)/WarningsManager.Plo
-include ./$(DEPDIR)/add.Plo
-include ./$(DEPDIR)/allTrue.Plo
-include ./$(DEPDIR)/allZero.Plo
-include ./$(DEPDIR)/backDiv.Plo
-include ./$(DEPDIR)/blockDiagonalDerivative.Plo
-include ./$(DEPDIR)/broadCastEndOfSpk.Plo
-include ./$(DEPDIR)/calcMean.Plo
-include ./$(DEPDIR)/centdiff.Plo
-include ./$(DEPDIR)/cholesky.Plo
-include ./$(DEPDIR)/countTrues.Plo
-include ./$(DEPDIR)/derParStatistics.Plo
-include ./$(DEPDIR)/det.Plo
-include ./$(DEPDIR)/divByScalar.Plo
-include ./$(DEPDIR)/elementwiseAnd.Plo
-include ./$(DEPDIR)/elementwiseOr.Plo
-include ./$(DEPDIR)/elsq.Plo
-include ./$(DEPDIR)/elsq_x.Plo
-include ./$(DEPDIR)/elsq_xBlockDiag.Plo
-include ./$(DEPDIR)/elsq_xDiag.Plo
-include ./$(DEPDIR)/estimateB.Plo
-include ./$(DEPDIR)/expectedHessian.Plo
-include ./$(DEPDIR)/extractIndex.Plo
-include ./$(DEPDIR)/firstOrderOpt.Plo
-include ./$(DEPDIR)/fitIndividual.Plo
-include ./$(DEPDIR)/fitPopulation.Plo
-include ./$(DEPDIR)/getCol.Plo
-include ./$(DEPDIR)/getMulCols.Plo
-include ./$(DEPDIR)/getMulRows.Plo
-include ./$(DEPDIR)/getRow.Plo
-include ./$(DEPDIR)/getSubblock.Plo
-include ./$(DEPDIR)/identity.Plo
-include ./$(DEPDIR)/indResiduals.Plo
-include ./$(DEPDIR)/indStatistics.Plo
-include ./$(DEPDIR)/intToOrdinalString.Plo
-include ./$(DEPDIR)/inverse.Plo
-include ./$(DEPDIR)/inxToMax.Plo
-include ./$(DEPDIR)/isDmatEpsEqual.Plo
-include ./$(DEPDIR)/isEndOfSpk.Plo
-include ./$(DEPDIR)/isGreaterThanOrEqualTo.Plo
-include ./$(DEPDIR)/isLessThanOrEqualTo.Plo
-include ./$(DEPDIR)/isNotANumber.Plo
-include ./$(DEPDIR)/isSymmetric.Plo
-include ./$(DEPDIR)/isUnnormNumber.Plo
-include ./$(DEPDIR)/lTilde.Plo
-include ./$(DEPDIR)/lambda.Plo
-include ./$(DEPDIR)/lambda2diff.Plo
-include ./$(DEPDIR)/lambdaDiff.Plo
-include ./$(DEPDIR)/mapObj.Plo
-include ./$(DEPDIR)/mapObjDiff.Plo
-include ./$(DEPDIR)/mapOpt.Plo
-include ./$(DEPDIR)/mapTilde.Plo
-include ./$(DEPDIR)/matabs.Plo
-include ./$(DEPDIR)/matmax.Plo
-include ./$(DEPDIR)/matmin.Plo
-include ./$(DEPDIR)/mulByScalar.Plo
-include ./$(DEPDIR)/multiply.Plo
-include ./$(DEPDIR)/node.Plo
-include ./$(DEPDIR)/norm.Plo
-include ./$(DEPDIR)/placeRows.Plo
-include ./$(DEPDIR)/popResiduals.Plo
-include ./$(DEPDIR)/popStatistics.Plo
-include ./$(DEPDIR)/ppkaOpt.Plo
-include ./$(DEPDIR)/ppkaOptParallel.Plo
-include ./$(DEPDIR)/quasiNewtonAnyBox.Plo
-include ./$(DEPDIR)/randNormal.Plo
-include ./$(DEPDIR)/replaceIth.Plo
-include ./$(DEPDIR)/replaceJth.Plo
-include ./$(DEPDIR)/replaceSubblock.Plo
-include ./$(DEPDIR)/rvecInverse.Plo
-include ./$(DEPDIR)/simulate.Plo
-include ./$(DEPDIR)/statistics.Plo
-include ./$(DEPDIR)/subtract.Plo
-include ./$(DEPDIR)/symmetrize.Plo
-include ./$(DEPDIR)/transpose.Plo
-include ./$(DEPDIR)/transposeDerivative.Plo
-include ./$(DEPDIR)/transposeRowBlocks.Plo
-include ./$(DEPDIR)/wres.Plo
+include ./$(DEPDIR)/ABA_x.Po
+include ./$(DEPDIR)/AkronBtimesC.Po
+include ./$(DEPDIR)/AkronItimesC.Po
+include ./$(DEPDIR)/BlockAlloc.Po
+include ./$(DEPDIR)/Channel.Po
+include ./$(DEPDIR)/Covariance.Po
+include ./$(DEPDIR)/DirBasedParallelControls.Po
+include ./$(DEPDIR)/DoubleMatrix.Po
+include ./$(DEPDIR)/EqIndModel.Po
+include ./$(DEPDIR)/File.Po
+include ./$(DEPDIR)/FpErrorChecker.Po
+include ./$(DEPDIR)/FullCovariance.Po
+include ./$(DEPDIR)/FullDataCovariance.Po
+include ./$(DEPDIR)/FullIndParCovariance.Po
+include ./$(DEPDIR)/Function.Po
+include ./$(DEPDIR)/IkronBtimesC.Po
+include ./$(DEPDIR)/IndInputDataPackage.Po
+include ./$(DEPDIR)/IndOutputDataPackage.Po
+include ./$(DEPDIR)/IndResults.Po
+include ./$(DEPDIR)/IndVars.Po
+include ./$(DEPDIR)/NaiveFoModel.Po
+include ./$(DEPDIR)/Optimizer.Po
+include ./$(DEPDIR)/PopConstVals.Po
+include ./$(DEPDIR)/PopVars.Po
+include ./$(DEPDIR)/QN01BoxError.Po
+include ./$(DEPDIR)/SpkError.Po
+include ./$(DEPDIR)/SpkException.Po
+include ./$(DEPDIR)/SpkModel.Po
+include ./$(DEPDIR)/SpkWarning.Po
+include ./$(DEPDIR)/StatusList.Po
+include ./$(DEPDIR)/System.Po
+include ./$(DEPDIR)/UTranTimesSymKronSymTimesU.Po
+include ./$(DEPDIR)/UTranTimesSymKronSymTimesU_x.Po
+include ./$(DEPDIR)/WarningsManager.Po
+include ./$(DEPDIR)/add.Po
+include ./$(DEPDIR)/allTrue.Po
+include ./$(DEPDIR)/allZero.Po
+include ./$(DEPDIR)/backDiv.Po
+include ./$(DEPDIR)/blockDiagonalDerivative.Po
+include ./$(DEPDIR)/broadCastEndOfSpk.Po
+include ./$(DEPDIR)/calcMean.Po
+include ./$(DEPDIR)/centdiff.Po
+include ./$(DEPDIR)/cholesky.Po
+include ./$(DEPDIR)/countTrues.Po
+include ./$(DEPDIR)/derParStatistics.Po
+include ./$(DEPDIR)/det.Po
+include ./$(DEPDIR)/divByScalar.Po
+include ./$(DEPDIR)/elementwiseAnd.Po
+include ./$(DEPDIR)/elementwiseOr.Po
+include ./$(DEPDIR)/elsq.Po
+include ./$(DEPDIR)/elsq_x.Po
+include ./$(DEPDIR)/elsq_xBlockDiag.Po
+include ./$(DEPDIR)/elsq_xDiag.Po
+include ./$(DEPDIR)/estimateB.Po
+include ./$(DEPDIR)/expectedHessian.Po
+include ./$(DEPDIR)/extractIndex.Po
+include ./$(DEPDIR)/firstOrderOpt.Po
+include ./$(DEPDIR)/fitIndividual.Po
+include ./$(DEPDIR)/fitPopulation.Po
+include ./$(DEPDIR)/getCol.Po
+include ./$(DEPDIR)/getMulCols.Po
+include ./$(DEPDIR)/getMulRows.Po
+include ./$(DEPDIR)/getRow.Po
+include ./$(DEPDIR)/getSubblock.Po
+include ./$(DEPDIR)/identity.Po
+include ./$(DEPDIR)/indResiduals.Po
+include ./$(DEPDIR)/indStatistics.Po
+include ./$(DEPDIR)/intToOrdinalString.Po
+include ./$(DEPDIR)/inverse.Po
+include ./$(DEPDIR)/inxToMax.Po
+include ./$(DEPDIR)/isDmatEpsEqual.Po
+include ./$(DEPDIR)/isEndOfSpk.Po
+include ./$(DEPDIR)/isGreaterThanOrEqualTo.Po
+include ./$(DEPDIR)/isLessThanOrEqualTo.Po
+include ./$(DEPDIR)/isNotANumber.Po
+include ./$(DEPDIR)/isSymmetric.Po
+include ./$(DEPDIR)/isUnnormNumber.Po
+include ./$(DEPDIR)/lTilde.Po
+include ./$(DEPDIR)/lambda.Po
+include ./$(DEPDIR)/lambda2diff.Po
+include ./$(DEPDIR)/lambdaDiff.Po
+include ./$(DEPDIR)/mapObj.Po
+include ./$(DEPDIR)/mapObjDiff.Po
+include ./$(DEPDIR)/mapOpt.Po
+include ./$(DEPDIR)/mapTilde.Po
+include ./$(DEPDIR)/matabs.Po
+include ./$(DEPDIR)/matmax.Po
+include ./$(DEPDIR)/matmin.Po
+include ./$(DEPDIR)/mulByScalar.Po
+include ./$(DEPDIR)/multiply.Po
+include ./$(DEPDIR)/node.Po
+include ./$(DEPDIR)/norm.Po
+include ./$(DEPDIR)/placeRows.Po
+include ./$(DEPDIR)/popResiduals.Po
+include ./$(DEPDIR)/popStatistics.Po
+include ./$(DEPDIR)/ppkaOpt.Po
+include ./$(DEPDIR)/ppkaOptParallel.Po
+include ./$(DEPDIR)/quasiNewtonAnyBox.Po
+include ./$(DEPDIR)/randNormal.Po
+include ./$(DEPDIR)/replaceIth.Po
+include ./$(DEPDIR)/replaceJth.Po
+include ./$(DEPDIR)/replaceSubblock.Po
+include ./$(DEPDIR)/rvecInverse.Po
+include ./$(DEPDIR)/simulate.Po
+include ./$(DEPDIR)/statistics.Po
+include ./$(DEPDIR)/subtract.Po
+include ./$(DEPDIR)/symmetrize.Po
+include ./$(DEPDIR)/transpose.Po
+include ./$(DEPDIR)/transposeDerivative.Po
+include ./$(DEPDIR)/transposeRowBlocks.Po
+include ./$(DEPDIR)/wres.Po
 
 .cpp.o:
 	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -907,9 +972,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgincludedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgincludedir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -938,8 +1003,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
-	mostlyclean-am
+clean-am: clean-generic clean-libLIBRARIES clean-libLTLIBRARIES \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -959,7 +1024,7 @@ info-am:
 
 install-data-am: install-pkgincludeHEADERS
 
-install-exec-am: install-libLTLIBRARIES
+install-exec-am: install-libLIBRARIES install-libLTLIBRARIES
 
 install-info: install-info-am
 
@@ -985,21 +1050,22 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES \
-	uninstall-pkgincludeHEADERS
+uninstall-am: uninstall-info-am uninstall-libLIBRARIES \
+	uninstall-libLTLIBRARIES uninstall-pkgincludeHEADERS
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pkgincludeHEADERS \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-info-am uninstall-libLTLIBRARIES \
+	clean-libLIBRARIES clean-libLTLIBRARIES clean-libtool ctags \
+	distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-libLIBRARIES install-libLTLIBRARIES \
+	install-man install-pkgincludeHEADERS install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-info-am \
+	uninstall-libLIBRARIES uninstall-libLTLIBRARIES \
 	uninstall-pkgincludeHEADERS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

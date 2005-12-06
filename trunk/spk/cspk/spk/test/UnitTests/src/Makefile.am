@@ -5,26 +5,29 @@ INST_BASE = /usr/local
 libdir = $(INST_BASE)/lib/spktest
 
 # Set C++ compiler flags
-AM_CXXFLAGS = \
+AM_CPPFLAGS = \
+	-I. \
+	-I$(top_builddir) \
 	-I$(top_builddir)/spk \
 	-I$(INST_BASE)/include/spktest \
 	-I/$(INST_BASE)/cppunit/include \
 	-I/$(INST_BASE)/include/spktest/CppAD
 
 if SPK_RELEASE 
-AM_CXXFLAGS   += -O3 -Dspk_release -DNDEBUG
+AM_CXXFLAGS   = -O3 -Dspk_release -DNDEBUG
 else
-AM_CXXFLAGS   += -g -Dspk_debug
+AM_CXXFLAGS   = -g -Dspk_debug
 endif
 
 AM_LDFLAGS  = \
 	-L/usr/local/lib \
 	-L$(INST_BASE)/lib/spktest \
 	-L$(INST_BASE)/lib/spktest/CppAD \
-	../../../spk/libspk.la \
+	$(top_builddir)/spk/libspk.a \
 	-lQN01Box \
 	-lCppAD \
 	-llapack \
+	-lg2c \
 	-latlas_lapack \
 	-lcblas \
 	-latlas \
