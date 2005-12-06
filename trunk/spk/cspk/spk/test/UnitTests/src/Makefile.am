@@ -4,7 +4,7 @@ INST_BASE = /usr/local
 
 libdir = $(INST_BASE)/lib/spktest
 
-# Set C++ compiler flags
+# Set C pre-processor flags
 AM_CPPFLAGS = \
 	-I. \
 	-I$(top_builddir) \
@@ -13,12 +13,14 @@ AM_CPPFLAGS = \
 	-I/$(INST_BASE)/cppunit/include \
 	-I/$(INST_BASE)/include/spktest/CppAD
 
+# Set C++ compiler flags
 if SPK_RELEASE 
 AM_CXXFLAGS   = -O3 -Dspk_release -DNDEBUG
 else
 AM_CXXFLAGS   = -g -Dspk_debug
 endif
 
+# Set linker flags
 AM_LDFLAGS  = \
 	-L/usr/local/lib \
 	-L$(INST_BASE)/lib/spktest \
