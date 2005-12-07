@@ -34,8 +34,6 @@ AM_LDFLAGS  = \
 	-lcppunit \
 	-lxerces-c
 
-testall_DEPENDENCIES = $(top_builddir)/spkpred/libspkpred.a 
-
 testall_SOURCES = \
 	compareToKnown.cpp \
 	DiagCovTest.cpp \
