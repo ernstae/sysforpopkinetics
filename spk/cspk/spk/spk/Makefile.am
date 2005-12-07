@@ -1,6 +1,3 @@
-# Shared libraries
-lib_LTLIBRARIES = libspk.la
-
 # Static libraries
 lib_LIBRARIES   = libspk.a
 
@@ -386,4 +383,3 @@ pkginclude_HEADERS = \
 	UTranTimesSymKronSymTimesU_x.h \
 	WarningsManager.h
 
-libspk_la_SOURCES = libspk_a_SOURCES
