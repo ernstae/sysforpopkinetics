@@ -1,14 +1,21 @@
 noinst_PROGRAMS      = testall
-AM_LDFLAGS           = -lxerces-c -lcppunit ../../spkcompiler/libcommon.a
-MOSTLYCLEANFILES     = IndData.h 
-MAINTEINERCLEANFILES = Makefile.in
-testall_DEPENDENCIES = ../../spkcompiler/libcommon.a 
 
-AM_CXXFLAGS          = -I@top_srcdir@
+# Linker flags
+AM_LDFLAGS           = -lxerces-c -lcppunit ../../spkcompiler/libcommon.a
+
+# Dependencies
+testall_DEPENDENCIES = $(top_builddir)/spkcompiler/libcommon.a 
+
+# C pre-processor flags
+AM_CPPFLAGS          = \
+	-I. \
+	-I@top_builddir@
+
+# C++ compiler flags
 if SPK_RELEASE
-AM_CXXFLAGS          += -O3 -Dspk_release
+AM_CXXFLAGS          = -O3 -Dspk_release -DNDEBUG
 else
-AM_CXXFLAGS          += -g  -Dspk_debug
+AM_CXXFLAGS          = -g  -Dspk_debug
 endif
 
 testall_SOURCES = \
@@ -29,5 +36,5 @@ testall_SOURCES = \
         SpkCompilerErrorTest.h \
         SpkCompilerExceptionTest.cpp \
         SpkCompilerExceptionTest.h \
-	../../config.h
+	$(top_builddir)/config.h
 

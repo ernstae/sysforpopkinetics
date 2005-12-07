@@ -3,11 +3,14 @@ bin_PROGRAMS     = spkcompiler
 bindir           = /usr/local/bin/spktest
 noinst_LIBRARIES = libcommon.a
 
-AM_CXXFLAGS = -I./nonmem
+AM_CPPFLAGS = \
+	-I. \
+	-I./nonmem
+
 if SPK_RELEASE
-AM_CXXFLAGS += -O3 -Dspk_release
+AM_CXXFLAGS = -O3 -Dspk_release -DNDEBUG
 else
-AM_CXXFLAGS += -g  -Dspk_debug
+AM_CXXFLAGS = -g  -Dspk_debug
 endif
 
 AM_LDFLAGS       = -lxerces-c nonmem/libnonmem.a ./libcommon.a
@@ -48,4 +51,4 @@ dist_libcommon_a_SOURCES = \
         SpkCompilerError.h \
         SpkCompilerException.h \
         SpkCompilerException.cpp \
-        ../config.h
+        $(top_builddir)/config.h
