@@ -1,3 +1,3 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = DiffEqnModelTest 
+SUBDIRS =  
 pkginclude_HEADERS = ../../config.h
