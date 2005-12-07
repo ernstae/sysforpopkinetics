@@ -1,22 +1,20 @@
 noinst_PROGRAMS      = testall
 
+# Set Linker flags
 AM_LDFLAGS           = -lxerces-c \
                        -lcppunit \
-		       ../../spkcompiler/libcommon.a \
-		       ../../spkcompiler/nonmem/libnonmem.a
+		       $(top_builddir)/spkcompiler/libcommon.a \
+		       $(top_builddir)/spkcompiler/nonmem/libnonmem.a
 
-AM_CXXFLAGS          = -I@top_srcdir@ 
+# Set C preprocessor flags
+AM_CPPFLAGS          = -I. -I$(top_builddir) 
+
+# Set C++ compiler flags
 if SPK_RELEASE
-AM_CXXFLAGS         += -O3 -Dspk_release -DNDEBUG
+AM_CXXFLAGS          = -O3 -Dspk_release -DNDEBUG
 else
-AM_CXXFLAGS         += -g  -Dspk_debug
+AM_CXXFLAGS          = -g  -Dspk_debug
 endif
-
-
-testall_DEPENDENCIES = ../../spkcompiler/libcommon.a \
-		       ../../spkcompiler/nonmem/libnonmem.a
-
-MAINTEINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES     = Pred.h \
                        predEqn.cpp \
