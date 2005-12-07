@@ -42,18 +42,24 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "TEST_DIR  = spktest" << endl;
   oMakefile << endl;                                   
 
-#ifndef NDEBUG
-  oMakefile << "CPP_FLAGS = -g ";
-#else
-  oMakefile << "CPP_FLAGS = -O3 -Dspk_release -DNDEBUG ";
-#endif
-  if( myModelSpec == ADVAN6 )
-    oMakefile << "-DODEPRED"; // Define "ODEPRED" macro
+  oMakefile << "# C++ compiler flags to build a release version." << endl;
+  oMakefile << "#CXX_FLAGS = -O3 -Dspk_release -DNDEBUG";
   oMakefile << endl;
+
+  oMakefile << "# C++ compiler flags to build a debug version." << endl;
+  oMakefile << "CXX_FLAGS = -g";
+
+  oMakefile << endl;
+  oMakefile << "# C++ compiler flags to turn on profiling" << endl;
+  oMakefile << "# CXX_FLAGS += -pg -Dspk_profiling ";
+
+  oMakefile << "# Define a macro \"ODEPRED\" when the job uses PRED." << endl;
+  if( myModelSpec == ADVAN6 )
+    oMakefile << "CXX_FLAGS += -DODEPRED"; // Define "ODEPRED" macro
   oMakefile << endl;                                        
 
-  oMakefile << "LIBS      = -lspk -lQN01Box -lspkpred -lCppAD";
-  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c" << endl;
+  oMakefile << "LIBS      = -lspkpred -lspk -lQN01Box -lCppAD";
+  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -llapack -lg2c -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c" << endl;
   oMakefile << endl;
 
   oMakefile << "COMMON_INCLUDE = \\" << endl;
@@ -69,7 +75,7 @@ void NonmemTranslator::generateMakefile() const
   if( !myIsMonte )
     {
       oMakefile << "prod : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
-      oMakefile << "\tg++ $(CPP_FLAGS) fitDriver.cpp -o driver ";
+      oMakefile << "\tg++ $(CXX_FLAGS) fitDriver.cpp -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
@@ -80,7 +86,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << endl;
       
       oMakefile << "test : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
-      oMakefile << "\tg++ $(CPP_FLAGS) fitDriver.cpp -o driver ";
+      oMakefile << "\tg++ $(CXX_FLAGS) fitDriver.cpp -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";

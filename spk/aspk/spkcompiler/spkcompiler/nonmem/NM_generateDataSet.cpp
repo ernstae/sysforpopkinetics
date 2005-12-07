@@ -1243,7 +1243,7 @@ void NonmemTranslator::generateDataSet( ) const
 
 
   oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "std::ostream& operator<< <spk_ValueType>( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
+  oDataSet_h << "std::ostream& operator<< ( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
 }

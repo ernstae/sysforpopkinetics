@@ -126,7 +126,7 @@ dnl
 dnl Display "checking for build mode ..." message on screen when 
 dnl "configure" is run.
 dnl
-AC_MSG_CHECKING( [build mode] )
+AC_MSG_CHECKING( [for build mode] )
 
 dnl
 dnl If $release_build is set to "yes",
@@ -141,7 +141,6 @@ else
 	AC_DEFINE(SPK_RELEASE, 0, "build debug")
         AC_MSG_RESULT( [debug] )
 fi
-
 
 dnl
 dnl <AC_CONFIG_FILES>
