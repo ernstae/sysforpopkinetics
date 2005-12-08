@@ -932,7 +932,7 @@ void NonmemTranslator::generateDataSet( ) const
   // ---------
   oDataSet_h << "// Extracts the contents of this class object in the SpkResultML::presentation_data form." << endl;
   oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "std::ostream& operator<<( std::ostream& o, const DataSet<spk_ValueType>& A )" << endl;
+  oDataSet_h << "std::ostream& operator<< ( std::ostream& o, const DataSet<spk_ValueType>& A )" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   using std::endl;" << endl;
 
@@ -1243,7 +1243,7 @@ void NonmemTranslator::generateDataSet( ) const
 
 
   oDataSet_h << "template <class spk_ValueType>" << endl;
-  oDataSet_h << "std::ostream& operator<< ( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
+  oDataSet_h << "std::ostream& operator<<( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
   oDataSet_h << "#endif" << endl;
   oDataSet_h.close();
 }
