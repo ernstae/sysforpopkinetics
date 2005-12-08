@@ -47,15 +47,18 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to build a debug version." << endl;
-  oMakefile << "CXX_FLAGS = -g";
-
+  oMakefile << "CXX_FLAGS = -g" << endl;
   oMakefile << endl;
-  oMakefile << "# C++ compiler flags to turn on profiling" << endl;
-  oMakefile << "# CXX_FLAGS += -pg -Dspk_profiling ";
 
-  oMakefile << "# Define a macro \"ODEPRED\" when the job uses PRED." << endl;
+  oMakefile << "# C++ compiler flags to turn on profiling" << endl;
+  oMakefile << "# CXX_FLAGS += -pg -Dspk_profiling" << endl;
+  oMakefile << endl;
+
   if( myModelSpec == ADVAN6 )
+  {
+    oMakefile << "# Define a macro \"ODEPRED\" when the job uses PRED." << endl;
     oMakefile << "CXX_FLAGS += -DODEPRED"; // Define "ODEPRED" macro
+  }
   oMakefile << endl;                                        
 
   oMakefile << "LIBS      = -lspkpred -lspk -lQN01Box -lCppAD";
@@ -130,7 +133,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "prod : " << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
-      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
+      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
@@ -143,7 +146,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "test : " << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
-      oMakefile << "\tg++ $(CPP_FLAGS) $(MONTE_SRC) -o monteDriver ";
+      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_SRC) -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
