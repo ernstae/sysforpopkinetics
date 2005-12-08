@@ -80,9 +80,16 @@ to /tmp on the installation machine.
         <screen>
         cd cppad-yy-mm-dd
         ./configure \
-	        --prefix=/usr/local       POSTFIX_DIR=spktest \
-	CPPAD_PREFIX_DIR=/usr/local CPPAD_POSTFIX_DIR=spktest
+           --prefix=/usr/local \
+           POSTFIX_DIR=spktest \
+           CPPAD_PREFIX_DIR=/usr/local \
+           CPPAD_POSTFIX_DIR=spktest \
+           COMPILE_FLAGS="compiler_flags"
         </screen>
+	where the optimized value for
+	compiler_flags is "-DNDEBUG -O3 -Wall"
+	and the debug value for
+	compiler_flags is "-g -Wall".
         </para>
       </listitem>
       <listitem>
