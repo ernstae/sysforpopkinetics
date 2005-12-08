@@ -16,6 +16,9 @@ AM_CXXFLAGS = -O3 -Dspk_release -DNDEBUG
 else
 AM_CXXFLAGS = -g  -Dspk_debug
 endif
+if SPK_PROFILE
+AM_CXXFLAGS += -pg -Dspk_profiling
+endif
 
 AM_LDFLAGS  = \
 	-L/usr/local/lib \
