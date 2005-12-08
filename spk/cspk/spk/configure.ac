@@ -126,7 +126,7 @@ dnl
 dnl Display "checking for build mode ..." message on screen when 
 dnl "configure" is run.
 dnl
-AC_MSG_CHECKING( [build mode] )
+AC_MSG_CHECKING( [for build mode] )
 
 dnl
 dnl If $release_build is set to "yes",
@@ -142,6 +142,50 @@ else
         AC_MSG_RESULT( [debug] )
 fi
 
+dnl
+dnl Set an extra command line option "--enable-profiling" to 'configure'.
+dnl If the user specifies this option, a variable "profiling" gets
+dnl set to TRUE.  An important note here is that the variable name
+dnl must exactly match the option string after "enable_" with dashes
+dnl replaces by underscores.
+dnl
+AC_ARG_ENABLE( profiling,
+       AC_HELP_STRING( [--enable-profiling], [profile SPK Library] ),
+       [profiling=TRUE],
+       [profiling=FALSE]
+)
+                                                                                                                         
+dnl
+dnl <AM_CONDITIONAL>
+dnl
+dnl    AM_CONDITIONAL(conditional, condition)
+dnl
+dnl Checks if $profiling is set to "yes".
+dnl If yes, define a macro SPK_PROFILE so that
+dnl Makefile's can switch its behavior and
+dnl build the SPK Library with profile instrumentations
+dnl
+AM_CONDITIONAL(SPK_PROFILE, test $profiling = TRUE)
+                                                                                                                         
+dnl
+dnl Display "checking for profiling ..." message on screen when
+dnl "configure" is run.
+dnl
+AC_MSG_CHECKING( [for profiling] )
+                                                                                                                         
+dnl
+dnl If $profiling is set to "yes",
+dnl define SPK_PROFILE to be 1; otherwise to be 0.
+dnl Display a text, "yes" or "no", followed after the
+dnl "checking for profiling..." screen message.
+dnl
+if test $profiling = TRUE; then
+        AC_DEFINE(SPK_PROFILE, 1, "yes")
+        AC_MSG_RESULT( [yes] )
+else
+        AC_DEFINE(SPK_RELEASE, 0, "no")
+        AC_MSG_RESULT( [no] )
+fi
 
 dnl
 dnl <AC_CONFIG_FILES>
