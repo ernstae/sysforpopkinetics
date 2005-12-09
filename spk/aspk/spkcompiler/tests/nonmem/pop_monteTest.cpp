@@ -28,7 +28,7 @@ using namespace CppUnit;
 using namespace xercesc;
 
 namespace{ 
-  const unsigned int MAXCHARS = 64;
+  const unsigned int MAXCHARS = 512;
 
   const char * testName;
   char fSavedReportML[]   = "saved_result.xml";
@@ -36,19 +36,19 @@ namespace{
   char fFitDriver[]       = "driver";
   char fReportML[]        = "result.xml";
 
-  char fPrefix              [MAXCHARS];
-  char fDataML              [MAXCHARS];
-  char fSourceML            [MAXCHARS];
-  char fNonmemParsDriver    [MAXCHARS];
-  char fNonmemParsDriver_cpp[MAXCHARS];
-  char fMonteParsDriver     [MAXCHARS];
-  char fMonteParsDriver_cpp [MAXCHARS];
-  char fIndDataDriver       [MAXCHARS];
-  char fIndDataDriver_cpp   [MAXCHARS];
-  char fDataSetDriver       [MAXCHARS];
-  char fDataSetDriver_cpp   [MAXCHARS];
-  char fPredDriver          [MAXCHARS];
-  char fPredDriver_cpp      [MAXCHARS];
+  char fPrefix              [MAXCHARS+1];
+  char fDataML              [MAXCHARS+1];
+  char fSourceML            [MAXCHARS+1];
+  char fNonmemParsDriver    [MAXCHARS+1];
+  char fNonmemParsDriver_cpp[MAXCHARS+1];
+  char fMonteParsDriver     [MAXCHARS+1];
+  char fMonteParsDriver_cpp [MAXCHARS+1];
+  char fIndDataDriver       [MAXCHARS+1];
+  char fIndDataDriver_cpp   [MAXCHARS+1];
+  char fDataSetDriver       [MAXCHARS+1];
+  char fDataSetDriver_cpp   [MAXCHARS+1];
+  char fPredDriver          [MAXCHARS+1];
+  char fPredDriver_cpp      [MAXCHARS+1];
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
@@ -258,14 +258,14 @@ void pop_monteTest::setUp()
   catch( const XMLException& toCatch )
     {
       char buf[MAXCHARS + 1];
-      sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
+      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
                XMLString::transcode( toCatch.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( ... )
     {
       char buf[MAXCHARS + 1];
-      sprintf( buf, "Unknown rror during Xerces-c initialization.\nException message.\n" );
+      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
 
@@ -289,21 +289,21 @@ void pop_monteTest::setUp()
   X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
   X_POP_MONTE_RESULT           = XMLString::transcode( C_POP_MONTE_RESULT );
 
-  strcpy ( fPrefix,               testName );
-  sprintf( fMonteParsDriver,      "%s_MonteParsDriver",      fPrefix );
-  sprintf( fMonteParsDriver_cpp,  "%s_MonteParsDriver.cpp",  fPrefix );
-  sprintf( fNonmemParsDriver,     "%s_NonmemParsDriver",     fPrefix );
-  sprintf( fNonmemParsDriver_cpp, "%s_NonmemParsDriver.cpp", fPrefix );
-  sprintf( fIndDataDriver,        "%s_IndDataDriver",        fPrefix );
-  sprintf( fIndDataDriver_cpp,    "%s_IndDataDriver.cpp",    fPrefix );
-  sprintf( fDataML,               "%s_dataML.xml",           fPrefix );
-  sprintf( fSourceML,             "%s_sourceML.xml",         fPrefix );
-  sprintf( fDataSetDriver,        "%s_DataSetDriver",        fPrefix );
-  sprintf( fDataSetDriver_cpp,    "%s_DataSetDriver.cpp",    fPrefix );
-  sprintf( fPredDriver,           "%s_PredDriver",           fPrefix );
-  sprintf( fPredDriver_cpp,       "%s_PredDriver.cpp",       fPrefix );
+  strcpy ( fPrefix,                testName );
+  snprintf( fMonteParsDriver,      MAXCHARS, "%s_MonteParsDriver",      fPrefix );
+  snprintf( fMonteParsDriver_cpp,  MAXCHARS, "%s_MonteParsDriver.cpp",  fPrefix );
+  snprintf( fNonmemParsDriver,     MAXCHARS, "%s_NonmemParsDriver",     fPrefix );
+  snprintf( fNonmemParsDriver_cpp, MAXCHARS, "%s_NonmemParsDriver.cpp", fPrefix );
+  snprintf( fIndDataDriver,        MAXCHARS, "%s_IndDataDriver",        fPrefix );
+  snprintf( fIndDataDriver_cpp,    MAXCHARS, "%s_IndDataDriver.cpp",    fPrefix );
+  snprintf( fDataML,               MAXCHARS, "%s_dataML.xml",           fPrefix );
+  snprintf( fSourceML,             MAXCHARS, "%s_sourceML.xml",         fPrefix );
+  snprintf( fDataSetDriver,        MAXCHARS, "%s_DataSetDriver",        fPrefix );
+  snprintf( fDataSetDriver_cpp,    MAXCHARS, "%s_DataSetDriver.cpp",    fPrefix );
+  snprintf( fPredDriver,           MAXCHARS, "%s_PredDriver",           fPrefix );
+  snprintf( fPredDriver_cpp,       MAXCHARS, "%s_PredDriver.cpp",       fPrefix );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+  snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // ID doesn't have an alias
@@ -471,7 +471,7 @@ void pop_monteTest::createDataML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+      snprintf( buf, MAXCHARS, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fDataML, XMLString::transcode(e.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -482,7 +482,7 @@ void pop_monteTest::createDataML()
 	{
           XMLPlatformUtils::Terminate();
           char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+          snprintf( buf, MAXCHARS, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fDataML, e.code, XMLString::transcode(errText) );
 	  
           CPPUNIT_ASSERT_MESSAGE( buf, false );
@@ -492,7 +492,7 @@ void pop_monteTest::createDataML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fDataML );
+      snprintf( buf, MAXCHARS, "An unknown error occurred during parsing %s.\n", fDataML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -648,7 +648,7 @@ void pop_monteTest::createSourceML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+      snprintf( buf, MAXCHARS, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fSourceML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
@@ -661,7 +661,7 @@ void pop_monteTest::createSourceML()
 	{
           XMLPlatformUtils::Terminate();
           char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+          snprintf( buf, MAXCHARS, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fSourceML, e.code, XMLString::transcode(errText) );
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
@@ -670,7 +670,7 @@ void pop_monteTest::createSourceML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSourceML );
+      snprintf( buf, MAXCHARS, "An unknown error occurred during parsing %s.\n", fSourceML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -720,27 +720,27 @@ void pop_monteTest::testMontePars_h()
   o << "}" << endl;
   o.close();
 
-  char command[512];
+  char command[1024];
 
   // Build the test driver.
-  sprintf( command, "g++ %s -o %s %s %s",
+  snprintf( command, 1024, "g++ %s -o %s %s %s",
            fMonteParsDriver_cpp, 
            fMonteParsDriver, 
            LDFLAG, 
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char mess[128];
-      sprintf( mess, "Failed to build %s.", fMonteParsDriver );
+      char mess[MAXCHARS+1];
+      snprintf( mess, MAXCHARS, "Failed to build %s.", fMonteParsDriver );
       CPPUNIT_ASSERT_MESSAGE( mess, false );
     }
 
   // Run the test driver
-  sprintf( command, "./%s", fMonteParsDriver );
+  snprintf( command, 1024, "./%s", fMonteParsDriver );
   if( system( command ) != 0 )
     {
-      char mess[128];
-      sprintf( mess, "%s abnormally terminated.", fMonteParsDriver );
+      char mess[MAXCHARS+1];
+      snprintf( mess, MAXCHARS, "%s abnormally terminated.", fMonteParsDriver );
       CPPUNIT_ASSERT_MESSAGE( mess, false );      
     }
 }
@@ -751,16 +751,16 @@ void pop_monteTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   printf( "\n--- %s ---\n", fMonteDriver_cpp );
   int  exitcode      = 0;
-  char command[256];
-  sprintf( command, "make -f %s test", fMakefile );
+  char command[1024];
+  snprintf( command, 1024, "make -f %s test", fMakefile );
   if( system( command ) != 0 )
     {
-      char message[256];
-      sprintf( message, "Compilation of the generated %s failed!", fMonteDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, MAXCHARS, "Compilation of the generated %s failed!", fMonteDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  sprintf( command, "./%s > %s", fFitDriver, fTraceOut );
+  snprintf( command, 1024, "./%s > %s", fFitDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -771,21 +771,22 @@ void pop_monteTest::testDriver()
   exitcode = system( command );
   if( exitcode == 1 )
     {
-      char message[256];
-      sprintf( message, "%s failed for computation problem <%d>!", fMonteDriver_cpp, exitcode );
+      char message[MAXCHARS+1];
+      snprintf( message, MAXCHARS, "%s failed for computation problem <%d>!", fMonteDriver_cpp, exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode == 2 )
     {
-      char message[256];
-      sprintf( message, "%s failed due to inproper file access permission <%d>!", fMonteDriver_cpp, exitcode );
+      char message[MAXCHARS+1];
+      snprintf( message, MAXCHARS, "%s failed due to inproper file access permission <%d>!", fMonteDriver_cpp, exitcode );
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
   if( exitcode > 2 )
     {
-      char message[256];
-      sprintf( message, 
+      char message[MAXCHARS+1];
+      snprintf( message, 
+	        MAXCHARS,
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
                fFitDriver, 
                exitcode );
@@ -794,8 +795,8 @@ void pop_monteTest::testDriver()
     }
   if( rename( fReportML, fSavedReportML ) != 0 )
   {
-     char message[256];
-     sprintf( message, "Failed to rename %s to %s!", fReportML, fSavedReportML );
+     char message[MAXCHARS+1];
+     snprintf( message, MAXCHARS, "Failed to rename %s to %s!", fReportML, fSavedReportML );
      CPPUNIT_ASSERT_MESSAGE( message, false );
   }
 }
@@ -821,7 +822,7 @@ void pop_monteTest::testReportML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+      snprintf( buf, MAXCHARS, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fReportML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
@@ -834,7 +835,7 @@ void pop_monteTest::testReportML()
 	{
           XMLPlatformUtils::Terminate();
           char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+          snprintf( buf, MAXCHARS, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fReportML, e.code, XMLString::transcode(errText) );
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
@@ -843,7 +844,7 @@ void pop_monteTest::testReportML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSavedReportML );
+      snprintf( buf, MAXCHARS, "An unknown error occurred during parsing %s.\n", fSavedReportML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }

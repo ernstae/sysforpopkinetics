@@ -29,7 +29,7 @@ using namespace xercesc;
 
 
 namespace{
-  const unsigned int MAXCHARS = 64;
+  const unsigned int MAXCHARS = 256;
 
   const char * testName;
   char fSavedReportML[]   = "saved_result.xml";
@@ -37,19 +37,19 @@ namespace{
   char fFitDriver[]       = "driver";
   char fReportML[]        = "result.xml";
 
-  char fPrefix                       [MAXCHARS];
-  char fDataML                       [MAXCHARS];
-  char fSourceML                     [MAXCHARS];
-  char fNonmemParsDriver             [MAXCHARS];
-  char fNonmemParsDriver_cpp         [MAXCHARS];
-  char fMonteParsDriver              [MAXCHARS];
-  char fMonteParsDriver_cpp          [MAXCHARS];
-  char fIndDataDriver                [MAXCHARS];
-  char fIndDataDriver_cpp            [MAXCHARS];
-  char fExpandDriver                 [MAXCHARS];
-  char fExpandDriver_cpp             [MAXCHARS];
-  char fGetMeasurementIndexDriver    [MAXCHARS];
-  char fGetMeasurementIndexDriver_cpp[MAXCHARS];
+  char fPrefix                       [MAXCHARS+1];
+  char fDataML                       [MAXCHARS+1];
+  char fSourceML                     [MAXCHARS+1];
+  char fNonmemParsDriver             [MAXCHARS+1];
+  char fNonmemParsDriver_cpp         [MAXCHARS+1];
+  char fMonteParsDriver              [MAXCHARS+1];
+  char fMonteParsDriver_cpp          [MAXCHARS+1];
+  char fIndDataDriver                [MAXCHARS+1];
+  char fIndDataDriver_cpp            [MAXCHARS+1];
+  char fExpandDriver                 [MAXCHARS+1];
+  char fExpandDriver_cpp             [MAXCHARS+1];
+  char fGetMeasurementIndexDriver    [MAXCHARS+1];
+  char fGetMeasurementIndexDriver_cpp[MAXCHARS+1];
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
@@ -220,14 +220,14 @@ void dataSetTest::setUp()
   catch( const XMLException& toCatch )
     {
       char buf[MAXCHARS + 1];
-      sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
+      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
 	       XMLString::transcode( toCatch.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( ... )
     {
       char buf[MAXCHARS + 1];
-      sprintf( buf, "Unknown rror during Xerces-c initialization.\nException message.\n" );
+      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
 
@@ -237,20 +237,20 @@ void dataSetTest::setUp()
   testName = typeid( *this ).name();
 
   strcpy ( fPrefix,                        testName );
-  sprintf( fMonteParsDriver,               "%s_MonteParsDriver",               fPrefix );
-  sprintf( fMonteParsDriver_cpp,           "%s_MonteParsDriver.cpp",           fPrefix );
-  sprintf( fNonmemParsDriver,              "%s_NonmemParsDriver",              fPrefix );
-  sprintf( fNonmemParsDriver_cpp,          "%s_NonmemParsDriver.cpp",          fPrefix );
-  sprintf( fIndDataDriver,                 "%s_IndDataDriver",                 fPrefix );
-  sprintf( fIndDataDriver_cpp,             "%s_IndDataDriver.cpp",             fPrefix );
-  sprintf( fDataML,                        "%s_dataML",                        fPrefix );
-  sprintf( fSourceML,                      "%s_sourceML.xml",                  fPrefix );
-  sprintf( fExpandDriver,                  "%s_expandDriver",                  fPrefix );
-  sprintf( fExpandDriver_cpp,              "%s_expandDriver.cpp",              fPrefix );
-  sprintf( fGetMeasurementIndexDriver,     "%s_getMeasurementIndexDriver",     fPrefix );
-  sprintf( fGetMeasurementIndexDriver_cpp, "%s_getMeasurementIndexDriver.cpp", fPrefix );
+  snprintf( fMonteParsDriver,               MAXCHARS, "%s_MonteParsDriver",               fPrefix );
+  snprintf( fMonteParsDriver_cpp,           MAXCHARS, "%s_MonteParsDriver.cpp",           fPrefix );
+  snprintf( fNonmemParsDriver,              MAXCHARS, "%s_NonmemParsDriver",              fPrefix );
+  snprintf( fNonmemParsDriver_cpp,          MAXCHARS, "%s_NonmemParsDriver.cpp",          fPrefix );
+  snprintf( fIndDataDriver,                 MAXCHARS, "%s_IndDataDriver",                 fPrefix );
+  snprintf( fIndDataDriver_cpp,             MAXCHARS, "%s_IndDataDriver.cpp",             fPrefix );
+  snprintf( fDataML,                        MAXCHARS, "%s_dataML",                        fPrefix );
+  snprintf( fSourceML,                      MAXCHARS, "%s_sourceML.xml",                  fPrefix );
+  snprintf( fExpandDriver,                  MAXCHARS, "%s_expandDriver",                  fPrefix );
+  snprintf( fExpandDriver_cpp,              MAXCHARS, "%s_expandDriver.cpp",              fPrefix );
+  snprintf( fGetMeasurementIndexDriver,     MAXCHARS, "%s_getMeasurementIndexDriver",     fPrefix );
+  snprintf( fGetMeasurementIndexDriver_cpp, MAXCHARS, "%s_getMeasurementIndexDriver.cpp", fPrefix );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+  snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // ID doesn't have an alias
@@ -396,7 +396,7 @@ void dataSetTest::createDataML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+      snprintf( buf, MAXCHARS, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fDataML, XMLString::transcode(e.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -407,7 +407,7 @@ void dataSetTest::createDataML()
 	{
 	  XMLPlatformUtils::Terminate();
 	  char buf[MAXCHARS + 1];
-	  sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+	  snprintf( buf, MAXCHARS, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
 		   fDataML, e.code, XMLString::transcode(errText) );
 	  
 	  CPPUNIT_ASSERT_MESSAGE( buf, false );
@@ -417,7 +417,7 @@ void dataSetTest::createDataML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fDataML );
+      snprintf( buf, MAXCHARS, "An unknown error occurred during parsing %s.\n", fDataML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -544,7 +544,7 @@ void dataSetTest::createSourceML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+      snprintf( buf, MAXCHARS, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fSourceML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
@@ -557,7 +557,7 @@ void dataSetTest::createSourceML()
 	{
 	  XMLPlatformUtils::Terminate();
 	  char buf[MAXCHARS + 1];
-	  sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+	  snprintf( buf, MAXCHARS, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
 		   fSourceML, e.code, XMLString::transcode(errText) );
 	  CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
@@ -566,7 +566,7 @@ void dataSetTest::createSourceML()
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSourceML );
+      snprintf( buf, MAXCHARS, "An unknown error occurred during parsing %s.\n", fSourceML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -659,16 +659,16 @@ void dataSetTest::testExpand()
   snprintf( command, 512, "g++ %s -o %s %s %s", fExpandDriver_cpp, fExpandDriver, LDFLAG, CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[256];
-      snprintf( message, 256, "Compilation of the generated %s failed!", fExpandDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, MAXCHARS, "Compilation of the generated %s failed!", fExpandDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  snprintf( command, 256, "./%s", fExpandDriver );
+  snprintf( command, 512, "./%s", fExpandDriver );
   if( system( command ) != 0 )
     {
-      char message[256];
-      snprintf( message, 256, "A test driver, %s, failed!", fExpandDriver );
+      char message[MAXCHARS+1];
+      snprintf( message, MAXCHARS, "A test driver, %s, failed!", fExpandDriver );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
@@ -724,16 +724,16 @@ void dataSetTest::testGetMeasurementIndex()
   snprintf( command, 512, "g++ %s -o %s %s %s", fGetMeasurementIndexDriver_cpp, fGetMeasurementIndexDriver, LDFLAG, CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[256];
-      snprintf( message, 256, "Compilation of the generated %s failed!", fGetMeasurementIndexDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, MAXCHARS, "Compilation of the generated %s failed!", fGetMeasurementIndexDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  snprintf( command, 256, "./%s", fGetMeasurementIndexDriver );
+  snprintf( command, 512, "./%s", fGetMeasurementIndexDriver );
   if( system( command ) != 0 )
     {
-      char message[256];
-      snprintf( message, 256, "A test driver, %s, failed!", fGetMeasurementIndexDriver );
+      char message[MAXCHARS+1];
+      snprintf( message, MAXCHARS, "A test driver, %s, failed!", fGetMeasurementIndexDriver );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }

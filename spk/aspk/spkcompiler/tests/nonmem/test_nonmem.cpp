@@ -25,6 +25,8 @@
 #include "ind_dataSetTest.h"
 #include "pop_dataSetTest.h"
 #include "pop_modifyDataItemsTest.h"
+//#include "ind_parseDataTest.h"
+//#include "pop_parseDataTest.h"
 
 #include "countStrInLhsTest.h"
 #include "linInterpTest.h"
@@ -110,6 +112,10 @@ int main( int argc, const char * argv[] )
   // Test for Linear Interpolation
   master[ "ind_dataSetTest" ] = ind_dataSetTest::suite();
   master[ "pop_dataSetTest" ] = pop_dataSetTest::suite();
+
+  // Test for data.xml parsing feature
+//  master[ "ind_parseDataTest" ] = ind_parseDataTest::suite();
+//  master[ "pop_parseDataTest" ] = pop_parseDataTest::suite();
 
   // Inserting missing data items
   master[ "pop_modifyDataItemsTest" ] = pop_modifyDataItemsTest::suite();
