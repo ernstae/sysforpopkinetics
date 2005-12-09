@@ -41,4 +41,10 @@ public class JobState {
     
     /** Job state list */
     protected Properties jobList = new Properties();
+            
+    /** Compiler daemon visiting flag */
+    protected static boolean cmpd = false;
+    
+    /** Run-time daemon visiting flag */
+    protected static boolean rund = false;
 }
