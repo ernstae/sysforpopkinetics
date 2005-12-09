@@ -772,22 +772,12 @@ $SIG{'TERM'} = \&stop;
 #    death("emerg", "error reading database: $Spkdb::errstr");
 #}
 
-# Put any compiling jobs back to compiler queue that were interupted 
-# by the last termination of this daemon
-print $sh "get-cmp\n";
+# Initialize this daemon with the job-queue server
+print $sh "init-cmpd\n";
 my $answer = <$sh>;
 chop($answer);
 unless(defined $answer && $answer eq "done") {
-    death("emerg", "error reading job-queue to get cmp job");
-}
-
-# Put any aborting jobs back to aborting compilation queue that were interupted 
-# by the last termination of this daemon
-print $sh "get-acmp\n";
-$answer = <$sh>;
-chop($answer);
-unless(defined $answer && $answer eq "done") {
-    death("emerg", "error reading job-queue to get acmp job");
+    death("emerg", "error reading job-queue to initialize");
 }
 
 # Loop until interrupted by a signal

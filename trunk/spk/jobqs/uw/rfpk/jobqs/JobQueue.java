@@ -101,32 +101,8 @@ import java.util.Enumeration;
  *             state code in the database will be set to "arun" by the Run-time daemon.<br>
  *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise
  *  <p>
- *  Request:   "get-cmp"<br>
- *  Handling:  If the jobList contains any job with state code "cmp", add these job's job ID to
- *             the Compiler queue, and set the jobs' state code to "q2c" in the JobList and in the
- *             database.<br>
- *  Response:  "done"
- *  <p>
- *  Request:   "get-run"<br>
- *  Handling:  If the jobList contains any job with state code "run", add these job's job ID to
- *             the Run queue, and set the jobs' state code to "q2r" in the JobList and in the
- *             database.<br>
- *  Response:  "done"
- *  <p>
- *  Request:   "get-acmp"<br>
- *  Handling:  If the jobList contains any job with state code "acmp", add these job's job ID to
- *             the Aborting compiler queue, and set the jobs' state code to "q2ac" in the JobList 
- *             and in the database.<br>
- *  Response:  "done"
- *  <p>
- *  Request:   "get-arun"<br>
- *  Handling:  If the jobList contains any job with state code "arun", add these job's job ID to
- *             the Aborting run queue, and set the jobs' state code to "q2ar" in the JobList 
- *             in the database.<br>
- *  Response:  "done"
- *  <p>
  *  Request:   "set-abrt-"<i>job_ID</i><br>
- *  handling:  If the job's state code in the JobList is "q2c", remove it from the Compiler queue 
+ *  Handling:  If the job's state code in the JobList is "q2c", remove it from the Compiler queue 
  *             and the JobList, and set the job's state code to "end" and the job's
  *             end code to "abrt" in the database.
  *             <p>
@@ -150,6 +126,34 @@ import java.util.Enumeration;
  *             contained in any of these containers.  In the database the job's state code will be
  *             set to "end" by either the Compiler daemon or the Run-time daemon.<br>
  *  Response:  "done" 
+ *  <p>
+ *  Request:   "init-cmpd"<br>
+ *  Handling:  If the jobList contains any job with state code either "q2c" or "q2ac", set these
+ *             jobs' end code to "null" in the database.
+ *             <p>
+ *             If the jobList contains any job with state code "cmp", add these job's job ID to
+ *             the Compiler queue, set these jobs' state code to "q2c" in the JobList and in the
+ *             database, and set these jobs' end code to "null" in the database.
+ *             <p>
+ *             If the jobList contains any job with state code "acmp", add these job's job ID to
+ *             the Aborting compiler queue, set these jobs' state code to "q2ac" in the JobList 
+ *             and in the database, and set these jobs' end code to "null" in the database.
+ *             <br>
+ *  Response:  "done"
+ *  <p>
+ *  Request:   "init-rund"<br>
+ *  Handling:  If the jobList contains any job with state code either "q2cr" or "q2ar", set these
+ *             jobs' end code to "null" in the database.
+ *             <p>
+ *             If the jobList contains any job with state code "run", add these job's job ID to
+ *             the Run queue, set these jobs' state code to "q2r" in the JobList and in the
+ *             database, and set these jobs' end code to "null" in the database.
+ *             <p>
+ *             If the jobList contains any job with state code "arun", add these job's job ID to
+ *             the Aborting run queue, set these jobs' state code to "q2ar" in the JobList 
+ *             and in the database, and set these jobs' end code to "null" in the database.
+ *             <br>
+ *  Response:  "done"
  *  <p>
  *  Request:   "Hi"<br>
  *  Handling:  Do nothing.<br>
@@ -189,6 +193,10 @@ public class JobQueue
         // Initialize queues
         initQueue(jobState);
 
+        // Start monitor
+        Thread monitor = new Monitor(jobState);
+        monitor.start();
+        
         // Start server
         try
         {
@@ -320,11 +328,11 @@ public class JobQueue
      * @param stateCode state code of the job.
      * @param eventTime time of this event.
      * @param stmt statement to execute sql command.
-     * @throws SQLException SQL exception.
+     * @throws SQLException a SQL exception.
      */
     protected static void addHistory(String jobId, String stateCode, long eventTime,
                                      Statement stmt)
-        throws SQLException                           
+        throws SQLException                          
     {        
         String sql = "insert into history (job_id, state_code, event_time, host) "
 	             + "values(" + jobId + ", '" + stateCode + "'," + eventTime
@@ -332,23 +340,41 @@ public class JobQueue
 	stmt.execute(sql);
     }
     
-    /** Set job state code in the database
+    /** Set job's state code to the specified value and job's end code to null into the database
      * @param jobId job ID of the job.
      * @param stateCode state code of the job.
+     * @throws SQLException a SQL exception. 
      */ 
     protected static void setStateCode(String jobId, String stateCode)
         throws SQLException
     {
         long eventTime = (new Date()).getTime()/1000;
         Statement stmt = JobQueue.conn.createStatement();
-        String sql = "update job set state_code='" + stateCode + "',event_time=" + 
+        String sql = "update job set state_code='" + stateCode + "',end_code=null,event_time=" +
                      eventTime + " where job_id=" + jobId;
         stmt.executeUpdate(sql);
         addHistory(jobId, stateCode, eventTime, stmt);
         stmt.close();
     }
     
-    /** Database connection object*/
+    /** Set job's end code to the specified value into the database
+     * @param jobId job ID of the job.
+     * @param endCode end code of the job.
+     * @throws SQLException a SQL exception.
+     */ 
+    protected static void setEndCode(String jobId, String endCode)
+        throws SQLException
+    {
+        Statement stmt = JobQueue.conn.createStatement();
+        String sql;
+        if(endCode != null)
+            sql = "update job set end_code='" + endCode + "' where job_id=" + jobId;
+        else
+            sql = "update job set end_code=null where job_id=" + jobId;
+        stmt.executeUpdate(sql);
+        stmt.close();
+    }    
+    /** Database connection object */
     protected static Connection conn;
     
     private static String startingJobId = "1";
@@ -414,21 +440,6 @@ class ThreadedHandler extends Thread
                             else
                                 out.println("none");
                         }
-                        if(message[1].equals("cmp"))
-                        {                         
-                            Enumeration keys = jobState.jobList.keys();                          
-                            while(keys.hasMoreElements())
-                            {                              
-                                jobId = (String)keys.nextElement();                              
-                                if(jobState.jobList.getProperty(jobId).equals("cmp"))
-                                {                                  
-                                    jobState.cmpQueue.add(jobId);                                
-                                    jobState.jobList.setProperty(jobId, "q2c");                                  
-                                    JobQueue.setStateCode(jobId, "q2c");                                  
-                                }
-                            }
-                            out.println("done");                          
-                        }
                         if(message[1].equals("q2r"))
                         {
                             if(jobState.runQueue.size() > 0)
@@ -440,23 +451,9 @@ class ThreadedHandler extends Thread
                             else
                                 out.println("none");
                         }
-                        if(message[1].equals("run"))
-                        {
-                            Enumeration keys = jobState.jobList.keys();
-                            while(keys.hasMoreElements())
-                            {
-                                jobId = (String)keys.nextElement();
-                                if(jobState.jobList.getProperty(jobId).equals("run"))
-                                {
-                                    jobState.runQueue.add(jobId);
-                                    jobState.jobList.setProperty(jobId, "q2r");
-                                    JobQueue.setStateCode(jobId, "q2r");
-                                }
-                            }
-                            out.println("done");
-                        }
                         if(message[1].equals("q2ac"))
                         {
+                            JobState.cmpd = true;
                             if(jobState.abortCmpQueue.size() > 0)
                             {
                                 jobId = (String)jobState.abortCmpQueue.remove(0);
@@ -465,24 +462,10 @@ class ThreadedHandler extends Thread
                             }
                             else
                                 out.println("none");
-                        }
-                        if(message[1].equals("acmp"))
-                        {
-                            Enumeration keys = jobState.jobList.keys();
-                            while(keys.hasMoreElements())
-                            {
-                                jobId = (String)keys.nextElement();
-                                if(jobState.jobList.getProperty(jobId).equals("acmp"))
-                                {
-                                    jobState.abortCmpQueue.add(jobId);
-                                    jobState.jobList.setProperty(jobId, "q2ac");
-                                    JobQueue.setStateCode(jobId, "q2ac");
-                                }
-                            }
-                            out.println("done");
-                        }                    
+                        }    
                         if(message[1].equals("q2ar"))
                         {
+                            JobState.rund = true;
                             if(jobState.abortRunQueue.size() > 0)
                             {
                                 jobId = (String)jobState.abortRunQueue.remove(0);
@@ -492,20 +475,58 @@ class ThreadedHandler extends Thread
                             else
                                 out.println("none");
                         }
-                        if(message[1].equals("arun"))
+                    }
+                    if(message[0].equals("init"))
+                    {
+                        if(message[1].equals("cmpd"))
                         {
+                            JobState.cmpd = true;
                             Enumeration keys = jobState.jobList.keys();
                             while(keys.hasMoreElements())
                             {
                                 jobId = (String)keys.nextElement();
-                                if(jobState.jobList.getProperty(jobId).equals("arun"))
+                                stateCode = jobState.jobList.getProperty(jobId);
+                                if(stateCode.equals("q2c") || stateCode.equals("q2ac"))                 
+                                    JobQueue.setEndCode(jobId, null);
+                                if(stateCode.equals("cmp"))
+                                {
+                                    jobState.cmpQueue.add(jobId);
+                                    jobState.jobList.setProperty(jobId, "q2c");
+                                    JobQueue.setStateCode(jobId, "q2c");
+                                }
+                                if(stateCode.equals("acmp"))
+                                {
+                                    jobState.abortCmpQueue.add(jobId);
+                                    jobState.jobList.setProperty(jobId, "q2ac");
+                                    JobQueue.setStateCode(jobId, "q2ac");
+                                }
+                            }
+                            out.println("done");                            
+                        }
+                        if(message[1].equals("rund"))
+                        {
+                            JobState.rund = true;
+                            Enumeration keys = jobState.jobList.keys();
+                            while(keys.hasMoreElements())
+                            {
+                                jobId = (String)keys.nextElement();
+                                stateCode = jobState.jobList.getProperty(jobId);
+                                if(stateCode.equals("q2r") || stateCode.equals("q2ar"))                  
+                                    JobQueue.setEndCode(jobId, null);
+                                if(stateCode.equals("run"))
+                                {
+                                    jobState.runQueue.add(jobId);
+                                    jobState.jobList.setProperty(jobId, "q2r");
+                                    JobQueue.setStateCode(jobId, "q2r");
+                                }
+                                if(stateCode.equals("arun"))
                                 {
                                     jobState.abortRunQueue.add(jobId);
                                     jobState.jobList.setProperty(jobId, "q2ar");
                                     JobQueue.setStateCode(jobId, "q2ar");
                                 }
                             }
-                            out.println("done");
+                            out.println("done");                            
                         }
                     }
                     if(message[0].equals("set"))
@@ -584,5 +605,87 @@ class ThreadedHandler extends Thread
     }
    
     private Socket socket;
+    private JobState jobState;
+}
+
+/** This class defines a thread to monitor the hosts.
+ * @author  jiaji Du
+ */
+class Monitor extends Thread
+{
+    /** Construct a Monitor object.
+     * @param jobState JobState object containing job state information.
+     */    
+    public Monitor(JobState jobState)
+    {
+        this.jobState = jobState;
+    }    
+    
+    /** This is the run method of the thread. It monitors the hosts
+     */
+    public void run()
+    {
+        long now;
+        String jobId, stateCode;
+        while(true)
+        {
+            try
+            {
+                sleep(10000);            
+            }
+            catch(InterruptedException e)
+            {
+                return;
+            }
+            synchronized(jobState)
+            {
+                if(JobState.cmpd)
+                {
+                    Enumeration keys = jobState.jobList.keys();
+                    while(keys.hasMoreElements())
+                    {
+                        jobId = (String)keys.nextElement();
+                        stateCode = jobState.jobList.getProperty(jobId);
+                        if(stateCode.equals("q2c") || stateCode.equals("q2ac") ||
+                            stateCode.equals("cmp") || stateCode.equals("acmp"))
+                        {
+                            try
+                            {
+                                JobQueue.setEndCode(jobId, "spku");  
+                            }
+                            catch(SQLException e)
+                            {
+                            }
+                        }
+                    }
+                }
+                else
+                    JobState.cmpd = false;
+                if(!JobState.rund)
+                {
+                    Enumeration keys = jobState.jobList.keys();
+                    while(keys.hasMoreElements())
+                    {
+                        jobId = (String)keys.nextElement();
+                        stateCode = jobState.jobList.getProperty(jobId);
+                        if(stateCode.equals("q2r") || stateCode.equals("q2ar") ||
+                           stateCode.equals("run") || stateCode.equals("arun"))
+                        {
+                            try
+                            {
+                                JobQueue.setEndCode(jobId, "spku");  
+                            }
+                            catch(SQLException e)
+                            {
+                            }
+                        }
+                    }
+                }
+                else
+                    JobState.rund = false;
+            }
+        }
+    }
+    
     private JobState jobState;
 }

@@ -971,23 +971,13 @@ $SIG{'TERM'} = \&stop;
 #else {
 #    death("emerg", "error reading database: $Spkdb::errstr");
 #}
-
-# Put any running jobs back to run queue that were interupted 
-# by the last termination of this daemon
-print $sh "get-run\n";
+ 
+# Initialize this daemon with the job-queue server
+print $sh "init-rund\n";
 my $answer = <$sh>;
 chop($answer);
 unless(defined $answer && $answer eq "done") {
-    death("emerg", "error reading job-queue to get run job");
-}
-
-# Put any aborting jobs back to aborting run queue that were interupted 
-# by the last termination of this daemon
-print $sh "get-arun\n";
-$answer = <$sh>;
-chop($answer);
-unless(defined $answer && $answer eq "done") {
-    death("emerg", "error reading job-queue to get arun job");
+    death("emerg", "error reading job-queue to initialize");
 }
 
 # loop until interrupted by a signal
