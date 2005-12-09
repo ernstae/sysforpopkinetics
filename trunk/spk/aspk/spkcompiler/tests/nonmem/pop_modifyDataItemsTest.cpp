@@ -59,7 +59,7 @@ $COVARIANCE
 ====================================================================================
 */
 namespace{ 
-  const unsigned int MAXCHARS = 64;
+  const unsigned int MAXCHARS = 512;
 
   const char * testName;
   char fSavedReportML[]   = "saved_result.xml";
@@ -67,19 +67,19 @@ namespace{
   char fFitDriver[]       = "driver";
   char fReportML[]        = "result.xml";
 
-  char fPrefix              [MAXCHARS];
-  char fDataML              [MAXCHARS];
-  char fSourceML            [MAXCHARS];
-  char fNonmemParsDriver    [MAXCHARS];
-  char fNonmemParsDriver_cpp[MAXCHARS];
-  char fMonteParsDriver     [MAXCHARS];
-  char fMonteParsDriver_cpp [MAXCHARS];
-  char fIndDataDriver       [MAXCHARS];
-  char fIndDataDriver_cpp   [MAXCHARS];
-  char fDataSetDriver       [MAXCHARS];
-  char fDataSetDriver_cpp   [MAXCHARS];
-  char fODEPredDriver       [MAXCHARS];
-  char fODEPredDriver_cpp   [MAXCHARS];
+  char fPrefix              [MAXCHARS+1];
+  char fDataML              [MAXCHARS+1];
+  char fSourceML            [MAXCHARS+1];
+  char fNonmemParsDriver    [MAXCHARS+1];
+  char fNonmemParsDriver_cpp[MAXCHARS+1];
+  char fMonteParsDriver     [MAXCHARS+1];
+  char fMonteParsDriver_cpp [MAXCHARS+1];
+  char fIndDataDriver       [MAXCHARS+1];
+  char fIndDataDriver_cpp   [MAXCHARS+1];
+  char fDataSetDriver       [MAXCHARS+1];
+  char fDataSetDriver_cpp   [MAXCHARS+1];
+  char fODEPredDriver       [MAXCHARS+1];
+  char fODEPredDriver_cpp   [MAXCHARS+1];
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
@@ -416,9 +416,9 @@ void pop_modifyDataItemsTest::noAMT_noMDV_noEVID()
 
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -426,20 +426,21 @@ void pop_modifyDataItemsTest::noAMT_noMDV_noEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
+      char message[MAXCHARS+1];
+      snprintf( message, 
+                MAXCHARS,
 	       "Compilation of the generated %s failed!", 
 	       fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -563,9 +564,9 @@ void pop_modifyDataItemsTest::noAMT_noMDV_yesEVID()
   o << "}" << endl;
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -573,20 +574,21 @@ void pop_modifyDataItemsTest::noAMT_noMDV_yesEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
-	       "Compilation of the generated %s failed!", 
-	       fDataSetDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, 
+	        MAXCHARS,
+	        "Compilation of the generated %s failed!", 
+	        fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -708,9 +710,9 @@ void pop_modifyDataItemsTest::noAMT_yesMDV_noEVID()
 
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -718,20 +720,21 @@ void pop_modifyDataItemsTest::noAMT_yesMDV_noEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
-	       "Compilation of the generated %s failed!", 
-	       fDataSetDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, 
+	        MAXCHARS,
+	        "Compilation of the generated %s failed!", 
+	        fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -856,9 +859,9 @@ void pop_modifyDataItemsTest::noAMT_yesMDV_yesEVID()
 
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -866,20 +869,21 @@ void pop_modifyDataItemsTest::noAMT_yesMDV_yesEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
-	       "Compilation of the generated %s failed!", 
-	       fDataSetDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, 
+                MAXCHARS,
+	        "Compilation of the generated %s failed!", 
+	        fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -1006,9 +1010,9 @@ void pop_modifyDataItemsTest::yesAMT_noMDV_noEVID()
 
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -1016,20 +1020,21 @@ void pop_modifyDataItemsTest::yesAMT_noMDV_noEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
-	       "Compilation of the generated %s failed!", 
-	       fDataSetDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message,
+                MAXCHARS, 
+	        "Compilation of the generated %s failed!", 
+	        fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -1157,9 +1162,9 @@ void pop_modifyDataItemsTest::yesAMT_noMDV_yesEVID()
 
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -1167,20 +1172,21 @@ void pop_modifyDataItemsTest::yesAMT_noMDV_yesEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
-	       "Compilation of the generated %s failed!", 
-	       fDataSetDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, 
+                MAXCHARS,
+	        "Compilation of the generated %s failed!", 
+	        fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -1315,9 +1321,9 @@ void pop_modifyDataItemsTest::yesAMT_yesMDV_noEVID()
 
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -1325,20 +1331,21 @@ void pop_modifyDataItemsTest::yesAMT_yesMDV_noEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
-	       "Compilation of the generated %s failed!", 
-	       fDataSetDriver_cpp );
+      char message[MAXCHARS+1];
+      snprintf( message, 
+                MAXCHARS,
+	        "Compilation of the generated %s failed!", 
+	        fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -1462,9 +1469,9 @@ void pop_modifyDataItemsTest::yesAMT_yesMDV_yesEVID()
 
   o.close();
 
-  char command[512];
+  char command[1024];
   snprintf( command,
-	    512,
+	    1024,
 	   "g++ %s -o %s %s %s", 
 	   fDataSetDriver_cpp, 
 	   fDataSetDriver, 
@@ -1472,20 +1479,21 @@ void pop_modifyDataItemsTest::yesAMT_yesMDV_yesEVID()
 	   CPPFLAG );
   if( system( command ) != 0 )
     {
-      char message[512];
-      sprintf( message, 
-	       "Compilation of the generated %s failed!", 
-	       fDataSetDriver_cpp );
+      char message[MAXCHARS];
+      snprintf( message, 
+                MAXCHARS,
+	        "Compilation of the generated %s failed!", 
+	        fDataSetDriver_cpp );
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
 
-  snprintf( command, 512, "./%s", fDataSetDriver );
+  snprintf( command, 1024, "./%s", fDataSetDriver );
   if( system( command ) != 0 )
     {
-      char message[512];
+      char message[MAXCHARS+1];
       snprintf( message, 
-		512,
+		MAXCHARS,
 	       "A test driver, %s, failed!",
 	       fDataSetDriver );
       
@@ -1679,14 +1687,14 @@ void pop_modifyDataItemsTest::setUp()
   catch( const XMLException& toCatch )
     {
       char buf[MAXCHARS + 1];
-      sprintf( buf, "Error during Xerces-c initialization.\nException message: %s.\n", 
+      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
                XMLString::transcode( toCatch.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
   catch( ... )
     {
       char buf[MAXCHARS + 1];
-      sprintf( buf, "Unknown rror during Xerces-c initialization.\nException message.\n" );
+      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
 
@@ -1695,19 +1703,19 @@ void pop_modifyDataItemsTest::setUp()
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
   testName = typeid( *this ).name();
 
-  strcpy ( fPrefix,               testName );
-  sprintf( fMonteParsDriver,      "%s_MonteParsDriver",      fPrefix );
-  sprintf( fMonteParsDriver_cpp,  "%s_MonteParsDriver.cpp",  fPrefix );
-  sprintf( fNonmemParsDriver,     "%s_NonmemParsDriver",     fPrefix );
-  sprintf( fNonmemParsDriver_cpp, "%s_NonmemParsDriver.cpp", fPrefix );
-  sprintf( fIndDataDriver,        "%s_IndDataDriver",        fPrefix );
-  sprintf( fIndDataDriver_cpp,    "%s_IndDataDriver.cpp",    fPrefix );
-  sprintf( fDataML,               "%s_data.xml",             fPrefix );
-  sprintf( fSourceML,             "%s_source.xml",           fPrefix );
-  sprintf( fDataSetDriver,        "%s_DataSetDriver",        fPrefix );
-  sprintf( fDataSetDriver_cpp,    "%s_DataSetDriver.cpp",    fPrefix );
-  sprintf( fODEPredDriver,        "%s_ODEPredDriver",        fPrefix );
-  sprintf( fODEPredDriver_cpp,    "%s_ODEPredDriver.cpp",    fPrefix );
+  strcpy  ( fPrefix,               testName );
+  snprintf( fMonteParsDriver,      MAXCHARS, "%s_MonteParsDriver",      fPrefix );
+  snprintf( fMonteParsDriver_cpp,  MAXCHARS, "%s_MonteParsDriver.cpp",  fPrefix );
+  snprintf( fNonmemParsDriver,     MAXCHARS, "%s_NonmemParsDriver",     fPrefix );
+  snprintf( fNonmemParsDriver_cpp, MAXCHARS, "%s_NonmemParsDriver.cpp", fPrefix );
+  snprintf( fIndDataDriver,        MAXCHARS, "%s_IndDataDriver",        fPrefix );
+  snprintf( fIndDataDriver_cpp,    MAXCHARS, "%s_IndDataDriver.cpp",    fPrefix );
+  snprintf( fDataML,               MAXCHARS, "%s_data.xml",             fPrefix );
+  snprintf( fSourceML,             MAXCHARS, "%s_source.xml",           fPrefix );
+  snprintf( fDataSetDriver,        MAXCHARS, "%s_DataSetDriver",        fPrefix );
+  snprintf( fDataSetDriver_cpp,    MAXCHARS, "%s_DataSetDriver.cpp",    fPrefix );
+  snprintf( fODEPredDriver,        MAXCHARS, "%s_ODEPredDriver",        fPrefix );
+  snprintf( fODEPredDriver_cpp,    MAXCHARS, "%s_ODEPredDriver.cpp",    fPrefix );
 
   X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
   X_VALUE                      = XMLString::transcode( C_VALUE );
@@ -1734,7 +1742,7 @@ void pop_modifyDataItemsTest::setUp()
   X_DEFAULT_OBSERVATION        = XMLString::transcode( C_DEFAULT_OBSERVATION );
   X_DEFAULT_DOSE               = XMLString::transcode( C_DEFAULT_DOSE );
 
-  sprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+  snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   dataParser = new xercesc::XercesDOMParser;
@@ -1864,7 +1872,7 @@ void pop_modifyDataItemsTest::parseDataML( xercesc::XercesDOMParser *dataParser,
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+      snprintf( buf, MAXCHARS, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fDataML, XMLString::transcode(e.getMessage() ) );
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -1875,7 +1883,7 @@ void pop_modifyDataItemsTest::parseDataML( xercesc::XercesDOMParser *dataParser,
 	{
           XMLPlatformUtils::Terminate();
           char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+          snprintf( buf, MAXCHARS, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fDataML, e.code, XMLString::transcode(errText) );
 	  
           CPPUNIT_ASSERT_MESSAGE( buf, false );
@@ -1885,7 +1893,7 @@ void pop_modifyDataItemsTest::parseDataML( xercesc::XercesDOMParser *dataParser,
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fDataML );
+      snprintf( buf, MAXCHARS, "An unknown error occurred during parsing %s.\n", fDataML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }
@@ -1993,7 +2001,7 @@ void pop_modifyDataItemsTest::parseSourceML( xercesc::XercesDOMParser *sourcePar
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An error occurred during parsing %s.\n   Message: %s\n",
+      snprintf( buf, MAXCHARS, "An error occurred during parsing %s.\n   Message: %s\n",
 	       fSourceML, XMLString::transcode(e.getMessage() ) );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
@@ -2006,7 +2014,7 @@ void pop_modifyDataItemsTest::parseSourceML( xercesc::XercesDOMParser *sourcePar
 	{
           XMLPlatformUtils::Terminate();
           char buf[MAXCHARS + 1];
-          sprintf( buf, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
+          snprintf( buf, MAXCHARS, "DOM Error during parsing \"%s\".\nDOMException code is: %d.\nMessage is: %s.\n",
                    fSourceML, e.code, XMLString::transcode(errText) );
           CPPUNIT_ASSERT_MESSAGE( buf, false );
 	}
@@ -2015,7 +2023,7 @@ void pop_modifyDataItemsTest::parseSourceML( xercesc::XercesDOMParser *sourcePar
     {
       XMLPlatformUtils::Terminate();
       char buf[MAXCHARS + 1];
-      sprintf( buf, "An unknown error occurred during parsing %s.\n", fSourceML );
+      snprintf( buf, MAXCHARS, "An unknown error occurred during parsing %s.\n", fSourceML );
       
       CPPUNIT_ASSERT_MESSAGE( buf, false );
     }

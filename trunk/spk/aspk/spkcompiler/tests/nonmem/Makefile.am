@@ -91,6 +91,5 @@ testall_SOURCES      = \
                        pop_dataSetTest.cpp \
                        pop_dataSetTest.h \
                        pop_modifyDataItemsTest.cpp \
-                       pop_modifyDataItemsTest.h \
-		       ../../config.h
+                       ../../config.h
 
