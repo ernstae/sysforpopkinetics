@@ -2,10 +2,7 @@ include ../../../../../../doc/webdir.mk
 T = spkcompiler
 WEB = $(WEBDIR)/v0.1/specs/$T
 
-SUBDIRS = common nonmem
-
-dist_pkgdata_DATA = spkcompiler.cfg \
-                    main_menu.html
+dist_pkgdata_DATA = spkcompiler.cfg 
 
 DRIVER_SRC = ../spkcompiler/main.cpp
 
@@ -32,5 +29,3 @@ all  :
 install:
 	scp *.html $(WEB)
 	scp html/*.html $(WEB)/html
-	scp nonmem/html/*.html $(WEB)/nonmem/html
-	scp common/html/*.html $(WEB)/common/html
