@@ -44,16 +44,8 @@
     </revhistory>
   <abstract>
       <para>
-The experimental data set is merely a set of records and a record is a set of values,
-or a matrix of values.  This type of matrix is very-well handled by many
-existing spreadsheet programs today: Microsoft Excel, Sun StarOffice and OpenOffice
-to name a few.  These applications are all going to use or already have adapted
-XML as the inter-product exhange format.  Unfortunately so far they have exclaimed
-different syntaxes.  Their XML *grammer*, however, has some common feature, which
-is to see a spreadsheet as a place to lay one or more tables and each table
-is composed of multiple rows.  A row, in turn, is made of multiple cells that 
-contain actual values.  We will follow this convension to express our data set in XML
-even though the actual syntax may not match any of them.
+       A data set is represented as an instance of SpkDataML.
+       This document defines the SpkDataML language.
       </para>
   </abstract>
  </articleinfo>
@@ -70,7 +62,7 @@ even though the actual syntax may not match any of them.
 
 &lt;!ELEMENT description (#PCDATA)>
 
-&lt;!ELEMENT weight (#PCDATA)>
+&lt;!ELEMENT weight (#PCDATA)>               --- WARNING!  This feature is not yet implemented (12/13/2005)
 &lt;!ATTLIST weight base (sd|fsd|pois|gen) #REQUIRED>
 &lt;!ATTLIST weight absolute (yes | no) #REQUIRED>
 &lt;!ATTLIST weight x CDATA #REQUIRED>
@@ -130,7 +122,10 @@ even though the actual syntax may not match any of them.
    <varlistentry>
       <term><varname>weight</varname></term>
       <listitem>
-         <para>A type of standard deviation used to calculate weights
+         <para>(IMPORATNT! not yet implemented as of 12/13/2005) 
+         </para>
+         <para>
+         A type of standard deviation used to calculate weights
          on each datum.  Select one of the four types as  the <emphasis>base</emphasis> attribute value.
          </para>
          <variablelist>
@@ -255,7 +250,7 @@ is estimated for each block of data.  --- SAAM II User Guide
   <sect1>
      <title>Example</title>
      <para>
-        <ulink url="../dataML/SpkDataML.xml"><citetitle>Example</citetitle></ulink>
+        <ulink url="../dataML/data.xml"><citetitle>An example: Theophylline, 12 subjects</citetitle></ulink>
      </para>
   </sect1>
 </article>
