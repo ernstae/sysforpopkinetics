@@ -25,6 +25,7 @@ rtf:	$T.rtf
 install:
 	scp $T.html $(WEB)
 	scp $T.pdf  $(WEB)
+	scp data.xml $(WEB)
 	for i in $(PNG); do \
 	     scp $$i $(WEB); \
 	done
