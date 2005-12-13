@@ -8,7 +8,13 @@
   <articleinfo>
     <revhistory>
       <revision>
-	<revnumber>1.2</revnumber>
+	<revnumber>2.1</revnumber>
+	<date>December 13, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Two levels of compilation</revremark>
+      </revision>
+      <revision>
+	<revnumber>2.0</revnumber>
 	<date>April 21, 2005</date>
 	<authorinitials>sh</authorinitials>
 	<revremark>Overall update</revremark>
@@ -28,10 +34,8 @@
     </revhistory>
     <abstract>
       <para>
-<!-- What do i have to tell the others about the compiler if they are to 
-take over this project?  purpose, architecture, front- & back- end -->
-The purpose of this documentation is to give you an overall architectural view 
-of SPK Compiler and links to related documents.
+The purpose of this documentation is to give you an overall view 
+of SPK Compiler system.
       </para>
     </abstract>
   </articleinfo>
@@ -39,17 +43,22 @@ of SPK Compiler and links to related documents.
      <title>Introduction</title>
      <para>
        SPK Compiler, <filename>spkcompiler</filename>, is a command line application
-       that compiles information from a pair of an 
+       that takes two input files as arguments: an 
        <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">
        SpkSourceML</ulink> document and an 
        <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/dataML/dataML.html">SpkDataML</ulink>
-       document and generates a number of C++ source code files that are, as together,
-       built as an application of the SPK (computational) Library.
+       document.  
+       The <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">
+       SpkSourceML</ulink> document contains control parameters and model definitions.
+       The <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/dataML/dataML.html">SpkDataML</ulink>
+       document contains a data set.
+       The system analyzes the two input files and generates a number of C++ source 
+       code files that are, as together, built as an SPK job application.
      </para>
      <screen>
      +---------------+    
      |               |                
-     |  <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">SpkSourceML</ulink>  |  fed to    /------------------\             &lt;An SPK Application&gt;
+     |  <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">SpkSourceML</ulink>  |  fed to    /------------------\             &lt;SPK Job Application&gt;
      |   document    |----------->|                  |
      |               |            |                  |             +--------------+
      +---------------+            |                  |  generates  |              |-+
@@ -64,94 +73,149 @@ of SPK Compiler and links to related documents.
                                     +             +
                 /------------------------\    =================
                 |                        |    |               |
-                |     Domain specific    |    |   DOM Parser  |
-                |  expression language   |    |  (XERCES C++) |
-                |        compliler       |    |               |
-                |                        |    =================
-                \------------------------/
+                |  Expression Language   |    |   DOM Parser  |
+                |        Compiler        |    |  (XERCES C++) |
+                |                        |    |               |
+                \------------------------/    =================
 
      </screen>
-     <para>
-       As part of the process, <filename>spkcompiler</filename> uses 
-       a DOM parser provided by <ulink url="http://xml.apache.org/xerces-c/">XERCES C++</ulink>
-       library to generate a parse tree.  A parse tree is generated
-       so that the Compiler can visit elements more freely and repetitively
-       as it wishes.  
-     </para>
-     <para>
-       The input information can be categolized into three
-       main parts: model(s), a data set and control parameters.
-       The user defined model(s) which is essentially a set of expressions
-       may invoke a domain specific language compiler within the context
-       of SPK Compiler compilation process.  The primary job of the
-       domain specific language compiler is to discover new 
-       symbols (ie. variable names) and their attributes from the expressions
-       written in a language familar with target users (ex. FORTRAN 77)
-       and communicates it back to the calling SPK Compiler.
-       The calling SPK Compiler, then, merges it with the rest of the information collected
-       else where, and generates a complete application of SPK (computational) library.
-     </para>
      <sect2>
         <title>Usage of <filename>spkcompiler</filename></title>
         <screen>
         Usage: spkcompiler SOUCE_XML DATA_XML
 
-        SOURCE_XML - a path to an SpkSourceML document instance
-        DATA_XML   - a path to an SpkDataML document instance
+        SOURCE_XML - the file name of an SpkSourceML document instance
+        DATA_XML   - the file name an SpkDataML document instance
         </screen>
         <para>
-        Note: <filename>spkcompiler</filename> is assumed to be installed in one of
-        the system directories (ex. /usr/bin, /usr/local/bin, a directory set by 
-        <varname>LD_LIBRARY_PATH</varname>).
+        Note: <filename>spkcompiler</filename> is installed 
+        in either /usr/local/bin/spktest or /usr/local/bin/spkprod.
+        The preceding directory is for the test environment and
+        the latter one is for the production environment.
         </para>
      </sect2>
   </sect1>
   <sect1>
-     <title>Software Components</title>
-     <para>
-     The unit level specifications of components making up 
-     <filename>spkcompiler</filename> are available at
-     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/index.html">
-     http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/index.html</ulink>.
+     <title>Two Levels of Compilation</title>
+     <para>SPK Compiler is composed of two layers of compilation
+     facilities.  The outer one analyzes the input XML files and
+     calls for the inner one which is specialized to analyze
+     user's expression language, and then generates C++ source code.
      </para>
      <para>
-     In a nut shell, the 
-     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/html/main_8cpp.html">
-     main program</ulink> creates an instance of 
-     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/classClientTranslator.html">
-     <classname>ClientTranslator</classname></ulink>
-     specific to the type of user.  For example, an object of 
-     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/nonmem/html/classNonmemTranslator.html">
-     <classname>NonmemTranslator</classname></ulink>
-     that is derived from 
-     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/classClientTranslator.html">
-     <classname>ClientTranslator</classname></ulink> is created for users
-     familar with NONMEM.  The object provides a method, among other methods, that initiates
-     compilation and generates C++ source code for a complete C++ application.  The caller
-     of <filename>spkcompiler</filename>, then, can build the application using
-     the Makefile, which is also generated, and run it.</para>
-  
+     The system maintains a symbol table and other internal
+     data structures.
+     <ulink url="html/classSymbolTable.html">The symbol table</ulink>
+     collects information about
+     symbols that are found in the input XML files,
+     user's model definitions, user's reserved words
+     and system reserved keywords.  Other structures
+     are maintained to hold any other information that
+     may not fit well into the symbol table's structure or
+     different representations of the same data found in
+     the symbol table for convenience.
+     </para>
+     <para>
+     The process is clearly staged into two:
+        <orderedlist>
+           <listitem>
+             <para>Data Collection Stage</para>
+             <para>
+             In the first phase of compilation, the system focuses solely
+             on collecting and assembling information in the symbol table
+             and other internal data structures from the input.
+	     During this stage, the internal data structures including
+             the symbol table are read-write.  The XML parse trees
+             may also be altered during this stage.
+             </para>
+           </listitem>
+           <listitem>
+	     <para>Code Generation Stage</para>
+             <para>
+             In the second phase, the system uses the collected information 
+             and produce a number of C++ source code files and a Makefile. 
+             All information should have been collected by now.  
+             So, the XML parse trees should have no use in this stage. 
+             The internal data structures including the symbol table
+             are treated as read-only in this stage.
+	     </para>
+           </listitem>
+        </orderedlist>
+     </para>
      <sect2>
-        <title>Domain Specific Expression Language Compiler</title>
+        <title>Outer: Analyzing XML Input Files and Generating C++
+        </title>
         <para>
-        A part, if not entirely, of user model specifications is written in a language that permits
-        the users to write mathematical expresssions, while the rest may be expressed as parameters
-        in expected forms.  The hand-written mathematical expressions
-        have to be analyzed by a specialized subtool within SPK Compiler, namely, 
-        a domain specific expression language compiler.
-        For example, NONMEM users may write an entire model in a subset of FORTRAN 77 language
-        when they use $PRED style specification or only a part if they use one of NONMEM
-        canned models.
-        SAAM II users may need to express rate constants in mathematical equations
-        in a SAAM II specific language when they have a non-linear compartment model.
+        The outer compiler performs overall semantic analysis of
+        the SpkSourceML and SpkDataML documents and generates C++ 
+        source code files.  It uses 
+        Xerces-C++ DOM facility for lexical analysis and 
+        as the parse tree generator.  We use DOM (i.e. tree generator)
+        because information necessary to determine a piece of code
+        may be scattered around in multiple places.  There are
+        times also that directly inserting/removing information
+        into or from the input structure simplifies the rest of
+        the process.  For example, if a data set (represented
+        by an SpkDataML document) were missing items that 
+        are assumed to have certain default values, inserting
+        the missing item with the default value
+        in the earlier in the process allows
+        the rest of the process to proceed without checking its
+        existence.
+        </para>
+        <para>Within the SpkSourceML document
+        is user's code that are written in 
+        their specific expression language (ex. NONMEM Abbribiated Code).
+        When the outer compiler reaches these code,
+        it passes them to the inner compiler for further analysis.
         </para>
         <para>
-        We use industorial standard tools, 
-        <ulink url="http://www.combo.org/lex_yacc_page/">FLEX</ulink> for generating
-        lexcal analyzers (ie. scanners) and 
-        <ulink url="http://www.combo.org/lex_yacc_page/">BISON</ulink> 
-        for generating compiler-compilers (ie. parsers). FLEX and BISON are a
-        GNU version of LEX and YACC, respectively.
+        When all necessary information are gathered, the outer
+        layer moves to the code-generation stage.
+        For detailed discussion of generated code, see 
+        <ulink url="#AEN68">Generated C++ Code</ulink>.
+        </para>
+     </sect2>
+     <sect2>
+        <title>Inner: Analyzing Expressions</title>
+        <para>
+        When the outer compiler reaches the user expression language,
+        it passes them to the inner compiler, Expression Lanuage Compiler,
+        for further analysis.  For example, NONMEM users use 
+        NONMEM Abbribiated Code that follows the syntax of FORTRAN to
+        define models.
+        </para>
+        <para>
+        The purpose of this portion of compilation process is to gather
+        enough information about symbols appearing in the expressions
+        so that the system can ultimately generate a complete
+        C++ application.  This can be tricky because symbols may 
+        appear without formal declaration.  Certain characterics
+        such as data type (ex. double for numerical variables)
+        are applied per user-type basis.
+        </para>
+        <para>
+        Currently we have expression language compilers specialized for:
+           <itemizedlist>
+              <listitem>
+                 <para>NONMEM Abbribiated Code 
+                 </para>
+              </listitem> 
+           </itemizedlist>
+        </para>
+        <para>
+        The lexical analyzers for expression languages are developed using
+        <ulink url="http://www.combo.org/lex_yacc_page/">FLEX</ulink>,
+        a GNU implementation of LEX.
+        The parsers are developed using
+        <ulink url="http://www.combo.org/lex_yacc_page/">BISON</ulink>,
+        a GNU implementation of YACC.
+        </para>
+     </sect2>
+     <sect2>
+        <title>API Specifications</title>
+        <para>API Specifications are available at
+           <ulink url="html/index.html">SPK Compiler API</ulink>.
         </para>
      </sect2>
   </sect1>
@@ -159,45 +223,41 @@ of SPK Compiler and links to related documents.
      <title>Generated C++ Code</title>
      <para>
      SPK Compiler generates a number of C++ source code files and a Makefile.
-     The specifications for these files are found at:
-     <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html">
-     http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html</ulink>.
+     For further discussion, consult <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html">
+     SPK Compiler Output (C++)</ulink>.
      </para>
   </sect1>
   <sect1>
      <title>Related Documents</title>
-     <itemizedlist>
-        <listitem>
-           <para>
-              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/dataML/dataML.html">SpkDataML Specification</ulink>
-           </para>
-        </listitem>
-        <listitem>
-           <para>
-              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">SpkSourceML Specification</ulink>
-           </para>
-        </listitem>
-        <listitem>
-           <para>
-              <ulink url="symbolTable.html">Symbol Table Specification</ulink>
-           </para>
-        </listitem>
-        <listitem>
-           <para>
-              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkcompiler/common/html/index.html">
-              SPK Compiler software component specifications</ulink>
-           </para>
-        </listitem>
-        <listitem>
-           <para>
-             <ulink url="">Generated C++ Source Code</ulink>
-           </para>
-        </listitem>
-        <listitem>
-           <para>
-              <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html">CSPK Results/Report (xml)</ulink>
-           </para>
-        </listitem>
-     </itemizedlist>
+     <sect2>
+        <title>
+        <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/dataML/dataML.html">SpkDataML (Data Set)</ulink>
+        </title>
+        <para></para>
+     </sect2>
+     <sect2>
+        <title>
+        <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceML/sourceML.html">SpkSourceML (Control Parameters + Models)</ulink>
+        </title>
+        <para></para>
+     </sect2>
+     <sect2>
+        <title>
+           <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/reportML/reportML.html">SpkReportML (Job Output)</ulink>
+        </title>
+        <para></para>
+     </sect2>
+     <sect2>
+        <title>
+        <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/sourceCpp/sourceCpp.html">SPK Compiler Output (C++)</ulink>
+        </title>
+        <para></para>
+     </sect2>
+     <sect2>
+        <title>
+        <ulink url="html/index.html">SPK Compiler API Documentation</ulink>
+        </title>
+        <para></para>
+     </sect2>
   </sect1>
 </article>

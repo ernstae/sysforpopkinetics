@@ -6,7 +6,7 @@ dist_pkgdata_DATA = spkcompiler.cfg
 
 DRIVER_SRC = ../spkcompiler/main.cpp
 
-html : overall_html components_html
+html : components_html overall_html
 
 overall_html : spkcompiler.xml
 	docbook2html --dsl ~/develop/r2/doc/stylesheet/"local.dsl#html" --nochunks $<
@@ -18,14 +18,18 @@ clean :
 	rm -rf html
 	rm -rf latex
 	rm -rf man
+	rm -rf rtf
+	rm spkcompiler.html
 
 all  : 
 	rm -rf html
 	rm -rf latex
 	rm -rf man
-	doxygen spkcompiler.cfg
+	rm -rf rtf
+	rm spkcompiler.html
 	docbook2html --dsl ~/develop/r2/doc/stylesheet/"local.dsl#html" --nochunks spkcompiler.xml
+	doxygen spkcompiler.cfg
 
 install:
 	scp *.html $(WEB)
-	scp html/*.html $(WEB)/html
+	scp html/* $(WEB)/html
