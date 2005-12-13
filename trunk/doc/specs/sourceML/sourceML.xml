@@ -65,32 +65,16 @@
     </revhistory>
   <abstract>
       <para>
-In this page are links to multiple specifications for the XML that defines the model and the parameters to control the model and the 
-computational engine's behaviors.
-Each version of the XML has a unique set of grammer and syntax that is designed to look familar to a specific (group of) client(s).
-
+      All the user provided information other than the data set is captured in an instance
+      of SpkSourceML.  This document defines SpkSourceML.
       </para>
   </abstract>
  </articleinfo>
   <sect1>
     <title>
-       <ulink url="nonmem/html/elt-spksource.html">NONMEM (ie. NM-TRAN)</ulink>
+       <ulink url="nonmem/html/elt-spksource.html">NONMEM</ulink>
     </title>
-    <itemizedlist>
-       <title>
-Example: Population parameter estimation + stat analysis.  Linear model, Laplace method, 100 subjects.
-       </title>
-       <listitem>
-          <para>
-             <ulink url="nonmem/source.xml">source.xml</ulink>
-          </para>
-       </listitem>
-       <listitem>
-          <para>
-             <ulink url="nonmem/data.xml">data.xml</ulink>
-          </para>
-       </listitem>
-    </itemizedlist>
+    <para></para>
   </sect1>
   <sect1>
     <title>SAAM-II</title>
