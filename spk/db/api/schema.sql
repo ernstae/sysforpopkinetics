@@ -133,3 +133,10 @@ CREATE TABLE user (
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
 
+
+--- 
+--- Create Indexes for tables
+--- by: ernst
+--- 
+
+create index idx_job_user_id on job(user_id);
