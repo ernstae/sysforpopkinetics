@@ -22,10 +22,10 @@ void NonmemTranslator::generatePopDriver() const
       throw e;
     }
 
-  const Symbol* pTheta = table->findi(KeyStr.THETA);
-  const Symbol* pOmega = table->findi(KeyStr.OMEGA);
-  const Symbol* pSigma = table->findi(KeyStr.SIGMA);
-  const Symbol* pEta   = table->findi(KeyStr.ETA);
+  const Symbol* pTheta = table->find(NMKey.THETA);
+  const Symbol* pOmega = table->find(NMKey.OMEGA);
+  const Symbol* pSigma = table->find(NMKey.SIGMA);
+  const Symbol* pEta   = table->find(NMKey.ETA);
   
   oPopDriver << "// " << myDescription << endl;
 

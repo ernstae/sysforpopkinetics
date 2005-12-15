@@ -21,9 +21,9 @@ void NonmemTranslator::generateIndDriver( ) const
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  const Symbol* pTheta = table->findi(KeyStr.THETA);
-  const Symbol* pEta   = table->findi(KeyStr.ETA);
-  const Symbol* pOmega = table->findi(KeyStr.OMEGA);
+  const Symbol* pTheta = table->find(NMKey.THETA);
+  const Symbol* pEta   = table->find(NMKey.ETA);
+  const Symbol* pOmega = table->find(NMKey.OMEGA);
 
   oIndDriver << "// " << myDescription              << endl;
   oIndDriver << "#include <iostream>"               << endl;

@@ -7,7 +7,6 @@
  * Define "nonmem" namespace and NonmemParameters data structure.
  * Also include all headers specific to NONMEM.
  *
- * @defgroup nonmem NONMEM
  */
 #include <valarray>
 

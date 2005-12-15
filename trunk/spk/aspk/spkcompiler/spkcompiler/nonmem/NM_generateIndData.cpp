@@ -42,13 +42,13 @@ void NonmemTranslator::generateIndData( ) const
   // object that holds "ID" data items handy for
   // frequent references.
   //
-  const Symbol * pID = table->findi( KeyStr.ID );
+  const Symbol * pID = table->find( NMKey.ID );
 
   //
   // DV has to be declared non-constant if simulated data replaces it.
   //
-  const Symbol * pDV = table->findi( KeyStr.DV );
-  const Symbol * pORGDV = table->findi( KeyStr.ORGDV );
+  const Symbol * pDV = table->find( NMKey.DV );
+  const Symbol * pORGDV = table->find( NMKey.ORGDV );
 
   //
   // The order in which the label strings appear is significant.
@@ -182,9 +182,8 @@ void NonmemTranslator::generateIndData( ) const
   pLabel = labels->begin();
   for( ; pLabel != labels->end(); pLabel++ )
     {
-      const string keyVarName = SymbolTable::key( *pLabel );
       bool isID  = ( *pLabel == pID->name );
-      bool isInt = (keyVarName==KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT );
+      bool isInt = ( *pLabel==NMKey.EVID || *pLabel == NMKey.CMT || *pLabel == NMKey.PCMT );
       oIndData_h << "," << endl;
 	  
       //
@@ -213,19 +212,17 @@ void NonmemTranslator::generateIndData( ) const
     {
       const string varName         = pInternalTable->second.name;
       const string varAlias        = pInternalTable->second.synonym;
-      const string keyVarName      = SymbolTable::key( varName );
-      const string keyVarAlias     = SymbolTable::key( varAlias );
       enum Symbol::ObjectType objectType = pInternalTable->second.object_type;
       enum Symbol::Ownership  owner      = pInternalTable->second.owner;
       
-      if( keyVarName == KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT )
+      if( varName == NMKey.EVID || varName == NMKey.CMT || varName == NMKey.PCMT )
 	{
 	  oIndData_h << "   std::vector<int> " << varName << ";" << endl;
 	  if( varAlias != "" )
 	    oIndData_h << "   std::vector<int> " << varAlias << ";" << endl;
 	  continue;
 	}
-      else if( keyVarName == KeyStr.ID )
+      else if( varName == NMKey.ID )
 	{
 	  oIndData_h << "   std::vector<char*> " << varName << ";" << endl;
 	  if( varAlias != "" )
@@ -258,7 +255,7 @@ void NonmemTranslator::generateIndData( ) const
       else // Matrix
 	{
 	  // OMEGA and SIGMA are the only legal matrices.
-	  if( !( keyVarName == KeyStr.OMEGA || keyVarName == KeyStr.SIGMA ) )
+	  if( !( varName == NMKey.OMEGA || varName == NMKey.SIGMA ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      snprintf( m, 
@@ -267,105 +264,6 @@ void NonmemTranslator::generateIndData( ) const
 	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
 	}
-      /*
-      
-       // Handling data labels.
-      if( type == Symbol::DATALABEL )
-	{
-	  bool isID    = ( varName == pID->name?    true : false );
-          bool isDV    = ( varName == pDV->name?    true : false );
-	  bool isInt   = ( keyVarName == KeyStr.EVID || keyVarName == KeyStr.CMT || keyVarName == KeyStr.PCMT );
-
-	  // If data simulation is requested, DV values are replaced by simulated
-	  // measurements and the original DV values are moved/stored in ORGDV.
-	  // Thus, in case of data simulation, DV (and ORGDV) has to be writable.
-	  // Otherwise, DV is read-only.
-	  oIndData_h << "   std::vector<";
-	  if( isID )
-	    {
-	      oIndData_h << "char *";
-	    }
-	  else if( isInt )
-	    {
-	      oIndData_h << "int";
-	    }
-	  else
-	    {
-	      oIndData_h << "spk_ValueType";
-	    }
-	  oIndData_h << "> " << varName << ";" << endl;
-
-	  // If the current symbol has an alias, declare the alias as well.
-	  if( varAlias != "" )
-	    {
-	      oIndData_h << "   std::vector<";
-	      if( isID )
-		{
-		  oIndData_h << "char *";
-		}
-	      else if( isInt )
-		{
-		  oIndData_h << "int";
-		}
-	      else
-		{
-		  oIndData_h << "spk_ValueType";
-		}
-	      oIndData_h << "> " << varAlias << ";" << endl;
-	    }
-	}
-      // Handling NONMEM pred variables.
-      //
-      // The NONMEM pred variables are vectors whose elements
-      // would be replaced by computed values.  So they have to be
-      // declared writable.
-      else if( type == Symbol::PREDEFINED )
-	{
-	  if( keyVarName == KeyStr.THETA 
-	      || keyVarName == KeyStr.ETA 
-	      || keyVarName == KeyStr.EPS 
-	      || keyVarName == KeyStr.ETARES
-	      || keyVarName == KeyStr.WETARES
-	      || keyVarName == KeyStr.IETARES
-	      || keyVarName == KeyStr.IWETARES
-	      || keyVarName == KeyStr.PETARES
-	      || keyVarName == KeyStr.PWETARES
-	      || keyVarName == KeyStr.CETARES
-	      || keyVarName == KeyStr.CWETARES
-	      || keyVarName == KeyStr.DADT
-	      || keyVarName == KeyStr.P
-	      || keyVarName == KeyStr.A )
-	    oIndData_h << "   std::vector<std::vector<spk_ValueType> > " << varName << ";" << endl;
-
-	  // The values of Omega and Sigma matrices are
-	  // rather expressed as ETA and EPS, respectively.
-	  // So, these matrices don't need place-holders.
-	  else if( keyVarName == KeyStr.OMEGA 
-              || keyVarName == KeyStr.SIGMA )
-	    {}
-	  else
-	    {
-	      oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
-	    }
-	}
-
-      // These may appear in the data set or not appear.
-      else if( keyVarName == KeyStr.EVID 
-	       || keyVarName == KeyStr.CMT
-	       || keyVarName == KeyStr.PCMT )
-	{
-	  oIndData_h << "   std::vector<int> " << varName << ";" << endl;
-	}
-
-      // Handling all others (ie. the user defined variables)
-      // 
-      // User defined variables store values computed every time the user model
-      // is evaluated.  Thus, these have to be declared writable.
-      else
-	{
-	  oIndData_h << "   std::vector<spk_ValueType> " << varName << ";" << endl;
-	}
-      */
     }
 
   oIndData_h << endl;
@@ -479,9 +377,8 @@ void NonmemTranslator::generateIndData( ) const
   pLabel = labels->begin();
   for( ; pLabel != labels->end(); pLabel++ )
     {
-      const string keyLabel = SymbolTable::key( *pLabel );
       bool isID  = ( *pLabel == pID->name );
-      bool isInt = (keyLabel == KeyStr.EVID || keyLabel == KeyStr.CMT || keyLabel == KeyStr.PCMT );
+      bool isInt = ( *pLabel == NMKey.EVID || *pLabel == NMKey.CMT || *pLabel == NMKey.PCMT );
       oIndData_h << "," << endl;
 
       //
@@ -516,7 +413,6 @@ void NonmemTranslator::generateIndData( ) const
   pLabel = labels->begin();
   for( ; pLabel != labels->end(); pLabel++ )
     {
-      const string keyLabel = SymbolTable::key( *pLabel );
       oIndData_h << "," << endl;
       oIndData_h << *pLabel;
       oIndData_h << "( " << *pLabel << "In" << " )";
@@ -524,7 +420,7 @@ void NonmemTranslator::generateIndData( ) const
       //
       // If the label has a synonym, apply the same value to the synonym.
       //
-      if( ( synonym = table->findi( keyLabel/**pLabel*/ )->synonym ) != "" )
+      if( ( synonym = table->find( *pLabel )->synonym ) != "" )
 	{
 	  oIndData_h << "," << endl;
 	  oIndData_h << synonym;
@@ -550,8 +446,7 @@ void NonmemTranslator::generateIndData( ) const
   for( ; pInternalTable != internalTable->end(); pInternalTable++ )
     {
       const string label    = pInternalTable->second.name;
-      const string keyLabel = SymbolTable::key( label );
-      if( keyLabel == KeyStr.OMEGA || keyLabel == KeyStr.SIGMA )
+      if( label == NMKey.OMEGA || label == NMKey.SIGMA )
 	{
 	  continue;
 	}
@@ -568,7 +463,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "{" << endl;
   oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
   oIndData_h << "   {" << endl;
-  oIndData_h << "      if( " << UserStr.MDV << "[j] == 0 )" << endl;
+  oIndData_h << "      if( " << NMKey.MDV << "[j] == 0 )" << endl;
   oIndData_h << "      {" << endl;
   oIndData_h << "         nY++;" << endl;
   oIndData_h << "      }" << endl;
@@ -586,36 +481,9 @@ void NonmemTranslator::generateIndData( ) const
   for( ; pInternalTable != internalTable->end(); pInternalTable++ )
     {
       const string varName    = pInternalTable->second.name;
-      const string keyVarName = SymbolTable::key( varName );
       enum Symbol::ObjectType objectType = pInternalTable->second.object_type;
       enum Symbol::Ownership  owner      = pInternalTable->second.owner;
-      /*
-      if( keyLabel == KeyStr.OMEGA 
-	  || keyLabel == KeyStr.SIGMA
-	  || keyLabel == KeyStr.THETA
-	  || keyLabel == KeyStr.ETA
-	  || keyLabel == KeyStr.ETARES
-	  || keyLabel == KeyStr.WETARES
-	  || keyLabel == KeyStr.IETARES
-	  || keyLabel == KeyStr.IWETARES
-	  || keyLabel == KeyStr.PETARES
-	  || keyLabel == KeyStr.PWETARES
-	  || keyLabel == KeyStr.CETARES
-	  || keyLabel == KeyStr.CWETARES
-	  || keyLabel == KeyStr.EPS
-	  || keyLabel == KeyStr.DADT
-	  || keyLabel == KeyStr.A
-	  || keyLabel == KeyStr.P
-	  )
-	{
-	  continue;
-	}
 
-      // fill the place holders with -99999
-      if( find( labels->begin(), labels->end(), pInternalTable->second.name ) 
-	  == labels->end() )
-	oIndData_h << "fill( " << label << ".begin(), " << label << ".end(), -99999 );" << endl;
-      */
       if( owner != Symbol::DATASET && objectType != Symbol::VECTOR && objectType != Symbol::MATRIX )
 	{
 	  oIndData_h << "fill( " << varName << ".begin(), " << varName << ".end(), -99999 );" << endl;
@@ -626,8 +494,8 @@ void NonmemTranslator::generateIndData( ) const
 
   // Save DV values in ORGDV so that the original data set values are kept in case
   // simulation overwrites DV.
-  oIndData_h << "copy( " << UserStr.DV << ".begin(), " << UserStr.DV << ".end(), ";
-  oIndData_h << UserStr.ORGDV << ".begin() );" << endl;
+  oIndData_h << "copy( " << NMKey.DV << ".begin(), " << NMKey.DV << ".end(), ";
+  oIndData_h << NMKey.ORGDV << ".begin() );" << endl;
   oIndData_h << endl;
 
   // Resize and initialize (with -999999) vector variables.
@@ -643,66 +511,66 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   {" << endl;
   if( myThetaLen > 0 )
     {
-      oIndData_h << "      " << UserStr.THETA << "[j].resize( " << myThetaLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << UserStr.THETA << "[j].begin(), " << UserStr.THETA << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << NMKey.THETA << "[j].resize( " << myThetaLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << NMKey.THETA << "[j].begin(), " << NMKey.THETA << "[j].end(), -99999 );" << endl;
     }
   if( myEtaLen > 0 )
     {
-      oIndData_h << "      " << UserStr.ETA     << "[j].resize( " << myEtaLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << UserStr.ETA << "[j].begin(), " << UserStr.ETA << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << NMKey.ETA     << "[j].resize( " << myEtaLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << NMKey.ETA << "[j].begin(), " << NMKey.ETA << "[j].end(), -99999 );" << endl;
       if( getTarget() == POP )
 	{
-	  oIndData_h << "      " << UserStr.ETARES   << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.WETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.IETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.IWETARES << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.PETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.PWETARES << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.CETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << UserStr.CWETARES << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.ETARES   << "[j].begin(), ";
-	  oIndData_h << UserStr.ETARES   << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.WETARES  << "[j].begin(), ";
-	  oIndData_h << UserStr.WETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.IETARES  << "[j].begin(), ";
-	  oIndData_h << UserStr.IETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.IWETARES << "[j].begin(), ";
-	  oIndData_h << UserStr.IWETARES << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.PETARES  << "[j].begin(), ";
-	  oIndData_h << UserStr.PETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.PWETARES << "[j].begin(), ";
-	  oIndData_h << UserStr.PWETARES << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.CETARES  << "[j].begin(), ";
-	  oIndData_h << UserStr.CETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << UserStr.CWETARES << "[j].begin(), ";
-	  oIndData_h << UserStr.CWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << NMKey.ETARES   << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << NMKey.WETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << NMKey.IETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << NMKey.IWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << NMKey.PETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << NMKey.PWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << NMKey.CETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << NMKey.CWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.ETARES   << "[j].begin(), ";
+	  oIndData_h << NMKey.ETARES   << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.WETARES  << "[j].begin(), ";
+	  oIndData_h << NMKey.WETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.IETARES  << "[j].begin(), ";
+	  oIndData_h << NMKey.IETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.IWETARES << "[j].begin(), ";
+	  oIndData_h << NMKey.IWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.PETARES  << "[j].begin(), ";
+	  oIndData_h << NMKey.PETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.PWETARES << "[j].begin(), ";
+	  oIndData_h << NMKey.PWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.CETARES  << "[j].begin(), ";
+	  oIndData_h << NMKey.CETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << NMKey.CWETARES << "[j].begin(), ";
+	  oIndData_h << NMKey.CWETARES << "[j].end(), -99999 );" << endl;
 	}
     }
   if( myEpsLen > 0 )
     {
-      oIndData_h << "      " << UserStr.EPS   << "[j].resize( " << myEpsLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << UserStr.EPS   << "[j].begin(), " << UserStr.EPS << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << NMKey.EPS   << "[j].resize( " << myEpsLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << NMKey.EPS   << "[j].begin(), " << NMKey.EPS << "[j].end(), -99999 );" << endl;
     }
   
   if( myModelSpec == ADVAN6 || myModelSpec == ADVAN8 || myModelSpec == ADVAN9 )
     {
-      assert( table->findi( KeyStr.DADT ) != Symbol::empty() );
-      assert( table->findi( KeyStr.A    ) != Symbol::empty() );
-      assert( table->findi( KeyStr.P    ) != Symbol::empty() );
+      assert( table->find( NMKey.DADT ) != Symbol::empty() );
+      assert( table->find( NMKey.A    ) != Symbol::empty() );
+      assert( table->find( NMKey.P    ) != Symbol::empty() );
       
-      oIndData_h << "      " << UserStr.DADT << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
-      oIndData_h << "      " << UserStr.A    << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
-      oIndData_h << "      " << UserStr.P    << "[j].resize( " << myCompModel->getNParameters()    << " );" << endl;
+      oIndData_h << "      " << NMKey.DADT << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
+      oIndData_h << "      " << NMKey.A    << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
+      oIndData_h << "      " << NMKey.P    << "[j].resize( " << myCompModel->getNParameters()    << " );" << endl;
       
-      oIndData_h << "      " << "fill( " << UserStr.DADT << "[j].begin(), " << UserStr.DADT << "[j].end(), -99999 );" << endl;
-      oIndData_h << "      " << "fill( " << UserStr.A    << "[j].begin(), " << UserStr.A    << "[j].end(), -99999 );" << endl;
-      oIndData_h << "      " << "fill( " << UserStr.P    << "[j].begin(), " << UserStr.P    << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << NMKey.DADT << "[j].begin(), " << NMKey.DADT << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << NMKey.A    << "[j].begin(), " << NMKey.A    << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << NMKey.P    << "[j].begin(), " << NMKey.P    << "[j].end(), -99999 );" << endl;
       
     }
   
-  oIndData_h << "        if( " << UserStr.MDV << "[j] == 0 )" << endl;
+  oIndData_h << "        if( " << NMKey.MDV << "[j] == 0 )" << endl;
   oIndData_h << "        {" << endl;
-  oIndData_h << "           assign( measurements[jPrime], " << UserStr.DV << "[j] );" << endl;
+  oIndData_h << "           assign( measurements[jPrime], " << NMKey.DV << "[j] );" << endl;
   oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
   oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
   oIndData_h << "           jPrime++;" << endl;
@@ -809,10 +677,10 @@ void NonmemTranslator::generateIndData( ) const
   bool hasAlias = ( pDV->synonym != "" );
   oIndData_h << "   for( int i=0, k=0; i<nRecords; i++ )" << endl;
   oIndData_h << "   {" << endl;
-  oIndData_h << "      if( " << UserStr.MDV << "[i] == 0 )" << endl;
+  oIndData_h << "      if( " << NMKey.MDV << "[i] == 0 )" << endl;
   oIndData_h << "      {" << endl;
-  oIndData_h << "         " << UserStr.ORGDV << "[i] = " << UserStr.DV << "[i];" << endl;
-  oIndData_h << "         " << UserStr.DV << "[i] = yyi[k];" << endl;
+  oIndData_h << "         " << NMKey.ORGDV << "[i] = " << NMKey.DV << "[i];" << endl;
+  oIndData_h << "         " << NMKey.DV << "[i] = yyi[k];" << endl;
   if( hasAlias )
     oIndData_h << "         " << pDV->synonym << "[i] = yyi[k];" << endl;
   oIndData_h << "         k++;" << endl;
@@ -827,8 +695,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePred( const SPK_VA::valarray<double>& predIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( predIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = predIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -842,8 +710,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& ResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( ResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.RES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.RES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.RES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << NMKey.RES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = ResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -857,8 +725,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& WResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( WResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.WRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.WRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.WRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << NMKey.WRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = WResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -872,8 +740,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceIPred( const SPK_VA::valarray<double>& iPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( iPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.IPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.IPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.IPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << NMKey.IPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = iPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -887,8 +755,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceIRes( const SPK_VA::valarray<double>& iResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( iResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.IRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.IRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.IRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << NMKey.IRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = iResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -902,8 +770,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceIWRes( const SPK_VA::valarray<double>& iWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( iWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << UserStr.IWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << UserStr.IWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.IWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << NMKey.IWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = iWResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -917,8 +785,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePPred( const SPK_VA::valarray<double>& pPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -932,8 +800,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePRes( const SPK_VA::valarray<double>& pResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -947,8 +815,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePWRes( const SPK_VA::valarray<double>& pWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.PWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << UserStr.PWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pWResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -962,8 +830,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCPred( const SPK_VA::valarray<double>& cPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.CPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << UserStr.CPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.CPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << NMKey.CPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -977,8 +845,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCRes( const SPK_VA::valarray<double>& cResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.CRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << UserStr.CRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.CRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << NMKey.CRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -992,8 +860,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCWRes( const SPK_VA::valarray<double>& cWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << UserStr.CWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << UserStr.CWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.CWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << NMKey.CWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cWResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -1014,7 +882,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.ETA << "[i][j] = etaIn[j];" << endl;
+      oIndData_h << "         " << NMKey.ETA << "[i][j] = etaIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1032,7 +900,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.ETARES << "[i][j] = EtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.ETARES << "[i][j] = EtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1050,7 +918,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.WETARES << "[i][j] = WEtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.WETARES << "[i][j] = WEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1068,7 +936,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.IETARES << "[i][j] = iEtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.IETARES << "[i][j] = iEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1086,7 +954,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.IWETARES << "[i][j] = iWEtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.IWETARES << "[i][j] = iWEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1104,7 +972,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.PETARES << "[i][j] = pEtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.PETARES << "[i][j] = pEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1122,7 +990,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.PWETARES << "[i][j] = pWEtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.PWETARES << "[i][j] = pWEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1140,7 +1008,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.CETARES << "[i][j] = cEtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.CETARES << "[i][j] = cEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1158,7 +1026,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << UserStr.CWETARES << "[i][j] = cWEtaResIn[j];" << endl;
+      oIndData_h << "         " << NMKey.CWETARES << "[i][j] = cWEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;

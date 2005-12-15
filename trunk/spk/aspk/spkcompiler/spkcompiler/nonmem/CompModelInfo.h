@@ -30,7 +30,7 @@ class CompModelInfo{
    *
    * @param nCompartmentsIn The number of compartments in this system.
    * @param nParametersIn   The number of basic PK parameters.
-   * @param nEquilibrimIn   The number of quilibrim compartments.
+   * @param nEquilibrimsIn  The number of quilibrim compartments.
    * @param relTolIn        The relative tolerance (10^-(TOL+1)) where TOL is the #of sigs user provide.
    */
   CompModelInfo( int nCompartmentsIn, 

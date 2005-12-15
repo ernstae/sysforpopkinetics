@@ -5,9 +5,6 @@
  * specification file, nonmem/explang.ypp, which defines the nm_parse() for NONMEM.
  * @ingroup nonmem
  */
-/**
- * @example explangTest.cpp
- */
 
 #include <iostream>
 #include <fstream>
@@ -81,8 +78,6 @@ extern "C"{
     * This parser converts "algebraic expressions + control statements"
     *  written in
     * the NONMEM Abbriviated language to C++ language.
-    * The NONMEM version of nm_lex() is expected to tokenize the input,
-    * convert it to all @em lower-case and pass back to this routine.  
     * The input expressions must be
     * stored in an open readable file pointed by a FILE handler, @a nm_in.
     * The generated C++ source code is appended to an open writable
@@ -172,15 +167,7 @@ int nm_wrap()
 {
       return 1;
 }
-/**
- * The error handler used by nm_parse() when it finds an error.  
- * Currently, it is only to display an error message and
- * and return from nm_parse() with a value -1.
- *
- * @todo This error handler forces nm_parse() to immediately return.
- * It probably want to do more than that.
- *
- */
+
 int nm_error( char * err_message )
 { 
   ++gSpkExpErrors;
@@ -221,9 +208,7 @@ int nm_error( char * err_message )
 
   return -1;
 }
-/**
- * The handler used to terminate the parser. 
- */
+
 void nm_terminate( )
 {
   fprintf( stderr, "The Expression Parser was terminated abnormally.\n" );
@@ -694,7 +679,7 @@ subobject {
 ;
 whole_object :
 NAME { 
- if( gSpkExpSymbolTable->findi( $1 ) == Symbol::empty() )
+ if( gSpkExpSymbolTable->find( $1 ) == Symbol::empty() )
   {
      if( inRHS )
      {
@@ -745,7 +730,7 @@ matrix_section_variable {
 vector_section_variable : 
 NAME '(' slice ')' { 
 
-   if( gSpkExpSymbolTable->findi( $1 ) == Symbol::empty() )
+   if( gSpkExpSymbolTable->find( $1 ) == Symbol::empty() )
    {
       if( inRHS )
       {

@@ -98,86 +98,66 @@ void NonmemTranslator::parseSource()
   myModelSpec = detModelType();
 
   // PRED - computed within Pred::eval() or OdePred::eval()
-  table->insertScalar( DefaultStr.PRED, Symbol::SYSTEM, Symbol::READONLY );
-  UserStr.PRED = DefaultStr.PRED;
+  table->insertScalar( NMKey.PRED, Symbol::SYSTEM, Symbol::READONLY );
 
   // RES - computed within Pred::eval() or OdePred::eval()
-  table->insertScalar( DefaultStr.RES, Symbol::SYSTEM, Symbol::READONLY );
-  UserStr.RES = DefaultStr.RES;
+  table->insertScalar( NMKey.RES, Symbol::SYSTEM, Symbol::READONLY );
 
   // WRES
-  table->insertScalar( DefaultStr.WRES, Symbol::SYSTEM, Symbol::READONLY );
-  UserStr.WRES = DefaultStr.WRES;
+  table->insertScalar( NMKey.WRES, Symbol::SYSTEM, Symbol::READONLY );
 
   // IPRED
-  table->insertScalar( DefaultStr.IPRED, Symbol::SYSTEM, Symbol::READONLY );
-  UserStr.IPRED = DefaultStr.IPRED;
+  table->insertScalar( NMKey.IPRED, Symbol::SYSTEM, Symbol::READONLY );
 
   // IRES
-  table->insertScalar( DefaultStr.IRES, Symbol::SYSTEM, Symbol::READONLY );
-  UserStr.IRES = DefaultStr.IRES;
+  table->insertScalar( NMKey.IRES, Symbol::SYSTEM, Symbol::READONLY );
 
   // IWRES
-  table->insertScalar( DefaultStr.IWRES, Symbol::SYSTEM, Symbol::READONLY );
-  UserStr.IWRES = DefaultStr.IWRES;
+  table->insertScalar( NMKey.IWRES, Symbol::SYSTEM, Symbol::READONLY );
 
   if( getTarget() == POP )
     {
       // ETARES
-      table->insertVector( DefaultStr.ETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.ETARES = DefaultStr.ETARES;
+      table->insertVector( NMKey.ETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 
       // WETARES
-      table->insertVector( DefaultStr.WETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.WETARES = DefaultStr.WETARES;
+      table->insertVector( NMKey.WETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 
       // IETARES
-      table->insertVector( DefaultStr.IETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.IETARES = DefaultStr.IETARES;
+      table->insertVector( NMKey.IETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 
       // IWETARES
-      table->insertVector( DefaultStr.IWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.IWETARES = DefaultStr.IWETARES;
+      table->insertVector( NMKey.IWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 
       // PPRED
-      table->insertScalar( DefaultStr.PPRED, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.PPRED = DefaultStr.PPRED;
-      
+      table->insertScalar( NMKey.PPRED, Symbol::SYSTEM, Symbol::READONLY );
+
       // PRES
-      table->insertScalar( DefaultStr.PRES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.PRES = DefaultStr.PRES;
+      table->insertScalar( NMKey.PRES, Symbol::SYSTEM, Symbol::READONLY );
       
       // PWRES
-      table->insertScalar( DefaultStr.PWRES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.PWRES = DefaultStr.PWRES;
+      table->insertScalar( NMKey.PWRES, Symbol::SYSTEM, Symbol::READONLY );
 
       // PETARES
-      table->insertVector( DefaultStr.PETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.PETARES = DefaultStr.PETARES;
+      table->insertVector( NMKey.PETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 
       // PWETARES
-      table->insertVector( DefaultStr.PWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.PWETARES = DefaultStr.PWETARES;
+      table->insertVector( NMKey.PWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 
       // CPRED
-      table->insertScalar( DefaultStr.CPRED, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.CPRED = DefaultStr.CPRED;
+      table->insertScalar( NMKey.CPRED, Symbol::SYSTEM, Symbol::READONLY );
       
       // CRES
-      table->insertScalar( DefaultStr.CRES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.CRES = DefaultStr.CRES;
+      table->insertScalar( NMKey.CRES, Symbol::SYSTEM, Symbol::READONLY );
       
       // CWRES
-      table->insertScalar( DefaultStr.CWRES, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.CWRES = DefaultStr.CWRES;
+      table->insertScalar( NMKey.CWRES, Symbol::SYSTEM, Symbol::READONLY );
 
       // CETARES
-      table->insertVector( DefaultStr.CETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.CETARES = DefaultStr.CETARES;
+      table->insertVector( NMKey.CETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
 
       // CWETARES
-      table->insertVector( DefaultStr.CWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
-      UserStr.CWETARES = DefaultStr.CWETARES;
+      table->insertVector( NMKey.CWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
     } 
   DOMNodeList * models = nonmem->getElementsByTagName( X_MODEL );
   if( models->getLength() != 1 )
@@ -314,14 +294,14 @@ void NonmemTranslator::parseSource()
   DOMElement * presentation = dynamic_cast<DOMElement*>( presentations->item(0) );
 
   myRecordNums.resize( getPopSize() );
-  Symbol * id = table->findi( KeyStr.ID );
+  Symbol * id = table->find( NMKey.ID );
   if( id == NULL || id == Symbol::empty() )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
 		"\"%s\" data item seems missing from the data set.", 
-	       DefaultStr.ID.c_str() ); 
+		NMKey.ID.c_str() ); 
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -348,10 +328,10 @@ void NonmemTranslator::parseSource()
   // ORGDV is a placeholder for the original data set.
   // The original data set should be copied into this placeholder
   // in case a new data set is simulated and replaces the oridinary DV field.
-  if( ( p = table->findi( KeyStr.ORGDV )) == Symbol::empty() )
+  if( ( p = table->find( NMKey.ORGDV )) == Symbol::empty() )
     {  
-      table->insertScalar( DefaultStr.ORGDV, Symbol::SYSTEM, Symbol::READONLY );
-      assert( table->findi( KeyStr.ORGDV ) != Symbol::empty() );
+      table->insertScalar( NMKey.ORGDV, Symbol::SYSTEM, Symbol::READONLY );
+      assert( table->find( NMKey.ORGDV ) != Symbol::empty() );
     }
   else
     {
@@ -367,32 +347,32 @@ void NonmemTranslator::parseSource()
   // in the model definition.
   //+++++++++++++++++++++++++++++++++++++
   // CMT
-  if( (p = table->findi( KeyStr.CMT ))  != Symbol::empty() )
+  if( (p = table->find( NMKey.CMT ))  != Symbol::empty() )
     myIsMissingCmt = false;
 
   // PCMT
-  if( (p = table->findi( KeyStr.PCMT )) != Symbol::empty() )
+  if( (p = table->find( NMKey.PCMT )) != Symbol::empty() )
     myIsMissingPcmt = false;
 
   // RATE
-  if( (p = table->findi( KeyStr.RATE )) != Symbol::empty() )
+  if( (p = table->find( NMKey.RATE )) != Symbol::empty() )
     myIsMissingRate = false;
 
   if( myModelSpec != PRED )
     {
-      if( (p = table->findi( KeyStr.MDV ))  == Symbol::empty() )
+      if( (p = table->find( NMKey.MDV ))  == Symbol::empty() )
 	{
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
 				      "MDV data item is missing",
 				      __LINE__, __FILE__ );
 	}
-      if( (p = table->findi( KeyStr.AMT ))  == Symbol::empty() )
+      if( (p = table->find( NMKey.AMT ))  == Symbol::empty() )
 	{
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
 				      "AMT data item is missing",
 				      __LINE__, __FILE__ );
 	}
-      if( (p = table->findi( KeyStr.EVID ))  == Symbol::empty() )
+      if( (p = table->find( NMKey.EVID ))  == Symbol::empty() )
 	{
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
 				      "EVID data item is missing",
@@ -412,9 +392,7 @@ void NonmemTranslator::parseSource()
   // ID is required in a data set.
   // The field should have been inserted even if
   // the original data set lacked it.
-  if( (p = table->findi( KeyStr.ID )) != Symbol::empty() )
-    UserStr.ID = p->name;
-  else
+  if( (p = table->find( NMKey.ID )) == Symbol::empty() )
     {
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
 				  "ID should have been defined by now!",
@@ -424,9 +402,7 @@ void NonmemTranslator::parseSource()
 
   // DV is always required in a data set and
   // should have appeared in the model definition as well.
-  if( (p = table->findi( KeyStr.DV )) != Symbol::empty() )
-    UserStr.DV = p->name;
-  else
+  if( (p = table->find( NMKey.DV )) == Symbol::empty() )
     {
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
 				  "DV should have been defined by now!",
@@ -437,11 +413,7 @@ void NonmemTranslator::parseSource()
   // REVISIT by Sachiko - 08/08/2005
   // F is required by the current implementation of SPK, 
   // although it is not by NONMEM.
-  if( (p = table->findi( KeyStr.F )) != Symbol::empty() )
-    {
-      UserStr.F = p->name;
-    }
-  else
+  if( (p = table->find( NMKey.F )) == Symbol::empty() )
     {
       throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, 
 				  "F was missing in the user's model!",
@@ -451,11 +423,7 @@ void NonmemTranslator::parseSource()
   
   // F should have appeared in the model definition.
   // If not, it's a user input error.
-  if( (p = table->findi( KeyStr.Y )) != Symbol::empty() )
-    {
-       UserStr.Y = p->name;
-    }
-  else
+  if( (p = table->find( NMKey.Y )) == Symbol::empty() )
     {
       throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, 
 				  "Y was missing in the user's model!",
@@ -466,9 +434,7 @@ void NonmemTranslator::parseSource()
 
   // THETA is always required.
   // It should have been registered while parsing <pop_analysis> or <ind_analysis>.
-  if( (p = table->findi( KeyStr.THETA )) != Symbol::empty() )
-    UserStr.THETA = p->name;
-  else
+  if( (p = table->find( NMKey.THETA )) == Symbol::empty() )
     {
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
 				  "THETA should have been defined by now!",
@@ -478,9 +444,7 @@ void NonmemTranslator::parseSource()
 
   // OMEGA is always required.
   // It should have been registered while parsing <pop_analysis> or <ind_analysis>.
-  if( (p = table->findi( KeyStr.OMEGA )) != Symbol::empty() )
-    UserStr.OMEGA = p->name;
-  else
+  if( (p = table->find( NMKey.OMEGA )) == Symbol::empty() )
     {
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
 				  "OMEGA should have been defined by now!",
@@ -490,11 +454,8 @@ void NonmemTranslator::parseSource()
 
   // ETA is always required.
   // It should have been registered while parsing <pop_analysis> or <ind_analysis>.
-  if( (p = table->findi( KeyStr.ETA )) != Symbol::empty() )
-    UserStr.ETA = p->name;
-  else
+  if( (p = table->find( NMKey.ETA )) == Symbol::empty() )
     {
-      UserStr.ETA = DefaultStr.ETA;
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
 				  "ETA should have been defined by now!",
 				  __LINE__,
@@ -505,9 +466,7 @@ void NonmemTranslator::parseSource()
   if( getTarget() == POP )
     {
       // SIGMA
-      if( (p = table->findi( KeyStr.SIGMA )) != Symbol::empty() )
-	UserStr.SIGMA = p->name;
-      else
+      if( (p = table->find( NMKey.SIGMA )) == Symbol::empty() )
 	{
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
 				      "SIGMA should have been defined by now!",
@@ -515,9 +474,7 @@ void NonmemTranslator::parseSource()
 				      __FILE__ );
 	}
       // EPS
-      if( (p = table->findi( KeyStr.EPS )) != Symbol::empty() )
-	UserStr.EPS = p->name;
-      else
+      if( (p = table->find( NMKey.EPS )) == Symbol::empty() )
 	{
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
 				      "EPS should have been defined by now!",

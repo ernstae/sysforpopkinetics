@@ -63,15 +63,15 @@ class CompartmentInfo{
    * DEFDOSE        = is_default_dose
    * 
    * @param nameIn The name for this compartment.
-   * @param is_initial_offIn       Sets INITIALOFF.      If true, this compartment is initially off.
-   * @param is_no_off              Sets NOOFF.           If true, this compartment may not be turned on and off.
-   * @param is_no_dose             Sets NODOSE.          If true, this compartment may not receive a dose.
-   * @param is_equilibrim          Sets EQUILIBRIM.      If true, this compartment is an equilibrim compartment 
-   *                               (ADVAN9 only: implies NODOSE).
-   * @param is_exclude             Sets EXCLUDE          If true, this compartment's amount is excluded 
-   *                               from the output compartment (ADVAN9 only).
-   * @param is_default_observation Sets DEFOBSERVATION.  If true, this compartment is the default observation compartment.
-   * @param is_deafult_dose        Sets DEFDOSE.         If true, this compartment is the default dose compartment.
+   * @param is_initial_offIn         Sets INITIALOFF.      If true, this compartment is initially off.
+   * @param is_no_offIn              Sets NOOFF.           If true, this compartment may not be turned on and off.
+   * @param is_no_doseIn             Sets NODOSE.          If true, this compartment may not receive a dose.
+   * @param is_equilibrimIn          Sets EQUILIBRIM.      If true, this compartment is an equilibrim compartment 
+   *                                 (ADVAN9 only: implies NODOSE).
+   * @param is_excludedIn            Sets EXCLUDE          If true, this compartment's amount is excluded 
+   *                                 from the output compartment (ADVAN9 only).
+   * @param is_default_observationIn Sets DEFOBSERVATION.  If true, this compartment is the default observation compartment.
+   * @param is_default_doseIn        Sets DEFDOSE.         If true, this compartment is the default dose compartment.
    */
   CompartmentInfo( const std::string& nameIn,
                bool is_initial_offIn,
@@ -80,7 +80,7 @@ class CompartmentInfo{
                bool is_equilibrimIn,
                bool is_excludedIn,
                bool is_default_observationIn,
-               bool is_default_dose );
+               bool is_default_doseIn );
 
   /**
    * Copy constructor.
@@ -169,9 +169,9 @@ class CompartmentInfo{
 
   /**
    * Set/reset this compartment's amount to be excluded from the output compartment.
-   * @param equilibrimIn true makes this compartment's amount excluded.
+   * @param excludedIn true makes this compartment's amount excluded.
    */
-  void set_exclude            ( bool excludeIn );
+  void set_exclude            ( bool excludedIn );
   /**
    * Set/reset this compartment to be the default observation compartment.
    * @param default_observationIn true makes this compartment the default observation compartment.
@@ -180,7 +180,7 @@ class CompartmentInfo{
 
   /**
    * Set/reset this compartment to be the default dose compartment.
-   * @param default_dose_compartmentIn true makes this compartment the default dose compartment.
+   * @param default_doseIn true makes this compartment the default dose compartment.
    */
   void set_default_dose       ( bool default_doseIn );
 

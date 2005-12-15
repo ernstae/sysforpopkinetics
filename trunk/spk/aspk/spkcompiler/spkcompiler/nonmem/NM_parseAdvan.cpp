@@ -138,26 +138,21 @@ void NonmemTranslator::parseAdvan(
 	}
     }
 
-  //assert( table->findi( KeyStr.EVID ) );
-  assert( table->findi( KeyStr.AMT ) );
-  assert( table->findi( KeyStr.TIME ) );
-  //assert( table->findi( "RATE" ) );       // optional
-  //assert( table->findi( UserStr.CMT ) );  // optional
-  //assert( table->findi( UserStr.PCMT ) ); // optional
+  //assert( table->find( NMKey.EVID ) );
+  assert( table->find( NMKey.AMT ) );
+  assert( table->find( NMKey.TIME ) );
+  //assert( table->find( "RATE" ) );       // optional
+  //assert( table->find( NMKey.CMT ) );  // optional
+  //assert( table->find( NMKey.PCMT ) ); // optional
 
   // These may/should appear on the left hand side of assignment in the user's equations.
   // In that case, the variable would be registered to the symbol table
   // as a user variable automatically.  But, we want it to be a system
   // variable and also read-write.  So, we register in the way
   // we require in advance.
-  table->insertScalar( UserStr.F, Symbol::SYSTEM, Symbol::READWRITE );
-  table->insertScalar( UserStr.Y, Symbol::SYSTEM, Symbol::READWRITE );
+  table->insertScalar( NMKey.F, Symbol::SYSTEM, Symbol::READWRITE );
+  table->insertScalar( NMKey.Y, Symbol::SYSTEM, Symbol::READWRITE );
  
-  // REVISIT - Sachiko 08/09/2005
-  // For ODE models (ADVAN 6, 8 and 9),
-  // T (the continuous time) is required.
-  // The values is set by the ODE solver.
-  // 
   double relTol;
   if( advan == 6 || advan == 8 || advan == 9 )
     {
@@ -186,33 +181,37 @@ void NonmemTranslator::parseAdvan(
       // the size of a vector as it parses through.
       // So, provide the vectors before hand. 
       //  
-      table->insertVector( UserStr.P,    myCompModel->getNParameters(),   Symbol::SYSTEM, Symbol::READWRITE );
-      table->insertVector( UserStr.DADT, myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READWRITE );
-      table->insertVector( UserStr.A,    myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READONLY );
+      table->insertVector( NMKey.P,    myCompModel->getNParameters(),   Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertVector( NMKey.DADT, myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertVector( NMKey.A,    myCompModel->getNCompartments(), Symbol::SYSTEM, Symbol::READONLY );
 
-      table->insertScalar( UserStr.T,      Symbol::SYSTEM, Symbol::READONLY );
-      table->insertScalar( UserStr.TSCALE, Symbol::SYSTEM, Symbol::READWRITE );
-      table->insertScalar( UserStr.FO,     Symbol::SYSTEM, Symbol::READWRITE ); // ef-oh
-      table->insertScalar( UserStr.F0,     Symbol::SYSTEM, Symbol::READWRITE ); // ef-zero
-      table->insertScalar( UserStr.S0,     Symbol::SYSTEM, Symbol::READWRITE ); // es-zero
+      // REVISIT - Sachiko 08/09/2005
+      // For ODE models (ADVAN 6, 8 and 9),
+      // T (the continuous time) is required.
+      // The values is set by the ODE solver.
+      table->insertScalar( NMKey.T,      Symbol::SYSTEM, Symbol::READONLY );
+      table->insertScalar( NMKey.TSCALE, Symbol::SYSTEM, Symbol::READWRITE );
+      table->insertScalar( NMKey.FO,     Symbol::SYSTEM, Symbol::READWRITE ); // ef-oh
+      table->insertScalar( NMKey.F0,     Symbol::SYSTEM, Symbol::READWRITE ); // ef-zero
+      table->insertScalar( NMKey.S0,     Symbol::SYSTEM, Symbol::READWRITE ); // es-zero
       for( int i=0; i<myCompModel->getNCompartments(); i++ )
 	{
 	  char tmp_s[ 32 ], tmp_f[ 32 ], tmp_r[ 32 ], tmp_d[ 32 ], tmp_alag[ 32 ];
 	  snprintf( tmp_r,    
 		    SpkCompilerError::maxMessageLen(),
-		    "%s%d", UserStr.R.c_str(), i+1 );    // infusion rate for i-th comp
+		    "%s%d", NMKey.R.c_str(), i+1 );    // infusion rate for i-th comp
 	  snprintf( tmp_d,    
 		    SpkCompilerError::maxMessageLen(),
-		    "%s%d", UserStr.D.c_str(), i+1 );    // infusion duration for i-th comp
+		    "%s%d", NMKey.D.c_str(), i+1 );    // infusion duration for i-th comp
 	  snprintf( tmp_alag, 
 		    SpkCompilerError::maxMessageLen(),
-		    "%s%d", UserStr.ALAG.c_str(), i+1 ); // absorption lag time for i-th comp
+		    "%s%d", NMKey.ALAG.c_str(), i+1 ); // absorption lag time for i-th comp
 	  snprintf( tmp_s,    
 		    SpkCompilerError::maxMessageLen(),
-		    "%s%d", UserStr.S.c_str(), i+1 );    // scale for i-th comp
+		    "%s%d", NMKey.S.c_str(), i+1 );    // scale for i-th comp
 	  snprintf( tmp_f,    
 		    SpkCompilerError::maxMessageLen(),
-		    "%s%d", UserStr.F.c_str(), i+1 ); 
+		    "%s%d", NMKey.F.c_str(), i+1 ); 
 
 	  table->insertScalar( tmp_r,    Symbol::SYSTEM, Symbol::READWRITE );
 	  table->insertScalar( tmp_d,    Symbol::SYSTEM, Symbol::READWRITE ); 
@@ -404,7 +403,7 @@ void NonmemTranslator::parsePK( const DOMElement* pk )
   //
   // This value is assumed to be the same as NPARAMETERS given in $MODEL.
   // Maybe wrong...
-  int nP_elements = countStrInLhs( UserStr.P.c_str(), c_pk_def );
+  int nP_elements = countStrInLhs( NMKey.P.c_str(), c_pk_def );
 
   nm_in = fopen( fPkEqn_fortran, "w" );
   fprintf( nm_in, "%s", c_pk_def );
@@ -459,7 +458,7 @@ void NonmemTranslator::parseDiffEqn( const DOMElement* diffeqn )
   if( des_size > 0 )
     c_des_def = XMLString::transcode( xml_des_def );
 
-  int nCompsInDES = countStrInLhs( UserStr.DADT.c_str(), c_des_def );
+  int nCompsInDES = countStrInLhs( NMKey.DADT.c_str(), c_des_def );
   if( nCompsInDES != myCompModel->getNCompartments()-1 )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
