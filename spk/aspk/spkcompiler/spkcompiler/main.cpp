@@ -1,6 +1,23 @@
-/** 
- * @file spkcompiler.cpp
+/**
+ * \mainpage SPK Compiler API Documentation 
+ * \section intro_sec Overall
+ * <a href="../spkcompiler.html">Overall</a>
+ * \section install_sec Installation
+ * \subsection step1 Step 1: Configure
+ * \subsection step2 Step 2: Make
+ * \subsection step3 Step 3: Install
+ * \section execution Execution
  *
+ * \bug The search facility on this page is not working.
+ * The webserver (i.e. "webserver" in RFPK) on which this documentation
+ * is installed must be equipped with 
+ * <a href="http://us2.php.net/manual/en/install.php">PHP</a>
+ * version 4.1.0 or higher.
+ *
+ * \author Sachiko Honda
+ * \date December 13, 2005
+ */
+/** 
  * The <code>main</code> function defined in this file
  * compiles C++ source code from a pair of an SpkSourceML and an SpkDataML documents.
  *

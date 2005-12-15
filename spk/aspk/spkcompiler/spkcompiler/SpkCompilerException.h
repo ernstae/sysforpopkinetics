@@ -7,9 +7,11 @@
 #include <string>
 #include "SpkCompilerError.h"
 
-//
-// SpkCompilerException class declaration
-//
+/** 
+ * Representation of an exception object.
+ *
+ * An instance of this class will maintain a list of errors representaed by SpkCompilerError.
+ */ 
 class SpkCompilerException
 {
 public:	

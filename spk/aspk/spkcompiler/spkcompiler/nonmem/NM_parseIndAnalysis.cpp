@@ -256,7 +256,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
 	    c_synonym = XMLString::transcode( xml_synonym );
 	  }
 
-	Symbol * name = table->findi( c_name );
+	Symbol * name = table->find( c_name );
 
 	// "name" may not be one of the official data item labels.
 	// For example, "DV" may be used as an official data label
@@ -277,7 +277,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
                                         __LINE__, __FILE__ );
                 throw e;
 	      }
-	    Symbol * synonym = table->findi( c_synonym );
+	    Symbol * synonym = table->find( c_synonym );
 	    if( synonym == Symbol::empty() )
 	      {
                 char mess[ SpkCompilerError::maxMessageLen() ];
@@ -347,7 +347,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertVector( DefaultStr.THETA, myThetaLen, Symbol::SYSTEM, Symbol::READONLY );
+  Symbol * sym_theta = table->insertVector( NMKey.THETA, myThetaLen, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( X_IN );
@@ -589,7 +589,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myOmegaStruct = Symbol::DIAGONAL;
   myOmegaOrder = myOmegaDim;
 
-  Symbol * sym_omega = table->insertSymmetricMatrix( DefaultStr.OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
+  Symbol * sym_omega = table->insertSymmetricMatrix( NMKey.OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( X_IN );
@@ -723,7 +723,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   char etaDefault[] = "0.0";
   //  myEtaLen = myOmegaOrder;
   myEtaLen = myOmegaDim;
-  Symbol * sym_eta = table->insertVector( DefaultStr.ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+  Symbol * sym_eta = table->insertVector( NMKey.ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
   

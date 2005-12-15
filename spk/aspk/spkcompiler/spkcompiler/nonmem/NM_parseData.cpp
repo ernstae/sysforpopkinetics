@@ -420,7 +420,7 @@ void NonmemTranslator::parseData()
 	{
 	  for( int k=0; k<nLabels; k++ )
 	    {
-	      Symbol *s = table->findi( tmp_labels[k] );
+	      Symbol *s = table->find( tmp_labels[k] );
 	      vector<string>::const_iterator itr = (tmp_values[*pID][tmp_labels[k]]).begin();
 	      for( int l=0; itr != tmp_values[*pID][tmp_labels[k]].end(); l++, itr++ )
 		{

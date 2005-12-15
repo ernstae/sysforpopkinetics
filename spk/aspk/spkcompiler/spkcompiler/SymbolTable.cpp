@@ -73,9 +73,8 @@ Symbol* SymbolTable::insertScalar( const string& name,
 				   enum Symbol::Access access )
 {
   Symbol a = Symbol::createScalar( name, owner, access );
-  const string NAME = key(name);
-  table[ NAME ] = a;
-  return &(table[ NAME ]); 
+  table[ name ] = a;
+  return &(table[ name ]); 
   
 }
 Symbol* SymbolTable::insertVector( const string& name, int len, 
@@ -83,9 +82,8 @@ Symbol* SymbolTable::insertVector( const string& name, int len,
 				   enum Symbol::Access access )
 {
    Symbol a = Symbol::createVector( name, len, owner, access );
-   const string NAME = key(name);
-   table[ NAME ] = a;
-   return &(table[ NAME ]);
+   table[ name ] = a;
+   return &(table[ name ]);
 }
 
 Symbol* SymbolTable::insertSymmetricMatrix( const string& name, 
@@ -94,19 +92,17 @@ Symbol* SymbolTable::insertSymmetricMatrix( const string& name,
 				   enum Symbol::Access access )
 {
    Symbol a = Symbol::createSymmetricMatrix( name, mt, dim, owner, access );
-   const string NAME = key(name);
-   table[ NAME ] = a;
-   return &(table[ NAME ]);
+   table[ name ] = a;
+   return &(table[ name ]);
 }
 Symbol* SymbolTable::insertLabel( const string& label, 
 				  const string& alias, 
 				  const valarray<int>& N )
 {
    Symbol a = Symbol::createLabel( label, alias, N );
-   const string LABEL = key(label);
-   table[ LABEL ] = a;
+   table[ label ] = a;
    labels.push_back( label );
-   return &(table[ LABEL ]);
+   return &(table[ label ]);
 }
 const vector<string> * SymbolTable::getLabels() const
 {

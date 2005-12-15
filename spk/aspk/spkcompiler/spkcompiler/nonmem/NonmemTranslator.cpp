@@ -57,25 +57,23 @@ extern "C"{
 //==================================================================================
 // XML tag names and attribute names in C string
 //==================================================================================
-const char* NonmemTranslator::C_SPKDATA    ( "spkdata" );
-const char* NonmemTranslator::C_VERSION    ( "version" );
-const char* NonmemTranslator::C_POINTONE   ( "0.1" );
-const char* NonmemTranslator::C_TABLE      ( "table" );
-const char* NonmemTranslator::C_COLUMNS    ( "columns" );
-const char* NonmemTranslator::C_ROWS       ( "rows" );
-const char* NonmemTranslator::C_DESCRIPTION( "description" );
-const char* NonmemTranslator::C_ROW        ( "row" );
-const char* NonmemTranslator::C_POSITION   ( "position" );
-const char* NonmemTranslator::C_VALUE      ( "value" );
-const char* NonmemTranslator::C_TYPE       ( "type" );
-const char* NonmemTranslator::C_NUMERIC    ( "numeric" );
-const char* NonmemTranslator::C_ID         ( "ID" );
-const char* NonmemTranslator::C_MDV        ( "MDV" );
-const char* NonmemTranslator::C_EVID       ( "EVID" );
-const char* NonmemTranslator::C_AMT        ( "AMT" );
-const char* NonmemTranslator::C_DROP       ( "DROP" );
-const char* NonmemTranslator::C_SKIP       ( "SKIP" );
+const char* NonmemTranslator::C_SPKDATA                    ( "spkdata" );
+const char* NonmemTranslator::C_VERSION                    ( "version" );
+const char* NonmemTranslator::C_POINTONE                   ( "0.1" );
+const char* NonmemTranslator::C_TABLE                      ( "table" );
+const char* NonmemTranslator::C_COLUMNS                    ( "columns" );
+const char* NonmemTranslator::C_ROWS                       ( "rows" );
+const char* NonmemTranslator::C_DESCRIPTION                ( "description" );
+const char* NonmemTranslator::C_ROW                        ( "row" );
+const char* NonmemTranslator::C_POSITION                   ( "position" );
+const char* NonmemTranslator::C_VALUE                      ( "value" );
+const char* NonmemTranslator::C_TYPE                       ( "type" );
+const char* NonmemTranslator::C_NUMERIC                    ( "numeric" );
 
+const char* NonmemTranslator::C_THETA                      ( "theta" );
+const char* NonmemTranslator::C_OMEGA                      ( "omega" );
+const char* NonmemTranslator::C_SIGMA                      ( "sigma" );
+const char* NonmemTranslator::C_PRED                       ( "pred" );
 const char* NonmemTranslator::C_YES                        ( "yes" );
 const char* NonmemTranslator::C_NO                         ( "no" );
 const char* NonmemTranslator::C_FIXED                      ( "fixed" );
@@ -100,14 +98,12 @@ const char* NonmemTranslator::C_CONSTRAINT                 ( "constraint" );
 const char* NonmemTranslator::C_MODEL                      ( "model" );
 const char* NonmemTranslator::C_ADVAN                      ( "advan" );
 const char* NonmemTranslator::C_TRANS                      ( "trans" );
-const char* NonmemTranslator::C_PRED                       ( "pred" );
 const char* NonmemTranslator::C_COMP_MODEL                 ( "comp_model" );
 const char* NonmemTranslator::C_COMPARTMENT                ( "compartment" );
 const char* NonmemTranslator::C_DIFFEQN                    ( "diffeqn" );
 const char* NonmemTranslator::C_PK                         ( "pk" );
 const char* NonmemTranslator::C_ERROR                      ( "error" );
 const char* NonmemTranslator::C_PRESENTATION               ( "presentation" );
-//const char* NonmemTranslator::C_TABLE                      ( "table" );
 const char* NonmemTranslator::C_SCATTERPLOT                ( "scatterplot" );
 const char* NonmemTranslator::C_COLUMN                     ( "column" );
 const char* NonmemTranslator::C_X                          ( "x" );
@@ -133,10 +129,7 @@ const char* NonmemTranslator::C_DATA_LABELS                ( "data_labels" );
 const char* NonmemTranslator::C_FILENAME                   ( "filename" );
 const char* NonmemTranslator::C_NAME                       ( "name" );
 const char* NonmemTranslator::C_SYNONYM                    ( "synonym" );
-const char* NonmemTranslator::C_THETA                      ( "theta" );
 const char* NonmemTranslator::C_LENGTH                     ( "length" );
-const char* NonmemTranslator::C_OMEGA                      ( "omega" );
-const char* NonmemTranslator::C_SIGMA                      ( "sigma" );
 const char* NonmemTranslator::C_SIMULATION                 ( "simulation" );
 const char* NonmemTranslator::C_SEED                       ( "seed" );
 const char* NonmemTranslator::C_SUBPROBLEMS                ( "subproblems" );
@@ -202,6 +195,19 @@ const char* NonmemTranslator::C_DEFAULT_OBSERVATION        ( "default_observatio
 const char* NonmemTranslator::C_DEFAULT_DOSE               ( "default_dose" );
 const char* NonmemTranslator::C_TOLERANCE                  ( "tolerance" );
 
+//==================================================================================
+// XML source/data element values
+//==================================================================================
+const char* NonmemTranslator::C_ID                         ( "ID" );
+const char* NonmemTranslator::C_MDV                        ( "MDV" );
+const char* NonmemTranslator::C_EVID                       ( "EVID" );
+const char* NonmemTranslator::C_AMT                        ( "AMT" );
+const char* NonmemTranslator::C_DROP                       ( "DROP" );
+const char* NonmemTranslator::C_SKIP                       ( "SKIP" );
+
+//==================================================================================
+// Names of files that are generated by SPK Compiler or at runtime.
+//==================================================================================
 const char* NonmemTranslator::fMakefile                    ( "Makefile.SPK" );
 const char* NonmemTranslator::fIndData_h                   ( "IndData.h" );
 const char* NonmemTranslator::fDataSet_h                   ( "DataSet.h" );
@@ -222,6 +228,60 @@ const char* NonmemTranslator::fMonteDriver_cpp             ( "monteDriver.cpp" )
 const char* NonmemTranslator::fSpkRuntimeLongError_tmp     ( "scratch.tmp" );
 const char* NonmemTranslator::fResult_xml                  ( "result.xml" );
 const char* NonmemTranslator::fCheckpoint_xml              ( "checkpoint.xml" );
+
+/*
+std::string NonmemTranslator::NonmemKeyword::THETA         = "THETA";
+std::string NonmemTranslator::NonmemKeyword::ETA           = "ETA";
+std::string NonmemTranslator::NonmemKeyword::EPS           = "EPS";
+std::string NonmemTranslator::NonmemKeyword::OMEGA         = "OMEGA";
+std::string NonmemTranslator::NonmemKeyword::SIGMA         = "SIGMA";
+std::string NonmemTranslator::NonmemKeyword::PRED          = "PRED";
+std::string NonmemTranslator::NonmemKeyword::RES           = "RES";
+std::string NonmemTranslator::NonmemKeyword::WRES          = "WRES";
+std::string NonmemTranslator::NonmemKeyword::ETARES        = "ETARES";
+std::string NonmemTranslator::NonmemKeyword::WETARES       = "WETARES";
+std::string NonmemTranslator::NonmemKeyword::IPRED         = "IPRED";
+std::string NonmemTranslator::NonmemKeyword::IRES          = "IRES";
+std::string NonmemTranslator::NonmemKeyword::IWRES         = "IWRES";
+std::string NonmemTranslator::NonmemKeyword::IETARES       = "IETARES";
+std::string NonmemTranslator::NonmemKeyword::IWETARES      = "IWETARES";
+std::string NonmemTranslator::NonmemKeyword::PPRED         = "PPRED";
+std::string NonmemTranslator::NonmemKeyword::PRES          = "PRES";
+std::string NonmemTranslator::NonmemKeyword::PWRES         = "PWRES";
+std::string NonmemTranslator::NonmemKeyword::PETARES       = "PETARES";
+std::string NonmemTranslator::NonmemKeyword::PWETARES      = "PWETARES";
+std::string NonmemTranslator::NonmemKeyword::CPRED         = "CPRED";
+std::string NonmemTranslator::NonmemKeyword::CRES          = "CRES";
+std::string NonmemTranslator::NonmemKeyword::CWRES         = "CWRES";
+std::string NonmemTranslator::NonmemKeyword::CETARES       = "CETARES";
+std::string NonmemTranslator::NonmemKeyword::CWETARES      = "CWETARES";
+std::string NonmemTranslator::NonmemKeyword::DV            = "DV";
+std::string NonmemTranslator::NonmemKeyword::ORGDV         = "ORGDV";
+std::string NonmemTranslator::NonmemKeyword::MDV           = "MDV";
+std::string NonmemTranslator::NonmemKeyword::ID            = "ID";
+std::string NonmemTranslator::NonmemKeyword::F             = "F";
+std::string NonmemTranslator::NonmemKeyword::Y             = "Y";
+std::string NonmemTranslator::NonmemKeyword::T             = "T";
+std::string NonmemTranslator::NonmemKeyword::P             = "P";
+std::string NonmemTranslator::NonmemKeyword::A             = "A";
+std::string NonmemTranslator::NonmemKeyword::EVID          = "EVID";
+std::string NonmemTranslator::NonmemKeyword::DADT          = "DADT";
+std::string NonmemTranslator::NonmemKeyword::AMT           = "AMT";
+std::string NonmemTranslator::NonmemKeyword::CMT           = "CMT";
+std::string NonmemTranslator::NonmemKeyword::PCMT          = "PCMT";
+std::string NonmemTranslator::NonmemKeyword::R             = "R";
+std::string NonmemTranslator::NonmemKeyword::D             = "D";
+std::string NonmemTranslator::NonmemKeyword::ALAG          = "ALAG";
+std::string NonmemTranslator::NonmemKeyword::FO            = "FO"; // ef-oh
+std::string NonmemTranslator::NonmemKeyword::F0            = "F0"; // ef-zero
+std::string NonmemTranslator::NonmemKeyword::S0            = "S0"; // es-zero
+std::string NonmemTranslator::NonmemKeyword::RATE          = "RATE";
+std::string NonmemTranslator::NonmemKeyword::TIME          = "TIME";
+std::string NonmemTranslator::NonmemKeyword::TSCALE        = "TSCALE";
+std::string NonmemTranslator::NonmemKeyword::S             = "S";
+std::string NonmemTranslator::NonmemKeyword::DROP          = "DROP";
+std::string NonmemTranslator::NonmemKeyword::SKIP          = "SKIP";
+*/
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   : ClientTranslator        ( sourceIn, dataIn ),
@@ -271,168 +331,6 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIsMissingRate         ( true )
 {
   table = ClientTranslator::getSymbolTable();
-
-  DefaultStr.THETA             = "THETA";
-  DefaultStr.ETA               = "ETA";
-  DefaultStr.EPS               = "EPS";
-  DefaultStr.OMEGA             = "OMEGA";
-  DefaultStr.SIGMA             = "SIGMA";
-  DefaultStr.PRED              = "PRED";
-  DefaultStr.RES               = "RES";
-  DefaultStr.WRES              = "WRES";
-  DefaultStr.ETARES            = "ETARES";
-  DefaultStr.WETARES           = "WETARES";
-  DefaultStr.IPRED             = "IPRED";
-  DefaultStr.IRES              = "IRES";
-  DefaultStr.IWRES             = "IWRES";
-  DefaultStr.IETARES           = "IETARES";
-  DefaultStr.IWETARES          = "IWETARES";
-  DefaultStr.PPRED             = "PPRED";
-  DefaultStr.PRES              = "PRES";
-  DefaultStr.PWRES             = "PWRES";
-  DefaultStr.PETARES           = "PETARES";
-  DefaultStr.PWETARES          = "PWETARES";
-  DefaultStr.CPRED             = "CPRED";
-  DefaultStr.CRES              = "CRES";
-  DefaultStr.CWRES             = "CWRES";
-  DefaultStr.CETARES           = "CETARES";
-  DefaultStr.CWETARES          = "CWETARES";
-  DefaultStr.DV                = "DV";
-  DefaultStr.ORGDV             = "ORGDV";
-  DefaultStr.MDV               = "MDV";
-  DefaultStr.ID                = "ID";
-  DefaultStr.F                 = "F";
-  DefaultStr.Y                 = "Y";
-  DefaultStr.T                 = "T";
-  DefaultStr.P                 = "P";
-  DefaultStr.A                 = "A";
-  DefaultStr.EVID              = "EVID";
-  DefaultStr.DADT              = "DADT";
-  DefaultStr.AMT               = "AMT";
-  DefaultStr.CMT               = "CMT";
-  DefaultStr.PCMT              = "PCMT";
-  DefaultStr.R                 = "R";
-  DefaultStr.D                 = "D";
-  DefaultStr.ALAG              = "ALAG";
-  DefaultStr.FO                = "FO"; // ef-oh
-  DefaultStr.F0                = "F0"; // ef-zero
-  DefaultStr.S0                = "S0"; // es-zero
-  DefaultStr.RATE              = "RATE";
-  DefaultStr.TIME              = "TIME";
-  DefaultStr.TSCALE            = "TSCALE";
-  DefaultStr.S                 = "S";
-  DefaultStr.DROP              = "DROP";
-  DefaultStr.SKIP              = "SKIP";
-
-  UserStr.THETA                = DefaultStr.THETA;
-  UserStr.ETA                  = DefaultStr.ETA;
-  UserStr.EPS                  = DefaultStr.EPS;
-  UserStr.OMEGA                = DefaultStr.OMEGA;
-  UserStr.SIGMA                = DefaultStr.SIGMA;
-  UserStr.PRED                 = DefaultStr.PRED;
-  UserStr.RES                  = DefaultStr.RES;
-  UserStr.WRES                 = DefaultStr.WRES;
-  UserStr.ETARES               = DefaultStr.ETARES;
-  UserStr.WETARES              = DefaultStr.WETARES;
-  UserStr.IPRED                = DefaultStr.IPRED;
-  UserStr.IRES                 = DefaultStr.IRES;
-  UserStr.IWRES                = DefaultStr.IWRES;
-  UserStr.IETARES              = DefaultStr.IETARES;
-  UserStr.IWETARES             = DefaultStr.IWETARES;
-  UserStr.PPRED                = DefaultStr.PPRED;
-  UserStr.PRES                 = DefaultStr.PRES;
-  UserStr.PWRES                = DefaultStr.PWRES;
-  UserStr.PETARES              = DefaultStr.PETARES;
-  UserStr.PWETARES             = DefaultStr.PWETARES;
-  UserStr.CPRED                = DefaultStr.CPRED;
-  UserStr.CRES                 = DefaultStr.CRES;
-  UserStr.CWRES                = DefaultStr.CWRES;
-  UserStr.CETARES              = DefaultStr.CETARES;
-  UserStr.CWETARES             = DefaultStr.CWETARES;
-  UserStr.DV                   = DefaultStr.DV;
-  UserStr.ORGDV                = DefaultStr.ORGDV;
-  UserStr.MDV                  = DefaultStr.MDV;
-  UserStr.ID                   = DefaultStr.ID;
-  UserStr.F                    = DefaultStr.F;
-  UserStr.Y                    = DefaultStr.Y;
-  UserStr.T                    = DefaultStr.T;
-  UserStr.P                    = DefaultStr.P;
-  UserStr.A                    = DefaultStr.A;
-  UserStr.DADT                 = DefaultStr.DADT;
-  UserStr.EVID                 = DefaultStr.EVID;
-  UserStr.DADT                 = DefaultStr.DADT;
-  UserStr.AMT                  = DefaultStr.AMT;
-  UserStr.CMT                  = DefaultStr.CMT;
-  UserStr.PCMT                 = DefaultStr.PCMT;
-  UserStr.R                    = DefaultStr.R;
-  UserStr.D                    = DefaultStr.D;
-  UserStr.ALAG                 = DefaultStr.ALAG;
-  UserStr.FO                   = DefaultStr.FO; // ef-oh
-  UserStr.F0                   = DefaultStr.F0; // ef-zero
-  UserStr.S0                   = DefaultStr.S0; // es-zero
-  UserStr.RATE                 = DefaultStr.RATE;
-  UserStr.TIME                 = DefaultStr.TIME;
-  UserStr.TSCALE               = DefaultStr.TSCALE;
-  UserStr.S                    = DefaultStr.S;
-  UserStr.DROP                 = DefaultStr.DROP;
-  UserStr.SKIP                 = DefaultStr.SKIP;
-
-
-  // These are used as insensitive search keys to find the values of
-  // NONMEM-predefined variables in the symbol table or to be extracted
-  // as C++ variable names when cases are supposed to be insensitive.
-  KeyStr.THETA                 = SymbolTable::key( DefaultStr.THETA );
-  KeyStr.ETA                   = SymbolTable::key( DefaultStr.ETA );
-  KeyStr.EPS                   = SymbolTable::key( DefaultStr.EPS );
-  KeyStr.OMEGA                 = SymbolTable::key( DefaultStr.OMEGA );
-  KeyStr.SIGMA                 = SymbolTable::key( DefaultStr.SIGMA );
-  KeyStr.PRED                  = SymbolTable::key( DefaultStr.PRED );
-  KeyStr.RES                   = SymbolTable::key( DefaultStr.RES );
-  KeyStr.WRES                  = SymbolTable::key( DefaultStr.WRES );
-  KeyStr.ETARES                = SymbolTable::key( DefaultStr.ETARES );
-  KeyStr.WETARES               = SymbolTable::key( DefaultStr.WETARES );
-  KeyStr.IPRED                 = SymbolTable::key( DefaultStr.IPRED );
-  KeyStr.IRES                  = SymbolTable::key( DefaultStr.IRES );
-  KeyStr.IWRES                 = SymbolTable::key( DefaultStr.IWRES );
-  KeyStr.IETARES               = SymbolTable::key( DefaultStr.IETARES );
-  KeyStr.IWETARES              = SymbolTable::key( DefaultStr.IWETARES );
-  KeyStr.PPRED                 = SymbolTable::key( DefaultStr.PPRED );
-  KeyStr.PRES                  = SymbolTable::key( DefaultStr.PRES );
-  KeyStr.PWRES                 = SymbolTable::key( DefaultStr.PWRES );
-  KeyStr.PETARES               = SymbolTable::key( DefaultStr.PETARES );
-  KeyStr.PWETARES              = SymbolTable::key( DefaultStr.PWETARES );
-  KeyStr.CPRED                 = SymbolTable::key( DefaultStr.CPRED );
-  KeyStr.CRES                  = SymbolTable::key( DefaultStr.CRES );
-  KeyStr.CWRES                 = SymbolTable::key( DefaultStr.CWRES );
-  KeyStr.CETARES               = SymbolTable::key( DefaultStr.CETARES );
-  KeyStr.CWETARES              = SymbolTable::key( DefaultStr.CWETARES );
-  KeyStr.DV                    = SymbolTable::key( DefaultStr.DV );
-  KeyStr.ORGDV                 = SymbolTable::key( DefaultStr.ORGDV );
-  KeyStr.MDV                   = SymbolTable::key( DefaultStr.MDV );
-  KeyStr.ID                    = SymbolTable::key( DefaultStr.ID );
-  KeyStr.F                     = SymbolTable::key( DefaultStr.F );
-  KeyStr.Y                     = SymbolTable::key( DefaultStr.Y );
-  KeyStr.T                     = SymbolTable::key( DefaultStr.T );
-  KeyStr.P                     = SymbolTable::key( DefaultStr.P );
-  KeyStr.A                     = SymbolTable::key( DefaultStr.A );
-  KeyStr.DADT                  = SymbolTable::key( DefaultStr.DADT );
-  KeyStr.EVID                  = SymbolTable::key( DefaultStr.EVID );
-  KeyStr.DADT                  = SymbolTable::key( DefaultStr.DADT );
-  KeyStr.AMT                   = SymbolTable::key( DefaultStr.AMT );
-  KeyStr.CMT                   = SymbolTable::key( DefaultStr.CMT );
-  KeyStr.PCMT                  = SymbolTable::key( DefaultStr.PCMT );
-  KeyStr.R                     = SymbolTable::key( DefaultStr.R );
-  KeyStr.D                     = SymbolTable::key( DefaultStr.D );
-  KeyStr.ALAG                  = SymbolTable::key( DefaultStr.ALAG );
-  KeyStr.FO                    = SymbolTable::key( DefaultStr.FO ); // ef-oh
-  KeyStr.F0                    = SymbolTable::key( DefaultStr.F0 ); // ef-zero
-  KeyStr.S0                    = SymbolTable::key( DefaultStr.S0 ); // es-zero
-  KeyStr.RATE                  = SymbolTable::key( DefaultStr.RATE );
-  KeyStr.TIME                  = SymbolTable::key( DefaultStr.TIME );
-  KeyStr.TSCALE                = SymbolTable::key( DefaultStr.TSCALE );
-  KeyStr.S                     = SymbolTable::key( DefaultStr.S );
-  KeyStr.DROP                  = SymbolTable::key( DefaultStr.DROP );
-  KeyStr.SKIP                  = SymbolTable::key( DefaultStr.SKIP );
 
   // SpkDataML tags & attributes;
   X_SPKDATA                    = XMLString::transcode( C_SPKDATA );

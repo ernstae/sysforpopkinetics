@@ -10,7 +10,7 @@
 #include <string>
 
 /**
- * 
+ * Representation of an error object. 
  */
 class SpkCompilerError
 {
@@ -67,7 +67,7 @@ class SpkCompilerError
   typedef std::map< enum ErrorCode, const char* > ErrorMap;
 
  private:
-  // Map: ErrorCode vs. Default Message
+  /** Map: ErrorCode vs. Default Message */
   static const ErrorMap mapping;
 
   // filling the default error code vs message map

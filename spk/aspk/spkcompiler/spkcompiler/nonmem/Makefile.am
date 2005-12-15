@@ -26,6 +26,8 @@ dist_libnonmem_a_SOURCES = \
         CompModelInfo.h \
         NonmemTranslator.cpp \
         NonmemTranslator.h \
+	NonmemKeyword.cpp \
+	NonmemKeyword.h \
 	NM_detAnalysisType.cpp \
 	NM_detModelType.cpp \
 	NM_parseData.cpp \

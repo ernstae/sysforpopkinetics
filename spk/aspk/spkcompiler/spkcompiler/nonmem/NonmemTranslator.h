@@ -7,6 +7,7 @@
 
 #include "../ClientTranslator.h"
 #include "../SymbolTable.h"
+#include "NonmemKeyword.h"
 #include "CompModelInfo.h"
 #include <iostream>
 #include <vector>
@@ -24,6 +25,7 @@ class NonmemTranslator : public ClientTranslator
 {
  public:
 
+  struct NonmemKeyword NMKey;
   /**
    * Model specification types
    */
@@ -52,86 +54,6 @@ class NonmemTranslator : public ClientTranslator
 
   enum INTEG_METHOD { ANALYTIC, GRID, PLAIN, MISER, VEGAS };
 
-  /**
-   * Predefined words
-   */
-  struct NonmemKeyword{
-    std::string THETA;
-    std::string ETA;
-    std::string EPS;
-    std::string OMEGA;
-    std::string SIGMA;
-    std::string PRED;
-    std::string RES;
-    std::string WRES;
-    std::string ETARES;
-    std::string WETARES;
-    std::string IPRED;
-    std::string IRES;
-    std::string IWRES;
-    std::string IETARES;
-    std::string IWETARES;
-    std::string PPRED;
-    std::string PRES;
-    std::string PWRES;
-    std::string PETARES;
-    std::string PWETARES;
-    std::string CPRED;
-    std::string CRES;
-    std::string CWRES;
-    std::string CETARES;
-    std::string CWETARES;
-    std::string DV;
-    std::string ORGDV;
-    std::string MDV;
-    std::string EVID;
-    std::string ID;
-    std::string F;
-    std::string Y;
-
-    std::string T;
-    std::string P;
-    std::string A;
-    std::string DADT;
-    std::string CMT;
-    std::string PCMT;
-    std::string AMT;
-    std::string R;
-    std::string D;
-    std::string S;
-    std::string ALAG;
-    std::string FO;
-    std::string F0;
-    std::string S0;
-    std::string RATE;
-    std::string TIME;
-    std::string TSCALE;
-    std::string DROP;
-    std::string SKIP;
-  };
-
-  /**
-   * These are the default string values for NONMEM-predefined
-   * variables.  The default values will be used when these variables do
-   * not appear in either <label> or <model> in the sourceML document.
-   */
-  NonmemKeyword DefaultStr;
-
-  /**
-   * These are used as insensitive search keys to find the values of
-   * NONMEM-predefined variables in the symbol table or to be extracted
-   * as C++ variable names when cases are supposed to be insensitive.
-   */
-  NonmemKeyword KeyStr;
-
-  /**
-   * These will hold the actual (NONMEM-predefined) variable names that
-   * may be composed of arbitrary mixture of letters in upper/lower
-   * cases.  These values would be determined from the <label> values or
-   * variable names used within <model> definition in the sourceML
-   * document.
-   */
-  NonmemKeyword UserStr;
 
   /**
    * The only legal constructor.
