@@ -156,8 +156,6 @@ dnl       file
 dnl 
 AC_CONFIG_FILES( [Makefile 
 		  doc/Makefile
-		  doc/nonmem/Makefile
-		  doc/common/Makefile
 	          spkcompiler/Makefile
 	          spkcompiler/nonmem/Makefile
                   tests/Makefile
