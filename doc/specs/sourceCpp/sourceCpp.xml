@@ -97,6 +97,12 @@ SPK Compiler.
                   <ulink url="../reportML/reportML.html">SpkReportML</ulink>
                </para>
             </listitem>
+            <listitem>
+               <para>
+                  <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/hierarchy.html">
+                  Pred Library</ulink>
+               </para>
+            </listitem>
          </itemizedlist>
       </para>
    </sect1>
