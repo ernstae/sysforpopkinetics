@@ -47,10 +47,20 @@ public class MDAObject {
      */
     public Vector getData() { return data; }
     
-    /** Get Parsed data for SPK input file.
+    /** Set Parsed data for SPK input file.
      * @param v an vector containing the parsed data to generate SPK data.
      */
     public void setData(Vector v) { data = v; }
+    
+    /** Get data labels.
+     * @return a String array containing the data labels.
+     */
+    public String[] getDataLabels() { return dataLabels; }
+    
+    /** Set data labels.
+     * @param v an vector containing the parsed data to generate SPK data.
+     */
+    public void setDataLabels(String[] s) { dataLabels = s; }
     
     // NONMEM control file records
     private Properties records = new Properties();
@@ -60,4 +70,7 @@ public class MDAObject {
     
     // Parsed data for SPK input file
     private Vector data = null;
+    
+    // Data labels
+    private String[] dataLabels = null;
 }

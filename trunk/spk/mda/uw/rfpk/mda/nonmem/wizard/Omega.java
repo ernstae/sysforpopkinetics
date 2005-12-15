@@ -629,7 +629,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           "file may not be taken by NONMEM.",
                                           "Warning Message",    
                                           JOptionPane.INFORMATION_MESSAGE);
-                    }                    
+                    }
                     element = element + " " + value;
                     if(jCheckBox1.isSelected()) 
                         element = element + " FIXED";

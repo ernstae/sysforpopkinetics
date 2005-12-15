@@ -20,10 +20,11 @@ package uw.rfpk.beans;
 
 import java.sql.*;
 import java.io.ByteArrayInputStream;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import rfpk.spk.spkdb.*;
+import uw.rfpk.rcs.Archive;
 
 /**
  * Get version list of a model or a dataset.
@@ -67,27 +68,25 @@ public class VersionList implements java.io.Serializable
 	    String archive = new String(blobArchive.getBytes(1L, (int)length)); 
           
             // Generate version list for the model or the dataset
-            Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
-            int number = arch.getRevisionVersion().last(); 
-            versionList = new String[number][4]; 
-            for(int i = 0; i < number; i++)
-            {
-                int n = number - i;
-                Node node = arch.findNode(new Version("1." + n));  
-                versionList[i][0] = String.valueOf(n);
-                versionList[i][1] = node.getAuthor().toString();
-                versionList[i][2] = node.getDate().toString();
-                versionList[i][3] = arch.getLog("1." + n);
-            }            
+//            Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
+//            int number = arch.getRevisionVersion().last(); 
+//            versionList = new String[number][4]; 
+//            for(int i = 0; i < number; i++)
+//            {
+//                int n = number - i;
+//                Node node = arch.findNode(new Version("1." + n));  
+//                versionList[i][0] = String.valueOf(n);
+//                versionList[i][1] = node.getAuthor().toString();
+//                versionList[i][2] = node.getDate().toString();
+//                versionList[i][3] = arch.getLog("1." + n);
+//            }
+            versionList = Archive.getVersionList(archive);
         }      
         catch(SQLException e)
         {
         }    
         catch(SpkdbException e)
         {
-        }
-        catch(ParseException e)
-        { 
         }
         finally
         {

@@ -23,14 +23,14 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
 import java.sql.*;
+import java.net.Socket;
 import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
 
 /** This servlet abort the job specified by the client.
  * The servlet receives a String array containing two String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
- * object is the job_id.  The servlet calls database API method, abortJob,
- * to set the job's state_code to "q2a" if the state_code is not 'end'.
+ * object is the job_id.  The servlet sends an aborting job message to the job-queue server. 
  * The servlet sends back two String objects.  The first String object contains the error 
  * message if there is an error or an empty String if there is not any error.  The secod
  * String object is a text "true" if this operation is successful, "false" otherwise.
@@ -106,7 +106,18 @@ public class AbortJob extends HttpServlet
                                 
                 // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
-                    success = String.valueOf(Spkdb.abortJob(con, jobId));
+                {                  
+                    Socket socket = new Socket(context.getInitParameter("jobqs_host"),
+                                               Integer.parseInt(context.getInitParameter("jobqs_port")));
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);                    
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));                    
+                    writer.println("set-abrt-" + jobId);                    
+                    String message = reader.readLine();                    
+                    if(message.equals("done")) success = "true";
+                    reader.close();
+                    writer.close();
+                    socket.close();
+                }
             }
             else
             {
@@ -134,7 +145,7 @@ public class AbortJob extends HttpServlet
                 if(jobStmt != null) jobStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

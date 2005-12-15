@@ -55,6 +55,19 @@
         <description>The password of the database user</description>
     </context-param>
 
+    <!-- Sevlet job queue server calls -->
+    <context-param>
+        <param-name>jobqs_host</param-name>
+        <param-value>rose.rfpk.washington.edu</param-value>
+        <description>The host of the job-queue server</description>
+    </context-param>
+
+    <context-param>
+        <param-name>jobqs_port</param-name>
+        <param-value>9001</param-value>
+        <description>The port of the job-queue server</description>
+    </context-param>
+
     <!-- Jsp page database calls -->
     <context-param>
       <param-name>
@@ -99,6 +112,12 @@
         <param-name>MDA_test_host</param-name>
         <param-value>192.168.1.5</param-value>
         <description>The host of the client for testing</description>
+    </context-param>
+
+    <context-param>
+        <param-name>perlDir</param-name>
+        <param-value>/usr/local/bin/spktest/</param-value>
+        <description>The rcs perl script directory</description>
     </context-param>
 
     <!-- Session expiration -->

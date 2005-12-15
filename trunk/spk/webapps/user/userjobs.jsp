@@ -49,7 +49,7 @@ distribution.
     <%-- Get user jobs --%>
     <c:set var="dbValues" value="${user.rows[0]}" />
     <sql:query var="userJobs" startRow="${param.start}" maxRows="${noOfRows}">
-      SELECT * FROM job WHERE user_id = ? ORDER BY job_id desc
+      SELECT start_time,state_code,end_code,abstract FROM job WHERE user_id = ? ORDER BY job_id desc
       <sql:param value="${dbValues.user_id}" />
     </sql:query>
 

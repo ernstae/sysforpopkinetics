@@ -62,7 +62,7 @@ public class PlotTool extends JFrame {
         // Read the first line of the text
         StringTokenizer tokenizer = new StringTokenizer(lines[0].trim(), " ", false);
         int nTokens = tokenizer.countTokens();
-        if((isIDString && nTokens < 3) || (!isIDString && nTokens < 2))
+        if((isIDString && nTokens < 2) || (!isIDString && nTokens < 1))
         {
             JOptionPane.showMessageDialog(null, "Data are not availible.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -1769,7 +1769,7 @@ public class PlotTool extends JFrame {
             }
  
             int l = j - j / 10 * 10;
-            plot(dataX, dataY, (String)elements[j], l * 50, l * 40);            
+            plot(dataX, dataY, (String)elements[j], l * 50, l * 40, false);            
         }
     }//GEN-LAST:event_displayButtonActionPerformed
 
@@ -1821,7 +1821,7 @@ public class PlotTool extends JFrame {
             {
                 double[][] dataX = new double[1][];
                 dataX[0] = dataAll[xComboBox.getSelectedIndex() - 1];
-                plot(dataX, null, null, 0, 0);
+                plot(dataX, null, null, 0, 0, false);
             }
             return;
         }
@@ -1885,7 +1885,7 @@ public class PlotTool extends JFrame {
                         return;
                     }
             }
-            plot(dataX, dataY, null, 0, 0);
+            plot(dataX, dataY, null, 0, 0, true);
         }
     }
     
@@ -1919,7 +1919,8 @@ public class PlotTool extends JFrame {
         return 1;
     }
     
-    private void plot(double[][] dataX, double[][] dataY, String idTitle, int x, int y)
+    private void plot(double[][] dataX, double[][] dataY, String idTitle, int x, int y, 
+                      boolean isIndividualized)
     {
         int nCurve = selection.size();
         String[] name = new String[nCurve];
@@ -1975,7 +1976,28 @@ public class PlotTool extends JFrame {
         double intervalSize = -1;
         if(jRadioButton3.isSelected())
             intervalSize = Double.parseDouble(jTextField5.getText()); 
-        
+        int[] indPoints = null;
+        if(isIndividualized)
+        {
+            int count = 0;
+            String id = indIDs[0];
+            Vector points = new Vector();
+            for(int i = 1; i < indIDs.length; i++)
+            {
+                count++;
+                if(!id.equals(indIDs[i]))
+                {
+                    points.add(new Integer(count));
+                    count = 0;
+                }
+                id = indIDs[i];
+            }
+            points.add(new Integer(count));
+            indPoints = new int[points.size()];
+            for(int i = 0; i < points.size(); i++)
+                indPoints[i] = ((Integer)points.get(i)).intValue();
+        }
+
         Plotter plotter = new Plotter(dataX,
                                       dataY,
                                       title,
@@ -2027,7 +2049,8 @@ public class PlotTool extends JFrame {
                                       jTextField6.getText(),
                                       nDigitX,
                                       nDigitY,
-                                      frame);
+                                      frame,
+                                      indPoints);
         plotter.setToolTipText("");
         frame.getContentPane().add(plotter);
         frame.setLocation(x, y);

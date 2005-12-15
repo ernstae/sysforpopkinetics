@@ -25,10 +25,11 @@ import java.nio.*;
 import java.sql.*;
 import java.util.Vector;
 import rfpk.spk.spkdb.*;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
+import uw.rfpk.rcs.Archive;
 
 /** This servlet sends bsck the revision number of the model or datsset requested by 
  * the client.
@@ -39,7 +40,7 @@ import uw.rfpk.beans.UserInfo;
  * belongs to the user using ,database API method, getUser, to get the user_id and using 
  * database API method, getModel or getDataset, to get user_id, then comparing them.  If 
  * they are the same, the servlet uses the the archive from the previous database API 
- * method call and the JRCS API methods to get the last revision version number.
+ * method call and the RCS API method getNumRevision to get the last revision version number.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second 
  * object is String containing the version number.
@@ -127,8 +128,9 @@ public class GetLastVersion extends HttpServlet
 	            String archive = new String(blobArchive.getBytes(1L, (int)length));                  
                             
                     // Get the last revision version number
-                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
-                    versionLast = String.valueOf(arch.getRevisionVersion().last()); 
+//                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
+//                    versionLast = String.valueOf(arch.getRevisionVersion().last());
+                    versionLast = String.valueOf(Archive.getNumRevision(archive)); 
                 }
                 else
                 {
@@ -154,10 +156,6 @@ public class GetLastVersion extends HttpServlet
         {
             messageOut = e.getMessage();
         } 
-        catch(ParseException e)
-        { 
-            messageOut = e.getMessage();
-        }
         finally
         {
             try
@@ -166,7 +164,7 @@ public class GetLastVersion extends HttpServlet
                 if(archiveStmt != null) archiveStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

@@ -62,8 +62,9 @@ public class Server {
      * @param jobParent a long representing the id of the parent job.
      * @param isWarmStart a boolean "true" for warm start, "false" for otherwise.
      * @param isMailNotice a boolean "true" for sending end-job mail notice, "false" for otherwise.
+     * @return true if the job submission was successful, false if otherwise.
      */
-    public void submitJob(String source, String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo, 
+    public boolean submitJob(String source, String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo, 
                           String jobMethodCode, long jobParent, boolean isWarmStart, boolean isMailNotice)
     {
         String[] messageOut = new String[24];
@@ -106,17 +107,18 @@ public class Server {
                                           sessionId);
             String messages = (String)network.talk(messageOut);
             if(messages == null)
-                return;
+                return false;
             JOptionPane.showMessageDialog(null, messages,    
                                           "Database Information",         
-                                          JOptionPane.INFORMATION_MESSAGE); 
+                                          JOptionPane.INFORMATION_MESSAGE);
         }
         catch(Exception e)
 	{
             JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
                                           "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
-        }   
+        }
+        return true;
     }        
 
     /** Send a message to the server to abort a job.

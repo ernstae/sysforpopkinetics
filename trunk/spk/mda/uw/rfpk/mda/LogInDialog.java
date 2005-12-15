@@ -72,6 +72,12 @@ public class LogInDialog extends javax.swing.JDialog {
         jTextField1.setMaximumSize(new java.awt.Dimension(150, 19));
         jTextField1.setMinimumSize(new java.awt.Dimension(150, 19));
         jTextField1.setPreferredSize(new java.awt.Dimension(150, 19));
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField1KeyPressed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -89,6 +95,12 @@ public class LogInDialog extends javax.swing.JDialog {
         jTextField3.setMaximumSize(new java.awt.Dimension(150, 19));
         jTextField3.setMinimumSize(new java.awt.Dimension(150, 19));
         jTextField3.setPreferredSize(new java.awt.Dimension(150, 19));
+        jTextField3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField3KeyPressed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -106,16 +118,27 @@ public class LogInDialog extends javax.swing.JDialog {
         jTextField4.setMaximumSize(new java.awt.Dimension(150, 19));
         jTextField4.setMinimumSize(new java.awt.Dimension(150, 19));
         jTextField4.setPreferredSize(new java.awt.Dimension(150, 19));
+        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField4KeyPressed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 12, 12);
         getContentPane().add(jTextField4, gridBagConstraints);
 
-        jPasswordField1.setText("new");
         jPasswordField1.setMaximumSize(new java.awt.Dimension(150, 19));
         jPasswordField1.setMinimumSize(new java.awt.Dimension(150, 19));
         jPasswordField1.setPreferredSize(new java.awt.Dimension(150, 19));
+        jPasswordField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jPasswordField1KeyPressed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -169,6 +192,22 @@ public class LogInDialog extends javax.swing.JDialog {
 
         pack();
     }//GEN-END:initComponents
+
+    private void jTextField4KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyPressed
+        if(evt.getKeyCode() == 10) jButton1.doClick();
+    }//GEN-LAST:event_jTextField4KeyPressed
+
+    private void jTextField3KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyPressed
+        if(evt.getKeyCode() == 10) jButton1.doClick();
+    }//GEN-LAST:event_jTextField3KeyPressed
+
+    private void jPasswordField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPasswordField1KeyPressed
+        if(evt.getKeyCode() == 10) jButton1.doClick();
+    }//GEN-LAST:event_jPasswordField1KeyPressed
+
+    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
+        if(evt.getKeyCode() == 10) jButton1.doClick();
+    }//GEN-LAST:event_jTextField1KeyPressed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         boolean ok = true;

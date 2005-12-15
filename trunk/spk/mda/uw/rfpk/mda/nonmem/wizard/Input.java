@@ -204,7 +204,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nA standard data item may have alias.  The first data item must be  \"ID\" if\nit exists in the data file.  Data item \"DV\"(data values) is always required.\nThe data item names are not case sensitive.  Each name must be unique.");
+        jTextPane1.setText("Enter the name of the data items in the same order as the data columns\nlocated in the data file.  A data item may be standard or non-standard.\nA standard data item may have alias.  The first data item must be  \"ID\" if\nit exists in the data file.  Data item \"DV\"(data values) is always required.\nData item names and aliases must be in upper case letters and unique.");
         jTextPane1.setPreferredSize(new java.awt.Dimension(435, 66));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
@@ -541,7 +541,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         if(jRadioButton1.isSelected())
         {
             element = (String)jComboBox1.getSelectedItem();
-            String alias = jTextField1.getText().trim();
+            String alias = jTextField1.getText().trim().toUpperCase();
             if(!alias.equals(""))
             {
                 element = element + "=" + alias;
@@ -549,27 +549,26 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         }
         else if(jRadioButton2.isSelected())
         {
-            String item = jTextField2.getText().trim();
-            if(item.equals(""))
+            element = jTextField2.getText().trim().toUpperCase();
+            if(element.equals(""))
                 return;
-            if(exist(stdItems, item.toUpperCase()))
+            if(exist(stdItems, element))
             {
                 JOptionPane.showMessageDialog(null, 
-                                              item + " is one of the reserved " +
+                                              element + " is one of the reserved " +
                                               "names for standard data items.", 
                                               "Input Error",    
                                               JOptionPane.ERROR_MESSAGE);             
                 return;
             }
-            element = jTextField2.getText().trim(); 
             if(jCheckBox1.isSelected())
                 element = element + "=CENTERED";           
         }
         else
             element = "DROP";
         for(int i = 0; i < nDataCol; i++)
-            if(input[i].split("=")[0].equalsIgnoreCase(element.split("=")[0])
-               && !element.equalsIgnoreCase("DROP")) 
+            if(input[i].split("=")[0].equals(element.split("=")[0])
+               && !element.equals("DROP")) 
             {
                 JOptionPane.showMessageDialog(null, 
                                               "Data item " + element.split("=")[0] +
@@ -690,7 +689,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     {
         String first = string.split("=")[0];
         for(int i = 0; i < strings.length; i++)
-            if(first.equalsIgnoreCase(strings[i].split("=")[0]))
+            if(first.equals(strings[i].split("=")[0]))
                 return true;
         return false;
     }
@@ -795,10 +794,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             data = ((MDAObject)wizard.getCustomizedObject()).getData();
             nDataCol = iterator.getNDataCol();
             setDataArray();
-            input = new String[nDataCol];
- 
-            for(int i = 0; i < nDataCol; i++)
-                input[i] = "";
+            input = ((MDAObject)wizard.getCustomizedObject()).getDataLabels();
+
             index = 0;
             jComboBox1.removeItem("ID");
             if(!iterator.getIsInd())
@@ -809,6 +806,11 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             else
             {
                 jComboBox1.insertItemAt("ID", 1);
+            }
+            if(exist(input, "DV"))
+            {
+                isValid = true;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
             }
             if(iterator.getIsReload() && iterator.getReload().getProperty("INPUT") != null &&
                iterator.getIsDataXML())
@@ -866,7 +868,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String inputs = "";
             for(int i = 0; i < nDataCol - 1; i++)
-                inputs = inputs + input[i].toUpperCase() + " ";
+                inputs = inputs + input[i] + " ";
             inputs += input[nDataCol - 1];
             if(input.length > nDataCol)
             {
@@ -899,7 +901,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         
         public String getHelpID() {
             return "Prepare_Input_Data_Labels";
-        }
-        
+        } 
     }
 }

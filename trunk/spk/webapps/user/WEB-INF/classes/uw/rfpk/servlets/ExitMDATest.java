@@ -72,7 +72,7 @@ public class ExitMDATest extends HttpServlet
         }
         catch(ClassNotFoundException e)
         {
-            messageOut = e.getMessage();
+            messageOut += "\n" + e.getMessage();
         }
        
         // Write the data to our internal buffer

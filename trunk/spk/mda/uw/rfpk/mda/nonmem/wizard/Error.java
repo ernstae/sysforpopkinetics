@@ -180,9 +180,14 @@ public class Error extends javax.swing.JPanel implements WizardStep {
             {
                 // Eliminate comments
                 errorCode = Utility.eliminateComments(errorCode); 
-                // Find number of EPSs for population analysis or Etas for individual analysis
+                // Find number of EPSs for population analysis or Etas for individual analysis                    
                 if(!iterator.getIsInd())
                 {
+                    String pkCode = object.getRecords().getProperty("PK");
+                    if(pkCode != null)
+                        iterator.setNEta(Utility.find(pkCode + errorCode, "ETA"));
+                    else
+                        iterator.setNEta(Utility.find(errorCode, "ETA"));
                     iterator.setNEps(Utility.find(errorCode, "EPS"));
                     if(iterator.getNEps() == 0)
                         JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",

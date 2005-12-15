@@ -1002,9 +1002,10 @@ public class XMLReader
    
     /** Convert the data XML back to the original.
      * @param dataXML data XML as a String object.
+     * @param true for adding labels, false for otherwise.
      * @return a String object containing the original data, null if failed.
      */
-    public static String parseDataXML(String dataXML)
+    public static String parseDataXML(String dataXML, boolean addLabel)
     {
         String data = "";
         Document docData = null;
@@ -1042,7 +1043,8 @@ public class XMLReader
         NodeList rowList = spkdata.getElementsByTagName("row"); 
         if(rowList.getLength() > 1)
         {
-            for(int i = 1; i < rowList.getLength(); i++)
+            int start = addLabel? 0 : 1;
+            for(int i = start; i < rowList.getLength(); i++)
             {
                 row = (Element)rowList.item(i);
                 NodeList valueList = row.getElementsByTagName("value");                
@@ -1059,7 +1061,9 @@ public class XMLReader
                 } 
                 data += "\n";
             }
-        }        
+        }
+        if(addLabel)
+            data = "C" + data.substring(1);
         return data;
     }
 
@@ -1067,7 +1071,7 @@ public class XMLReader
     private static String formatString(String number)
     {
         String string = "";
-        for(int i = 0; i < 10 - number.length(); i++)
+        for(int i = 0; i < 12 - number.length(); i++)
             string +=" ";
         return string + number;
     }

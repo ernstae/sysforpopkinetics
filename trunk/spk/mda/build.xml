@@ -37,6 +37,7 @@ author: Jiaji Du
       <classpath>
         <pathelement location="classes" />
         <pathelement location="lib/jnlp.jar" />
+        <pathelement location="lib/jhall.jar" />
         <pathelement location="lib/xercesImpl.jar" />
         <pathelement location="lib/xmlParserAPIs.jar" />
       </classpath>
@@ -65,8 +66,7 @@ author: Jiaji Du
       <classpath>
         <pathelement location="classes" />
         <pathelement location="lib/jnlp.jar" />
-        <pathelement location="lib/xercesImpl.jar" />
-        <pathelement location="lib/xmlParserAPIs.jar" />
+        <pathelement location="lib/jhall.jar" />
       </classpath>
        <link href="${jdk-docs-location}"
              offline="true"

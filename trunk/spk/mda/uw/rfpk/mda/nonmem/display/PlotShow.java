@@ -46,11 +46,10 @@ public class PlotShow extends JFrame {
      * @param type format of presentation: "dots", "line" or "both".
      */
     public PlotShow(String[][][] plotAll, double[][] dataAll, ArrayList labelAll,
-                    Properties dataLabelMap, int type)
+                    Properties dataLabelMap)
     {
         this.plotAll = plotAll;
         this.dataLabelMap = dataLabelMap;
-        this.type = type;
         
         // Display the window
         setSize(500, 500);
@@ -283,7 +282,7 @@ public class PlotShow extends JFrame {
             JFrame frame = new JFrame(); 
             Plotter plotter = new Plotter(dataX, dataY, title, tokens[4], tokens[2],
                                           new String[]{tokens[2]},
-                                          new int[]{type},
+                                          new int[]{0},
                                           new Color[]{Color.red, Color.green, Color.green, Color.green},
                                           plot[0][2].equals("show"),
                                           plot[0][3].equals("show"),
@@ -297,7 +296,7 @@ public class PlotShow extends JFrame {
                                           new Font("SansSerif", Font.BOLD, 11),
                                           new Font("SansSerif", Font.BOLD, 10),
                                           0, 0, 0, 0, true, true, false, false,
-                                          false, 0, false, null, 2, 2, frame);                                          
+                                          false, 0, false, null, 2, 2, frame, null);                                          
             plotter.setToolTipText("");
             frame.getContentPane().add(plotter);
             frame.setLocation(50 * j, 40 * j);
@@ -360,5 +359,4 @@ public class PlotShow extends JFrame {
     private ArrayList aliasList = new ArrayList();  
     private ArrayList splitList = new ArrayList();
     private Properties dataLabelMap = null;
-    private int type = 0;
 }

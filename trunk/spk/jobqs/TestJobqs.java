@@ -47,7 +47,7 @@ public class TestJobqs
 //        String classpath = "/home/jiaji/r2/src/apps/spk/db/api/java/:/home/jiaji/r2/src/apps/spk/jobqs/:" + 
 //        "/home/jiaji/mysql-connector-java-3.0.10-stable/mysql-connector-java-3.0.10-stable-bin.jar:.";
         
-        final int maxTests = 22;
+        final int maxTests = 26;
         final int port = 9001;
 	boolean b = true;
 	boolean target = true;
@@ -319,7 +319,7 @@ public class TestJobqs
                         out.println("set-end-3");
                         b = in.readLine().equals("done") && b;
                         out.println("get-q2ac");
-                        b = in.readLine().equals("none") && b;
+                        b = in.readLine().equals("none") && b;                        
                         break;
                     case 21:
                         target = true;
@@ -331,9 +331,57 @@ public class TestJobqs
                         out.println("set-end-4");
                         b = in.readLine().equals("done") && b;
                         out.println("get-q2ar");
-                        b = in.readLine().equals("none") && b;
+                        b = in.readLine().equals("none") && b;                        
                         break;
                     case 22:
+                        target = true;
+                        s = "init compiler daemon on cmp";
+                        out.println("add-q2c-1");
+                        in.readLine();
+                        out.println("get-q2c");
+                        String jobId = in.readLine();
+                        out.println("init-cmpd");
+                        b = in.readLine().equals("done");
+                        out.println("get-q2c");
+                        b = in.readLine().equals(jobId) && b;
+                        break;
+                    case 23:
+                        target = true;
+                        s = "init compiler daemon on acmp";
+                        out.println("get-q2ac");
+                        jobId = in.readLine();
+                        out.println("init-cmpd");
+                        b = in.readLine().equals("done");
+                        out.println("get-q2ac");
+                        in.readLine();
+                        out.println("get-q2ac");
+                        b = in.readLine().equals(jobId) && b;
+                        break;
+                    case 24:
+                        target = true;
+                        s = "init run-time daemon on run";
+                        out.println("add-q2r-3");
+                        in.readLine();
+                        out.println("get-q2r");
+                        jobId = in.readLine();
+                        out.println("init-rund");
+                        b = in.readLine().equals("done");
+                        out.println("get-q2r");
+                        b = in.readLine().equals(" " + jobId) && b;
+                        break;
+                    case 25:
+                        target = true;
+                        s = "init run-time daemon on arun";
+                        out.println("get-q2ar");
+                        jobId = in.readLine();
+                        out.println("init-rund");
+                        b = in.readLine().equals("done");
+                        out.println("get-q2ar");
+                        in.readLine();
+                        out.println("get-q2ar");
+                        b = in.readLine().equals(jobId) && b;
+                        break;                        
+                    case 26:
                         target = true;
                         s = "calling the server Hi";
                         out.println("Hi");

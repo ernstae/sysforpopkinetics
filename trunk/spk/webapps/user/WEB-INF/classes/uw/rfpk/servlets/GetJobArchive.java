@@ -26,10 +26,11 @@ import java.util.Vector;
 import java.util.Properties;
 import java.sql.*;
 import rfpk.spk.spkdb.*;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
+import uw.rfpk.rcs.Archive;
 
 /** This servlet sends back either the model or the dataset that is used by the job.
  * The servlet receives a String array containing four String objects from the client.
@@ -42,8 +43,8 @@ import uw.rfpk.beans.UserInfo;
  * model_version, or dataset_id, dataset_version according to the third String. Then,
  * the model_id is passed in the database API method getModel to get model archive  and 
  * model name, or the dataset_id is passed in the database API method getDataset to get 
- * dataset archive and dataset name.  The servlet calls JRCS API methods, getRevision and 
- * arrayToString, to get the archive text of the version that has been returned from the 
+ * dataset archive and dataset name.  The servlet calls RCS API method getRevision to 
+ * get the archive text of the version that has been returned from the 
  * database API method getJob call.  The servlet puts the archive text, name and version
  * into a java,util.Properties object.  The servlet sends back two objects.  The first 
  * object is a String containing the error message if there is an error or an empty String 
@@ -146,9 +147,11 @@ public class GetJobArchive extends HttpServlet
                     // Get the requested version of model or dataset
                     rs.next();
                     String ar = rs.getString("archive"); 
-                    Archive arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));                
-                    Object[] revision = arch.getRevision(version); 
-                    String text = ToString.arrayToString(revision, "\n"); 
+//                    Archive arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));                
+//                    Object[] revision = arch.getRevision(version); 
+//                    String text = ToString.arrayToString(revision, "\n");
+                    String text = Archive.getRevision(ar, getServletContext().getInitParameter("perlDir"), 
+                                                      "/tmp/", secret, version);
                     if(text.equals(""))
                         messageOut = "The archive is empty."; 
                  
@@ -181,18 +184,10 @@ public class GetJobArchive extends HttpServlet
         {
             messageOut = e.getMessage();
         }
-        catch(ParseException e)
+        catch(InterruptedException e)
         {
             messageOut = e.getMessage();
         }        
-        catch(InvalidFileFormatException e)
-        {
-            messageOut = e.getMessage();
-        }
-        catch(PatchFailedException e)
-        {
-            messageOut = e.getMessage();
-        }
         finally
         {
             try
@@ -202,7 +197,7 @@ public class GetJobArchive extends HttpServlet
                 if(stmt != null) stmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

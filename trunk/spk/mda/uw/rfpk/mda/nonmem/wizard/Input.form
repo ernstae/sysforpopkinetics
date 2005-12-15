@@ -187,7 +187,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="Enter the name of the data items in the same order as the data columns&#xa;located in the data file.  A data item may be standard or non-standard.&#xa;A standard data item may have alias.  The first data item must be  &quot;ID&quot; if&#xa;it exists in the data file.  Data item &quot;DV&quot;(data values) is always required.&#xa;The data item names are not case sensitive.  Each name must be unique."/>
+        <Property name="text" type="java.lang.String" value="Enter the name of the data items in the same order as the data columns&#xa;located in the data file.  A data item may be standard or non-standard.&#xa;A standard data item may have alias.  The first data item must be  &quot;ID&quot; if&#xa;it exists in the data file.  Data item &quot;DV&quot;(data values) is always required.&#xa;Data item names and aliases must be in upper case letters and unique."/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[435, 66]"/>
         </Property>

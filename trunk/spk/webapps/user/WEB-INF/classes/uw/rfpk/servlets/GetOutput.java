@@ -210,7 +210,7 @@ public class GetOutput extends HttpServlet
                 if(datasetStmt != null) datasetStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer
