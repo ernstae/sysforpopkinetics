@@ -8,43 +8,16 @@
    <title>SPK Compiler Output (C++)</title>
    <articleinfo>
       <revhistory>
-         <revision>
-            <revnumber>1.25</revnumber>
-            <date>October 06, 2005</date>
+	 <revision>
+            <revnumber>2.5</revnumber>
+            <date>December 14, 2005</date>
             <authorinitials>sh</authorinitials>
             <revremark>
-            Simulation error 11->16. Simulation failure 101->106.
+            OdePred.h
             </revremark>
          </revision>
          <revision>
-            <revnumber>1.24</revnumber>
-            <date>October 05, 2005</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            DataSet::getMeasurementIndex(i,j),
-            DataSet::getRecordIndex(i,j),
-            Pred::getMeasurementIndex(i,j),
-            Pred::getRecordIndex(i,j)
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.23</revnumber>
-            <date>September 23, 2005</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Re-defining fitDriver.cpp and monteDriver.cpp's return codes.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.22</revnumber>
-            <date>September 20, 2005</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Adding a new return code for "didn't-converge".
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.21</revnumber>
+            <revnumber>2.4</revnumber>
             <date>June 10, 2005</date>
             <authorinitials>sh</authorinitials>
             <revremark>
@@ -52,65 +25,7 @@
             </revremark>
          </revision>
          <revision>
-            <revnumber>1.20</revnumber>
-            <date>June 10, 2005</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            IndData::getMeasurementIndex(j), IndData::getRecordIndex(j'),
-            DataSet::getMeasurementIndex(j), DataSet::getRecordIndex(j').
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.19</revnumber>
-            <date>March 1, 2005</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Specifying that whenever a checkpoing is found in the working directory
-            of fitDriver, the optimization process begins from whereever it's left off.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.18</revnumber>
-            <date>January 26, 2005</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Specifying the name of check-point file that is generated at run-time of fitDriver.cpp.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.17</revnumber>
-            <date>December 15, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Specify generated drivers' screen output.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.16</revnumber>
-            <date>November, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Specifying the return value of fitDriver.cpp and monteDriver.cpp.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.15</revnumber>
-            <date>September 30, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Specifying fixing elements of THETA.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.14</revnumber>
-            <date>September 8, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            Replaced DataSet::xmlOut() with DataSet::operator<<().
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.13</revnumber>
+            <revnumber>2.3</revnumber>
             <date>September 8, 2004</date>
             <authorinitials>sh</authorinitials>
             <revremark>
@@ -118,17 +33,7 @@
             </revremark>
          </revision>
          <revision>
-            <revnumber>1.12</revnumber>
-            <date>September 8, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>
-            The data type of DataSet::getAllMeasurements() and DataSet::getN()
-            were specified incorrectly.  They were said std::vector, but
-            acturally are std::valarray.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.11</revnumber>
+            <revnumber>2.2</revnumber>
             <date>September 8, 2004</date>
             <authorinitials>sh</authorinitials>
             <revremark>
@@ -136,61 +41,28 @@
             </revremark>
          </revision>
          <revision>
-            <revnumber>1.10</revnumber>
-            <date>September 7, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>A &gt; was flipped around.
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.9</revnumber>
-            <date>September 7, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>DataSet::getN(), DataSet::getAllMeasurements(), DataSet::getPopSize(), DataSet()::xmlOut()
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.8</revnumber>
-            <date>September 2, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>Corrected the description for DataSet::getAllMeasurements().
-            </revremark>
-         </revision>
-         <revision>
-            <revnumber>1.7</revnumber>
+            <revnumber>2.1</revnumber>
             <date>August 3, 2004</date>
             <authorinitials>sh</authorinitials>
             <revremark>Explanations for Makefile.SPK and Monte Carlo related topics</revremark>
          </revision>
          <revision>
-            <revnumber>1.6</revnumber>
+            <revnumber>2.0</revnumber>
             <date>July 1, 2004</date>
             <authorinitials>sh</authorinitials>
             <revremark>Complete reorganization.</revremark>
          </revision>
          <revision>
-            <revnumber>1.5</revnumber>
-            <date>April 6, 2004</date>
-            <authorinitials>sh</authorinitials>
-            <revremark>Updated the doc re. $PRED: Pred class derived from PredBase.</revremark>
-         </revision>
-         <revision>
-            <revnumber>1.4</revnumber>
+            <revnumber>1.3</revnumber>
             <date>March 13, 2004</date>
             <authorinitials>alan</authorinitials>
             <revremark>Changes to move documentation to web server.</revremark>
          </revision>
          <revision>
-            <revnumber>1.3</revnumber>
+            <revnumber>1.2</revnumber>
             <date>January 6, 2004</date>
             <authorinitials>alan</authorinitials>
             <revremark>Changed version of Docbook DTD from 4.1.2 to 4.2 in all .xml files</revremark>
-         </revision>
-         <revision>
-            <revnumber>1.2</revnumber>
-            <date>January 5, 2004</date>
-            <authorinitials>alan</authorinitials>
-            <revremark>Clean up.</revremark>
          </revision>
          <revision>
 	    <revnumber>1.1</revnumber>
@@ -201,19 +73,8 @@
       </revhistory>
       <abstract>
          <para>
-SPK Compiler assembles information from a given pair of 
-<ulink url="../sourceML/sourceML.html">SpkSourceML</ulink> and 
-<ulink url="../dataML/dataML.html">SpkDataML</ulink> documents
-and translates it to C++ source code.  The source code is organized into several
-logical units and saved in files (.cpp and .h).  In this documentation,
-you will find the descriptions and specifications of 
-these logical units and their corresponding file names, and
-the pieces of information (publically) available from these units.
-         </para>
-         <para>
-For the terms, 
-<emphasis>theta</emphasis>, <emphasis>Omega</emphasis>, <emphasis>eta</emphasis>,
-<emphasis>Sigma</emphasis> and <emphasis>eps</emphasis>, refer to NONMEM manuals.
+This documentation describes the source code files produced by 
+SPK Compiler.
          </para>
      </abstract>
    </articleinfo>
@@ -221,12 +82,6 @@ For the terms,
       <title>Related Articles</title>
       <para>
          <itemizedlist>
-            <listitem>
-               <para>
-                  <ulink url="../modelCap/modelCap.tex">
-                  Modeling Capabilities Specification</ulink>
-               </para>
-            </listitem>
             <listitem>
                <para>
                   <ulink url="../sourceML/sourceML.html">SpkSourceML</ulink>
@@ -237,22 +92,19 @@ For the terms,
                   <ulink url="../dataML/dataML.html">SpkDataML</ulink>
                </para>
             </listitem>
+            <listitem>
+               <para>
+                  <ulink url="../reportML/reportML.html">SpkReportML</ulink>
+               </para>
+            </listitem>
          </itemizedlist>
       </para>
    </sect1>
    <sect1>
       <title><filename>NonmemPars.h</filename></title>
       <para>
-      This header file exports a namespace, <literal>NonmemPars</literal>, containing
-      C++ translation of NONMEM control parameters. Most of the parameters declared within this
-      namespace are originated directly from the given SpkSourceML document.
-      Some extra information may be provided in the namespace as well.  
-      They are values SPK Compiler could statically derive from the given parameters.
-
-      Not all user-given control parameters are present in the namespace.
-      If you, an SPK application developer, finds a piece of information missing
-      from this namespace, please contact 
-      <ulink url="mailto:honda99@u.washington.edu">honda99@u.washington.edu</ulink>.
+      This header file exports a namespace, <literal>NonmemPars</literal>, 
+      defining variables that contain the values of NONMEM control parameters. 
       </para>
       <variablelist>
          <title>Namespace Entries</title>
@@ -289,13 +141,14 @@ For the terms,
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const valarray&lt;double&gt; thetaFixed</literal></term>
+            <term><literal>const valarray&lt;bool&gt; thetaFixed</literal></term>
             <listitem>
                <para>
-               contains a vector of boolean flags telling the corresponding i-th element of 
-               <emphasis>theta</emphasis> is fixed to the initial estimate value.
-               <literal>thetaFixed[i]</literal> = true tells <emphasis>theta(i+1)</emphasis> is
-               fixed.
+               contains a vector of boolean flags telling as to whether
+               the corresponding i-th element of 
+               <emphasis>theta</emphasis> is fixed to the initial estimate value or not.
+               <literal>thetaFixed[i]</literal> = true causes <emphasis>theta(i+1)</emphasis>
+               to be fixed.
                </para>
             </listitem>
          </varlistentry>
@@ -348,7 +201,7 @@ For the terms,
             <listitem>
                <para>
                is the dimension of <emphasis>Omega</emphasis> (symmetric) matrix.
-               ex. for a 3 by 3 matrix, the value here is 3.
+               This value is determined by the length of <emphasis>eta</emphasis>.
                </para>
             </listitem>
          </varlistentry>
@@ -368,6 +221,18 @@ For the terms,
                is the initial estimates for the elements of <emphasis>Omega</emphasis>
                that are subject to optimization.  Thus, the length of <varname>omegaIn</varname>
                is <literal>omegaOrder</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;bool&gt; omegaFixed</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean values telling as to whether the corresponding i-th
+               element of <emphasis>Omega</emphasis> should be fixed to the initial estimate value or not.
+               If Omega is 3 by 3 and only the diagonal elements are subject to optimization,
+               setting <literal>omegaFixed[2] = true</literal> causes the (3,3) element of the matrix
+               to be fixed.
                </para>
             </listitem>
          </varlistentry>
@@ -438,7 +303,7 @@ For the terms,
 
          <!-- Begin ONLY APPEAR in ADVAN6 -------------------------------------------------------------------- -->
          <varlistentry>
-            <term>----- ADVAN6 ONLY -----</term>
+            <term>----- For ADVAN6 only from here -----</term>
             <listitem>
               <variablelist>
                   <varlistentry>
@@ -486,7 +351,7 @@ For the terms,
                      </listitem>
                   </varlistentry>
                   <varlistentry>
-                     <term><literal>const std::valarray&lt;bool&gt; initialOff</literal></term>
+                     <term><literal>const valarray&lt;bool&gt; initialOff</literal></term>
                      <listitem>
                         <para>
                         is a vector of boolean values where the i-th value indicates
@@ -496,7 +361,7 @@ For the terms,
                      </listitem>
                   </varlistentry>
                   <varlistentry>
-                     <term><literal>const std::valarray&lt;bool&gt; noOff</literal></term>
+                     <term><literal>const valarray&lt;bool&gt; noOff</literal></term>
                      <listitem>
                         <para>
                         is a vector of boolean values where the i-th value indicates
@@ -506,7 +371,7 @@ For the terms,
                      </listitem>
                   </varlistentry>
                   <varlistentry>
-                     <term><literal>const std::valarray&lt;bool&gt; noDose</literal></term>
+                     <term><literal>const valarray&lt;bool&gt; noDose</literal></term>
                      <listitem>
                         <para>
                         is a vector of boolean values where the i-th value indicates
@@ -573,14 +438,28 @@ For the terms,
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const int numberEval</literal></term>
+            <term><literal>const int nEval</literal></term>
             <listitem>
                <para>
-               specifies the number of function evalautions to use for each
-               individual in the population.
-               Actually it is the maximum number when <varname>method</varname> is
-               <literal>grid</literal>.  The value is ignored when <varname>method</varname>
-               is <literal>analytic</literal>.
+               is the number of components or the number of function evaluations.
+               If method = grid, the value is taken as the number of random effects.
+               Otherwise, the value must be one.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; numberEval</literal></term>
+            <listitem>
+               <para>
+               specifies the number of function evalautions.
+               If method == grid, the length of the vector is equal to the
+               number of random effects.  numberEval[i] specifies the 
+               number of grid points in i-th random effect, 
+               and the corresponding total number of function evaluations is
+               the product of the elements of numberEval.
+               If method != grid, the length of the vector is 1 and 
+               numberEval[0] is taken as the total number of functions
+               evaluations.
                </para>
             </listitem>
          </varlistentry>
@@ -590,46 +469,66 @@ For the terms,
       <title><filename>IndData.h</filename></title>
       <para>
       This header file exports the definition of a template class, <classname>IndData</classname>.
-      The class is an abstraction of a set of data records for a single individual.
-      Each data record is a s set of <emphasis>at least</emphasis> two data items: DV
-      (Dependent Variable) and MDV (Missing Dependent Variable) 
-      --- consult NONMEM manuals for further explanation on these terms ---.
+      <classname>IndData</classname> is a representation of the data set associated with
+      <emphasis>a single individual</emphasis>.
       </para>
       <para>
-      Those data items which are taken from an experiement shall be made available to the SPK applications as
-      read-only.  ID, MDV and DV belong to this category.  
-      On the other hand, there may be other values that cannot be determined until the PRED model is evaluated
-      at each sampling point.  The class provides (writable) placeholders for convenience 
-      for such values as well.
-      </para>
-      <para>
-      Here is an example.  3 measurements were taken from a patient. 
-      Her/his data set not only contains 3 data records corresponding to these 3 measurements but also
-      an additional record containing only her/his gender information.  The model
-      describing the behaviour of the drug is given by:
-         <programlisting>
-TmP1 = THETA(1) * 2.0
-F = TmP1 + ETA(1)
-         </programlisting>
-      The measurements from the observation unit are described as DVs.
-      The sampling points are in the TIME field.
-      Then, an <classname>IndData</classname> object would expose read-only vectors of length 
-      <varname>n</varname> named <varname>TIME</varname>, <varname>DV</varname> and <varname>MDV</varname>
-      and read-write vectors of the same length named <varname>TmP1</varname> and
-      <varname>F</varname>.  Plus, it will expose a read-write vector of 
-      <varname>4</varname> vectors of length <varname>1</varname> named 
-      <varname>THETA</varname> and <varname>ETA</varname>
-      (ie. "1" comes from the fact <emphasis>theta</emphasis> and <emphasis>eta</emphasis> 
-      vectors have only one element in this example).
+      The class object contains not only the individual's original data set but also
+      placeholders for values computed during the process that correspond to each data record.
+      The original data set values are declared read-only and others are most likely read-write.
+      It also provides a number of methods for data operation.
       </para>
       <variablelist>
          <title>Public Methods</title>
          <varlistentry>
-            <term><literal>const std::valarray&lt;double&gt; getMeasurements() const</literal></term>
+            <term><literal>IndData( int nRecords, 
+                                    const vector&lt;char*&gt; &amp;IDIn, 
+                                    const vector&lt;double&gt; &amp;d1In, 
+                                    const vector&lt;double&gt; &amp;d2In, 
+                                    ...)</literal></term>
             <listitem>
                <para>
-               Returns a vector of measurements, i.e. DV values of which corresponding MDV values
-               are 0 in the original data set.
+               The constructor.  The first argument, <varname>nRecords</varname> specifies
+               the number of data records (for the individual).  The arguments after
+               following <varname>nRecords</varname> (ex. <varname>IDIn</varname>,
+               <varname>d1In</varname>, <varname>d2In</varname>...)
+               are vectors containing the values of data items
+               from the data set such as ID, DV and TIME.  Optional data items such
+               as ID and MDV will appear in this list of arguments with their default values.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>~IndData()</literal></term>
+            <listitem>
+               <para>
+                The destructor.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNRecords() const</literal></term>
+            <listitem>
+               <para>
+               Returns the total number of data records associated with this individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNObservs() const</literal></term>
+            <listitem>
+               <para>
+               Returns the number of data records whose corresponding MDV (Missing Data Value)
+               value is 0 (false).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; getMeasurements() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of measurements.
+               i.e. The DV values of which corresponding MDV values are 0.
                </para>
             </listitem>
          </varlistentry>
@@ -646,19 +545,6 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>int getMeasurementIndex( int i, int j ) const</literal></term>
-            <listitem>
-               <para>
-               Returns the index to an element of the i-th individual's measurement vector, i.e. yi, that 
-               corresponds to the measurement, i.e. DV, value of the j-th row of the 
-               i-th individual's original data set.
-               If the MDV field value of the j-th row of the original data set were 1, indicating
-               the data record does not contain a valid measurement value, i.e. DV, the value 
-               returned by this method is -1.
-               </para>
-            </listitem>
-         </varlistentry>
-         <varlistentry>
             <term><literal>int getRecordIndex( int j' ) const</literal></term>
             <listitem>
                <para>
@@ -668,12 +554,197 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>int getRecordIndex( int i, int j' ) const</literal></term>
+            <term><literal>void replaceMeasurements( const valarray&lt;double&gt; &amp; yi )</literal></term>
             <listitem>
                <para>
-               Returns the index to a record in the i-th individual's original data 
-               set from which the j'th 
-               element of the measurement vector, i.e. y, originated.
+               Replace the internally kept values of measurements with the values of <varname>yi</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePred ( const valarray&lt;double&gt; &amp; predIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PRED (prediction) with the values of <varname>predIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceRes( const valarray&lt;double&gt; &amp; ResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of RES (residual) with the values of <varname>ResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceWRes( const valarray&lt;double&gt; &amp; WResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of WRES (weighted residual)
+               with the values of <varname>WResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePPred( const valarray&lt;double&gt; &amp; pPredIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PPRED (population prediction)
+               with the values of <varname>pPredIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePRes( const valarray&lt;double&gt; &amp; pResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PRES (population residual)
+               with the values of <varname>pResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePWRes( const valarray&lt;double&gt; &amp; pWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PWRES (population weighted residual)
+               with the values of <varname>pWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIPred( const valarray&lt;double&gt; &amp; iPredIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IPRED (individualized prediction)
+               with the values of <varname>iPredIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIRes( const valarray&lt;double&gt; &amp; iResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IRES (individualized residual)
+               with the values of <varname>iResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIWres( const valarray&lt;double&gt; &amp; iWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IWRES (individualized weighted residual)
+               with the values of <varname>iWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCPred( const valarray&lt;double&gt; &amp; cPredIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CPRED (conditional prediction) 
+               with the values of <varname>cPredIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCRes( const valarray&lt;double&gt; &amp; cResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CRES (conditional residual)
+               with the values of <varname>cResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCWRes( const valarray&lt;double&gt; &amp; cWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CWRES (conditional weighted residual)
+               with the values of <varname>cWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceEta( const valarray&lt;double&gt; &amp; etaIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of ETA (eta) 
+               with the values of <varname>etaIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceEtaRes( const valarray&lt;double&gt; &amp; etaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of ETARES (eta residual)
+               with the values of <varname>etaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceWEtaRes( const valarray&lt;double&lt; &amp; etaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of WETARES (weighted eta residual)
+               with the values of <varname>etaWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIEtaRes( const valarray&lt;double&gt; &amp; iEtaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IETARES (individualized eta residual)
+               with the values of <varname>iEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIWEtaRes( const valarray&lt;double&gt; &amp; iEtaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IWETARES (individualized weighted eta residual)
+               with the values of <varname>iWEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePEtaRes( const valarray&lt;double&gt; &amp; pEtaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PETARES (population eta residual)
+               with the values of <varname>pEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePWEtaRes( const valarray&lt;double&gt; &amp; pEtaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PWETARES (population weighted eta residual)
+               with the values of <varname>pEtaWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCEtaRes( const valarray&lt;double&gt; &amp; cEtaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CETARES (conditional eta residual)
+               with the values of <varname>cEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCWEtaRes( const valarray&lt;double&gt; &amp; cEtaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CWETARES (conditional weighted eta residual)
+               with the values of <varname>cEtaWResIn</varname>.
                </para>
             </listitem>
          </varlistentry>
@@ -681,32 +752,27 @@ F = TmP1 + ETA(1)
       <variablelist>
          <title>Public Properties</title>
          <varlistentry>
-            <term><literal>const std::vector&lt;T&gt; <replaceable>xXx</replaceable></literal></term>
+            <term><literal>const vector&lt;T&gt; <replaceable>xXx</replaceable></literal></term>
             <listitem>
                <para>
-               <replaceable>xXx</replaceable> is replaced by a user-given data label 
-               such as DV.  The name will be exactly the same as the corresponding 
-               data label specified in the given
-               SpkSourceML document or SpkDataML document, maintaining upper/lower cases.
-               It is a vector of length <varname>n</varname>, where <varname>n</varname>
-               is the number of data records for the individual.
+               <replaceable>xXx</replaceable> is replaced exactly by the labels of user-given (read only) 
+               data items such as ID, TIME and DV. 
+               It has a length of <varname>nRecords</varname>.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>std::vector&lt;T&gt; <replaceable>yYy</replaceable></literal></term>
+            <term><literal>vector&lt;T&gt; <replaceable>yYy</replaceable></literal></term>
             <listitem>
                <para>
-               <replaceable>yYy</replaceable> is replaced by a PRED item such as <varname>TmP1</varname> 
-               in the earlier example.  The name will be exactly the same as the corresponding PRED
-               item name, maintaining upper/lower cases.
-               It is a vector of length <varname>n</varname>, where <varname>n</varname>
-               is the number of data records for the individual.
+               <replaceable>yYy</replaceable> is replaced exactly by variable names that appear
+               on the left hand side of assignment statements in model definitions.
+               It has a length of <varname>nRecords</varname>.
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>std::vector&lt; std::vector&lt;T&gt; &gt; THETA</literal></term>
+            <term><literal>vector&lt; vector&lt;T&gt; &gt; THETA</literal></term>
             <listitem>
                <para>
                A read-write vector of <varname>n</varname>, 
@@ -717,7 +783,7 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>std::vector&lt; std::vector&lt;T&gt; &gt; ETA</literal></term>
+            <term><literal>vector&lt; vector&lt;T&gt; &gt; ETA</literal></term>
             <listitem>
                <para>
                A read-write vector of <varname>n</varname> 
@@ -728,7 +794,7 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>std::vector&lt; std::vector&lt;T&gt; &gt; EPS</literal></term>
+            <term><literal>vector&lt; vector&lt;T&gt; &gt; EPS</literal></term>
             <listitem>
                <para>
                A read-write vector that contains <varname>n</varname> 
@@ -745,30 +811,28 @@ F = TmP1 + ETA(1)
       <title><filename>DataSet.h</filename></title>
       <para>
       This header file exports the definition of a template class, <classname>DataSet</classname>.
-      The class is an abstraction of data set for the entire population of size > 0.
-      It basically bundles all individuals' data sets
-      represented by <classname>IndData</classname> objects.  This class's default constructor is responsible
-      for filling/initializing the set.  Note that, it is the <emphasis>default</emphasis> constructor
-      that does the filling, which means all information are embedded (hard-coded) in the constructor 
-      body by SPK Compiler.
+      <classname>DataSet</classname> class is a reprentation of an entire data set
+      (the population size >= 1).
       </para>
       <variablelist>
-         <title>Constructor</title>
+         <title>Public Methods</title>
          <varlistentry>
-            <term>
-            DataSet&lt;class T&gt;::DataSet()
+            <term><literal>DataSet&lt;class T&gt;::DataSet()</literal>
             </term>
             <listitem>
                <para>
-               The type of the template parameter is somewhat restrictive at this point.
-               <varname>T</varname> has to be a concrete type of <literal>CppAD</literal> template
-               class.
+               Constructor.  The type of the template argument is somewhat restrictive at this point.
+               <varname>T</varname> has to be a concrete type of 
+               <ulink url="http://www.coin-or.org/CppAD/">CppAD</ulink>. 
                </para>
             </listitem>
          </varlistentry>
-      </variablelist>
-      <variablelist>
-         <title>Public Methods</title>
+         <varlistentry>
+            <term><literal>~DataSet()</literal></term>
+            <listitem>
+               <para>Destructor</para>
+            </listitem>
+         </varlistentry>
          <varlistentry>
             <term><literal>int getPopSize() const </literal></term>
             <listitem>
@@ -778,7 +842,7 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const std::valarray&lt;double&gt; getAllMeasurements() const</literal></term>
+            <term><literal>const valarray&lt;double&gt; getAllMeasurements() const</literal></term>
             <listitem>
                <para>
                Returns a vector of measurements, i.e. DV values of which corresponding MDV values
@@ -831,7 +895,7 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>void expand( const std::valarray&lt;double&gt; &amp; trancated, std::valarray&lt;double&gt; &amp; expanded ) const</literal></term>
+            <term><literal>void expand( const valarray&lt;double&gt; &amp; trancated, valarray&lt;double&gt; &amp; expanded ) const</literal></term>
             <listitem>
                <para>
                Map <varname>trancated</varname> that is in the measurement-oriented space to the original record-oriented space.  The measurement-oriented space refers to the space in which only the data records that contain Dependent Variable values.  Whereas, the record-oriented space refers to the original data set that also contains rows missing DVs.
@@ -839,7 +903,7 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const std::valarray&lt;int&gt; getNObservs() const</literal></term>
+            <term><literal>const valarray&lt;int&gt; getNObservs() const</literal></term>
             <listitem>
                <para>
                Returns a vector of numbers of obervation records.  The i-th element of the vector
@@ -858,7 +922,7 @@ F = TmP1 + ETA(1)
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const std::valarray&lt;int&gt; getNRecords() const</literal></term>
+            <term><literal>const valarray&lt;int&gt; getNRecords() const</literal></term>
             <listitem>
                <para>
                Returns a vector of numbers of records.  The i-th element of the vector
@@ -878,7 +942,7 @@ F = TmP1 + ETA(1)
          </varlistentry>
          <varlistentry>
             <term>
-               <literal>friend std::ostream& operator<<( std::ostream&amp; o, const DataSet&lt;T&gt; A )</literal>
+               <literal>friend ostream &amp; operator&lt;&lt;( ostream&amp; o, const DataSet&lt;T&gt; A )</literal>
             </term>
             <listitem>
                <para>
@@ -931,77 +995,71 @@ F = TmP1 + ETA(1)
       <para>
 <filename>Pred.h</filename> defines a template class, <classname>Pred</classname>,
 which is derived from an abstract class, <classname>PredBase</classname>.
-<classname>Pred</classname> is basically a wrapper for $PRED model definition.
-The class provides a public interface that allows clients to request an evaluation
-of the model at a certain point.
+The purpose of this class is to provide a facility to execute the user's PRED model.
       </para>
-      <para>
-The definition of $PRED, which is written 
-in NM-TRAN (ie. a subset of FORTRAN 77), is translated into C++ and 
-inserted into a generated (by SPK Compiler) 
-subclass of an existing abstract class, <classname>PredBase</classname>.
-<classname>PredBase</classname>
-declares a pure virtual member function called <function>eval()</function>,
-that is to be implemented.  SPK Compiler produces a C++ source code for
-<classname>Pred</classname>, a concrete template sub-class of the abstract
-base and store the definition in a file named, <filename>Pred.h</filename>.
-The C++ version of PRED definition takes up the core computational portion
-of the function implementation.
-      </para>
+      <programlisting>
+template &lt;class spk_ValueType&gt;
+Pred : public PredBase
+{
+   public:
+      Pred( const DataSet&lt;spk_ValueType&gt;* dataIn );
+      ~Pred(){}
+      virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
+                         int spk_etaOffset,   int spk_etaLen,
+		         int spk_epsOffset,   int spk_epsLen,
+		         int spk_fOffset,     int spk_fLen,
+		         int spk_yOffset,     int spk_yLen,
+		         int spk_i,
+		         int spk_j,
+                         int &amp; spk_m,
+		         const vector&lt;spk_ValueType&gt; &amp; spk_indepVar,
+		         vector&lt;spk_ValueType&gt;       &amp; spk_depVar ) = 0;
+      int getNObservs( int who ) const;
+      int getNRecords( int who ) const;
+      int getMeasurementIndex( int who, int recordIndex ) const;
+      int getMeasurementIndex( int recordIndex ) const;
+      int getRecordIndex( int who, int measurementIndex ) const;
+      int getRecordIndex( int measurementIndex ) const;
+}
+      </programlisting>
       <sect2>
-         <title>Abstract Base Class: <classname>PredBase</classname></title>
+         <title>Methods to Implement</title>
          <anchor id="predbase"/>
          <para>
-            <classname>PredBase</classname> declares a pure virtual function, 
-            <function>eval()</function> along with (defined) utility functions.
+            <classname>Pred</classname> must implement a pure virtual function of
+            its super class <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html">
+            PredBase</ulink>, <function>eval()</function>.
          </para>
          <sect3>
-            <title>virtual bool eval()</title>
+            <title>Constructor</title>
+            <variablelist>
+               <title>Arguments</title>
+               <varlistentry>
+                  <term><literal>const DataSet&lt;spk_ValueType&gt;* dataIn</literal></term>
+                  <listitem>
+                     <para>
+                     A pointer to a DataSet object.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </sect3>
+         <sect3>
+            <title><literal>virtual bool eval()</literal></title>
             <para>
                <function>eval()</function> function evaluates
-               the C++ translation of user's $PRED model for the j-th component of
-               the i-th individual's measurement data.  The class <classname>PredBase</classname>
-               is part of <varname>spkpred</varname> library and declared in 
-               <filename>PredBase.h</filename>.
+               the $PRED model at the evaluation point corresponding to the i-th
+               individual's j-th data record.
             </para>
-            <programlisting>
-// This class is defined in &lt;spk/PredBase.h&gt;.
-template &lt;class T&gt;
-PredBase{
-   public:
-      virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
-		     int spk_etaOffset,   int spk_etaLen,
-		     int spk_epsOffset,   int spk_epsLen,
-		     int spk_fOffset,     int spk_fLen,
-		     int spk_yOffset,     int spk_yLen,
-		     int spk_i,
-		     int spk_j,
-		     const std::vector&lt;T&gt; & spk_indepVar,
-		     std::vector&lt;T&gt; & spk_depVar ) = 0;
-      virtual ~PredBase(){}
-   protected:
-      PredBase(){}
-      PredBase( const PredBase& ){}
-      PredBase& operator=( const PredBase& ){}
-}
-            </programlisting>
+            <para>
+               For the complete specification of <function>eval()</function>,
+               consult <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0">
+               PredBase Specifiction</ulink>.
+            </para>
             <formalpara>
                <title>Requirements</title>
                <para>
                   <itemizedlist>
-                     <listitem>
-                        <para>
-At the end of an iteration of population parameter optimization,
-a <emphasis>complete</emphasis> set of values assigned 
-to the all variables appeared 
-on the left hand side of assignment statements in the user's 
-PRED model definition, evaluated at every sampling point for 
-each individual shall be kept and be available externally.
-This implies that the values from the previous iteration shall
-be available if the current iteration failed in the middle
-of computation.
-                        </para>
-                     </listitem>  
                      <listitem>
                         <para>
 The user's model definition which is in a psudo FORTRAN language
@@ -1010,17 +1068,21 @@ shall retain the case-insensitive attribute when it is translated to C++.
                      </listitem>
                      <listitem>
                         <para>
-A prefix <literal>spk_</literal> is reserved for use by SPK Compiler developers.
+Prefix <literal>spk_</literal> is added to all non-user variables in order
+to avoid a conflict with user variable names.  A non-user variable
+in this sense is a variable created by the system (i.e. non-user).
+Whereas, a user-variable is a variable that appear in the model definition.
                         </para>
                      </listitem>
                   </itemizedlist>
                </para>
             </formalpara>
             <formalpara>
-               <title>Returned Value</title>
+               <title>Return Value</title>
                <para>
-<literal>true</literal> if the MDV for the corresponding data record ---
-the i-th individual's j-th data record --- is 0.  <literal>false</literal> otherwise.
+               The function returns <literal>true</literal> 
+               if the MDV for the current data 
+               record is 0.  <literal>false</literal> otherwise.
                </para>
             </formalpara>
             <variablelist>
@@ -1143,12 +1205,13 @@ the i-th individual's j-th data record --- is 0.  <literal>false</literal> other
                   <listitem>
                      <para>
                      will be replaced by the index to the observation record that corresponds to
-                     the j-th data record of the i-th individual.
+                     the j-th data record of the i-th individual if the MDV is 0.  
+                     The value is unspecified for MDV=1.
                      </para>
                   </listitem>
                </varlistentry>
                <varlistentry>
-                  <term><literal>const std::vector&lt;T&gt; & spk_indepVar</literal></term>
+                  <term><literal>const vector&lt;T&gt; &amp; spk_indepVar</literal></term>
                   <listitem>
                      <para>
                      is the vector containing independent variables: 
@@ -1158,7 +1221,7 @@ the i-th individual's j-th data record --- is 0.  <literal>false</literal> other
                   </listitem>
                </varlistentry>
                <varlistentry>
-                  <term><literal>std::vector&lt;T&gt; & spk_depVar</literal></term>
+                  <term><literal>vector&lt;T&gt; &amp; spk_depVar</literal></term>
                   <listitem>
                      <para>
                      is an output in which the predicted value for the i-th individual's j-th data record
@@ -1171,19 +1234,19 @@ the i-th individual's j-th data record --- is 0.  <literal>false</literal> other
             </variablelist>
          </sect3>
          <sect3>
-            <title>int getNObservs( int i ) const</title>
+            <title><literal>int getNObservs( int i ) const</literal></title>
             <para>
             Returns the number of obervations records for the i-th individual.
             </para>
          </sect3>
          <sect3>
-            <title>int getNRecords( int i ) const</title>
+            <title><literal>int getNRecords( int i ) const</literal></title>
             <para>
             Returns the number of total records for the i-th individual.
             </para>
          </sect3>
          <sect3>
-            <title>int getMeasurementIndex( int j ) const</title>
+            <title><literal>int getMeasurementIndex( int j ) const</literal></title>
             <para>
                Returns the index to an element of the measurement vector, i.e. y, that 
                corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
@@ -1193,7 +1256,7 @@ the i-th individual's j-th data record --- is 0.  <literal>false</literal> other
             </para>
          </sect3>
          <sect3>
-            <title>int getMeasurementIndex( int i, int j ) const</title>
+            <title><literal>int getMeasurementIndex( int i, int j ) const</literal></title>
             <para>
                Returns the index to an element of the i-th individual's measurement vector, i.e. y, that 
                corresponds to the measurement, i.e. DV, value of the j-th row of the 
@@ -1204,14 +1267,14 @@ the i-th individual's j-th data record --- is 0.  <literal>false</literal> other
             </para>
          </sect3>
          <sect3>
-            <title>int getRecordIndex( int j ) const</title>
+            <title><literal>int getRecordIndex( int j ) const</literal></title>
             <para>
                Returns the index to a record in the original data set from which the j'th 
                element of the measurement vector, i.e. y, originated.
             </para>
          </sect3>
          <sect3>
-            <title>int getRecordIndex( int i, int j ) const</title>
+            <title><literal>int getRecordIndex( int i, int j ) const</literal></title>
             <para>
                Returns the index to a record in the i-th individual's
                original data set from which the j'th 
@@ -1219,176 +1282,287 @@ the i-th individual's j-th data record --- is 0.  <literal>false</literal> other
             </para>
          </sect3>
       </sect2>
-      <sect2>
-         <title>An instance of $PRED and <filename>Pred.h</filename></title>
-         <anchor id="pred"/>
-         <sect3>
-            <title>$PRED</title>
-            <programlisting>
-;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
-;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
-;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/KG)
-;DOSE=WT-ADJUSTED DOSE (MG/KG)
-;DS=NON-WT-ADJUSTED DOSE (MG)
-
-IF (DOSE.NE.0) THEN
-   DS=DOSE*WT
-   W=WT
-ENDIF
-KA=THETA(1) + ETA(1)
-KE=THETA(2) + ETA(2)
-CL=THETA(3) * WT + ETA(3)
-D=EXP(-KE*TIME)-EXP(-KA*TIME)
-E=CL*(KA-KE)
-F=DS*KE*KA/E*D
-Y=F+EPS(1)
-            </programlisting>
-         </sect3>
-         <sect3>
-            <title><filename>Pred.h</filename></title>
-            <programlisting>
-#ifndef PRED_H
-#define PRED_H
-
-#include &lt;vector&gt;
-#include &lt;string&gt;
-#include "DataSet.h"
-#include "PredBase.h"
-
-template &lt;class T&gt;
-class Pred : public PredBase
+   </sect1>
+   <sect1>
+      <title><filename>OdePred.h</filename></title>
+      <para>
+      <filename>OdePred.h</filename> defines a template class, <classname>OdePred</classname>,
+      which is dervied from an abstract class, 
+      <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+      OdePredBase</ulink>.  The purpose of this class is to provide a facility to execute
+      the User's ODE model.
+      </para>
+      <programlisting>
+template &lt;class spk_ValueType&gt;
+class OdePred : public OdePredBase&lt;spk_ValueType&gt;
 {
 public:
-   virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
-                      int spk_etaOffset,   int spk_etaLen,
-                      int spk_epsOffset,   int spk_epsLen,
-                      int spk_fOffset,     int spk_fLen,
-                      int spk_yOffset,     int spk_yLen,
-                      int spk_i,
-                      int spk_j,
-                      int spk_m,
-                      const std::vector&lt;T&gt;& spk_indepVar,
-                      std::vector&lt;T&gt;& spk_depVar );
-   Pred( const DataSet&lt;T&gt; * dataIn ){}
-   ~Pred(){}
+   OdePred( const DataSet&lt;spk_ValueType&gt;*  dataIn,
+            int                            nPopSizeIn,
+            bool                           isPkFunctionOfTIn,
+            int                            nCompartmentsWithOutputIn,
+            int                            nParametersIn,
+            int                            defaultDoseCompIn,
+            int                            defaultObservationCompIn,
+            const std::valarray&lt;bool&gt;&amp;     initialOffIn,
+            const std::valarray&lt;bool&gt;&amp;     noOffIn,
+            const std::valarray&lt;bool&gt;&amp;     noDoseIn,
+            double                         tolRelIn
+   );
 
-protected:
-   Pred(){}
-   Pred( const Pred& ){}
-   Pred & operator=( const Pred& ){}
-private:
-   // # of individuals in the population
-   const int nIndividuals;
+  ~OdePred();
 
-   // A pointer to the data set
-   const DataSet&lt;T&gt; *set;
+  int getNObservs( int who ) const;
 
-   // temporary placeholders for the user's equations to be able to access
-   // the data items freely.
-   mutable std::string id;
-   mutable T time;
-   mutable T cp;
-   mutable T dv;
-   mutable T wt;
-   mutable T dose;
-   mutable T mdv;
-   mutable T cl;
-   mutable T d;
-   mutable T ds;
-   mutable T e;
-   mutable T f;
-   mutable T y;
-   mutable T ka;
-   mutable T ke;
-};
+  int getNRecords( int who ) const;
 
-template &lt;class T&gt;
-bool Pred&lt;T&gt;::eval( int spk_thetaOffset, int spk_thetaLen,
-                    int spk_etaOffset,   int spk_etaLen,
-                    int spk_epsOffset,   int spk_epsLen,
-                    int spk_fOffset,     int spk_fLen,
-                    int spk_yOffset,     int spk_yLen,
-                    int spk_i,
-                    int spk_j,
-                    int spk_m,
-                    const std::vector&lt;T&gt;& spk_indepVar,
-                    std::vector&lt;T&gt;& spk_depVar )
-{
+  const spk_ValueType lininterp( const string &amp; devVar );
 
-   //==================================================================================
-   // Preliminaries:
-   //
-   // Place the data items to temporary variables for easy data access.
-   //==================================================================================
-   id   = set->data[spk_i]->id[spk_j];
-   time = set->data[spk_i]->time[spk_j];
-   cp   = set->data[spk_i]->cp[spk_j];
-   dv   = set->data[spk_i]->dv[spk_j];
-   wt   = set->data[spk_i]->wt[spk_j];
-   dose = set->data[spk_i]->dose[spk_j];
-   mdv  = set->data[spk_i]->mdv[spk_j];
-   typename std::vector&lt;T&gt;::const_iterator theta1 = spk_indepVar.begin() + spk_thetaOffset + 0;
-   typename std::vector&lt;T&gt;::const_iterator theta2 = spk_indepVar.begin() + spk_thetaOffset + 1;
-   typename std::vector&lt;T&gt;::const_iterator theta3 = spk_indepVar.begin() + spk_thetaOffset + 2;
-   typename std::vector&lt;T&gt;::const_iterator eta1   = spk_indepVar.begin() + spk_etaOffset   + 0;
-   typename std::vector&lt;T&gt;::const_iterator eta2   = spk_indepVar.begin() + spk_etaOffset   + 1;
-   typename std::vector&lt;T&gt;::const_iterator eta3   = spk_indepVar.begin() + spk_etaOffset   + 2;
-   typename std::vector&lt;T&gt;::const_iterator eps1   = spk_indepVar.begin() + spk_epsOffset   + 0;
-   typename std::vector&lt;T&gt;::const_iterator eps2   = spk_indepVar.begin() + spk_epsOffset   + 1;
-   typename std::vector&lt;T&gt;::const_iterator theta  = spk_indepVar.begin() + spk_thetaOffset;
-   typename std::vector&lt;T&gt;::const_iterator eta    = spk_indepVar.begin() + spk_etaOffset;
-   typename std::vector&lt;T&gt;::const_iterator eps    = spk_indepVar.begin() + spk_epsOffset;
-   f = 0.0;
-   y = 0.0;
+  virtual void initUserEnv( int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_fOffset,     int spk_fLen,
+                            int spk_yOffset,     int spk_yLen,
+                            int spk_i,
+                            int spk_j,
+                            const vector&lt;spk_ValueType&gt;&amp; spk_indepVar,
+                            vector&lt;spk_ValueType&gt;      &amp; spk_depVar );
 
-   //==================================================================================
-   // Begin User Code                         
-   //----------------------------------------------------------------------------------
-   // THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
-   // THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
-   // THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)
-   // DOSE=WT-ADJUSTED DOSE (mg/kg)
-   // DS=NON-WT-ADJUSTED DOSE (mg)
-   if( dose != 0 )
-   {
-      ds = dose * wt;
-      w = wt;
-   }
+  virtual void saveUserEnv( int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_fOffset,     int spk_fLen,
+                            int spk_yOffset,     int spk_yLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_depVar );
+                                                                                                                          
+  virtual void evalError(   int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar);
+  virtual void evalError();
 
-   ka = theta[ ( 1 ) - 1 ] + eta[ ( 1 ) - 1 ];
-   ke = theta[ ( 2 ) - 1 ] + eta[ ( 2 ) - 1 ];
-   cl = theta[ ( 3 ) - 1 ] * w + eta[ ( 3 ) - 1 ];
-   d = exp( -ke * time ) - exp( -ka * time );
-   e = cl * ( ka - ke );
-   f = ds * ke * ka / e * d;
-   y = f + eps[ ( 1 ) - 1 ];
-   //----------------------------------------------------------------------------------
-   // End User Code                           
-   //==================================================================================
+  virtual void evalPk(      int thetaOffset, int thetaLen,
+                            int etaOffset,   int etaLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar );
+  void evalPk( const spk_ValueType &amp; t );
 
-
-   //==================================================================================
-   // Wrap up:
-   //
-   // Place values to expected locations in given vectors.
-   // Return true if MDV (missing dependent variable) for this record is false.
-   // Otherwise return false (which is not supported for ver 0.1).
-   //==================================================================================
-   spk_m = getMeasurementIndex( spk_i, spk_j );
-   if( set->data[ spk_i ]->mdv[ spk_j ] == 0 )
-   {
-      spk_depVar[ spk_fOffset + spk_m ] = f;
-      spk_depVar[ spk_yOffset + spk_m ] = y;
-      return true;
-   }
-   else 
-   {
-      return false;
-   }
+  virtual void evalDes(     int thetaOffset,     int thetaLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar );
+  void evalDes(             const spk_ValueType &amp; t,
+                            typename vector&lt;spk_ValueType&gt;::const_iterator a );
 }
-
-#endif
-            </programlisting>
+      </programlisting>
+      <sect2>
+         <title>Methods to Implement</title>
+         <sect3>
+            <title><literal>OdePred(...)</literal></title>
+            <variablelist>
+               <title>Arguments</title>
+               <varlistentry>
+                  <term><literal>const DataSet&lt;spk_ValueType&gt; * dataIn</literal></term>
+                  <listitem>
+                     <para>A pointer to a DataSet object.</para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int nPopSizeIn</literal></term>
+                  <listitem>
+                     <para>The population size (> 0).</para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>bool isPkFunctionOfTIn</literal></term>
+                  <listitem>
+                     <para>
+                     The value of <literal>true</literal> indicates that the PK model 
+                     is a function of T (i.e. continuous time variable).
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int nCompartmentsWithOutputIn</literal></term>
+                  <listitem>
+                     <para>
+                     The number of compartments, including the output compartment.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int nParametersIn</literal></term>
+                  <listitem>
+                     <para>
+                     The number of PK parameters.  
+                     </para>
+                     <para>
+                     <emphasis>Note to Developer: </emphasis>
+                     The meaning of this parameter is not quite understood.  Currently
+                     the value is not used by the system.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int defaultDoseCompIn</literal></term>
+                  <listitem>
+                     <para>
+                     The integer value indicates the default dose compartment (>=1).
+                     For instance, the value of <literal>1</literal> indicates
+                     the first compartment is given doses.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int defaultObservationCompIn</literal></term>
+                  <listitem>
+                     <para>
+                     The integer value indicates the default observation compartment (>=1).
+                     For instance, the value of <literal>1</literal> indicates
+                     the first compartment is taken observations.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const valarray&lt;bool&gt; &amp; initialOffIn</literal></term>
+                  <listitem>
+                     <para>
+                     An array of boolean values.  If <literal>initialOffIn[i]</literal>
+                     were true, (i+1)-th compartment is considered initially OFF.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const valarray&lt;bool&gt; &amp; noOffIn</literal></term>
+                  <listitem>
+                     <para>
+                     An array of boolean values.  If <literal>noOffIn[i]</literal> were true,
+                     (i+1)-th compartment is considered that it will be never turned off.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const valarray&lt;bool&gt; &amp; noDoseIn</literal></term>
+                  <listitem>
+                     <para>
+                     An array of boolean values.  If <literal>noDoseIn[i]</literal> were true,
+                     (i+1)-th compartment is considered that it will be never receive doses.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>double tolRelIn</literal></term>
+                  <listitem>
+                     <para>
+                     The relative tolerance.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </sect3>
+         <sect3>
+            <title><literal>~OdePred()</literal></title>
+            <para>Destructor</para>
+         </sect3>
+         <sect3>
+            <title><literal>int getNObservs( int who ) const</literal></title>
+            <para>
+            The function returns the number of measurements 
+            for the individual indicated by <varname>who</varname>
+            Measurements means DV values whose corresponding MDV values are 0.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>int getNRecords( int who ) const</literal></title>
+            <para>
+            The function returns the number of data records
+            for the individual indicated by <varname>who</varname>. 
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>const spk_ValueType lininterp( const string & devVar )</literal></title>
+            <para>
+            <function>lininterp</function> linearly interpolates 
+            <varname>devVar</varname> at the current T (i.e. continuous time variable).
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void initUserEnv(...)</literal></title>
+            <para>
+            This function initializes the user's space so that their models are
+            evaluated properly at a given evaluation point.
+            The specifications for the arguments are the same as of 
+            <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0">
+            <function>Pred::eval()</function></ulink>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void saveUserEnv(...)</literal></title>
+            <para>
+            This function saves the status of user's environment.
+            The specifications for the arguments are the same as of 
+            <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0">
+            <function>Pred::eval()</function></ulink>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void evalError(...)</literal></title>
+            <para>
+            This is a deplicated version of <function>evalError()</function>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>void evalError()</literal></title>
+            <para>
+            Evaluates the user's error model at the current state of the object.
+            </para>
+            <para>
+            <emphasis>Note to developers:</emphasis> Once the deplicated version is removed
+            from <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+            OdePred</ulink> class, this function should be come "virtual".
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void evalPk(...)</literal></title>
+            <para>
+            This is a deplicated version of <function>evalPk()</function>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>void evalPk( const spk_ValueType &amp; t )</literal></title>
+            <para>
+            Evaluates the user's error model at <varname>t</varname> and the current state of
+            the object.
+            </para>
+            <para>
+            <emphasis>Note to developers:</emphasis> Once the deplicated version is removed
+            from <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+            OdePred</ulink> class, this function should be come "virtual".
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void evalDes(...)</literal></title>
+            <para>
+            This is a deplicated version of <function>evalDes()</function>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>void evalOde( const spk_ValueType& t, typename vector&lt;spk_ValueType&gt;::const_iterator a )</literal></title>
+            <para>
+            Evaluates the user's differential equation model at <varname>t</varname>,
+            <varname>a</varname> and the current state of the object.
+            </para>
+            <para>
+            <emphasis>Note to developers:</emphasis> Once the deplicated version is removed
+            from <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+            OdePred</ulink> class, this function should be come "virtual".
+            </para>
          </sect3>
       </sect2>
    </sect1>
