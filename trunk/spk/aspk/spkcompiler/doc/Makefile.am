@@ -19,14 +19,14 @@ clean :
 	rm -rf latex
 	rm -rf man
 	rm -rf rtf
-	rm spkcompiler.html
+	rm -f spkcompiler.html
 
 all  : 
 	rm -rf html
 	rm -rf latex
 	rm -rf man
 	rm -rf rtf
-	rm spkcompiler.html
+	rm -f spkcompiler.html
 	docbook2html --dsl ~/develop/r2/doc/stylesheet/"local.dsl#html" --nochunks spkcompiler.xml
 	doxygen spkcompiler.cfg
 
