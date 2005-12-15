@@ -21,10 +21,11 @@ package uw.rfpk.beans;
 import java.sql.*;
 import java.util.Vector;
 import java.io.ByteArrayInputStream;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import rfpk.spk.spkdb.*;
+import uw.rfpk.rcs.Archive;
 
 /**
  * Get user model list from archive.
@@ -116,14 +117,16 @@ public class ModelList implements java.io.Serializable
 	        Blob blobArchive = userModelsRS.getBlob("archive");
 	        long length = blobArchive.length(); 
 	        String modelArchive = new String(blobArchive.getBytes(1L, (int)length));                    
-                Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
+//                Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
                     
                 // Fill in the list 
                 String[] model = new String[5];
                 model[0] = String.valueOf(modelId); 
                 model[1] = userModelsRS.getString("name");
-                model[2] = String.valueOf(archive.getRevisionVersion().last());
-                model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+//                model[2] = String.valueOf(archive.getRevisionVersion().last());
+//                model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                model[2] = String.valueOf(Archive.getNumRevision(modelArchive));
+                model[3] = Archive.getRevisionDate(modelArchive);
                 model[4] = userModelsRS.getString("abstract");
                 modelList.add(model);        
             }
@@ -133,9 +136,6 @@ public class ModelList implements java.io.Serializable
         }    
         catch(SpkdbException e)
         {
-        }
-        catch(ParseException e)
-        { 
         }
         finally
         {

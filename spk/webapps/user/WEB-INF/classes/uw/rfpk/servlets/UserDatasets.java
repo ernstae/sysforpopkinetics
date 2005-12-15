@@ -25,18 +25,20 @@ import java.nio.*;
 import java.sql.*;
 import rfpk.spk.spkdb.*;
 import java.util.Vector;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
+import uw.rfpk.rcs.Archive;
 
 /** This servlet sends back information about a list of datasets belonging to the user.
  * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of dataset to provide status for.  The third String object is
  * the least dataset_id previously returned.  The fourth String object indicates if it is to 
- * get the dataset list of the dataset library.  The servlet calls database API method, 
- * userDatasets, to get dataset status that includes id, name, newest version number, and 
+ * get the dataset list of the dataset library.  The servlet calls database API method 
+ * userDatasets and RCS API method getNUmRevision and getRevisionDate to get dataset status 
+ * that includes id, name, number of revisions, last revision date and 
  * abstract of the datasets.  The servlet puts these data into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second 
@@ -126,14 +128,16 @@ public class UserDatasets extends HttpServlet
        	            Blob blobArchive = userDatasetsRS.getBlob("archive");
 	            long length = blobArchive.length(); 
 	            String datasetArchive = new String(blobArchive.getBytes(1L, (int)length));                    
-                    Archive archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
+//                    Archive archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
                     
                     // Fill in the list 
                     String[] dataset = new String[5];
                     dataset[0] = String.valueOf(datasetId); 
                     dataset[1] = userDatasetsRS.getString("name");
-                    dataset[2] = String.valueOf(archive.getRevisionVersion().last());
-                    dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                    dataset[2] = String.valueOf(Archive.getNumRevision(datasetArchive));
+                    dataset[3] = Archive.getRevisionDate(datasetArchive);
+//                    dataset[2] = String.valueOf(archive.getRevisionVersion().last());
+//                    dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
                     dataset[4] = userDatasetsRS.getString("abstract");
                     datasetList.add(dataset);
                 }
@@ -167,10 +171,6 @@ public class UserDatasets extends HttpServlet
         {
             messageOut = e.getMessage();
         } 
-        catch(ParseException e)
-        { 
-            messageOut = e.getMessage();
-        }
         finally
         {
             try
@@ -179,7 +179,7 @@ public class UserDatasets extends HttpServlet
                 if(userDatasetsStmt != null) userDatasetsStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

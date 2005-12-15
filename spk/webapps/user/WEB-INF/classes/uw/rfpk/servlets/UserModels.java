@@ -25,18 +25,20 @@ import java.nio.*;
 import java.sql.*;
 import rfpk.spk.spkdb.*;
 import java.util.Vector;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo; 
+import uw.rfpk.rcs.Archive;
 
 /** This servlet sends back information about a list of models belonging to the user.
  * The servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of models to provide status for.  The third String object is
  * the least model_id previously returned.  The fourth String object indicates if it is to 
- * get the model list of the model library.  The servlet calls database API method, userModels,
- * to get model status that includes id, name, newest version number, and abstract
+ * get the model list of the model library.  The servlet calls database API method userModels
+ * and RCS API method getNUmRevision and getRevisionDate to get model status 
+ * that includes id, name, number of revisions, last revision date and abstract
  * of the models.  The servlet puts these data into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second 
@@ -126,14 +128,16 @@ public class UserModels extends HttpServlet
 	            Blob blobArchive = userModelsRS.getBlob("archive");
 	            long length = blobArchive.length(); 
 	            String modelArchive = new String(blobArchive.getBytes(1L, (int)length));                    
-                    Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
+//                    Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
                     
                     // Fill in the list 
                     String[] model = new String[5];
                     model[0] = String.valueOf(modelId); 
                     model[1] = userModelsRS.getString("name");
-                    model[2] = String.valueOf(archive.getRevisionVersion().last());                    
-                    model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                    model[2] = String.valueOf(Archive.getNumRevision(modelArchive));
+                    model[3] = Archive.getRevisionDate(modelArchive);
+//                    model[2] = String.valueOf(archive.getRevisionVersion().last());                    
+//                    model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
                     model[4] = userModelsRS.getString("abstract");
                     modelList.add(model);
                 }
@@ -167,10 +171,6 @@ public class UserModels extends HttpServlet
         {
             messageOut = e.getMessage();
         } 
-        catch(ParseException e)
-        { 
-            messageOut = e.getMessage();
-        }
         finally
         {
             try
@@ -179,7 +179,7 @@ public class UserModels extends HttpServlet
                 if(userModelsStmt != null) userModelsStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

@@ -22,16 +22,17 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
+import uw.rfpk.rcs.Archive;
 
 /** This servlet sends back the version's text of model or dataset that was selected by 
  * the user from version list by the immediately previous call to the servlet GetVersions.
  * The servlet receives a String array containing two String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the version number.  The servlet retrieves the archive from the session object
- * and then calls JRCS API methods, getRevision and arrayToString, to get the archive text.
+ * and then calls RCS API method getRevision to get the archive text.
  * The servlet sends back two objects.  The first object is a String containing the error 
  * message if there is an error or an empty String if there is not any error.  The second 
  * object is the returning archive text as a String object.
@@ -77,9 +78,12 @@ public class GetArchive extends HttpServlet
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
             {                        
  	        String version = messageIn[1]; 
-                Archive arch = (Archive)req.getSession().getAttribute("ARCHIVE");
-                Object[] revision = arch.getRevision("1." + version);
-                archive = ToString.arrayToString(revision, "\n"); 
+//                Archive arch = (Archive)req.getSession().getAttribute("ARCHIVE");
+//                Object[] revision = arch.getRevision("1." + version);
+//                archive = ToString.arrayToString(revision, "\n");
+                archive = Archive.getRevision((String)req.getSession().getAttribute("ARCHIVE"), 
+                                               getServletContext().getInitParameter("perlDir"), 
+                                               "/tmp/", secret, "1." + version);
                 if(archive.equals(""))
                     messageOut = "The archive is empty.";
             }
@@ -89,14 +93,10 @@ public class GetArchive extends HttpServlet
                 messageOut = "Authentication error.";              
             }                
         }      
-        catch(PatchFailedException e)
+        catch(InterruptedException e)
         {
             messageOut = e.getMessage();
         } 
-        catch(InvalidFileFormatException e)
-        { 
-            messageOut = e.getMessage();
-        }
         catch(ClassNotFoundException e)
         {
             messageOut = e.getMessage();

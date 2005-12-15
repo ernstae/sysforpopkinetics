@@ -26,10 +26,11 @@ import java.sql.*;
 import java.util.Vector;
 import rfpk.spk.spkdb.*;
 import java.text.SimpleDateFormat;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
+import uw.rfpk.rcs.Archive;
 
 /** This servlet sends bsck the version list of the model or datsset that was selected by 
  * the user from model list by the immediately previous call to the servlet UserModels
@@ -42,7 +43,7 @@ import uw.rfpk.beans.UserInfo;
  * using ,database API method, getUser, to get the user_id and using database API method, 
  * getModel or getDataset, to get user_id, then comparing them.  If they are the same,
  * the servlet uses the archive from the previous database API method call and 
- * the JRCS API methods to get the status of the versions including 
+ * the RCS API methods to get the status of the versions including 
  * version number, author name, revision time and log of the versions.  The servlet puts 
  * these data into a String[][] object. 
  * The servlet sends back two objects.  The first object is a String containing the error 
@@ -131,24 +132,25 @@ public class GetVersions extends HttpServlet
                 {                
       	            Blob blobArchive = archiveRS.getBlob("archive");
 	            long length = blobArchive.length(); 
-	            String archive = new String(blobArchive.getBytes(1L, (int)length));                  
-                            
-
+	            String archive = new String(blobArchive.getBytes(1L, (int)length));
+                    
+                    versionList = Archive.getVersionList(archive);
+                    req.getSession().setAttribute("ARCHIVE", archive);
             
                     // Generate version list for the model or the dataset
-                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
-                    int number = arch.getRevisionVersion().last(); 
-                    versionList = new String[number][4];
-                    for(int i = 0; i < number; i++)
-                    {
-                        int n = number - i;
-                        Node node = arch.findNode(new Version("1." + n));  
-                        versionList[i][0] = String.valueOf(n);
-                        versionList[i][1] = node.getAuthor().toString();
-                        versionList[i][2] = node.getDate().toString();
-                        versionList[i][3] = arch.getLog("1." + n);
-                    }
-                    req.getSession().setAttribute("ARCHIVE", arch);
+//                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes())); 
+//                    int number = arch.getRevisionVersion().last();
+//                    versionList = new String[number][4];
+//                    for(int i = 0; i < number; i++)
+//                    {
+//                        int n = number - i;
+//                        Node node = arch.findNode(new Version("1." + n));
+//                        versionList[i][0] = String.valueOf(n);
+//                        versionList[i][1] = node.getAuthor().toString();
+//                        versionList[i][2] = node.getDate().toString();
+//                        versionList[i][3] = arch.getLog("1." + n);
+//                    }
+//                    req.getSession().setAttribute("ARCHIVE", arch);
                 }
                 else
                 {
@@ -174,10 +176,6 @@ public class GetVersions extends HttpServlet
         {
             messageOut = e.getMessage();
         } 
-        catch(ParseException e)
-        { 
-            messageOut = e.getMessage();
-        }
         finally
         {
             try
@@ -186,7 +184,7 @@ public class GetVersions extends HttpServlet
                 if(archiveStmt != null) archiveStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

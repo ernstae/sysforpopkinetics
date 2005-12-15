@@ -107,31 +107,31 @@ public class DiffFiles extends HttpServlet implements javax.servlet.SingleThread
                 }
                 else
                 {
-                // Get stdout and stderr of the subprocess
-                BufferedInputStream in1 = new BufferedInputStream(process.getInputStream());
-                BufferedInputStream er1 = new BufferedInputStream(process.getErrorStream());
-                while(true)
-                {
-                    int i = in1.read();
-                    if(i == -1)
-                        break;
-                    revision += (char)i;
-                }
-                String error = "";
-                while(true)
-                {
-                    int i = er1.read();
-                    if(i == -1)
-                        break;
-                    error += (char)i;
-                }
-                in1.close();
-                er1.close();
+                    // Get stdout and stderr of the subprocess
+                    BufferedInputStream in1 = new BufferedInputStream(process.getInputStream());
+                    BufferedInputStream er1 = new BufferedInputStream(process.getErrorStream());
+                    while(true)
+                    {
+                        int i = in1.read();
+                        if(i == -1)
+                            break;
+                        revision += (char)i;
+                    }
+                    String error = "";
+                    while(true)
+                    {
+                        int i = er1.read();
+                        if(i == -1)
+                            break;
+                        error += (char)i;
+                    }
+                    in1.close();
+                    er1.close();
 
-                // Destroy the subprocess
-                process.destroy(); 
+                    // Destroy the subprocess
+                    process.destroy(); 
                 
-                messageOut = error;
+                    messageOut = error;
                 }
             }
             else
@@ -142,11 +142,11 @@ public class DiffFiles extends HttpServlet implements javax.servlet.SingleThread
         }      
         catch(ClassNotFoundException e)
         {
-            messageOut = e.getMessage();
+            messageOut += "\n" + e.getMessage();
         }
         catch(InterruptedException e)
         {
-            messageOut = e.getMessage();
+            messageOut += "\n" + e.getMessage();
         }        
         finally
         {

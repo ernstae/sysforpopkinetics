@@ -196,13 +196,13 @@ public class MDAFrame extends JFrame
         jLabel7 = new javax.swing.JLabel();
         jRadioButton7 = new javax.swing.JRadioButton();
         jRadioButton8 = new javax.swing.JRadioButton();
-        jTextField14 = new javax.swing.JTextField();
         jRadioButton9 = new javax.swing.JRadioButton();
         jRadioButton10 = new javax.swing.JRadioButton();
         jRadioButton11 = new javax.swing.JRadioButton();
         jRadioButton12 = new javax.swing.JRadioButton();
         jScrollPane10 = new javax.swing.JScrollPane();
         jTextArea10 = new javax.swing.JTextArea();
+        jCheckBox1 = new javax.swing.JCheckBox();
         buttonGroup1 = new javax.swing.ButtonGroup();
         errorMessageDialog = new javax.swing.JDialog();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -654,7 +654,7 @@ public class MDAFrame extends JFrame
         jLabel7.setText("short description (<=100 characters)     ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         jPanel5.add(jLabel7, gridBagConstraints);
@@ -687,13 +687,6 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel5.add(jRadioButton8, gridBagConstraints);
-
-        jTextField14.setEditable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel5.add(jTextField14, gridBagConstraints);
 
         jRadioButton9.setFont(new java.awt.Font("Default", 0, 12));
         jRadioButton9.setText("Vegas M.C. integration on likelihood");
@@ -766,9 +759,17 @@ public class MDAFrame extends JFrame
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel5.add(jScrollPane10, gridBagConstraints);
+
+        jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jCheckBox1.setText("Email me when the job has finished");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel5.add(jCheckBox1, gridBagConstraints);
 
         jTabbedPane1.addTab("Job", jPanel5);
 
@@ -2055,7 +2056,7 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_reportDialogWindowClosing
 
     private void scatterPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scatterPlotMenuActionPerformed
-        scatterPlot(0);
+        scatterPlot();
     }//GEN-LAST:event_scatterPlotMenuActionPerformed
 
     private void textAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textAreaMouseClicked
@@ -2073,17 +2074,14 @@ public class MDAFrame extends JFrame
 
     private void jRadioButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton12ActionPerformed
         jobMethodCode = "mi";
-        jTextField14.setText(((String[])methodTable.get("mi"))[0]);
     }//GEN-LAST:event_jRadioButton12ActionPerformed
 
     private void jRadioButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton11ActionPerformed
         jobMethodCode = "an";
-        jTextField14.setText(((String[])methodTable.get("an"))[0]);
     }//GEN-LAST:event_jRadioButton11ActionPerformed
 
     private void jRadioButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton10ActionPerformed
         jobMethodCode = "gr";
-        jTextField14.setText(((String[])methodTable.get("gr"))[0]);
     }//GEN-LAST:event_jRadioButton10ActionPerformed
 
     private void warningMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_warningMenuActionPerformed
@@ -2137,17 +2135,14 @@ public class MDAFrame extends JFrame
 
     private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
         jobMethodCode = "vl";
-        jTextField14.setText(((String[])methodTable.get("vl"))[0]);
     }//GEN-LAST:event_jRadioButton9ActionPerformed
 
     private void jRadioButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton8ActionPerformed
         jobMethodCode = "ml";
-        jTextField14.setText(((String[])methodTable.get("ml"))[0]);
     }//GEN-LAST:event_jRadioButton8ActionPerformed
 
     private void jRadioButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton7ActionPerformed
         jobMethodCode = method;
-        jTextField14.setText(((String[])methodTable.get(method))[0]);
     }//GEN-LAST:event_jRadioButton7ActionPerformed
 
     private void traceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_traceMenuActionPerformed
@@ -2798,7 +2793,7 @@ public class MDAFrame extends JFrame
                         if(isLeft)
                         {
                             jInternalFrame2.setTitle(title);
-                            textL = XMLReader.parseDataXML(archive).replaceAll(ls, "\n");
+                            textL = XMLReader.parseDataXML(archive, true).replaceAll(ls, "\n");
                             if(textL != null)
                             {
                                 jTextArea3.setText(textL);
@@ -2808,7 +2803,7 @@ public class MDAFrame extends JFrame
                         else
                         {
                             jInternalFrame3.setTitle(title);
-                            textR = XMLReader.parseDataXML(archive).replaceAll(ls, "\n");
+                            textR = XMLReader.parseDataXML(archive, true).replaceAll(ls, "\n");
                             if(textR != null)
                             {
                                 jTextArea4.setText(textR);
@@ -2837,7 +2832,7 @@ public class MDAFrame extends JFrame
                         else
                         {
 
-                            String text = XMLReader.parseDataXML(archive);
+                            String text = XMLReader.parseDataXML(archive,true);
                             if(text != null)
                             {
                                 textArea.setText(text);
@@ -2969,8 +2964,8 @@ public class MDAFrame extends JFrame
     private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
         jTextField4.setEditable(false);
         if(recentDataset.name != null && 
-           XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")))
-           .equals(XMLReader.parseDataXML(dataArchive.text.substring(dataArchive.text.indexOf("<spkdata ")))))
+           XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")), true)
+           .equals(XMLReader.parseDataXML(dataArchive.text.substring(dataArchive.text.indexOf("<spkdata ")), true)))
         {
             datasetRadioButtonState = 3;
             jTextField4.setText(recentDataset.name);
@@ -3146,37 +3141,43 @@ public class MDAFrame extends JFrame
                                           JOptionPane.ERROR_MESSAGE);
             return;            
         }
-        
-        // If the user is going to use a likelihhod evaluation method modify the input file
+        jobMethodClass = "";
+        submitJob(text);
+    }//GEN-LAST:event_SubmitJobButtonActionPerformed
+
+   /** submit a likelihood evaluation job.
+    * @param text SPK input.
+    */
+    protected void likelihoodJob(String text)
+    {
         jobMethodClass = "";        
-        if(jobId != 0 && text.indexOf("<pop_analysis ") != -1 && text.indexOf(" is_estimation=\"yes\" ") != -1 && 
-           (jobInfo.endCode.equals("srun") || jobInfo.endCode.equals("staf")))
+
+        // Get report
+        String[] reports = server.getOutput(jobId, isLibrary).getProperty("report").split("<spkreport");
+        
+        // Use the last report
+        if(reports.length > 2)
+            JOptionPane.showMessageDialog(null, "The parent job has multiple reports.\n" +
+                                          "The final estimates of the parameters from\n" +
+                                          "the last report will be used to initialze this job.");
+        String report = "<?xml version=\"1.0\">\n<spkreport" + reports[reports.length - 1];
+        if(report.indexOf("<error_message>") != -1)
         {
-            if(JOptionPane.showConfirmDialog(null, "Are you going to use a likelihood evaluation only method?",
-                                             "Question", JOptionPane.YES_NO_OPTION) == 0)
-            {
-                // Get report
-                String[] reports = server.getOutput(jobId, isLibrary).getProperty("report").split("<spkreport");
-                // Use the last report
-                if(reports.length > 2)
-                    JOptionPane.showMessageDialog(null, "The parent job has multiple reports.\n" +
-                                                  "The final estimates of the parameters from\n" +
-                                                  "the last report will be used to initialze this job.");
-                String report = "<?xml version=\"1.0\">\n<spkreport" + reports[reports.length - 1];
-                if(report.indexOf("<error_message>") != -1)
-                {
-                    JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + jobId + ", has error.",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                hasSimulation = text.indexOf("<simulation ") != -1;
-                text = Likelihood.changeInput(text, report, jobId, isLibrary);
-                textArea.setText(text);
-                textArea.setCaretPosition(0);
-                jobMethodClass = "le";
-            }
+            JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + jobId + ", has error.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-                
+        hasSimulation = text.indexOf("<simulation ") != -1;
+        text = Likelihood.changeInput(text, report, jobId, isLibrary);
+        textArea.setText(text);
+        textArea.setCaretPosition(0);
+        jobMethodClass = "le";
+
+        submitJob(text);        
+    }
+        
+    private void submitJob(String text)
+    {
         // Find $PROBLEM
         int beginIndex = text.indexOf("\n$PROBLEM") + 9; 
         int endIndex = text.indexOf("\n", beginIndex);
@@ -3284,9 +3285,9 @@ public class MDAFrame extends JFrame
                 jRadioButton3.doClick();
             else
                 jRadioButton1.doClick();
-            if(recentDataset.name != null && 
-               XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")))
-               .equals(XMLReader.parseDataXML(dataset.substring(dataset.indexOf("<spkdata ")))))
+            if(recentDataset.name != null &&
+               XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")), true)
+               .equals(XMLReader.parseDataXML(dataset.substring(dataset.indexOf("<spkdata ")), true)))
                 jRadioButton6.doClick();
             else
                 jRadioButton4.doClick();
@@ -3319,7 +3320,7 @@ public class MDAFrame extends JFrame
         }
         else if(jobMethodCode.equals("fo") || jobMethodCode.equals("eh") || jobMethodCode.equals("la"))
         {
-            jRadioButton7.setSelected(true);
+            jRadioButton7.setText(((String[])methodTable.get(jobMethodCode))[0]);
             jRadioButton7.doClick();
             jRadioButton8.setEnabled(false);
             jRadioButton9.setEnabled(false);
@@ -3332,27 +3333,26 @@ public class MDAFrame extends JFrame
             jRadioButton7.setEnabled(false);
             jRadioButton8.setSelected(true);
         }
-        jTextField14.setText(((String[])methodTable.get(jobMethodCode))[0]);
-
         jTextArea10.setText(problem); 
-
+        jCheckBox1.setSelected(false);
+        
         archiveDialog.setSize(300, 350);
-        archiveDialog.setVisible(true);
-    }//GEN-LAST:event_SubmitJobButtonActionPerformed
-
+        archiveDialog.setVisible(true);    
+    }
+    
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
         iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, jobId);
         writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
-    private void scatterPlot(int type)
+    private void scatterPlot()
     {
         if(output != null && output.scatterplot != null)
         {
             if(output.dataAll != null && output.dataItems != null && output.dataLabelMap != null)
             {
-                new PlotShow(output.scatterplot, output.dataAll, output.dataItems,  
-                             output.dataLabelMap, type);
+                new PlotShow(output.scatterplot, output.dataAll, output.dataItems,
+                             output.dataLabelMap); 
             }
             else
             {
@@ -3788,18 +3788,12 @@ public class MDAFrame extends JFrame
             jobId = 0;
         }
 
-        // Ask the user if an end-job email notice is requested
-        boolean isMailNotice = false;
-        if(JOptionPane.showConfirmDialog(null, "Do you want to receive an email notice when the job has finished?",
-                                         "Question", JOptionPane.YES_NO_OPTION) == 0)
-            isMailNotice = true;
-        
         // Submit the job
-        server.submitJob(source, jobAbstract, modelArchive, dataArchive,
-                         jobMethodCode, jobParent, false, isMailNotice);
+        boolean ok = server.submitJob(source, jobAbstract, modelArchive, dataArchive,
+                                      jobMethodCode, jobParent, false, jCheckBox1.isSelected());
         
         // Close the dialog
-        archiveDialog.dispose();
+        if(ok) archiveDialog.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -4471,6 +4465,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
@@ -4553,7 +4548,6 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextArea jTextArea8;
     private javax.swing.JTextArea jTextArea9;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField14;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;

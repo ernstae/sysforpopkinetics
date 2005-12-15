@@ -75,7 +75,7 @@ public class Utility {
     {
         String regExp = "\\b" + s + "\\s*\\(?(\\d+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
         Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
-        Matcher matcher = pattern.matcher(" " + input);
+        Matcher matcher = pattern.matcher(" " + input.toUpperCase());
         Vector list = new Vector();
         if(matcher.find())
         {
@@ -286,10 +286,12 @@ public class Utility {
      * String arrays.  The number of arrays is the number of the data records
      * for the individual.  Each array contains data items of number of columns.
      * @param isInd a boolean true for individual analysis, false for population analysis.
+     * @return a String array containing the data labels.
      */        
-    public static int parseDataXML(String dataXML, Vector data, boolean isInd)
+    public static String[] parseDataXML(String dataXML, Vector data, boolean isInd)
     {
         int nDataCol = -1;
+        String[] labels = null;
         Document docData = null;
         Element row, value;
         try
@@ -305,17 +307,17 @@ public class Utility {
         catch(ParserConfigurationException e)
         {
             JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
-            return -1;
+            return null;
         }
         catch(SAXException e)
         {
             JOptionPane.showMessageDialog(null, e, "SAXException", JOptionPane.ERROR_MESSAGE);
-            return -1;
+            return null;
         }
         catch(IOException e)
         {
             JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
-            return -1;
+            return null;
         }    
         
         //Get root element of spkdata
@@ -327,11 +329,20 @@ public class Utility {
         {
             Vector indData = new Vector();
             
-            // Put the first row in a String[]
-            row = (Element)rowList.item(1);
+            // Find the data lablel
+            row = (Element)rowList.item(0);
             NodeList valueList = row.getElementsByTagName("value");
             nDataCol = valueList.getLength();
-
+            labels = new String[nDataCol];
+            for(int j = 0; j < nDataCol; j++)
+            {
+                value = (Element)valueList.item(j);
+                labels[j] = value.getFirstChild().getNodeValue();                 
+            }            
+            
+            // Put the first row in a String[]
+            row = (Element)rowList.item(1);
+            valueList = row.getElementsByTagName("value");
             String[] firstRowItems = new String[nDataCol];
             for(int j = 0; j < nDataCol; j++)
             {
@@ -373,7 +384,7 @@ public class Utility {
             }
             data.add(indData);
         }        
-        return nDataCol;        
+        return labels;        
     }  
         
     /** Parse the data file and put the data in a Vector object.
@@ -383,13 +394,13 @@ public class Utility {
      * String arrays.  The number of arrays is the number of the data records 
      * for the individual.  Each array contains data items of number of columns.
      * @param isInd a boolean true for individual analysis, false for population analysis.
-     * @return a int value that is the number of data columns in the data file.
-     * In case of error, -1 is returned.
+     * @return a String array containing the data labels in the comment line.
+     * In case of error, null is returned.
      */        
-    public static int parseDataFile(String filename, Vector data, boolean isInd)
+    public static String[] parseDataFile(String filename, Vector data, boolean isInd)
     {
         Vector indData = new Vector();
-        int nTokens = 0;
+        String[] labels = null;
         try
 	{
             // Read in the data file
@@ -397,11 +408,38 @@ public class Utility {
             // Read the first line
             String firstLine = in.readLine();
             if(firstLine == null) 
-                return -1;
+                return null;
             
+
+            boolean hasComment = false;
+            if(firstLine.startsWith("C") || firstLine.startsWith("c"))
+            {
+                hasComment = true;
+                firstLine = firstLine.substring(1).trim();
+                StringTokenizer commentToken = new StringTokenizer(firstLine, " ,\t", false);
+                int nLabels = commentToken.countTokens();
+                labels = new String[nLabels];
+                for(int i = 0; i < nLabels; i++)
+                    labels[i] = commentToken.nextToken();
+                firstLine = in.readLine();
+            }
+                      
             // Tokenize the first line and put them in a String[]
             StringTokenizer lineToken = new StringTokenizer(firstLine, " ,\t", false);
-            nTokens = lineToken.countTokens();
+            int nTokens = lineToken.countTokens();
+            if(hasComment && nTokens != labels.length)
+            {
+                JOptionPane.showMessageDialog(null, "Data labels are not consistent with data columns",
+                                              "Data file error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            if(!hasComment)
+            {
+                labels = new String[nTokens];
+                for(int i = 0; i < nTokens; i++)
+                     labels[i] = "";
+            }
+            
             String[] firstLineTokens = new String[nTokens];
             for(int i = 0; i < nTokens; i++)
             {
@@ -417,7 +455,7 @@ public class Utility {
                     JOptionPane.showMessageDialog(null, "A number format error was found in the data file." +
                                                   "\nColumn " + (i + 1) + ".",   
                                                   "Number Format Error", JOptionPane.ERROR_MESSAGE);
-                    return -1;
+                    return null;
                 }
             }
             
@@ -449,7 +487,11 @@ public class Utility {
                     lineToken = new StringTokenizer(line, " ,\t", false);
                     String[] tokens = new String[nTokens];
                     if(lineToken.countTokens() != nTokens)
-                        return -1;
+                    {
+                        JOptionPane.showMessageDialog(null, "Number of columns is incorrect.", 
+                                                      "Data file error", JOptionPane.ERROR_MESSAGE);
+                        return null;
+                    }
                     
                     for(int i = 0; i < nTokens; i++)
                     {
@@ -465,7 +507,7 @@ public class Utility {
                             JOptionPane.showMessageDialog(null, "A number format error was found in the data file." +
                                                           "\nColumn " + (i + 1) + ".",   
                                                           "Number Format Error", JOptionPane.ERROR_MESSAGE);
-                            return -1;
+                            return null;
                         }                        
                     }
 
@@ -509,7 +551,7 @@ public class Utility {
                                           JOptionPane.ERROR_MESSAGE);
         }
 
-        return nTokens;
+        return labels;
     }    
     
     /** Determine if a character sting is a name of a standard data item.

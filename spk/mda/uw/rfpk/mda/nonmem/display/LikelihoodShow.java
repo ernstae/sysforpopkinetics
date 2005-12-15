@@ -161,7 +161,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
                                           new Font("SansSerif", Font.BOLD, 10),
                                           0, 0, 0, 0, true, true, false, false,
                                           false, 0, false, null,
-                                          2, 2, frame);
+                                          2, 2, frame, null);
 
             plotter.setToolTipText("");
             frame.getContentPane().add(plotter);

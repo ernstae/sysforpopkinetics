@@ -110,6 +110,9 @@ public class Plotter extends JPanel
      * @param baseLabel the label for the baseline of the histogram.
      * @param nDigitX number of digits right to the decimal point of the X numerical lable.
      * @param nDigitY number of digits right to the decimal point of the Y numerical lable.
+     * @param frame window of the plot.
+     * @param indPoints[] an int array containing number of data points for each individual, 
+              null for not individualized.
      */
     public Plotter(double[][] dataX, double[][] dataY, String title, String labelX, String labelY, 
                    String[] name, int[] symbol, Color[] color, boolean xLine, boolean yLine, 
@@ -123,7 +126,7 @@ public class Plotter extends JPanel
                    int topInset, int bottomInset, int leftInset, int rightInset, 
                    boolean isExpX, boolean isExpY, boolean isLogX, boolean isLogY, 
                    boolean isHistogram, double intervalSize, boolean baseline, String baseLabel,
-                   int nDigitX, int nDigitY, JFrame frame)
+                   int nDigitX, int nDigitY, JFrame frame, int[] indPoints)
     {
         this.frame = frame;
 	this.dataX = dataX;
@@ -277,7 +280,8 @@ public class Plotter extends JPanel
             for(int i = 0; i < nDigitY; i++)
                 form += "#";
             formatY = new DecimalFormat("###." + form);            
-        }     
+        }
+        this.indPoints = indPoints;
         initComponents();
     }
     
@@ -1660,24 +1664,46 @@ public class Plotter extends JPanel
                 }
                 break;
             case 10:
-                gc2D.setStroke(new BasicStroke(2.0f)); 
-                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
+                gc2D.setStroke(new BasicStroke(2.0f));
+                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
+                else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());
                 break;
-            case 11: 
-                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
+            case 11:
+                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
+                else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 break;                
             case 12:
                 gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
                                BasicStroke.JOIN_BEVEL, 0, new float[]{5.0f, 2.0f}, 0));
-                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
+                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
+                else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());
                 break;
             case 13:
                 gc2D.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, 
                                BasicStroke.JOIN_BEVEL, 0, new float[]{5.0f, 2.0f}, 0));
-                gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
+                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
+                else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());    
+        }        
+    }
+    
+    private void drawIndLines(Graphics2D gc2D, int[] allX, int[] allY)
+    {
+        int[] indX, indY;
+        int offset = 0;
+        for(int k = 0; k < indPoints.length; k++)
+        {
+            indX = new int[indPoints[k]];
+            indY = new int[indPoints[k]];
+            for(int l = 0; l < indX.length; l++)
+            {
+                indX[l] = allX[offset + l];
+                indY[l] = allY[offset + l];                
+            }
+            offset += indX.length;
+            gc2D.drawPolyline(indX, indY, indX.length);
         }        
     }
     
@@ -1845,7 +1871,8 @@ public class Plotter extends JPanel
         double x = data[0] * data[0];
         for(int i = 1; i < n; i++)
             x += data[i] * data[i];
-        return Math.sqrt((x - n * getMean(data)) / (n - 1));
+        double mean = getMean(data);
+        return Math.sqrt((x - n * mean * mean) / (n - 1));
     }
     
     //--------------------------------------------------------------------------
@@ -1892,6 +1919,7 @@ public class Plotter extends JPanel
     private String baseLabel;
     private int baseX, meanX, medianX;
     private double baselineX;
+    private int[] indPoints;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

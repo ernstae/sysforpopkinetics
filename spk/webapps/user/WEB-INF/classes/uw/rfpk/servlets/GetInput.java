@@ -26,10 +26,11 @@ import java.util.Vector;
 import java.util.Properties;
 import java.sql.*;
 import rfpk.spk.spkdb.*;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import uw.rfpk.beans.UserInfo;
+import uw.rfpk.rcs.Archive;
 
 /** This servlet seads back the three components: source, data, model of the SPK input file. 
  * The servlet receives a String array containing three String objects from the client.
@@ -41,7 +42,7 @@ import uw.rfpk.beans.UserInfo;
  * model_id, model_version, dataset_id and dataset_version from the getJob call resultset. 
  * Then, the model_id is paased in the database API method getModel to get model archive 
  * and the dataset_id is passed in the database API method getDataset to get dataset archive.  
- * The servlet calls JRCS API methods, getRevision and arrayToString, to get the archive 
+ * The servlet calls RCS API method getRevision to get the archive 
  * text of the version that has been returned from the database API method getJob call for  
  * both the model and the dataset.  The servlet puts the xml_source, model and dataset
  * into a java,util.Properties object.  The servlet sends back two objects.  The first 
@@ -130,7 +131,7 @@ public class GetInput extends HttpServlet
                     Blob blob = jobRS.getBlob("xml_source");
 	            long length = blob.length(); 
 	            String source = new String(blob.getBytes(1L, (int)length));
-                   
+                  
                     // Get model
                     ResultSet modelRS = Spkdb.getModel(con, jobRS.getLong("model_id"));
                     modelStmt = modelRS.getStatement();
@@ -139,10 +140,12 @@ public class GetInput extends HttpServlet
                     blob = modelRS.getBlob("archive");
                     length = blob.length();
                     String ar = new String(blob.getBytes(1L, (int)length));
-                    Archive arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));                
-                    Object[] revision = arch.getRevision(version); 
-                    String model = ToString.arrayToString(revision, "\n");                     
-                    
+//                    Archive arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));                
+//                    Object[] revision = arch.getRevision(version); 
+//                    String model = ToString.arrayToString(revision, "\n");
+                    String perlDir = getServletContext().getInitParameter("perlDir");                    
+                    String model = Archive.getRevision(ar, perlDir, "/tmp/", secret, version);
+
                     // Get dataset
                     ResultSet datasetRS = Spkdb.getDataset(con, jobRS.getLong("dataset_id"));
                     datasetStmt = datasetRS.getStatement();
@@ -151,9 +154,10 @@ public class GetInput extends HttpServlet
                     blob = datasetRS.getBlob("archive");
                     length = blob.length();
                     ar = new String(blob.getBytes(1L, (int)length));
-                    arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));
-                    revision = arch.getRevision(version);
-                    String dataset = ToString.arrayToString(revision, "\n");
+//                    arch = new Archive("", new ByteArrayInputStream(ar.getBytes()));
+//                    revision = arch.getRevision(version);
+//                    String dataset = ToString.arrayToString(revision, "\n");
+                    String dataset = Archive.getRevision(ar, perlDir, "/tmp/", secret, version);
 
                     // Put data into the properties object
                     spkInput.setProperty("source", source); 
@@ -184,18 +188,10 @@ public class GetInput extends HttpServlet
         {
             messageOut = e.getMessage();
         }
-        catch(ParseException e)
+        catch(InterruptedException e)
         {
             messageOut = e.getMessage();
         }        
-        catch(InvalidFileFormatException e)
-        {
-            messageOut = e.getMessage();
-        }
-        catch(PatchFailedException e)
-        {
-            messageOut = e.getMessage();
-        }
         finally
         {
             try
@@ -206,7 +202,7 @@ public class GetInput extends HttpServlet
                 if(datasetStmt != null) datasetStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

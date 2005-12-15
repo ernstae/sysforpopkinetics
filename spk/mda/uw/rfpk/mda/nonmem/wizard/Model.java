@@ -373,6 +373,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 10, 12);
         add(jButton1, gridBagConstraints);
 
+        jTextField1.setEditable(false);
         jTextField1.setPreferredSize(new java.awt.Dimension(4, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -505,6 +506,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
         // Remove element
         model.removeElement(jList1.getSelectedValue());
+        jTextField1.setText(String.valueOf(model.size()));
         jList1.setSelectedIndex(--index);
         clear();
         
@@ -524,19 +526,22 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
     private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
         // Construct element
-        String name = jTextField2.getText().trim();
-        if(name.equals(""))
-            name = "COMP" + String.valueOf(index + 1);
-        String element = "COMP=(" + name + attributes + ")";
+        String name = jTextField4.getText().trim();
+        if(name.trim().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "The compartment name is missing.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         // Check if changeable
         for(int i = 0; i < model.getSize(); i++)
-            if(i != index && 
-               ((String)model.get(i)).split(" ")[0].equals(element.split(" ")[0]))
+            if(i != index && ((String)model.get(i)).split(" ")[0].equals(name))
             {
-                JOptionPane.showMessageDialog(null, "The name '" + name + "' is already used.",
+                JOptionPane.showMessageDialog(null, "The compartment name '" + name + "' is already used.",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);                
                 return;
             }
+        String element = "COMP=(" + name + attributes + ")";
         model.setElementAt(element, index);     
         jList1.setSelectedIndex(index);
         clear();
@@ -574,7 +579,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         }
 
         // Add element
-        model.add(++index, element);     
+        model.add(++index, element);
+        jTextField1.setText(String.valueOf(model.size()));
         jList1.setSelectedIndex(index);
         clear();
 
@@ -582,19 +588,19 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         Utility.setUpDownButton(index, model, upButton, downButton);
         
         // Set left options
-        String n1 = jTextField1.getText().trim();
+//        String n1 = jTextField1.getText().trim();
         String n2 = jTextField2.getText().trim();
         String n3 = jTextField3.getText().trim();        
-        if(!n1.equals("") && !Utility.isPosIntNumber(n1))
-        {
-            JOptionPane.showMessageDialog(null, 
-                                          "The number of compartments other than the output compartment is " +
-                                          "not a positive integer",
-                                          "Input Error",  
-                                          JOptionPane.ERROR_MESSAGE); 
-            jTextField1.setText("");
-        }
-        else if(!n2.equals("") && !Utility.isPosIntNumber(n2) && !n2.equals("0"))
+//        if(!n1.equals("") && !Utility.isPosIntNumber(n1))
+//        {
+//            JOptionPane.showMessageDialog(null, 
+//                                          "The number of compartments other than the output compartment is " +
+//                                          "not a positive integer",
+//                                          "Input Error",  
+//                                          JOptionPane.ERROR_MESSAGE); 
+//            jTextField1.setText("");
+//        }
+        if(iterator.getAdvan() == 9 && !n2.equals("") && !Utility.isPosIntNumber(n2) && !n2.equals("0"))
         {
             JOptionPane.showMessageDialog(null, 
                                           "The number of equilibrium equations is " +
@@ -750,8 +756,12 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                         model.set(i, checkAttribute((String)model.get(i)));
             }
             else
+            {
                 for(int i = 0; i < model.size(); i++)
                     model.set(i, checkAttribute((String)model.get(i)));
+            }
+            jTextField1.setText(String.valueOf(model.size()));
+            jTextField2.setEditable(iterator.getAdvan() == 9);
 	}
         
         private void setLastDefaultCompNumber()
@@ -819,7 +829,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 iterator.setNComp(Integer.parseInt(n1));
             }
             String n2 = jTextField2.getText().trim();
-            if(!n2.equals(""))
+            if(!n2.equals("") && iterator.getAdvan() == 9)
                 record += " NEQUILIBRIUM=" + n2;
             String n3 = jTextField3.getText().trim();
             if(!n3.equals(""))
@@ -873,7 +883,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 compartments[0][0] = n1;
             else
                 compartments[0][0] = String.valueOf(size);
-            if(!n2.equals(""))
+            if(!n2.equals("") && iterator.getAdvan() == 9)
                 compartments[0][1] = n2;
             else
                 compartments[0][1] = "0";

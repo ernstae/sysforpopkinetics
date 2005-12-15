@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
-    <fileobject name="Omega.java">
-        <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Omega"/>
-        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="Omega.ATableModel"/>
-        <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Omega.MyStepDescriptor"/>
-        <attr name="class_dependency_javax.swing.JPanel" stringvalue="Omega"/>
-        <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="Omega.HeaderCellRenderer"/>
+    <fileobject name="ScatterPlot.java">
+        <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="ScatterPlot"/>
+        <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="ScatterPlot.MyStepDescriptor"/>
+        <attr name="class_dependency_javax.swing.JPanel" stringvalue="ScatterPlot"/>
     </fileobject>
     <fileobject name="Theta.java">
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Theta"/>
         <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Theta.MyStepDescriptor"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Theta"/>
     </fileobject>
-    <fileobject name="ScatterPlot.java">
-        <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="ScatterPlot"/>
-        <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="ScatterPlot.MyStepDescriptor"/>
-        <attr name="class_dependency_javax.swing.JPanel" stringvalue="ScatterPlot"/>
-    </fileobject>
-    <fileobject name="Sigma.java">
-        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="Sigma.ATableModel"/>
-        <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Sigma"/>
-        <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Sigma.MyStepDescriptor"/>
-        <attr name="class_dependency_javax.swing.JPanel" stringvalue="Sigma"/>
-        <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="Sigma.HeaderCellRenderer"/>
-    </fileobject>
     <fileobject name="Pred.java">
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Pred"/>
         <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Pred.MyStepDescriptor"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Pred"/>
-        <attr name="SourceSync" bytevalue="0"/>
         <attr name="class_dependency_javax.swing.event.DocumentListener" stringvalue="Pred.MyDocumentListener"/>
+        <attr name="SourceSync" bytevalue="0"/>
+    </fileobject>
+    <fileobject name="Sigma.java">
+        <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Sigma"/>
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="Sigma.ATableModel"/>
+        <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Sigma.MyStepDescriptor"/>
+        <attr name="class_dependency_javax.swing.JPanel" stringvalue="Sigma"/>
+        <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="Sigma.HeaderCellRenderer"/>
+    </fileobject>
+    <fileobject name="Simulation.java">
+        <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Simulation"/>
+        <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Simulation.MyStepDescriptor"/>
+        <attr name="class_dependency_javax.swing.JPanel" stringvalue="Simulation"/>
     </fileobject>
     <fileobject name="Des.java">
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Des"/>
@@ -38,23 +36,18 @@
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Des"/>
         <attr name="class_dependency_javax.swing.event.DocumentListener" stringvalue="Des.MyDocumentListener"/>
     </fileobject>
-    <fileobject name="Simulation.java">
-        <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Simulation"/>
-        <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Simulation.MyStepDescriptor"/>
-        <attr name="class_dependency_javax.swing.JPanel" stringvalue="Simulation"/>
-    </fileobject>
     <fileobject name="Subroutines.java">
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Subroutines"/>
         <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Subroutines.MyStepDescriptor"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Subroutines"/>
     </fileobject>
-    <fileobject name="Help.java">
-        <attr name="class_dependency_javax.swing.JFrame" stringvalue="Help"/>
-    </fileobject>
     <fileobject name="Covariance.java">
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Covariance"/>
         <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Covariance.MyStepDescriptor"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Covariance"/>
+    </fileobject>
+    <fileobject name="Help.java">
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="Help"/>
     </fileobject>
     <fileobject name="Confirmation.java">
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Confirmation"/>
@@ -92,8 +85,8 @@
         <attr name="class_dependency_javax.swing.event.DocumentListener" stringvalue="Problem.MyDocumentListener"/>
     </fileobject>
     <fileobject name="Input.java">
-        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="Input.ATableModel"/>
         <attr name="class_dependency_org.netbeans.ui.wizard.WizardStep" stringvalue="Input"/>
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="Input.ATableModel"/>
         <attr name="class_dependency_org.netbeans.ui.wizard.StepDescriptor" stringvalue="Input.MyStepDescriptor"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="Input"/>
         <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="Input.CellRenderer"/>

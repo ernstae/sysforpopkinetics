@@ -21,10 +21,11 @@ package uw.rfpk.beans;
 import java.sql.*;
 import java.util.Vector;
 import java.io.ByteArrayInputStream;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import rfpk.spk.spkdb.*;
+import uw.rfpk.rcs.Archive;
 
 /**
  * Get user dataset list from archive.
@@ -116,16 +117,18 @@ public class DatasetList implements java.io.Serializable
 	        Blob blobArchive = userDatasetsRS.getBlob("archive");
 	        long length = blobArchive.length(); 
 	        String dataArchive = new String(blobArchive.getBytes(1L, (int)length));                    
-                Archive archive = new Archive("", new ByteArrayInputStream(dataArchive.getBytes()));
+//                Archive archive = new Archive("", new ByteArrayInputStream(dataArchive.getBytes()));
                     
                 // Fill in the list 
                 String[] dataset = new String[5];
                 dataset[0] = String.valueOf(datasetId); 
                 dataset[1] = userDatasetsRS.getString("name");
-                dataset[2] = String.valueOf(archive.getRevisionVersion().last());
-                dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+//                dataset[2] = String.valueOf(archive.getRevisionVersion().last());
+//                dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                dataset[2] = String.valueOf(Archive.getNumRevision(dataArchive));
+                dataset[3] = Archive.getRevisionDate(dataArchive);
                 dataset[4] = userDatasetsRS.getString("abstract");
-                datasetList.add(dataset);        
+                datasetList.add(dataset); 
             }
         }      
         catch(SQLException e)
@@ -133,9 +136,6 @@ public class DatasetList implements java.io.Serializable
         }    
         catch(SpkdbException e)
         {
-        }
-        catch(ParseException e)
-        { 
         }
         finally
         {

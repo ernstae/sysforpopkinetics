@@ -40,7 +40,7 @@ import uw.rfpk.beans.UserInfo;
  * the model_id to get model_name using database API method getModel and uses the dataset_id
  * to get dataset_name using database API method getDataset.  The servlet converts the 
  * state_code and the end_code into the corresponding names and uses the names to form a 
- * status_code for each job.  If the state_code is not "End", the status_code is the name of
+ * status_code for each job.  If the end_code is "null", the status_code is the name of
  * the state_code, otherwise the status_code is the name of the end_code.  The servlet forms
  * model_info string by "model_name.model_version" and forms dataset_info string by 
  " dataset_name.dataset_version.  The servletThe servlet puts the job_id, start_time(formated), 
@@ -149,14 +149,9 @@ public class UserJobs extends HttpServlet
                     job[0] = String.valueOf(userJobsRS.getLong("job_id"));
                     job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));                   
                     job[2] = state.getProperty(userJobsRS.getString("state_code"));
-                    if(job[2].equals("End"))
-                    {                   
-                        String endCode = userJobsRS.getString("end_code");
-                        if(endCode != null)
-                            job[2] = end.getProperty(endCode); 
-                        else
-                            job[2] = "";                        
-                    }                    
+                    String endCode = userJobsRS.getString("end_code");
+                    if(endCode != null)
+                        job[2] = end.getProperty(endCode); 
                     ResultSet modelRS = Spkdb.getModel(con, userJobsRS.getLong("model_id"));
                     modelStmt.add(modelRS.getStatement());                   
                     modelRS.next();
@@ -208,7 +203,7 @@ public class UserJobs extends HttpServlet
                 if(endStmt != null) endStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
-            catch(SQLException e){messageOut = e.getMessage();}
+            catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
         
         // Write the data to our internal buffer

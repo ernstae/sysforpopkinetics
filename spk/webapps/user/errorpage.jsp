@@ -26,7 +26,7 @@ author: Jiaji Du
 
 <%
     String emailAddress = getServletContext().getInitParameter("emailAddress");
-    String link = "<a href="mailto:" + emailAddress + ">Let us know</a>";
+    String link = "<a href=mailto:" + emailAddress + ">Let us know</a>";
 %>
 
 <html>

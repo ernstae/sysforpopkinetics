@@ -53,7 +53,9 @@ public class Likelihood {
         // Remove attributes of <pop_analysis>.
         String front = source.substring(0, source.indexOf("<pop_analysis "));
         int popSizeIndex = source.indexOf("pop_size=", source.indexOf("<pop_analysis "));
-        String popSize = source.substring(popSizeIndex, source.indexOf(" ", popSizeIndex));
+        String section = source.substring(popSizeIndex);
+        section = section.replaceFirst(">", " ");
+        String popSize = section.substring(0, section.indexOf(" "));
         String back = source.substring(source.indexOf(">", source.indexOf("<pop_analysis ")) + 1);
         source = front + "<pop_analysis is_estimation=\"no\" " + popSize + ">" + back;
         JOptionPane.showMessageDialog(null, "Initial values of the parameters have been replaced" +
