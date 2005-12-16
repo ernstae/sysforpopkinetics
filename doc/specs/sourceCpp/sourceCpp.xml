@@ -1575,18 +1575,41 @@ public:
    <sect1>
       <title><filename>fitDriver.cpp</filename></title>
       <para>
-      This is a driver for data simulation, optimization and statistics 
-      computation.
+      This is the SPK job driver (for parameter estimation, statistics and simulation).
+      When you run <filename>Makefile.SPK</filename> generated together by SPK Compiler,
+      this file builds to an executable named <filename>driver</filename>.
       </para>
+      <programlisting>
+Usage: driver FORCE_WARM_START
+
+FORCE_WARM_START --- Forces the job to start from the status found in "checkpoint.xml" in the current directory.
+      </programlisting>
       <variablelist>
          <title>Input File</title>
             <varlistentry>
                <term><filename>checkpoint.xml</filename></term>
                <listitem>
                   <para>
-                  Whenever this file is found in the working directory of fitDriver,
-                  the optimization process will being from the state that is saved
-                  in the file. 
+                  When the contents of this file is loaded into the job driver,
+                  the optimization will start from the status saved in the file (i.e. warm-start).
+                  </para>
+                  <para>
+                  There are two scenarios where this file is loaded into the job driver:
+                  <itemizedlist>
+                    <listitem>
+                       <para>
+                       This file is found in the working directory 
+                       <emphasis>and</emphasis> the user has requested the warm start.
+                       </para>
+                    </listitem>
+                    <listitem>
+                       <para>
+                       This file is found in the working directory
+                       <emphasis>and</emphasis> the first command line argument to this driver
+                       is <emphasis>1</emphasis>.  The argument value overrides the user's request.
+                       </para>
+                    </listitem>
+                  </itemizedlist>
                   </para>
                </listitem>
             </varlistentry>
