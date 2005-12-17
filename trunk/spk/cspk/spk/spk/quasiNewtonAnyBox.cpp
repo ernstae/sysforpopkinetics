@@ -599,7 +599,7 @@ namespace // [Begin: unnamed namespace]
     int            n,
     const double*  yCurr,
     const double*  gScaled,
-    double*        gProjScaled );
+    double*        gScaledProj );
 
   bool isAllZero( int n, const double* x );
   
@@ -751,7 +751,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           stde,
-          "An standard exception was thrown during the evaluation of the objective function.",
+          "A standard exception was thrown during the evaluation of the objective function.",
           __LINE__, 
           __FILE__ );
       }  
@@ -826,7 +826,7 @@ namespace // [Begin: unnamed namespace]
       {
         throw SpkException(
           stde,
-          "An standard exception was thrown during the evaluation of the gradient of the objective function.",
+          "A standard exception was thrown during the evaluation of the gradient of the objective function.",
           __LINE__, 
           __FILE__ );
       }  
@@ -1044,6 +1044,9 @@ void quasiNewtonAnyBox(
   double rScaled;
   double fScaled;
 
+  // Send the output to standard cout.
+  std::ostream& outputStream = std::cout;
+
   const char* charMessage;
 
   // Even if quasiNewtonAnyBox is not doing a warm start, QuasiNewton01Box
@@ -1083,7 +1086,7 @@ void quasiNewtonAnyBox(
     {
       throw SpkException(
         stde,
-        "An standard exception was thrown during the initial evaluation of the objective function and gradient.",
+        "A standard exception was thrown during the initial evaluation of the objective function and gradient.",
         __LINE__, 
         __FILE__ );
     }  
@@ -1169,6 +1172,34 @@ void quasiNewtonAnyBox(
 
 
   //------------------------------------------------------------
+  // See if the initial parameters are already optimal.
+  //------------------------------------------------------------
+
+  // Calculate the initial scaled projected gradient.
+  calcScaledProjGrad( nObjParFree, yCurr, gScaled, gScaledProj ); 
+  
+  // If the scaled projected gradient is already equal to zero,
+  // then the starting value is the optimal value, and the
+  // optimizer does not need to perform any iterations.
+  if ( nObjParFree > 0 )
+  {
+    if ( QN01Box::MaxAbs( nObjParFree, gScaledProj ) == 0.0 )
+    {
+      isWithinTol = true;
+
+      if ( level > 0 && nMaxIterAnyBox > 0 )
+      {
+        outputStream << endl;
+        outputStream << "Initial parameter values are optimal." << endl;
+        outputStream << endl;
+      }
+
+      nMaxIterAnyBox = 0;
+    }
+  }
+
+
+  //------------------------------------------------------------
   // Set the rest of the parameters that control the optimization.
   //------------------------------------------------------------
 
@@ -1193,8 +1224,11 @@ void quasiNewtonAnyBox(
   // optimizer's quadratic subproblem.
   bool isSScaledOk = false;
 
-  // Send the output to standard cout.
-  std::ostream& outputStream = std::cout;
+  // Set the negative value for level.
+  int negLevel = - level;
+
+  // Set the value for level that won't produced any trace information.
+  int noTracingLevel = 0;
 
 
   //------------------------------------------------------------
@@ -1221,15 +1255,6 @@ void quasiNewtonAnyBox(
       // Calculate the current scaled projected gradient.
       calcScaledProjGrad( nObjParFree, yCurr, gScaled, gScaledProj );
 
-      // Set delta so that the optimizer will be able to perform at
-      // least one Quasi-Newton iteration and so that the quadratic
-      // subproblems will be solved with sufficient accuracy.
-      delta = QN01Box::MaxAbs( nObjParFree, gScaledProj ) / 100.0;
-
-      // The current sScaled is no longer valid because it depends
-      // on the value for delta.
-      isSScaledOk = false;
-
       // If the scaled projected gradient is close to zero relative
       // to the Hessian and the smallest double value, then the
       // current y value is a local minimizer of the objective.
@@ -1243,6 +1268,15 @@ void quasiNewtonAnyBox(
       }
       else
       {
+        // Set delta so that the optimizer will be able to perform at
+        // least one Quasi-Newton iteration and so that the quadratic
+        // subproblems will be solved with sufficient accuracy.
+        delta = QN01Box::MaxAbs( nObjParFree, gScaledProj ) / 100.0;
+    
+        // The current sScaled is no longer valid because it depends
+        // on the value for delta.
+        isSScaledOk = false;
+
         // Check this function's convergence criterion 
         // unless the flag has been turned off.
         if ( checkConvAtBeginOfIter )
@@ -1253,10 +1287,11 @@ void quasiNewtonAnyBox(
           iterMax  = iterCurr;
           quadCurr = 0;
     
-          // Try to get the current sScaled value.
+          // Try to get the current sScaled value using a value for
+          // level that turns off any tracing information.
           charMessage = QN01Box::QuasiNewton01Box(
             outputStream,
-            level,
+            noTracingLevel,
             iterMax,
             nQuadMax,
             nObjParFree,
@@ -1372,10 +1407,11 @@ void quasiNewtonAnyBox(
       iterMax    = iterCurr + 1;
       quadCurr   = 0;
 
-      // Optimize the scaled objective function.
+      // Perform the single iteration using a negative value for level
+      // that prevents the final values from being printed.
       charMessage = QN01Box::QuasiNewton01Box(
         outputStream,
-        level,
+        negLevel,
         iterMax,
         nQuadMax,
         nObjParFree,
@@ -1412,6 +1448,13 @@ void quasiNewtonAnyBox(
           }
         }
 
+        if ( level > 0 )
+        {
+          outputStream << endl;
+          outputStream << stringMessage << endl;
+          outputStream << endl;
+        }
+
         throw SpkException( 
           SpkError::SPK_OPT_ERR,
           stringMessage.c_str(),
@@ -1436,7 +1479,7 @@ void quasiNewtonAnyBox(
   {
     throw SpkException(
       stde,
-      "An standard exception was thrown during the optimization of the objective function.",
+      "A standard exception was thrown during the optimization of the objective function.",
       __LINE__, 
       __FILE__ );
   }  
@@ -1447,6 +1490,93 @@ void quasiNewtonAnyBox(
       "An unknown exception was thrown during the optimization of the objective function.",
       __LINE__, 
       __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Print tracing for the final iteration if necessary.
+  //------------------------------------------------------------
+
+  // If the optimization was successful and there were more than
+  // zero iterations requested, then print the tracing information
+  // for the final iteration.
+  if ( isWithinTol && nMaxIterAnyBox > 0 )
+  {
+    try
+    {
+      // Set this so that the optimizer won't try to perform another
+      // Quasi-Newton iteration.
+      iterMax  = iterCurr;
+      quadCurr = 0;
+
+      // Print the tracing information for the final iteration.
+      charMessage = QN01Box::QuasiNewton01Box(
+        outputStream,
+        level,
+        iterMax,
+        nQuadMax,
+        nObjParFree,
+        delta,
+        objective01Box,
+        isSScaledOk,
+        iterCurr,
+        quadCurr,
+        bfgsCurr,
+        rScaled,
+        fScaled,
+        yCurr,
+        sScaled,
+        gScaled,
+        hScaled );
+    }
+    catch( SpkException& e )
+    {
+      throw e.push(
+        SpkError::SPK_OPT_ERR, 
+        "The optimization of the objective function failed.",
+        __LINE__, 
+        __FILE__ );
+    }
+    catch( const std::exception& stde )
+    {
+      throw SpkException(
+        stde,
+        "A standard exception was thrown during the optimization of the objective function.",
+        __LINE__, 
+        __FILE__ );
+    }  
+    catch( ... )
+    {
+      throw SpkException(
+        SpkError::SPK_UNKNOWN_ERR, 
+        "An unknown exception was thrown during the optimization of the objective function.",
+        __LINE__, 
+        __FILE__ );
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Check for parameter values that are at or near their bounds.
+  //------------------------------------------------------------
+
+  const string parAtOrNearBoundsMessage = 
+    "Note that some parameter values are at or near their bounds.";
+
+  bool parAtOrNearBounds = false;
+
+  // See if any of the free elements of the parameter is at or near
+  // its bounds, i.e., within epsilon.
+  if ( !isWithinTol )
+  {
+    for ( i = 0; i < nObjParFree; i++ )
+    {
+      if ( yCurr[i] < epsilon || 1.0 - yCurr[i] < epsilon )
+      {
+        bool parAtOrNearBounds = true;
+        break;
+      }
+    }
   }
 
 
@@ -1484,6 +1614,11 @@ void quasiNewtonAnyBox(
       outputStream << endl;
       outputStream << "Maximum number of iterations performed without convergence." << endl;
       outputStream << endl;
+      if ( parAtOrNearBounds )
+      {
+        outputStream << parAtOrNearBoundsMessage << endl;
+        outputStream << endl;
+      }
     }
 
     optInfo.setIsTooManyIter( true );
@@ -1491,6 +1626,10 @@ void quasiNewtonAnyBox(
     {
       errorCode = SpkError::SPK_TOO_MANY_ITER;
       stringMessage = "Maximum number of iterations performed without convergence.";
+      if ( parAtOrNearBounds )
+      {
+        stringMessage += "\n" + parAtOrNearBoundsMessage;
+      }
       ok = false;
     }
     else
@@ -1509,11 +1648,20 @@ void quasiNewtonAnyBox(
       outputStream << endl;
       outputStream << "Unable to find optimal parameter values." << endl;
       outputStream << endl;
+      if ( parAtOrNearBounds )
+      {
+        outputStream << parAtOrNearBoundsMessage << endl;
+        outputStream << endl;
+      }
     }
 
     optInfo.setIsTooManyIter( false );
     errorCode = SpkError::SPK_NOT_CONVERGED;
     stringMessage = "Unable to find optimal parameter values in quasiNewtonAnyBox.";
+    if ( parAtOrNearBounds )
+    {
+      stringMessage += "\n" + parAtOrNearBoundsMessage;
+    }
     ok = false;
   }
 
@@ -2002,7 +2150,7 @@ bool meetsConvCrit( int nAccept, int nPar )
  * The gradient gScaled(y) evaluated at yCurr.  It must be of length n.
  *
  *
- * gProjScaled
+ * gScaledProj
  *
  * On input, this must be allocated to hold n elements.  On output, it
  * will contain the scaled projected gradient evaluated at yCurr.
@@ -2013,7 +2161,7 @@ void calcScaledProjGrad(
   int            n,
   const double*  yCurr,
   const double*  gScaled,
-  double*        gProjScaled )
+  double*        gScaledProj )
 {
   int i;
 
@@ -2022,11 +2170,11 @@ void calcScaledProjGrad(
   {
     if ( gScaled[i] >= 0.0 )
     {
-      gProjScaled[i] = ( yCurr[i] - 0.0 ) * gScaled[i];
+      gScaledProj[i] = ( yCurr[i] - 0.0 ) * gScaled[i];
     }
     else
     {
-      gProjScaled[i] = ( 1.0 - yCurr[i] ) * gScaled[i];
+      gScaledProj[i] = ( 1.0 - yCurr[i] ) * gScaled[i];
     }
   }
 
