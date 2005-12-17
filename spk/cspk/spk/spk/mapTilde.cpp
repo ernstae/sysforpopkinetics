@@ -734,6 +734,8 @@ void mapTilde(
     using namespace std;
     using namespace dbl_true_false;
 
+    int level = 0;
+
     // Check assumptions.  If any assumption fails, the routine returns false immediately.
     int nB = dvecBinitial.nr();
     int nY = dvecY.nr();
@@ -810,6 +812,28 @@ void mapTilde(
 
     // Intialize a nB by 1 column vector dvecPosNewtonDir
     dvecPosNewtonDir.fill(1.0);
+
+    // Set any parameter elements that are close to their bounds
+    // equal to that bound.
+    //
+    // The motivation for this is to handle the situation where the
+    // parameters are actually at their bounds but the interior point
+    // method holds them off and the objective is not positive
+    // definite for the current parameter value.  This violates the
+    // assumptions made in this routine and causes the parameters to
+    // go in the direction away from the bound.
+    //
+    for(i = 0; i <nB; i++)
+    {
+        if( (pdCurB[i] - pdBlower[i]) <= 2.0 * dEps * (pdBupper[i] - pdBlower[i]) )
+        {
+            pdCurB[i] = pdBlower[i];
+        }
+        if( (pdBupper[i] - pdCurB[i]) <= 2.0 * dEps * (pdBupper[i] - pdBlower[i]) )
+        {
+            pdCurB[i] = pdBupper[i];
+        }
+    }
 
     bool change;
     for( int itr=0; itr<=iMaxitr; itr++ )
@@ -943,9 +967,8 @@ void mapTilde(
             // If g[i] was not active but (curBLower[i] != 0 || curBUp[i] != 0),
             // then, g[i] is said to be active.
             //
-	    int indexMax = -1;
+            int indexMax = -1;
             double amountMax = 0.;
-            int i;
             double * pdCurBlower = dvecCurBlower.data();
             double * pdCurBupper = dvecCurBupper.data();
 
@@ -964,7 +987,7 @@ void mapTilde(
             change = indexMax >= 0;
             if( change )
             {
-		pdActive[indexMax] = dTRUE;
+                pdActive[indexMax] = dTRUE;
             }
         }
         // determine the maximum allowable step size
@@ -1014,6 +1037,10 @@ void mapTilde(
 
         // check for convergednce
         active   = isActive( dvecCurMapObj_bOut, dvecBlower, dvecBupper, dvecCurB );
+
+        notActive = !active;
+        transpose(notActive, drowNotActive);
+
         if( allTrue(active) )
         {
             converged = true;
@@ -1044,8 +1071,11 @@ void mapTilde(
                 normSofar = addScalarOnTail( normSofar, norm(g) );
             }
         }
-        // Trace...
-	//cout << "Maptilde Objective = " << normSofar << endl;
+        // Trace.
+        if( level > 0 )
+        {
+            cout << "itr = " << itr << ", mapTilde objective = " << normSofar << endl;
+        }
         if( converged || (iMaxitr == 0) )
         {
             dvecBout               = dvecCurB;
