@@ -1,21 +1,89 @@
 /**
- * \mainpage SPK Compiler API Documentation 
- * \section intro_sec Overall
- * <a href="../spkcompiler.html">Overall</a>
- * \section install_sec Installation
- * \subsection step1 Step 1: Configure
- * \subsection step2 Step 2: Make
- * \subsection step3 Step 3: Install
- * \section execution Execution
+ * @mainpage SPK Compiler API Documentation 
  *
- * \bug The search facility on this page is not working.
+ * @section overall Overall 
+ * For the top down conceptual documentation, <a href="../spkcompiler.html">click here.</a>
+ *
+ * The code are organized in the following directory structure:
+ * <code><pre>
+ *    spkcompiler -+- autogen.sh
+ *                 +  configure.ac
+ *                 +  Makefile.am
+ *                 +  README
+ *                 +  AUTHORS
+ *                 +  NEWS
+ *                 +  INSTALL
+ *                 +  ChangeLog
+ *                 |
+ *                 +- spkcompiler    -+-  (common components)
+ *                 |                  +-  Makefile.am
+ *                 |                  +-  nonmem               -+- (NONMEM specific components)
+ *                 |                                            +- Makefile.am
+ *                 |
+ *                 +- tests          -+-  common               -+- (unit tests for common comp)
+ *                 |                  |                         +- Makefile.am
+ *                 |                  |
+ *                 |                  +-  nonmem               -+- (unit tests for NONMEM comp)
+ *                 |                                            +- Makefile.am
+ *                 |
+ *                 +- doc            -+-  spkcompiler.xml
+ *                                    +-  spkcompiler.cfg
+ *                                    +-  Makefile.am
+ *                                    +-  html                 -+- index.html
+ *                                                              +- ...
+ * </pre></code>
+ *
+ * @section install_sec Build & Installation
+ * @subsection step1 Step 1: Configure
+ * <code><pre>
+ *    [r2/src/apps/spk/aspk/spkcompiler] $ ./autogen.sh
+ * </pre></code>
+ * <code>autogen</code> is a bootstrap script that ultimately
+ * executes <code>configure</code> and generates Makefile's.
+ * This script is needed to be executed only for the first
+ * time after you checkout the module or only after
+ * when <code>configure.ac</code> was modified.
+ *
+ * <code>configure.ac</code> has an extra option as well as
+ * standard options provided by the autoconf system.
+ * <code><pre>
+ *    [r2/src/apps/spk/aspk/spkcompiler] $ ./configure --enable-release-build
+ * </pre></code>
+ * <code>--enable-release-build</code> option is for building SPK Compiler
+ * with full code-optimization and with no debug information.
+ * By default, it builds with no code-optimization and with debug info.
+ *
+ * @subsection step2 Step 2: Make
+ * <code><pre>
+ *    [r2/src/apps/spk/aspk/spkcompiler] $ make 
+ * </pre></code>
+ * Running "make" at this level builds all the compiler, unit tests and documentations.
+ * If you are interested in only building, for example, the compiler,
+ * change directory to "r2/src/apps/spk/aspk/spkcompiler/spkcompiler" and run make.
+ *
+ * @subsection step3 Step 3: Install
+ * <code><pre>
+ *    [r2/src/apps/spk/aspk/spkcompiler] $ su
+ *    [r2/src/apps/spk/aspk/spkcompiler] $ make install
+ * </pre></code>
+ * The compiler, <code>spkcompiler</code>, is intalled into <code>/usr/local/bin/spktest/</code>.
+ *
+ * @section usage Usage
+ * <code><pre>
+ *    Usage: spkcompiler SOURCE_XML DATA_XML
+ *
+ *    SOURCE_XML --- an SpkSourceML document
+ *    DATA_XML   --- an SpkDataML document
+ * </pre></code> 
+ *
+ * @bug The search facility on this page is not working.
  * The webserver (i.e. "webserver" in RFPK) on which this documentation
  * is installed must be equipped with 
  * <a href="http://us2.php.net/manual/en/install.php">PHP</a>
  * version 4.1.0 or higher.
  *
- * \author Sachiko Honda
- * \date December 13, 2005
+ * @author Sachiko Honda
+ * @date December 23, 2005
  */
 /** 
  * The <code>main</code> function defined in this file
@@ -80,7 +148,6 @@
 #include "client.h"
 #include "SpkCompilerException.h"
 #include "ClientTranslator.h"
-#include "upper.h"
 #include "nonmem/NonmemTranslator.h"
 #include "DOMPrint.h"
 
