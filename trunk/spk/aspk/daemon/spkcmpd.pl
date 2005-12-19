@@ -466,7 +466,7 @@ sub reaper {
     chdir $working_dir;
 
     # Normal termination
-    if ($child_exit_value == 0 && $child_signal_number == 0) {
+    if ($child_exit_value == 0 && $child_signal_number == 0 && !$child_dumped_core) {
 	# Make a tar file from the working directory
 	my @args = ($pathname_tar, 'cf', "cpp_source.tar");
 	push @args, glob("*");
@@ -712,7 +712,6 @@ sub abort_job {
     # Form the working directory path of the job
     my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
     my $working_dir = "$tmp_dir/$unique_name";
-    my $checkpoint;
     if ( -e $working_dir ) {
         # Remove working directory if it is not needed
         if (!$retain_working_dir) {
