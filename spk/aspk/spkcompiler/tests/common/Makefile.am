@@ -19,11 +19,7 @@ AM_CXXFLAGS          = -g  -Dspk_debug
 endif
 
 testall_SOURCES = \
-	test_common.cpp \
-	lowerTest.cpp \
-        lowerTest.h \
-        upperTest.cpp \
-        upperTest.h \
+	testall.cpp \
 	seriesTest.cpp \
 	seriesTest.h \
 	clientTest.cpp \

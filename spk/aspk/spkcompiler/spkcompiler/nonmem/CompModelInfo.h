@@ -5,7 +5,7 @@
 #include <vector>
 
 /**
- * A representation of a compartmental model.
+ * Representation of a compartmental model.
  */
 class CompModelInfo{
 
@@ -109,31 +109,66 @@ class CompModelInfo{
   void getNoDose( std::vector<bool>& no_dose ) const;
 
   /**
-   * Get the i-th Compartment object.
-   * @param i The number/order of the object.
+   * Get the constant reference to the i-th CompartmentInfo object.
+   * 
+   * @param i The number/order of the object (>=0).
    */
   const CompartmentInfo& operator[]( int i ) const;
-  const CompartmentInfo& getCompartment( int i ) const;
+
   /**
-   * Get the i-th CompartmentInfo object.
+   * Get the constant reference to the i-th CompartmentInfo object.
+   * @param i The number/order of the object (>=0).
+   */
+  const CompartmentInfo& getCompartment( int i ) const;
+
+  /**
+   * Get the non-const reference to the i-th CompartmentInfo object.
    * @param i The number/order of the object.
    */
   CompartmentInfo& operator[]( int i );
-  CompartmentInfo& getCompartment( int i );
 
   /**
-   *
+   * Get the non-const reference to the i-th CompartmentInfo object.
+   * @param i The number/order of the object.
    */
+  CompartmentInfo& getCompartment( int i );
 
   protected:
+  /**
+   * (Prohibited) Default constructor.
+   */
   CompModelInfo();
 
   private:
+
+  /** The number of compartments */
   int nCompartments;
+
+  /** The number of PK parameters 
+   * @note for developers: We don't really understand what this number stands for at this point.
+   *                       The value is not currently used.
+   */
   int nParameters;
+
+  /**
+   * The number of equilibrim compartments.
+   */
   int nEquilibrims;
+
+  /**
+   * The relative tolerance.
+   */
   double relTol;
+  
+  /**
+   * A flag indicating as to whether the PK model is a function of T.
+   * true means it is a function of T.
+   */
   bool is_pkFunctionOfT;
+
+  /**
+   * The internal list of compartment objects.
+   */
   std::vector<CompartmentInfo> compartments;
 };
 

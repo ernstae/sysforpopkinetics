@@ -610,24 +610,24 @@ void pop_advan6Test::parse()
   }
   // Check general variables registered by the compiler
   SymbolTable* table = xlator.getSymbolTable();
-  assert( table->findi( strPRED ) );
-  assert( table->findi( strIPRED ) );
-  assert( table->findi( strIWRES ) );
-  assert( table->findi( strIRES ) );
-  assert( table->findi( strIETARES ) );
-  assert( table->findi( strIWETARES ) );
-  assert( table->findi( strPPRED ) );
-  assert( table->findi( strPWRES ) );
-  assert( table->findi( strPRES ) );
-  assert( table->findi( strPETARES ) );
-  assert( table->findi( strPWETARES ) );
+  assert( table->find( strPRED ) );
+  assert( table->find( strIPRED ) );
+  assert( table->find( strIWRES ) );
+  assert( table->find( strIRES ) );
+  assert( table->find( strIETARES ) );
+  assert( table->find( strIWETARES ) );
+  assert( table->find( strPPRED ) );
+  assert( table->find( strPWRES ) );
+  assert( table->find( strPRES ) );
+  assert( table->find( strPETARES ) );
+  assert( table->find( strPWETARES ) );
 
   // Check variables that are required specifically by ADVAN6
-  assert( table->findi( strY ) );
-  assert( table->findi( strF ) );
-  assert( table->findi( strT ) );
-  assert( table->findi( strTIME ) );
-  assert( table->findi( strAMT ) );
+  assert( table->find( strY ) );
+  assert( table->find( strF ) );
+  assert( table->find( strT ) );
+  assert( table->find( strTIME ) );
+  assert( table->find( strAMT ) );
   char Ri[ 24 ];
   char Di[ 24 ];
   char ALAGi[ 24 ];
@@ -636,33 +636,33 @@ void pop_advan6Test::parse()
   for ( int i=0; i<nonmemNComps; i++ )
     {
       snprintf( Ri, 24, "R%d", i+1 );
-      assert( table->findi( Ri ) );
+      assert( table->find( Ri ) );
 
       snprintf( Di, 24, "D%d", i+1 );
-      assert( table->findi( Di ) );
+      assert( table->find( Di ) );
 
       snprintf( ALAGi, 24, "ALAG%d", i+1 );
-      assert( table->findi( ALAGi ) );
+      assert( table->find( ALAGi ) );
 
       snprintf( Si, 24, "S%d", i+1 );
-      assert( table->findi( Si ) );
+      assert( table->find( Si ) );
 
       if( i < nonmemNComps-1 )
 	{
           // should be read-write
 	  snprintf( Fi, 24, "F%d", i+1 );
-	  assert( table->findi( Fi ) );
+	  assert( table->find( Fi ) );
 	}
       else
         {
           // should be read only
 	  snprintf( Fi, 24, "F%d", i+1 );
-	  assert( table->findi( Fi ) );
+	  assert( table->find( Fi ) );
         }
     }
-  assert( table->findi( strFO ) );
-  assert( table->findi( strF0 ) );
-  assert( table->findi( strS0 ) );
+  assert( table->find( strFO ) );
+  assert( table->find( strF0 ) );
+  assert( table->find( strS0 ) );
 }
 void pop_advan6Test::tearDown()
 {

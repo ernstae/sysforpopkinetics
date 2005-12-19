@@ -11,55 +11,51 @@
  */
 
 /**
- * The Symbol class abstracts the concept of string or word that is used as a reference
- * to some other object.
- *
- * In our case, a symbol would indicate a variable name and the object associated with it
- * may be a scalar, a vector, a list of vectors or a matrix.
- * These objects have their own peculiar properties such as the length if it is a vector or
- * the lengths of vectors for a list of vectors.  For a matrix, a property may indicate
- * the sparceness of the matrixe: diagonal, triangle or full.
+ * This class represents a symbol.
  */
 class Symbol{
 public:
 
   /**
-   * The types of data object associated with symbols.
+   * Object type. 
    */
-  enum ObjectType { SCALAR,      /** Scalar **/
-		    VECTOR,      /** Vector **/
-		    MATRIX       /** Matrix **/ };
+  enum ObjectType { SCALAR,      /**< Scalar */
+		    VECTOR,      /**< Vector */
+		    MATRIX       /**< Matrix */ };
 
   /**
-   * The types of object structures.  For objects other than matrix, use FULL.
+   * Object structure. For objects other than MATRIX, use FULL.
    */
-  enum Structure  { FULL,        /** Full matrix **/
-		    TRIANGLE,    /** Triangle (symmetrical) matrix **/
-		    DIAGONAL     /** Diagonal matrix **/ };
+  enum Structure  { FULL,        /**< Full matrix */
+		    TRIANGLE,    /**< Triangle (symmetrical) matrix */
+		    DIAGONAL     /**< Diagonal matrix */ };
 
   /**
-   * The access permissions.
+   * Access permission.
    **/
-  enum Access     { READONLY,    /** Read only **/
-                    READWRITE,   /** Read and write **/ };
+  enum Access     { READONLY,    /**< Read only */
+                    READWRITE,   /**< Read and write */ };
   /**
-   * Ownership, indicating who defines it.
+   * Ownership.  
+   * Data labels are owned by DATASET.  NONMEM/SPK reserved words are by SYSTEM
+   * and variables found in user models are by USER.
    */
-  enum Ownership  { SYSTEM,      /** System defined **/
-                    USER,        /** User defined **/ 
-                    DATASET      /** Bound to Data Set **/ };
+  enum Ownership  { SYSTEM,      /**< System defined */
+                    USER,        /**< User defined */ 
+                    DATASET      /**< Bound to Data Set */ };
                  
   /**
-   * Return a Symbol object that defines "empty".
+   * Return a Symbol object that defines the "empty" Symbol.
    *
-   * A Symbol object which lacks of the name (ie. the <em>name</em> field is empty)
-   * is considered empty no matter how the other fields are defined.
+   * Implementation: 
+   * A Symbol object that has no value assigned to "name" fieled
+   * is considered empty regardless of the values in the other fields.
    */
    static const Symbol* empty();
 
   /**
-   * The default constructor.  This initializes the object as an empty Symbol.
-   *
+   * The default constructor.  
+   * This initializes the object to an empty Symbol.
    * A Symbol object which lacks of the name (ie. the <em>name</em> field is empty)
    * is considered empty no matter how the other fields are defined.
    *
@@ -69,17 +65,17 @@ public:
   /**
    * The constructor that initializes the object with the given parameters.
    *
-   * @param nameIn    The symbol/identifier/name for this object.
-   * @param synonymIn The synonym for the symbol.  The string may be empty.
-   * @param stIn      The symbol type: data label, user-defined variable or NONMEM keyword
-   * @param otIn      The object type: scalar, vector or matrix
-   * @param msIn      The type of the data structure: full, triangle or diagonal.
-   *                  The value shall be always FULL for all non-matrices.
-   * @param dimIn     The dimension of the data object.  
-   *                  For scalars, the value is always 1.
-   *                  For vectors, it is its length.
-   *                  All matrices are assumed to be sqaure, so the value here is 3 if 
-   *                  the square matrix is 3 by 3.
+   * @param nameIn       The symbol/identifier/name for this object.
+   * @param synonymIn    The synonym for the symbol.  The string may be empty.
+   * @param ownerIn      The owener of this symbol.
+   * @param accessIn     The access permision to this object.
+   * @param objectTypeIn The type of object.
+   * @param structureIn  The object structure.
+   * @param dimIn        The dimension of the data object.  
+   *                     For scalars, the value is always 1.
+   *                     For vectors, it is its length.
+   *                     All matrices are assumed to be sqaure, so the value here is 3 if 
+   *                     the square matrix is 3 by 3.
    */
    Symbol( const std::string& nameIn,
 	   const std::string& synonymIn,
@@ -113,61 +109,72 @@ public:
    bool operator!=( const Symbol& ) const;
 
   /**
-   * Create and return a Symbol object that represents a user-defined (scalar) variable.
+   * Create and return a Symbol object that represents an arbitrary variable.
    *
    * @return A new Symbol object which has the following values set:
    *
    * <dl>
    *   <dt>name</dt>            <dd>The value of <em>var</em></dd>
    *   <dt>synonym</dt>         <dd>empty</dd>
-   *   <dt>symbol type</dt>     <dd>SymbolType::USERDEF</dd>
-   *   <dt>data object type</dt><dd>ObjectType::SCALAR</dd>
-   *   <dt>data structure</dt>  <dd>Structure::FULL</dd>
+   *   <dt>owner</dt>           <dd>The value of <em>owner</em></dd>
+   *   <dt>object_type</dt>     <dd>ObjectType::SCALAR</dd>
+   *   <dt>structure</dt>       <dd>Structure::FULL</dd>
+   *   <dt>access</dt>          <dd>The value of <em>access</em></dd>
    *   <dt>dimension</dt>       <dd>1</dd>
    * </dl>
    *
-   * @param var The name of the user-defined (scalar) variable.
+   * @param var The variable name.
+   * @param owner The owner of this variable.
+   * @param access The access permission to this object.
    */
    static Symbol createScalar( const std::string& var, 
 			       enum Symbol::Ownership owner, 
 			       enum Symbol::Access access );
 
   /** 
-   * Create and return a Symbol object that represents a NONMEM (vector) variable.
+   * Create and return a Symbol object that represents a vector variable.
    *
    * @return A new Symbol object which has the following values set:
    *
    * <dl>
    *   <dt>name</dt>            <dd>The value of <em>var</em></dd>
    *   <dt>synonym</dt>         <dd>empty</dd>
-   *   <dt>symbol type</dt>     <dd>SymbolType::NONMEMDEF</dd>
-   *   <dt>data object type</dt><dd>ObjectType::VECTOR</dd>
-   *   <dt>data structure</dt>  <dd>Structure::FULL</dd>
-   *   <dt>dimension</dt>       <dd>The value of <em>length</em></dd>
+   *   <dt>owner</dt>           <dd>The value of <em>owner</em></dd>
+   *   <dt>object_type</dt>     <dd>ObjectType::VECTOR</dd>
+   *   <dt>structure</dt>       <dd>Structure::FULL</dd>
+   *   <dt>access</dt>          <dd>The value of <em>access</em></dd>
+   *   <dt>dimension</dt>       <dd>The value of <em>veclen</em></dd>
    * </dl>
-   * @param var The name of the NONMEM (vector) variable.
-   * @param length The length of the vector.
+   * @param var The name of the vector variable.
+   * @param veclen The length of the vector.
+   * @param owner The owner of the variable.
+   * @param access The access permission to the object.
    */
-   static Symbol createVector( const std::string& var, int veclen, 
+   static Symbol createVector( const std::string& var, 
+                               int veclen, 
 			       enum Symbol::Ownership owner, 
 			       enum Symbol::Access access );
 
   /** 
-   * Create and return a Symbol object that represents a NONMEM (matrix) variable.
+   * Create and return a Symbol object that represents a (square) matrix variable.
    *
    * @return A new Symbol object which has the following values set:
    *
    * <dl>
    *   <dt>name</dt>            <dd>The value of <em>var</em></dd>
    *   <dt>synonym</dt>         <dd>empty</dd>
-   *   <dt>symbol type</dt>     <dd>SymbolType::NONMEMDEF</dd>
-   *   <dt>data object type</dt><dd>ObjectType::MATRIX</dd>
-   *   <dt>data structure</dt>  <dd>The value of <em>structure</em></dd>
+   *   <dt>owner</dt>           <dd>The value of <em>owner</em></dd>
+   *   <dt>object type</dt>     <dd>ObjectType::MATRIX</dd>
+   *   <dt>structure</dt>       <dd>The value of <em>structure</em></dd>
+   *   <dt>access</dt>          <dd>The value of <em>access</em></dd>
    *   <dt>dimension</dt>       <dd>The value of <em>dim</em></dd>
    * </dl>
-   * @param var The name of the NONMEM (matrix) variable.
+   *
+   * @param var        The name of the NONMEM (matrix) variable.
    * @param structure  The matrix structure (ie. sparseness).
-   * @param dim The dimension of the square matrix.
+   * @param dim        The dimension of the square matrix.
+   * @param owner      The owner of the matrix.
+   * @param access     The access permission of the matrix.
    */
    static Symbol createSymmetricMatrix( const std::string& var, 
 			       enum Structure structure, 
@@ -181,11 +188,12 @@ public:
    * @return A new Symbol object which has the following values set:
    *
    * <dl>
-   *   <dt>name</dt>            <dd>The value of <em>var</em></dd>
+   *   <dt>name</dt>            <dd>The value of <em>label</em></dd>
    *   <dt>synonym</dt>         <dd>The value of <em>alias</em></dd>
-   *   <dt>symbol type</dt>     <dd>SymbolType::DATALABEL</dd>
-   *   <dt>data object type</dt><dd>ObjectType::VECTOR</dd>
-   *   <dt>data structure</dt>  <dd>Structure::FULL</dd>
+   *   <dt>owner</dt>           <dd>Ownership::DATASET</dd>
+   *   <dt>object type</dt>     <dd>ObjectType::VECTOR</dd>
+   *   <dt>structure</dt>       <dd>Structure::FULL</dd>
+   *   <dt>access</dt>          <dd>Access::READONLY</dd>
    *   <dt>dimension</dt>       <dd>N</dd>
    * </dl>
    * @param label The label for the data subset.
@@ -219,7 +227,7 @@ public:
    enum ObjectType object_type;
 
    /**
-    * The data structure (ie. sparseness).
+    * The data structure.
     */
    enum Structure  structure;
   
@@ -234,54 +242,112 @@ public:
    enum Ownership owner;
 
    /**
-    * The dimension(s) of the data object(s) refered by the symbol.
+    * An array of dimension(s) of the data object(s) associated with the symbol.
     *
+    * The array has a different size depending on the type of object.
+    *
+    * When the object associated with the symbol is a scalar, a vector or a (square) matrix,
+    * the array has only one element.
     * For scalars, the first element of <em>dimension</em> is set to one.
     * For vectors, the first element of <em>dimension</em> is set to the length of vector.
-    * For data subsets (ie. vectors), the i-th element of <em>dimension</em> is set to the
-    * length of the i-th data subset.
-    * For matrices, the first element of <em>dimension</em> is set to the dimension.  
-    * Note that the matrices are all assumed to be square.
+    * For (square) matrices, the first element of <em>dimension</em> is set to the dimension
+    *
+    * When the object is a data label, the array has the number of elements
+    * equal to the number of individuals.  
+    * In which case, the i-th element indicates the
+    * number of i-th individual's data records.
     */
    std::valarray< int > dimension;
 
    /**
-    * The typical or initial values for the data object(s) refered by the symbol.
+    * The initial values for the data object(s) refered by the symbol.
     * 
-    * This is a list (ie. vector) of vectors.  For symbols like data labels,
-    * there are n number of data subsets associated with the label, 
-    * where n is the number of subjects.  For other symbols, the list will have
-    * only a single vector, namely the first element (vector) of initial, initial[0].
+    * This is a list (ie. vector) of vectors.  The number of vectors withint the list
+    * depends on the type of data object associated with the symbol.
+    * 
+    * When the object associated with the symbol is a scalar, a vector or a matrix,
+    * the list will contain only one element (a vector).  The element vector
+    * has the length of the data object associated with the symbol.
+    * For example, if the symbol is "THETA" and the THETA vector has a length of 3,
+    * The only element vector has the length of 3.
+    * <code><pre>
+    * initial[0:0][0:2]
+    * </pre></code>
+    * where <code>0:0</code> reads "The smallest index is 0 and the largest index is 0";
+    * Therefore, the list "initial" has a length of 1.
+    *
+    * When the object is a data label, the list will contain n number of elements (vectors),
+    * where n is the number of individuals.  Each element vector has the number
+    * elements equal to the number of i-th individual's data records.
     */
    std::vector< std::valarray<std::string> > initial;
 
    /**
-    * The upper boundary values for the data object refered by the symbol.
+    * The upper boundary values for the data object(s) by the symbol.
+    * 
+    * This is a list (ie. vector) of vectors.  The number of vectors withint the list
+    * depends on the type of data object associated with the symbol.
+    * 
+    * When the object associated with the symbol is a scalar, a vector or a matrix,
+    * the list will contain only one element (a vector).  The element vector
+    * has the length of the data object associated with the symbol.
+    * For example, if the symbol is "THETA" and the THETA vector has a length of 3,
+    * The only element vector has the length of 3.
+    * <code><pre>
+    * upper[0:0][0:2]
+    * </pre></code>
+    * where <code>0:0</code> reads "The smallest index is 0 and the largest index is 0";
+    * Therefore, the list "initial" has a length of 1.
     *
-    * It makes sense to use this field only if the symbol is associated with a
-    * NONMEM vector or matrix.  The vector is sized to the same value as of 
-    * the first element of <em>dimension</em> vector for NONMEM vectors or matrices.
-    * For other data objects, this vector remains empty.
+    * When the object is a data label, the list will contain n number of elements (vectors),
+    * where n is the number of individuals.  Each element vector has the number
+    * elements equal to the number of i-th individual's data records.
     */
    std::vector< std::valarray<std::string> > upper;
 
    /**
     * The lower boundary values for the data object refered by the symbol.
+    * 
+    * This is a list (ie. vector) of vectors.  The number of vectors withint the list
+    * depends on the type of data object associated with the symbol.
+    * 
+    * When the object associated with the symbol is a scalar, a vector or a matrix,
+    * the list will contain only one element (a vector).  The element vector
+    * has the length of the data object associated with the symbol.
+    * For example, if the symbol is "THETA" and the THETA vector has a length of 3,
+    * The only element vector has the length of 3.
+    * <code><pre>
+    * lower[0:0][0:2]
+    * </pre></code>
+    * where <code>0:0</code> reads "The smallest index is 0 and the largest index is 0";
+    * Therefore, the list "initial" has a length of 1.
     *
-    * It makes sense to use this field only if the symbol is associated with a
-    * NONMEM vector or matrix.  The vector is sized to the same value as of 
-    * the first element of <em>dimension</em> vector for NONMEM vectors or matrices.
-    * For other data objects, this vector remains empty.
+    * When the object is a data label, the list will contain n number of elements (vectors),
+    * where n is the number of individuals.  Each element vector has the number
+    * elements equal to the number of i-th individual's data records.
     */   
    std::vector< std::valarray<std::string> > lower;
 
    /**
     * The step size for the data object refered by the symbol.
     *
-    * It makes sense to use this field only if the symbol is associated with a
-    * NONMEM vector or matrix.  The vector is sized to the same value as of 
-    * the first element of <em>dimension</em> vector for NONMEM vectors or matrices.
-    * For other data objects, this vector remains empty.
+    * This is a list (ie. vector) of vectors.  The number of vectors withint the list
+    * depends on the type of data object associated with the symbol.
+    * 
+    * When the object associated with the symbol is a scalar, a vector or a matrix,
+    * the list will contain only one element (a vector).  The element vector
+    * has the length of the data object associated with the symbol.
+    * For example, if the symbol is "THETA" and the THETA vector has a length of 3,
+    * The only element vector has the length of 3.
+    * <code><pre>
+    * step[0:0][0:2]
+    * </pre></code>
+    * where <code>0:0</code> reads "The smallest index is 0 and the largest index is 0";
+    * Therefore, the list "initial" has a length of 1.
+    *
+    * When the object is a data label, the list will contain n number of elements (vectors),
+    * where n is the number of individuals.  Each element vector has the number
+    * elements equal to the number of i-th individual's data records.
     */   
    std::vector< std::valarray<std::string> > step;
 
@@ -289,16 +355,28 @@ public:
     * The boolean values indicating as to whether the corresponding NONMEM vector
     * value is fixed during the optimization effort.
     *
-    * It makes sense to use this field only if the symbol is associated with a
-    * NONMEM vector or matrix.  The vector is sized to the same value as of 
-    * the first element of <em>dimension</em> vector for NONMEM vectors or matrices.
-    * For other data objects, this vector remains empty.
+    * This is a list (ie. vector) of vectors.  The number of vectors withint the list
+    * depends on the type of data object associated with the symbol.
+    * 
+    * When the object associated with the symbol is a scalar, a vector or a matrix,
+    * the list will contain only one element (a vector).  The element vector
+    * has the length of the data object associated with the symbol.
+    * For example, if the symbol is "THETA" and the THETA vector has a length of 3,
+    * The only element vector has the length of 3.
+    * <code><pre>
+    * fixed[0:0][0:2]
+    * </pre></code>
+    * where <code>0:0</code> reads "The smallest index is 0 and the largest index is 0";
+    * Therefore, the list "initial" has a length of 1.
+    *
+    * When the object is a data label, the list will contain n number of elements (vectors),
+    * where n is the number of individuals.  Each element vector has the number
+    * elements equal to the number of i-th individual's data records.
     */
    std::vector< std::valarray<bool> >   fixed;
 
    /**
-    * Extract the contents into the ostream.
-    *
+    * The extractor.
     */
    friend std::ostream& operator<<( std::ostream& o, const Symbol& s );
 

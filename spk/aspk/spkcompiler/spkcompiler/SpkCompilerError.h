@@ -11,32 +11,45 @@
 
 /**
  * Representation of an error object. 
+ *
+ * An SpkCompilerError object has a predetermined fixed size so that
+ * the construction of an object never fails for memory allocation.
  */
 class SpkCompilerError
 {
 
  public:
-  
-  /**
-   * The length of the field that contains an error code.
-   * Error codes are of tppe of ErrorCode enumulation.
-   * The size of an enumulation cannot be larger than
-   * sizeof( int ).  The largest number expressed in the
-   * integral type is obtained by an ANSII macro INT_MAX 
-   * defined in <filename>limits.h</filename>.
-   */
+  /** The maximum number of digits for an error code */
   static const unsigned int ERRORCODE_FIELD_LEN;
+
+  /** The maximum number of characters for an error cord description */
   static const unsigned int ERRORCODE_DESCRIPTION_FIELD_LEN;
+
+  /** The maximum number of digits for a line number */
   static const unsigned int LINENUM_FIELD_LEN;
+
+  /** The maximum number of charcaters in a name of file in which the error was detected. */
   static const unsigned int FILENAME_FIELD_LEN;
+  
+  /** The maximum number of characters in an error message */
   static const unsigned int MESSAGE_FIELD_LEN;
 
+  /** The total number of characters and digits held by this object */
   static const unsigned int ERROR_SIZE;
 
+  /** The name of error code field */
   static const char ERRORCODE_FIELD_NAME[];
+
+  /** The name of error code description field */
   static const char ERRORCODE_DESCRIPTION_FIELD_NAME[];
+
+  /** The name of filename field */
   static const char FILENAME_FIELD_NAME[];
+
+  /** The name of line-number field */
   static const char LINENUM_FIELD_NAME[];
+
+  /** The name of message field */
   static const char MESSAGE_FIELD_NAME[];
 
   enum ErrorCode {
@@ -64,79 +77,101 @@ class SpkCompilerError
     /** Unknown */
     ASPK_UNKNOWN_ERR
   };
+  /** The type definition of a map that maps error codes to short descriptions */
   typedef std::map< enum ErrorCode, const char* > ErrorMap;
 
  private:
-  /** Map: ErrorCode vs. Default Message */
+  /** The mapping between error codes and short descriptions */
   static const ErrorMap mapping;
 
-  // filling the default error code vs message map
-  static const ErrorMap fillErrorMap();
+  /** 
+   * Initialize <em>mapping</em> object. 
+   *
+   * @return the initialized map.
+   */
+  static const ErrorMap initErrorMap();
 
-  // integer indicating the nature of this error
+  /** Error code */
   enum ErrorCode myErrorCode;
 
-  // line number at which the error was detected
+  /** Line number at which the error was detected (reported by the caller) */
   unsigned int myLineNum;
 
-  // filename in which the error was detected
+  /** Filename in which the error was detected (reported by the caller) */
   char myFileName[128+1]; //[SpkCompilerError::FILENAME_FIELD_LEN+1];
 
-  // error message added by client
-  char myMessage[256+1]; //[MESSAGE_FIELD_LEN+1];
+  /** Error message (genreated by the caller) */
+  char myMessage[256+1]; // Must be same as MESSAGE_FIELD_LEN + 1.
+                         // Can't use the constant because it is not intialized at this point.
 
-  // returns the maximum value allowed for error code
+  /** 
+   * Returns the maximum value that can be used as an error code.
+   * @return the maximum value that can be used as an error code.
+   */
   unsigned int maxErrorcode() throw();
 
  public:
 
-  // Displays a default error message corresponding to the error code
+  /** Displays a default error message corresponding to the error code */
   static const char* describe( enum ErrorCode key );
 
-  // method that returns the max value for a linenum
+  /** Returns the max value that can be used for a line number */
   static unsigned int maxLinenum() throw();
 
-  // method that returns the max number of characters for a filename
+  /** Returns the max number of characters for a filename */
   static unsigned int maxFilenameLen() throw();
 
-  // method that returns the max number of characters in a message
+  /** Returns the max number of characters in a message */
   static unsigned int maxMessageLen() throw();
 
-  // default constructor
+  /** Default constructor */
   SpkCompilerError() throw();
 
-  // copy constructor which performs deep copy
+  /** Copy constructor (deep copy) */
   SpkCompilerError( const SpkCompilerError& ) throw();
 
-  // constructor that takes a set of concrete information for an error
+  /** Constructor that takes a set of concrete information for an error */
   SpkCompilerError( enum ErrorCode, const char* message, unsigned int, const char* filename) throw();
 
-
-  // constructor that takes std::exception as error object
+  /** Constructor that takes std::exception as error object */
   SpkCompilerError( const std::exception& e, const char* message, unsigned int, const char* filename) throw();
 
-  // destructor which does nothing
+  /** Destructor */
   ~SpkCompilerError() throw();
 
-  // assignment operator which performs deep copy
+  /** Assignment operator (deep copy) */
   const SpkCompilerError& operator=(const SpkCompilerError&) throw();
 	
-  // method that returns the error code
+  /** Returns the error code */
   enum ErrorCode code() const throw();    
 
-  // returns the line number
+  /** Returns the line number */
   unsigned int linenum() const throw();
 
-  // method that returns the filename
+  /** Returns the filename */
   const char* filename() const throw();
 
-  // returns the message
+  /** Returns the message */
   const char* message() const throw();
 
-  // serialize
+  /** Serialize in an XML format 
+   * @return a string containing the contents of this object in an XML format.
+   */
   const std::string getXml() const;
+
+  /** Extractor (to ostream) 
+   * @return an ostream object.
+   * @param stream The output stream from which contents are extracted.
+   * @param e The object from which contents are extracted.
+   */
   friend std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e);
-  friend std::string& operator<<(std::string& stream, const SpkCompilerError& e);
+
+  /** Extractor (to string) 
+   * @return a string.
+   * @param str The string to which contents are extracted. 
+   * @param e The object from which contents are extracted.
+   */
+  friend std::string& operator<<(std::string& str, const SpkCompilerError& e);
 
 };
 

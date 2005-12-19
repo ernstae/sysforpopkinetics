@@ -708,22 +708,22 @@ void ind_withIDTest::parse()
   SymbolTable *table = xlator.getSymbolTable();
 
   // ID, TIME, DV were in the data set.  So, they should be in the symbol table already.
-  Symbol * id   = table->findi( strID );
+  Symbol * id   = table->find( strID );
   CPPUNIT_ASSERT( id != Symbol::empty() );
-  Symbol * time = table->findi( strTIME );
+  Symbol * time = table->find( strTIME );
   CPPUNIT_ASSERT( time != Symbol::empty() );
-  Symbol * dv   = table->findi( strDV );
+  Symbol * dv   = table->find( strDV );
   CPPUNIT_ASSERT( dv != Symbol::empty() );
 
-  Symbol * cp   = table->findi( strCP );
+  Symbol * cp   = table->find( strCP );
   CPPUNIT_ASSERT( cp != Symbol::empty() );
 
   // THETA, OMEGA, ETA must be registered for individual analysis.
-  Symbol * theta = table->findi( strTHETA );
+  Symbol * theta = table->find( strTHETA );
   CPPUNIT_ASSERT( theta != Symbol::empty() );
-  Symbol * omega = table->findi( strOMEGA );
+  Symbol * omega = table->find( strOMEGA );
   CPPUNIT_ASSERT( omega != Symbol::empty() );
-  Symbol * eta = table->findi( strETA );
+  Symbol * eta = table->find( strETA );
   CPPUNIT_ASSERT( eta != Symbol::empty() );
 
   //============================================

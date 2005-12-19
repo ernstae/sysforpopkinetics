@@ -65,7 +65,7 @@ static const char *const substr(const char * begin,
 /*------------------------------------------------------------------------
  * Static member functions
  *------------------------------------------------------------------------*/
-const SpkCompilerError::ErrorMap SpkCompilerError::mapping = SpkCompilerError::fillErrorMap();
+const SpkCompilerError::ErrorMap SpkCompilerError::mapping = SpkCompilerError::initErrorMap();
 const char* SpkCompilerError::describe( enum ErrorCode key )
 {
   ErrorMap::const_iterator ptr = mapping.find(key);
@@ -312,7 +312,7 @@ const char* SpkCompilerError::message() const throw()
 {
     return myMessage;
 }
-const SpkCompilerError::ErrorMap SpkCompilerError::fillErrorMap()
+const SpkCompilerError::ErrorMap SpkCompilerError::initErrorMap()
 {
     //
     // Filling the error code-message map
