@@ -81,25 +81,26 @@ import java.util.Enumeration;
  *  Handling:  If the Compiler queue contains any job, remove the first job ID from the 
  *             queue, and set the job's state code to "cmp" in the JobList.  The job's
  *             state code in the database will be set to "cmp" by the Compiler daemon.<br>
- *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise
+ *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise.
  *  <p>
  *  Request:   "get-q2r"<br>
  *  Handling:  If the Run queue contains any job, remove the first job ID from the 
- *             queue, and set the job's state code to "run" in the JobList.  The job's
+ *             queue, and set the job's state code to "run" in the JobList. The job ID may 
+ *             be started with a space character.  The space character is removed.  The job's
  *             state code in the database will be set to "run" by the Run-time daemon.<br>
- *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise
+ *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise.
  *  <p>
  *  Request:   "get-q2ac"<br>
  *  Handling:  If the Aborting compiler queue contains any job, remove the first job ID from the 
  *             queue, and set the job's state code to "acmp" in the JobList.  The job's
  *             state code in the database will be set to "acmp" by the Compiler daemon.<br>
- *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise
+ *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise.
  *  <p>
  *  Request:   "get-q2ar"<br>
  *  Handling:  If the Aborting run queue contains any job, remove the first job ID from the 
  *             queue, and set the job's state code to "arun" in the JobList.  The job's
  *             state code in the database will be set to "arun" by the Run-time daemon.<br>
- *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise
+ *  Response:  <i>job_ID</i> if the job is available, "none" if otherwise.
  *  <p>
  *  Request:   "set-abrt-"<i>job_ID</i><br>
  *  Handling:  If the job's state code in the JobList is "q2c", remove it from the Compiler queue 
@@ -146,8 +147,9 @@ import java.util.Enumeration;
  *             jobs' end code to "null" in the database.
  *             <p>
  *             If the jobList contains any job with state code "run", add these job's job ID to
- *             the Run queue, set these jobs' state code to "q2r" in the JobList and in the
- *             database, and set these jobs' end code to "null" in the database.
+ *             the Run queue with an space character added too the front of the job ID, set these 
+ *             jobs' state code to "q2r" in the JobList and in the database, and set these jobs' 
+ *             end code to "null" in the database.
  *             <p>
  *             If the jobList contains any job with state code "arun", add these job's job ID to
  *             the Aborting run queue, set these jobs' state code to "q2ar" in the JobList 
@@ -270,18 +272,18 @@ public class JobQueue
                      " and state_code='" + stateCode + "' order by job_id;";
 	ResultSet rs = stmt.executeQuery(sql);
         while(rs.next())
-        {            
+        {
             eventTime = (new Date()).getTime()/1000;
-            jobId = String.valueOf(rs.getLong("job_id"));          
+            jobId = String.valueOf(rs.getLong("job_id"));
             if(stateCode.equals("q2c"))
             {
                 jobState.cmpQueue.add(jobId);
                 jobState.jobList.put(jobId, "q2c");
             }
             if(stateCode.equals("cmp"))
-            {                    
-                sql = "update job set state_code='q2c',event_time="+
-                       eventTime + " where job_id=" + jobId;                   
+            {
+                sql = "update job set state_code='q2c',event_time=" +
+                       eventTime + " where job_id=" + jobId;
                 stmt.executeUpdate(sql);
                 addHistory(jobId, "q2c", eventTime, stmt);
             }
@@ -332,8 +334,8 @@ public class JobQueue
      */
     protected static void addHistory(String jobId, String stateCode, long eventTime,
                                      Statement stmt)
-        throws SQLException                          
-    {        
+        throws SQLException
+    {
         String sql = "insert into history (job_id, state_code, event_time, host) "
 	             + "values(" + jobId + ", '" + stateCode + "'," + eventTime
 	             + ", 'unknown')";
@@ -373,7 +375,7 @@ public class JobQueue
             sql = "update job set end_code=null where job_id=" + jobId;
         stmt.executeUpdate(sql);
         stmt.close();
-    }    
+    }
     /** Database connection object */
     protected static Connection conn;
     
@@ -445,7 +447,7 @@ class ThreadedHandler extends Thread
                             if(jobState.runQueue.size() > 0)
                             {
                                 jobId =(String)jobState.runQueue.remove(0);
-                                jobState.jobList.setProperty(jobId, "run");
+                                jobState.jobList.setProperty(jobId.trim(), "run");
                                 out.println(jobId);
                             }
                             else
@@ -462,7 +464,7 @@ class ThreadedHandler extends Thread
                             }
                             else
                                 out.println("none");
-                        }    
+                        }
                         if(message[1].equals("q2ar"))
                         {
                             JobState.rund = true;
@@ -515,7 +517,7 @@ class ThreadedHandler extends Thread
                                     JobQueue.setEndCode(jobId, null);
                                 if(stateCode.equals("run"))
                                 {
-                                    jobState.runQueue.add(jobId);
+                                    jobState.runQueue.add(" " + jobId);
                                     jobState.jobList.setProperty(jobId, "q2r");
                                     JobQueue.setStateCode(jobId, "q2r");
                                 }
@@ -619,7 +621,7 @@ class Monitor extends Thread
     public Monitor(JobState jobState)
     {
         this.jobState = jobState;
-    }    
+    }
     
     /** This is the run method of the thread. It monitors the hosts
      */
@@ -631,7 +633,7 @@ class Monitor extends Thread
         {
             try
             {
-                sleep(10000);            
+                sleep(10000);
             }
             catch(InterruptedException e)
             {
@@ -651,7 +653,7 @@ class Monitor extends Thread
                         {
                             try
                             {
-                                JobQueue.setEndCode(jobId, "spku");  
+                                JobQueue.setEndCode(jobId, "spku");
                             }
                             catch(SQLException e)
                             {
@@ -673,7 +675,7 @@ class Monitor extends Thread
                         {
                             try
                             {
-                                JobQueue.setEndCode(jobId, "spku");  
+                                JobQueue.setEndCode(jobId, "spku");
                             }
                             catch(SQLException e)
                             {

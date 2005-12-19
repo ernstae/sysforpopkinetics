@@ -316,6 +316,7 @@ sub fork_driver {
 
     my $jrow = shift;
     my $job_id = shift;
+    my $warmstart = shift;
     my $cpp_source = $jrow->{'cpp_source'};
     my $checkpoint = $jrow->{'checkpoint'};
     my $pid;
@@ -409,9 +410,8 @@ sub fork_driver {
 
 	  # Redirect Standard Error to a file
 	  open STDERR, ">$filename_serr";
-         
 	  # execute the job driver
-	  @args = ("./$filename_driver", $filename_source, $filename_data);
+	  @args = ("./$filename_driver", $warmstart);
 	  my $e = exec(@args);
 
 	  # this statement will never be reached, unless the exec failed
@@ -556,7 +556,6 @@ sub reaper {
 
     # Assume success, then look for errors
     $end_code = "srun"; 
-syslog('info', "end_code: srun  pid: $child_pid");
     if(exists $pid_abort{$child_pid}) {
         $end_code = "abrt";
         $submit_to_bugzilla = 0;
@@ -993,10 +992,15 @@ while(1) {
         $jobid = <$sh>;
         if (defined $jobid) {
             chop($jobid);
-            if ($jobid ne "none") {    
+            if ($jobid ne "none") {
+                my $warmstart = 0;
+                if (ord($jobid) == 32) {
+                    $jobid = substr($jobid, 1);
+                    $warmstart = 1;
+                }
                 my $job_row = &get_q2r_job($dbh, $jobid);
 	        if (defined $job_row && $job_row) {
-		    &fork_driver($job_row, $jobid);
+		    &fork_driver($job_row, $jobid, $warmstart);
 	        }
 	        else {
 	            death("emerg", "error reading database: $Spkdb::errstr");
