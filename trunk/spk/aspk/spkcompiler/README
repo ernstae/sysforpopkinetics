@@ -1,12 +1,11 @@
               --- SPK Compiler Library & Driver ---
 
-0. Dependencies
-1. The Directory Structure
-2. How to Build/Install SPK Compiler Libraries
-3. How to Build/Install SPK Compiler Driver
+1. Dependencies
+2. The Directory Structure
+3. How to Build/Install SPK Compiler
 4. How to Build the Tests
 
-<Dependencies>
+1: <Dependencies>
 The library requires ATLAS LAPACK and CBLAS.  The instructions to find
 or install these libraries can be found in RFPK Software Group's internal
 website.
@@ -22,7 +21,7 @@ in the group's website.
 To build the documentations, you need JAVAC, which can be found in the SUN site.
 
 
-<The Directory Structure>
+2: <The Directory Structure>
 
    spkcompiler
    ===========
@@ -68,55 +67,46 @@ To build the documentations, you need JAVAC, which can be found in the SUN site.
       |
       |---  doc
            =====
-              | Makefile.in
-              | SpkCompiler.dox
+              | Makefile.am
+              | spkcompiler.cfg
+              | spkcompiler.xml
               |
               |--- html
                    ====
                         (generated html, gif and other files)
 
 
-<How To Build and Install SPK Compiler>
+3: <How To Build and Install SPK Compiler>
 
-1. Assuming you're currently in the top level directory, "spkcompiler",
+3-1. Assuming you're currently in the top level directory, "spkcompiler",
    run a shell script that generates the configure script.
 
    > ./autogen.sh
 
-2. Run the generated configure script:
+3-2. Run the generated configure script:
 
    > ./configure
 
-3. If everything goes well, Makefiles should have been created in 
-   subsequent subdirectories.  Change the directory and invoke "make"
-   as follows:
+3-3. If everything goes well, Makefiles should have been created in 
+   subsequent subdirectories.  
    
-   > cd spkcompiler
    > make
 
-4. To install the libraries, you must become super-user:
+3-4. Install the compiler:
 
    > su
-
-   Then, type the following:
-
    > make install
    > exit
 
    This will install "spkcompiler" into /usr/local/bin/spktest/.
 
-<How To Build/Run the Tests>
+4: <How To Run the Tests>
 
-The unit tests require CppUnit.  If you do not have CppUnit installed on your machine, this is the time to do so.  You can find it at www.sourceforge.net and the installation procedure is posted in RFPK Software Group's internal website.
-
-1. Move to the top directory and then to "tests".
-
-2. Type:
-
-   > make
-
-3. Two sets of test are built in "tests/common" and "tests/nonmem" directories.
-   Run "testall" in each directory.  
+   > cd tests
+   > cd common
+   > ./testall
+   > ../nonmem
+   > ./testall
 
 DONE.
 

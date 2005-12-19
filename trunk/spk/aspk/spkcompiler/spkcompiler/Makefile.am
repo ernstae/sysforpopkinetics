@@ -37,10 +37,6 @@ dist_libcommon_a_SOURCES = \
         client.h \
         series.h \
         series.cpp \
-        lower.h \
-        lower.cpp \
-        upper.h \
-        upper.cpp \
         Symbol.cpp \
         Symbol.h \
         SymbolTable.cpp \

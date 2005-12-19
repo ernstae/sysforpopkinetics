@@ -39,7 +39,7 @@ MOSTLYCLEANFILES     = Pred.h \
 		       checkpoint.xml
 
 testall_SOURCES      = \
-	               test_nonmem.cpp \
+	               testall.cpp \
                        DOMPrint.h \
                        DOMPrint.cpp \
                        DOMPrintErrorHandler.cpp \

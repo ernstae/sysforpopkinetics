@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include "NonmemTranslator.h"
-#include "SpkCompilerException.h"
+#include "../SpkCompilerException.h"
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOM.hpp>

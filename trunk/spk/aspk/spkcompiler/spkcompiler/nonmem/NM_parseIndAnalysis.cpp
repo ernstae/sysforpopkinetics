@@ -3,10 +3,6 @@
 #include "NonmemTranslator.h"
 #include "SpkCompilerException.h"
 #include "explang.h"
-#include "countStrInLhs.h"
-#include "../upper.h"
-#include "../lower.h"
-#include "../series.h"
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOM.hpp>

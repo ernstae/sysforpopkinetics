@@ -15,11 +15,6 @@
 using namespace std;
 using namespace xercesc;
 
-class TestTranslator : public ClientTranslator
-{
-public:
-  virtual void convertSource(){};
-};
 ClientTranslator::ClientTranslator()
 {
 }

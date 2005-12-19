@@ -187,13 +187,28 @@ class CompartmentInfo{
   protected:
 
   private:
+
+  /** The label for the compartment.  */
   std::string name;
+
+  /** When this flag is true, this compartment is marked so that it is set initially OFF. */
   bool initial_off;
+
+  /** When this flag is true, this compartment is marked so that it is never turned off. */
   bool no_off;
+
+  /** When this flag is true, this compartment is marked so that it never receive a dose. */
   bool no_dose;
+
+  /** When this flag is true, this compartment is considered at quilibrim.  Valid only for ADVAN 9.*/
   bool equilibrim;  // ADVAN 9 only
+
+  /** When this flag is true, this compartment is considered excluded from the system.  Valid only for ADVAN 9. */
   bool exclude;     // ADVAN 9 only
+  /** When this flag is true, observations are taken from this compartment by default. */
   bool default_observation;
+
+  /** When this flag is true, doses are given to this compartment by default. */
   bool default_dose;
 };
 

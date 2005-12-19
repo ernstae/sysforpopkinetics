@@ -109,38 +109,63 @@ public:
 
   /**
    * Return a pointer to the (writable) symbol table.
-   *
-   * @return t A pointer to the symbol table.
    */
   inline SymbolTable* getSymbolTable()
     {
       return &table;
     }
 
+  /**
+   * Return a non-const pointer to the SpkSourceML parse tree.
+   */
   inline xercesc::DOMDocument * getSourceTree()
     {
       return source;
     }
+ 
+  /**
+   * Return a constant pinter to the SpkSourceML parse tree.
+   */
   inline const xercesc::DOMDocument * getSourceTree() const
     {
       return source;
     }
+
+  /**
+   * Return a non-const pointer to the SpkDataML parse tree.
+   */
   inline xercesc::DOMDocument * getDataTree()
     {
       return data;
     }
+
+  /**
+   * Return a pointer to the SpkDataML parse tree.
+   */
   inline const xercesc::DOMDocument * getDataTree() const
     {
       return data;
     }
+
+  /**
+   * Return the number of subjects in the population.
+   */
   inline const unsigned int getPopSize() const
     {
       return popSize;
     }
+
+  /**
+   * Determines the type of analysis: population or individual.
+   */
   inline const enum TARGET getTarget() const
     {
       return target;
     }
+
+  /**
+   * Determines the type of approximation.
+   */
   inline const enum APPROX getApproximation() const
     {
       return approximation;
@@ -148,17 +173,31 @@ public:
 
  protected:
 
+  /**
+   * Set the number of subjects in the population.
+   * @param n The number of subjects (>0).
+   */
   inline void setPopSize( unsigned int n )
     {
       popSize = n;
     }
-  inline void setTarget( enum TARGET t )
+
+  /**
+   * Set the type of analysis: population or individual.
+   * @param targetIn A value of TARGET enumlator indicating the type of analysis.
+   */
+  inline void setTarget( enum TARGET targetIn )
     {
-      target = t;
+      target = targetIn;
     }
-  inline void setApproximation( enum APPROX a )
+
+  /**
+   * Set the type of approximation.
+   * @param approx A value of APPROX enumlator indicating the type of approximation.
+   */
+  inline void setApproximation( enum APPROX approx )
     {
-      approximation = a;
+      approximation = approx;
     }
 
   /**

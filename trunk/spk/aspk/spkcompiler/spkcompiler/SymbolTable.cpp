@@ -1,6 +1,4 @@
 #include "SymbolTable.h"
-#include "lower.h"
-#include "upper.h"
 
 #include <vector>
 #include <iostream>
@@ -40,34 +38,6 @@ const Symbol* SymbolTable::find( const string& name ) const
    return NULL;
 }
 
-Symbol* SymbolTable::findi( const string& name )
-{
-   string low = key( name );
-   map<string, Symbol>::iterator p = table.begin();
-   while( p != table.end() )
-   {
-     if( key( p->second.name ) == low || key( p->second.synonym ) == low )
-       return &(p->second);
-     p++;
-   }
-   return NULL;
-}
-const Symbol* SymbolTable::findi( const string& name ) const
-{
-   string low = key( name );
-   map<string, Symbol>::const_iterator p = table.begin();
-   while( p != table.end() )
-   {
-     if( key( p->second.name ) == low || key( p->second.synonym ) == low )
-       return &(p->second);
-     p++;
-   }
-   return NULL;
-}
-const string SymbolTable::key( const string& str )
-{
-  return lower( str );
-}
 Symbol* SymbolTable::insertScalar( const string& name, 
 				   enum Symbol::Ownership owner, 
 				   enum Symbol::Access access )

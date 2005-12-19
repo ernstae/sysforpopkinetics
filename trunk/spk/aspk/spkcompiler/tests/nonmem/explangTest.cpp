@@ -83,7 +83,7 @@ void explangTest::testScalarAssignmentToScalar()
   nm_parse();
 
   CPPUNIT_ASSERT_EQUAL( 13, gSpkExpLines );
-  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "A" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -240,7 +240,7 @@ void explangTest::testVectorElementAssignmentToScalar()
   nm_parse();
 
   CPPUNIT_ASSERT_EQUAL( 2, gSpkExpLines );
-  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "A" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -370,8 +370,8 @@ void explangTest::testFunctions()
   nm_parse();
 
   CPPUNIT_ASSERT_EQUAL( 22, gSpkExpLines );
-  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
-  CPPUNIT_ASSERT( table.findi( "B" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "A" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "B" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -718,7 +718,7 @@ void explangTest::testLinInterp()
   nm_parse();
 
   CPPUNIT_ASSERT_EQUAL( 1, gSpkExpLines );
-  CPPUNIT_ASSERT( table.findi( "Z" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "Z" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -788,7 +788,7 @@ void explangTest::testIfStmt()
   nm_parse();
 
   CPPUNIT_ASSERT_EQUAL( 2, gSpkExpLines );
-  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "A" ) != Symbol::empty() );
   
   fclose( pInput );
   fclose( gSpkExpOutput );
@@ -918,8 +918,8 @@ void explangTest::testIfThenStmt()
   nm_parse();
 
   CPPUNIT_ASSERT_EQUAL( 5, gSpkExpLines );
-  CPPUNIT_ASSERT( table.findi( "C" ) != Symbol::empty() );
-  CPPUNIT_ASSERT( table.findi( "A" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "C" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "A" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -1038,7 +1038,7 @@ void explangTest::testHAHN1_1()
   nm_parse();
 
   CPPUNIT_ASSERT_EQUAL( 3, gSpkExpLines );
-  CPPUNIT_ASSERT( table.findi( "x" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "x" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
@@ -1087,10 +1087,10 @@ void explangTest::testIsTInRhs()
 
   CPPUNIT_ASSERT_EQUAL( 4, gSpkExpLines );
   CPPUNIT_ASSERT( !gSpkIsTInRhs );
-  CPPUNIT_ASSERT( table.findi( "CL" ) != Symbol::empty() );
-  CPPUNIT_ASSERT( table.findi( "V" )  != Symbol::empty() );
-  CPPUNIT_ASSERT( table.findi( "K" )  != Symbol::empty() );
-  CPPUNIT_ASSERT( table.findi( "S1" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "CL" ) != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "V" )  != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "K" )  != Symbol::empty() );
+  CPPUNIT_ASSERT( table.find( "S1" ) != Symbol::empty() );
   fclose( pInput );
   fclose( gSpkExpOutput );
 
