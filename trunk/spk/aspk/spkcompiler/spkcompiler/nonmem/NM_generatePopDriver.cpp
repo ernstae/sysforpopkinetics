@@ -124,6 +124,12 @@ void NonmemTranslator::generatePopDriver() const
     oPopDriver << "FIRST_ORDER;" << endl;
   else if( getApproximation() == FOCE )
     oPopDriver << "EXPECTED_HESSIAN;" << endl;
+  else if( getApproximation() == STD_TWO_STAGE )
+    oPopDriver << "STANDARD_TWO_STAGE;" << endl;
+  else if( getApproximation() == GLOBAL_TWO_STAGE )
+    oPopDriver << "GLOBAL_TWO_STAGE;" << endl;
+  else if( getApproximation() == ITERATIVE_TWO_STAGE )
+    oPopDriver << "ITERATIVE_TWO_STAGE;" << endl;
   else
     oPopDriver << "MODIFIED_LAPLACE;" << endl;
   oPopDriver << endl;
