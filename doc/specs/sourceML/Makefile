@@ -9,6 +9,10 @@ HTML = $(wildcard nonmem/html/*.html)
 all:	nonmem_html html pdf rtf
 
 nonmem_html:
+ifndef JAVA_HOME
+	$(error A necessary system variable, JAVA_HOME, is not defined.\
+	The variable is necessary to locate $JAVA_HOME/bin/javac. )
+endif
 	rm -rf nonmem/html
 	mkdir nonmem/html
 	$(JAVA_HOME)/bin/javac -classpath ../tools/dtddoc/java/dtdparser119.jar:../tools/dtddoc/java/jakarta-oro-2.0.6.jar ../tools/dtddoc/java/DTDDoc.java
