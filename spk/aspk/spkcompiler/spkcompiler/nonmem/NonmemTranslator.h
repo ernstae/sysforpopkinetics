@@ -350,6 +350,9 @@ class NonmemTranslator : public ClientTranslator
   XMLCh* X_FO;                         static const char* C_FO;
   XMLCh* X_FOCE;                       static const char* C_FOCE;
   XMLCh* X_LAPLACE;                    static const char* C_LAPLACE;
+  XMLCh* X_STD_TWO_STAGE;              static const char* C_STD_TWO_STAGE;
+  XMLCh* X_GLOBAL_TWO_STAGE;           static const char* C_GLOBAL_TWO_STAGE;
+  XMLCh* X_ITERATIVE_TWO_STAGE;        static const char* C_ITERATIVE_TWO_STAGE;
   XMLCh* X_METHOD;                     static const char* C_METHOD;
   XMLCh* X_ANALYTIC;                   static const char* C_ANALYTIC;
   XMLCh* X_GRID;                       static const char* C_GRID;

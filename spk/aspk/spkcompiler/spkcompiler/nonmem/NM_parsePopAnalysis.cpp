@@ -59,6 +59,12 @@ void NonmemTranslator::parsePopAnalysis( DOMElement* pop_analysis )
 	setApproximation( FOCE );
       else if( XMLString::equals( xml_approx, X_LAPLACE ) )
 	setApproximation( LAPLACE );
+      else if( XMLString::equals( xml_approx, X_STD_TWO_STAGE ) )
+	setApproximation( STD_TWO_STAGE );
+      else if( XMLString::equals( xml_approx, X_GLOBAL_TWO_STAGE ) )
+	setApproximation( GLOBAL_TWO_STAGE );
+      else if( XMLString::equals( xml_approx, X_ITERATIVE_TWO_STAGE ) )
+	setApproximation( ITERATIVE_TWO_STAGE );
       else
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];

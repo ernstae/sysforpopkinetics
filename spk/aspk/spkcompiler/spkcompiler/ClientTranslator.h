@@ -29,7 +29,13 @@ class ClientTranslator{
   /**
    * Approximation method
    */
-  enum APPROX     { FO, FOCE, LAPLACE };
+  enum APPROX     { FO, 		/**< First Order */
+                    FOCE,               /**< Expected Hessian */
+                    LAPLACE,            /**< Modified Laplace */
+                    STD_TWO_STAGE,      /**< Standard two stage */
+                    GLOBAL_TWO_STAGE,   /**< Global two stage*/
+                    ITERATIVE_TWO_STAGE /**< Iterative two stage */
+                  };
 
   /**
    * Analysis type
