@@ -157,7 +157,7 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 -->
 <!ATTLIST pop_analysis abort (yes|no) #IMPLIED>
 
-<!-- <pop_analysis approximation="fo"> Approximation method: "fo" for First Order, "foce" for Modified Expected Hessian, "laplace" for Modified Laplace, "std_two_stage" for Standard Two Stage, "global_two_stage" for Global Two Stage, "iterative_two_stage" for Iterative Two Stage method. 
+<!-- <pop_analysis approximation="fo"> Approximation method: "fo" for First Order, "foce" for Modified Expected Hessian, "laplace" for Modified Laplace, "std_two_stage" for Standard Two Stage, "global_two_stage" for Global Two Stage, "iterative_two_stage" for Iterative Two Stage method, "map_bayes_std_two_stage" for Map Bayesian Standard Two Stage, "map_bayes_global_two_stage" for Map Bayesian Global Two Stage, "map_bayes_iterative_two_stage" for Map Bayesian Iterative Two Stage. 
 -->
 <!ATTLIST pop_analysis approximation (fo|foce|laplace) #REQUIRED>
 
