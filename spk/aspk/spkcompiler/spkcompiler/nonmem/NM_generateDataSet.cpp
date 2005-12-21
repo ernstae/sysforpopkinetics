@@ -57,7 +57,7 @@ void NonmemTranslator::generateDataSet( ) const
   // Reference to an Symbol object that represents "ID" data label.
   // Keep it for repetitive use.
   //
-  const Symbol * const pID = table->find( NMKey.ID );
+  const Symbol * const pID = table->find( nonmem::ID );
 
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //
@@ -311,7 +311,7 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  const Symbol * s = table->find( *pLabel );
 	  bool isID  = (*pLabel == pID->name);
-	  bool isInt = (*pLabel == NMKey.EVID || *pLabel == NMKey.CMT || *pLabel == NMKey.PCMT );
+	  bool isInt = (*pLabel == nonmem::EVID || *pLabel == nonmem::CMT || *pLabel == nonmem::PCMT );
 
 	  string carray_name = s->name + "_" + c_who + "_c";
 	  string vector_name = s->name + "_" + c_who;
@@ -395,7 +395,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "      int n = data[i]->getNRecords();" << endl;
   oDataSet_h << "      for( int k=0; k<n; k++, j++ )" << endl;
   oDataSet_h << "      {" << endl;
-  oDataSet_h << "         if( data[i]->" << NMKey.MDV << "[k] == 0 )" << endl;
+  oDataSet_h << "         if( data[i]->" << nonmem::MDV << "[k] == 0 )" << endl;
   oDataSet_h << "         {" << endl;
   oDataSet_h << "            jPrimeToj[jPrime] = j;" << endl;
   oDataSet_h << "            jTojPrime[j] = jPrime;" << endl;
@@ -958,28 +958,28 @@ void NonmemTranslator::generateDataSet( ) const
     + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for PWETARES
     + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for CETARES
     + (getTarget()==POP? (myEtaLen - 1) : 0 ) // for CWETARES
-    - (table->find(NMKey.OMEGA)   == Symbol::empty()? 0 : 1 )
-    - (table->find(NMKey.SIGMA)   == Symbol::empty()? 0 : 1 );
+    - (table->find(nonmem::OMEGA)   == Symbol::empty()? 0 : 1 )
+    - (table->find(nonmem::SIGMA)   == Symbol::empty()? 0 : 1 );
  
   if( myCompModel )
     {
       const Symbol* s;
-      if( ( s = table->find( NMKey.DADT ) ) != Symbol::empty() )
+      if( ( s = table->find( nonmem::DADT ) ) != Symbol::empty() )
 	{
 	  if( s->object_type == Symbol::VECTOR )
 	    nColumns += myCompModel->getNCompartments()-1;
 	}
-      if( ( s = table->find( NMKey.A ) ) != Symbol::empty() )
+      if( ( s = table->find( nonmem::A ) ) != Symbol::empty() )
 	{
 	  if( s->object_type == Symbol::VECTOR )
 	    nColumns += myCompModel->getNCompartments()-1;
 	}
-      if( ( s = table->find( NMKey.P ) ) != Symbol::empty() )
+      if( ( s = table->find( nonmem::P ) ) != Symbol::empty() )
 	{
 	  if( s->object_type == Symbol::VECTOR )
 	    nColumns += myCompModel->getNParameters()-1;
 	}
-      if( ( s = table->find( NMKey.T ) ) != Symbol::empty() )
+      if( ( s = table->find( nonmem::T ) ) != Symbol::empty() )
 	{
 	  nColumns--;
 	}
@@ -1011,17 +1011,17 @@ void NonmemTranslator::generateDataSet( ) const
   int cntColumns = 1;
   for( cntColumns=1,  pEntry = t->begin(); pEntry!=t->end(); pEntry++ )
     {
-      if( pEntry->first != NMKey.ID )
+      if( pEntry->first != nonmem::ID )
 	{
 	  // Skip Omega and Sigma.
           // These values are not computed by Pred::eval().
-	  if(    pEntry->first != NMKey.OMEGA 
-		 && pEntry->first != NMKey.SIGMA )
+	  if(    pEntry->first != nonmem::OMEGA 
+		 && pEntry->first != nonmem::SIGMA )
 	    {
 	      whatGoesIn.push_back( pEntry->second.name );
 	      
 	      // theta: This is a vector.  So, all element values have to be printed out individually.
-	      if( pEntry->first == NMKey.THETA )
+	      if( pEntry->first == nonmem::THETA )
 		{
 		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 		    {
@@ -1033,15 +1033,15 @@ void NonmemTranslator::generateDataSet( ) const
 		}
 	      // eta, etares, wetares: These are vectors of length myEtaLen.
               // So, all elements values have to be printed out individually.
-	      else if( pEntry->first == NMKey.ETA
-		       || pEntry->first == NMKey.ETARES 
-		       || pEntry->first == NMKey.WETARES
-		       || pEntry->first == NMKey.IETARES 
-		       || pEntry->first == NMKey.IWETARES
-		       || pEntry->first == NMKey.PETARES 
-		       || pEntry->first == NMKey.PWETARES
-		       || pEntry->first == NMKey.CETARES 
-		       || pEntry->first == NMKey.CWETARES )
+	      else if( pEntry->first == nonmem::ETA
+		       || pEntry->first == nonmem::ETARES 
+		       || pEntry->first == nonmem::WETARES
+		       || pEntry->first == nonmem::IETARES 
+		       || pEntry->first == nonmem::IWETARES
+		       || pEntry->first == nonmem::PETARES 
+		       || pEntry->first == nonmem::PWETARES
+		       || pEntry->first == nonmem::CETARES 
+		       || pEntry->first == nonmem::CWETARES )
 		{
 		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 		    {
@@ -1053,7 +1053,7 @@ void NonmemTranslator::generateDataSet( ) const
 		}
 	      // eps: This is a vector of length myEpsLen.
               // So, all elements values have to be printed out individually.
-	      else if( pEntry->first == NMKey.EPS )
+	      else if( pEntry->first == nonmem::EPS )
 		{
 		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 		    {
@@ -1064,7 +1064,7 @@ void NonmemTranslator::generateDataSet( ) const
 		    }
 		}
 	      // DADT or A: This is a vector of length nCompartments
-	      else if( (pEntry->first == NMKey.DADT || pEntry->first == NMKey.A )
+	      else if( (pEntry->first == nonmem::DADT || pEntry->first == nonmem::A )
 		       && myCompModel ) 
 		{
 		  for( int cnt=0; cnt<myCompModel->getNCompartments(); cnt++ )
@@ -1076,7 +1076,7 @@ void NonmemTranslator::generateDataSet( ) const
 		    }
 		}
 	      // P: This is a vector of length nParameters
-	      else if( pEntry->first == NMKey.P && myCompModel )
+	      else if( pEntry->first == nonmem::P && myCompModel )
 		{
 		  for( int cnt=0; cnt<myCompModel->getNParameters(); cnt++ )
 		    {
@@ -1088,7 +1088,7 @@ void NonmemTranslator::generateDataSet( ) const
 		}
 
 	      // T should be omitted from print out if it means the ODE's T.
-	      else if( myCompModel && (pEntry->first == NMKey.T) ) 
+	      else if( myCompModel && (pEntry->first == nonmem::T) ) 
 		{
 		  // ignore
 		}
@@ -1135,7 +1135,7 @@ void NonmemTranslator::generateDataSet( ) const
 
   for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
-      if( *pWhatGoesIn == NMKey.THETA )
+      if( *pWhatGoesIn == nonmem::THETA )
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
@@ -1146,15 +1146,15 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( *pWhatGoesIn == NMKey.ETA
-	       || *pWhatGoesIn == NMKey.ETARES
-	       || *pWhatGoesIn == NMKey.WETARES
-	       || *pWhatGoesIn == NMKey.IETARES
-	       || *pWhatGoesIn == NMKey.IWETARES
-	       || *pWhatGoesIn == NMKey.PETARES
-	       || *pWhatGoesIn == NMKey.PWETARES
-	       || *pWhatGoesIn == NMKey.CETARES
-	       || *pWhatGoesIn == NMKey.CWETARES )
+      else if( *pWhatGoesIn == nonmem::ETA
+	       || *pWhatGoesIn == nonmem::ETARES
+	       || *pWhatGoesIn == nonmem::WETARES
+	       || *pWhatGoesIn == nonmem::IETARES
+	       || *pWhatGoesIn == nonmem::IWETARES
+	       || *pWhatGoesIn == nonmem::PETARES
+	       || *pWhatGoesIn == nonmem::PWETARES
+	       || *pWhatGoesIn == nonmem::CETARES
+	       || *pWhatGoesIn == nonmem::CWETARES )
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
@@ -1165,7 +1165,7 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( *pWhatGoesIn == NMKey.EPS && getTarget() == POP )
+      else if( *pWhatGoesIn == nonmem::EPS && getTarget() == POP )
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
@@ -1176,11 +1176,11 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( *pWhatGoesIn == NMKey.OMEGA || *pWhatGoesIn == NMKey.SIGMA )
+      else if( *pWhatGoesIn == nonmem::OMEGA || *pWhatGoesIn == nonmem::SIGMA )
 	{
 	  // ignore
 	}
-      else if( ( *pWhatGoesIn == NMKey.DADT || *pWhatGoesIn == NMKey.A ) 
+      else if( ( *pWhatGoesIn == nonmem::DADT || *pWhatGoesIn == nonmem::A ) 
 	       && myCompModel )
 	{
 	  for( int cnt=0; cnt<myCompModel->getNCompartments(); cnt++ )
@@ -1192,7 +1192,7 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( *pWhatGoesIn == NMKey.P && myCompModel )
+      else if( *pWhatGoesIn == nonmem::P && myCompModel )
 	{
 	  for( int cnt=0; cnt<myCompModel->getNParameters(); cnt++ )
 	    {
@@ -1203,7 +1203,7 @@ void NonmemTranslator::generateDataSet( ) const
 	      cntColumns++;
 	    }
 	}
-      else if( myCompModel && (*pWhatGoesIn == NMKey.T) )
+      else if( myCompModel && (*pWhatGoesIn == nonmem::T) )
         {
           // ignore
         }

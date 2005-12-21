@@ -22,7 +22,7 @@ using namespace xercesc;
 //                     myIntegNumberEvals (vector)
 //
 //=============================================================================
-void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
+void NonmemTranslator::parseMonte( const DOMElement* monte_carlo )
 {
   assert( monte_carlo != NULL );
   if( monte_carlo->hasAttribute( XML.X_METHOD ) )

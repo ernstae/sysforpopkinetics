@@ -31,7 +31,7 @@ extern "C"{
 };
 
 
-void NonmemTranslator::parsePred( DOMElement * pred )
+void NonmemTranslator::parsePred( const DOMElement * pred )
 {
   char * c_equations = NULL;
   const XMLCh* xml_pred_def = pred->getFirstChild()->getNodeValue();

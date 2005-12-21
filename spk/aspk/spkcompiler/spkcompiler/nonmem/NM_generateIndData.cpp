@@ -42,13 +42,13 @@ void NonmemTranslator::generateIndData( ) const
   // object that holds "ID" data items handy for
   // frequent references.
   //
-  const Symbol * pID = table->find( NMKey.ID );
+  const Symbol * pID = table->find( nonmem::ID );
 
   //
   // DV has to be declared non-constant if simulated data replaces it.
   //
-  const Symbol * pDV = table->find( NMKey.DV );
-  const Symbol * pORGDV = table->find( NMKey.ORGDV );
+  const Symbol * pDV = table->find( nonmem::DV );
+  const Symbol * pORGDV = table->find( nonmem::ORGDV );
 
   //
   // The order in which the label strings appear is significant.
@@ -183,7 +183,7 @@ void NonmemTranslator::generateIndData( ) const
   for( ; pLabel != labels->end(); pLabel++ )
     {
       bool isID  = ( *pLabel == pID->name );
-      bool isInt = ( *pLabel==NMKey.EVID || *pLabel == NMKey.CMT || *pLabel == NMKey.PCMT );
+      bool isInt = ( *pLabel==nonmem::EVID || *pLabel == nonmem::CMT || *pLabel == nonmem::PCMT );
       oIndData_h << "," << endl;
 	  
       //
@@ -215,14 +215,14 @@ void NonmemTranslator::generateIndData( ) const
       enum Symbol::ObjectType objectType = pInternalTable->second.object_type;
       enum Symbol::Ownership  owner      = pInternalTable->second.owner;
       
-      if( varName == NMKey.EVID || varName == NMKey.CMT || varName == NMKey.PCMT )
+      if( varName == nonmem::EVID || varName == nonmem::CMT || varName == nonmem::PCMT )
 	{
 	  oIndData_h << "   std::vector<int> " << varName << ";" << endl;
 	  if( varAlias != "" )
 	    oIndData_h << "   std::vector<int> " << varAlias << ";" << endl;
 	  continue;
 	}
-      else if( varName == NMKey.ID )
+      else if( varName == nonmem::ID )
 	{
 	  oIndData_h << "   std::vector<char*> " << varName << ";" << endl;
 	  if( varAlias != "" )
@@ -255,7 +255,7 @@ void NonmemTranslator::generateIndData( ) const
       else // Matrix
 	{
 	  // OMEGA and SIGMA are the only legal matrices.
-	  if( !( varName == NMKey.OMEGA || varName == NMKey.SIGMA ) )
+	  if( !( varName == nonmem::OMEGA || varName == nonmem::SIGMA ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      snprintf( m, 
@@ -378,7 +378,7 @@ void NonmemTranslator::generateIndData( ) const
   for( ; pLabel != labels->end(); pLabel++ )
     {
       bool isID  = ( *pLabel == pID->name );
-      bool isInt = ( *pLabel == NMKey.EVID || *pLabel == NMKey.CMT || *pLabel == NMKey.PCMT );
+      bool isInt = ( *pLabel == nonmem::EVID || *pLabel == nonmem::CMT || *pLabel == nonmem::PCMT );
       oIndData_h << "," << endl;
 
       //
@@ -446,7 +446,7 @@ void NonmemTranslator::generateIndData( ) const
   for( ; pInternalTable != internalTable->end(); pInternalTable++ )
     {
       const string label    = pInternalTable->second.name;
-      if( label == NMKey.OMEGA || label == NMKey.SIGMA )
+      if( label == nonmem::OMEGA || label == nonmem::SIGMA )
 	{
 	  continue;
 	}
@@ -463,7 +463,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "{" << endl;
   oIndData_h << "   for( int j=0; j<nRecords; j++ )" << endl;
   oIndData_h << "   {" << endl;
-  oIndData_h << "      if( " << NMKey.MDV << "[j] == 0 )" << endl;
+  oIndData_h << "      if( " << nonmem::MDV << "[j] == 0 )" << endl;
   oIndData_h << "      {" << endl;
   oIndData_h << "         nY++;" << endl;
   oIndData_h << "      }" << endl;
@@ -494,8 +494,8 @@ void NonmemTranslator::generateIndData( ) const
 
   // Save DV values in ORGDV so that the original data set values are kept in case
   // simulation overwrites DV.
-  oIndData_h << "copy( " << NMKey.DV << ".begin(), " << NMKey.DV << ".end(), ";
-  oIndData_h << NMKey.ORGDV << ".begin() );" << endl;
+  oIndData_h << "copy( " << nonmem::DV << ".begin(), " << nonmem::DV << ".end(), ";
+  oIndData_h << nonmem::ORGDV << ".begin() );" << endl;
   oIndData_h << endl;
 
   // Resize and initialize (with -999999) vector variables.
@@ -511,66 +511,66 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "   {" << endl;
   if( myThetaLen > 0 )
     {
-      oIndData_h << "      " << NMKey.THETA << "[j].resize( " << myThetaLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << NMKey.THETA << "[j].begin(), " << NMKey.THETA << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << nonmem::THETA << "[j].resize( " << myThetaLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::THETA << "[j].begin(), " << nonmem::THETA << "[j].end(), -99999 );" << endl;
     }
   if( myEtaLen > 0 )
     {
-      oIndData_h << "      " << NMKey.ETA     << "[j].resize( " << myEtaLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << NMKey.ETA << "[j].begin(), " << NMKey.ETA << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << nonmem::ETA     << "[j].resize( " << myEtaLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::ETA << "[j].begin(), " << nonmem::ETA << "[j].end(), -99999 );" << endl;
       if( getTarget() == POP )
 	{
-	  oIndData_h << "      " << NMKey.ETARES   << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << NMKey.WETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << NMKey.IETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << NMKey.IWETARES << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << NMKey.PETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << NMKey.PWETARES << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << NMKey.CETARES  << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << NMKey.CWETARES << "[j].resize( " << myEtaLen << " );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.ETARES   << "[j].begin(), ";
-	  oIndData_h << NMKey.ETARES   << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.WETARES  << "[j].begin(), ";
-	  oIndData_h << NMKey.WETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.IETARES  << "[j].begin(), ";
-	  oIndData_h << NMKey.IETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.IWETARES << "[j].begin(), ";
-	  oIndData_h << NMKey.IWETARES << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.PETARES  << "[j].begin(), ";
-	  oIndData_h << NMKey.PETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.PWETARES << "[j].begin(), ";
-	  oIndData_h << NMKey.PWETARES << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.CETARES  << "[j].begin(), ";
-	  oIndData_h << NMKey.CETARES  << "[j].end(), -99999 );" << endl;
-	  oIndData_h << "      " << "fill( " << NMKey.CWETARES << "[j].begin(), ";
-	  oIndData_h << NMKey.CWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << nonmem::ETARES   << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << nonmem::WETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << nonmem::IETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << nonmem::IWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << nonmem::PETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << nonmem::PWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << nonmem::CETARES  << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << nonmem::CWETARES << "[j].resize( " << myEtaLen << " );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::ETARES   << "[j].begin(), ";
+	  oIndData_h << nonmem::ETARES   << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::WETARES  << "[j].begin(), ";
+	  oIndData_h << nonmem::WETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::IETARES  << "[j].begin(), ";
+	  oIndData_h << nonmem::IETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::IWETARES << "[j].begin(), ";
+	  oIndData_h << nonmem::IWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::PETARES  << "[j].begin(), ";
+	  oIndData_h << nonmem::PETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::PWETARES << "[j].begin(), ";
+	  oIndData_h << nonmem::PWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::CETARES  << "[j].begin(), ";
+	  oIndData_h << nonmem::CETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << "      " << "fill( " << nonmem::CWETARES << "[j].begin(), ";
+	  oIndData_h << nonmem::CWETARES << "[j].end(), -99999 );" << endl;
 	}
     }
   if( myEpsLen > 0 )
     {
-      oIndData_h << "      " << NMKey.EPS   << "[j].resize( " << myEpsLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << NMKey.EPS   << "[j].begin(), " << NMKey.EPS << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << nonmem::EPS   << "[j].resize( " << myEpsLen << " );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::EPS   << "[j].begin(), " << nonmem::EPS << "[j].end(), -99999 );" << endl;
     }
   
   if( myModelSpec == ADVAN6 || myModelSpec == ADVAN8 || myModelSpec == ADVAN9 )
     {
-      assert( table->find( NMKey.DADT ) != Symbol::empty() );
-      assert( table->find( NMKey.A    ) != Symbol::empty() );
-      assert( table->find( NMKey.P    ) != Symbol::empty() );
+      assert( table->find( nonmem::DADT ) != Symbol::empty() );
+      assert( table->find( nonmem::A    ) != Symbol::empty() );
+      assert( table->find( nonmem::P    ) != Symbol::empty() );
       
-      oIndData_h << "      " << NMKey.DADT << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
-      oIndData_h << "      " << NMKey.A    << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
-      oIndData_h << "      " << NMKey.P    << "[j].resize( " << myCompModel->getNParameters()    << " );" << endl;
+      oIndData_h << "      " << nonmem::DADT << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
+      oIndData_h << "      " << nonmem::A    << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
+      oIndData_h << "      " << nonmem::P    << "[j].resize( " << myCompModel->getNParameters()    << " );" << endl;
       
-      oIndData_h << "      " << "fill( " << NMKey.DADT << "[j].begin(), " << NMKey.DADT << "[j].end(), -99999 );" << endl;
-      oIndData_h << "      " << "fill( " << NMKey.A    << "[j].begin(), " << NMKey.A    << "[j].end(), -99999 );" << endl;
-      oIndData_h << "      " << "fill( " << NMKey.P    << "[j].begin(), " << NMKey.P    << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::DADT << "[j].begin(), " << nonmem::DADT << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::A    << "[j].begin(), " << nonmem::A    << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::P    << "[j].begin(), " << nonmem::P    << "[j].end(), -99999 );" << endl;
       
     }
   
-  oIndData_h << "        if( " << NMKey.MDV << "[j] == 0 )" << endl;
+  oIndData_h << "        if( " << nonmem::MDV << "[j] == 0 )" << endl;
   oIndData_h << "        {" << endl;
-  oIndData_h << "           assign( measurements[jPrime], " << NMKey.DV << "[j] );" << endl;
+  oIndData_h << "           assign( measurements[jPrime], " << nonmem::DV << "[j] );" << endl;
   oIndData_h << "           jPrimeToj[jPrime] = j;" << endl;
   oIndData_h << "           jTojPrime[j] = jPrime;" << endl;
   oIndData_h << "           jPrime++;" << endl;
@@ -677,10 +677,10 @@ void NonmemTranslator::generateIndData( ) const
   bool hasAlias = ( pDV->synonym != "" );
   oIndData_h << "   for( int i=0, k=0; i<nRecords; i++ )" << endl;
   oIndData_h << "   {" << endl;
-  oIndData_h << "      if( " << NMKey.MDV << "[i] == 0 )" << endl;
+  oIndData_h << "      if( " << nonmem::MDV << "[i] == 0 )" << endl;
   oIndData_h << "      {" << endl;
-  oIndData_h << "         " << NMKey.ORGDV << "[i] = " << NMKey.DV << "[i];" << endl;
-  oIndData_h << "         " << NMKey.DV << "[i] = yyi[k];" << endl;
+  oIndData_h << "         " << nonmem::ORGDV << "[i] = " << nonmem::DV << "[i];" << endl;
+  oIndData_h << "         " << nonmem::DV << "[i] = yyi[k];" << endl;
   if( hasAlias )
     oIndData_h << "         " << pDV->synonym << "[i] = yyi[k];" << endl;
   oIndData_h << "         k++;" << endl;
@@ -695,8 +695,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePred( const SPK_VA::valarray<double>& predIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( predIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << nonmem::PRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << nonmem::PRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = predIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -710,8 +710,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceRes( const SPK_VA::valarray<double>& ResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( ResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.RES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << NMKey.RES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << nonmem::RES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << nonmem::RES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = ResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -725,8 +725,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceWRes( const SPK_VA::valarray<double>& WResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( WResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.WRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << NMKey.WRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << nonmem::WRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << nonmem::WRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = WResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -740,8 +740,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceIPred( const SPK_VA::valarray<double>& iPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( iPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.IPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << NMKey.IPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << nonmem::IPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << nonmem::IPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = iPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -755,8 +755,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceIRes( const SPK_VA::valarray<double>& iResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( iResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.IRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << NMKey.IRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << nonmem::IRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << nonmem::IRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = iResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -770,8 +770,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceIWRes( const SPK_VA::valarray<double>& iWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( iWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << NMKey.IWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != " << NMKey.IWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = " << nonmem::IWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != " << nonmem::IWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = iWResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -785,8 +785,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePPred( const SPK_VA::valarray<double>& pPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << nonmem::PPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << nonmem::PPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -800,8 +800,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePRes( const SPK_VA::valarray<double>& pResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << nonmem::PRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << nonmem::PRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -815,8 +815,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replacePWRes( const SPK_VA::valarray<double>& pWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( pWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.PWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << NMKey.PWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << nonmem::PWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << nonmem::PWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = pWResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -830,8 +830,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCPred( const SPK_VA::valarray<double>& cPredIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cPredIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.CPRED << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << NMKey.CPRED << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << nonmem::CPRED << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << nonmem::CPRED << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cPredIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -845,8 +845,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCRes( const SPK_VA::valarray<double>& cResIn )"     << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.CRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << NMKey.CRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << nonmem::CRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << nonmem::CRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -860,8 +860,8 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::replaceCWRes( const SPK_VA::valarray<double>& cWResIn )"    << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   assert( cWResIn.size() == nRecords );" << endl;
-  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << NMKey.CWRES << ".begin();" << endl;
-  oIndData_h << "   for( int i=0; itr != this->" << NMKey.CWRES << ".end(); itr++, i++ )" << endl;
+  oIndData_h << "   typename std::vector<spk_ValueType>::iterator itr = this->" << nonmem::CWRES << ".begin();" << endl;
+  oIndData_h << "   for( int i=0; itr != this->" << nonmem::CWRES << ".end(); itr++, i++ )" << endl;
   oIndData_h << "   {" << endl;
   oIndData_h << "      *itr = cWResIn[i];" << endl;
   oIndData_h << "   }" << endl;
@@ -882,7 +882,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.ETA << "[i][j] = etaIn[j];" << endl;
+      oIndData_h << "         " << nonmem::ETA << "[i][j] = etaIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -900,7 +900,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.ETARES << "[i][j] = EtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::ETARES << "[i][j] = EtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -918,7 +918,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.WETARES << "[i][j] = WEtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::WETARES << "[i][j] = WEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -936,7 +936,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.IETARES << "[i][j] = iEtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::IETARES << "[i][j] = iEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -954,7 +954,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.IWETARES << "[i][j] = iWEtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::IWETARES << "[i][j] = iWEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -972,7 +972,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.PETARES << "[i][j] = pEtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::PETARES << "[i][j] = pEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -990,7 +990,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.PWETARES << "[i][j] = pWEtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::PWETARES << "[i][j] = pWEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1008,7 +1008,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.CETARES << "[i][j] = cEtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::CETARES << "[i][j] = cEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
@@ -1026,7 +1026,7 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "   {" << endl;
       oIndData_h << "      for( int j=0; j<nEta; j++ )" << endl;
       oIndData_h << "      {" << endl;
-      oIndData_h << "         " << NMKey.CWETARES << "[i][j] = cWEtaResIn[j];" << endl;
+      oIndData_h << "         " << nonmem::CWETARES << "[i][j] = cWEtaResIn[j];" << endl;
       oIndData_h << "      }" << endl;
       oIndData_h << "   }" << endl;
       oIndData_h << "}" << endl;
