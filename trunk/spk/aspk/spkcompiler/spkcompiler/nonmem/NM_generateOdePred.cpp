@@ -261,13 +261,13 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       
       if( owner == Symbol::DATASET )
         {
-	  if( varName == NMKey.ID )
+	  if( varName == nonmem::ID )
 	    {
 	      oOdePred_h << "   std::string " << varName << ";" << endl;
 	      if( pT->second.synonym != "" )
 		oOdePred_h << "   std::string " << pT->second.synonym << ";" << endl;
 	    }
-	  else if( varName == NMKey.EVID || varName == NMKey.CMT || varName == NMKey.PCMT )
+	  else if( varName == nonmem::EVID || varName == nonmem::CMT || varName == nonmem::PCMT )
 	    {
 	      oOdePred_h << "   int " << varName << ";" << endl;
 	      if( pT->second.synonym != "" )
@@ -288,9 +288,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    }
 	  else if( objType == Symbol::VECTOR )
 	    {
-	      if( varName == NMKey.DADT || varName == NMKey.P 
-		  || varName == NMKey.A
-		  || varName == NMKey.THETA || varName == NMKey.ETA || varName == NMKey.EPS )
+	      if( varName == nonmem::DADT || varName == nonmem::P 
+		  || varName == nonmem::A
+		  || varName == nonmem::THETA || varName == nonmem::ETA || varName == nonmem::EPS )
 		{
 		  if( access == Symbol::READWRITE ) // A
 		    oOdePred_h << "   typename std::vector<spk_ValueType>::iterator " << varName << ";" << endl;
@@ -443,38 +443,38 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "{" << endl;
   oOdePred_h << "   const int nObservs  = getNObservs( spk_curWho );" << endl;
   oOdePred_h << "   const int nRecords  = getNRecords( spk_curWho );" << endl;
-  oOdePred_h << "   std::vector<spk_ValueType> indVar( ( depVarName == \"" << NMKey.DV << "\"? nObservs:nRecords) );" << endl;
-  oOdePred_h << "   std::vector<spk_ValueType> depVar( ( depVarName == \"" << NMKey.DV << "\"? nObservs:nRecords) );" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType> indVar( ( depVarName == \"" << nonmem::DV << "\"? nObservs:nRecords) );" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType> depVar( ( depVarName == \"" << nonmem::DV << "\"? nObservs:nRecords) );" << endl;
   oOdePred_h << "   std::vector<spk_ValueType> depVarRecords( nRecords );" << endl;
   pLabel = labels->begin();
   while( pLabel != labels->end() )
     {
       oOdePred_h << "   if( depVarName == \"" << *pLabel << "\" )" << endl;
-      if( *pLabel == NMKey.ID )
+      if( *pLabel == nonmem::ID )
 	{
 	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
           oOdePred_h << "                         \"ID cannot be interpolated!\", " << endl;
           oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
 	}
-      else if( *pLabel == NMKey.MDV )
+      else if( *pLabel == nonmem::MDV )
 	{
 	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
           oOdePred_h << "                         \"MDV cannot be interpolated!\", " << endl;
           oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
 	}
-      else if( *pLabel == NMKey.EVID )
+      else if( *pLabel == nonmem::EVID )
 	{
 	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
           oOdePred_h << "                         \"EVID cannot be interpolated!\", " << endl;
           oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
 	}
-      else if( *pLabel == NMKey.CMT )
+      else if( *pLabel == nonmem::CMT )
 	{
 	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
           oOdePred_h << "                         \"CMT cannot be interpolated!\", " << endl;
           oOdePred_h << "                           __LINE__, __FILE__ );" << endl;
 	}
-      else if( *pLabel == NMKey.PCMT )
+      else if( *pLabel == nonmem::PCMT )
 	{
 	  oOdePred_h << "      throw SpkException( SpkError::SPK_USER_INPUT_ERR, " << endl;
           oOdePred_h << "                         \"PCMT cannot be interpolated!\", " << endl;
@@ -487,13 +487,13 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       
       pLabel++;
     }
-  oOdePred_h << "   if( depVarName == \"" << NMKey.DV << "\" )" << endl;
+  oOdePred_h << "   if( depVarName == \"" << nonmem::DV << "\" )" << endl;
   oOdePred_h << "   {" << endl;
   oOdePred_h << "      for( int j=0, k=0; j<nRecords; j++ )" << endl;
   oOdePred_h << "      {" << endl;
-  oOdePred_h << "         if( spk_perm->data[spk_curWho]->" << NMKey.MDV << "[j] == 0 )" << endl;
+  oOdePred_h << "         if( spk_perm->data[spk_curWho]->" << nonmem::MDV << "[j] == 0 )" << endl;
   oOdePred_h << "         {" << endl;
-  oOdePred_h << "            indVar[k] = spk_perm->data[spk_curWho]->" << NMKey.TIME << "[j];" << endl;
+  oOdePred_h << "            indVar[k] = spk_perm->data[spk_curWho]->" << nonmem::TIME << "[j];" << endl;
   oOdePred_h << "            if( TIME < indVar[k] )" << endl;
   oOdePred_h << "            {" << endl;
   oOdePred_h << "               char m[ SpkError::maxMessageLen() ];" << endl;
@@ -507,7 +507,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "   }" << endl;
   oOdePred_h << "   else" << endl;
   oOdePred_h << "   {" << endl;
-  oOdePred_h << "      indVar = spk_perm->data[spk_curWho]->" << NMKey.TIME << ";" << endl;
+  oOdePred_h << "      indVar = spk_perm->data[spk_curWho]->" << nonmem::TIME << ";" << endl;
   oOdePred_h << "      depVar = depVarRecords;" << endl;
   oOdePred_h << "   }" << endl;
   oOdePred_h << "   return linearInterpolate( T, " << endl;
@@ -639,30 +639,30 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   //
   // THETA: This value is given by the system through the eval() interface.
   //
-  //  oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.THETA;
-  oOdePred_h << "   " << NMKey.THETA << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
+  //  oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::THETA;
+  oOdePred_h << "   " << nonmem::THETA << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
   //
   // NONMEM makes aliases to each element of the vector.
   // THETA(1) can be referred to as THETA1, THETA(2) as THETA2 and so on.
   // 
   for( int i=0; i<myThetaLen; i++ )
     {
-      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.THETA << i+1 << endl;
+      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::THETA << i+1 << endl;
       oOdePred_h << "   = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
     }
 
   //
   // ETA: This value is given by the system through the eval() interface.
   // 
-  //oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.ETA;
-  oOdePred_h << "   " << NMKey.ETA << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
+  //oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::ETA;
+  oOdePred_h << "   " << nonmem::ETA << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
   //
   // NONMEM makes aliases to each element of the vector.
   // ETA(1) can be referred to as ETA1, ETA(2) as ETA2 and so on.
   // 
   for( int i=0; i<myEtaLen; i++ )
     {
-      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.ETA << i+1 << endl;
+      oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::ETA << i+1 << endl;
       oOdePred_h << "   = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
     }
 
@@ -671,15 +671,15 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       //
       // EPS: This value is given by the system through the eval() interface.
       // 
-      //oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.EPS;
-      oOdePred_h << "   " << NMKey.EPS << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
+      //oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS;
+      oOdePred_h << "   " << nonmem::EPS << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
       //
       // NONMEM makes aliases to each element of the vector.
       // EPS(1) can be referred to as EPS1, EPS(2) as EPS2 and so on.
       // 
       for( int i=0; i<myEpsLen; i++ )
 	{
-	  oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.EPS << i+1 << endl;
+	  oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS << i+1 << endl;
 	  oOdePred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl; 
 	}
     }
@@ -706,8 +706,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "   assert( spk_curWhichRecord == spk_j );" << endl;
 
   // Store the current values in temporary storage and also copy into the supper classes.
-  oOdePred_h << "   " << NMKey.PRED << " = " << NMKey.F << ";" << endl;
-  oOdePred_h << "   " << NMKey.RES  << " = (" << NMKey.MDV << "==0?" << NMKey.DV << "-" << NMKey.PRED << " : 0 );" << endl;
+  oOdePred_h << "   " << nonmem::PRED << " = " << nonmem::F << ";" << endl;
+  oOdePred_h << "   " << nonmem::RES  << " = (" << nonmem::MDV << "==0?" << nonmem::DV << "-" << nonmem::PRED << " : 0 );" << endl;
 
   // Keep computed values in a temporary location.
   for( pT = t->begin(); pT != t->end(); pT++ )
@@ -728,27 +728,27 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
         {
           if( objectType == Symbol::VECTOR )
             {
-              if( label == NMKey.THETA )
+              if( label == nonmem::THETA )
 	        {
 	          oOdePred_h << "   copy( " << label << ", " << label << "+spk_thetaLen, ";
 	          oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
                 }
-              else if( label == NMKey.ETA )
+              else if( label == nonmem::ETA )
 	        {
 	          oOdePred_h << "   copy( " << label << ", " << label << "+spk_etaLen, ";
 	          oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	        }
-              else if( label == NMKey.EPS )
+              else if( label == nonmem::EPS )
 	        {
 	          oOdePred_h << "   copy( " << label << ", " << label << "+spk_epsLen, ";
 	          oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	        }
-              else if( label == NMKey.P )
+              else if( label == nonmem::P )
 	        {
 	          oOdePred_h << "   copy( " << label << ", " << label << "+spk_nParameters, ";
 	          oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
   	        }
-              else if( label == NMKey.A || label == NMKey.DADT )
+              else if( label == nonmem::A || label == nonmem::DADT )
 	        {
 	          oOdePred_h << "   copy( " << label << ", " << label << "+spk_nCompartments, ";
 	          oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
@@ -762,7 +762,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    }
           else // Scalar
 	    {
-	      if( label == NMKey.PRED || label == NMKey.RES || access == Symbol::READWRITE )
+	      if( label == nonmem::PRED || label == nonmem::RES || access == Symbol::READWRITE )
 		{
 		  oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
 		  oOdePred_h << " = " << label << ";" << endl;
@@ -784,7 +784,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   // is available even when a failure occurs.
   //
   oOdePred_h << "   if( spk_i == " << getPopSize() << "-1 && spk_j == spk_perm->data[spk_i]->";
-  oOdePred_h << NMKey.ID << ".size()-1 )" << endl;
+  oOdePred_h << nonmem::ID << ".size()-1 )" << endl;
   oOdePred_h << "   {" << endl;
   oOdePred_h << "     // This means, SPK advanced in iteration." << endl;
   oOdePred_h << "     // Move spk_temporary storage to spk_permanent storage." << endl;
@@ -808,12 +808,12 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    continue;
 	  else if( objectType == Symbol::VECTOR )
 	    {
-	      if( label == NMKey.THETA 
-		  || label == NMKey.ETA 
-		  || label == NMKey.EPS 
-		  || label == NMKey.DADT 
-		  || label == NMKey.P 
-		  || label == NMKey.A )
+	      if( label == nonmem::THETA 
+		  || label == nonmem::ETA 
+		  || label == nonmem::EPS 
+		  || label == nonmem::DADT 
+		  || label == nonmem::P 
+		  || label == nonmem::A )
 		{
 		  oOdePred_h << "       spk_perm->data[ i ]->" << label;
 		  oOdePred_h << " = spk_temp.data[ i ]->";
@@ -826,7 +826,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    }
           else // Scalar
 	    {
-	      if( label == NMKey.PRED || label == NMKey.RES || access == Symbol::READWRITE )
+	      if( label == nonmem::PRED || label == nonmem::RES || access == Symbol::READWRITE )
 		{
 		  oOdePred_h << "         spk_perm->data[ i ]->" << label;
 		  oOdePred_h << " = spk_temp.data[ i ]->" << label << ";" << endl;

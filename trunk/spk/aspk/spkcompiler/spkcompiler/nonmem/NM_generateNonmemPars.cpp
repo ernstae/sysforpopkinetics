@@ -11,10 +11,10 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   //---------------------------------------------------------------------------------------
   // Generate the NonmemPars namespace.
   //---------------------------------------------------------------------------------------
-  const Symbol* pTheta = table->find(NMKey.THETA);
-  const Symbol* pOmega = table->find(NMKey.OMEGA);
-  const Symbol* pSigma = table->find(NMKey.SIGMA);
-  const Symbol* pEta   = table->find(NMKey.ETA);
+  const Symbol* pTheta = table->find(nonmem::THETA);
+  const Symbol* pOmega = table->find(nonmem::OMEGA);
+  const Symbol* pSigma = table->find(nonmem::SIGMA);
+  const Symbol* pEta   = table->find(nonmem::ETA);
   ofstream oNonmemPars( fNonmemPars_h );
   if( !oNonmemPars.good() )
     {

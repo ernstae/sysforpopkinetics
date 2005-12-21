@@ -7,8 +7,8 @@
 
 #include "../ClientTranslator.h"
 #include "../SymbolTable.h"
-#include "NonmemKeyword.h"
 #include "CompModelInfo.h"
+#include "nonmem.h"
 #include "XmlConstants.h"
 #include <iostream>
 #include <vector>
@@ -30,35 +30,33 @@
  */
 class NonmemTranslator : public ClientTranslator
 {
- public:
+ private:
 
   /**
-   * XML tags and attribute names.
+   * A data structure bundling XML tags and attribute names used in the user input XML files.
    */
   const struct XmlConstants XML;
 
+public:
   /**
-   * NONMEM Keywords.
+   * Model specification types.  Only PRED and ADVAN6 are currently supported (as of December 23, 2005).
    */
-  struct NonmemKeyword NMKey;
+  enum MODEL_SPEC { PRED=0,   /**< PRED: Analytical model */
+		    ADVAN1=1, /**< ADVAN 1: One compartment linear model */
+		    ADVAN2,   /**< ADVAN 2: One compartment linear model with first order absorpotion */
+		    ADVAN3,   /**< ADVAN 3: Two compartment linear model */
+		    ADVAN4,   /**< ADVAN 4: Two compartment linear model with first order absorption */
+		    ADVAN5,   /**< ADVAN 5: General linear model */
+		    ADVAN6,   /**< ADVAN 6: General nonlinear model */
+		    ADVAN7,   /**< ADVAN 7: General linear model with real eigenvalues */
+		    ADVAN8,   /**< ADVAN 8: General nonlinear model with stiff differential equations */
+		    ADVAN9,   /**< ADVAN 9: General nonlinear model with equilibrium compartments */
+		    ADVAN10,  /**< ADVAN 10: One compartment model with Michaelis-Menten elimination */
+		    ADVAN11,  /**< ADVAN 11: Three compartment linear model */
+		    ADVAN12   /**< ADVAN 12: Three compartment linear model with first order absorption */
+                  };
   /**
-   * Model specification types.
-   */
-  enum MODEL_SPEC { PRED=0, 
-		    ADVAN1=1, 
-		    ADVAN2, 
-		    ADVAN3,
-		    ADVAN4, 
-		    ADVAN5, 
-		    ADVAN6,
-		    ADVAN7, 
-		    ADVAN8, 
-		    ADVAN9, 
-		    ADVAN10, 
-		    ADVAN11, 
-		    ADVAN12 };
-  /**
-   * Predefined variable sets for ADVAN.
+   * PK parameter translation unit.
    */
   enum TRANS { TRANS1=1, 
 	       TRANS2, 
@@ -66,10 +64,6 @@ class NonmemTranslator : public ClientTranslator
 	       TRANS4, 
 	       TRANS5, 
 	       TRANS6 };
-
-  /** Likelihood evaluation method. */
-  enum INTEG_METHOD { ANALYTIC, GRID, PLAIN, MISER, VEGAS };
-
 
   /**
    * Constructor.
@@ -146,12 +140,12 @@ class NonmemTranslator : public ClientTranslator
   virtual void parseData();
 
  /**
-  * Returns a pointer handler to the CompModelInfo object that captures the information
-  * necessary to define a compartmental model.
+  * Returns a pointer handler to the CompModelInfo object that has captured 
+  * the information about a compartmental model.
   */
  inline const CompModelInfo& getCompModel() const { return *myCompModel; };
  
- protected:
+ private:
   /**
    * Determine the type of analysis, population or individual, and
    * the number of subjects.  The parent class variable, ourTarget 
@@ -266,40 +260,51 @@ class NonmemTranslator : public ClientTranslator
   // constant strings used as <tag> names and values
   //---------------------------------------------------------
 
-  /** Determine the location of the label found in the list.
+  /** Determine the location of the label in label_list.
    *
    * @return The index to the element in the label list when the label is found.  
    *         -1 if it fails to found.
-   * @param labels The list of lables.
+   * @param label_list The list of lables.
    * @param label The label to be found.
    */
-  int whereis( xercesc::DOMNodeList* labels, const XMLCh* label ) const;
+  int whereis( xercesc::DOMNodeList* label_list, const XMLCh* label ) const;
   //========================================
 
  private:
 
   /**
-   * Insert the ID field in each record (subtree) if the data set lacks of it.
-   * Returns the location in which the ID field can be found.
+   * Insert the ID field into the data set if it were missing.
+   * @return The location in which the ID field was inserted.
+   * @param dataset The data set to which the ID field is inserted.
+   * @param labels The corresponding label list to which the change should be reflected.
    */
   int insertID( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels );
 
   /**
-   * Insert the MDV field in each record (subtree) if the data set lacks of it.
-   * Returns the location in which the MDV field can be found.
+   * Insert the MDV field into the data set if it were missing.
+   * @note This routine assumes AMT and EVID fields are present in the data set.
+   * @return The location in which the MDV field was inserted.
+   * @param dataset The data set to which the MDV field is inserted.
+   * @param labels The corresponding label list to which the change should be reflected.
+   * @param posAMT The position of AMT field in the data set, counting from the left (>=0).
+   * @param posEVID The position of EVID field in the data set, counting from the left (>=0).
    */
   int insertMDV( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels, int posAMT, int posEVID );
 
   /**
-   * Insert the EVID field in each record (subtree) if the data set lacks of it.
-   * Returns the location in which the EVID field can be found.
-   * This routine assumes MDV is present or has been inserted by SPK Compiler in the data set.
+   * Insert the EVID field into the data set if it were missing.
+   * @note This routine assumes AMT and MDV fields are present in the data set.
+   * @return The location in which the EVID field was inserted.
+   * @param dataset The data set to which the EVID field is inserted.
+   * @param labels The corresponding label list to which the change should be reflected.
+   * @param posAMT The position of AMT field in the data set, counting from the left (>=0).
+   * @param posMDV The position of MDV field in the data set, counting from the left (>=0).
    */
   int insertEVID( xercesc::DOMElement* dataset, xercesc::DOMNodeList* labels, int posAMT, int posMDV );
 
   /**
-   * Insert the AMT field in each record (subtree) if the data set lacks of it.
-   * @return the location in which the AMT field can be found.
+   * Insert the AMT field into the data set if it were missing.
+   * @return the location in which the AMT field was inserted.
    * @param dataset The data set to which the AMT field is inserted.
    * @param labels The corresponding label list to which the change should be reflected.
    */
@@ -326,24 +331,24 @@ class NonmemTranslator : public ClientTranslator
    *
    * @param pPopAnalysis A pointer to the &lt;popAnalysis&gt; node.
    */
-   void parsePopAnalysis ( xercesc::DOMElement* pPopAnalysis );
+   void parsePopAnalysis ( const xercesc::DOMElement* pPopAnalysis );
 
   /**
    * Analyze the &lt;ind_analysis&gt; subtree.
    *
    * @param pIndAnalysis A pointer to the &lt;indAnalysis&gt; node.
    */
-  void parseIndAnalysis ( xercesc::DOMElement* pIndAnalysis );
+  void parseIndAnalysis ( const xercesc::DOMElement* pIndAnalysis );
 
   /**
-   * Analyzie the PRED specification.
+   * Analyze the &lt;pred&gt; subtree.
    *
    * @param pPred A pointer to the &lt;pred&gt; node.
    */
-  void parsePred( xercesc::DOMElement* pPred );
+  void parsePred( const xercesc::DOMElement* pPred );
 
   /**
-   * Analyze ADVAN 1 - 12 specification.
+   * Analyze the ADVAN 1 - 12 specification.
    *
    * @param advan A canned model
    * @param trans A translation method
@@ -353,7 +358,7 @@ class NonmemTranslator : public ClientTranslator
 		   enum TRANS      trans,
 		   const xercesc::DOMElement* model );
   /**
-   * Analyze &lt;comp_model&gt; specification.
+   * Analyze the &lt;comp_model&gt; subtree.
    * @return #of compartments.
    * @param comp_model A pointer to &lt;comp_model&gt; tree.
    * @param tolRel The relative toleranace as for the number of digits
@@ -363,21 +368,21 @@ class NonmemTranslator : public ClientTranslator
   int parseCompModel( const xercesc:: DOMElement* comp_model, double tolRel );
 
   /**
-   * Analyze &lt;pk&gt; specification.
+   * Analyze the &lt;pk&gt; subtree.
    *
    * @param pk A pointer to $PK specification.
    */
   void parsePK( const xercesc::DOMElement* pk );
 
   /**
-   * Analyze &lt;diffeqn&gt; specification.
+   * Analyze the &lt;diffeqn&gt; substree.
    *
    * @param diffeqn A pointer to &lt;diffeqn&gt; tree.
    */
   void parseDiffEqn( const xercesc::DOMElement* diffeqn );
 
   /**
-   * Analyze &lt;error&gt; specification.
+   * Analyze the &lt;error&gt; subtree.
    *
    * @param error A pointer to &lt;error&gt; tree.
    */
@@ -388,54 +393,63 @@ class NonmemTranslator : public ClientTranslator
    *
    * @param pMonte A point to the &lt;monte_carlo&gt; node.
    */
-  void parseMonte( xercesc::DOMElement* pMonte );
+  void parseMonte( const xercesc::DOMElement* pMonte );
   
   /**
-   * Generate C++ source code for declaring and defining IndData class which
-   * is a C++ representation of a single patient records.
+   * Generate IndData.h, defining IndData class.
+   *
+   * IndData class is a C++ representation of a subject's records.
    */
   void generateIndData( ) const;
 
   /**
-   * Generate C++ source code for declaring and defining DataSet class which
-   * is a C++ representation of the set of patient records.
+   * Generate DataSet.h, defining DataSet class.
+   * DataSet class is a C++ representation of the set of all subjects' 
+   * data records.
    */
   void generateDataSet( ) const;
 
   /**
-   * Generate C++ source code for Pred class.
+   * Generate Pred.h, defining Pred class.
+   * 
+   * @param fPredEqn_cpp The name of file containing the C++ translation of PRED equations.
    */
-  void generatePred( const char* predDefFilename ) const;
+  void generatePred( const char* fPredEqn_cpp ) const;
 
   /**
-   * Generate C++ soruce code for OdePred class.
+   * Generate OdePred.h, defining OdePred class.
+   *
+   * @param fPkEqn_cpp The name of file containing the C++ translation of PK definition.
+     @param fDiffEqn_cpp The name of file containing the C++ translation of DES definition.
+   * @param fErrorEqn_cpp The name of file containing the C++ translation of ERROR definition.
    */
   void generateOdePred( const char* fPkEqn_cpp, 
 	                const char* fDiffEqn_cpp, 
 			const char* fErrorEqn_cpp ) const;
   /**
-   * Generate C++ source code for NonmemPars namespace.
+   * Generate NonmemPars.h for NonmemPars namespace.
+   * NonmemPars namespace declares parameters given by the NONMEM-savvy user.
    */
   void generateNonmemParsNamespace() const;
 
   /**
-   * Generate C++ source code for MontePars namespace.
+   * Generate MontePars.h for MontePars namespace.
+   * MontePars namespace declares parameters needed by Likelihood problems.
    */
   void generateMonteParsNamespace() const;
 
   /**
-   * Generate C++ source code for the driver for population analysis.
+   * Generate fitDriver.cpp for population analysis.
    */
   void generatePopDriver( ) const;
 
   /**
-   * Generate C++ source code for the driver for individual analysis.
+   * Generate fitDriver.cpp for individual analysis.
    */
   void generateIndDriver( ) const;
 
   /**
-   * Generate a Makefile that builds an executable called, driver, 
-   * from all the generated files.
+   * Generate Makefile.SPK, a makefile that builds a job driver.
    */
   void generateMakefile() const;
 
@@ -454,7 +468,7 @@ private:
   /** The type of model requested by the user. */
   enum MODEL_SPEC   myModelSpec;
 
-  /** The type of likehood method requested by the user.*/
+  /** The type of likelihood method requested by the user.*/
   enum INTEG_METHOD myIntegMethod;
  
   /** The type of TRANS requested by the user. */

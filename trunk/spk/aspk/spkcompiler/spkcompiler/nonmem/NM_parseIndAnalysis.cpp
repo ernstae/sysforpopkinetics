@@ -11,7 +11,7 @@
 using namespace std;
 using namespace xercesc;
 
-void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
+void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 {
   //---------------------------------------------------------------------------------------
   // Parse <simulate> if exists.  There's a chance in which only data simulation
@@ -343,7 +343,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  Symbol * sym_theta = table->insertVector( NMKey.THETA, myThetaLen, Symbol::SYSTEM, Symbol::READONLY );
+  Symbol * sym_theta = table->insertVector( nonmem::THETA, myThetaLen, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( XML.X_IN );
@@ -585,7 +585,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   myOmegaStruct = Symbol::DIAGONAL;
   myOmegaOrder = myOmegaDim;
 
-  Symbol * sym_omega = table->insertSymmetricMatrix( NMKey.OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
+  Symbol * sym_omega = table->insertSymmetricMatrix( nonmem::OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( XML.X_IN );
@@ -719,7 +719,7 @@ void NonmemTranslator::parseIndAnalysis( DOMElement* ind_analysis )
   char etaDefault[] = "0.0";
   //  myEtaLen = myOmegaOrder;
   myEtaLen = myOmegaDim;
-  Symbol * sym_eta = table->insertVector( NMKey.ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
+  Symbol * sym_eta = table->insertVector( nonmem::ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
   

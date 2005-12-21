@@ -184,7 +184,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   pLabel = labels->begin();
   for( int i=0; i<nLabels, pLabel != labels->end(); i++, pLabel++ )
     {
-      bool isID = ( *pLabel == NMKey.ID );
+      bool isID = ( *pLabel == nonmem::ID );
 
       const Symbol* s = table->find( *pLabel );
       oPred_h << ( isID? "std::string" : "spk_ValueType" );
@@ -213,7 +213,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 
       if( objType == Symbol::VECTOR )
 	{
-	  if( varName == NMKey.THETA || varName == NMKey.ETA || varName == NMKey.EPS )
+	  if( varName == nonmem::THETA || varName == nonmem::ETA || varName == nonmem::EPS )
 	    {
 	      // These are independent variables for the user's model.  So, want to keep
 	      // them around along with the computed values.
@@ -238,7 +238,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	}
       else if( objType == Symbol::MATRIX )
 	{
-	  if( varName == NMKey.OMEGA || varName == NMKey.SIGMA )
+	  if( varName == nonmem::OMEGA || varName == nonmem::SIGMA )
 	    {
 	      // These are irrelevant in this class.
 	      continue;
@@ -422,19 +422,19 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  oPred_h << s->synonym << "[spk_j];" << endl;
 	}
     }
-  oPred_h << "   " << NMKey.THETA;
+  oPred_h << "   " << nonmem::THETA;
   oPred_h << " = spk_indepVar.begin() + spk_thetaOffset;" << endl;
   for( int i=0; i<myThetaLen; i++ )
     {
-      oPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.THETA << i+1;
+      oPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::THETA << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_thetaOffset + " << i << ";" << endl;
     }
 
-  oPred_h << "   " << NMKey.ETA;
+  oPred_h << "   " << nonmem::ETA;
   oPred_h << " = spk_indepVar.begin() + spk_etaOffset;" << endl;
   for( int i=0; i<myEtaLen; i++ )
     {
-      oPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.ETA << i+1;
+      oPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::ETA << i+1;
       oPred_h << " = spk_indepVar.begin() + spk_etaOffset + " << i << ";" << endl;
     }
 
@@ -444,11 +444,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // "myEpsLen" has been set to zero; thus the following loop loops zero times.
   if( getTarget() == POP )
     {
-      oPred_h << "   " << NMKey.EPS;
+      oPred_h << "   " << nonmem::EPS;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
       for( int i=0; i<myEpsLen; i++ )
 	{
-	  oPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << NMKey.EPS << i+1;
+	  oPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS << i+1;
 	  oPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
 	}
     }
@@ -459,8 +459,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // REVISIT Sachiko 08/25/2005
   // Do they need to be really initialized to zero here?
   // 
-  //  oPred_h << "   spk_ValueType " << NMKey.F << " = 0.0;" << endl;
-  //  oPred_h << "   spk_ValueType " << NMKey.Y << " = 0.0;" << endl;
+  //  oPred_h << "   spk_ValueType " << nonmem::F << " = 0.0;" << endl;
+  //  oPred_h << "   spk_ValueType " << nonmem::Y << " = 0.0;" << endl;
   //
   ///////////////////////////////////////////////////////////////////////////////////
       
@@ -489,8 +489,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   ///////////////////////////////////////////////////////////////////////////////////
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
-  oPred_h << NMKey.PRED << " = " << NMKey.F << ";" << endl;
-  oPred_h << NMKey.RES  << " = (" << NMKey.MDV << "==0? " << NMKey.DV << "-" << NMKey.PRED << " : 0 );" << endl;
+  oPred_h << nonmem::PRED << " = " << nonmem::F << ";" << endl;
+  oPred_h << nonmem::RES  << " = (" << nonmem::MDV << "==0? " << nonmem::DV << "-" << nonmem::PRED << " : 0 );" << endl;
 
   for( pT = t->begin(); pT != t->end(); pT++ )
     {
@@ -510,17 +510,17 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
         {
           if( objectType == Symbol::VECTOR )
             {
-              if( label == NMKey.THETA )
+              if( label == nonmem::THETA )
 	        {
 	          oPred_h << "   copy( " << label << ", " << label << "+spk_thetaLen, ";
 	          oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
                 }
-              else if( label == NMKey.ETA )
+              else if( label == nonmem::ETA )
 	        {
 	          oPred_h << "   copy( " << label << ", " << label << "+spk_etaLen, ";
 	          oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
 	        }
-              else if( label == NMKey.EPS )
+              else if( label == nonmem::EPS )
 	        {
 	          oPred_h << "   copy( " << label << ", " << label << "+spk_epsLen, ";
 	          oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
@@ -534,7 +534,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	    }
           else // Scalar
 	    {
-	      if( label == NMKey.PRED || label == NMKey.RES || access == Symbol::READWRITE )
+	      if( label == nonmem::PRED || label == nonmem::RES || access == Symbol::READWRITE )
 		{
 		  oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ]";
 		  oPred_h << " = " << label << ";" << endl;
@@ -556,7 +556,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // is available even when a failure occurs.
   //
   oPred_h << "   if( spk_i == " << getPopSize() << "-1 && spk_j == spk_perm->data[spk_i]->";
-  oPred_h << NMKey.ID << ".size()-1 )" << endl;
+  oPred_h << nonmem::ID << ".size()-1 )" << endl;
   oPred_h << "   {" << endl;
   oPred_h << "     // This means, SPK advanced in iteration." << endl;
   oPred_h << "     // Move temporary storage to spk_permanent storage." << endl;
@@ -579,9 +579,9 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	    continue;
 	  else if( objectType == Symbol::VECTOR )
 	    {
-	      if( label == NMKey.THETA 
-		  || label == NMKey.ETA 
-		  || label == NMKey.EPS )
+	      if( label == nonmem::THETA 
+		  || label == nonmem::ETA 
+		  || label == nonmem::EPS )
 		{
 		  oPred_h << "       spk_perm->data[ i ]->" << label;
 		  oPred_h << " = spk_temp.data[ i ]->";
@@ -594,7 +594,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	    }
           else // Scalar
 	    {
-	      if( label == NMKey.PRED || label == NMKey.RES || access == Symbol::READWRITE )
+	      if( label == nonmem::PRED || label == nonmem::RES || access == Symbol::READWRITE )
 		{
 		  oPred_h << "       spk_perm->data[ i ]->" << label;
 		  oPred_h << " = spk_temp.data[ i ]->" << label << ";" << endl;
@@ -621,11 +621,11 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 
   ///////////////////////////////////////////////////////////////////////////////////
 
-  oPred_h << "   if( spk_perm->data[ spk_i ]->" << NMKey.MDV << "[ spk_j ] == 0 )" << endl;
+  oPred_h << "   if( spk_perm->data[ spk_i ]->" << nonmem::MDV << "[ spk_j ] == 0 )" << endl;
   oPred_h << "   {" << endl;
   oPred_h << "      spk_m = getMeasurementIndex( spk_i, spk_j );" << endl;
-  oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << NMKey.F << ";" << endl;
-  oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << NMKey.Y << ";" << endl;
+  oPred_h << "      spk_depVar[ spk_fOffset+spk_m ] = " << nonmem::F << ";" << endl;
+  oPred_h << "      spk_depVar[ spk_yOffset+spk_m ] = " << nonmem::Y << ";" << endl;
   oPred_h << "      return true;" << endl;
   oPred_h << "   }" << endl;
   oPred_h << "   else" << endl;
