@@ -17,7 +17,6 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
@@ -36,7 +35,9 @@ namespace{
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
   char fFitDriver[]       = "driver";
+  char fFitDriver_cpp[]   = "fitDriver.cpp";
   char fReportML[]        = "result.xml";
+  char fMakefile[]        = "Makefile.SPK";
 
   char fPrefix              [MAXCHARS];
   char fDataML              [MAXCHARS];
@@ -229,35 +230,12 @@ if( actual != expected ) \\\n \
 
 void ind_subprobTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( ... )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
   testName = typeid( *this ).name();
 
-  strcpy ( fPrefix,               testName );
+  strcpy  ( fPrefix,               testName );
   snprintf( fMonteParsDriver,      MAXCHARS, "%s_MonteParsDriver",      fPrefix );
   snprintf( fMonteParsDriver_cpp,  MAXCHARS, "%s_MonteParsDriver.cpp",  fPrefix );
   snprintf( fNonmemParsDriver,     MAXCHARS, "%s_NonmemParsDriver",     fPrefix );
@@ -284,24 +262,6 @@ void ind_subprobTest::setUp()
   // DV is aliased to CP
   label_alias[strDV]   = NULL;
 
-  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
-  X_IND_OBJ_OUT                = XMLString::transcode( C_IND_OBJ_OUT );
-  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
-  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
-  X_IND_ANALYSIS_RESULT        = XMLString::transcode( C_IND_ANALYSIS_RESULT );
-  X_IND_STDERROR_OUT           = XMLString::transcode( C_IND_STDERROR_OUT );
-  X_IND_COVARIANCE_OUT         = XMLString::transcode( C_IND_COVARIANCE_OUT );
-  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_IND_INVERSE_COVARIANCE_OUT );
-  X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
-  X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
-  X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
-  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
-  X_SPKREPORT                  = XMLString::transcode( C_SPKREPORT );
-  X_SIMULATION                 = XMLString::transcode( C_SIMULATION );
-  X_SUBPROBLEM                 = XMLString::transcode( C_SUBPROBLEM );
-
-
   record[0]   = record0;
   record[1]   = record1;
   record[2]   = record2;
@@ -315,23 +275,6 @@ void ind_subprobTest::setUp()
 }
 void ind_subprobTest::tearDown()
 {
-  XMLString::release( &X_ERROR_LIST );
-  XMLString::release( &X_VALUE );
-  XMLString::release( &X_IND_OBJ_OUT );
-  XMLString::release( &X_THETA_OUT );
-  XMLString::release( &X_OMEGA_OUT );
-  XMLString::release( &X_IND_ANALYSIS_RESULT );
-  XMLString::release( &X_IND_STDERROR_OUT );
-  XMLString::release( &X_IND_COVARIANCE_OUT );
-  XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_IND_CONFIDENCE_OUT );
-  XMLString::release( &X_IND_COEFFICIENT_OUT );
-  XMLString::release( &X_IND_CORRELATION_OUT );
-  XMLString::release( &X_PRESENTATION_DATA );
-  XMLString::release( &X_SPKREPORT );
-  XMLString::release( &X_SIMULATION );
-  XMLString::release( &X_SUBPROBLEM );
-
   if( okToClean )
     {
       remove( fDataML );
@@ -349,22 +292,13 @@ void ind_subprobTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fPredDriver );
       remove( fPredDriver_cpp );
-      remove( fMontePars_h );
-      remove( fNonmemPars_h );
-      remove( fIndData_h );
-      remove( fDataSet_h );
-      remove( fPred_h );
-      remove( fPredEqn_cpp );
-      remove( fMakefile );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( fCheckpoint_xml );
       remove( fXml1_xml );
       remove( fXml2_xml );
       remove( fXml3_xml );
     }
 
-  XMLPlatformUtils::Terminate();
 }
 //******************************************************************************
 //
@@ -727,16 +661,16 @@ void ind_subprobTest::testReportML()
 
       //DOMPrint( doc );
 
-      DOMNodeList * report_list = doc->getElementsByTagName( X_SPKREPORT );
+      DOMNodeList * report_list = doc->getElementsByTagName( XML.X_SPKREPORT );
       int nReports = report_list->getLength();
 
-      DOMNodeList * opt_result_list = doc->getElementsByTagName( X_IND_OPT_RESULT );
+      DOMNodeList * opt_result_list = doc->getElementsByTagName( XML.X_IND_OPT_RESULT );
       int nOpts = opt_result_list->getLength();
 
-      DOMNodeList * stat_result_list = doc->getElementsByTagName( X_IND_STAT_RESULT );
+      DOMNodeList * stat_result_list = doc->getElementsByTagName( XML.X_IND_STAT_RESULT );
       int nStats = stat_result_list->getLength();
  
-      DOMNodeList * presentation_data_list = doc->getElementsByTagName( X_PRESENTATION_DATA );
+      DOMNodeList * presentation_data_list = doc->getElementsByTagName( XML.X_PRESENTATION_DATA );
       int nPresentations = presentation_data_list->getLength();
 
     }

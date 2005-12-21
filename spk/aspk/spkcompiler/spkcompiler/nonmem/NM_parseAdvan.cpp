@@ -53,10 +53,10 @@ void NonmemTranslator::parseAdvan(
       throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
     }
 
-  DOMNodeList * comp_models = model->getElementsByTagName( X_COMP_MODEL );
-  DOMNodeList * pks         = model->getElementsByTagName( X_PK );
-  DOMNodeList * errors      = model->getElementsByTagName( X_ERROR );
-  DOMNodeList * diffeqns    = model->getElementsByTagName( X_DIFFEQN );
+  DOMNodeList * comp_models = model->getElementsByTagName( XML.X_COMP_MODEL );
+  DOMNodeList * pks         = model->getElementsByTagName( XML.X_PK );
+  DOMNodeList * errors      = model->getElementsByTagName( XML.X_ERROR );
+  DOMNodeList * diffeqns    = model->getElementsByTagName( XML.X_DIFFEQN );
   DOMElement  * comp_model  = NULL;
   DOMElement  * diffeqn     = NULL;
   DOMElement  * pk          = NULL;
@@ -88,7 +88,7 @@ void NonmemTranslator::parseAdvan(
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"<%s> block is missing!", C_PK );
+		"<%s> block is missing!", XML.C_PK );
       throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  m, __LINE__, __FILE__ );
     }
@@ -98,7 +98,7 @@ void NonmemTranslator::parseAdvan(
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"<%s> block is missing!", C_ERROR );
+		"<%s> block is missing!", XML.C_ERROR );
       throw SpkCompilerException( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  m, __LINE__, __FILE__ );
     }
@@ -154,15 +154,15 @@ void NonmemTranslator::parseAdvan(
   if( advan == 6 || advan == 8 || advan == 9 )
     {
       unsigned sig_digits = 0;
-      if( model->hasAttribute( X_TOLERANCE ) )
+      if( model->hasAttribute( XML.X_TOLERANCE ) )
 	{
-	  const XMLCh *x_tol = model->getAttribute( X_TOLERANCE );
+	  const XMLCh *x_tol = model->getAttribute( XML.X_TOLERANCE );
 	  if( !XMLString::textToBin( x_tol, sig_digits ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      snprintf( m, 
 			SpkCompilerError::maxMessageLen(),
-			"Invalid %s: %s", C_TOLERANCE, XMLString::transcode( x_tol ) );
+			"Invalid %s: %s", XML.C_TOLERANCE, XMLString::transcode( x_tol ) );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, m, __LINE__, __FILE__ );
 	    }
 	  relTol = pow( 10.0, -(sig_digits+1.0) );
@@ -240,20 +240,20 @@ void NonmemTranslator::parseAdvan(
 // 
 int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTol )
 {
-  const DOMNodeList * compartment_list = comp_model->getElementsByTagName( X_COMPARTMENT ); 
+  const DOMNodeList * compartment_list = comp_model->getElementsByTagName( XML.X_COMPARTMENT ); 
 
   // #of compartments other than the ouput compartment.
   // This value must match the number of <compartment> sub-entries.
   unsigned int nUserCompartments; /* User specified #of compartments (this doesn't include the output comp)*/
-  if( comp_model->hasAttribute( X_NCOMPARTMENTS ) )
+  if( comp_model->hasAttribute( XML.X_NCOMPARTMENTS ) )
     {
-      const XMLCh* x_ncompartments = comp_model->getAttribute( X_NCOMPARTMENTS );
+      const XMLCh* x_ncompartments = comp_model->getAttribute( XML.X_NCOMPARTMENTS );
       if( ! XMLString::textToBin( x_ncompartments, nUserCompartments ) )
 	{
           char mess[ SpkCompilerError::maxMessageLen() ];
           snprintf( mess,
 		    SpkCompilerError::maxMessageLen(),
-		    "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NCOMPARTMENTS,
+		    "Invalid <%s::%s> attribute value: \"%s\"", XML.C_COMP_MODEL, XML.C_NCOMPARTMENTS,
 		    XMLString::transcode(x_ncompartments) );
           SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__);
           throw e;
@@ -264,7 +264,7 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
           snprintf( mess,
 		    SpkCompilerError::maxMessageLen(),
 		    "The number of compartments specified in <%s::%s> does not match with the number of <%s> incidents!",
-		    C_COMP_MODEL, C_NCOMPARTMENTS, C_COMPARTMENT );
+		    XML.C_COMP_MODEL, XML.C_NCOMPARTMENTS, XML.C_COMPARTMENT );
           throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__ );
 	}
     }
@@ -275,15 +275,15 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
 
   // #of equilibrim compartments. Default = 0.
   unsigned int nEquilibrims = 0;
-  if( comp_model->hasAttribute( X_NEQUILIBRIMS ) )
+  if( comp_model->hasAttribute( XML.X_NEQUILIBRIMS ) )
     {
-      const XMLCh* x_nequilibrims = comp_model->getAttribute( X_NEQUILIBRIMS );
+      const XMLCh* x_nequilibrims = comp_model->getAttribute( XML.X_NEQUILIBRIMS );
       if( ! XMLString::textToBin( x_nequilibrims, nEquilibrims ) )
 	{
           char mess[ SpkCompilerError::maxMessageLen() ];
           snprintf( mess,
 		    SpkCompilerError::maxMessageLen(),
-		    "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NEQUILIBRIMS,
+		    "Invalid <%s::%s> attribute value: \"%s\"", XML.C_COMP_MODEL, XML.C_NEQUILIBRIMS,
 		    XMLString::transcode(x_nequilibrims) );
           SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__);
           throw e;
@@ -291,15 +291,15 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
     }
 
   unsigned int nParameters = 0; 
-  if( comp_model->hasAttribute( X_NPARAMETERS ) )
+  if( comp_model->hasAttribute( XML.X_NPARAMETERS ) )
     {
-      const XMLCh* x_nparameters = comp_model->getAttribute( X_NPARAMETERS );
+      const XMLCh* x_nparameters = comp_model->getAttribute( XML.X_NPARAMETERS );
       if( ! XMLString::textToBin( x_nparameters, nParameters ) )
 	{
           char mess[ SpkCompilerError::maxMessageLen() ];
           snprintf( mess,
 		    SpkCompilerError::maxMessageLen(),
-		    "Invalid <%s::%s> attribute value: \"%s\"", C_COMP_MODEL, C_NPARAMETERS,
+		    "Invalid <%s::%s> attribute value: \"%s\"", XML.C_COMP_MODEL, XML.C_NPARAMETERS,
 		    XMLString::transcode(x_nparameters) );
           SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__);
           throw e;
@@ -316,66 +316,66 @@ int NonmemTranslator::parseCompModel( const DOMElement* comp_model, double relTo
   for( int i=0; i<nUserCompartments; i++ )
     {
       DOMElement* compartment = dynamic_cast<DOMElement*>( compartment_list->item(i) );
-      if( compartment->hasAttribute( X_NAME ) )
-	myCompModel->getCompartment(i).setName( XMLString::transcode( compartment->getAttribute( X_NAME ) ) );
-      if( compartment->hasAttribute( X_INITIAL_OFF ) )
+      if( compartment->hasAttribute( XML.X_NAME ) )
+	myCompModel->getCompartment(i).setName( XMLString::transcode( compartment->getAttribute( XML.X_NAME ) ) );
+      if( compartment->hasAttribute( XML.X_INITIAL_OFF ) )
 	{
-	  const XMLCh * yn = compartment->getAttribute( X_INITIAL_OFF );
-	  if( XMLString::equals( yn, X_YES ) )
+	  const XMLCh * yn = compartment->getAttribute( XML.X_INITIAL_OFF );
+	  if( XMLString::equals( yn, XML.X_YES ) )
 	    tempVal = true;
 	  else
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_initial_off( tempVal );
 	}
-      if( compartment->hasAttribute( X_NO_OFF ) )
+      if( compartment->hasAttribute( XML.X_NO_OFF ) )
 	{
-	  const XMLCh * yn = compartment->getAttribute( X_NO_OFF );
-	  if( XMLString::equals( yn, X_YES ) )
+	  const XMLCh * yn = compartment->getAttribute( XML.X_NO_OFF );
+	  if( XMLString::equals( yn, XML.X_YES ) )
 	    tempVal = true;
 	  else
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_no_off( tempVal );
 	}
-      if( compartment->hasAttribute( X_NO_DOSE ) )
+      if( compartment->hasAttribute( XML.X_NO_DOSE ) )
 	{
-	  const XMLCh * yn = compartment->getAttribute( X_NO_DOSE );
-	  if( XMLString::equals( yn, X_YES ) )
+	  const XMLCh * yn = compartment->getAttribute( XML.X_NO_DOSE );
+	  if( XMLString::equals( yn, XML.X_YES ) )
 	    tempVal = true;
 	  else
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_no_dose( tempVal );
 	}
-      if( compartment->hasAttribute( X_EQUILIBRIM ) )
+      if( compartment->hasAttribute( XML.X_EQUILIBRIM ) )
 	{
-	  const XMLCh * yn = compartment->getAttribute( X_EQUILIBRIM );
-	  if( XMLString::equals( yn, X_YES ) )
+	  const XMLCh * yn = compartment->getAttribute( XML.X_EQUILIBRIM );
+	  if( XMLString::equals( yn, XML.X_YES ) )
 	    tempVal = true;
 	  else
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_equilibrim( tempVal );
 	}
-      if( compartment->hasAttribute( X_EXCLUDE ) )
+      if( compartment->hasAttribute( XML.X_EXCLUDE ) )
 	{
-	  const XMLCh * yn = compartment->getAttribute( X_EXCLUDE );
-	  if( XMLString::equals( yn, X_YES ) )
+	  const XMLCh * yn = compartment->getAttribute( XML.X_EXCLUDE );
+	  if( XMLString::equals( yn, XML.X_YES ) )
 	    tempVal = true;
 	  else
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_exclude( tempVal );
 	}
-      if( compartment->hasAttribute( X_DEFAULT_OBSERVATION ) )
+      if( compartment->hasAttribute( XML.X_DEFAULT_OBSERVATION ) )
 	{
-	  const XMLCh * yn = compartment->getAttribute( X_DEFAULT_OBSERVATION );
-	  if( XMLString::equals( yn, X_YES ) )
+	  const XMLCh * yn = compartment->getAttribute( XML.X_DEFAULT_OBSERVATION );
+	  if( XMLString::equals( yn, XML.X_YES ) )
 	    tempVal = true;
 	  else
 	    tempVal = false;
 	  myCompModel->getCompartment(i).set_default_observation( tempVal );
 	}
-      if( compartment->hasAttribute( X_DEFAULT_DOSE ) )
+      if( compartment->hasAttribute( XML.X_DEFAULT_DOSE ) )
 	{
-	  const XMLCh * yn = compartment->getAttribute( X_DEFAULT_DOSE );
-	  if( XMLString::equals( yn, X_YES ) )
+	  const XMLCh * yn = compartment->getAttribute( XML.X_DEFAULT_DOSE );
+	  if( XMLString::equals( yn, XML.X_YES ) )
 	    tempVal = true;
 	  else
 	    tempVal = false;

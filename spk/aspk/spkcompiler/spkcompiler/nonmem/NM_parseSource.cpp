@@ -30,13 +30,13 @@ void NonmemTranslator::parseSource()
   // <nonmem>
   //---------------------------------------------------------------------------------------
   DOMElement  * spksouce = getSourceTree()->getDocumentElement();
-  DOMNodeList * nonmems  = spksouce->getElementsByTagName( X_NONMEM );
+  DOMNodeList * nonmems  = spksouce->getElementsByTagName( XML.X_NONMEM );
   if( !nonmems->getLength() > 0 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing <%s> element.", C_NONMEM );
+		"Missing <%s> element.", XML.C_NONMEM );
       SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -45,13 +45,13 @@ void NonmemTranslator::parseSource()
   //---------------------------------------------------------------------------------------
   // <constraint>
   //---------------------------------------------------------------------------------------
-  DOMNodeList * constraints = nonmem->getElementsByTagName( X_CONSTRAINT );
+  DOMNodeList * constraints = nonmem->getElementsByTagName( XML.X_CONSTRAINT );
   if( constraints->getLength() != 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen()];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing <%s> element.", C_CONSTRAINT );
+		"Missing <%s> element.", XML.C_CONSTRAINT );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -62,8 +62,8 @@ void NonmemTranslator::parseSource()
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
 		"Missing <%s> or <%s> element.", 
-		C_POP_ANALYSIS, 
-		C_IND_ANALYSIS );
+		XML.C_POP_ANALYSIS, 
+		XML.C_IND_ANALYSIS );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -72,13 +72,13 @@ void NonmemTranslator::parseSource()
   bool isAnalysisDone = false;
   if( getTarget() == POP )
     {
-      DOMNodeList * pop_analysises = constraint->getElementsByTagName( X_POP_ANALYSIS );
+      DOMNodeList * pop_analysises = constraint->getElementsByTagName( XML.X_POP_ANALYSIS );
       analysis = dynamic_cast<DOMElement*>( pop_analysises->item(0) );
       parsePopAnalysis( analysis );
     }
   else //if( getTarget() == IND )
     {
-      DOMNodeList * ind_analysises = constraint->getElementsByTagName( X_IND_ANALYSIS );
+      DOMNodeList * ind_analysises = constraint->getElementsByTagName( XML.X_IND_ANALYSIS );
       analysis = dynamic_cast<DOMElement*>( ind_analysises->item(0) );
       parseIndAnalysis( analysis );
     }
@@ -155,13 +155,13 @@ void NonmemTranslator::parseSource()
       // CWETARES
       table->insertVector( NMKey.CWETARES, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
     } 
-  DOMNodeList * models = nonmem->getElementsByTagName( X_MODEL );
+  DOMNodeList * models = nonmem->getElementsByTagName( XML.X_MODEL );
   if( models->getLength() != 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing <%s> element.", C_MODEL );
+		"Missing <%s> element.", XML.C_MODEL );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -175,20 +175,20 @@ void NonmemTranslator::parseSource()
   //
   if( myModelSpec != PRED )
     {
-      XMLString::textToBin( model->getAttribute( X_ADVAN ), advan );
+      XMLString::textToBin( model->getAttribute( XML.X_ADVAN ), advan );
       assert( advan > 0 );
 
       assert( myTrans == TRANS1 );  // default TRANS value
-      if( model->hasAttribute( X_TRANS ) )
+      if( model->hasAttribute( XML.X_TRANS ) )
 	{
-	  XMLString::textToBin( model->getAttribute( X_TRANS ), trans );
+	  XMLString::textToBin( model->getAttribute( XML.X_TRANS ), trans );
 	  myTrans = static_cast<TRANS>( trans );
 	}
       parseAdvan( myModelSpec, myTrans, model );
     }
   else
     {
-      DOMNodeList * preds   = model->getElementsByTagName( X_PRED );
+      DOMNodeList * preds   = model->getElementsByTagName( XML.X_PRED );
       if( preds->getLength() < 1 )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
@@ -208,7 +208,7 @@ void NonmemTranslator::parseSource()
   //---------------------------------------------------------------------------------------
   // <monte_carlo>
   //---------------------------------------------------------------------------------------
-  DOMNodeList * monte_carlos = nonmem->getElementsByTagName( X_MONTE_CARLO );
+  DOMNodeList * monte_carlos = nonmem->getElementsByTagName( XML.X_MONTE_CARLO );
   DOMElement * monte_carlo;
   if( monte_carlos->getLength() > 0 )
     {
@@ -260,7 +260,7 @@ void NonmemTranslator::parseSource()
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
 		"<%s> must be parsed before parsing <%s>.", 
-		C_PRED, C_PRESENTATION);
+		XML.C_PRED, XML.C_PRESENTATION);
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -270,19 +270,19 @@ void NonmemTranslator::parseSource()
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
 		"<%s> must be parsed before parsing <%s>", 
-		(getTarget()==POP? C_POP_ANALYSIS : C_IND_ANALYSIS ), 
-		C_PRESENTATION );
+		(getTarget()==POP? XML.C_POP_ANALYSIS : XML.C_IND_ANALYSIS ), 
+		XML.C_PRESENTATION );
       SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
   
-  DOMNodeList * presentations = nonmem->getElementsByTagName( X_PRESENTATION );
+  DOMNodeList * presentations = nonmem->getElementsByTagName( XML.X_PRESENTATION );
   if( presentations->getLength() > 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
-		"Multiple <%s> elements are found.", C_PRESENTATION ); 
+		"Multiple <%s> elements are found.", XML.C_PRESENTATION ); 
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }

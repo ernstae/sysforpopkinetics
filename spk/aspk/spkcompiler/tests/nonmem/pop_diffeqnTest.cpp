@@ -15,7 +15,6 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
@@ -25,7 +24,6 @@
 
 using namespace std;
 using namespace CppUnit;
-using namespace xercesc;
 
 namespace{ 
   const unsigned int MAXCHARS = 256;
@@ -410,29 +408,6 @@ if( actual != expected ) \\\n \
 };
 void pop_diffeqnTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( ... )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
@@ -688,7 +663,6 @@ void pop_diffeqnTest::tearDown()
       remove( fTraceOut );
       remove( fCheckpoint_xml );
     }
-  XMLPlatformUtils::Terminate();
 }
 //******************************************************************************
 //

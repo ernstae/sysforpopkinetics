@@ -16,7 +16,6 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
@@ -35,6 +34,8 @@ namespace{
   char fTraceOut[]        = "trace_output";
   char fFitDriver[]       = "driver";
   char fReportML[]        = "result.xml";
+  char fMakefile[]        = "Makefile.SPK";
+  char fFitDriver_cpp[]   = "fitDriver.cpp";
 
   char fPrefix              [MAXCHARS+1];
   char fDataML              [MAXCHARS+1];
@@ -261,29 +262,6 @@ if( actual != expected ) \\\n \
 
 void pop_subprobTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( ... )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
@@ -302,23 +280,6 @@ void pop_subprobTest::setUp()
   snprintf( fDataSetDriver_cpp,    MAXCHARS, "%s_DataSetDriver.cpp",    fPrefix );
   snprintf( fPredDriver,           MAXCHARS, "%s_PredDriver",           fPrefix );
   snprintf( fPredDriver_cpp,       MAXCHARS, "%s_PredDriver.cpp",       fPrefix );
-
-  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
-  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
-  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
-  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
-  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
-  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
-  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
-  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
-  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
-  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
-  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
-  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
-  X_SPKREPORT                  = XMLString::transcode( C_SPKREPORT );
-  X_SIMULATION                 = XMLString::transcode( C_SIMULATION );
-  X_SUBPROBLEM                 = XMLString::transcode( C_SUBPROBLEM );
 
   snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
@@ -356,23 +317,6 @@ void pop_subprobTest::setUp()
 }
 void pop_subprobTest::tearDown()
 {
-  XMLString::release( &X_ERROR_LIST );
-  XMLString::release( &X_VALUE );
-  XMLString::release( &X_POP_OBJ_OUT );
-  XMLString::release( &X_THETA_OUT );
-  XMLString::release( &X_OMEGA_OUT );
-  XMLString::release( &X_POP_ANALYSIS_RESULT );
-  XMLString::release( &X_POP_STDERROR_OUT );
-  XMLString::release( &X_POP_COVARIANCE_OUT );
-  XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_POP_CONFIDENCE_OUT );
-  XMLString::release( &X_POP_COEFFICIENT_OUT );
-  XMLString::release( &X_POP_CORRELATION_OUT );
-  XMLString::release( &X_PRESENTATION_DATA );
-  XMLString::release( &X_SPKREPORT );
-  XMLString::release( &X_SIMULATION );
-  XMLString::release( &X_SUBPROBLEM );
-
   if( okToClean )
     {
       remove( fDataML );
@@ -390,18 +334,10 @@ void pop_subprobTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fPredDriver );
       remove( fPredDriver_cpp );
-      remove( fMontePars_h );
-      remove( fNonmemPars_h );
-      remove( fIndData_h );
-      remove( fDataSet_h );
-      remove( fPred_h );
-      remove( fPredEqn_cpp );
       remove( fMakefile );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( fCheckpoint_xml );
     }
-  XMLPlatformUtils::Terminate();
 }
 //******************************************************************************
 //
@@ -812,21 +748,21 @@ void pop_subprobTest::testReportML()
 
       //      DOMPrint( doc );
 
-      DOMNodeList * report_list = doc->getElementsByTagName( X_SPKREPORT );
+      DOMNodeList * report_list = doc->getElementsByTagName( XML.X_SPKREPORT );
       int nReports = report_list->getLength();
 
-      DOMNodeList * simulation_list = doc->getElementsByTagName( X_SIMULATION );
+      DOMNodeList * simulation_list = doc->getElementsByTagName( XML.X_SIMULATION );
       unsigned int order;
-      XMLString::textToBin( dynamic_cast<DOMElement*>(simulation_list->item(0))->getAttribute( X_SUBPROBLEM ), order );
+      XMLString::textToBin( dynamic_cast<DOMElement*>(simulation_list->item(0))->getAttribute( XML.X_SUBPROBLEM ), order );
       CPPUNIT_ASSERT_EQUAL( i+1, static_cast<int>(order) );
 
-      DOMNodeList * opt_result_list = doc->getElementsByTagName( X_POP_OPT_RESULT );
+      DOMNodeList * opt_result_list = doc->getElementsByTagName( XML.X_POP_OPT_RESULT );
       int nOpts = opt_result_list->getLength();
 
-      DOMNodeList * stat_result_list = doc->getElementsByTagName( X_POP_STAT_RESULT );
+      DOMNodeList * stat_result_list = doc->getElementsByTagName( XML.X_POP_STAT_RESULT );
       int nStats = stat_result_list->getLength();
  
-      DOMNodeList * presentation_data_list = doc->getElementsByTagName( X_PRESENTATION_DATA );
+      DOMNodeList * presentation_data_list = doc->getElementsByTagName( XML.X_PRESENTATION_DATA );
       int nPresentations = presentation_data_list->getLength();
     }
 

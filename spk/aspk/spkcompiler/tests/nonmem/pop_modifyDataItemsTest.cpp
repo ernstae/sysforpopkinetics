@@ -17,7 +17,6 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
@@ -29,6 +28,7 @@
 using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
+
 /*
 ===================================================================================
    NONMEM Control File
@@ -66,6 +66,8 @@ namespace{
   char fTraceOut[]        = "trace_output";
   char fFitDriver[]       = "driver";
   char fReportML[]        = "result.xml";
+  char fMakefile[]        = "Makefile.SPK";
+  char fFitDriver_cpp[]   = "fitDriver.cpp";
 
   char fPrefix              [MAXCHARS+1];
   char fDataML              [MAXCHARS+1];
@@ -1675,29 +1677,6 @@ void pop_modifyDataItemsTest::skip()
 }
 void pop_modifyDataItemsTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( ... )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
@@ -1716,31 +1695,6 @@ void pop_modifyDataItemsTest::setUp()
   snprintf( fDataSetDriver_cpp,    MAXCHARS, "%s_DataSetDriver.cpp",    fPrefix );
   snprintf( fODEPredDriver,        MAXCHARS, "%s_ODEPredDriver",        fPrefix );
   snprintf( fODEPredDriver_cpp,    MAXCHARS, "%s_ODEPredDriver.cpp",    fPrefix );
-
-  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
-  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
-  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
-  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
-  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
-  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
-  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
-  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
-  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
-  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
-  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
-  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
-
-  X_NCOMPARTMENTS              = XMLString::transcode( C_NCOMPARTMENTS );
-  X_NPARAMETERS                = XMLString::transcode( C_NPARAMETERS );
-  X_NEQUILIBRIMS               = XMLString::transcode( C_NEQUILIBRIMS );
-  X_INITIAL_OFF                = XMLString::transcode( C_INITIAL_OFF );
-  X_NO_OFF                     = XMLString::transcode( C_NO_OFF );
-  X_NO_DOSE                    = XMLString::transcode( C_NO_DOSE );
-  X_EQUILIBRIM                 = XMLString::transcode( C_EQUILIBRIM );
-  X_EXCLUDE                    = XMLString::transcode( C_EXCLUDE );
-  X_DEFAULT_OBSERVATION        = XMLString::transcode( C_DEFAULT_OBSERVATION );
-  X_DEFAULT_DOSE               = XMLString::transcode( C_DEFAULT_DOSE );
 
   snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
@@ -1763,30 +1717,6 @@ void pop_modifyDataItemsTest::setUp()
 
 void pop_modifyDataItemsTest::tearDown()
 {
-  XMLString::release( &X_ERROR_LIST );
-  XMLString::release( &X_VALUE );
-  XMLString::release( &X_POP_OBJ_OUT );
-  XMLString::release( &X_THETA_OUT );
-  XMLString::release( &X_OMEGA_OUT );
-  XMLString::release( &X_POP_ANALYSIS_RESULT );
-  XMLString::release( &X_POP_STDERROR_OUT );
-  XMLString::release( &X_POP_COVARIANCE_OUT );
-  XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_POP_CONFIDENCE_OUT );
-  XMLString::release( &X_POP_COEFFICIENT_OUT );
-  XMLString::release( &X_POP_CORRELATION_OUT );
-  XMLString::release( &X_PRESENTATION_DATA );
-  XMLString::release( &X_NCOMPARTMENTS );
-  XMLString::release( &X_NPARAMETERS );
-  XMLString::release( &X_NEQUILIBRIMS );
-  XMLString::release( &X_INITIAL_OFF );
-  XMLString::release( &X_NO_OFF );
-  XMLString::release( &X_NO_DOSE );
-  XMLString::release( &X_EQUILIBRIM );
-  XMLString::release( &X_EXCLUDE );
-  XMLString::release( &X_DEFAULT_OBSERVATION );
-  XMLString::release( &X_DEFAULT_DOSE );
-
   delete data;
   delete source;
 
@@ -1808,18 +1738,10 @@ void pop_modifyDataItemsTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fODEPredDriver );
       remove( fODEPredDriver_cpp );
-      remove( fMontePars_h );
-      remove( fNonmemPars_h );
-      remove( fIndData_h );
-      remove( fDataSet_h );
-      remove( fOdePred_h );
-      remove( fPredEqn_cpp );
       remove( fMakefile );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( fCheckpoint_xml );
     }
-  XMLPlatformUtils::Terminate();
 }
 void pop_modifyDataItemsTest::createDataML( const char * fDataML, 
 					    int nIndividuals,

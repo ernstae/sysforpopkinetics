@@ -11,13 +11,12 @@
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
-#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/nonmem/XmlConstants.h"
 
 #include <vector>
 
 class pop_modifyDataItemsTest 
-: public CppUnit::TestFixture,
-  public NonmemTranslator
+: public CppUnit::TestFixture
 {
 
   xercesc::DOMDocument *source;
@@ -27,6 +26,8 @@ class pop_modifyDataItemsTest
   xercesc::XercesDOMParser * dataParser;
   xercesc::XercesDOMParser * sourceParser;
   
+  XmlConstants XML;
+
   bool okToClean;
 public:
     static CppUnit::Test * suite();

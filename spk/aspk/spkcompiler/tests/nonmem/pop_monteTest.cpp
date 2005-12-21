@@ -33,8 +33,10 @@ namespace{
   const char * testName;
   char fSavedReportML[]   = "saved_result.xml";
   char fTraceOut[]        = "trace_output";
-  char fFitDriver[]       = "driver";
+  char fMonteDriver[]     = "driver";
   char fReportML[]        = "result.xml";
+  char fMonteDriver_cpp[] = "monteDriver.cpp";
+  char fMakefile[]        = "Makefile.SPK";
 
   char fPrefix              [MAXCHARS+1];
   char fDataML              [MAXCHARS+1];
@@ -246,48 +248,10 @@ if( actual != expected ) \\\n \
 
 void pop_monteTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( ... )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
   testName = typeid( *this ).name();
-
-  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
-  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
-  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
-  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
-  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
-  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
-  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
-  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
-  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
-  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
-  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
-  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
-  X_POP_MONTE_RESULT           = XMLString::transcode( C_POP_MONTE_RESULT );
 
   strcpy ( fPrefix,                testName );
   snprintf( fMonteParsDriver,      MAXCHARS, "%s_MonteParsDriver",      fPrefix );
@@ -360,28 +324,13 @@ void pop_monteTest::setUp()
 }
 void pop_monteTest::tearDown()
 {
-  XMLString::release( &X_ERROR_LIST );
-  XMLString::release( &X_VALUE );
-  XMLString::release( &X_POP_OBJ_OUT );
-  XMLString::release( &X_THETA_OUT );
-  XMLString::release( &X_OMEGA_OUT );
-  XMLString::release( &X_POP_ANALYSIS_RESULT );
-  XMLString::release( &X_POP_STDERROR_OUT );
-  XMLString::release( &X_POP_COVARIANCE_OUT );
-  XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_POP_CONFIDENCE_OUT );
-  XMLString::release( &X_POP_COEFFICIENT_OUT );
-  XMLString::release( &X_POP_CORRELATION_OUT );
-  XMLString::release( &X_PRESENTATION_DATA );
-  XMLString::release( &X_POP_MONTE_RESULT );
-
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
       remove( fReportML );
-      remove( fFitDriver );
-      remove( fFitDriver_cpp );
+      remove( fMonteDriver );
+      remove( fMonteDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -392,16 +341,8 @@ void pop_monteTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fPredDriver );
       remove( fPredDriver_cpp );
-      remove( fMontePars_h );
-      remove( fNonmemPars_h );
-      remove( fIndData_h );
-      remove( fDataSet_h );
-      remove( fPred_h );
-      remove( fPredEqn_cpp );
-      remove( fMakefile );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( fCheckpoint_xml );
 
       remove( "MapMonte.h" );
       remove( "MapMonte.cpp" );
@@ -416,7 +357,6 @@ void pop_monteTest::tearDown()
       remove( "monteDriver.cpp" );
       remove( "monteDriver" );
     }
-  XMLPlatformUtils::Terminate();
 }
 //******************************************************************************
 //
@@ -760,7 +700,7 @@ void pop_monteTest::testDriver()
       
       CPPUNIT_ASSERT_MESSAGE( message, false );
     }
-  snprintf( command, 1024, "./%s > %s", fFitDriver, fTraceOut );
+  snprintf( command, 1024, "./%s > %s", fMonteDriver, fTraceOut );
 
   // The exist code of 0 indicates success.  1 indicates convergence problem.
   // 2 indicates some file access problem.
@@ -788,7 +728,7 @@ void pop_monteTest::testDriver()
       snprintf( message, 
 	        MAXCHARS,
                "%s failed for reasons other than convergence propblem or access permission <%d>!", 
-               fFitDriver, 
+               fMonteDriver, 
                exitcode );
       
       CPPUNIT_ASSERT_MESSAGE( message, true );
@@ -858,7 +798,7 @@ void pop_monteTest::testReportML()
   // However, it should not contain any error message.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   DOMNodeList *error_list;
-  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  error_list = report->getElementsByTagName( XML.X_ERROR_LIST );
   CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
   DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
   if( error->hasChildNodes() )
@@ -875,11 +815,11 @@ void pop_monteTest::testReportML()
   // Verify the objective value.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double obj_out = 0.0;
-  DOMNodeList * objOut_list = report->getElementsByTagName( X_POP_OBJ_OUT );
+  DOMNodeList * objOut_list = report->getElementsByTagName( XML.X_POP_OBJ_OUT );
   if( objOut_list->getLength() > 0 )
     {
       DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
-      DOMNodeList* value_list = objOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = objOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( 1, n );
       obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );      
@@ -890,11 +830,11 @@ void pop_monteTest::testReportML()
   // Verify the final estimate for theta
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( X_THETA_OUT );
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( XML.X_THETA_OUT );
   if( thetaOut_list->getLength() > 0 )
     {
       DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
-      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = thetaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( thetaLen, n );
       for( int i=0; i<n; i++ )
@@ -908,11 +848,11 @@ void pop_monteTest::testReportML()
   // Verify the final estimate for Omega
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( X_OMEGA_OUT );
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( XML.X_OMEGA_OUT );
   if( omegaOut_list->getLength() > 0 )
     {
       DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
-      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = omegaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
       for( int i=0; i<+n; i++ )
@@ -925,7 +865,7 @@ void pop_monteTest::testReportML()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Grab a pointer to the top of "pop_monte_result" sub-tree.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *pop_monte_result = report->getElementsByTagName( X_POP_MONTE_RESULT );
+  DOMNodeList *pop_monte_result = report->getElementsByTagName( XML.X_POP_MONTE_RESULT );
   CPPUNIT_ASSERT( pop_monte_result->getLength() == 1 );
   DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( pop_monte_result->item( 0 ) );
   CPPUNIT_ASSERT( ind_stat_result != NULL );

@@ -25,18 +25,18 @@ using namespace xercesc;
 void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
 {
   assert( monte_carlo != NULL );
-  if( monte_carlo->hasAttribute( X_METHOD ) )
+  if( monte_carlo->hasAttribute( XML.X_METHOD ) )
     {
-      const XMLCh* x_temp = monte_carlo->getAttribute( X_METHOD );
-      if( XMLString::equals( x_temp, X_ANALYTIC ) )
+      const XMLCh* x_temp = monte_carlo->getAttribute( XML.X_METHOD );
+      if( XMLString::equals( x_temp, XML.X_ANALYTIC ) )
 	myIntegMethod = ANALYTIC;
-      else if( XMLString::equals( x_temp, X_GRID ) )
+      else if( XMLString::equals( x_temp, XML.X_GRID ) )
 	myIntegMethod = GRID;
-      else if( XMLString::equals( x_temp, X_MISER ) )
+      else if( XMLString::equals( x_temp, XML.X_MISER ) )
 	myIntegMethod = MISER;
-      else if( XMLString::equals( x_temp, X_VEGAS ) )
+      else if( XMLString::equals( x_temp, XML.X_VEGAS ) )
 	myIntegMethod = VEGAS;
-      else //if( XMLString::equals( x_temp, X_PLAIN ) )
+      else //if( XMLString::equals( x_temp, XML.X_PLAIN ) )
 	myIntegMethod = PLAIN;
     }
   else
@@ -44,24 +44,24 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing <%s::%s> attribute.", C_MONTE_CARLO, C_METHOD );
+		"Missing <%s::%s> attribute.", XML.C_MONTE_CARLO, XML.C_METHOD );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess,
 			      __LINE__, __FILE__ );
       throw e;
     }
-  DOMNodeList * number_evals = monte_carlo->getElementsByTagName( X_NUMBEREVAL );
+  DOMNodeList * number_evals = monte_carlo->getElementsByTagName( XML.X_NUMBEREVAL );
   if( number_evals->getLength() < 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing <%s> element!", C_NUMBEREVAL );
+		"Missing <%s> element!", XML.C_NUMBEREVAL );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 			      mess, __LINE__, __FILE__ );
       throw e;
     }
   DOMElement  * number_eval  = dynamic_cast<DOMElement*>( number_evals->item(0) );
-  DOMNodeList * value_list = number_eval->getElementsByTagName( X_VALUE );
+  DOMNodeList * value_list = number_eval->getElementsByTagName( XML.X_VALUE );
   myIntegNEvals = value_list->getLength();
   if( myIntegNEvals < 1 )
     {
@@ -69,7 +69,7 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
 		"Missing <%s> element!",
-	       C_VALUE );
+	       XML.C_VALUE );
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 			      mess, __LINE__, __FILE__ );
       throw e;
@@ -85,7 +85,7 @@ void NonmemTranslator::parseMonte( DOMElement* monte_carlo )
 	  snprintf( mess, 
 		    SpkCompilerError::maxMessageLen(),
 		    "The number <%s> elements must be equal to the length of ETA (%d) for grid and miser approximation!", 
-		   C_VALUE, myEtaLen );
+		   XML.C_VALUE, myEtaLen );
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR,
 				  mess, __LINE__, __FILE__ );
 	  throw e;

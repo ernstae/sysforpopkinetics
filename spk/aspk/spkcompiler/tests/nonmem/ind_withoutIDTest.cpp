@@ -15,7 +15,6 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
@@ -284,29 +283,12 @@ Y = F * (1 + ETA(1))\n";
 
 void ind_withoutIDTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
   testName = typeid( *this ).name();
 
-  strcpy ( fPrefix,               testName );
+  strcpy  ( fPrefix,               testName );
   snprintf( fMonteParsDriver,      MAXCHARS, "%s_MonteParsDriver",      fPrefix );
   snprintf( fMonteParsDriver_cpp,  MAXCHARS, "%s_MonteParsDriver.cpp",  fPrefix );
   snprintf( fNonmemParsDriver,     MAXCHARS, "%s_NonmemParsDriver",     fPrefix );
@@ -328,20 +310,6 @@ void ind_withoutIDTest::setUp()
 
   // DV is aliased to CP
   label_alias[strDV]   = strCP;
-
-  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
-  X_IND_OBJ_OUT                = XMLString::transcode( C_IND_OBJ_OUT );
-  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
-  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
-  X_IND_ANALYSIS_RESULT        = XMLString::transcode( C_IND_ANALYSIS_RESULT );
-  X_IND_STDERROR_OUT           = XMLString::transcode( C_IND_STDERROR_OUT );
-  X_IND_COVARIANCE_OUT         = XMLString::transcode( C_IND_COVARIANCE_OUT );
-  X_IND_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_IND_INVERSE_COVARIANCE_OUT );
-  X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
-  X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
-  X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
-  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
   record[0]   = record0;
   record[1]   = record1;
@@ -385,27 +353,12 @@ void ind_withoutIDTest::setUp()
 }
 void ind_withoutIDTest::tearDown()
 {  
-  XMLString::release( &X_ERROR_LIST );
-  XMLString::release( &X_VALUE );
-  XMLString::release( &X_IND_OBJ_OUT );
-  XMLString::release( &X_THETA_OUT );
-  XMLString::release( &X_OMEGA_OUT );
-  XMLString::release( &X_IND_ANALYSIS_RESULT );
-  XMLString::release( &X_IND_STDERROR_OUT );
-  XMLString::release( &X_IND_COVARIANCE_OUT );
-  XMLString::release( &X_IND_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_IND_CONFIDENCE_OUT );
-  XMLString::release( &X_IND_COEFFICIENT_OUT );
-  XMLString::release( &X_IND_CORRELATION_OUT );
-  XMLString::release( &X_PRESENTATION_DATA );
-
   if( okToClean )
     {
       remove( fDataML );
       remove( fSourceML );
       remove( fReportML );
       remove( fFitDriver );
-      remove( fFitDriver_cpp );
       remove( fMonteParsDriver );
       remove( fMonteParsDriver_cpp );
       remove( fNonmemParsDriver );
@@ -416,18 +369,9 @@ void ind_withoutIDTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fPredDriver );
       remove( fPredDriver_cpp );
-      remove( fMontePars_h );
-      remove( fNonmemPars_h );
-      remove( fIndData_h );
-      remove( fDataSet_h );
-      remove( fPred_h );
-      remove( fPredEqn_cpp );
-      remove( fMakefile );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( fCheckpoint_xml );
     }
-  XMLPlatformUtils::Terminate();
 
 }
 //******************************************************************************
@@ -888,6 +832,9 @@ void ind_withoutIDTest::testDriver()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Test driver.cpp to see if it compiles/links successfully.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  char fFitDriver_cpp[] = "fitDriver.cpp";
+  char fMakefile[]      = "Makefile.SPK";
+
   printf( "\n--- %s ---\n", fFitDriver );
   int  exitcode      = 0;
   char command[512];
@@ -995,7 +942,7 @@ void ind_withoutIDTest::testReportML()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   DOMNodeList *error_list;
   
-  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  error_list = report->getElementsByTagName( XML.X_ERROR_LIST );
   CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
   DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
   const XMLCh* error_message = error->getFirstChild()->getNodeValue();
@@ -1005,11 +952,11 @@ void ind_withoutIDTest::testReportML()
   // Verify the final estimate for objective function
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double obj_out;
-  DOMNodeList * objOut_list = report->getElementsByTagName( X_IND_OBJ_OUT );
+  DOMNodeList * objOut_list = report->getElementsByTagName( XML.X_IND_OBJ_OUT );
   if( objOut_list->getLength() > 0 )
     {
       DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
-      DOMNodeList* value_list = objOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = objOut->getElementsByTagName( XML.X_VALUE );
 
       obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( expected_obj, obj_out, expected_obj / 1000.0 * 5.0 );
@@ -1020,11 +967,11 @@ void ind_withoutIDTest::testReportML()
   // Verify the final estimate for theta
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( X_THETA_OUT );
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( XML.X_THETA_OUT );
   if( thetaOut_list->getLength() > 0 )
     {
       DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
-      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = thetaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( thetaLen, n );
       for( int i=0; i<n; i++ )
@@ -1038,11 +985,11 @@ void ind_withoutIDTest::testReportML()
   // Verify the final estimate for Omega
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( X_OMEGA_OUT );
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( XML.X_OMEGA_OUT );
   if( omegaOut_list->getLength() > 0 )
     {
       DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
-      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = omegaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
       for( int i=0; i<+n; i++ )
@@ -1052,7 +999,7 @@ void ind_withoutIDTest::testReportML()
 	}
     }
 
-  DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
+  DOMNodeList *presentation_data = report->getElementsByTagName( XML.X_PRESENTATION_DATA );
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
   okToClean = true;

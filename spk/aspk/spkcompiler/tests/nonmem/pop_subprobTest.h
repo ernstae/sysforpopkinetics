@@ -10,17 +10,18 @@
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
-#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/nonmem/XmlConstants.h"
 
 class pop_subprobTest 
-: public CppUnit::TestFixture,
-  public NonmemTranslator
+: public CppUnit::TestFixture
 {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
   xercesc::DOMDocument *report;
   
+  XmlConstants XML;
+
   bool okToClean;
 public:
     static CppUnit::Test * suite();

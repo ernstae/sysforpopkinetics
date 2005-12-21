@@ -16,7 +16,6 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
@@ -27,6 +26,7 @@
 using namespace std;
 using namespace CppUnit;
 using namespace xercesc;
+
 /*
  * NONMEM CONTROL FILE
  *
@@ -128,6 +128,8 @@ namespace{
   char fTraceOut[]        = "trace_output";
   char fFitDriver[]       = "driver";
   char fReportML[]        = "result.xml";
+  char fFitDriver_cpp[]   = "fitDriver.cpp";
+  char fMakefile[]        = "Makefile.SPK";
 
   char fPrefix              [MAXCHARS+1];
   char fDataML              [MAXCHARS+1];
@@ -429,29 +431,6 @@ if( actual != expected ) \\\n \
 
 void pop_fixedParaTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( ... )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
@@ -469,19 +448,6 @@ void pop_fixedParaTest::setUp()
   snprintf( fDataSetDriver,        MAXCHARS, "%s_DataSetDriver",        fPrefix );
   snprintf( fDataSetDriver_cpp,    MAXCHARS, "%s_DataSetDriver.cpp",    fPrefix );
   snprintf( fPredDriver,           MAXCHARS, "%s_PredDriver",           fPrefix );
-  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
-  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
-  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
-  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
-  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
-  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
-  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
-  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
-  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
-  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
-  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
-  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
   snprintf( fPredDriver_cpp,       MAXCHARS, "%s_PredDriver.cpp",       fPrefix );
 
@@ -575,20 +541,6 @@ void pop_fixedParaTest::setUp()
 }
 void pop_fixedParaTest::tearDown()
 {
-  XMLString::release( &X_ERROR_LIST );
-  XMLString::release( &X_VALUE );
-  XMLString::release( &X_POP_OBJ_OUT );
-  XMLString::release( &X_THETA_OUT );
-  XMLString::release( &X_OMEGA_OUT );
-  XMLString::release( &X_POP_ANALYSIS_RESULT );
-  XMLString::release( &X_POP_STDERROR_OUT );
-  XMLString::release( &X_POP_COVARIANCE_OUT );
-  XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_POP_CONFIDENCE_OUT );
-  XMLString::release( &X_POP_COEFFICIENT_OUT );
-  XMLString::release( &X_POP_CORRELATION_OUT );
-  XMLString::release( &X_PRESENTATION_DATA );
-
   if( okToClean )
     {
       remove( fDataML );
@@ -606,18 +558,10 @@ void pop_fixedParaTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fPredDriver );
       remove( fPredDriver_cpp );
-      remove( fMontePars_h );
-      remove( fNonmemPars_h );
-      remove( fIndData_h );
-      remove( fDataSet_h );
-      remove( fPred_h );
-      remove( fPredEqn_cpp );
       remove( fMakefile );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( fCheckpoint_xml );
     }
-  XMLPlatformUtils::Terminate();
 }
 //******************************************************************************
 //
@@ -1000,7 +944,7 @@ void pop_fixedParaTest::testReportML()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   DOMNodeList *error_list;
   
-  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  error_list = report->getElementsByTagName( XML.X_ERROR_LIST );
   CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
   DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
   const XMLCh* error_message = error->getFirstChild()->getNodeValue();
@@ -1011,11 +955,11 @@ void pop_fixedParaTest::testReportML()
   // Verify the objective value.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double obj_out = 0.0;
-  DOMNodeList * objOut_list = report->getElementsByTagName( X_POP_OBJ_OUT );
+  DOMNodeList * objOut_list = report->getElementsByTagName( XML.X_POP_OBJ_OUT );
   if( objOut_list->getLength() > 0 )
     {
       DOMElement* objOut = dynamic_cast<DOMElement*>( objOut_list->item(0) );
-      DOMNodeList* value_list = objOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = objOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( 1, n );
       obj_out = atof( XMLString::transcode( value_list->item(0)->getFirstChild()->getNodeValue() ) );      
@@ -1026,11 +970,11 @@ void pop_fixedParaTest::testReportML()
   // Verify the final estimate for theta
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( X_THETA_OUT );
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( XML.X_THETA_OUT );
   if( thetaOut_list->getLength() > 0 )
     {
       DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
-      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = thetaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( thetaLen, n );
       for( int i=0; i<n; i++ )
@@ -1044,11 +988,11 @@ void pop_fixedParaTest::testReportML()
   // Verify the final estimate for Omega
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( X_OMEGA_OUT );
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( XML.X_OMEGA_OUT );
   if( omegaOut_list->getLength() > 0 )
     {
       DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
-      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = omegaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
       for( int i=0; i<+n; i++ )
@@ -1062,11 +1006,11 @@ void pop_fixedParaTest::testReportML()
   // Verify the final estimate for Sigma
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double sigma_out[sigmaOrder];
-  DOMNodeList * sigmaOut_list = report->getElementsByTagName( X_SIGMA_OUT );
+  DOMNodeList * sigmaOut_list = report->getElementsByTagName( XML.X_SIGMA_OUT );
   if( sigmaOut_list->getLength() > 0 )
     {
       DOMElement* sigmaOut = dynamic_cast<DOMElement*>( sigmaOut_list->item(0) );
-      DOMNodeList* value_list = sigmaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = sigmaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( sigmaOrder, n );
       for( int i=0; i<+n; i++ )
@@ -1079,7 +1023,7 @@ void pop_fixedParaTest::testReportML()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Grab a pointer to the top of "ind_stat_result" sub-tree.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *ind_analysis_result = report->getElementsByTagName( X_POP_ANALYSIS_RESULT );
+  DOMNodeList *ind_analysis_result = report->getElementsByTagName( XML.X_POP_ANALYSIS_RESULT );
   CPPUNIT_ASSERT( ind_analysis_result->getLength() == 1 );
   DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( ind_analysis_result->item( 0 ) );
   CPPUNIT_ASSERT( ind_stat_result != NULL );
@@ -1088,12 +1032,12 @@ void pop_fixedParaTest::testReportML()
   // Verify the standard error of the final estimate of parameters
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   vector<double> se_val;
-  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( X_POP_STDERROR_OUT );
+  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( XML.X_POP_STDERROR_OUT );
   if( se_list->getLength() == 1 )
     {
       DOMElement * se = dynamic_cast<DOMElement*>( se_list->item(0) );
       CPPUNIT_ASSERT( se != NULL );
-      DOMNodeList * value_list = se->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = se->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       se_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1112,12 +1056,12 @@ void pop_fixedParaTest::testReportML()
   vector<double> cov_val;
   vector<double> inv_cov_val;
   int covLen = series(1,1,omegaOrder+thetaLen);
-  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  X_POP_COVARIANCE_OUT ) ;
+  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  XML.X_POP_COVARIANCE_OUT ) ;
   if( cov_list->getLength() == 1 )
     {
       DOMElement * cov = dynamic_cast<DOMElement*>( cov_list->item(0) );
       CPPUNIT_ASSERT( cov != NULL );
-      DOMNodeList * value_list = cov->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = cov->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       cov_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1131,12 +1075,12 @@ void pop_fixedParaTest::testReportML()
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], cov_val[i], scale );
       }
     }
-  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  X_POP_INVERSE_COVARIANCE_OUT ) ;
+  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  XML.X_POP_INVERSE_COVARIANCE_OUT ) ;
   if( invcov_list->getLength() == 1 )
     {
       DOMElement * invcov = dynamic_cast<DOMElement*>( invcov_list->item(0) );
       CPPUNIT_ASSERT( invcov != NULL );
-      DOMNodeList * value_list = invcov->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = invcov->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       inv_cov_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1152,12 +1096,12 @@ void pop_fixedParaTest::testReportML()
   // Verify the confidence interval for the final estimate of parameters
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   vector<double> ci_val;
-  DOMNodeList * ci_list =ind_stat_result->getElementsByTagName(  X_POP_CONFIDENCE_OUT ) ;
+  DOMNodeList * ci_list =ind_stat_result->getElementsByTagName(  XML.X_POP_CONFIDENCE_OUT ) ;
   if( ci_list->getLength() == 1 )
     {
       DOMElement * ci = dynamic_cast<DOMElement*>( ci_list->item(0) );
       CPPUNIT_ASSERT( ci != NULL );
-      DOMNodeList * value_list = ci->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = ci->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       ci_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1173,12 +1117,12 @@ void pop_fixedParaTest::testReportML()
   // Verify the coefficient of variation for the final estimate of parameters
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   vector<double> cv_val;
-  DOMNodeList * cv_list =ind_stat_result->getElementsByTagName(  X_POP_COEFFICIENT_OUT ) ;
+  DOMNodeList * cv_list =ind_stat_result->getElementsByTagName(  XML.X_POP_COEFFICIENT_OUT ) ;
   if( cv_list->getLength() == 1 )
     {
       DOMElement * cv = dynamic_cast<DOMElement*>( cv_list->item(0) );
       CPPUNIT_ASSERT( cv != NULL );
-      DOMNodeList * value_list = cv->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = cv->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       cv_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1194,12 +1138,12 @@ void pop_fixedParaTest::testReportML()
   // Verify the correlation matrix for the final estimate of parameters
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   vector<double> cor_val;
-  DOMNodeList * cor_list =ind_stat_result->getElementsByTagName(  X_POP_CORRELATION_OUT ) ;
+  DOMNodeList * cor_list =ind_stat_result->getElementsByTagName(  XML.X_POP_CORRELATION_OUT ) ;
   if( cor_list->getLength() == 1 )
     {
       DOMElement * cor = dynamic_cast<DOMElement*>( cor_list->item(0) );
       CPPUNIT_ASSERT( cor != NULL );
-      DOMNodeList * value_list = cor->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = cor->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       cor_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1212,7 +1156,7 @@ void pop_fixedParaTest::testReportML()
       }
     }
 
-  DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
+  DOMNodeList *presentation_data = report->getElementsByTagName( XML.X_PRESENTATION_DATA );
 
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 

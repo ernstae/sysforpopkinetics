@@ -15,7 +15,6 @@
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include "../../spkcompiler/nonmem/NonmemTranslator.h"
@@ -146,6 +145,8 @@ namespace{
   char fTraceOut[]        = "trace_output";
   char fFitDriver[]       = "driver";
   char fReportML[]        = "result.xml";
+  char fMakefile[]        = "Makefile.SPK";
+  char fFitDriver_cpp[]   = "fitDriver.cpp";
 
   char fPrefix              [MAXCHARS+1];
   char fDataML              [MAXCHARS+1];
@@ -475,29 +476,6 @@ if( actual != expected ) \\\n \
 };
 void linInterpTest::setUp()
 {
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //
-  // Initializing the XML
-  //
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  try
-    {
-      XMLPlatformUtils::Initialize();
-    }
-  catch( const XMLException& toCatch )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Error during Xerces-c initialization.\nException message: %s.\n", 
-               XMLString::transcode( toCatch.getMessage() ) );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-  catch( ... )
-    {
-      char buf[MAXCHARS + 1];
-      snprintf( buf, MAXCHARS, "Unknown rror during Xerces-c initialization.\nException message.\n" );
-      CPPUNIT_ASSERT_MESSAGE( buf, false );
-    }
-
   okToClean = false;
 
   // The first element of the char array returned by type_info.name() is the number of characters that follows.
@@ -516,31 +494,6 @@ void linInterpTest::setUp()
   snprintf( fDataSetDriver_cpp,    MAXCHARS, "%s_DataSetDriver.cpp",    fPrefix );
   snprintf( fODEPredDriver,        MAXCHARS, "%s_ODEPredDriver",        fPrefix );
   snprintf( fODEPredDriver_cpp,    MAXCHARS, "%s_ODEPredDriver.cpp",    fPrefix );
-
-  X_ERROR_LIST                 = XMLString::transcode( C_ERROR_LIST );
-  X_VALUE                      = XMLString::transcode( C_VALUE );
-  X_POP_OBJ_OUT                = XMLString::transcode( C_POP_OBJ_OUT );
-  X_THETA_OUT                  = XMLString::transcode( C_THETA_OUT );
-  X_OMEGA_OUT                  = XMLString::transcode( C_OMEGA_OUT );
-  X_POP_ANALYSIS_RESULT        = XMLString::transcode( C_POP_ANALYSIS_RESULT );
-  X_POP_STDERROR_OUT           = XMLString::transcode( C_POP_STDERROR_OUT );
-  X_POP_COVARIANCE_OUT         = XMLString::transcode( C_POP_COVARIANCE_OUT );
-  X_POP_INVERSE_COVARIANCE_OUT = XMLString::transcode( C_POP_INVERSE_COVARIANCE_OUT );
-  X_POP_CONFIDENCE_OUT         = XMLString::transcode( C_POP_CONFIDENCE_OUT );
-  X_POP_COEFFICIENT_OUT        = XMLString::transcode( C_POP_COEFFICIENT_OUT );
-  X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
-  X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
-
-  X_NCOMPARTMENTS              = XMLString::transcode( C_NCOMPARTMENTS );
-  X_NPARAMETERS                = XMLString::transcode( C_NPARAMETERS );
-  X_NEQUILIBRIMS               = XMLString::transcode( C_NEQUILIBRIMS );
-  X_INITIAL_OFF                = XMLString::transcode( C_INITIAL_OFF );
-  X_NO_OFF                     = XMLString::transcode( C_NO_OFF );
-  X_NO_DOSE                    = XMLString::transcode( C_NO_DOSE );
-  X_EQUILIBRIM                 = XMLString::transcode( C_EQUILIBRIM );
-  X_EXCLUDE                    = XMLString::transcode( C_EXCLUDE );
-  X_DEFAULT_OBSERVATION        = XMLString::transcode( C_DEFAULT_OBSERVATION );
-  X_DEFAULT_DOSE               = XMLString::transcode( C_DEFAULT_DOSE );
 
   snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
 	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
@@ -767,30 +720,6 @@ void linInterpTest::parse()
 }
 void linInterpTest::tearDown()
 {
-  XMLString::release( &X_ERROR_LIST );
-  XMLString::release( &X_VALUE );
-  XMLString::release( &X_POP_OBJ_OUT );
-  XMLString::release( &X_THETA_OUT );
-  XMLString::release( &X_OMEGA_OUT );
-  XMLString::release( &X_POP_ANALYSIS_RESULT );
-  XMLString::release( &X_POP_STDERROR_OUT );
-  XMLString::release( &X_POP_COVARIANCE_OUT );
-  XMLString::release( &X_POP_INVERSE_COVARIANCE_OUT );
-  XMLString::release( &X_POP_CONFIDENCE_OUT );
-  XMLString::release( &X_POP_COEFFICIENT_OUT );
-  XMLString::release( &X_POP_CORRELATION_OUT );
-  XMLString::release( &X_PRESENTATION_DATA );
-  XMLString::release( &X_NCOMPARTMENTS );
-  XMLString::release( &X_NPARAMETERS );
-  XMLString::release( &X_NEQUILIBRIMS );
-  XMLString::release( &X_INITIAL_OFF );
-  XMLString::release( &X_NO_OFF );
-  XMLString::release( &X_NO_DOSE );
-  XMLString::release( &X_EQUILIBRIM );
-  XMLString::release( &X_EXCLUDE );
-  XMLString::release( &X_DEFAULT_OBSERVATION );
-  XMLString::release( &X_DEFAULT_DOSE );
-
   if( okToClean )
     {
       remove( fDataML );
@@ -808,18 +737,10 @@ void linInterpTest::tearDown()
       remove( fDataSetDriver_cpp );
       remove( fODEPredDriver );
       remove( fODEPredDriver_cpp );
-      remove( fMontePars_h );
-      remove( fNonmemPars_h );
-      remove( fIndData_h );
-      remove( fDataSet_h );
-      remove( fOdePred_h );
-      remove( fPredEqn_cpp );
       remove( fMakefile );
       remove( fSavedReportML );
       remove( fTraceOut );
-      remove( fCheckpoint_xml );
     }
-  XMLPlatformUtils::Terminate();
 }
 //******************************************************************************
 //
@@ -1148,7 +1069,7 @@ void linInterpTest::testReportML()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   DOMNodeList *error_list;
   
-  error_list = report->getElementsByTagName( X_ERROR_LIST );
+  error_list = report->getElementsByTagName( XML.X_ERROR_LIST );
   CPPUNIT_ASSERT_EQUAL( 1, (int)error_list->getLength() );
   DOMElement* error = dynamic_cast<DOMElement*>( error_list->item(0) );
   const XMLCh* error_message = error->getFirstChild()->getNodeValue();
@@ -1164,11 +1085,11 @@ void linInterpTest::testReportML()
   // Verify the final estimate for theta
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double theta_out[thetaLen];
-  DOMNodeList * thetaOut_list = report->getElementsByTagName( X_THETA_OUT );
+  DOMNodeList * thetaOut_list = report->getElementsByTagName( XML.X_THETA_OUT );
   if( thetaOut_list->getLength() > 0 )
     {
       DOMElement* thetaOut = dynamic_cast<DOMElement*>( thetaOut_list->item(0) );
-      DOMNodeList* value_list = thetaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = thetaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( thetaLen, n );
       for( int i=0; i<n; i++ )
@@ -1182,11 +1103,11 @@ void linInterpTest::testReportML()
   // Verify the final estimate for Omega
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   double omega_out[omegaOrder];
-  DOMNodeList * omegaOut_list = report->getElementsByTagName( X_OMEGA_OUT );
+  DOMNodeList * omegaOut_list = report->getElementsByTagName( XML.X_OMEGA_OUT );
   if( omegaOut_list->getLength() > 0 )
     {
       DOMElement* omegaOut = dynamic_cast<DOMElement*>( omegaOut_list->item(0) );
-      DOMNodeList* value_list = omegaOut->getElementsByTagName( X_VALUE );
+      DOMNodeList* value_list = omegaOut->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       CPPUNIT_ASSERT_EQUAL( omegaOrder, n );
       for( int i=0; i<+n; i++ )
@@ -1199,7 +1120,7 @@ void linInterpTest::testReportML()
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // Grab a pointer to the top of "ind_stat_result" sub-tree.
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  DOMNodeList *ind_analysis_result = report->getElementsByTagName( X_POP_ANALYSIS_RESULT );
+  DOMNodeList *ind_analysis_result = report->getElementsByTagName( XML.X_POP_ANALYSIS_RESULT );
   CPPUNIT_ASSERT( ind_analysis_result->getLength() == 1 );
   DOMElement *ind_stat_result = dynamic_cast<DOMElement*>( ind_analysis_result->item( 0 ) );
   CPPUNIT_ASSERT( ind_stat_result != NULL );
@@ -1208,12 +1129,12 @@ void linInterpTest::testReportML()
   // Verify the standard error of the final estimate of parameters
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   vector<double> se_val;
-  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( X_POP_STDERROR_OUT );
+  DOMNodeList * se_list = ind_stat_result->getElementsByTagName( XML.X_POP_STDERROR_OUT );
   if( se_list->getLength() == 1 )
     {
       DOMElement * se = dynamic_cast<DOMElement*>( se_list->item(0) );
       CPPUNIT_ASSERT( se != NULL );
-      DOMNodeList * value_list = se->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = se->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       se_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1233,12 +1154,12 @@ void linInterpTest::testReportML()
   vector<double> cov_val;
   vector<double> inv_cov_val;
   int covLen = series(1,1,omegaOrder+thetaLen);
-  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  X_POP_COVARIANCE_OUT ) ;
+  DOMNodeList * cov_list =ind_stat_result->getElementsByTagName(  XML.X_POP_COVARIANCE_OUT ) ;
   if( cov_list->getLength() == 1 )
     {
       DOMElement * cov = dynamic_cast<DOMElement*>( cov_list->item(0) );
       CPPUNIT_ASSERT( cov != NULL );
-      DOMNodeList * value_list = cov->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = cov->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       cov_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1254,12 +1175,12 @@ void linInterpTest::testReportML()
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cov[i], cov_val[i], tol );
       }
     }
-  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  X_POP_INVERSE_COVARIANCE_OUT ) ;
+  DOMNodeList * invcov_list =ind_stat_result->getElementsByTagName(  XML.X_POP_INVERSE_COVARIANCE_OUT ) ;
   if( invcov_list->getLength() == 1 )
     {
       DOMElement * invcov = dynamic_cast<DOMElement*>( invcov_list->item(0) );
       CPPUNIT_ASSERT( invcov != NULL );
-      DOMNodeList * value_list = invcov->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = invcov->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       inv_cov_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1278,12 +1199,12 @@ void linInterpTest::testReportML()
   // Verify the correlation matrix for the final estimate of parameters
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   vector<double> corr_val;
-  DOMNodeList * corr_list =ind_stat_result->getElementsByTagName(  X_POP_CORRELATION_OUT ) ;
+  DOMNodeList * corr_list =ind_stat_result->getElementsByTagName(  XML.X_POP_CORRELATION_OUT ) ;
   if( corr_list->getLength() == 1 )
     {
       DOMElement * corr = dynamic_cast<DOMElement*>( corr_list->item(0) );
       CPPUNIT_ASSERT( corr != NULL );
-      DOMNodeList * value_list = corr->getElementsByTagName( X_VALUE );
+      DOMNodeList * value_list = corr->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       corr_val.resize( n );
       for( int i=0; i<n; i++ )
@@ -1297,7 +1218,7 @@ void linInterpTest::testReportML()
       }
     }
 
-  DOMNodeList *presentation_data = report->getElementsByTagName( X_PRESENTATION_DATA );
+  DOMNodeList *presentation_data = report->getElementsByTagName( XML.X_PRESENTATION_DATA );
   CPPUNIT_ASSERT( presentation_data->getLength() == 1 );
 
   okToClean = true;

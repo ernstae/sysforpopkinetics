@@ -9,16 +9,17 @@
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
-#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/nonmem/XmlConstants.h"
 
 class ind_dataSetTest 
-: public CppUnit::TestFixture,
-  public NonmemTranslator
+: public CppUnit::TestFixture
 {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
   xercesc::DOMDocument *report;
+
+  XmlConstants XML;
   
   bool okToClean;
 public:
