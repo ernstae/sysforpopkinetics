@@ -10,11 +10,10 @@
 #include <cppunit/TestSuite.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
-#include "../../spkcompiler/nonmem/NonmemTranslator.h"
+#include "../../spkcompiler/nonmem/XmlConstants.h"
 
 class ind_fixedParaTest 
-: public CppUnit::TestFixture, 
-  public NonmemTranslator {
+: public CppUnit::TestFixture {
 
   xercesc::DOMDocument *source;
   xercesc::DOMDocument *data;
@@ -22,6 +21,7 @@ class ind_fixedParaTest
   
   bool okToClean;
 
+  XmlConstants XML;
 public:
     static CppUnit::Test * suite();
     virtual void setUp();

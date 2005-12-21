@@ -54,10 +54,10 @@ void NonmemTranslator::parseData()
 
   valarray<int> N;
   DOMElement * spkdata = getDataTree()->getDocumentElement();
-  assert( XMLString::equals( spkdata->getNodeName(), X_SPKDATA ) );
-  const XMLCh* version = spkdata->getAttribute( X_VERSION );
+  assert( XMLString::equals( spkdata->getNodeName(), XML.X_SPKDATA ) );
+  const XMLCh* version = spkdata->getAttribute( XML.X_VERSION );
 
-  if( !XMLString::equals( version, X_POINTONE ) )
+  if( !XMLString::equals( version, XML.X_POINTONE ) )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
@@ -72,7 +72,7 @@ void NonmemTranslator::parseData()
   //
   DOMElement * spksource = dynamic_cast<DOMElement*>( getSourceTree()->getDocumentElement() );
 
-  DOMNodeList * datasets = spkdata->getElementsByTagName( X_TABLE );
+  DOMNodeList * datasets = spkdata->getElementsByTagName( XML.X_TABLE );
   int nDataSets = datasets->getLength();
   if( nDataSets < 1 )
     {
@@ -97,14 +97,14 @@ void NonmemTranslator::parseData()
       DOMElement * dataset = dynamic_cast<DOMElement*>( datasets->item(i) );
 
       int  posID, posAMT, posMDV, posEVID;
-      DOMNodeList * data_labels_list = spksource->getElementsByTagName( X_DATA_LABELS );
+      DOMNodeList * data_labels_list = spksource->getElementsByTagName( XML.X_DATA_LABELS );
       if( data_labels_list->getLength() < 1 )
       {
          throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
 	                             "<data_labels> tag is missing in source.xml",
 				     __LINE__, __FILE__ );
       }
-      DOMNodeList * labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+      DOMNodeList * labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( XML.X_LABEL );
       if( labels->getLength() < 1 )
       {
          throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
@@ -115,10 +115,10 @@ void NonmemTranslator::parseData()
       removeDrop( dataset, labels );
       removeSkip( dataset, labels );
 
-      bool isID   = ( ( posID   = whereis( labels, X_ID )   ) >= 0 );
-      bool isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
-      bool isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
-      bool isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
+      bool isID   = ( ( posID   = whereis( labels, XML.X_ID )   ) >= 0 );
+      bool isAMT  = ( ( posAMT  = whereis( labels, XML.X_AMT )  ) >= 0 );
+      bool isMDV  = ( ( posMDV  = whereis( labels, XML.X_MDV )  ) >= 0 );
+      bool isEVID = ( ( posEVID = whereis( labels, XML.X_EVID ) ) >= 0 );
 
       // Warning: Do not change the order of the following three insert calls.
 
@@ -128,9 +128,9 @@ void NonmemTranslator::parseData()
 	  posID = insertID( dataset, labels );
 
           // Update the other label positions.
-	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
-	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
-	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
+	  isAMT  = ( ( posAMT  = whereis( labels, XML.X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, XML.X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, XML.X_EVID ) ) >= 0 );
 	}
 
       // If MDV is missing, there are more than one way to determine the default value.
@@ -154,9 +154,9 @@ void NonmemTranslator::parseData()
 	  posAMT = insertAMT( dataset, labels );
 
           // Update the other label positions.
-	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
-	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
-	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
+	  isAMT  = ( ( posAMT  = whereis( labels, XML.X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, XML.X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, XML.X_EVID ) ) >= 0 );
 	}
 
       if( !isMDV )
@@ -173,9 +173,9 @@ void NonmemTranslator::parseData()
 	  posMDV = insertMDV( dataset, labels, posAMT, posEVID );
 
           // Update the other label positions.
-	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
-	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
-	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
+	  isAMT  = ( ( posAMT  = whereis( labels, XML.X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, XML.X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, XML.X_EVID ) ) >= 0 );
 	}
 	if( !isEVID )
 	{
@@ -195,33 +195,33 @@ void NonmemTranslator::parseData()
 	  posEVID = insertEVID( dataset, labels, posAMT, posMDV );
 
 	  // Update the other label positions.
-	  isAMT  = ( ( posAMT  = whereis( labels, X_AMT )  ) >= 0 );
-	  isMDV  = ( ( posMDV  = whereis( labels, X_MDV )  ) >= 0 );
-	  isEVID = ( ( posEVID = whereis( labels, X_EVID ) ) >= 0 );
+	  isAMT  = ( ( posAMT  = whereis( labels, XML.X_AMT )  ) >= 0 );
+	  isMDV  = ( ( posMDV  = whereis( labels, XML.X_MDV )  ) >= 0 );
+	  isEVID = ( ( posEVID = whereis( labels, XML.X_EVID ) ) >= 0 );
 	}
 
 
       unsigned int nFields;
-      if( !dataset->hasAttribute( X_COLUMNS ) )
+      if( !dataset->hasAttribute( XML.X_COLUMNS ) )
 	{
 	  char m[ SpkCompilerError::maxMessageLen() ];
 	  snprintf( m, 
 		    SpkCompilerError::maxMessageLen(),
-		    "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+		    "Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_COLUMNS );
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	}     
-      XMLString::textToBin( dataset->getAttribute( X_COLUMNS ), nFields );
+      XMLString::textToBin( dataset->getAttribute( XML.X_COLUMNS ), nFields );
 
       unsigned int nRecords;
-      if( !dataset->hasAttribute( X_ROWS ) )
+      if( !dataset->hasAttribute( XML.X_ROWS ) )
 	{
 	  char m[ SpkCompilerError::maxMessageLen() ];
 	  snprintf( m, 
 		    SpkCompilerError::maxMessageLen(),
-		    "Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_ROWS );
+		    "Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_ROWS );
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	} 
-      XMLString::textToBin( dataset->getAttribute( X_ROWS ), nRecords );
+      XMLString::textToBin( dataset->getAttribute( XML.X_ROWS ), nRecords );
 
       if( nRecords == 0 )
       {
@@ -242,7 +242,7 @@ void NonmemTranslator::parseData()
       vector<string> tmp_types (nFields);
 
       unsigned int pos;      
-      DOMNodeList * rows = dataset->getElementsByTagName( X_ROW );
+      DOMNodeList * rows = dataset->getElementsByTagName( XML.X_ROW );
       if( rows->getLength() != nRecords )
 	{
 	  char m[ SpkCompilerError::maxMessageLen() ];
@@ -255,15 +255,15 @@ void NonmemTranslator::parseData()
       for( int j=0; j<nRecords; j++ )
 	{
 	  DOMElement  * row    = dynamic_cast<DOMElement*>( rows->item(j) );
-	  if( !row->hasAttribute( X_POSITION ) )
+	  if( !row->hasAttribute( XML.X_POSITION ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      snprintf( m, 
 			SpkCompilerError::maxMessageLen(),
-			"An attribute, %s, is missing from &lt;%s&gt; tag.", X_POSITION, X_ROW );
+			"An attribute, %s, is missing from &lt;%s&gt; tag.", XML.X_POSITION, XML.X_ROW );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );	      
 	    }
-	  const XMLCh* xml_position = row->getAttribute( X_POSITION );
+	  const XMLCh* xml_position = row->getAttribute( XML.X_POSITION );
 	  if( !XMLString::textToBin( xml_position, pos ) )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
@@ -272,14 +272,14 @@ void NonmemTranslator::parseData()
 			"Failed to convert an alphanumeric value to an integer!" );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
-	  DOMNodeList * values = row->getElementsByTagName( X_VALUE );
+	  DOMNodeList * values = row->getElementsByTagName( XML.X_VALUE );
 	  if( values->getLength() != nFields )
 	    {
 	      char m[ SpkCompilerError::maxMessageLen() ];
 	      snprintf( m, 
 			SpkCompilerError::maxMessageLen(),
 			"The number of &lt;%s&gt; elements does not match with the value of &lt;%s&gt; attribute!",
-		       X_VALUE, X_COLUMNS );
+		       XML.X_VALUE, XML.X_COLUMNS );
 	      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
 	    }
 
@@ -320,13 +320,13 @@ void NonmemTranslator::parseData()
 		}
 
 	      const XMLCh* xml_type;
-	      if( dynamic_cast<DOMElement*>( values->item(k) )->hasAttribute( X_TYPE ) )
+	      if( dynamic_cast<DOMElement*>( values->item(k) )->hasAttribute( XML.X_TYPE ) )
 		{
-		  xml_type = dynamic_cast<DOMElement*>( values->item(k) )->getAttribute( X_TYPE );
+		  xml_type = dynamic_cast<DOMElement*>( values->item(k) )->getAttribute( XML.X_TYPE );
 		}
 	      else
 		{
-		  xml_type = X_NUMERIC;
+		  xml_type = XML.X_NUMERIC;
 		}
 	      //
 	      // The value types in the second row (ie. position=2) are used as reference
@@ -437,36 +437,36 @@ int NonmemTranslator::removeDrop( DOMElement * dataset, DOMNodeList * labels  )
 
   DOMNodeList * data_labels_list;
 
-  for( nDropped = 0; (pos = whereis( labels, X_DROP )) >= 0; ++nDropped )
+  for( nDropped = 0; (pos = whereis( labels, XML.X_DROP )) >= 0; ++nDropped )
     {
-      DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+      DOMNodeList * records  = dataset->getElementsByTagName( XML.X_ROW );
       
       for( int i=0; i<records->getLength(); i++ )
 	{
-	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( XML.X_VALUE );
 	  records->item(i)->removeChild( values->item(pos));
 	}
 
-      data_labels_list = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
+      data_labels_list = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
       // Remove the DROP label from source.xml
       data_labels_list->item(0)->removeChild( labels->item(pos) );
-      labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+      labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( XML.X_LABEL );
     }
 
   unsigned int nOriginalItems = 0;
   char c_nAdjustedItems[ 56 ];
-  if( !dataset->hasAttribute( X_COLUMNS ) )
+  if( !dataset->hasAttribute( XML.X_COLUMNS ) )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+		"Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_COLUMNS );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+  XMLString::textToBin( dataset->getAttribute( XML.X_COLUMNS ),
 			nOriginalItems );
   snprintf( c_nAdjustedItems, 56, "%d", nOriginalItems-nDropped );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nAdjustedItems ) );
+  dataset->setAttribute( XML.X_COLUMNS, XMLString::transcode( c_nAdjustedItems ) );
 
   return nOriginalItems-nDropped;
 }
@@ -481,35 +481,35 @@ int NonmemTranslator::removeSkip( DOMElement * dataset, DOMNodeList * labels  )
 
   DOMNodeList * data_labels_list;
 
-  for( nSkipped = 0; (pos = whereis( labels, X_SKIP )) >= 0; ++nSkipped )
+  for( nSkipped = 0; (pos = whereis( labels, XML.X_SKIP )) >= 0; ++nSkipped )
     {
-      DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+      DOMNodeList * records  = dataset->getElementsByTagName( XML.X_ROW );
       
       for( int i=0; i<records->getLength(); i++ )
 	{
-	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNodeList * values = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( XML.X_VALUE );
 	  records->item(i)->removeChild( values->item(pos));
 	}
 
-      data_labels_list = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
+      data_labels_list = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
       // Remove the SKIP label from source.xml
       data_labels_list->item(0)->removeChild( labels->item(pos) );
-      labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+      labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( XML.X_LABEL );
     }
   unsigned int nOriginalItems = 0;
   char c_nAdjustedItems[ 56 ];
-  if( !dataset->hasAttribute( X_COLUMNS ) )
+  if( !dataset->hasAttribute( XML.X_COLUMNS ) )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+		"Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_COLUMNS );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+  XMLString::textToBin( dataset->getAttribute( XML.X_COLUMNS ),
 			nOriginalItems );
   snprintf( c_nAdjustedItems, 56, "%d", nOriginalItems-nSkipped );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nAdjustedItems ) );
+  dataset->setAttribute( XML.X_COLUMNS, XMLString::transcode( c_nAdjustedItems ) );
 
   return nOriginalItems-nSkipped;
 }
@@ -524,13 +524,13 @@ int NonmemTranslator::whereis( DOMNodeList * labels, const XMLCh* x_label ) cons
   for( int i=0; i<nLabels; i++ )
     {
       const DOMElement* elem = dynamic_cast<DOMElement*>( labels->item(i) );
-      if( !elem->hasAttribute( X_NAME ) )
+      if( !elem->hasAttribute( XML.X_NAME ) )
 	{
 	  throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR,
 				      "\"name\" attribute is missing in <label> tag",
 				      __LINE__, __FILE__ );
 	}
-      const XMLCh* x_name = elem->getAttribute( X_NAME );
+      const XMLCh* x_name = elem->getAttribute( XML.X_NAME );
       // If there's the label, return immediately.
       if( XMLString::compareIString( x_name, x_label ) == 0 )
 	{
@@ -538,9 +538,9 @@ int NonmemTranslator::whereis( DOMNodeList * labels, const XMLCh* x_label ) cons
 	  return i;
 	}
 
-      if( elem->hasAttribute( X_SYNONYM ) )
+      if( elem->hasAttribute( XML.X_SYNONYM ) )
 	{
-	  const XMLCh* x_synonym = elem->getAttribute( X_SYNONYM );
+	  const XMLCh* x_synonym = elem->getAttribute( XML.X_SYNONYM );
 	  if( XMLString::compareIString( x_synonym, x_label ) == 0 )
 	    {
 	      // The ID field is found in the j-th column.
@@ -561,9 +561,9 @@ int NonmemTranslator::insertID( DOMElement * dataset, DOMNodeList * labels  )
 {
   // If ID is defined in the data set, don't need to do anything.
   const int posID = 0;
-  assert( whereis( labels, X_ID ) < 0 );
+  assert( whereis( labels, XML.X_ID ) < 0 );
 
-  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  DOMNodeList * records  = dataset->getElementsByTagName( XML.X_ROW );
   //
   // If the data set is a population data and lacks the ID field,
   // then every record should be assigned to a different ID.
@@ -575,20 +575,20 @@ int NonmemTranslator::insertID( DOMElement * dataset, DOMNodeList * labels  )
     {
       for( int i=0; i<records->getLength(); i++ )
 	{
-	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( XML.X_POSITION );
 	  XMLString::textToBin( x_position, recordNum );
 	  if( recordNum == 1 )
 	    {
-	      x_id_val = X_ID;
+	      x_id_val = XML.X_ID;
 	    }
 	  else
 	    {
 	      snprintf( id, 56, "%d", recordNum-1 );
 	      x_id_val = XMLString::transcode( id );
 	    }
-	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( XML.X_VALUE );
 	  DOMNode     * firstValueNode  = values->item(0);
-	  DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+	  DOMElement  * newValueNode    = getDataTree()->createElement( XML.X_VALUE );
 	  DOMText     * newTerminalNode = getDataTree()->createTextNode( x_id_val );
 	  newValueNode->appendChild( newTerminalNode );
 	  records->item(i)->insertBefore( newValueNode, firstValueNode );
@@ -603,19 +603,19 @@ int NonmemTranslator::insertID( DOMElement * dataset, DOMNodeList * labels  )
       const XMLCh* X_1 = XMLString::transcode( "1" );
       for( int i=0; i<records->getLength(); i++ )
 	{
-	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+	  const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( XML.X_POSITION );
 	  XMLString::textToBin( x_position, recordNum );
 	  if( recordNum == 1 )
 	    {
-	      x_id_val = X_ID;
+	      x_id_val = XML.X_ID;
 	    }
 	  else
 	    {
 	      x_id_val = X_1;
 	    }
-	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+	  DOMNodeList * values          = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( XML.X_VALUE );
 	  DOMNode     * firstValueNode  = values->item(0);
-	  DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+	  DOMElement  * newValueNode    = getDataTree()->createElement( XML.X_VALUE );
 	  DOMText     * newTerminalNode = getDataTree()->createTextNode( x_id_val );
 	  newValueNode->appendChild( newTerminalNode );
 	  records->item(i)->insertBefore( newValueNode, firstValueNode );
@@ -625,30 +625,30 @@ int NonmemTranslator::insertID( DOMElement * dataset, DOMNodeList * labels  )
   unsigned int nItems = 0;
   char c_nItemsPlus1[ 56 ];
 
-  if( !dataset->hasAttribute( X_COLUMNS ) )
+  if( !dataset->hasAttribute( XML.X_COLUMNS ) )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+		"Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_COLUMNS );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+  XMLString::textToBin( dataset->getAttribute( XML.X_COLUMNS ),
 			    nItems );
   snprintf( c_nItemsPlus1, 56,"%d", nItems + 1 );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
+  dataset->setAttribute( XML.X_COLUMNS, XMLString::transcode( c_nItemsPlus1)  );
 
   // Insert "ID" as the first entry of <data_labels> list in source.xml
-  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( XML.X_LABEL );
   DOMNode     * firstValueNode  = values->item(0);
-  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
-  newValueNode->setAttribute( X_NAME, X_ID );
+  DOMElement  * newValueNode    = getSourceTree()->createElement( XML.X_LABEL );
+  newValueNode->setAttribute( XML.X_NAME, XML.X_ID );
   data_labels->item(0)->insertBefore( newValueNode, firstValueNode );
 
   // Update the label list
-  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( XML.X_LABEL );
 
   return posID;
 }
@@ -662,20 +662,20 @@ int NonmemTranslator::insertID( DOMElement * dataset, DOMNodeList * labels  )
 int NonmemTranslator::insertAMT( DOMElement * dataset, DOMNodeList * labels )
 {
   // If AMT is defined in the data set, don't need to do anything.
-  assert( whereis( labels, X_AMT ) < 0 );
+  assert( whereis( labels, XML.X_AMT ) < 0 );
 
-  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  DOMNodeList * records  = dataset->getElementsByTagName( XML.X_ROW );
   unsigned int recordNum=0;
   const XMLCh* x_amt_val;
   const XMLCh* X_0 = XMLString::transcode( "0.0" );
   for( int i=0; i<records->getLength(); i++ )
     {
-      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( XML.X_POSITION );
       XMLString::textToBin( x_position, recordNum );
-      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( XML.X_VALUE );
       if( recordNum == 1 )
 	{
-	  x_amt_val = X_AMT;
+	  x_amt_val = XML.X_AMT;
 	}
       else
 	{
@@ -691,7 +691,7 @@ int NonmemTranslator::insertAMT( DOMElement * dataset, DOMNodeList * labels )
       //          -> item(3)
       //             <value>AMT</value>
       DOMNode     * firstValueNode  = values->item(0);
-      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMElement  * newValueNode    = getDataTree()->createElement( XML.X_VALUE );
       DOMText     * newTerminalNode = getDataTree()->createTextNode( x_amt_val );
       newValueNode->appendChild( newTerminalNode );
       records->item(i)->appendChild( newValueNode );
@@ -699,32 +699,32 @@ int NonmemTranslator::insertAMT( DOMElement * dataset, DOMNodeList * labels )
   
   unsigned int nItems = 0;
   char c_nItemsPlus1[ 56 ];
-  if( !dataset->hasAttribute( X_COLUMNS ) )
+  if( !dataset->hasAttribute( XML.X_COLUMNS ) )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+		"Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_COLUMNS );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+  XMLString::textToBin( dataset->getAttribute( XML.X_COLUMNS ),
 			    nItems );
   snprintf( c_nItemsPlus1, 56, "%d", nItems + 1 );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
+  dataset->setAttribute( XML.X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
 
   const int pos = nItems;
 
   // Insert "AMT" as the first entry of <data_labels> list in source.xml
-  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( XML.X_LABEL );
   DOMNode     * firstValueNode  = values->item(0);
-  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
-  newValueNode->setAttribute( X_NAME, X_AMT );
+  DOMElement  * newValueNode    = getSourceTree()->createElement( XML.X_LABEL );
+  newValueNode->setAttribute( XML.X_NAME, XML.X_AMT );
   data_labels->item(0)->appendChild( newValueNode );
 
   // Update the label list
-  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( XML.X_LABEL );
 
   return pos;
 }
@@ -747,9 +747,9 @@ int NonmemTranslator::insertAMT( DOMElement * dataset, DOMNodeList * labels )
  */
 int NonmemTranslator::insertMDV( DOMElement * dataset, DOMNodeList * labels, int posAMT, int posEVID )
 {
-  assert( whereis( labels, X_MDV ) < 0 );
+  assert( whereis( labels, XML.X_MDV ) < 0 );
 
-  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  DOMNodeList * records  = dataset->getElementsByTagName( XML.X_ROW );
 
   unsigned int recordNum=0;
   const XMLCh* x_mdv_val;
@@ -757,12 +757,12 @@ int NonmemTranslator::insertMDV( DOMElement * dataset, DOMNodeList * labels, int
   const XMLCh* X_1 = XMLString::transcode( "1" );
   for( int i=0; i<records->getLength(); i++ )
     {
-      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( XML.X_POSITION );
       XMLString::textToBin( x_position, recordNum );
-      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( XML.X_VALUE );
       if( recordNum == 1 )
 	{
-	  x_mdv_val = X_MDV;
+	  x_mdv_val = XML.X_MDV;
 	}
       else
 	{
@@ -801,7 +801,7 @@ int NonmemTranslator::insertMDV( DOMElement * dataset, DOMNodeList * labels, int
       //          -> item(3)
       //             <value>EVID</value>
       DOMNode     * firstValueNode  = values->item(0);
-      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMElement  * newValueNode    = getDataTree()->createElement( XML.X_VALUE );
       DOMText     * newTerminalNode = getDataTree()->createTextNode( x_mdv_val );
       newValueNode->appendChild( newTerminalNode );
       records->item(i)->appendChild( newValueNode );
@@ -809,32 +809,32 @@ int NonmemTranslator::insertMDV( DOMElement * dataset, DOMNodeList * labels, int
   
   unsigned int nItems = 0;
   char c_nItemsPlus1[ 56 ];
-  if( !dataset->hasAttribute( X_COLUMNS ) )
+  if( !dataset->hasAttribute( XML.X_COLUMNS ) )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+		"Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_COLUMNS );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+  XMLString::textToBin( dataset->getAttribute( XML.X_COLUMNS ),
 			    nItems );
   snprintf( c_nItemsPlus1, 56, "%d", nItems + 1 );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1) );
+  dataset->setAttribute( XML.X_COLUMNS, XMLString::transcode( c_nItemsPlus1) );
 
   const int pos = nItems;
 
   // Insert "MDV" as the first entry of <data_labels> list in source.xml
-  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( XML.X_LABEL );
   DOMNode     * firstValueNode  = values->item(0);
-  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
-  newValueNode->setAttribute( X_NAME, X_MDV );
+  DOMElement  * newValueNode    = getSourceTree()->createElement( XML.X_LABEL );
+  newValueNode->setAttribute( XML.X_NAME, XML.X_MDV );
   data_labels->item(0)->appendChild( newValueNode );
 
   // Update the label list
-  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( XML.X_LABEL );
 
   return pos;
 }
@@ -853,9 +853,9 @@ int NonmemTranslator::insertMDV( DOMElement * dataset, DOMNodeList * labels, int
  */
 int NonmemTranslator::insertEVID( DOMElement * dataset, DOMNodeList * labels, int posAMT, int posMDV )
 {
-  assert( whereis( labels, X_EVID ) < 0 );
+  assert( whereis( labels, XML.X_EVID ) < 0 );
 
-  DOMNodeList * records  = dataset->getElementsByTagName( X_ROW );
+  DOMNodeList * records  = dataset->getElementsByTagName( XML.X_ROW );
   unsigned int recordNum=0;
   const XMLCh* x_evid_val;
   const XMLCh* X_0 = XMLString::transcode( "0" );
@@ -863,12 +863,12 @@ int NonmemTranslator::insertEVID( DOMElement * dataset, DOMNodeList * labels, in
   const XMLCh* X_2 = XMLString::transcode( "2" );
   for( int i=0; i<records->getLength(); i++ )
     {
-      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( X_POSITION );
+      const XMLCh * x_position = dynamic_cast<DOMElement*>(records->item(i))->getAttribute( XML.X_POSITION );
       XMLString::textToBin( x_position, recordNum );
-      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( X_VALUE );
+      DOMNodeList * values     = dynamic_cast<DOMElement*>(records->item(i))->getElementsByTagName( XML.X_VALUE );
       if( recordNum == 1 )
 	{
-	  x_evid_val = X_EVID;
+	  x_evid_val = XML.X_EVID;
 	}
       else
 	{
@@ -927,7 +927,7 @@ int NonmemTranslator::insertEVID( DOMElement * dataset, DOMNodeList * labels, in
       //          -> item(3)
       //             <value>MDV</value>
       DOMNode     * firstValueNode  = values->item(0);
-      DOMElement  * newValueNode    = getDataTree()->createElement( X_VALUE );
+      DOMElement  * newValueNode    = getDataTree()->createElement( XML.X_VALUE );
       DOMText     * newTerminalNode = getDataTree()->createTextNode( x_evid_val );
       newValueNode->appendChild( newTerminalNode );
       records->item(i)->appendChild( newValueNode );
@@ -935,32 +935,32 @@ int NonmemTranslator::insertEVID( DOMElement * dataset, DOMNodeList * labels, in
   
   unsigned int nItems = 0;
   char c_nItemsPlus1[ 56 ];
-  if( !dataset->hasAttribute( X_COLUMNS ) )
+  if( !dataset->hasAttribute( XML.X_COLUMNS ) )
     {
       char m[ SpkCompilerError::maxMessageLen() ];
       snprintf( m, 
 		SpkCompilerError::maxMessageLen(),
-		"Missing \"%s::%s\" attribute specification in data.xml!\n", C_TABLE, C_COLUMNS );
+		"Missing \"%s::%s\" attribute specification in data.xml!\n", XML.C_TABLE, XML.C_COLUMNS );
       throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, m, __LINE__, __FILE__ );
     }
-  XMLString::textToBin( dataset->getAttribute( X_COLUMNS ),
+  XMLString::textToBin( dataset->getAttribute( XML.X_COLUMNS ),
 			    nItems );
   snprintf( c_nItemsPlus1, 56, "%d", nItems + 1 );
-  dataset->setAttribute( X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
+  dataset->setAttribute( XML.X_COLUMNS, XMLString::transcode( c_nItemsPlus1 )  );
 
   const int pos = nItems;
 
   // Insert "EVID" as the first entry of <data_labels> list in source.xml
-  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels     = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  DOMNodeList * values          = dynamic_cast<DOMElement*>(data_labels->item(0))->getElementsByTagName( XML.X_LABEL );
   DOMNode     * firstValueNode  = values->item(0);
-  DOMElement  * newValueNode    = getSourceTree()->createElement( X_LABEL );
-  newValueNode->setAttribute( X_NAME, X_EVID );
+  DOMElement  * newValueNode    = getSourceTree()->createElement( XML.X_LABEL );
+  newValueNode->setAttribute( XML.X_NAME, XML.X_EVID );
   data_labels->item(0)->appendChild( newValueNode );
 
   // Update the label list
-  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( X_DATA_LABELS );
-  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( X_LABEL );
+  DOMNodeList * data_labels_list = getSourceTree()->getElementsByTagName( XML.X_DATA_LABELS );
+  labels = dynamic_cast<DOMElement*>(data_labels_list->item(0))->getElementsByTagName( XML.X_LABEL );
 
   return pos;
 }

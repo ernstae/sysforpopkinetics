@@ -16,6 +16,8 @@ MOSTLYCLEANFILES = explang.output \
 	           libnonmem.a
 
 dist_libnonmem_a_SOURCES = \
+        XmlConstants.cpp \
+        XmlConstants.h \
         explang.ypp \
         lex_explang.l \
         CompartmentInfo.cpp \
