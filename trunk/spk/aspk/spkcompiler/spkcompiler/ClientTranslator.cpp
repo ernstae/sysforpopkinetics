@@ -1,3 +1,7 @@
+/**
+ * @file ClientTranslator.cpp
+ * Define the ClientTranslator class.
+ */
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -14,7 +18,6 @@
 
 using namespace std;
 using namespace xercesc;
-
 ClientTranslator::ClientTranslator()
 {
 }

@@ -1,3 +1,7 @@
+/**
+ * @file DOMPrint.cpp
+ * Define the DOMPrint() function.
+ */
 #include "DOMPrint.h"
 
 #include <xercesc/util/PlatformUtils.hpp>

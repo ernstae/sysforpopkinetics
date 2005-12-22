@@ -3,7 +3,7 @@
 
 /**
  * @file series.h
- * Declare the series(a,d) function.
+ * Declare the series() function.
  */
 
 /**

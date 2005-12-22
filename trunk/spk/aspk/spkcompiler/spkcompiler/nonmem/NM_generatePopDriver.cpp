@@ -1,3 +1,7 @@
+/** 
+ * @file NM_generatePopDriver.cpp
+ * Define NonmemTranslator::generatePopDriver().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

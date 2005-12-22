@@ -1,3 +1,7 @@
+/**
+ * @file NM_parseAdvan.cpp
+ * Define NonmemTranslator::parseAdvan().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

@@ -1,3 +1,7 @@
+/**
+ * @file NM_detAnalysisType.cpp
+ * Define NonmemTranslator::detAnalysisType().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

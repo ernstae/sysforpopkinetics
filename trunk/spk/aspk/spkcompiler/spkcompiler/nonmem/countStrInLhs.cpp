@@ -1,3 +1,8 @@
+/**
+ * @file countStrInLhs.cpp
+ * Define the countStrInLhs() function.
+ */
+
 #include "countStrInLhs.h"
 #include <string.h>
 

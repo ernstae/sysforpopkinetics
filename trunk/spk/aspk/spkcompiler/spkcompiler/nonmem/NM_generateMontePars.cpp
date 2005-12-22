@@ -1,3 +1,7 @@
+/** 
+ * @file NM_generateMontePars.cpp
+ * Define NonmemTranslator::generateMonteParsNamespace().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

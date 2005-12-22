@@ -1,3 +1,7 @@
+/**
+ * @file NM_generateMakefile.cpp
+ * Define NonmemTranslator::generateMakefile().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

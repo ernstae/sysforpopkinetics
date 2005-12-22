@@ -1,3 +1,9 @@
+/**
+ * @file SymbolTable.cpp
+ *
+ * Define the SymbolTable class.
+ */
+
 #include "SymbolTable.h"
 
 #include <vector>

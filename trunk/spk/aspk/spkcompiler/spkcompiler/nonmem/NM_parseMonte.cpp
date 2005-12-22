@@ -1,3 +1,7 @@
+/**
+ * @file NM_parseMonte.cpp
+ * Define NonmemTranslator::parseMonte().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

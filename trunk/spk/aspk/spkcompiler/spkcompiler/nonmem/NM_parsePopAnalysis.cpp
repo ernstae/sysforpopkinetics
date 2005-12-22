@@ -1,3 +1,7 @@
+/**
+ * @file NM_parsePopAnalysis.cpp
+ * Define NonmemTranslator::parsePopAnalysis().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

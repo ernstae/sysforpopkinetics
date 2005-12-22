@@ -1,3 +1,7 @@
+/**
+ * @file NM_detModelType.cpp 
+ * Define NonmemTranslator::detModelType().
+ */
 #include <fstream>
 #include "NonmemTranslator.h"
 #include "SpkCompilerException.h"

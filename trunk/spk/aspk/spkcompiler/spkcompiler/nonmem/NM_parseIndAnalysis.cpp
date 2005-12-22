@@ -1,3 +1,7 @@
+/**
+ * @file NM_parseIndAnalysis.cpp
+ * Define NonmemTranslator::parseIndAnalysis().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

@@ -1,14 +1,13 @@
+/**
+ * @file Symbol.h
+ * Declare the Symbol class.
+ */
+
 #ifndef SYMBOL_H
 #define SYMBOL_H
 #include <valarray>
 #include <string>
 #include <vector>
-
-/**
- * @file Symbol.h
- *
- * Declare the Symbol class.
- */
 
 /**
  * This class represents a symbol.

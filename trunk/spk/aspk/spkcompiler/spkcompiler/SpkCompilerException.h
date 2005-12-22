@@ -1,3 +1,7 @@
+/**
+ * @file SpkCompilerException.h
+ * Declare SpkCompilerException class.
+ */
 #ifndef SPKCOMPILEREXCEPTION_H
 #define SPKCOMPILEREXCEPTION_H
 

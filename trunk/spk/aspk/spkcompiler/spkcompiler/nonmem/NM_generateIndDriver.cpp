@@ -1,3 +1,7 @@
+/**
+ * @file NM_generateIndDriver.cpp
+ * Define NonmemTranslator::generateIndDriver().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

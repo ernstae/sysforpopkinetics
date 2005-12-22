@@ -1,3 +1,7 @@
+/**
+ * @file NM_generateIndData.cpp
+ * Define NonmemTranslator::generateIndData().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"
