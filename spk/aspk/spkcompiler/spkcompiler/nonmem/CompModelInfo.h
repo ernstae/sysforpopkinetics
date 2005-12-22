@@ -1,3 +1,7 @@
+/**
+ * @file CompModelInfo.h
+ * Decleare the CompModelInfo class.
+ */
 #ifndef COMPMODELINFO_H
 #define COMPMODELINFO_H
 

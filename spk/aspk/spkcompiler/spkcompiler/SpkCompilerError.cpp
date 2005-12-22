@@ -1,3 +1,7 @@
+/**
+ * @file SpkCompilerError.cpp
+ * Define SpkCompilerError class.
+ */
 #include <map>
 
 #include <iostream>

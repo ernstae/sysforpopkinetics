@@ -1,3 +1,7 @@
+/**
+ * @file CompModelInfo.cpp
+ * Define the CompModelInfo class.
+ */
 #include "CompModelInfo.h"
 #include "CompartmentInfo.h"
 

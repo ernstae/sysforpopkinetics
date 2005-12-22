@@ -1,3 +1,8 @@
+/**
+ * @file Symbol.cpp
+ * Define the Symbol class.
+ */
+
 #include "Symbol.h"
 #include "series.h"
 #include <valarray>

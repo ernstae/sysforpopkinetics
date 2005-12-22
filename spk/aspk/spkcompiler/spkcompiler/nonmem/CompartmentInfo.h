@@ -1,3 +1,7 @@
+/**
+ * @file CompartmentInfo.h
+ * Declare the CompartmentInfo class.
+ */
 #ifndef COMPARTMENTINFO_H
 #define COMPARTMENTINFO_H
 #include <string>

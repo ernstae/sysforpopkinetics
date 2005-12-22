@@ -1,3 +1,7 @@
+/**
+ * @file series.cpp
+ * Define series().
+ */
 #include "series.h"
 
 int series( int a, int d, int n )

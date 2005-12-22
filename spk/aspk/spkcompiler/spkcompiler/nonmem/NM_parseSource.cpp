@@ -1,3 +1,7 @@
+/**
+ * @file NM_parseSource.cpp
+ * Define NonmemTranslator::parseSource().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

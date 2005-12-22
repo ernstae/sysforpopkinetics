@@ -1,6 +1,6 @@
 /**
  * @file ClientTranslator.h
- * Declare the ClientTranslator abstract class.
+ * Declare the ClientTranslator class.
  */
 #ifndef CLIENTTRANSLATOR
 #define CLIENTTRANSLATOR

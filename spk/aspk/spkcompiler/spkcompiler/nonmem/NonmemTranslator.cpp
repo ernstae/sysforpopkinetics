@@ -1,3 +1,8 @@
+/**
+ * @file NonmemTranslator.cpp
+ * Define NonmemTranslator constructors, destructor and others.
+ *
+ */
 /*
   %************************************************************************
   %                                                                       *

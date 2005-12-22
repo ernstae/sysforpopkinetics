@@ -1,3 +1,7 @@
+/** 
+ * @file NM_generateNonmemPars.cpp
+ * Define NonmemTranslator::generateNonmemParsNamespace().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

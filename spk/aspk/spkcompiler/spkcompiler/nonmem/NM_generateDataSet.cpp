@@ -1,3 +1,7 @@
+/**
+ * @file NM_generateDataSet.cpp 
+ * Define NonmemTranslator::generateDataSet().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

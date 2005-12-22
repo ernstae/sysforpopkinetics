@@ -1,3 +1,7 @@
+/**
+ * @file CompartmentInfo.cpp
+ * Define the CompartmentInfo class.
+ */
 #include "CompartmentInfo.h"
 #include <iostream>
 #include <string>

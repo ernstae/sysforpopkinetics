@@ -1,3 +1,7 @@
+/**
+ * @file NM_generateOdePred.cpp
+ * Define NonmemTranslator::generateOdePred().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"

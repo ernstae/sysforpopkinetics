@@ -4,10 +4,7 @@
 #include <string>
 /**
  * @file client.h
- * 
- * Declare a namespace, client, which 
- * defines constant values used to identify different clients using Spk Compiler
- * and some helper functions associated with these constant values.
+ * Define "client" namespace. 
  */
 /**
  * The namespace, "client", declares an enumulator, type, that should be

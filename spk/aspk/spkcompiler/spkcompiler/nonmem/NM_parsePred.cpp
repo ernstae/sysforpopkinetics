@@ -1,3 +1,7 @@
+/**
+ * @file NM_parsePred.cpp
+ * Define NonmemTranslator::parsePred().
+ */
 #include <fstream>
 
 #include "NonmemTranslator.h"
