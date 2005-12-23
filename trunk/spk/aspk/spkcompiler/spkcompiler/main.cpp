@@ -178,74 +178,74 @@ namespace{
 		   ACCESS_ERR=2,    /**< File/directory access denied. */
 		   OTHER_ERR        /**< Unclassified error. */
                  };
-  /**
-   * client::type getClientName( xercesc::DOMDocument* source )
-   *
-   * Extract information about the origin of the source document.
-   *
-   * @return The enumulator indicating the type of client.
-   * @param source A pointer to the DOMDocument tree containing the client information.
-   */
-  client::type getClientName( xercesc::DOMDocument* source )
-  {
-    DOMElement * root = source->getDocumentElement();
-    DOMTreeWalker * walker = source->createTreeWalker( root, 
-						       DOMNodeFilter::SHOW_ELEMENT, 
-						       NULL, 
-						       false );
-    const XMLCh * c = walker->firstChild()->getNodeName();
-    
-    if( XMLString::equals( c, XMLString::transcode("nonmem") ) )
-      return client::NONMEM;
-    return client::NOT_SUPPORTED;
-  }
-
-  /**
-   * Generate an SpkReport document.
-   */
-  void genCompilationErrorML( const SpkCompilerException& e )
-  {
-     ofstream o( compilation_error_xml );
-     if( !o.good() )
-     {
-       cerr << "Failed to create " << compilation_error_xml << "." << endl;
-       cerr << "Abnormal termination..." << endl;
-       abort();
-     }
-     o << "<?xml version=\"1.0\"?>" << endl;
-     o << "<spkreport>" << endl;
-     o << e.getXml() << endl;
-     o << "</spkreport>" << endl;
-     o.close();
-     return;
-  }
-  /**
-   * Displays the usage.
-   *
-   * @param o A string buffer in which a generated message is placed.
-   * 
-   */
-  void usage( char* o )
-  {
-    strcpy( o, "\n\n" );
-    strcat( o, "Usage: spkcompiler SOURCE DATA\n" );
-    strcat( o, "\n" );
-    strcat( o, "   SOURCE    --- file path to an SpkSourceML document\n" );
-    strcat( o ,"   DATA      --- file path to an SpkDataML document\n" );
-    strcat( o, "\n" );
-    strcat( o, "<Exit Code>\n" );
-    strcat( o, "   0: The compilation completed successfully.\n" );
-    strcat( o, "      A makefile, \"Makefile.SPK\", along with the source\n" );
-    strcat( o, "      code files are generated in the current directory.\n" );
-    strcat( o, "   1: Syntax errors are found in either/both SOURCE or/and DATA.\n" );
-    strcat( o, "      compilation_error.xml will be generated in the current directory.\n" );
-    strcat( o, "   2: File/directory access denied.\n" );
-    strcat( o, "   x: Any other error is reported with an unspecified exit code greater than 2.\n" );
-    strcat( o, "      compilation_error.xml will generated in the current directory.\n" );
-    
-    return;
-  }
 };
+/**
+ * client::type getClientName( xercesc::DOMDocument* source )
+ *
+ * Extract information about the origin of the source document.
+ *
+ * @return The enumulator indicating the type of client.
+ * @param source A pointer to the DOMDocument tree containing the client information.
+ */
+static client::type getClientName( xercesc::DOMDocument* source )
+{
+  DOMElement * root = source->getDocumentElement();
+  DOMTreeWalker * walker = source->createTreeWalker( root, 
+						     DOMNodeFilter::SHOW_ELEMENT, 
+						     NULL, 
+						     false );
+  const XMLCh * c = walker->firstChild()->getNodeName();
+    
+  if( XMLString::equals( c, XMLString::transcode("nonmem") ) )
+    return client::NONMEM;
+  return client::NOT_SUPPORTED;
+}
+
+/**
+ * Generate an SpkReport document.
+ */
+static void genCompilationErrorML( const SpkCompilerException& e )
+{
+  ofstream o( compilation_error_xml );
+  if( !o.good() )
+    {
+      cerr << "Failed to create " << compilation_error_xml << "." << endl;
+      cerr << "Abnormal termination..." << endl;
+      abort();
+    }
+  o << "<?xml version=\"1.0\"?>" << endl;
+  o << "<spkreport>" << endl;
+  o << e.getXml() << endl;
+  o << "</spkreport>" << endl;
+  o.close();
+  return;
+}
+/**
+ * Displays the usage of "spkcompiler".
+ *
+ * @param o A string buffer in which a generated message is placed.
+ * 
+ */
+static void usage( char* o )
+{
+  strcpy( o, "\n\n" );
+  strcat( o, "Usage: spkcompiler SOURCE DATA\n" );
+  strcat( o, "\n" );
+  strcat( o, "   SOURCE    --- file path to an SpkSourceML document\n" );
+  strcat( o ,"   DATA      --- file path to an SpkDataML document\n" );
+  strcat( o, "\n" );
+  strcat( o, "<Exit Code>\n" );
+  strcat( o, "   0: The compilation completed successfully.\n" );
+  strcat( o, "      A makefile, \"Makefile.SPK\", along with the source\n" );
+  strcat( o, "      code files are generated in the current directory.\n" );
+  strcat( o, "   1: Syntax errors are found in either/both SOURCE or/and DATA.\n" );
+  strcat( o, "      compilation_error.xml will be generated in the current directory.\n" );
+  strcat( o, "   2: File/directory access denied.\n" );
+  strcat( o, "   x: Any other error is reported with an unspecified exit code greater than 2.\n" );
+  strcat( o, "      compilation_error.xml will generated in the current directory.\n" );
+    
+  return;
+}
 
 /* rename -- rename a file
 int rename (const char * old, const char * new)
@@ -254,7 +254,7 @@ Renames a file from old to new.  If new already
 exists, it is removed.
 
 */
-int rename (char* zfrom, char* zto)
+static int rename (char* zfrom, char* zto)
 {
   if (link (zfrom, zto) < 0)
     {

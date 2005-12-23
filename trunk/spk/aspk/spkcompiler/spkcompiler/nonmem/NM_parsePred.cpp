@@ -15,26 +15,6 @@
 using namespace std;
 using namespace xercesc;
 
-//========================================
-// The global variables used by
-// yyparse() and yylex() (or equivalent).
-//----------------------------------------
-extern int           gSpkExpErrors;
-extern char*         gSpkExpErrorMessages;
-extern int           gSpkExpLines;
-extern SymbolTable * gSpkExpSymbolTable;
-extern FILE *        gSpkExpOutput;
-extern bool          gSpkIsTInRhs;
-extern FILE *        nm_in;
-extern int           NM_ACCEPT;
-extern int           NM_ABORT;
-
-extern "C"{
-  int nm_parse(void);
-  int nm_error( const char* );
-};
-
-
 void NonmemTranslator::parsePred( const DOMElement * pred )
 {
   char * c_equations = NULL;

@@ -14,43 +14,49 @@
 
 /**
  * @var int gSpkExpErrors = 0
- * Global counter for errors encountered during parsing.
- * This counter is initialized to zero at compilation time only
- * and it is the caller's responsibility to re-initialize the value
- * when necessarily.  In other words, nm_parse() does not reset the value.
+ * The global counter for errors encountered during the expression parsing.
+ * 
+ * The expression lexical analyzier (nm_lex()) and the parser (nm_parse())
+ * increment this counter when they encounter syntax errors.
+ * The counter is initialized to zero at the beginning of run-time process.
  */
 int gSpkExpErrors = 0;
 
 /**
  * @var int gSpkExpLines = 0
- * Global counter for lines that have been read so far during parsing.
- * This counter is initialized to zero at compilation time only
- * and it is the caller's responsibility to re-initialize the value
- * when necessarily.  In other words, nm_parse() does not reset the value.
+ * The global counter for lines that have been read so far during the expression parsing.
+ *
+ * The expression parser (nm_parse()) increments this counter.
+ *
+ * This counter is initialized to zero at the beginning of run-time process.
  */
 int gSpkExpLines  = 0;	
 
 /**
  * @var char* gSpkExpErrorMessages = 0
- * Global placeholder for syntax error messages.
- * The user of nm_parse() is responsible for allocating and deallocating
- * memory.
+ * The global placeholder for syntax error messages.
+ *
+ * The expression lexcal analyizer (nm_lex()) and the parser (nm_parse())
+ * store messages when they diagnose syntax errors.
+ * This pointer is initialized to NULL at the beginning of run-time process
+ * and it is the user's responsibly to allocate and deallocate 
+ * the memory.
  */
 char * gSpkExpErrorMessages = 0;
 
 /**
- * Global pointer to a FILE handler to which output is redirected.
+ * The global pointer to a FILE handler to which output is redirected.
  */
 FILE * gSpkExpOutput;
 
 /**
  * @var SymbolTable * gSpkExpSymbolTable
  *
- * Global pointer to a SymbolTable object.
+ * The global symbol table.
  *
- * This pointer has to be initialized to point to a valid object
- * in the caller (of nm_parse()) space.  The allocated resource
- * must be released by the caller too.
+ * This pointer is initialized to NULL at the beginning of 
+ * run-time process and it is the user's responsibility
+ * to allocate and deallocate the memory.
  *
  * The names of variables that are considered System-variable
  * (i.e. predefined/keyword) must be in the symbol table
@@ -67,7 +73,7 @@ SymbolTable * gSpkExpSymbolTable;
 /**
  * @var bool gSpkIsTInRhs
  *
- * Global flag indicating as to whether a variable T appear in the right
+ * The global flag indicating as to whether a variable T appear in the right
  * hand side of assignment statements.
  *
  */
@@ -128,17 +134,6 @@ extern "C"{
     int nm_lex(void);
 
    /**
-    * A signal that forces nm_parse() to immediately return abnormaly.
-    */
-    //int NM_ABORT;
-
-   /**
-    * A signal that forces nm_parse() to immediately return normally.
-    */
-    //int NM_ACCEPT;
-
-
-   /**
     * The file hander pointing to the input file to read in.  It must be open & readable.
     */
     //FILE * nm_in;
@@ -159,7 +154,7 @@ extern "C"{
    /**
     * The handler used to terminate the parser. 
     */
-   void nm_terminate( );
+    void nm_terminate( );
   
 };
 
@@ -214,7 +209,6 @@ void nm_terminate( )
   fprintf( stderr, "The Expression Parser was terminated abnormally.\n" );
   return;
 }
-
 namespace{
    const char * const STR_TYPE     = "type";
    const char * const STR_VALUE    = "value";
