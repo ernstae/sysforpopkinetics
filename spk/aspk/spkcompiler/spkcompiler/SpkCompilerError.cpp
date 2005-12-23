@@ -234,12 +234,12 @@ const SpkCompilerError& SpkCompilerError::operator=(const SpkCompilerError& righ
     }
 }
 
-std::string& operator<<(std::string& s, const SpkCompilerError& e)
+std::string& operator<<(std::string& str, const SpkCompilerError& e)
 {
   std::ostringstream stream;
   stream << e;
-  s = stream.str();
-  return s;
+  str = stream.str();
+  return str;
 }
 std::ostream& operator<<(std::ostream& stream, const SpkCompilerError& e)
 {

@@ -268,6 +268,12 @@ Symbol Symbol::createLabel( const string& label,
   return Symbol( label, alias, DATASET, READONLY, VECTOR, FULL, N );
 }
 
+/**
+ * The extractor of Symbol object.
+ * @param o The output stream.
+ * @param s The Symbol object from which the contents are extracted.
+ * @return The modified output stream.
+ */
 std::ostream& operator<<( std::ostream& o, const Symbol& s )
 {
   o << "Symbol         : " << s.name << endl;

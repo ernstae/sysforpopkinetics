@@ -9,12 +9,129 @@
 #include "../SymbolTable.h"
 #include "CompModelInfo.h"
 #include "nonmem.h"
+#include "explang.h"
 #include "XmlConstants.h"
 #include <iostream>
 #include <vector>
 
 #include <xercesc/dom/DOMDocument.hpp>
 
+//========================================
+// The global variables used by
+// yyparse() and yylex() (or equivalent).
+//----------------------------------------
+/**
+ * The global counter for errors encountered during the expression parsing.
+ * 
+ * The expression lexical analyzier (nm_lex()) and the parser (nm_parse())
+ * increment this counter when they encounter syntax errors.
+ * The counter is initialized to zero at the beginning of run-time process.
+ * 
+ * This global variable is defined in explang.ypp.
+ */
+extern "C" int           gSpkExpErrors;
+
+/**
+ * A global placeholder for syntax error messages.
+ *
+ * The expression lexcal analyizer (nm_lex()) and the parser (nm_parse())
+ * store messages when they diagnose syntax errors.
+ * This pointer is initialized to NULL at the beginning of run-time process
+ * and it is the user's responsibly to allocate and deallocate 
+ * the memory.
+ *
+ * This global variable is defined in explang.ypp. 
+ */
+extern "C" char*         gSpkExpErrorMessages;
+
+/**
+ * The global counter for lines that have been read so far during the expression parsing.
+ * 
+ * The expression lexical analyzier (nm_lex()) increments this counter.
+ * This counter is initialized to zero at the beginning of run-time process.
+ *
+ * This global variable is defined in explang.ypp.
+ */
+extern "C" int           gSpkExpLines;
+
+/**
+ *
+ * The global symbol table.
+ *
+ * This pointer is initialized to NULL at the beginning of 
+ * run-time process and it is the user's responsibility
+ * to allocate and deallocate the memory.
+ *
+ * This global variable is defined in explang.ypp.
+ */
+extern "C" SymbolTable * gSpkExpSymbolTable;
+
+/**
+ * Global pointer to a FILE handler to which output is redirected.
+ *
+ * The expression parser (nm_parse()) redirects its output text (C++ source code) 
+ * to the file pointed by the handler.  The pointer is initilized to
+ * NULL at the beginning of run-time process and it is the user's
+ * responsibility to open and close the resource.
+ *
+ * This global variable is defined in explang.ypp.
+ */
+extern "C" FILE *        gSpkExpOutput;
+
+/**
+ * The global flag indicating as to whether a variable T appear in the right
+ * hand side of an assignment statement.
+ *
+ * The expression parser (nm_parse()) sets this flag TRUE when
+ * it finds a variable named "T" on the right hand side of an assignment
+ * statement.
+ *
+ * This global variable is defined in explang.ypp.
+ */
+extern "C" bool          gSpkIsTInRhs;
+
+/**
+ * The file hander pointing to the input file to read in.
+ *
+ * The expression lexical analyzier (nm_lex()) reads characters
+ * from the file pointed by this handler.
+ *
+ * This global variable is defined in explang.ypp.
+ */
+extern "C" FILE *        nm_in;
+
+extern "C"{
+  /**
+   * The NONMEM expression parser.
+   *
+   * This module reads in expressions via the lexical analyizer (nm_lex()),
+   * analyizes them and converts them to fit to C++ syntax.
+   *
+   * This function is defined in explang.ypp.
+   */
+  int nm_parse(void);
+
+  /**
+   * The error handler for the expression parser.
+   *
+   * This error handler puts the #message into #gSpkExpErrorMessages
+   * and increments #gSpkExpErrors.
+   *
+   * This function is defined in explang.ypp.
+   */
+  int nm_error( const char* message );
+
+  /**
+   * @var nm_lex(void)
+   *
+   * The lexical analyzer for NONMEM expression.
+   * The input string stream nm_lex() reads in is assumed to 
+   * be pointed by a FILE handler, @a nm_in.
+   *
+   * @note The code for this function is generated from
+   * a LEX (FLEX) specification file, lex_explang.l.
+   */
+};
 /**
  * NonmemTranslator is an implementation of ClientTranslator abstract class.
  *

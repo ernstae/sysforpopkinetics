@@ -157,7 +157,8 @@ class SymbolTable{
   const std::map<const std::string, Symbol> * getTable() const;
 
 /**
- * Print out all registered symbols with their attributes.
+ * Extractor.
+ * Print out all registered symbols.
  *
  * @return The reference to the modified/filled output stream.
  * @param o The reference to the output stream.

@@ -88,6 +88,15 @@ const map<const string, Symbol> * SymbolTable::getTable() const
 {
   return &table;
 }
+
+/**
+ * Extractor.
+ * Print out all registered Symbol objects.
+ *
+ * @return The reference to the modified/filled output stream.
+ * @param o The reference to the output stream.
+ * @param t The symbol table from which the contents to be extracted.
+ */
 ostream& operator<<( ostream& o, const SymbolTable& t )
 {
   map<string, Symbol>::const_iterator itr = t.table.begin();
