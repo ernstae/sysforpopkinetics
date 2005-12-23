@@ -16,18 +16,19 @@
 using namespace std;
 using namespace xercesc;
 
+/*
+ *****************************************************************************************
+ *
+ * Parsing <pop_analysis>
+ *
+ *****************************************************************************************
+ */
 void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 {
-  
-  //---------------------------------------------------------------------------------------
-  // <pop_analysis>: Attributes required when "is_estimation=yes".
-  //---------------------------------------------------------------------------------------
-  // * approximation = {fo, foce, laplace}
-  // * pop_size
-  // * is_estimation = {yes, no}
-  //
-  // Finding out if parameter estimation is requested.
-  //
+  //--------------------------------------------------------------------------------------
+  // Determine the value of <pop_analysis::is_estimation>.
+  // If "yes", it requires certain other attributes to be given as well.
+  //--------------------------------------------------------------------------------------
   if( !pop_analysis->hasAttribute( XML.X_IS_ESTIMATION ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
@@ -41,10 +42,17 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   myIsEstimate = ( XMLString::equals( xml_is_estimation, XML.X_YES )? true : false );
 
 
+  //--------------------------------------------------------------------------------------
+  // Attributes that are required when <pop_analysis::is_estimation> is "yes".
+  //
+  // * approximation = {fo, foce, laplace}
+  // * pop_size
+  // * is_estimation = {yes, no}
+  //--------------------------------------------------------------------------------------
   if( myIsEstimate )
     {
       //
-      // Finding out the approximation method
+      // Finding out the approximation method.
       //
       if( !pop_analysis->hasAttribute( XML.X_APPROXIMATION ) )
 	{
@@ -83,14 +91,14 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	}
     }
 
-  myIndTraceLevel = 0;
-  myPopTraceLevel = 1;
-
   //---------------------------------------------------------------------------------------
-  // Optional attributes
-  //---------------------------------------------------------------------------------------
+  // Optional attributes that matter when <pop_analysis::is_estimation> is "yes".
+  //
   // * is_eta_out = {yes, "no"}
   // * is_restart = {yes, "no"}
+  // * mitr
+  // * sig_digits
+  //---------------------------------------------------------------------------------------
   if( myIsEstimate )
     {
       const XMLCh * xml_is_eta_out;
@@ -116,22 +124,11 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 			SpkCompilerError::maxMessageLen(),
 			"Invalid <%s::%s> attribute value: \"%s\".", 
 			XML.C_POP_ANALYSIS, XML.C_MITR, XMLString::transcode(xml_mitr) );
-	      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+				      __LINE__, __FILE__ );
 	      throw e;
 	    }
 	}
-      /*
-	else{
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	snprintf( mess, 
-	SpkCompilerError::maxMessageLen(),
-	"Missing <%s::%s> attribute.", 
-	XML.C_POP_ANALYSIS, XML.C_MITR );
-	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
-	__LINE__, __FILE__ );
-	throw e;
-	}
-      */
       const XMLCh* xml_sig_digits;
       if( pop_analysis->hasAttribute( XML.X_SIG_DIGITS ) )
 	{
@@ -147,7 +144,8 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 			    XML.C_POP_ANALYSIS, 
 			    XML.C_SIG_DIGITS, 
 			   XMLString::transcode( xml_sig_digits ) );
-		  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+		  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+					  __LINE__, __FILE__);
 		  throw e;
               
 		}
@@ -158,7 +156,8 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 			    SpkCompilerError::maxMessageLen(),
 			    "Invalid <%s::%s> attribute value: \"%s\".  Valid range: (1-8)", 
 			    XML.C_POP_ANALYSIS, XML.C_SIG_DIGITS, XMLString::transcode( xml_sig_digits )  );
-		  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
+		  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+					  __LINE__, __FILE__);
 		  throw e;
 		}
 	      myIndEpsilon = pow( 10.0, -(mySigDigits + 1.0) );
@@ -169,11 +168,17 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 
   //---------------------------------------------------------------------------------------
   // Required elements
-  //---------------------------------------------------------------------------------------
+  //
   // <data_labels>
   // <theta>
   // <omega>+
   // <sigma>+
+  //---------------------------------------------------------------------------------------
+
+  //-------------------------------------------
+  // <data_labels>
+  //-------------------------------------------
+  // Get the list of <data_labels> elements from SourceML.
   DOMNodeList * data_labels_list = pop_analysis->getElementsByTagName( XML.X_DATA_LABELS );
   if( data_labels_list->getLength() > 1 )
     {
@@ -185,6 +190,8 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
       throw e;
     }
+
+  // Check the number of <data_labels>'s.  There must be at least one <data_labels>.
   if( data_labels_list->getLength() < 1 )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
@@ -196,8 +203,10 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       throw e;
     }
 
+  // Pick the first <data_labels> from the list of <data_labels>'s.
   DOMElement * data_labels = dynamic_cast<DOMElement*>( data_labels_list->item(0) );
   {
+    // Get the list of <label>s.  It cannot be empty.
     DOMNodeList * labels = data_labels->getElementsByTagName( XML.X_LABEL );
     int nLabels = labels->getLength();
     if( nLabels < 1 ) 
@@ -210,13 +219,15 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
         SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__);
         throw e;
       }
+
+    // Iterate though the list of <label>s.
+    // Check if the specification of labels here matches with that of
+    // labels in the data set (SpkDataML).
     for( int i=0; i<nLabels; i++ )
       {
 	DOMElement * xml_label = dynamic_cast<DOMElement*>( labels->item(i) );
-	// <label> is an empty element
 
-	// required attribute
-	// * name
+	// <label::name> is an required attribute.
 	if( !xml_label->hasAttribute( XML.X_NAME ) )
 	  {
             char mess[ SpkCompilerError::maxMessageLen() ];
@@ -229,8 +240,10 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	  }
 	const XMLCh* xml_name = xml_label->getAttribute( XML.X_NAME );
 	char * c_name = XMLString::transcode( xml_name );
-	Symbol * name = table->find( c_name );
 
+	// The label name should have been already registered in the symbol table
+        // during parseData(), or throw an exception.
+	Symbol * name = table->find( c_name );
 	if( name == Symbol::empty() )
 	  {
             char mess[ SpkCompilerError::maxMessageLen() ];
@@ -240,21 +253,22 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
             SpkCompilerException e( SpkCompilerError::ASPK_PROGRAMMER_ERR, mess, __LINE__, __FILE__ );
             throw e;
 	  }
-	delete c_name;
-
-	// optional attribute
-	// * synonym
+	// The synonym is an optional attribute.
+	// Register the value into the symbol table if it is given.
 	if( xml_label->hasAttribute( XML.X_SYNONYM ) )
 	  {
 	    const XMLCh* xml_synonym = xml_label->getAttribute( XML.X_SYNONYM );
 	    char * c_synonym = XMLString::transcode( xml_synonym );
-	    // register the synonym to the symbol table
 	    name->synonym = string( c_synonym );
 	    delete c_synonym;
 	  }
+	delete c_name;
       }
   }
 
+  //-------------------------------------------
+  // <theta>
+  //-------------------------------------------
   char valueDefault[] = "0.0";
 
   DOMNodeList * theta_list = pop_analysis->getElementsByTagName( XML.X_THETA );
@@ -479,6 +493,9 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       }
   }
 
+  //-------------------------------------------
+  // <omega>
+  //-------------------------------------------
   DOMNodeList * omega_list = pop_analysis->getElementsByTagName( XML.X_OMEGA );
   int nOmegaSpecs = omega_list->getLength();
   if( nOmegaSpecs > 1 )
@@ -686,6 +703,9 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 
   }
 
+  //-------------------------------------------
+  // <sigma>
+  //-------------------------------------------
   DOMNodeList * sigma_list = pop_analysis->getElementsByTagName( XML.X_SIGMA );
   int nSigmaSpecs = sigma_list->getLength();
   if( nSigmaSpecs > 1 )
@@ -893,23 +913,23 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	}
   }
   
-  //---------------------------------------------------------------------------------------
+  //-------------------------------------------
+  // <sigma>
+  //-------------------------------------------
   // eta
   // NOTE: eta is not given by the user.  
-  // eta's initial estimate is set to 0.0 automatically.
-  //
-  //---------------------------------------------------------------------------------------
+  // eta's initial estimate is initialized to
+  // 0.0 here.
+  //-------------------------------------------
   myEtaLen = myOmegaDim;
   char etaDefault[] = "0.0";
   Symbol * sym_eta = table->insertVector( nonmem::ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
 
-  //---------------------------------------------------------------------------------------
-  // Sigma 
-  // Sigma is the covariance of EPS: thus, 
-  // the order of Sigma is the length of EPS vector.
-  //---------------------------------------------------------------------------------------
+  //-------------------------------------------
+  // <eps> 
+  //-------------------------------------------
   myEpsLen = mySigmaDim;
   char epsDefault[] = "0.0";
   Symbol * sym_eps = table->insertVector( nonmem::EPS, myEpsLen, Symbol::SYSTEM, Symbol::READONLY );
@@ -918,10 +938,15 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 
   //---------------------------------------------------------------------------------------
   // (Optional) Statistics elements
-  //---------------------------------------------------------------------------------------
+  //
   // <description>
   // <simulation>
   // <pop_stat>
+  //---------------------------------------------------------------------------------------
+
+  //-------------------------------------------
+  // <description>
+  //-------------------------------------------
   DOMNodeList * descriptions = pop_analysis->getElementsByTagName( XML.X_DESCRIPTION );
   myDescription = new char[ 128 ];
   strcpy( myDescription, "--- This file is generated by SPK Compiler ---" );
@@ -935,6 +960,9 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	}
     }
 
+  //-------------------------------------------
+  // <simulation>
+  //-------------------------------------------
   myIsSimulate = false;
   mySeed       = 0;
   DOMNodeList * simulations = pop_analysis->getElementsByTagName( XML.X_SIMULATION );
@@ -990,6 +1018,9 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	}
     }
 
+  //-------------------------------------------
+  // <pop_stat>
+  //-------------------------------------------
   DOMNodeList * pop_stat_list = pop_analysis->getElementsByTagName( XML.X_POP_STAT );
 
   // Statistics computation can be done only when the parameter estimation
@@ -1088,6 +1119,12 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
     || myIsInvCov 
     || myIsConfidence 
     || myIsCoefficient;
+
+  //--------------------------------------------------------------------------------------
+  // Set trace levels.
+  //--------------------------------------------------------------------------------------
+  myIndTraceLevel = 0;
+  myPopTraceLevel = 1;
 
   return;
 }

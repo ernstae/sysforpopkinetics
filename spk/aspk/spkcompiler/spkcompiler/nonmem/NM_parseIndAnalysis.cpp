@@ -15,6 +15,13 @@
 using namespace std;
 using namespace xercesc;
 
+/*
+ *****************************************************************************************
+ *
+ * Parsing <ind_analysis>
+ *
+ *****************************************************************************************
+ */
 void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 {
   //---------------------------------------------------------------------------------------
@@ -121,15 +128,14 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 
   setPopSize( 1 );
 
-  myIndTraceLevel = 1;
-  myPopTraceLevel = 1;
-
   //---------------------------------------------------------------------------------------
-  // Optional attributes
-  //---------------------------------------------------------------------------------------
-  // * mitr   --- required when is_estimation == "yes"
+  // Optional attributes that matter when <ind_analysis::is_estimation> is "yes".
+  //
+  // * mitr   
   // * is_restart = {yes, "no"}
   // * sig_digits = 3
+  //
+  //---------------------------------------------------------------------------------------
   myIndMitr   = 0;
   mySigDigits = 3;
 
@@ -845,6 +851,10 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
     || myIsInvCov 
     || myIsConfidence 
     || myIsCoefficient;
+
+  myIndTraceLevel = 1;
+  myPopTraceLevel = 1;
+
 
   return;
 }
