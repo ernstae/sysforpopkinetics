@@ -12,24 +12,24 @@
       as part of SPK test environment.
       </para>
       <para>
-	This document is written for members of
-	the RFPK Software Team and associates and is specific to the
-	computer systems and network installed in the RFPK Laboratory
-	of the &dept; of the &uw;.  RFPK is the Resource for
-	Population Kinetics.  Its work is supported, in part, by grant
-	P41 EB-001975 of the National Institutes of Health (NIH) of
-	the U.S.  Department of Health and Human Services.
+        This document is written for members of
+        the RFPK Software Team and associates and is specific to the
+        computer systems and network installed in the RFPK Laboratory
+        of the &dept; of the &uw;.  RFPK is the Resource for
+        Population Kinetics.  Its work is supported, in part, by grant
+        P41 EB-001975 of the National Institutes of Health (NIH) of
+        the U.S.  Department of Health and Human Services.
       </para>
       <para>
-	<link linkend="copyright">Copyright</link> (c) 2005, by the &uw;.
+        <link linkend="copyright">Copyright</link> (c) 2005, by the &uw;.
       </para>
     </abstract>
     <revhistory>
       <revision>
-	<revnumber>1.0</revnumber>
-	<date>Oct 21, 2005</date>
-	<authorinitials>bmb</authorinitials>
-	<revremark></revremark>
+        <revnumber>1.0</revnumber>
+        <date>Oct 21, 2005</date>
+        <authorinitials>bmb</authorinitials>
+        <revremark></revremark>
       </revision>
     </revhistory>
   </articleinfo>
@@ -54,14 +54,14 @@
     <title>Installation</title>
     <orderedlist>
       <listitem>
-	<literallayout>copy most recent version 
-	whitechuck:/opt/downlaod/qn01box-yy-mm-dd.tar.gz
-to /tmp on the installation machine.
-	</literallayout>
-	<para>
-	Here and below yy is the year, mm is the month, and dd is the day 
-	(each as two decimal digits) corresponding to the version of QN01Box.
-	</para>
+        <para>Copy most recent version of
+          <screen>
+           whitechuck:/opt/downlaod/qn01box-yy-mm-dd.tar.gz
+          </screen>
+          to /tmp on the installation machine.  Here and below 
+          yy is the year, mm is the month, and dd is the day 
+          (each as two decimal digits) corresponding to the version of QN01Box.
+        </para>
       </listitem>
       <listitem>
         <para>
@@ -86,10 +86,10 @@ to /tmp on the installation machine.
            CPPAD_POSTFIX_DIR=spktest \
            COMPILE_FLAGS="compiler_flags"
         </screen>
-	where the optimized value for
-	compiler_flags is "-DNDEBUG -O3 -Wall"
-	and the debug value for
-	compiler_flags is "-g -Wall".
+        where the optimized value for
+        compiler_flags is "-DNDEBUG -O3 -Wall"
+        and the debug value for
+        compiler_flags is "-g -Wall".
         </para>
       </listitem>
       <listitem>
