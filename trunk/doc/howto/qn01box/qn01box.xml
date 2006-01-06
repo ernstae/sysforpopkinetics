@@ -78,7 +78,7 @@ to /tmp on the installation machine.
         <para>
         Configure
         <screen>
-        cd cppad-yy-mm-dd
+        cd qn01box-yy-mm-dd
         ./configure \
            --prefix=/usr/local \
            POSTFIX_DIR=spktest \
