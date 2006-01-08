@@ -192,6 +192,20 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, omegaOrder );" << endl;
   oNonmemPars << endl;
 
+  oNonmemPars << "   // A C-arrary containing the fixation flags for OMEGA." << endl;
+  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+  oNonmemPars << "   double c_omegaFixed[ omegaOrder ] = { "; 
+  for( int j=0; j<myOmegaOrder; j++ )
+    {
+      if( j>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << pOmega->fixed[0][j];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<double> omegaFixed( c_omegaFixed, omegaOrder );" << endl;
+  oNonmemPars << endl;
+
+
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // EPS" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
@@ -242,6 +256,18 @@ void NonmemTranslator::generateNonmemParsNamespace() const
 	}
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );" << endl;
+
+      oNonmemPars << "   // A C-arrary containing the fixation flags for SIGMA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   double c_sigmaFixed[ sigmaOrder ] = { ";
+      for( int j=0; j<mySigmaOrder; j++ )
+	{
+	  if( j>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << pSigma->fixed[0][j];
+	}
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<double> sigmaFixed( c_sigmaFixed, sigmaOrder );" << endl;
     }
   else
     {
