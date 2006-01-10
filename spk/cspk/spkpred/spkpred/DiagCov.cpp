@@ -62,7 +62,11 @@ DiagCov::DiagCov( int nRowIn )
 {
 }
 
-
+DiagCov::DiagCov( int nRowIn,  const SPK_VA::valarray<bool>& minRepFixedIn )
+  :
+  Cov( nRowIn, nRowIn, minRepFixedIn )
+{
+}
 /*************************************************************************
  *
  * Function: cov
@@ -335,7 +339,6 @@ void DiagCov::inv_par( SPK_VA::valarray<double>& inv_parOut ) const
 
   // Create a matrix that has only zeroes.
   inv_parCurr = 0.0;
-
   // Set the nonzero elements of the derivative, i.e. the partial
   // derivatives of the diagonal elements of the inverse of the 
   // the covariance,
@@ -374,9 +377,9 @@ void DiagCov::inv_par( SPK_VA::valarray<double>& inv_parOut ) const
 /*************************************************************************
  *
  * Function: getParLimits
- *
+ * * Modfied by David Salinger to allow for fixed components 05-11-21
  *//**
- * Gets the lower and upper limits for the covariance matrix parameters
+ * Determines the lower and upper limits for the covariance matrix parameters
  * at the current parameter value.  These limits are for use during the
  * optimization of objective functions that depend on these parameters.
  *
@@ -409,7 +412,6 @@ void DiagCov::getParLimits(
     cov( tempCov );
   }
 
-
   //------------------------------------------------------------
   // Set the limits for the parameters.
   //------------------------------------------------------------
@@ -423,20 +425,33 @@ void DiagCov::getParLimits(
   //
   // These limits for the covariance diagonal elements imply
   // these limits for its parameters,
-  //
-  //              -                -                            -                -
+  // If fixed[i], the parameter is set to the value .5 * log( cov[i,i] )
+  // Otherwise    -                -                            -                -
   //             |                  |                          |                  |
   //      1      |   1      (curr)  |                   1      |          (curr)  |
   //     --- log |  ---  cov        |  <=   par    <=  --- log |  100  cov        |  .
   //      2      |  100     (i,i)   |          i        2      |          (i,i)   |
-  //             |                  |                          |                  |
+  //             |                  |                          |                  |   
   //              -                -                            -                -
   //
+  // For fixed covariance elements, the upper and lower bounds are set to the par value.
+  //
   int i;
+  double parValue;
   for ( i = 0; i < nPar; i++ )
-  {
-    parLow[i] = 0.5 * log( covCurr[i + i * nRow] / 100.0 );
-    parUp[i]  = 0.5 * log( covCurr[i + i * nRow] * 100.0 );
+  { 
+    parValue = .5 * log( covCurr[i + i * nRow] );
+    if( parFixed[i] )
+    {  parLow[i] = parValue;
+       parUp[i]  = parValue;
+    }
+    else 
+    {   //parLow[i] = parValue - 0.5 * log( 100.0 );
+	//parUp[i]  = parValue + 0.5 * log( 100.0 );
+	parLow[i] = 0.5 * log( covCurr[i + i * nRow] / 100.0 );
+	parUp[i]  = 0.5 * log( covCurr[i + i * nRow] * 100.0 );
+
+    }
   }    
 
 }

@@ -19,7 +19,7 @@
 %************************************************************************
 
 */
-/*************************************************************************
+/************************************************************************
  *//**
  * @file: Cov.cpp
  *
@@ -62,6 +62,7 @@ Cov::Cov( int nRowIn, int nParIn )
   :
   nRow             ( nRowIn ),
   nPar             ( nParIn ),
+  parFixed         ( false, nParIn ),
   parCurr          ( nParIn ),
   covCurr          ( nRowIn * nRowIn ),
   cov_parCurr      ( nRowIn * nRowIn * nParIn ),
@@ -74,6 +75,24 @@ Cov::Cov( int nRowIn, int nParIn )
 {
 }
 
+//[Revisit - eliminate the need for two constructors in Cov, FullCov, DiagCov by
+//  providing default (all false) in PopPredModel and IndPredModel constructors - Dave]
+Cov::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn )
+  :
+  nRow             ( nRowIn ),
+  nPar             ( nParIn ),
+  parFixed         ( minRepFixedIn ),
+  parCurr          ( nParIn ),
+  covCurr          ( nRowIn * nRowIn ),
+  cov_parCurr      ( nRowIn * nRowIn * nParIn ),
+  invCurr          ( nRowIn * nRowIn ),
+  inv_parCurr      ( nRowIn * nRowIn * nParIn ),
+  isCovCurrOk      ( false ),
+  isCov_parCurrOk  ( false ),
+  isInvCurrOk      ( false ),
+  isInv_parCurrOk  ( false )
+{
+}
 
 /*************************************************************************
  *
