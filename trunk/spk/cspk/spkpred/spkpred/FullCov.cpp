@@ -65,6 +65,11 @@ FullCov::FullCov( int nRowIn )
 {
 }
 
+FullCov::FullCov( int nRowIn, const valarray<bool>& minRepFixedIn )
+  :
+  Cov( nRowIn, nRowIn * ( nRowIn + 1 ) / 2, minRepFixedIn )
+{
+}
 
 /*************************************************************************
  *
@@ -628,6 +633,9 @@ void FullCov::getParLimits(
   //
   //     sum( m )  =  0 + 1 + 2 + ... + m  .
   //
+  //
+  // For fixed covariance elements, the upper and lower bounds are set to the par value.
+  //
   double covDiag;
   int sumI = 0;
   for ( i = 0; i < nRow; i++ )
@@ -636,18 +644,36 @@ void FullCov::getParLimits(
 
     covDiag = covCurr[i + i * nRow];
 
+    // CHECK if parCurr has been filled in
+
     // Set the limits for the parameters not on the diagonal.
     for ( k = 0; k < i; k++ )
     {
-      parLow[sumI + k] = - sqrt( covDiag * 100.0 );
-      parUp [sumI + k] = + sqrt( covDiag * 100.0 );
+      if( parFixed[sumI + k] )
+      {
+	parLow[sumI + k] = parCurr[sumI + k];
+	parUp [sumI + k] = parCurr[sumI + k];
+      }
+      else
+      {
+        parLow[sumI + k] = - sqrt( covDiag * 100.0 );
+	parUp [sumI + k] = + sqrt( covDiag * 100.0 );
+      }
     }    
 
     // Set the limits for the parameter that is on the diagonal.
-    parLow[sumI + i] = 0.5 * log( covDiag / 100.0 );
-    parUp [sumI + i] = 0.5 * log( covDiag * 100.0 );
-  }    
+    if( parFixed[sumI + i] )
+    {
+      parLow[sumI + i] = parCurr[sumI + i];
+      parUp [sumI + i] = parCurr[sumI + i];
+    }
+    else
+    {
+      parLow[sumI + i] = 0.5 * log( covDiag / 100.0 );
+      parUp [sumI + i] = 0.5 * log( covDiag * 100.0 );
+    }    
 
+  }
 }
 
 

@@ -83,7 +83,7 @@ class FullCov : public Cov
 
 public:
   FullCov( int nRowIn );
-
+  FullCov( int nRowIn, const SPK_VA::valarray<bool>& minRepFixedIn );
 
   //------------------------------------------------------------
   // Mathematical functions.

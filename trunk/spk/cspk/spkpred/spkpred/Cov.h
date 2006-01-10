@@ -60,6 +60,8 @@ class Cov
 
 public:
   Cov( int nRowIn, int nParIn );
+  // New constructor enabling FIXed cov elements
+  Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn );
 
   // The destructor must be virtual for an abstract class.
   virtual ~Cov() {}
@@ -73,6 +75,8 @@ public:
   const int nRow;                 ///< Number of rows.
   const int nPar;                 ///< Number of minimal representation parameters.
 
+protected:
+  const SPK_VA::valarray<bool> parFixed;  ///< Fixed cov matrix pars
 
   //------------------------------------------------------------
   // State information.
@@ -146,7 +150,7 @@ public:
   /// optimization of objective functions that depend on these parameters.
   virtual void getParLimits(
     SPK_VA::valarray<double>&  parLow,
-    SPK_VA::valarray<double>&  parUp ) const = 0;
+    SPK_VA::valarray<double>&  parUp) const = 0;
 
   /// Sets parOut equal to the covariance matrix parameters that
   /// correspond to the covariance matrix covIn.

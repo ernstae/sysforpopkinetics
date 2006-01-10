@@ -77,7 +77,7 @@ class DiagCov : public Cov
 
 public:
   DiagCov( int nRowIn );
-
+  DiagCov( int nRowIn,  const SPK_VA::valarray<bool>& minRepFixedIn );
 
   //------------------------------------------------------------
   // Mathematical functions.
