@@ -89,7 +89,7 @@ using SPK_VA::valarray;
  * contained in omegaMinRepIn.
  */
 /*************************************************************************/
-
+//Constructor (original)
 IndPredModel::IndPredModel(
     PredBase< AD<double> >&          predEvaluatorIn,
     int                              nThetaIn,
@@ -144,6 +144,366 @@ IndPredModel::IndPredModel(
   else if ( omegaStructIn == FULL )
   {
     pOmegaCurr = new FullCov( nEta );
+  }
+  else
+  {
+    throw SpkException(
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Omega.",
+     __LINE__, 
+     __FILE__ );
+  }
+
+  try
+  {
+    // Get the number of parameters required by the structure of
+    // this covariance matrix.
+    nOmegaPar = pOmegaCurr->getNPar();
+    
+    // Save the omega value maintained by this class.
+    omegaCurr.resize( nEta * nEta );
+    pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
+    assert( omegaMinRepIn.size() == nOmegaPar );
+    
+    // Set the omega value maintained by the covariance class.
+    pOmegaCurr->setCov( omegaCurr );
+    
+    // Save the initial value for the omega parameters.
+    omegaParCurr.resize( nOmegaPar);
+    pOmegaCurr->calcPar( omegaCurr, omegaParCurr );
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The initialization of the Omega covariance matrix failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the Pred block parameters.
+  //------------------------------------------------------------
+
+  // Set the current value for theta.
+  thetaCurr.resize( nTheta );
+  thetaCurr = thetaCurrIn;
+  assert( thetaCurrIn.size() == nTheta );
+
+  // Set the lower limit for theta.
+  thetaLow.resize( nTheta );
+  thetaLow = thetaLowIn;
+  assert( thetaLowIn.size() == nTheta );
+
+  // Set the upper limit for theta.
+  thetaUp.resize( nTheta );
+  thetaUp = thetaUpIn;
+  assert( thetaUpIn.size() == nTheta );
+
+  // For individual level Pred models, eta is always equal to zero.
+  etaCurr.resize( nEta );
+  etaCurr = 0.0;
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual.
+  //------------------------------------------------------------
+
+  // Set the current individual to a number different than zero
+  // so that selectIndividual() won't use the cached values.
+  iCurr = 1;
+
+  // Set the current individual.
+  doSelectIndividual( 0 );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual parameter.
+  //------------------------------------------------------------
+
+  // The individual parameter is composed of the parameters that are
+  // optimized over when performing individual level estimation,
+  //
+  //             -              -
+  //            |   thetaCurr    |
+  //     b   =  |                |  .
+  //      i     |  omegaParCurr  |
+  //             -              -
+  //
+  nIndPar = nTheta + nOmegaPar;
+  bCurr.resize( nIndPar );
+
+  int k;
+
+  // Set the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    bCurr[k + thetaOffsetInIndPar] = thetaCurr[k];
+  }
+
+  // Set the parameters for the omega covariance matrix.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    bCurr[k + omegaParOffsetInIndPar] = omegaParCurr[k];
+  }
+
+}
+
+//Constructor (with inputs for FIXed elements)
+//[Revist - get rid of 2nd constructor - Dave]
+IndPredModel::IndPredModel(
+    PredBase< AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn )
+  :
+  nTheta                            ( nThetaIn ),
+  nEta                              ( nEtaIn ),
+  thetaOffsetInIndPar               ( 0 ),
+  omegaParOffsetInIndPar            ( nThetaIn ),
+  nZ                                ( nThetaIn + nEtaIn ),
+  thetaOffsetInZ                    ( 0 ),
+  etaOffsetInZ                      ( nThetaIn ),
+  fOffsetInW                        ( 0 ),
+  pOmegaCurr                        ( 0 ),
+  pPredADFunCurr                    ( 0 ),
+  predEvaluator                     ( predEvaluatorIn ),
+  zCurr                             ( nZ ),
+  isDataMeanCurrOk                  ( false ),
+  isDataMean_indParCurrOk           ( false ),
+  isDataVarianceCurrOk              ( false ),
+  isDataVariance_indParCurrOk       ( false ),
+  isDataVarianceInvCurrOk           ( false ),
+  isDataVarianceInv_indParCurrOk    ( false ),
+  isPredADFunCurrOk                 ( false ),
+  isPredFirstDerivCurrOk            ( false ),
+  isPredSecondDerivCurrOk           ( false ),
+  usedCachedDataMean                ( false ),
+  usedCachedDataMean_indPar         ( false ),
+  usedCachedDataVariance            ( false ),
+  usedCachedDataVariance_indPar     ( false ),
+  usedCachedDataVarianceInv         ( false ),
+  usedCachedDataVarianceInv_indPar  ( false ),
+  usedCachedPredADFun               ( false ),
+  usedCachedPredFirstDeriv          ( false ),
+  usedCachedPredSecondDeriv         ( false )
+{
+  //------------------------------------------------------------
+  // Initialize quantities related to the covariance matrix.
+  //------------------------------------------------------------
+
+  // Construct omega, the covariance matrix for eta, with the
+  // appropriate structure.
+  if ( omegaStructIn == DIAGONAL )
+  {
+    pOmegaCurr = new DiagCov( nEta, omegaMinRepFixedIn );
+  }
+  else if ( omegaStructIn == FULL )
+  {
+    pOmegaCurr = new FullCov( nEta, omegaMinRepFixedIn );
+  }
+  else
+  {
+    throw SpkException(
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Omega.",
+     __LINE__, 
+     __FILE__ );
+  }
+
+  try
+  {
+    // Get the number of parameters required by the structure of
+    // this covariance matrix.
+    nOmegaPar = pOmegaCurr->getNPar();
+    
+    // Save the omega value maintained by this class.
+    omegaCurr.resize( nEta * nEta );
+    pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
+    assert( omegaMinRepIn.size() == nOmegaPar );
+    
+    // Set the omega value maintained by the covariance class.
+    pOmegaCurr->setCov( omegaCurr );
+    
+    // Save the initial value for the omega parameters.
+    omegaParCurr.resize( nOmegaPar);
+    pOmegaCurr->calcPar( omegaCurr, omegaParCurr );
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The initialization of the Omega covariance matrix failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the Pred block parameters.
+  //------------------------------------------------------------
+
+  // Set the current value for theta.
+  thetaCurr.resize( nTheta );
+  thetaCurr = thetaCurrIn;
+  assert( thetaCurrIn.size() == nTheta );
+
+  // Set the lower limit for theta.
+  thetaLow.resize( nTheta );
+  thetaLow = thetaLowIn;
+  assert( thetaLowIn.size() == nTheta );
+
+  // Set the upper limit for theta.
+  thetaUp.resize( nTheta );
+  thetaUp = thetaUpIn;
+  assert( thetaUpIn.size() == nTheta );
+
+  // For individual level Pred models, eta is always equal to zero.
+  etaCurr.resize( nEta );
+  etaCurr = 0.0;
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual.
+  //------------------------------------------------------------
+
+  // Set the current individual to a number different than zero
+  // so that selectIndividual() won't use the cached values.
+  iCurr = 1;
+
+  // Set the current individual.
+  doSelectIndividual( 0 );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual parameter.
+  //------------------------------------------------------------
+
+  // The individual parameter is composed of the parameters that are
+  // optimized over when performing individual level estimation,
+  //
+  //             -              -
+  //            |   thetaCurr    |
+  //     b   =  |                |  .
+  //      i     |  omegaParCurr  |
+  //             -              -
+  //
+  nIndPar = nTheta + nOmegaPar;
+  bCurr.resize( nIndPar );
+
+  int k;
+
+  // Set the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    bCurr[k + thetaOffsetInIndPar] = thetaCurr[k];
+  }
+
+  // Set the parameters for the omega covariance matrix.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    bCurr[k + omegaParOffsetInIndPar] = omegaParCurr[k];
+  }
+
+}
+
+//Constructor (with inputs for block structure)
+IndPredModel::IndPredModel(
+    PredBase< AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn,
+    const SPK_VA::valarray<covStruct>&  omegaBlockStruct,
+    const SPK_VA::valarray<int>&     omegaBlockDims,
+    const SPK_VA::valarray<bool>&    omegaBlockSameAsPrev )
+  :
+  nTheta                            ( nThetaIn ),
+  nEta                              ( nEtaIn ),
+  thetaOffsetInIndPar               ( 0 ),
+  omegaParOffsetInIndPar            ( nThetaIn ),
+  nZ                                ( nThetaIn + nEtaIn ),
+  thetaOffsetInZ                    ( 0 ),
+  etaOffsetInZ                      ( nThetaIn ),
+  fOffsetInW                        ( 0 ),
+  pOmegaCurr                        ( 0 ),
+  pPredADFunCurr                    ( 0 ),
+  predEvaluator                     ( predEvaluatorIn ),
+  zCurr                             ( nZ ),
+  isDataMeanCurrOk                  ( false ),
+  isDataMean_indParCurrOk           ( false ),
+  isDataVarianceCurrOk              ( false ),
+  isDataVariance_indParCurrOk       ( false ),
+  isDataVarianceInvCurrOk           ( false ),
+  isDataVarianceInv_indParCurrOk    ( false ),
+  isPredADFunCurrOk                 ( false ),
+  isPredFirstDerivCurrOk            ( false ),
+  isPredSecondDerivCurrOk           ( false ),
+  usedCachedDataMean                ( false ),
+  usedCachedDataMean_indPar         ( false ),
+  usedCachedDataVariance            ( false ),
+  usedCachedDataVariance_indPar     ( false ),
+  usedCachedDataVarianceInv         ( false ),
+  usedCachedDataVarianceInv_indPar  ( false ),
+  usedCachedPredADFun               ( false ),
+  usedCachedPredFirstDeriv          ( false ),
+  usedCachedPredSecondDeriv         ( false )
+{
+  //------------------------------------------------------------
+  // Initialize quantities related to the covariance matrix.
+  //------------------------------------------------------------
+
+  // Construct omega, the covariance matrix for eta, with the
+  // appropriate structure.
+  if ( omegaStructIn == DIAGONAL )
+  {
+    pOmegaCurr = new DiagCov( nEta, omegaMinRepFixedIn );
+  }
+  else if ( omegaStructIn == FULL )
+  {
+    pOmegaCurr = new FullCov( nEta, omegaMinRepFixedIn );
   }
   else
   {

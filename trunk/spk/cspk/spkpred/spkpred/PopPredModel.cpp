@@ -99,6 +99,7 @@ using SPK_VA::valarray;
  */
 /*************************************************************************/
 
+//Constructor (original)
 PopPredModel::PopPredModel(
     PredBase< AD<double> >&          predEvaluatorIn,
     int                              nThetaIn,
@@ -236,6 +237,607 @@ PopPredModel::PopPredModel(
   else if ( sigmaStructIn == FULL )
   {
     pSigmaCurr = new FullCov( nEps );
+  }
+  else
+  {
+    throw SpkException(
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Sigma.",
+     __LINE__, 
+     __FILE__ );
+  }
+
+  try
+  {
+    // Get the number of parameters required by the structure of
+    // this covariance matrix.
+    nSigmaPar = pSigmaCurr->getNPar();
+  
+    // Save the sigma value maintained by this class that corresponds
+    // to the minimal representation passed to this constructor.
+    sigmaCurr.resize( nEps * nEps );
+    pSigmaCurr->expandCovMinRep( sigmaMinRepIn, sigmaCurr );
+    assert( sigmaMinRepIn.size() == nSigmaPar );
+  
+    // Set the sigma value maintained by the covariance class.
+    pSigmaCurr->setCov( sigmaCurr );
+  
+    // Save the initial value for the sigma parameters.
+    sigmaParCurr.resize( nSigmaPar);
+    pSigmaCurr->calcPar( sigmaCurr, sigmaParCurr );
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The initialization of the Sigma covariance matrix failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the initialization of the Sigma covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the initialization of the Sigma covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the Pred block parameters.
+  //------------------------------------------------------------
+
+  // Set the current value for theta.
+  thetaCurr.resize( nTheta );
+  thetaCurr = thetaCurrIn;
+  assert( thetaCurrIn.size() == nTheta );
+
+  // Set the lower limit for theta.
+  thetaLow.resize( nTheta );
+  thetaLow = thetaLowIn;
+  assert( thetaLowIn.size() == nTheta );
+
+  // Set the upper limit for theta.
+  thetaUp.resize( nTheta );
+  thetaUp = thetaUpIn;
+  assert( thetaUpIn.size() == nTheta );
+
+  // Set the current value for eta.
+  etaCurr.resize( nEta );
+  etaCurr = etaCurrIn;
+  assert( etaCurrIn.size() == nEta );
+
+  // For population level Pred models, eps is always equal to zero.
+  epsCurr.resize( nEps );
+  epsCurr = 0.0;
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual.
+  //------------------------------------------------------------
+
+  // Set the current individual to a number different than zero
+  // so that selectIndividual() won't use the cached values.
+  iCurr = 1;
+
+  // Set the current individual.
+  doSelectIndividual( 0 );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the population parameter.
+  //------------------------------------------------------------
+
+  // The population parameter is composed of the parameters that are
+  // optimized over when performing population level estimation,
+  //
+  //                -              -
+  //               |   thetaCurr    |
+  //               |                |
+  //     alpha  =  |  omegaParCurr  |  .
+  //               |                |
+  //               |  sigmaParCurr  |
+  //                -              -
+  //
+  nPopPar = nTheta + nOmegaPar + nSigmaPar;
+  alphaCurr.resize( nPopPar );
+
+  // Set the offsets for the parameters.
+  thetaOffsetInPopPar    = 0;
+  omegaParOffsetInPopPar = nTheta;
+  sigmaParOffsetInPopPar = nTheta + nOmegaPar;
+
+  int k;
+
+  // Set the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    alphaCurr[k + thetaOffsetInPopPar] = thetaCurr[k];
+  }
+
+  // Set the parameters for the omega covariance matrix.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    alphaCurr[k + omegaParOffsetInPopPar] = omegaParCurr[k];
+  }
+
+  // Set the parameters for the sigma covariance matrix.
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    alphaCurr[k + sigmaParOffsetInPopPar] = sigmaParCurr[k];
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual parameter.
+  //------------------------------------------------------------
+
+  // The individual parameter is the parameter that is optimized
+  // over when performing individual level estimation,
+  //
+  //     b   =  etaCurr  .
+  //      i
+  //
+  nIndPar = nEta;
+  bCurr.resize( nIndPar );
+
+  bCurr =etaCurr;
+}
+
+//Constructor (with input for FIXed elements)
+//[Revisit - remove this (2nd) constructor - Dave]
+PopPredModel::PopPredModel(
+    PredBase< AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    const SPK_VA::valarray<double>&  etaCurrIn,
+    int                              nEpsIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn,
+    covStruct                        sigmaStructIn,
+    const SPK_VA::valarray<double>&  sigmaMinRepIn,
+    const SPK_VA::valarray<bool>&    sigmaMinRepFixedIn )
+  :
+  nTheta                              ( nThetaIn ),
+  nEta                                ( nEtaIn ),
+  nEps                                ( nEpsIn ),
+  nZ                                  ( nThetaIn + nEtaIn + nEpsIn ),
+  thetaOffsetInZ                      ( 0 ),
+  etaOffsetInZ                        ( nThetaIn ),
+  epsOffsetInZ                        ( nThetaIn + nEtaIn ),
+  fOffsetInW                          ( 0 ),
+  pOmegaCurr                          ( 0 ),
+  pSigmaCurr                          ( 0 ),
+  pPredADFunCurr                      ( 0 ),
+  predEvaluator                       ( predEvaluatorIn ),
+  zCurr                               ( nZ ),
+  isDataMeanCurrOk                    ( false ),
+  isDataMean_popParCurrOk             ( false ),
+  isDataMean_indParCurrOk             ( false ),
+  isDataVarianceCurrOk                ( false ),
+  isDataVariance_popParCurrOk         ( false ),
+  isDataVariance_indParCurrOk         ( false ),
+  isDataVarianceInvCurrOk             ( false ),
+  isDataVarianceInv_popParCurrOk      ( false ),
+  isDataVarianceInv_indParCurrOk      ( false ),
+  isIndParVariance_popParCurrOk       ( false ),
+  isIndParVarianceInv_popParCurrOk    ( false ),
+  isPredADFunCurrOk                   ( false ),
+  isPredFirstDerivCurrOk              ( false ),
+  isPredSecondDerivCurrOk             ( false ),
+  usedCachedDataMean                  ( false ),
+  usedCachedDataMean_popPar           ( false ),
+  usedCachedDataMean_indPar           ( false ),
+  usedCachedDataVariance              ( false ),
+  usedCachedDataVariance_popPar       ( false ),
+  usedCachedDataVariance_indPar       ( false ),
+  usedCachedDataVarianceInv           ( false ),
+  usedCachedDataVarianceInv_popPar    ( false ),
+  usedCachedDataVarianceInv_indPar    ( false ),
+  usedCachedIndParVariance_popPar     ( false ),
+  usedCachedIndParVarianceInv_popPar  ( false ),
+  usedCachedPredADFun                 ( false ),
+  usedCachedPredFirstDeriv            ( false ),
+  usedCachedPredSecondDeriv           ( false )
+{
+  //------------------------------------------------------------
+  // Initialize quantities related to the omega covariance matrix.
+  //------------------------------------------------------------
+
+  // Construct omega, the covariance matrix for eta, with the
+  // appropriate structure.
+  if ( omegaStructIn == DIAGONAL )
+  {
+    pOmegaCurr = new DiagCov( nEta, omegaMinRepFixedIn );
+  }
+  else if ( omegaStructIn == FULL )
+  {
+    pOmegaCurr = new FullCov( nEta, omegaMinRepFixedIn );
+  }
+  else
+  {
+    throw SpkException(
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Omega.",
+     __LINE__, 
+     __FILE__ );
+  }
+
+  try
+  {
+    // Get the number of parameters required by the structure of
+    // this covariance matrix.
+    nOmegaPar = pOmegaCurr->getNPar();
+  
+    // Create a temporary version of omega that corresponds to the
+    // minimal representation passed to this constructor.
+    valarray<double> omegaTemp( nEta * nEta );
+    pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaTemp );
+    assert( omegaMinRepIn.size() == nOmegaPar );
+  
+    // Set the omega value maintained by the covariance class.
+    pOmegaCurr->setCov( omegaTemp );
+  
+    // Save the initial value for the omega parameters.
+    omegaParCurr.resize( nOmegaPar);
+    pOmegaCurr->calcPar( omegaTemp, omegaParCurr );
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The initialization of the Omega covariance matrix failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the sigma covariance matrix.
+  //------------------------------------------------------------
+
+  // Construct sigma, the covariance matrix for eps, with the
+  // appropriate structure.
+  if ( sigmaStructIn == DIAGONAL )
+  {
+    pSigmaCurr = new DiagCov( nEps, sigmaMinRepFixedIn );
+  }
+  else if ( sigmaStructIn == FULL )
+  {
+    pSigmaCurr = new FullCov( nEps, sigmaMinRepFixedIn );
+  }
+  else
+  {
+    throw SpkException(
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Sigma.",
+     __LINE__, 
+     __FILE__ );
+  }
+
+  try
+  {
+    // Get the number of parameters required by the structure of
+    // this covariance matrix.
+    nSigmaPar = pSigmaCurr->getNPar();
+  
+    // Save the sigma value maintained by this class that corresponds
+    // to the minimal representation passed to this constructor.
+    sigmaCurr.resize( nEps * nEps );
+    pSigmaCurr->expandCovMinRep( sigmaMinRepIn, sigmaCurr );
+    assert( sigmaMinRepIn.size() == nSigmaPar );
+  
+    // Set the sigma value maintained by the covariance class.
+    pSigmaCurr->setCov( sigmaCurr );
+  
+    // Save the initial value for the sigma parameters.
+    sigmaParCurr.resize( nSigmaPar);
+    pSigmaCurr->calcPar( sigmaCurr, sigmaParCurr );
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The initialization of the Sigma covariance matrix failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the initialization of the Sigma covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the initialization of the Sigma covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the Pred block parameters.
+  //------------------------------------------------------------
+
+  // Set the current value for theta.
+  thetaCurr.resize( nTheta );
+  thetaCurr = thetaCurrIn;
+  assert( thetaCurrIn.size() == nTheta );
+
+  // Set the lower limit for theta.
+  thetaLow.resize( nTheta );
+  thetaLow = thetaLowIn;
+  assert( thetaLowIn.size() == nTheta );
+
+  // Set the upper limit for theta.
+  thetaUp.resize( nTheta );
+  thetaUp = thetaUpIn;
+  assert( thetaUpIn.size() == nTheta );
+
+  // Set the current value for eta.
+  etaCurr.resize( nEta );
+  etaCurr = etaCurrIn;
+  assert( etaCurrIn.size() == nEta );
+
+  // For population level Pred models, eps is always equal to zero.
+  epsCurr.resize( nEps );
+  epsCurr = 0.0;
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual.
+  //------------------------------------------------------------
+
+  // Set the current individual to a number different than zero
+  // so that selectIndividual() won't use the cached values.
+  iCurr = 1;
+
+  // Set the current individual.
+  doSelectIndividual( 0 );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the population parameter.
+  //------------------------------------------------------------
+
+  // The population parameter is composed of the parameters that are
+  // optimized over when performing population level estimation,
+  //
+  //                -              -
+  //               |   thetaCurr    |
+  //               |                |
+  //     alpha  =  |  omegaParCurr  |  .
+  //               |                |
+  //               |  sigmaParCurr  |
+  //                -              -
+  //
+  nPopPar = nTheta + nOmegaPar + nSigmaPar;
+  alphaCurr.resize( nPopPar );
+
+  // Set the offsets for the parameters.
+  thetaOffsetInPopPar    = 0;
+  omegaParOffsetInPopPar = nTheta;
+  sigmaParOffsetInPopPar = nTheta + nOmegaPar;
+
+  int k;
+
+  // Set the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    alphaCurr[k + thetaOffsetInPopPar] = thetaCurr[k];
+  }
+
+  // Set the parameters for the omega covariance matrix.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    alphaCurr[k + omegaParOffsetInPopPar] = omegaParCurr[k];
+  }
+
+  // Set the parameters for the sigma covariance matrix.
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    alphaCurr[k + sigmaParOffsetInPopPar] = sigmaParCurr[k];
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the individual parameter.
+  //------------------------------------------------------------
+
+  // The individual parameter is the parameter that is optimized
+  // over when performing individual level estimation,
+  //
+  //     b   =  etaCurr  .
+  //      i
+  //
+  nIndPar = nEta;
+  bCurr.resize( nIndPar );
+
+  bCurr =etaCurr;
+}
+
+
+//Constructor (3rd version - with block structure info)
+PopPredModel::PopPredModel(
+    PredBase< AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    const SPK_VA::valarray<double>&  etaCurrIn,
+    int                              nEpsIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn,
+    const SPK_VA::valarray<covStruct>&  omegaBlockStruct,
+    const SPK_VA::valarray<int>&     omegaBlockDims,
+    const SPK_VA::valarray<bool>&    omegaBlockSameAsPrev,
+    covStruct                        sigmaStructIn,
+    const SPK_VA::valarray<double>&  sigmaMinRepIn,
+    const SPK_VA::valarray<bool>&    sigmaMinRepFixedIn,
+    const SPK_VA::valarray<covStruct>&  sigmaBlockStruct,
+    const SPK_VA::valarray<int>&     sigmaBlockDims,
+    const SPK_VA::valarray<bool>&    sigmaBlockSameAsPrev
+ )
+  :
+  nTheta                              ( nThetaIn ),
+  nEta                                ( nEtaIn ),
+  nEps                                ( nEpsIn ),
+  nZ                                  ( nThetaIn + nEtaIn + nEpsIn ),
+  thetaOffsetInZ                      ( 0 ),
+  etaOffsetInZ                        ( nThetaIn ),
+  epsOffsetInZ                        ( nThetaIn + nEtaIn ),
+  fOffsetInW                          ( 0 ),
+  pOmegaCurr                          ( 0 ),
+  pSigmaCurr                          ( 0 ),
+  pPredADFunCurr                      ( 0 ),
+  predEvaluator                       ( predEvaluatorIn ),
+  zCurr                               ( nZ ),
+  isDataMeanCurrOk                    ( false ),
+  isDataMean_popParCurrOk             ( false ),
+  isDataMean_indParCurrOk             ( false ),
+  isDataVarianceCurrOk                ( false ),
+  isDataVariance_popParCurrOk         ( false ),
+  isDataVariance_indParCurrOk         ( false ),
+  isDataVarianceInvCurrOk             ( false ),
+  isDataVarianceInv_popParCurrOk      ( false ),
+  isDataVarianceInv_indParCurrOk      ( false ),
+  isIndParVariance_popParCurrOk       ( false ),
+  isIndParVarianceInv_popParCurrOk    ( false ),
+  isPredADFunCurrOk                   ( false ),
+  isPredFirstDerivCurrOk              ( false ),
+  isPredSecondDerivCurrOk             ( false ),
+  usedCachedDataMean                  ( false ),
+  usedCachedDataMean_popPar           ( false ),
+  usedCachedDataMean_indPar           ( false ),
+  usedCachedDataVariance              ( false ),
+  usedCachedDataVariance_popPar       ( false ),
+  usedCachedDataVariance_indPar       ( false ),
+  usedCachedDataVarianceInv           ( false ),
+  usedCachedDataVarianceInv_popPar    ( false ),
+  usedCachedDataVarianceInv_indPar    ( false ),
+  usedCachedIndParVariance_popPar     ( false ),
+  usedCachedIndParVarianceInv_popPar  ( false ),
+  usedCachedPredADFun                 ( false ),
+  usedCachedPredFirstDeriv            ( false ),
+  usedCachedPredSecondDeriv           ( false )
+{
+  //------------------------------------------------------------
+  // Initialize quantities related to the omega covariance matrix.
+  //------------------------------------------------------------
+
+  // Construct omega, the covariance matrix for eta, with the
+  // appropriate structure.
+  if ( omegaStructIn == DIAGONAL )
+  {
+    pOmegaCurr = new DiagCov( nEta, omegaMinRepFixedIn );
+  }
+  else if ( omegaStructIn == FULL )
+  {
+    pOmegaCurr = new FullCov( nEta, omegaMinRepFixedIn );
+  }
+  else
+  {
+    throw SpkException(
+     SpkError::SPK_USER_INPUT_ERR, 
+     "Unknown covariance matrix type requested for Omega.",
+     __LINE__, 
+     __FILE__ );
+  }
+
+  try
+  {
+    // Get the number of parameters required by the structure of
+    // this covariance matrix.
+    nOmegaPar = pOmegaCurr->getNPar();
+  
+    // Create a temporary version of omega that corresponds to the
+    // minimal representation passed to this constructor.
+    valarray<double> omegaTemp( nEta * nEta );
+    pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaTemp );
+    assert( omegaMinRepIn.size() == nOmegaPar );
+  
+    // Set the omega value maintained by the covariance class.
+    pOmegaCurr->setCov( omegaTemp );
+  
+    // Save the initial value for the omega parameters.
+    omegaParCurr.resize( nOmegaPar);
+    pOmegaCurr->calcPar( omegaTemp, omegaParCurr );
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The initialization of the Omega covariance matrix failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "An standard exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the initialization of the Omega covariance matrix.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the sigma covariance matrix.
+  //------------------------------------------------------------
+
+  // Construct sigma, the covariance matrix for eps, with the
+  // appropriate structure.
+  if ( sigmaStructIn == DIAGONAL )
+  {
+    pSigmaCurr = new DiagCov( nEps, sigmaMinRepFixedIn );
+  }
+  else if ( sigmaStructIn == FULL )
+  {
+    pSigmaCurr = new FullCov( nEps, sigmaMinRepFixedIn );
   }
   else
   {
