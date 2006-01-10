@@ -66,7 +66,7 @@ class IndPredModel : public SpkModel
   //------------------------------------------------------------
 
 public:
-  enum covStruct {DIAGONAL, FULL};
+  enum covStruct {DIAGONAL, FULL, BLOCKDIAG};
 
 
   //------------------------------------------------------------
@@ -83,6 +83,31 @@ IndPredModel::IndPredModel(
     int                              nEtaIn,
     covStruct                        omegaStructIn,
     const SPK_VA::valarray<double>&  omegaMinRepIn );
+
+IndPredModel::IndPredModel(
+    PredBase< CppAD::AD<double> >&       predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn );
+
+IndPredModel::IndPredModel(
+    PredBase< CppAD::AD<double> >&       predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn,
+    const SPK_VA::valarray<covStruct>&  omegaBlockStruct,
+    const SPK_VA::valarray<int>&     omegaBlockDims,
+    const SPK_VA::valarray<bool>&    omegaBlockSameAsPrev );
 
   ~IndPredModel();
 

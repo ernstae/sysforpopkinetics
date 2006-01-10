@@ -66,7 +66,7 @@ class PopPredModel : public SpkModel
   //------------------------------------------------------------
 
 public:
-  enum covStruct {DIAGONAL, FULL};
+  enum covStruct {DIAGONAL, FULL, BLOCKDIAG};
 
 
   //------------------------------------------------------------
@@ -87,6 +87,44 @@ PopPredModel::PopPredModel(
     const SPK_VA::valarray<double>&  omegaMinRepIn,
     covStruct                        sigmaStructIn,
     const SPK_VA::valarray<double>&  sigmaMinRepIn );
+
+PopPredModel::PopPredModel(
+    PredBase< CppAD::AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    const SPK_VA::valarray<double>&  etaCurrIn,
+    int                              nEpsIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn,
+    covStruct                        sigmaStructIn,
+    const SPK_VA::valarray<double>&  sigmaMinRepIn,
+    const SPK_VA::valarray<bool>&    sigmaMinRepFixedIn );
+
+PopPredModel::PopPredModel(
+    PredBase< CppAD::AD<double> >&          predEvaluatorIn,
+    int                              nThetaIn,
+    const SPK_VA::valarray<double>&  thetaLowIn,
+    const SPK_VA::valarray<double>&  thetaUpIn,
+    const SPK_VA::valarray<double>&  thetaCurrIn,
+    int                              nEtaIn,
+    const SPK_VA::valarray<double>&  etaCurrIn,
+    int                              nEpsIn,
+    covStruct                        omegaStructIn,
+    const SPK_VA::valarray<double>&  omegaMinRepIn,
+    const SPK_VA::valarray<bool>&    omegaMinRepFixedIn,
+    const SPK_VA::valarray<covStruct>&  omegaBlockStruct,
+    const SPK_VA::valarray<int>&     omegaBlockDims,
+    const SPK_VA::valarray<bool>&    omegaBlockSameAsPrev,
+    covStruct                        sigmaStructIn,
+    const SPK_VA::valarray<double>&  sigmaMinRepIn,
+    const SPK_VA::valarray<bool>&    sigmaMinRepFixedIn,
+    const SPK_VA::valarray<covStruct>&  sigmaBlockStruct,
+    const SPK_VA::valarray<int>&     sigmaBlockDims,
+    const SPK_VA::valarray<bool>&    sigmaBlockSameAsPrev );
 
   ~PopPredModel();
 
