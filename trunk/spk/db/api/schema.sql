@@ -140,3 +140,6 @@ CREATE TABLE user (
 --- 
 
 create index idx_job_user_id on job(user_id);
+create index idx_user_user_name on user(surname, first_name);
+create index idx_user_user_id on user(user_id_
+create index idx_history_job_id on history(job_id);
