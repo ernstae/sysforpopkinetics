@@ -181,12 +181,15 @@ SPK Compiler.
                <para>
                is present only if the <emphasis>population analysis</emphasis>
                is requested in the given SpkSourceML document.
-               The value is either <varname>PopPredModel::DIAGONAL</varname> or 
-               <varname>PopPredModel::FULL</varname>.
-               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
+               The value is one of <varname>PopPredModel::DIAGONAL</varname>, 
+               <varname>PopPredModel::FULL</varname> or <varname>PopPredModel::BLOCKDIAG</varname>.
+               <varname>DIAGONAL</varname> means that only the diagonal elements of 
                <emphasis>Omega</emphasis> matrix
-               are subject to optimization.  <varname>FULL</varname> indicates that potentially all elements
-               are subject to optimization (but remember, <emphasis>Omega</emphasis> is symmetric).
+               are subject to optimization.  <varname>FULL</varname> means that potentially all elements
+               are subject to optimization (but remember, <emphasis>Omega</emphasis> is symmetric).  
+               <varname>BLOCKDIAG</varname> means that the matrix is composed of 
+               multiple block-diagonal sub-matrices and these diagonal elements within 
+               the blocks are subject to optimization.    
                </para>
             </listitem>
          </varlistentry>
@@ -196,9 +199,11 @@ SPK Compiler.
                <para>
                is present only if the <emphasis>individual analysis</emphasis>
                is requested in the given SpkSourceML document.
-               The value is always <varname>PopPredModel::DIAGONAL</varname> for this type of analysis. 
+               The value can be either <varname>PopPredModel::DIAGONAL</varname> or
+               <varname>PopPredModel::BLOCKDIAG</varname>.
                <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
-               <emphasis>Omega</emphasis> matrix are subject to optimization.  
+               <emphasis>Omega</emphasis> matrix are subject to optimization. 
+<varname>BLOCKDIAG</varname> means that the matrix is composed of multiple block-diagonal sub-matrices and these diagonal elements within the blocks are subject to optimization. 
                </para>
             </listitem>
          </varlistentry>
@@ -257,12 +262,15 @@ SPK Compiler.
             <listitem>
                <para>
                is present only if the <emphasis>population analysis</emphasis> is requested.
-               The value is either <varname>PopPredModel::DIAGONAL</varname>
-               or <varname>PopPredModel::FULL</varname>.
+               The value is one of <varname>PopPredModel::DIAGONAL</varname>,
+               <varname>PopPredModel::FULL</varname> or <varname>PopPredModel::BLOCKDIAG</varname>.
                <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
                <emphasis>Sigma</emphasis> matrix
                are subject to optimization.  <varname>FULL</varname> indicates that potentially all elements
-               are subject to optimization (but remember, <emphasis>Sigma</emphasis> is symmetric).
+               are subject to optimization (but remember, <emphasis>Sigma</emphasis> is symmetric)
+               <varname>BLOCKDIAG</varname> means that the matrix is composed of 
+               multiple block-diagonal sub-matrices and these diagonal elements within 
+               the blocks are subject to optimization.
                </para>
             </listitem>
          </varlistentry>
