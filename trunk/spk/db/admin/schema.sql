@@ -5,6 +5,17 @@
 -- Server version	4.0.17-standard
 
 --
+-- Table structure for table `class`
+--
+
+CREATE TABLE class (
+  class_code char(2) NOT NULL default '',
+  class_name char(20) default NULL,
+  parent_required tinyint(1) default '0',
+  PRIMARY KEY  (class_code)
+) TYPE=MyISAM;
+
+--
 -- Table structure for table `dataset`
 --
 
@@ -38,7 +49,8 @@ CREATE TABLE history (
   state_code varchar(4) NOT NULL default '',
   job_id int(10) unsigned NOT NULL default '0',
   host varchar(100) NOT NULL default '',
-  PRIMARY KEY  (history_id)
+  PRIMARY KEY  (history_id),
+  KEY idx_history_job_id (job_id)
 ) TYPE=InnoDB;
 
 --
@@ -61,8 +73,14 @@ CREATE TABLE job (
   cpp_source longblob,
   end_code varchar(4) default NULL,
   method_code char(2) default NULL,
-  parent int(20) unsigned default '0',
-  PRIMARY KEY  (job_id)
+  parent int(10) unsigned default '0',
+  checkpoint longblob,
+  owner varchar(40) NOT NULL default '',
+  mail tinyint(1) default '0',
+  PRIMARY KEY  (job_id),
+  KEY idx_user_id (user_id),
+  KEY idx_job_user_id (user_id),
+  KEY idx_job_state_code (state_code)
 ) TYPE=InnoDB;
 
 --
@@ -72,6 +90,8 @@ CREATE TABLE job (
 CREATE TABLE method (
   method_code char(2) NOT NULL default '',
   method_name char(20) default NULL,
+  class_code char(2) NOT NULL default '',
+  test_only tinyint(1) default '0',
   PRIMARY KEY  (method_code)
 ) TYPE=MyISAM;
 
@@ -112,7 +132,7 @@ CREATE TABLE user (
   company varchar(30) NOT NULL default '',
   country varchar(20) NOT NULL default '',
   state varchar(20) NOT NULL default '',
-  email varchar(30) default NULL,
+  email varchar(40) default NULL,
   test tinyint(1) default '0',
   dev tinyint(1) default '0',
   PRIMARY KEY  (user_id),
