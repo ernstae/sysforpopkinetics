@@ -28,6 +28,14 @@
       </para>
     </abstract>
     <revhistory>
+    
+      <revision>
+	<revnumber>1.2</revnumber>
+	<date>January 18, 2006</date>
+	<authorinitials>ernst</authorinitials>
+	<revremark>RHN Satellite server information.</revremark>
+      </revision>
+    
       <revision>
 	<revnumber>1.0</revnumber>
 	<date>May 16, 2005</date>
@@ -242,6 +250,32 @@ rm pass pass~
       months in advance of expiration, your credit card will not be charged 
       until the old subscription expires and the new subscription goes into
       effect.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Using the University of Washington's RedHat Site Licences</title>
+    <para>
+      The University of Washington now maintains a satellite RedHat Network Server
+      on campus, and has purchased a site-license for all University of Washington
+      students, faculty and staff.  Configuring your computer to work with the 
+      satellite server will enable updates to be performed using the up2date command 
+      on either the workstation (WS) or advanced server (AS) editions of RedHat 
+      Enterprise Linux versions 3 and 4.  The benefit of using this system is 
+      primarily the savings of $25/subscription through RedHat.
+    </para>
+    <para>
+      One consequence of using the University of Washingon's RedHat Linux site license
+      is that RedHat will no longer provide customer support for your installation of 
+      the software, and you are essentially on your own.  This should not be used unless
+      you are very familiar with the Linux operating system, or you have a system
+      administrator who is able to support your installation.
+    </para>
+    <para>
+	  You may configure your computer to use the RHN Satellite server by following the
+	  instructions as provided by the 
+	  <ulink url="https://www.washington.edu/computing/linux/rhnsat.html">
+	   Computing & Communication documentation
+	  </ulink> on the subject.
     </para>
   </sect1>
   <sect1>
