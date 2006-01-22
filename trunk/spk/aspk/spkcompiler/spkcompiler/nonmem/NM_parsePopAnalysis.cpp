@@ -914,7 +914,7 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   }
   
   //-------------------------------------------
-  // <sigma>
+  // <eta>
   //-------------------------------------------
   // eta
   // NOTE: eta is not given by the user.  
