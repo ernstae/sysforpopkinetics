@@ -176,14 +176,15 @@ void NonmemTranslator::generateIndDriver( ) const
       oIndDriver << "                                         NonmemPars::relTol"                  << endl;
       oIndDriver << "                                       );" << endl;
     }
-  oIndDriver << "      IndPredModel model( mPred, "                  << endl;
-  oIndDriver << "                          NonmemPars::nTheta, "     << endl;
-  oIndDriver << "                          NonmemPars::thetaLow, "   << endl;
-  oIndDriver << "                          NonmemPars::thetaUp, "    << endl;
-  oIndDriver << "                          NonmemPars::thetaIn, "    << endl;
-  oIndDriver << "                          NonmemPars::nEta, "       << endl;
-  oIndDriver << "                          NonmemPars::omegaStruct," << endl;
-  oIndDriver << "                          NonmemPars::omegaIn );"   << endl;
+  oIndDriver << "      IndPredModel model( mPred, "                   << endl;
+  oIndDriver << "                          NonmemPars::nTheta, "      << endl;
+  oIndDriver << "                          NonmemPars::thetaLow, "    << endl;
+  oIndDriver << "                          NonmemPars::thetaUp, "     << endl;
+  oIndDriver << "                          NonmemPars::thetaIn, "     << endl;
+  oIndDriver << "                          NonmemPars::nEta, "        << endl;
+  oIndDriver << "                          NonmemPars::omegaStruct,"  << endl;
+  oIndDriver << "                          NonmemPars::omegaIn,"      << endl;
+  oIndDriver << "                          NonmemPars::omegaFixed );" << endl;
   oIndDriver << "      //" << endl;
   oIndDriver << "      //////////////////////////////////////////////////////////////////////" << endl;
   oIndDriver << endl;
@@ -217,7 +218,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "                          NonmemPars::thetaIn, "        << endl;
   oIndDriver << "                          NonmemPars::nEta, "           << endl;
   oIndDriver << "                          NonmemPars::omegaStruct,"     << endl;
-  oIndDriver << "                          NonmemPars::omegaIn );"       << endl;
+  oIndDriver << "                          NonmemPars::omegaIn,"         << endl;
+  oIndDriver << "                          NonmemPars::omegaFixed );"    << endl;
   oIndDriver << "      //" << endl;
   oIndDriver << "      //////////////////////////////////////////////////////////////////////" << endl;
   oIndDriver << endl;

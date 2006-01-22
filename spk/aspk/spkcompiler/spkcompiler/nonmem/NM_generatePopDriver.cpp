@@ -199,8 +199,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                          NonmemPars::nEps,"        << endl;
   oPopDriver << "                          NonmemPars::omegaStruct," << endl;
   oPopDriver << "                          NonmemPars::omegaIn,"     << endl;
+  oPopDriver << "                          NonmemPars::omegaFixed,"  << endl;
   oPopDriver << "                          NonmemPars::sigmaStruct," << endl;
-  oPopDriver << "                          NonmemPars::sigmaIn );"   << endl;
+  oPopDriver << "                          NonmemPars::sigmaIn,"     << endl;
+  oPopDriver << "                          NonmemPars::sigmaFixed );" << endl;
   oPopDriver << "      //" << endl;
   oPopDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
   oPopDriver << endl;
@@ -238,8 +240,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                          NonmemPars::nEps,"        << endl;
   oPopDriver << "                          NonmemPars::omegaStruct," << endl;
   oPopDriver << "                          NonmemPars::omegaIn,"     << endl;
+  oPopDriver << "                          NonmemPars::omegaFixed,"  << endl;
   oPopDriver << "                          NonmemPars::sigmaStruct," << endl;
-  oPopDriver << "                          NonmemPars::sigmaIn );"   << endl;
+  oPopDriver << "                          NonmemPars::sigmaIn,"     << endl;
+  oPopDriver << "                          NonmemPars::sigmaFixed );" << endl;
   oPopDriver << "      //" << endl;
   oPopDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
   oPopDriver << endl;
