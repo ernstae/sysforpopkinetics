@@ -220,14 +220,15 @@ int main(int argc, char *argv[])
 	ofstream logFile( "Sim.log" );
 
 	// command line arguments
-	if( argc != 9 )
+	if( argc != 10 )
 	{	const char *msg = 
-		"Sim seed M T theta[0] theta[1] omega2[0] omega2[1] sigma2"; 
+		"Sim seed M N dt theta[0] theta[1] omega2[0] omega2[1] sigma2"; 
 		cerr << "usage:" << endl;
 		cerr << msg      << endl;
 		cerr << "seed     = random number generator input seed" << endl;
 		cerr << "M        = number of subjects in study" << endl;
-		cerr << "T        = time between measurements" << endl;
+		cerr << "N        = number of measurements per subject" << endl;
+		cerr << "dt       = time between measurements" << endl;
 		cerr << "theta[0] = mean for intercept of line" << endl;
 		cerr << "theta[1] = mean for slope of line" << endl;
 		cerr << "omega2[0]= variance for intercept of line" << endl;
@@ -237,7 +238,8 @@ int main(int argc, char *argv[])
 	}
 	int seed      = atoi(*(++argv));
 	int    M      = atoi(*(++argv));
-	double T      = atof(*(++argv));
+	int    N      = atoi(*(++argv));
+	double dt     = atof(*(++argv));
 	double xScaled[5];
 	vector<double> x(5);
 	vector<double> xLow(5);
@@ -269,13 +271,12 @@ int main(int argc, char *argv[])
 	gsl_rng_set(r, (unsigned long int) seed);
 
 
-	size_t N = 2;
 	vector<double> t(N);
 	vector<double> y(N * M);
 
 	// time
 	for(j = 0; j < N; j++)
-		t[j] = double(j) * T;
+		t[j] = double(j) * dt;
 
 	srand( (unsigned int) seed );
 	for(i = 0; i < M; i++)
@@ -312,8 +313,8 @@ int main(int argc, char *argv[])
 
 	// call QuasiNewton01Box
 	std::ostream &os    = std::cout;
-	int level           = 0;
-	size_t ItrMax       = 50;
+	int level           = 1;
+	size_t ItrMax       = 100;
 	size_t QuadMax      = 20 * ItrMax;
 	size_t n            = 5;
 	double delta        = 1e-6;
@@ -341,7 +342,8 @@ int main(int argc, char *argv[])
 	logFile << "Initialization"                << endl;
 	logFile << "seed          = "     << seed  << endl;
 	logFile << "M             = "     << M     << endl;
-	logFile << "T             = "     << T     << endl;
+	logFile << "N             = "     << N     << endl;
+	logFile << "dt            = "     << dt    << endl;
 	logFile << "fCur          = " << fCur      << endl;
 	logFile << "thetaTrue[0]  = " << theta[0]  << endl;
 	logFile << "thetaTrue[1]  = " << theta[1]  << endl;
@@ -371,9 +373,20 @@ int main(int argc, char *argv[])
 	
 	logFile << "msg = " << msg << endl;
 	double lambda;
+	logFile << "Optimization Results:" << endl;
+	logFile << "msg          = " << msg       << endl;
+	logFile << "fCur         = " << fCur      << endl;
 	for(j = 0; j < 5; j++)
 	{	lambda = xCur[j];
 		x[j] = xLow[j] * (1. - lambda) + xUp[j] * lambda;
+		if( lambda < .01 )
+		{	logFile << "Variable with value "   << x[j]; 
+			logFile << " is at its lower limit" << endl; 
+		}
+		if( .99 < lambda )
+		{	logFile << "Variable with value "   << x[j]; 
+			logFile << " is at its upper limit" << endl; 
+		}
 	}
 	theta[0]   = x[0];
 	theta[1]   = x[1];
@@ -381,9 +394,6 @@ int main(int argc, char *argv[])
 	omega2[1]  = x[3];
 	sigma2     = x[4];
 
-	logFile << "Optimization Results:" << endl;
-	logFile << "msg          = " << msg       << endl;
-	logFile << "fCur         = " << fCur      << endl;
 	logFile << "thetaHat[0]  = " << theta[0]  << endl;
 	logFile << "thetaHat[1]  = " << theta[1]  << endl;
 	logFile << "omega2Hat[0] = " << omega2[0] << endl;
