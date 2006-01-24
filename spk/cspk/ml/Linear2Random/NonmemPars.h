@@ -43,7 +43,7 @@ using namespace std;
    const valarray<double> thetaLow( c_thetaLow, 2 );
    // A C-arrary containing the initial estimates for THETA.
    // This array is used to initializes a valarray object that follows.
-   double c_thetaIn[nTheta] = { .855, .835 };
+   double c_thetaIn[nTheta] = { 1.08912, 0.252003 };
 
    // A C-arrary containing the fixation flags for THETA.
    // This array is used to initializes a valarray object that follows.
@@ -84,7 +84,7 @@ using namespace std;
 
    // A C-arrary containing the initial estimates for OMEGA.
    // This array is used to initializes a valarray object that follows.
-   double c_omegaIn[ omegaOrder ] = { .0623, 2.16 };
+   double c_omegaIn[ omegaOrder ] = { 0.706119, 0.727531 };
    const valarray<double> omegaIn( c_omegaIn, omegaOrder );
 
    //-------------------------------------------
@@ -111,7 +111,7 @@ using namespace std;
    const int sigmaOrder = sigmaDim;
    // A C-arrary containing the initial estimates for SIGMA.
    // This array is used to initializes a valarray object that follows.
-   double c_sigmaIn[ sigmaOrder ] = { 1.58 };
+   double c_sigmaIn[ sigmaOrder ] = { 1.62501 };
    const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );
 
    //-------------------------------------------
