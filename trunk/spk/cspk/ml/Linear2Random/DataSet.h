@@ -1,4 +1,4 @@
-// Population model of line with slope and intercept random effects.
+// Population model of line where slope and intercept are random effects.
 #ifndef DATASET_H
 #define DATASET_H
 #include <vector>
@@ -107,253 +107,253 @@ DataSet<spk_ValueType>::DataSet()
 {
    //------------------------------------
    // Subject <1> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[0] = 2;
-char* ID_0_c[] = { "1", "1" };
-   std::vector<char*> ID_0( 2 );
-   copy( ID_0_c, ID_0_c+2, ID_0.begin() );
-spk_ValueType TIME_0_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_0( 2 );
-   copy( TIME_0_c, TIME_0_c+2, TIME_0.begin() );
-spk_ValueType DV_0_c[] = { 2.81556, 4.25946 };
-   std::vector<spk_ValueType> DV_0( 2 );
-   copy( DV_0_c, DV_0_c+2, DV_0.begin() );
-spk_ValueType AMT_0_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_0( 2 );
-   copy( AMT_0_c, AMT_0_c+2, AMT_0.begin() );
-spk_ValueType MDV_0_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_0( 2 );
-   copy( MDV_0_c, MDV_0_c+2, MDV_0.begin() );
-int EVID_0_c[] = { 0, 0 };
-   std::vector<int> EVID_0( 2 );
-   copy( EVID_0_c, EVID_0_c+2, EVID_0.begin() );
-   data[0] = new IndData<spk_ValueType>( 2, ID_0, TIME_0, DV_0, AMT_0, MDV_0, EVID_0 );
+   NRecords[0] = 5;
+char* ID_0_c[] = { "1", "1", "1", "1", "1" };
+   std::vector<char*> ID_0( 5 );
+   copy( ID_0_c, ID_0_c+5, ID_0.begin() );
+spk_ValueType TIME_0_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_0( 5 );
+   copy( TIME_0_c, TIME_0_c+5, TIME_0.begin() );
+spk_ValueType DV_0_c[] = { 2.81556, 4.25946, 2.88029, 4.8092, 3.76698 };
+   std::vector<spk_ValueType> DV_0( 5 );
+   copy( DV_0_c, DV_0_c+5, DV_0.begin() );
+spk_ValueType AMT_0_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_0( 5 );
+   copy( AMT_0_c, AMT_0_c+5, AMT_0.begin() );
+spk_ValueType MDV_0_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_0( 5 );
+   copy( MDV_0_c, MDV_0_c+5, MDV_0.begin() );
+int EVID_0_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_0( 5 );
+   copy( EVID_0_c, EVID_0_c+5, EVID_0.begin() );
+   data[0] = new IndData<spk_ValueType>( 5, ID_0, TIME_0, DV_0, AMT_0, MDV_0, EVID_0 );
 
    //------------------------------------
    // Subject <2> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[1] = 2;
-char* ID_1_c[] = { "2", "2" };
-   std::vector<char*> ID_1( 2 );
-   copy( ID_1_c, ID_1_c+2, ID_1.begin() );
-spk_ValueType TIME_1_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_1( 2 );
-   copy( TIME_1_c, TIME_1_c+2, TIME_1.begin() );
-spk_ValueType DV_1_c[] = { 0.87218, 4.10368 };
-   std::vector<spk_ValueType> DV_1( 2 );
-   copy( DV_1_c, DV_1_c+2, DV_1.begin() );
-spk_ValueType AMT_1_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_1( 2 );
-   copy( AMT_1_c, AMT_1_c+2, AMT_1.begin() );
-spk_ValueType MDV_1_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_1( 2 );
-   copy( MDV_1_c, MDV_1_c+2, MDV_1.begin() );
-int EVID_1_c[] = { 0, 0 };
-   std::vector<int> EVID_1( 2 );
-   copy( EVID_1_c, EVID_1_c+2, EVID_1.begin() );
-   data[1] = new IndData<spk_ValueType>( 2, ID_1, TIME_1, DV_1, AMT_1, MDV_1, EVID_1 );
+   NRecords[1] = 5;
+char* ID_1_c[] = { "2", "2", "2", "2", "2" };
+   std::vector<char*> ID_1( 5 );
+   copy( ID_1_c, ID_1_c+5, ID_1.begin() );
+spk_ValueType TIME_1_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_1( 5 );
+   copy( TIME_1_c, TIME_1_c+5, TIME_1.begin() );
+spk_ValueType DV_1_c[] = { 0.256901, 2.81346, 0.568923, -0.231429, 1.3445 };
+   std::vector<spk_ValueType> DV_1( 5 );
+   copy( DV_1_c, DV_1_c+5, DV_1.begin() );
+spk_ValueType AMT_1_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_1( 5 );
+   copy( AMT_1_c, AMT_1_c+5, AMT_1.begin() );
+spk_ValueType MDV_1_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_1( 5 );
+   copy( MDV_1_c, MDV_1_c+5, MDV_1.begin() );
+int EVID_1_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_1( 5 );
+   copy( EVID_1_c, EVID_1_c+5, EVID_1.begin() );
+   data[1] = new IndData<spk_ValueType>( 5, ID_1, TIME_1, DV_1, AMT_1, MDV_1, EVID_1 );
 
    //------------------------------------
    // Subject <3> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[2] = 2;
-char* ID_2_c[] = { "3", "3" };
-   std::vector<char*> ID_2( 2 );
-   copy( ID_2_c, ID_2_c+2, ID_2.begin() );
-spk_ValueType TIME_2_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_2( 2 );
-   copy( TIME_2_c, TIME_2_c+2, TIME_2.begin() );
-spk_ValueType DV_2_c[] = { 1.05809, -1.5429 };
-   std::vector<spk_ValueType> DV_2( 2 );
-   copy( DV_2_c, DV_2_c+2, DV_2.begin() );
-spk_ValueType AMT_2_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_2( 2 );
-   copy( AMT_2_c, AMT_2_c+2, AMT_2.begin() );
-spk_ValueType MDV_2_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_2( 2 );
-   copy( MDV_2_c, MDV_2_c+2, MDV_2.begin() );
-int EVID_2_c[] = { 0, 0 };
-   std::vector<int> EVID_2( 2 );
-   copy( EVID_2_c, EVID_2_c+2, EVID_2.begin() );
-   data[2] = new IndData<spk_ValueType>( 2, ID_2, TIME_2, DV_2, AMT_2, MDV_2, EVID_2 );
+   NRecords[2] = 5;
+char* ID_2_c[] = { "3", "3", "3", "3", "3" };
+   std::vector<char*> ID_2( 5 );
+   copy( ID_2_c, ID_2_c+5, ID_2.begin() );
+spk_ValueType TIME_2_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_2( 5 );
+   copy( TIME_2_c, TIME_2_c+5, TIME_2.begin() );
+spk_ValueType DV_2_c[] = { 2.29028, 6.10964, 3.55954, 6.38663, 9.53105 };
+   std::vector<spk_ValueType> DV_2( 5 );
+   copy( DV_2_c, DV_2_c+5, DV_2.begin() );
+spk_ValueType AMT_2_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_2( 5 );
+   copy( AMT_2_c, AMT_2_c+5, AMT_2.begin() );
+spk_ValueType MDV_2_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_2( 5 );
+   copy( MDV_2_c, MDV_2_c+5, MDV_2.begin() );
+int EVID_2_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_2( 5 );
+   copy( EVID_2_c, EVID_2_c+5, EVID_2.begin() );
+   data[2] = new IndData<spk_ValueType>( 5, ID_2, TIME_2, DV_2, AMT_2, MDV_2, EVID_2 );
 
    //------------------------------------
    // Subject <4> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[3] = 2;
-char* ID_3_c[] = { "4", "4" };
-   std::vector<char*> ID_3( 2 );
-   copy( ID_3_c, ID_3_c+2, ID_3.begin() );
-spk_ValueType TIME_3_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_3( 2 );
-   copy( TIME_3_c, TIME_3_c+2, TIME_3.begin() );
-spk_ValueType DV_3_c[] = { 0.97394, 1.35234 };
-   std::vector<spk_ValueType> DV_3( 2 );
-   copy( DV_3_c, DV_3_c+2, DV_3.begin() );
-spk_ValueType AMT_3_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_3( 2 );
-   copy( AMT_3_c, AMT_3_c+2, AMT_3.begin() );
-spk_ValueType MDV_3_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_3( 2 );
-   copy( MDV_3_c, MDV_3_c+2, MDV_3.begin() );
-int EVID_3_c[] = { 0, 0 };
-   std::vector<int> EVID_3( 2 );
-   copy( EVID_3_c, EVID_3_c+2, EVID_3.begin() );
-   data[3] = new IndData<spk_ValueType>( 2, ID_3, TIME_3, DV_3, AMT_3, MDV_3, EVID_3 );
+   NRecords[3] = 5;
+char* ID_3_c[] = { "4", "4", "4", "4", "4" };
+   std::vector<char*> ID_3( 5 );
+   copy( ID_3_c, ID_3_c+5, ID_3.begin() );
+spk_ValueType TIME_3_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_3( 5 );
+   copy( TIME_3_c, TIME_3_c+5, TIME_3.begin() );
+spk_ValueType DV_3_c[] = { 1.34402, 2.49768, -0.57402, -0.561433, 0.876495 };
+   std::vector<spk_ValueType> DV_3( 5 );
+   copy( DV_3_c, DV_3_c+5, DV_3.begin() );
+spk_ValueType AMT_3_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_3( 5 );
+   copy( AMT_3_c, AMT_3_c+5, AMT_3.begin() );
+spk_ValueType MDV_3_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_3( 5 );
+   copy( MDV_3_c, MDV_3_c+5, MDV_3.begin() );
+int EVID_3_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_3( 5 );
+   copy( EVID_3_c, EVID_3_c+5, EVID_3.begin() );
+   data[3] = new IndData<spk_ValueType>( 5, ID_3, TIME_3, DV_3, AMT_3, MDV_3, EVID_3 );
 
    //------------------------------------
    // Subject <5> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[4] = 2;
-char* ID_4_c[] = { "5", "5" };
-   std::vector<char*> ID_4( 2 );
-   copy( ID_4_c, ID_4_c+2, ID_4.begin() );
-spk_ValueType TIME_4_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_4( 2 );
-   copy( TIME_4_c, TIME_4_c+2, TIME_4.begin() );
-spk_ValueType DV_4_c[] = { -1.73127, 2.15905 };
-   std::vector<spk_ValueType> DV_4( 2 );
-   copy( DV_4_c, DV_4_c+2, DV_4.begin() );
-spk_ValueType AMT_4_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_4( 2 );
-   copy( AMT_4_c, AMT_4_c+2, AMT_4.begin() );
-spk_ValueType MDV_4_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_4( 2 );
-   copy( MDV_4_c, MDV_4_c+2, MDV_4.begin() );
-int EVID_4_c[] = { 0, 0 };
-   std::vector<int> EVID_4( 2 );
-   copy( EVID_4_c, EVID_4_c+2, EVID_4.begin() );
-   data[4] = new IndData<spk_ValueType>( 2, ID_4, TIME_4, DV_4, AMT_4, MDV_4, EVID_4 );
+   NRecords[4] = 5;
+char* ID_4_c[] = { "5", "5", "5", "5", "5" };
+   std::vector<char*> ID_4( 5 );
+   copy( ID_4_c, ID_4_c+5, ID_4.begin() );
+spk_ValueType TIME_4_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_4( 5 );
+   copy( TIME_4_c, TIME_4_c+5, TIME_4.begin() );
+spk_ValueType DV_4_c[] = { -0.112967, 0.486252, 1.49783, 3.51853, 4.94744 };
+   std::vector<spk_ValueType> DV_4( 5 );
+   copy( DV_4_c, DV_4_c+5, DV_4.begin() );
+spk_ValueType AMT_4_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_4( 5 );
+   copy( AMT_4_c, AMT_4_c+5, AMT_4.begin() );
+spk_ValueType MDV_4_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_4( 5 );
+   copy( MDV_4_c, MDV_4_c+5, MDV_4.begin() );
+int EVID_4_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_4( 5 );
+   copy( EVID_4_c, EVID_4_c+5, EVID_4.begin() );
+   data[4] = new IndData<spk_ValueType>( 5, ID_4, TIME_4, DV_4, AMT_4, MDV_4, EVID_4 );
 
    //------------------------------------
    // Subject <6> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[5] = 2;
-char* ID_5_c[] = { "6", "6" };
-   std::vector<char*> ID_5( 2 );
-   copy( ID_5_c, ID_5_c+2, ID_5.begin() );
-spk_ValueType TIME_5_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_5( 2 );
-   copy( TIME_5_c, TIME_5_c+2, TIME_5.begin() );
-spk_ValueType DV_5_c[] = { -0.618794, 2.31692 };
-   std::vector<spk_ValueType> DV_5( 2 );
-   copy( DV_5_c, DV_5_c+2, DV_5.begin() );
-spk_ValueType AMT_5_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_5( 2 );
-   copy( AMT_5_c, AMT_5_c+2, AMT_5.begin() );
-spk_ValueType MDV_5_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_5( 2 );
-   copy( MDV_5_c, MDV_5_c+2, MDV_5.begin() );
-int EVID_5_c[] = { 0, 0 };
-   std::vector<int> EVID_5( 2 );
-   copy( EVID_5_c, EVID_5_c+2, EVID_5.begin() );
-   data[5] = new IndData<spk_ValueType>( 2, ID_5, TIME_5, DV_5, AMT_5, MDV_5, EVID_5 );
+   NRecords[5] = 5;
+char* ID_5_c[] = { "6", "6", "6", "6", "6" };
+   std::vector<char*> ID_5( 5 );
+   copy( ID_5_c, ID_5_c+5, ID_5.begin() );
+spk_ValueType TIME_5_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_5( 5 );
+   copy( TIME_5_c, TIME_5_c+5, TIME_5.begin() );
+spk_ValueType DV_5_c[] = { -1.92357, 3.42401, 3.00741, 4.3451, 7.11909 };
+   std::vector<spk_ValueType> DV_5( 5 );
+   copy( DV_5_c, DV_5_c+5, DV_5.begin() );
+spk_ValueType AMT_5_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_5( 5 );
+   copy( AMT_5_c, AMT_5_c+5, AMT_5.begin() );
+spk_ValueType MDV_5_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_5( 5 );
+   copy( MDV_5_c, MDV_5_c+5, MDV_5.begin() );
+int EVID_5_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_5( 5 );
+   copy( EVID_5_c, EVID_5_c+5, EVID_5.begin() );
+   data[5] = new IndData<spk_ValueType>( 5, ID_5, TIME_5, DV_5, AMT_5, MDV_5, EVID_5 );
 
    //------------------------------------
    // Subject <7> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[6] = 2;
-char* ID_6_c[] = { "7", "7" };
-   std::vector<char*> ID_6( 2 );
-   copy( ID_6_c, ID_6_c+2, ID_6.begin() );
-spk_ValueType TIME_6_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_6( 2 );
-   copy( TIME_6_c, TIME_6_c+2, TIME_6.begin() );
-spk_ValueType DV_6_c[] = { 1.41065, 3.10345 };
-   std::vector<spk_ValueType> DV_6( 2 );
-   copy( DV_6_c, DV_6_c+2, DV_6.begin() );
-spk_ValueType AMT_6_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_6( 2 );
-   copy( AMT_6_c, AMT_6_c+2, AMT_6.begin() );
-spk_ValueType MDV_6_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_6( 2 );
-   copy( MDV_6_c, MDV_6_c+2, MDV_6.begin() );
-int EVID_6_c[] = { 0, 0 };
-   std::vector<int> EVID_6( 2 );
-   copy( EVID_6_c, EVID_6_c+2, EVID_6.begin() );
-   data[6] = new IndData<spk_ValueType>( 2, ID_6, TIME_6, DV_6, AMT_6, MDV_6, EVID_6 );
+   NRecords[6] = 5;
+char* ID_6_c[] = { "7", "7", "7", "7", "7" };
+   std::vector<char*> ID_6( 5 );
+   copy( ID_6_c, ID_6_c+5, ID_6.begin() );
+spk_ValueType TIME_6_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_6( 5 );
+   copy( TIME_6_c, TIME_6_c+5, TIME_6.begin() );
+spk_ValueType DV_6_c[] = { -2.18017, 2.00627, 0.60578, 1.19295, -0.767411 };
+   std::vector<spk_ValueType> DV_6( 5 );
+   copy( DV_6_c, DV_6_c+5, DV_6.begin() );
+spk_ValueType AMT_6_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_6( 5 );
+   copy( AMT_6_c, AMT_6_c+5, AMT_6.begin() );
+spk_ValueType MDV_6_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_6( 5 );
+   copy( MDV_6_c, MDV_6_c+5, MDV_6.begin() );
+int EVID_6_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_6( 5 );
+   copy( EVID_6_c, EVID_6_c+5, EVID_6.begin() );
+   data[6] = new IndData<spk_ValueType>( 5, ID_6, TIME_6, DV_6, AMT_6, MDV_6, EVID_6 );
 
    //------------------------------------
    // Subject <8> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[7] = 2;
-char* ID_7_c[] = { "8", "8" };
-   std::vector<char*> ID_7( 2 );
-   copy( ID_7_c, ID_7_c+2, ID_7.begin() );
-spk_ValueType TIME_7_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_7( 2 );
-   copy( TIME_7_c, TIME_7_c+2, TIME_7.begin() );
-spk_ValueType DV_7_c[] = { -0.112967, 0.486252 };
-   std::vector<spk_ValueType> DV_7( 2 );
-   copy( DV_7_c, DV_7_c+2, DV_7.begin() );
-spk_ValueType AMT_7_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_7( 2 );
-   copy( AMT_7_c, AMT_7_c+2, AMT_7.begin() );
-spk_ValueType MDV_7_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_7( 2 );
-   copy( MDV_7_c, MDV_7_c+2, MDV_7.begin() );
-int EVID_7_c[] = { 0, 0 };
-   std::vector<int> EVID_7( 2 );
-   copy( EVID_7_c, EVID_7_c+2, EVID_7.begin() );
-   data[7] = new IndData<spk_ValueType>( 2, ID_7, TIME_7, DV_7, AMT_7, MDV_7, EVID_7 );
+   NRecords[7] = 5;
+char* ID_7_c[] = { "8", "8", "8", "8", "8" };
+   std::vector<char*> ID_7( 5 );
+   copy( ID_7_c, ID_7_c+5, ID_7.begin() );
+spk_ValueType TIME_7_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_7( 5 );
+   copy( TIME_7_c, TIME_7_c+5, TIME_7.begin() );
+spk_ValueType DV_7_c[] = { 0.482672, -0.489369, -1.69607, -4.39203, -2.61387 };
+   std::vector<spk_ValueType> DV_7( 5 );
+   copy( DV_7_c, DV_7_c+5, DV_7.begin() );
+spk_ValueType AMT_7_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_7( 5 );
+   copy( AMT_7_c, AMT_7_c+5, AMT_7.begin() );
+spk_ValueType MDV_7_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_7( 5 );
+   copy( MDV_7_c, MDV_7_c+5, MDV_7.begin() );
+int EVID_7_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_7( 5 );
+   copy( EVID_7_c, EVID_7_c+5, EVID_7.begin() );
+   data[7] = new IndData<spk_ValueType>( 5, ID_7, TIME_7, DV_7, AMT_7, MDV_7, EVID_7 );
 
    //------------------------------------
    // Subject <9> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[8] = 2;
-char* ID_8_c[] = { "9", "9" };
-   std::vector<char*> ID_8( 2 );
-   copy( ID_8_c, ID_8_c+2, ID_8.begin() );
-spk_ValueType TIME_8_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_8( 2 );
-   copy( TIME_8_c, TIME_8_c+2, TIME_8.begin() );
-spk_ValueType DV_8_c[] = { 1.77832, 2.23636 };
-   std::vector<spk_ValueType> DV_8( 2 );
-   copy( DV_8_c, DV_8_c+2, DV_8.begin() );
-spk_ValueType AMT_8_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_8( 2 );
-   copy( AMT_8_c, AMT_8_c+2, AMT_8.begin() );
-spk_ValueType MDV_8_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_8( 2 );
-   copy( MDV_8_c, MDV_8_c+2, MDV_8.begin() );
-int EVID_8_c[] = { 0, 0 };
-   std::vector<int> EVID_8( 2 );
-   copy( EVID_8_c, EVID_8_c+2, EVID_8.begin() );
-   data[8] = new IndData<spk_ValueType>( 2, ID_8, TIME_8, DV_8, AMT_8, MDV_8, EVID_8 );
+   NRecords[8] = 5;
+char* ID_8_c[] = { "9", "9", "9", "9", "9" };
+   std::vector<char*> ID_8( 5 );
+   copy( ID_8_c, ID_8_c+5, ID_8.begin() );
+spk_ValueType TIME_8_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_8( 5 );
+   copy( TIME_8_c, TIME_8_c+5, TIME_8.begin() );
+spk_ValueType DV_8_c[] = { 2.51285, 1.42056, 1.09081, 1.32213, -0.189584 };
+   std::vector<spk_ValueType> DV_8( 5 );
+   copy( DV_8_c, DV_8_c+5, DV_8.begin() );
+spk_ValueType AMT_8_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_8( 5 );
+   copy( AMT_8_c, AMT_8_c+5, AMT_8.begin() );
+spk_ValueType MDV_8_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_8( 5 );
+   copy( MDV_8_c, MDV_8_c+5, MDV_8.begin() );
+int EVID_8_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_8( 5 );
+   copy( EVID_8_c, EVID_8_c+5, EVID_8.begin() );
+   data[8] = new IndData<spk_ValueType>( 5, ID_8, TIME_8, DV_8, AMT_8, MDV_8, EVID_8 );
 
    //------------------------------------
    // Subject <10> 
-   // # of sampling points = 2
+   // # of sampling points = 5
    //------------------------------------
-   NRecords[9] = 2;
-char* ID_9_c[] = { "10", "10" };
-   std::vector<char*> ID_9( 2 );
-   copy( ID_9_c, ID_9_c+2, ID_9.begin() );
-spk_ValueType TIME_9_c[] = { 0, 1 };
-   std::vector<spk_ValueType> TIME_9( 2 );
-   copy( TIME_9_c, TIME_9_c+2, TIME_9.begin() );
-spk_ValueType DV_9_c[] = { 2.10395, -1.57448 };
-   std::vector<spk_ValueType> DV_9( 2 );
-   copy( DV_9_c, DV_9_c+2, DV_9.begin() );
-spk_ValueType AMT_9_c[] = { 0.0, 0.0 };
-   std::vector<spk_ValueType> AMT_9( 2 );
-   copy( AMT_9_c, AMT_9_c+2, AMT_9.begin() );
-spk_ValueType MDV_9_c[] = { 0, 0 };
-   std::vector<spk_ValueType> MDV_9( 2 );
-   copy( MDV_9_c, MDV_9_c+2, MDV_9.begin() );
-int EVID_9_c[] = { 0, 0 };
-   std::vector<int> EVID_9( 2 );
-   copy( EVID_9_c, EVID_9_c+2, EVID_9.begin() );
-   data[9] = new IndData<spk_ValueType>( 2, ID_9, TIME_9, DV_9, AMT_9, MDV_9, EVID_9 );
+   NRecords[9] = 5;
+char* ID_9_c[] = { "10", "10", "10", "10", "10" };
+   std::vector<char*> ID_9( 5 );
+   copy( ID_9_c, ID_9_c+5, ID_9.begin() );
+spk_ValueType TIME_9_c[] = { 0, 1, 2, 3, 4 };
+   std::vector<spk_ValueType> TIME_9( 5 );
+   copy( TIME_9_c, TIME_9_c+5, TIME_9.begin() );
+spk_ValueType DV_9_c[] = { 1.02133, 1.2694, 0.154778, -1.88743, -0.260074 };
+   std::vector<spk_ValueType> DV_9( 5 );
+   copy( DV_9_c, DV_9_c+5, DV_9.begin() );
+spk_ValueType AMT_9_c[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+   std::vector<spk_ValueType> AMT_9( 5 );
+   copy( AMT_9_c, AMT_9_c+5, AMT_9.begin() );
+spk_ValueType MDV_9_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<spk_ValueType> MDV_9( 5 );
+   copy( MDV_9_c, MDV_9_c+5, MDV_9.begin() );
+int EVID_9_c[] = { 0, 0, 0, 0, 0 };
+   std::vector<int> EVID_9( 5 );
+   copy( EVID_9_c, EVID_9_c+5, EVID_9.begin() );
+   data[9] = new IndData<spk_ValueType>( 5, ID_9, TIME_9, DV_9, AMT_9, MDV_9, EVID_9 );
 
 
    int nRecords = 0;
