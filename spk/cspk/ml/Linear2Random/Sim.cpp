@@ -220,8 +220,24 @@ int main(int argc, char *argv[])
 	ofstream logFile( "Sim.log" );
 
 	// command line arguments
-	if( argc != 10 )
+	char *default_args[] = {
+		"Sim",   // Sim
+		"123",   // seed
+		"10",    // M
+		"5",     // N
+		"1",     // dt
+		"1",     // theta[0]
+		"1",     // theta[1]
+		"1",     // omega2[0]
+		"1",     // omega2[1]
+		"1"      // sigma2
+	};
+	bool ok = argc == 10;
+	if(argc == 2)
+		ok =  strcmp(argv[1], "default") == 0;
+	if( ! ok )
 	{	const char *msg = 
+		"Sim default\n"
 		"Sim seed M N dt theta[0] theta[1] omega2[0] omega2[1] sigma2"; 
 		cerr << "usage:" << endl;
 		cerr << msg      << endl;
@@ -234,8 +250,16 @@ int main(int argc, char *argv[])
 		cerr << "omega2[0]= variance for intercept of line" << endl;
 		cerr << "omega2[1]= variance for slope of line" << endl;
 		cerr << "sigma2   = variance for measurement noise" << endl;
+		cerr << endl;
+		cerr << "Sim default =";
+		for(j = 0; j < 10; j++)
+			cerr << " " << default_args[j];
+		cerr << endl;
 		return 1;
 	}
+	if( argc == 2 )
+		argv = default_args;
+	
 	int seed      = atoi(*(++argv));
 	int    M      = atoi(*(++argv));
 	int    N      = atoi(*(++argv));
