@@ -597,9 +597,12 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "{" << endl;
   oOdePred_h << "   spk_curWho = spk_i;" << endl;
   oOdePred_h << "   spk_curWhichRecord = spk_j;" << endl;
+  oOdePred_h << endl;
+
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-  oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen << " );"   << endl;
-  oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen << " );"   << endl;
+  oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen   << " );" << endl;
+  oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen   << " ||" << endl;
+  oOdePred_h << "           spk_epsLen   == 0 );    // Allow this to be zero for two-stage methods." << endl;
   oOdePred_h << endl;
 
   oOdePred_h << "   // Get non-const references" << endl;
@@ -675,17 +678,21 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       //
       // EPS: This value is given by the system through the eval() interface.
       // 
-      //oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS;
-      oOdePred_h << "   " << nonmem::EPS << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
+      oOdePred_h << "   if ( spk_epsLen != 0 )" << endl;
+      oOdePred_h << "   {" << endl;
+      oOdePred_h << "      // Skip this if there are no eps values." << endl;
+      //oOdePred_h << "      typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS;
+      oOdePred_h << "      " << nonmem::EPS << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
       //
       // NONMEM makes aliases to each element of the vector.
       // EPS(1) can be referred to as EPS1, EPS(2) as EPS2 and so on.
       // 
       for( int i=0; i<myEpsLen; i++ )
 	{
-	  oOdePred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS << i+1 << endl;
+	  oOdePred_h << "      typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS << i+1 << endl;
 	  oOdePred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl; 
 	}
+      oOdePred_h << "   }" << endl;
     }
   oOdePred_h << endl;
   oOdePred_h << "}" << endl;
@@ -744,8 +751,12 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	        }
               else if( label == nonmem::EPS )
 	        {
-	          oOdePred_h << "   copy( " << label << ", " << label << "+spk_epsLen, ";
+	          oOdePred_h << "   if ( spk_epsLen != 0 )" << endl;
+	          oOdePred_h << "   {" << endl;
+	          oOdePred_h << "      // Skip this if there are no eps values." << endl;
+	          oOdePred_h << "      copy( " << label << ", " << label << "+spk_epsLen, ";
 	          oOdePred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+	          oOdePred_h << "   }" << endl;
 	        }
               else if( label == nonmem::P )
 	        {
@@ -814,14 +825,23 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    {
 	      if( label == nonmem::THETA 
 		  || label == nonmem::ETA 
-		  || label == nonmem::EPS 
 		  || label == nonmem::DADT 
 		  || label == nonmem::P 
 		  || label == nonmem::A )
 		{
-		  oOdePred_h << "       spk_perm->data[ i ]->" << label;
+		  oOdePred_h << "         spk_perm->data[ i ]->" << label;
 		  oOdePred_h << " = spk_temp.data[ i ]->";
 		  oOdePred_h << label << ";" << endl;
+		}
+	      else if( label == nonmem::EPS )
+		{
+	          oOdePred_h << "         if ( spk_epsLen != 0 )" << endl;
+	          oOdePred_h << "         {" << endl;
+	          oOdePred_h << "            // Skip this if there are no eps values." << endl;
+		  oOdePred_h << "            spk_perm->data[ i ]->" << label;
+		  oOdePred_h << " = spk_temp.data[ i ]->";
+		  oOdePred_h << label << ";" << endl;
+	          oOdePred_h << "         }" << endl;
 		}
 	    }
           else if( objectType == Symbol::MATRIX )
@@ -841,7 +861,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
         { 
 	  if( objectType == Symbol::SCALAR && access == Symbol::READWRITE )
 	    {
-	      oOdePred_h << "       spk_perm->data[ i ]->" << label;
+	      oOdePred_h << "         spk_perm->data[ i ]->" << label;
 	      oOdePred_h << " = spk_temp.data[ i ]->";
 	      oOdePred_h << label << ";" << endl;
 	    }
@@ -964,7 +984,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "   assert( spk_curWhichRecord == spk_j );" << endl;
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
   oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen << " );"   << endl;
-  oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen << " );"   << endl;
+  oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen   << " ||" << endl;
+  oOdePred_h << "           spk_epsLen   == 0 );    // Allow this to be zero for two-stage methods." << endl;
   oOdePred_h << endl;      
   oOdePred_h << "   return evalError();" << endl;
   oOdePred_h << "}" << endl;
