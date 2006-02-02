@@ -232,6 +232,8 @@ testall_SOURCES = \
 	transposeRowBlocksTest.h \
 	transposeTest.cpp \
 	transposeTest.h \
+	twoStageMethodTest.cpp \
+	twoStageMethodTest.h \
 	UTranTimesSymKronSymTimesU_xTest.cpp \
 	UTranTimesSymKronSymTimesU_xTest.h \
 	UTranTimesSymKronSymTimesUTest.cpp \
@@ -334,6 +336,7 @@ pkginclude_HEADERS = \
 	transposeDerivativeTest.h \
 	transposeRowBlocksTest.h \
 	transposeTest.h \
+	twoStageMethodTest.h \
 	UTranTimesSymKronSymTimesU_xTest.h \
 	UTranTimesSymKronSymTimesUTest.h \
 	WarningsManagerTest.h

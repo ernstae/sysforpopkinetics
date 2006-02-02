@@ -911,17 +911,38 @@ void fitPopulationErrorTest::setAllValid(fitpopulationerrortest::Info& info)
     double varBTrue  = varBetaTrue;
     double sdBTrue   = sqrt( varBTrue );
 
-    // Compute the measurements for each individual.
-    int seed = 2;
-    srand(seed);
-    
-    valarray<double> sdECov(nY*nY);
-    sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
-    
-    valarray<double> sdBCov(nY*nY);
-    sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
-    
-    info.Y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+    // Set the measurements for each individual.
+    //
+    // Note: these values were generated on a 32-bit Pentium machine
+    // using the following code.
+    //
+    //     int seed = 2;
+    //     srand(seed);
+    //
+    //     valarray<double> sdECov(nY*nY);
+    //     sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
+    //
+    //     valarray<double> sdBCov(nY*nY);
+    //     sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+    //
+    //     Y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+    //
+    // The values generated on a 64-bit Athalon machine were different
+    // and their optimal paramter values could not be calculated.  So,
+    // these values have been set explicitly here to ensure they're the
+    // same on all machines.
+    //
+    Y[0] = 1.88758;
+    Y[1] = -1.03471;
+    Y[2] = 1.18851;
+    Y[3] = -0.476253;
+    Y[4] = -1.45167;
+    Y[5] = -0.797979;
+    Y[6] = -0.0825739;
+    Y[7] = 3.04214;
+    Y[8] = 1.48168;
+    Y[9] = -1.29312;
+
 
     //------------------------------------------------------------
     // Quantities related to the fixed population parameter, alp.
