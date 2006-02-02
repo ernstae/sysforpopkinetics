@@ -147,7 +147,7 @@ import java.util.Enumeration;
  *             jobs' end code to "null" in the database.
  *             <p>
  *             If the jobList contains any job with state code "run", add these job's job ID to
- *             the Run queue with an space character added too the front of the job ID, set these 
+ *             the Run queue with an space character added to the front of the job ID, set these 
  *             jobs' state code to "q2r" in the JobList and in the database, and set these jobs' 
  *             end code to "null" in the database.
  *             <p>
@@ -447,7 +447,12 @@ class ThreadedHandler extends Thread
                             if(jobState.runQueue.size() > 0)
                             {
                                 jobId =(String)jobState.runQueue.remove(0);
-                                jobState.jobList.setProperty(jobId.trim(), "run");
+                                if(jobId.startsWith(" "))
+                                {
+                                    jobState.jobList.remove(jobId);
+                                    jobId = jobId.trim();                                   
+                                }
+                                jobState.jobList.setProperty(jobId, "run");
                                 out.println(jobId);
                             }
                             else
