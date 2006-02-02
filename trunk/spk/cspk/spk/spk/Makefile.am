@@ -134,6 +134,7 @@ libspk_a_SOURCES = \
 	transpose.cpp \
 	transposeDerivative.cpp \
 	transposeRowBlocks.cpp \
+	twoStageMethod.cpp \
 	UTranTimesSymKronSymTimesU.cpp \
 	UTranTimesSymKronSymTimesU_x.cpp \
 	WarningsManager.cpp \
@@ -256,6 +257,7 @@ libspk_a_SOURCES = \
 	transpose.h \
 	transposeDerivative.h \
 	transposeRowBlocks.h \
+	twoStageMethod.h \
 	UTranTimesSymKronSymTimesU.h \
 	UTranTimesSymKronSymTimesU_x.h \
 	WarningsManager.h
@@ -382,6 +384,7 @@ pkginclude_HEADERS = \
 	transpose.h \
 	transposeDerivative.h \
 	transposeRowBlocks.h \
+	twoStageMethod.h \
 	UTranTimesSymKronSymTimesU.h \
 	UTranTimesSymKronSymTimesU_x.h \
 	WarningsManager.h
