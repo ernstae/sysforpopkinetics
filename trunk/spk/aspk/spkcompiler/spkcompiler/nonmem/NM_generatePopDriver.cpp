@@ -77,7 +77,10 @@ void NonmemTranslator::generatePopDriver() const
   else
     oPopDriver << "#include \"OdePred.h\"" << endl;
 
-  oPopDriver << "#include <spkpred/PopPredModel.h>" << endl;
+  oPopDriver << "#include <spkpred/Cov.h>"                << endl;
+  oPopDriver << "#include <spkpred/IndPredModel.h>"       << endl;
+  oPopDriver << "#include <spkpred/PopPredModel.h>"       << endl;
+  oPopDriver << "#include <spkpred/predTwoStageMethod.h>" << endl;
   oPopDriver << "#include \"NonmemPars.h\""   << endl;
   oPopDriver << endl;
 
@@ -244,6 +247,40 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                          NonmemPars::sigmaStruct," << endl;
   oPopDriver << "                          NonmemPars::sigmaIn,"     << endl;
   oPopDriver << "                          NonmemPars::sigmaFixed );" << endl;
+  oPopDriver << "      //" << endl;
+  oPopDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
+  oPopDriver << endl;
+
+  oPopDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
+  oPopDriver << "      //   Model for two-stage methods." << endl;
+  oPopDriver << "      IndPredModel indModelForTwoStageMethod( predForDisposal," << endl;
+  oPopDriver << "                                              NonmemPars::nTheta," << endl;
+  oPopDriver << "                                              NonmemPars::thetaLow," << endl;
+  oPopDriver << "                                              NonmemPars::thetaUp," << endl;
+  oPopDriver << "                                              NonmemPars::thetaIn," << endl;
+  oPopDriver << "                                              NonmemPars::nEps," << endl;
+  oPopDriver << "                                              NonmemPars::sigmaStruct," << endl;
+  oPopDriver << "                                              NonmemPars::sigmaIn );" << endl;
+  oPopDriver << endl;
+  oPopDriver << "      const int nBTwoStage = indModelForTwoStageMethod.getNIndPar();" << endl;
+  oPopDriver << "      bool isTwoStageMethod;" << endl;
+  oPopDriver << "      valarray<double> bTwoStageOut;" << endl;
+  oPopDriver << endl;
+  oPopDriver << "      if( objective == STANDARD_TWO_STAGE            ||" << endl;
+  oPopDriver << "          objective == ITERATIVE_TWO_STAGE           ||" << endl;
+  oPopDriver << "          objective == GLOBAL_TWO_STAGE              ||" << endl;
+  oPopDriver << "          objective == MAP_BAYES_STANDARD_TWO_STAGE  ||" << endl;
+  oPopDriver << "          objective == MAP_BAYES_ITERATIVE_TWO_STAGE ||" << endl;
+  oPopDriver << "          objective == MAP_BAYES_GLOBAL_TWO_STAGE )" << endl;
+  oPopDriver << "      {" << endl;
+  oPopDriver << "         isTwoStageMethod = true;" << endl;
+  oPopDriver << "         bTwoStageOut.resize( nBTwoStage * nPop );" << endl;
+  oPopDriver << "      }" << endl;
+  oPopDriver << "      else" << endl;
+  oPopDriver << "      {" << endl;
+  oPopDriver << "         isTwoStageMethod = false;" << endl;
+  oPopDriver << "      }" << endl;
+  oPopDriver << endl;
   oPopDriver << "      //" << endl;
   oPopDriver << "      ///////////////////////////////////////////////////////////////////" << endl;
   oPopDriver << endl;
@@ -441,25 +478,44 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            gettimeofday( &optBegin, NULL );" << endl;
   oPopDriver << "            try" << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               fitPopulation( model,"         << endl;
-  oPopDriver << "                              objective, "    << endl;
-  oPopDriver << "                              NObservs,"             << endl;
-  oPopDriver << "                              y,"             << endl;
-  oPopDriver << "                              popOpt,"        << endl;
-  oPopDriver << "                              alpLow,"        << endl;
-  oPopDriver << "                              alpUp,"         << endl;
-  oPopDriver << "                              alpIn,"         << endl;
-  oPopDriver << "                              alpStep,"       << endl;
-  oPopDriver << "                             &alpOut,"        << endl;
-  oPopDriver << "                              indOpt,"        << endl;
-  oPopDriver << "                              bLow,"          << endl;
-  oPopDriver << "                              bUp,"           << endl;
-  oPopDriver << "                              bIn,"           << endl;
-  oPopDriver << "                              bStep,"         << endl;
-  oPopDriver << "                             &bOut,"          << endl;
-  oPopDriver << "                             &alpObjOut,"     << endl;
-  oPopDriver << "                             &alpObj_alpOut," << endl;
-  oPopDriver << "                             &alpObj_alp_alpOut );" << endl;
+  oPopDriver << "               if( isTwoStageMethod )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  predTwoStageMethod( model," << endl;
+  oPopDriver << "                                      indModelForTwoStageMethod," << endl;
+  oPopDriver << "                                      objective," << endl;
+  oPopDriver << "                                      NObservs," << endl;
+  oPopDriver << "                                      y," << endl;
+  oPopDriver << "                                      popOpt," << endl;
+  oPopDriver << "                                      indOpt," << endl;
+  oPopDriver << "                                      &bTwoStageOut );" << endl;
+  oPopDriver << endl;
+  oPopDriver << "                  // The two-stage methods do not provide values for" << endl;
+  oPopDriver << "                  // the eta values that appear in the population" << endl;
+  oPopDriver << "                  // model, so just set them all equal to zero." << endl;
+  oPopDriver << "                  bOut = 0.0;" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               else" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  fitPopulation( model," << endl;
+  oPopDriver << "                                 objective, " << endl;
+  oPopDriver << "                                 NObservs," << endl;
+  oPopDriver << "                                 y," << endl;
+  oPopDriver << "                                 popOpt," << endl;
+  oPopDriver << "                                 alpLow," << endl;
+  oPopDriver << "                                 alpUp," << endl;
+  oPopDriver << "                                 alpIn," << endl;
+  oPopDriver << "                                 alpStep," << endl;
+  oPopDriver << "                                &alpOut," << endl;
+  oPopDriver << "                                 indOpt," << endl;
+  oPopDriver << "                                 bLow," << endl;
+  oPopDriver << "                                 bUp," << endl;
+  oPopDriver << "                                 bIn," << endl;
+  oPopDriver << "                                 bStep," << endl;
+  oPopDriver << "                                &bOut," << endl;
+  oPopDriver << "                                &alpObjOut," << endl;
+  oPopDriver << "                                &alpObj_alpOut," << endl;
+  oPopDriver << "                                &alpObj_alp_alpOut );" << endl;
+  oPopDriver << "               }" << endl;
   oPopDriver << "               isOptSuccess = true;"          << endl;
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( SpkException& e )" << endl;
@@ -538,7 +594,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         }" << endl;
   oPopDriver << endl;
 
-  oPopDriver << "         if( isOptRequested && isOptSuccess )" << endl;
+  oPopDriver << "         if( isOptRequested && isOptSuccess && !isTwoStageMethod )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            assert( haveCompleteData );" << endl;
   oPopDriver << "            Objective objForDisposal = FIRST_ORDER;"    << endl;
@@ -575,9 +631,9 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                               &iiResWtdTrancatedOut, " << endl;
   oPopDriver << "                               &iiParResOut, "          << endl;
   oPopDriver << "                               &iiParResWtdOut );"      << endl;
-  oPopDriver << "                  dataForDisposal.expand( iiPredTrancatedOut,   iiPredOut );"   << endl;
-  oPopDriver << "                  dataForDisposal.expand( iiResTrancatedOut,    iiResOut );"    << endl;
-  oPopDriver << "                  dataForDisposal.expand( iiResWtdTrancatedOut, iiResWtdOut );" << endl;
+  oPopDriver << "                  dataForDisposal.expand( i, iiPredTrancatedOut,   iiPredOut );"   << endl;
+  oPopDriver << "                  dataForDisposal.expand( i, iiResTrancatedOut,    iiResOut );"    << endl;
+  oPopDriver << "                  dataForDisposal.expand( i, iiResWtdTrancatedOut, iiResWtdOut );" << endl;
    oPopDriver << "               }" << endl;
   oPopDriver << "               catch( SpkException& e )" << endl;
   oPopDriver << "               {" << endl;
@@ -721,6 +777,86 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            }" << endl;
   oPopDriver << "         }" << endl;
 
+  oPopDriver << "         // Calculate the residuals for the two-stage methods." << endl;
+  oPopDriver << "         if( isOptRequested && isOptSuccess && isTwoStageMethod )" << endl;
+  oPopDriver << "         {" << endl;
+  oPopDriver << "            assert( haveCompleteData );" << endl;
+  oPopDriver << "            valarray<double> yiTwoStage;" << endl;
+  oPopDriver << "            valarray<double> biTwoStage( nBTwoStage );" << endl;
+  oPopDriver << "            valarray<double> iTwoStagePredOut;" << endl;
+  oPopDriver << "            valarray<double> iTwoStageResOut; " << endl;
+  oPopDriver << "            valarray<double> iTwoStageResWtdOut;" << endl;
+  oPopDriver << "            valarray<double> iTwoStagePredTrancatedOut;" << endl;
+  oPopDriver << "            valarray<double> iTwoStageResTrancatedOut; " << endl;
+  oPopDriver << "            valarray<double> iTwoStageResWtdTrancatedOut;" << endl;
+  oPopDriver << "            for( int i=0, k=0; i<nPop; k+=NRecords[i++] )" << endl;
+  oPopDriver << "            {" << endl;
+  oPopDriver << "               yiTwoStage.resize        ( NObservs[i] );" << endl;
+  oPopDriver << "               iTwoStagePredOut.resize  ( dataForDisposal.getNRecords(i) );" << endl;
+  oPopDriver << "               iTwoStageResOut.resize   ( dataForDisposal.getNRecords(i) );" << endl;
+  oPopDriver << "               iTwoStageResWtdOut.resize( dataForDisposal.getNRecords(i) );" << endl;
+  oPopDriver << "               iTwoStagePredTrancatedOut.resize  ( NObservs[i] );" << endl;
+  oPopDriver << "               iTwoStageResTrancatedOut.resize   ( NObservs[i] );" << endl;
+  oPopDriver << "               iTwoStageResWtdTrancatedOut.resize( NObservs[i] );" << endl;
+  oPopDriver << "               yiTwoStage = y[ slice( k, NObservs[i], 1 ) ]; " << endl;
+  oPopDriver << "               biTwoStage = bTwoStageOut[ slice( i*nBTwoStage, nBTwoStage, 1 ) ];" << endl;
+  oPopDriver << "               indModelForTwoStageMethod.selectIndividual( i );" << endl;
+  oPopDriver << "               indModelForTwoStageMethod.setIndPar( biTwoStage );" << endl;
+  oPopDriver << "               try{" << endl;
+  oPopDriver << "                  // Don't calculate the individual's parameter residuals." << endl;
+  oPopDriver << "                  valarray<double>* pVANull = 0;" << endl;
+  oPopDriver << "                  indResiduals( indModelForTwoStageMethod," << endl;
+  oPopDriver << "                                yiTwoStage, " << endl;
+  oPopDriver << "                                biTwoStage," << endl;
+  oPopDriver << "                               &iTwoStagePredTrancatedOut," << endl;
+  oPopDriver << "                               &iTwoStageResTrancatedOut," << endl;
+  oPopDriver << "                               &iTwoStageResWtdTrancatedOut, " << endl;
+  oPopDriver << "                                pVANull, " << endl;
+  oPopDriver << "                                pVANull );" << endl;
+  oPopDriver << endl;
+  oPopDriver << "                  dataForDisposal.expand( i, iTwoStagePredTrancatedOut,   iTwoStagePredOut );" << endl;
+  oPopDriver << "                  dataForDisposal.expand( i, iTwoStageResTrancatedOut,    iTwoStageResOut );" << endl;
+  oPopDriver << "                  dataForDisposal.expand( i, iTwoStageResWtdTrancatedOut, iTwoStageResWtdOut );" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               catch( SpkException& e )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  char message[SpkError::maxMessageLen()];" << endl;
+  oPopDriver << "                  snprintf( message, " << endl;
+  oPopDriver << "                            SpkError::maxMessageLen()," << endl;
+  oPopDriver << "                            \"Failed during the calculation of %i-th individual's residuals!\", i );" << endl;
+  oPopDriver << "                  SpkError ee( SpkError::SPK_STATISTICS_ERR, message, __LINE__, __FILE__ );" << endl;
+  oPopDriver << "                  e.push( ee );" << endl;
+  oPopDriver << "                  errors.cat( e );" << endl;
+  oPopDriver << "                  isStatSuccess &= false;" << endl;
+  oPopDriver << "                  ret = PROGRAMMER_FAILURE;" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               catch( ... )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  char message[SpkError::maxMessageLen()];" << endl;
+  oPopDriver << "                  snprintf( message, " << endl;
+  oPopDriver << "                            SpkError::maxMessageLen()," << endl;
+  oPopDriver << "                           \"Unknown exception: failed during the calculation of %i-th individual's residuals!!!\", i );" << endl;
+  oPopDriver << "                  SpkError e( SpkError::SPK_UNKNOWN_ERR, message, __LINE__, __FILE__ );" << endl;
+  oPopDriver << "                  errors.push( e );" << endl;
+  oPopDriver << "                  isStatSuccess &= false;" << endl;
+  oPopDriver << "                  ret = STATISTICS_FAILURE;" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               iPredOut     [ slice( k, set.getNRecords(i), 1 ) ]  = iTwoStagePredOut;" << endl;
+  oPopDriver << "               iResOut      [ slice( k, set.getNRecords(i), 1 ) ]  = iTwoStageResOut;" << endl;
+  oPopDriver << "               iResWtdOut   [ slice( k, set.getNRecords(i), 1 ) ]  = iTwoStageResWtdOut;" << endl;
+  oPopDriver << "            }" << endl;
+  oPopDriver << "            // The two-stage methods do not provide values for the eta" << endl;
+  oPopDriver << "            // values that appear in the population model, so just set" << endl;
+  oPopDriver << "            // these residuals all equal to zero." << endl;
+  oPopDriver << "            iParResOut    = 0.0;" << endl;
+  oPopDriver << "            iParResWtdOut = 0.0;" << endl;
+  oPopDriver << endl;
+  oPopDriver << "            set.replaceIPred   ( iPredOut );" << endl;
+  oPopDriver << "            set.replaceIRes    ( iResOut );" << endl;
+  oPopDriver << "            set.replaceIWRes   ( iResWtdOut );" << endl;
+  oPopDriver << "            set.replaceIEtaRes ( iParResOut );" << endl;
+  oPopDriver << "            set.replaceIWEtaRes( iParResWtdOut );" << endl;
+  oPopDriver << "         }" << endl;
   oPopDriver << endl;
  
   // Statistics can be only computed when the parameter estimation has been done.
@@ -730,7 +866,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         /*   Statistics                                                    */" << endl;
   oPopDriver << "         /*                                                                 */" << endl;
   oPopDriver << "         /*******************************************************************/" << endl;
-  oPopDriver << "         if( isStatRequested && isOptRequested && isOptSuccess )" << endl;
+  oPopDriver << "         if( isStatRequested && isOptRequested && isOptSuccess && !isTwoStageMethod )" << endl;
   oPopDriver << "         {" << endl;
   oPopDriver << "            gettimeofday( &statBegin, NULL );" << endl;
   oPopDriver << "            try" << endl;
@@ -886,7 +1022,7 @@ void NonmemTranslator::generatePopDriver() const
   // sigam in
   oPopDriver << "            oResults << \"<sigma_in dimension=\" << \"\\\"\" << NonmemPars::sigmaDim << \"\\\"\";" << endl;
   oPopDriver << "            oResults << \" struct=\" << \"\\\"\";" << endl;
-  oPopDriver << "            if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::sigmaStruct==DIAGONAL )" << endl;
   oPopDriver << "               oResults << \"diagonal\";" << endl;
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
@@ -897,7 +1033,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               oResults << \"<value>\" << sigmaIn[i] << \"</value>\" << endl;" << endl;
   oPopDriver << "            }" << endl;
   */
-  oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               for( int i=0; i<NonmemPars::sigmaDim; i++ )" << endl;
   oPopDriver << "               {" << endl;
@@ -942,7 +1078,7 @@ void NonmemTranslator::generatePopDriver() const
   // sigma out
   oPopDriver << "            oResults << \"<sigma_out dimension=\" << \"\\\"\" << NonmemPars::sigmaDim << \"\\\"\";" << endl;
   oPopDriver << "            oResults << \" struct=\" << \"\\\"\";" << endl;
-  oPopDriver << "            if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::sigmaStruct==DIAGONAL )" << endl;
   oPopDriver << "               oResults << \"diagonal\";" << endl;
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
@@ -954,7 +1090,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            }" << endl;
   oPopDriver << "            oResults << \"</sigma_out>\" << endl;" << endl;
   */
-  oPopDriver << "            if( NonmemPars::sigmaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::sigmaStruct==DIAGONAL )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               for( int i=0; i<NonmemPars::sigmaDim; i++ )" << endl;
   oPopDriver << "               {" << endl;
@@ -1000,7 +1136,7 @@ void NonmemTranslator::generatePopDriver() const
   // omega in
   oPopDriver << "            oResults << \"<omega_in dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
   oPopDriver << "            oResults << \" struct=\" << \"\\\"\";" << endl;
-  oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oPopDriver << "               oResults << \"diagonal\";" << endl;
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
@@ -1013,7 +1149,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            }" << endl;
   */
 
-  oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
   oPopDriver << "               {" << endl;
@@ -1058,7 +1194,7 @@ void NonmemTranslator::generatePopDriver() const
   // omega out
   oPopDriver << "            oResults << \"<omega_out dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
   oPopDriver << "            oResults << \" struct=\" << \"\\\"\";" << endl;
-  oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oPopDriver << "               oResults << \"diagonal\";" << endl;
   oPopDriver << "            else" << endl;
   oPopDriver << "               oResults << \"block\";" << endl;
@@ -1071,7 +1207,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            }" << endl;
   */
 
-  oPopDriver << "            if( NonmemPars::omegaStruct==PopPredModel::DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
   oPopDriver << "               {" << endl;

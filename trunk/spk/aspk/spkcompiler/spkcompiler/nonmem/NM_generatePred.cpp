@@ -398,9 +398,10 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "                                std::vector<spk_ValueType>& spk_depVar )" << endl;
   oPred_h << "{" << endl;
 
-  oPred_h << "  assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-  oPred_h << "  assert( spk_etaLen   == " << myEtaLen << " );" << endl;
-  oPred_h << "  assert( spk_epsLen   == " << myEpsLen << " );" << endl;
+  oPred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
+  oPred_h << "   assert( spk_etaLen   == " << myEtaLen   << " );" << endl;
+  oPred_h << "   assert( spk_epsLen   == " << myEpsLen   << " ||" << endl;
+  oPred_h << "           spk_epsLen   == 0 );    // Allow this to be zero for two-stage methods." << endl;
   oPred_h << endl;
 
   ///////////////////////////////////////////////////////////////////////////////////
@@ -448,13 +449,17 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   // "myEpsLen" has been set to zero; thus the following loop loops zero times.
   if( getTarget() == POP )
     {
-      oPred_h << "   " << nonmem::EPS;
+      oPred_h << "   if ( spk_epsLen != 0 )" << endl;
+      oPred_h << "   {" << endl;
+      oPred_h << "      // Skip this if there are no eps values." << endl;
+      oPred_h << "      " << nonmem::EPS;
       oPred_h << " = spk_indepVar.begin() + spk_epsOffset;" << endl;
       for( int i=0; i<myEpsLen; i++ )
 	{
-	  oPred_h << "   typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS << i+1;
+	  oPred_h << "      typename std::vector<spk_ValueType>::const_iterator " << nonmem::EPS << i+1;
 	  oPred_h << " = spk_indepVar.begin() + spk_epsOffset + " << i << ";" << endl;
 	}
+      oPred_h << "   }" << endl;
     }
 
   //
@@ -493,8 +498,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   ///////////////////////////////////////////////////////////////////////////////////
   // Store the current values in temporary storage
   // : the user defined variable values and the NONMEM required variable values.
-  oPred_h << nonmem::PRED << " = " << nonmem::F << ";" << endl;
-  oPred_h << nonmem::RES  << " = (" << nonmem::MDV << "==0? " << nonmem::DV << "-" << nonmem::PRED << " : 0 );" << endl;
+  oPred_h << "   " << nonmem::PRED << " = " << nonmem::F << ";" << endl;
+  oPred_h << "   " << nonmem::RES  << " = (" << nonmem::MDV << "==0? " << nonmem::DV << "-" << nonmem::PRED << " : 0 );" << endl;
 
   for( pT = t->begin(); pT != t->end(); pT++ )
     {
@@ -526,8 +531,12 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	        }
               else if( label == nonmem::EPS )
 	        {
-	          oPred_h << "   copy( " << label << ", " << label << "+spk_epsLen, ";
+	          oPred_h << "   if ( spk_epsLen != 0 )" << endl;
+	          oPred_h << "   {" << endl;
+	          oPred_h << "      // Skip this if there are no eps values." << endl;
+	          oPred_h << "      copy( " << label << ", " << label << "+spk_epsLen, ";
 	          oPred_h << "   spk_temp.data[ spk_i ]->" << label << "[ spk_j ].begin() ); " << endl;
+	          oPred_h << "   }" << endl;
 	        }
 	      else
 		{}
@@ -584,12 +593,21 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	  else if( objectType == Symbol::VECTOR )
 	    {
 	      if( label == nonmem::THETA 
-		  || label == nonmem::ETA 
-		  || label == nonmem::EPS )
+		  || label == nonmem::ETA )
 		{
-		  oPred_h << "       spk_perm->data[ i ]->" << label;
+		  oPred_h << "         spk_perm->data[ i ]->" << label;
 		  oPred_h << " = spk_temp.data[ i ]->";
 		  oPred_h << label << ";" << endl;
+		}
+	      else if( label == nonmem::EPS )
+		{
+	          oPred_h << "         if ( spk_epsLen != 0 )" << endl;
+	          oPred_h << "         {" << endl;
+	          oPred_h << "            // Skip this if there are no eps values." << endl;
+		  oPred_h << "            spk_perm->data[ i ]->" << label;
+		  oPred_h << " = spk_temp.data[ i ]->";
+		  oPred_h << label << ";" << endl;
+	          oPred_h << "         }" << endl;
 		}
 	    }
           else if( objectType == Symbol::MATRIX )
@@ -600,7 +618,7 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
 	    {
 	      if( label == nonmem::PRED || label == nonmem::RES || access == Symbol::READWRITE )
 		{
-		  oPred_h << "       spk_perm->data[ i ]->" << label;
+		  oPred_h << "         spk_perm->data[ i ]->" << label;
 		  oPred_h << " = spk_temp.data[ i ]->" << label << ";" << endl;
 		}
 	    }
@@ -609,17 +627,17 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
         { 
 	  if( objectType == Symbol::SCALAR && access == Symbol::READWRITE )
 	    {
-	      oPred_h << "       spk_perm->data[ i ]->" << label;
+	      oPred_h << "         spk_perm->data[ i ]->" << label;
 	      oPred_h << " = spk_temp.data[ i ]->";
 	      oPred_h << label << ";" << endl;
 	    }
         }
     }      
-  oPred_h << "     }" << endl;
+  oPred_h << "      }" << endl;
   oPred_h << "   }" << endl;
   oPred_h << "   else" << endl;
   oPred_h << "   {" << endl;
-  oPred_h << "     spk_isIterCompleted = false;" << endl;
+  oPred_h << "      spk_isIterCompleted = false;" << endl;
   oPred_h << "   }" << endl;
   oPred_h << endl;
 

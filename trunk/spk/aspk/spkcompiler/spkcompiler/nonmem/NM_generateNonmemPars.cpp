@@ -57,10 +57,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << endl;
 
   oNonmemPars << "#include <valarray>" << endl;
-  if( getTarget() == POP )
-    oNonmemPars << "#include <spkpred/PopPredModel.h>" << endl;
-  else
-    oNonmemPars << "#include <spkpred/IndPredModel.h>" << endl;
+  oNonmemPars << "#include <spkpred/Cov.h>" << endl;
   oNonmemPars << endl;
   
 
@@ -163,8 +160,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
   oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
      
-  oNonmemPars << "   const enum " << (getTarget()==POP? "Pop":"Ind") << "PredModel::covStruct omegaStruct = ";
-  oNonmemPars << (getTarget()==POP? "Pop":"Ind") << "PredModel::";
+  oNonmemPars << "   const enum covStruct omegaStruct = ";
   oNonmemPars << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
   oNonmemPars << endl;
 
@@ -231,8 +227,8 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // The structure of SIGMA matrix." << endl;
       oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
       oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
-      oNonmemPars << "   const enum PopPredModel::covStruct sigmaStruct = ";
-      oNonmemPars << "PopPredModel::" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+      oNonmemPars << "   const enum covStruct sigmaStruct = ";
+      oNonmemPars << "" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
       oNonmemPars << endl;
 
       oNonmemPars << "   // The dimension of SIGMA matrix is detemined by the length of EPS vector." << endl;
@@ -274,7 +270,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "// NOTE:" << endl;
       oNonmemPars << "// SIGMA related variables do not appear in this namespace" << endl;
       oNonmemPars << "// because you requested the single individual analysis." << endl;
-      oNonmemPars << "// const enum PopPredModel::covStruct sigmaStruct;" << endl;
+      oNonmemPars << "// const enum covStruct sigmaStruct;" << endl;
       oNonmemPars << "// const valarray<double> sigmaIn;" << endl;
     }
   oNonmemPars << endl;

@@ -635,12 +635,12 @@ void NonmemTranslator::generateIndDriver( ) const
   // omega in
   oIndDriver << "            oResults << \"<omega_in dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
   oIndDriver << "            oResults << \" struct=\" << \"\\\"\";" << endl;
-  oIndDriver << "            if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
+  oIndDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oIndDriver << "               oResults << \"diagonal\";" << endl;
   oIndDriver << "            else" << endl;
   oIndDriver << "               oResults << \"block\";" << endl;
   oIndDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
-  oIndDriver << "            if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
+  oIndDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oIndDriver << "            {" << endl;
   oIndDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
   oIndDriver << "               {" << endl;
@@ -685,12 +685,12 @@ void NonmemTranslator::generateIndDriver( ) const
   // omega out
   oIndDriver << "            oResults << \"<omega_out dimension=\" << \"\\\"\" << NonmemPars::omegaDim << \"\\\"\";" << endl;
   oIndDriver << "            oResults << \" struct=\" << \"\\\"\";" << endl;
-  oIndDriver << "            if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
+  oIndDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oIndDriver << "               oResults << \"diagonal\";" << endl;
   oIndDriver << "            else" << endl;
   oIndDriver << "               oResults << \"block\";" << endl;
   oIndDriver << "            oResults << \"\\\"\" << \">\" << endl;" << endl;
-  oIndDriver << "            if( NonmemPars::omegaStruct==IndPredModel::DIAGONAL )" << endl;
+  oIndDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
   oIndDriver << "            {" << endl;
   oIndDriver << "               for( int i=0; i<NonmemPars::omegaDim; i++ )" << endl;
   oIndDriver << "               {" << endl;

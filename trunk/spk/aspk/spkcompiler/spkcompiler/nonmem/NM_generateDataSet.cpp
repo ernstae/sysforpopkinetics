@@ -165,6 +165,7 @@ void NonmemTranslator::generateDataSet( ) const
   // Public member functions
   // -----------------------
   oDataSet_h << "   void expand( const SPK_VA::valarray<double>& measurements, SPK_VA::valarray<double>& records ) const;" << endl;
+  oDataSet_h << "   void expand( int who, const SPK_VA::valarray<double>& measurements_who, SPK_VA::valarray<double>& records_who ) const;" << endl;
   oDataSet_h << "   int getMeasurementIndex( int recordIndex ) const;" << endl;
   oDataSet_h << "   int getMeasurementIndex( int who, int recordIndex ) const;" << endl;
   oDataSet_h << "   int getRecordIndex( int measurementIndex ) const;" << endl;
@@ -509,6 +510,7 @@ void NonmemTranslator::generateDataSet( ) const
   //----------------------------------------------------------
   // expand( const valarray& measurements, valarray& records )
   // ----------------------------------------------------------
+  oDataSet_h << "// Sets the record values that have measurement values for all of the individuals." << endl;
   oDataSet_h << "template <class spk_ValueType>" << endl;
   oDataSet_h << "void DataSet<spk_ValueType>::expand( " << endl;
   oDataSet_h << "       const SPK_VA::valarray<double> & measurements," << endl;  
@@ -523,6 +525,28 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
   oDataSet_h << "   {" << endl;
   oDataSet_h << "      records[ getRecordIndex( i ) ] = measurements[i];" << endl;
+  oDataSet_h << "   }" << endl;
+  oDataSet_h << "}" << endl;
+                                                                                
+  //----------------------------------------------------------
+  // expand( int who, const valarray& measurements_who, valarray& records_who )
+  // ----------------------------------------------------------
+  oDataSet_h << "// Sets the record values that have measurement values for the who-th individual." << endl;
+  oDataSet_h << "template <class spk_ValueType>" << endl;
+  oDataSet_h << "void DataSet<spk_ValueType>::expand( " << endl;
+  oDataSet_h << "       int who," << endl;
+  oDataSet_h << "       const SPK_VA::valarray<double>& measurements_who," << endl;
+  oDataSet_h << "       SPK_VA::valarray<double>& records_who ) const" << endl;
+  oDataSet_h << "{" << endl;
+  oDataSet_h << "   const int n = measurements_who.size();" << endl;
+  oDataSet_h << "   assert( n == NObservs[who] );" << endl;
+  oDataSet_h << "   int m = getNRecords(who);" << endl;
+  oDataSet_h << "   assert( m >= n );" << endl;
+  oDataSet_h << "   records_who.resize( m );" << endl;
+  oDataSet_h << "   records_who = 0.0;" << endl;
+  oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
+  oDataSet_h << "   {" << endl;
+  oDataSet_h << "      records_who[ getRecordIndex( who, i ) ] = measurements_who[i];" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "}" << endl;
                                                                                 
