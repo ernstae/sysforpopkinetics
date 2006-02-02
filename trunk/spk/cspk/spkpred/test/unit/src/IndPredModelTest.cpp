@@ -39,8 +39,8 @@
 #include "compareToKnown.h"
 
 // SPK Pred library header files.
-#include <spkpred/DiagCov.h>
-#include <spkpred/IndPredModel.h>
+#include "../../../spkpred/DiagCov.h"
+#include "../../../spkpred/IndPredModel.h"
 
 // SPK library header files.
 #include <spk/AkronBtimesC.h>
@@ -675,7 +675,7 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  IndPredModel::covStruct omegaStruct = IndPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -1137,7 +1137,7 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  IndPredModel::covStruct omegaStruct = IndPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -1687,7 +1687,7 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  IndPredModel::covStruct omegaStruct = IndPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -2228,7 +2228,7 @@ void IndPredModelTest::isCachingProperlyTest()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  IndPredModel::covStruct omegaStruct = IndPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;

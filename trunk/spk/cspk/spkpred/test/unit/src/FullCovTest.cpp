@@ -39,7 +39,7 @@
 #include "compareToKnown.h"
 
 // SPK Pred library header files.
-#include <spkpred/FullCov.h>
+#include "../../../spkpred/FullCov.h"
 
 // SPK library header files.
 #include <spk/AkronItimesC.h>

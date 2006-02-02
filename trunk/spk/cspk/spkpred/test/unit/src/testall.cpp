@@ -10,6 +10,7 @@
 #include "OdeBreakTest.h"
 #include "OdePredBaseTest.h"
 #include "PopPredModelTest.h"
+#include "predTwoStageMethodTest.h"
 
 using namespace std;
 using namespace CppUnit;
@@ -32,12 +33,13 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master_list_of_tests;
   vector<CppUnit::Test*> tests_to_be_executed;
 
-  master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest       ::suite();
-  master_list_of_tests[ "FullCovTest" ]               = FullCovTest       ::suite();
-  master_list_of_tests[ "IndPredModelTest" ]          = IndPredModelTest  ::suite();
-  master_list_of_tests[ "OdeBreakTest" ]              = OdeBreakTest      ::suite();
-  master_list_of_tests[ "OdePredBaseTest" ]           = OdePredBaseTest   ::suite();
-  master_list_of_tests[ "PopPredModelTest" ]          = PopPredModelTest  ::suite();
+  master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest             ::suite();
+  master_list_of_tests[ "FullCovTest" ]               = FullCovTest             ::suite();
+  master_list_of_tests[ "IndPredModelTest" ]          = IndPredModelTest        ::suite();
+  master_list_of_tests[ "OdeBreakTest" ]              = OdeBreakTest            ::suite();
+  master_list_of_tests[ "OdePredBaseTest" ]           = OdePredBaseTest         ::suite();
+  master_list_of_tests[ "PopPredModelTest" ]          = PopPredModelTest        ::suite();
+  master_list_of_tests[ "predTwoStageMethodTest" ]    = predTwoStageMethodTest  ::suite();
 
   //
   // This is the case where user didn't select specific unit tests.

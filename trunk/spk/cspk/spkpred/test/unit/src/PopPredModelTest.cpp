@@ -967,7 +967,7 @@ void PopPredModelTest::NoEta_OneExpF_ModelBasedExpY_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -976,7 +976,7 @@ void PopPredModelTest::NoEta_OneExpF_ModelBasedExpY_Test()
   valarray<double> omegaMinRep( nOmegaPar );
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -1482,7 +1482,7 @@ void PopPredModelTest::NoEta_OneExpF_AdditivePlusThetaDepY_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -1491,7 +1491,7 @@ void PopPredModelTest::NoEta_OneExpF_AdditivePlusThetaDepY_Test()
   valarray<double> omegaMinRep( nOmegaPar );
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -2002,7 +2002,7 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -2013,7 +2013,7 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -2776,7 +2776,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -2787,7 +2787,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -3529,7 +3529,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -3540,7 +3540,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::FULL;
+  covStruct sigmaStruct = FULL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps * ( nEps + 1 ) / 2;
@@ -4388,7 +4388,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -4399,7 +4399,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test()
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -5136,7 +5136,7 @@ void PopPredModelTest::isCachingProperlyTest()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -5147,7 +5147,7 @@ void PopPredModelTest::isCachingProperlyTest()
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
