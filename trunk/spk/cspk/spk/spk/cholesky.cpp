@@ -196,7 +196,7 @@ using SPK_VA::valarray;
 /*------------------------------------------------------------------------
  *     DoubleMatrix version of inverse()
  *------------------------------------------------------------------------*/
-const valarray<double> cholesky( const valarray<double>& A, int n ) 
+const SPK_VA::valarray<double> cholesky( const SPK_VA::valarray<double>& A, int n ) 
 {
   assert( A.size() == n * n );
   assert( isSymmetric( A, n ) );
