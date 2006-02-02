@@ -39,10 +39,10 @@
 #include "compareToKnown.h"
 
 // SPK Pred library header files.
-#include <spkpred/DiagCov.h>
-#include <spkpred/FullCov.h>
-#include <spkpred/PopPredModel.h>
-#include <spkpred/OdePredBase.h>
+#include "../../../spkpred/DiagCov.h"
+#include "../../../spkpred/FullCov.h"
+#include "../../../spkpred/OdePredBase.h"
+#include "../../../spkpred/PopPredModel.h"
 
 // SPK library header files.
 #include <spk/AkronBtimesC.h>
@@ -2220,7 +2220,7 @@ void OdePredBaseTest::NoEta_OneExpF_OneBolus_ModelBasedExpY_Test()
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -2229,7 +2229,7 @@ void OdePredBaseTest::NoEta_OneExpF_OneBolus_ModelBasedExpY_Test()
   valarray<double> omegaMinRep( nOmegaPar );
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -2785,7 +2785,7 @@ void OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test(
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -2796,7 +2796,7 @@ void OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test(
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -3591,7 +3591,7 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test(
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -3602,7 +3602,7 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test(
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -4282,7 +4282,7 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Outpu
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -4293,7 +4293,7 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Outpu
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -4981,7 +4981,7 @@ void OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_Additiv
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -4992,7 +4992,7 @@ void OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_Additiv
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
@@ -5690,7 +5690,7 @@ void OdePredBaseTest::FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_Addit
   //------------------------------------------------------------
 
   // Set the structure of omega, the covariance matrix for eta.
-  PopPredModel::covStruct omegaStruct = PopPredModel::DIAGONAL;
+  covStruct omegaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nOmegaPar = nEta;
@@ -5701,7 +5701,7 @@ void OdePredBaseTest::FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_Addit
   omegaMinRep[1] = 0.02;
 
   // Set the structure of sigma, the covariance matrix for eps.
-  PopPredModel::covStruct sigmaStruct = PopPredModel::DIAGONAL;
+  covStruct sigmaStruct = DIAGONAL;
 
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;

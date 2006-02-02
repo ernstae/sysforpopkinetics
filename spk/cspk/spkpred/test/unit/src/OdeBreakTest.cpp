@@ -39,7 +39,7 @@
 #include "OdeBreakTest.h"
 
 // SPK Pred library header files.
-#include <spkpred/OdeBreak.h>
+#include "../../../spkpred/OdeBreak.h"
 
 // CppAD header files.
 #include <CppAD/CppAD.h>
