@@ -33,7 +33,7 @@
  * Function: cholesky
  *
  *************************************************************************/
-#include <valarray>
+#include "SpkValarray.h"
 
-const std::valarray<double> cholesky( const std::valarray<double>& A, int n );
+const SPK_VA::valarray<double> cholesky( const SPK_VA::valarray<double>& A, int n );
 #endif
