@@ -713,7 +713,7 @@ void FullCov::calcPar(
   int k;
 
   // Calculate the Cholesky factor for the covariance matrix.
-  valarray<double> chol( nCovInRow * nCovInRow );
+  SPK_VA::valarray<double> chol( nCovInRow * nCovInRow );
   chol = cholesky( covIn, nCovInRow );
 
   // Set the covariance matrix parameters using the following

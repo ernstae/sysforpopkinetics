@@ -1224,6 +1224,62 @@ void PopPredModel::doSetIndPar( const SPK_VA::valarray<double>& bIn )
 
 /*************************************************************************
  *
+ * Function: setTheta
+ *
+ *//**
+ * Sets the current value for theta.
+ */
+/*************************************************************************/
+
+void PopPredModel::setTheta( const SPK_VA::valarray<double>& thetaIn )
+{
+  thetaCurr = thetaIn;
+  assert( thetaIn.size() == nTheta );
+}
+
+
+/*************************************************************************
+ *
+ * Function: setOmega
+ *
+ *//**
+ * Sets the current value for omega.
+ */
+/*************************************************************************/
+
+void PopPredModel::setOmega( const SPK_VA::valarray<double>& omegaIn )
+{
+  // Set the omega value maintained by the covariance class.
+  pOmegaCurr->setCov( omegaIn );
+  assert( omegaIn.size() == nEta * nEta );
+
+  // Save the initial value for the omega parameters.
+  pOmegaCurr->calcPar( omegaIn, omegaParCurr );
+}
+
+
+/*************************************************************************
+ *
+ * Function: setSigma
+ *
+ *//**
+ * Sets the current value for sigma.
+ */
+/*************************************************************************/
+
+void PopPredModel::setSigma( const SPK_VA::valarray<double>& sigmaIn )
+{
+  // Set the sigma value maintained by the covariance class.
+  pSigmaCurr->setCov( sigmaIn );
+  assert( sigmaIn.size() == nEps * nEps );
+
+  // Save the initial value for the sigma parameters.
+  pSigmaCurr->calcPar( sigmaIn, sigmaParCurr );
+}
+
+
+/*************************************************************************
+ *
  * Function: invalidateCache
  *
  *//**
@@ -4503,6 +4559,23 @@ void PopPredModel::getEta( SPK_VA::valarray<double>& ret ) const
   ret.resize( nEta );
 
   ret = etaCurr;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getEps
+ *
+ *//**
+ * Gets the current value for eps.
+ */
+/*************************************************************************/
+
+void PopPredModel::getEps( SPK_VA::valarray<double>& ret ) const 
+{
+  ret.resize( nEps );
+
+  ret = epsCurr;
 }
 
 

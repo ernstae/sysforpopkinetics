@@ -40,6 +40,8 @@
 // SPK library header files.
 #include <spk/SpkValarray.h>
 
+enum covStruct {DIAGONAL, FULL, BLOCKDIAG};
+
 
 /*************************************************************************
  *

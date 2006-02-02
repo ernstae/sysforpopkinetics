@@ -2773,6 +2773,23 @@ void IndPredModel::getTheta( SPK_VA::valarray<double>& ret ) const
 
 /*************************************************************************
  *
+ * Function: getEta
+ *
+ *//**
+ * Gets the current value for eta.
+ */
+/*************************************************************************/
+
+void IndPredModel::getEta( SPK_VA::valarray<double>& ret ) const 
+{
+  ret.resize( nEta );
+
+  ret = etaCurr;
+}
+
+
+/*************************************************************************
+ *
  * Function: getOmega
  *
  *//**

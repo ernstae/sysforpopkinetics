@@ -62,14 +62,6 @@
 class IndPredModel : public SpkModel
 {
   //------------------------------------------------------------
-  // Class scope declarations.
-  //------------------------------------------------------------
-
-public:
-  enum covStruct {DIAGONAL, FULL, BLOCKDIAG};
-
-
-  //------------------------------------------------------------
   // Constructors and destructors.
   //------------------------------------------------------------
 
@@ -149,6 +141,10 @@ protected:
   void doSelectIndividual( int iIn );
 
   void doSetIndPar( const SPK_VA::valarray<double>& indParIn );
+
+public:
+  void setTheta( const SPK_VA::valarray<double>& thetaIn );
+  void setOmega( const SPK_VA::valarray<double>& omegaIn );
 
 
   //------------------------------------------------------------
@@ -287,6 +283,7 @@ public:
   void getIndPar( SPK_VA::valarray<double>& ret ) const;
 
   void getTheta( SPK_VA::valarray<double>& ret ) const;
+  void getEta  ( SPK_VA::valarray<double>& ret ) const;
   void getOmega( SPK_VA::valarray<double>& ret ) const;
 
   void getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
