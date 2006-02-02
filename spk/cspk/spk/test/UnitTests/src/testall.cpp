@@ -98,6 +98,7 @@
 #include "transposeDerivativeTest.h"
 #include "transposeRowBlocksTest.h"
 #include "transposeTest.h"
+#include "twoStageMethodTest.h"
 #include "UTranTimesSymKronSymTimesU_xTest.h"
 #include "UTranTimesSymKronSymTimesUTest.h"
 #include "WarningsManagerTest.h"
@@ -217,6 +218,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "transposeDerivativeTest" ]          = transposeDerivativeTest::suite();
   master_list_of_tests[ "transposeRowBlocksTest" ]           = transposeRowBlocksTest::suite();
   master_list_of_tests[ "transposeTest" ]                    = transposeTest::suite();
+  master_list_of_tests[ "twoStageMethodTest" ]               = twoStageMethodTest::suite();
   master_list_of_tests[ "UTranTimesSymKronSymTimesU_xTest" ] = UTranTimesSymKronSymTimesU_xTest::suite();
   master_list_of_tests[ "UTranTimesSymKronSymTimesUTest" ]   = UTranTimesSymKronSymTimesUTest::suite();
   master_list_of_tests[ "WarningsManagerTest" ]              = WarningsManagerTest::suite();
