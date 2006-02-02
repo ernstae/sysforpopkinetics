@@ -29,6 +29,7 @@ libspkpred_a_SOURCES = \
 	IndPredModel.cpp \
 	isEqual.cpp \
 	PopPredModel.cpp \
+	predTwoStageMethod.cpp \
 	Cov.h \
 	DiagCov.h \
 	FullCov.h \
@@ -38,8 +39,7 @@ libspkpred_a_SOURCES = \
 	OdePredBase.h \
 	PopPredModel.h \
 	PredBase.h \
-	OdePredBase.h \
-	OdeBreak.h \
+	predTwoStageMethod.h \
 	$(top_builddir)/config.h
 
 pkginclude_HEADERS = \
@@ -52,6 +52,5 @@ pkginclude_HEADERS = \
 	OdePredBase.h \
 	PopPredModel.h \
 	PredBase.h \
-	OdePredBase.h \
-	OdeBreak.h
+	predTwoStageMethod.h 
 

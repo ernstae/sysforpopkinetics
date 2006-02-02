@@ -49,7 +49,7 @@
 #include <algorithm>
 #include <map>
 #include <vector>
-#include <valarray>
+
 
 /*************************************************************************
  *
@@ -81,14 +81,14 @@ class OdePredBase : public PredBase<Value>
 
 public:
   OdePredBase(
-    bool                        isPkBlockAFuncOfTIn,
-    int                         nCompIn,
-    int                         defaultDoseCompIn,
-    int                         defaultObservCompIn,
-    const std::valarray<bool>&  compInitialOffIn,
-    const std::valarray<bool>&  compNoOffIn,
-    const std::valarray<bool>&  compNoDoseIn,
-    double                      tolRelIn )
+    bool                           isPkBlockAFuncOfTIn,
+    int                            nCompIn,
+    int                            defaultDoseCompIn,
+    int                            defaultObservCompIn,
+    const SPK_VA::valarray<bool>&  compInitialOffIn,
+    const SPK_VA::valarray<bool>&  compNoOffIn,
+    const SPK_VA::valarray<bool>&  compNoDoseIn,
+    double                         tolRelIn )
     :
     isPkBlockAFuncOfTime      ( isPkBlockAFuncOfTIn ),
     nComp                     ( nCompIn ),
@@ -566,10 +566,10 @@ private:
   std::vector<Value> compScaleParam;       ///< Current scale parameter for each compartment.
   std::vector<Value> compBioavailFrac;     ///< Current bio-availability for each compartment.
 
-  std::valarray<bool> compInitialOff;      ///< Indicates which compartments are initially off.
-  std::valarray<bool> compNoOff;           ///< Indicates which compartments may not be turned on or off.
-  std::valarray<bool> compNoDose;          ///< Indicates which compartments may not receive a dose.
-  std::valarray<bool> compIsOff;           ///< Indicates which compartments are currently off.
+  SPK_VA::valarray<bool> compInitialOff;   ///< Indicates which compartments are initially off.
+  SPK_VA::valarray<bool> compNoOff;        ///< Indicates which compartments may not be turned on or off.
+  SPK_VA::valarray<bool> compNoDose;       ///< Indicates which compartments may not receive a dose.
+  SPK_VA::valarray<bool> compIsOff;        ///< Indicates which compartments are currently off.
 
   std::vector<Value> compAmountAllOdeSoln;             ///< Amount in each compartment for all of the ODE solution times.
   std::vector<Value> compAmountAllOdeSolnNoOutputComp; ///< Amount in each compartment except the output for all of the ODE solution times.

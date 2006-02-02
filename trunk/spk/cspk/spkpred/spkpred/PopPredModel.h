@@ -62,14 +62,6 @@
 class PopPredModel : public SpkModel
 {
   //------------------------------------------------------------
-  // Class scope declarations.
-  //------------------------------------------------------------
-
-public:
-  enum covStruct {DIAGONAL, FULL, BLOCKDIAG};
-
-
-  //------------------------------------------------------------
   // Constructors and destructors.
   //------------------------------------------------------------
 
@@ -174,6 +166,11 @@ protected:
 
   void doSetPopPar( const SPK_VA::valarray<double>& popParIn );
   void doSetIndPar( const SPK_VA::valarray<double>& indParIn );
+
+public:
+  void setTheta( const SPK_VA::valarray<double>& thetaIn );
+  void setOmega( const SPK_VA::valarray<double>& omegaIn );
+  void setSigma( const SPK_VA::valarray<double>& sigmaIn );
 
 
   //------------------------------------------------------------
@@ -364,6 +361,7 @@ public:
 
   void getTheta( SPK_VA::valarray<double>& ret ) const;
   void getEta  ( SPK_VA::valarray<double>& ret ) const;
+  void getEps  ( SPK_VA::valarray<double>& ret ) const;
   void getOmega( SPK_VA::valarray<double>& ret ) const;
   void getSigma( SPK_VA::valarray<double>& ret ) const;
 
