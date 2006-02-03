@@ -92,6 +92,34 @@ Cov::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn )
   isInvCurrOk      ( false ),
   isInv_parCurrOk  ( false )
 {
+
+  // For FullCov (including banded) ONLY:
+  //minRepParFixed enters as an upper triangle in row major order...
+  //parFixed needs to be a lower triangle in row major order.
+  //(Note:  minRep and parCurr are similarly opposing - confusing)
+  
+  if (nPar > nRow) {
+  //Store minRepFixed in a full matrix
+  valarray<double> fullCovFixed( nRow * nRow );
+  int k = 0;
+  for( int i = 0; i < nRow; i++ )
+  {
+    for( int j = 0; j <= i; j++ )
+    {
+      fullCovFixed[ i * nRow + j] = minRepFixedIn[ k++ ];
+    }
+  }
+  //parse full matrix to parFixed
+  k = 0;
+  for( int i = 0; i < nRow; i++ )
+  {
+    for( int j = i; j < nRow; j++ )
+    {
+      parFixed[ k++ ] = fullCovFixed[ j * nRow + i ];
+    }
+  }
+  }
+
 }
 
 /*************************************************************************
