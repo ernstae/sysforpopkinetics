@@ -446,13 +446,8 @@ class ThreadedHandler extends Thread
                         {
                             if(jobState.runQueue.size() > 0)
                             {
-                                jobId =(String)jobState.runQueue.remove(0);
-                                if(jobId.startsWith(" "))
-                                {
-                                    jobState.jobList.remove(jobId);
-                                    jobId = jobId.trim();                                   
-                                }
-                                jobState.jobList.setProperty(jobId, "run");
+                                jobId =(String)jobState.runQueue.remove(0);                                                                  
+                                jobState.jobList.setProperty(jobId.trim(), "run");
                                 out.println(jobId);
                             }
                             else
