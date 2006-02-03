@@ -55,6 +55,8 @@
     <!--job>969</job--><!-- Very expensive! 30 minutes! Population POP043, Argatroban 1 cpt ODE -->
     <job>962</job><!-- Population POP045, Argatroban 1 cpt ODE -->
     <job>993</job><!-- Individual IND035, 2 Comp ODE -->  
+    <job>1401</job><!-- 1000 point Vegas: True likelihood is 99.4385 -->
+    <job>1405</job><!-- 32 by 32 Grid: True likelihood is 99.4385 -->
     <ignore>elapsedtime</ignore>
   </srun>
   <serr>
