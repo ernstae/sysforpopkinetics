@@ -600,9 +600,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << endl;
 
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-  oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen   << " );" << endl;
-  oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen   << " ||" << endl;
-  oOdePred_h << "           spk_epsLen   == 0 );    // Allow this to be zero for two-stage methods." << endl;
+  oOdePred_h << "   assert( ( spk_etaLen == " << myEtaLen << " && spk_epsLen == " << myEpsLen   << " ) ||" << endl;
+  oOdePred_h << "           ( spk_etaLen == " << myEpsLen << " && spk_epsLen == " << 0          << " ) );   // Allow these for two-stage methods." << endl;
   oOdePred_h << endl;
 
   oOdePred_h << "   // Get non-const references" << endl;
@@ -983,9 +982,8 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "   assert( spk_curWho == spk_i );" << endl;
   oOdePred_h << "   assert( spk_curWhichRecord == spk_j );" << endl;
   oOdePred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-  oOdePred_h << "   assert( spk_etaLen   == " << myEtaLen << " );"   << endl;
-  oOdePred_h << "   assert( spk_epsLen   == " << myEpsLen   << " ||" << endl;
-  oOdePred_h << "           spk_epsLen   == 0 );    // Allow this to be zero for two-stage methods." << endl;
+  oOdePred_h << "   assert( ( spk_etaLen == " << myEtaLen << " && spk_epsLen == " << myEpsLen   << " ) ||" << endl;
+  oOdePred_h << "           ( spk_etaLen == " << myEpsLen << " && spk_epsLen == " << 0          << " ) );   // Allow these for two-stage methods." << endl;
   oOdePred_h << endl;      
   oOdePred_h << "   return evalError();" << endl;
   oOdePred_h << "}" << endl;
