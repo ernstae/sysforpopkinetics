@@ -106,6 +106,46 @@ using SPK_VA::valarray;
  *
  *     OmegaInd        =  nEtaInd by nEtaInd  .
  *
+ * 
+ * This function allows the following Two-Stage methods to be used:
+ * 
+ *     STANDARD_TWO_STAGE            =  Standard Two-Stage (STS) method,
+ *     ITERATIVE_TWO_STAGE           =  Iterative Two-Stage (ITS) method,
+ *     GLOBAL_TWO_STAGE              =  Global Two-Stage (GTS) method.
+ *     MAP_BAYES_STANDARD_TWO_STAGE  =  Standard Two-Stage (STS) method
+ *                                      with MAP Bayesian objective,
+ *     MAP_BAYES_ITERATIVE_TWO_STAGE =  Iterative Two-Stage (ITS) method
+ *                                      with MAP Bayesian objective, and
+ *     MAP_BAYES_GLOBAL_TWO_STAGE    =  Global Two-Stage (GTS) method 
+ *                                      with MAP Bayesian objective.
+ * 
+ * For the Standard Two-Stage method (STS), the population mean of
+ * the individuals' parameter estimates is calculated as
+ * 
+ *                            nInd
+ *                            ----
+ *          (STS)       1     \    
+ *     bMean       =  ------  /     bOut_i   
+ *                     nInd   ----      
+ *                            i = 1 
+ * 
+ * and the population covariance of the individuals' estimates is
+ * calculated as
+ * 
+ *                           nInd
+ *                           ----
+ *         (STS)       1     \                                              T
+ *     bCov       =  ------  /      ( bOut_i  -  bMean ) ( bOut_i  -  bMean )   .
+ *                    nInd   ----          
+ *                           i = 1 
+ * 
+ * 
+ * These algorithms are defined in the following reference:
+ *
+ * A. Schumitzky, EM algorithms and two stage methods in phamacokinetic population analysis.
+ * in $italic Advanced Methods of Pharmacokinetic and Pharmacodynamic Systems Analysis$$, 
+ * edited by D. Z. D'Argenio. New York: Plenum, 1995, p. 145-160.
+ * 
  */
 /*************************************************************************/
 

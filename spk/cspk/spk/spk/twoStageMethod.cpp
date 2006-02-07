@@ -57,13 +57,11 @@ $spell
   endl  
   eps
   epsilon  
-  Hessian  
   Ind  
   int  
   iostream  
   iomanip  
   Iter  
-  Laplace
   Max  
   namespace  
   Obj  
@@ -98,7 +96,6 @@ $spell
   optInfo
   pathname
   fp
-  spawn
   Ri
   valarray
   enum
@@ -108,13 +105,12 @@ $spell
   optimizer
   popOptInfo
   indOptInfo
-  Sachiko
 $$
 
-$section Determining Population Parameters Using a Two-Stage Method$$
+$section Determining the Population Mean and Covariance of Individual Parameters Using a Two-Stage Method$$
 
 $index twoStageMethod$$
-$cindex determining population parameters /using /a two-stage /method$$
+$cindex determining /the population mean /and covariance /of individual parameters /using /a Two-Stage /method$$
 
 $table
 $bold Prototype:$$ $cend
@@ -146,121 +142,61 @@ $$
 $pre
 $$
 $head Description$$
-
-// [Remove]==========================================
-//
-$pre
-
-    F I N I S H   T H I S :
-
-   -----------------------
-
-
-         REVIEW THE ARG.'S
-
-      
-         REVIEW THE SPEC.'S
-
-
-$$
-//
-// [Remove]==========================================
-
-Minimizes one of the parametric population objective functions:  
-the modified Laplace, the modified Expected Hessian, or the 
-modified First Order.
+Uses one of the Two-Stage methods to determine the population mean
+and covariance of the individual parameters.
 $pre
 
 $$
-To be specific, this function solves the problem 
+This function allows the following Two-Stage methods to be used:
+$pre
+
+    STANDARD_TWO_STAGE            =  Standard Two-Stage (STS) method,
+    ITERATIVE_TWO_STAGE           =  Iterative Two-Stage (ITS) method,
+    GLOBAL_TWO_STAGE              =  Global Two-Stage (GTS) method.
+    MAP_BAYES_STANDARD_TWO_STAGE  =  Standard Two-Stage (STS) method
+                                     with MAP Bayesian objective,
+    MAP_BAYES_ITERATIVE_TWO_STAGE =  Iterative Two-Stage (ITS) method
+                                     with MAP Bayesian objective, and
+    MAP_BAYES_GLOBAL_TWO_STAGE    =  Global Two-Stage (GTS) method 
+                                     with MAP Bayesian objective.
+
+$$
+For the Standard Two-Stage method (STS), the population mean of
+the individuals' parameter estimates is calculated as
 $math%
 
-    \minimize LTilde(alp) \with \respect \to alp
-    \subject \to alpLow \le alp \le alpUp  ,
-
-%$$
-where $math%LTilde(alp)%$$ is one of the above 
-objective functions.
-Each of these objectives is the negative log of a different 
-approximation for the likelihood of all of the individuals' data.
-$pre
+                           nInd
+                           ----
+         (STS)       1     \    
+    bMean       =  ------  /     bOut_i   
+                    nInd   ----      
+                           i = 1 
 
 $$
-The parametric population objective function for a population 
-of $math%M%$$ individuals is defined as 
-$math%
-                    M
-                   ----
-    LTilde(alp) =  >      LTilde_i(alp)  ,
-                   ----
-                   i = 1
-%$$
-where the negative log-likelihood of the $th i$$ individual's 
-data $math%y_i%$$ is defined as
-$math%
+and the population covariance of the individuals' estimates is
+calculated as
+$math%$$
 
-                    1 %                                  %
-    LTilde_i(alp) = - \logdet[ HTilde_i(alp, bTilde_i) / (2\pi) ] + Lambda_i(alp, bHat_i) ,
-                    2 %                                  %  
-
-%$$
-the joint negative log-likelihood of $math%y_i%$$ and 
-the random population parameter vector $math%b%$$ is defined as
-$math%
-
-                       1 %          %                   1                    T            -1
-    Lambda_i(alp, b) = - \logdet[ 2 \pi R_i(alp, b) ] + - [y_i - f_i(alp, b)]  R_i(alp, b)   [y_i - f_i(alp, b)]
-                       2 %          %                   2
-
-                       1 %          %                   1  T       -1
-                     + - \logdet[ 2 \pi D(alp) ]      + - b  D(alp)   b  ,
-                       2 %          %                   2
-
-%$$
-and the form of $math%HTilde_i(alp, b)%$$ depends on the 
-particular parametric population objective function.
-$pre
+                          nInd
+                          ----
+        (STS)       1     \                                              T
+    bCov       =  ------  /      ( bOut_i  -  bMean ) ( bOut_i  -  bMean )   .
+                   nInd   ----          
+                          i = 1 
 
 $$
-The random population parameter vector $math%bHat_i%$$ is the true 
-minimizer of $math%Lambda_i(alp, b)%$$ with respect to $math%b%$$. 
-The random population parameter vector $math%bTilde_i%$$, on the other
-hand, is the point where the approximate projected 
-gradient of $math%Lambda_i(alp, b)%$$ with respect to $math%b%$$ is zero. 
-The approximate projected gradient replaces the gradient by its 
-central difference approximate in the definition of the projected
-gradient.
-$pre
 
-$$
-For the case of the modified Laplace objective function,
-$math%HTilde_i(alp, b)%$$ is the finite difference approximation 
-for the Hessian of $math%Lambda_i(alp, b)%$$ with respect 
-to $math%b%$$.
-$pre
-
-$$
-For the case of the modified Expected Hessian objective function,
-$math%HTilde_i(alp, b)%$$ is the expected value of the Hessian of 
-$math%Lambda_i(alp, b)%$$ with respect to $math%b%$$, where  
-the derivatives with respect to $math%b%$$ are replaced 
-by their finite difference approximations.
-$pre
-
-$$
-(The above equations use
-$xref/glossary/Population Notation/population notation/$$.)
 
 $head Reference$$
-B. M. Bell, $italic Approximating The Marginal Likelihood Estimate 
-For Models With Random Parameters$$, Applied Mathematics and Computation, 
-Accepted 1999. 
+A. Schumitzky, EM algorithms and two stage methods in phamacokinetic population analysis.
+in $italic Advanced Methods of Pharmacokinetic and Pharmacodynamic Systems Analysis$$, 
+edited by D. Z. D'Argenio. New York: Plenum, 1995, p. 145-160.
 
 $head Model Assumptions$$
 The following model assumptions are stated using 
 $xref/glossary/Population Notation/population notation/$$.
 The bar above $math%alp%$$ and $math%b_i%$$ denote the true, but unknown,
-values for the fixed population parameters and the random population parameters
+values for the population parameters and the individual parameters
 for the $th i$$ individual, respectively.
 $math%
                ___   ___
@@ -272,44 +208,32 @@ $math%
 %$$
 
 $head Return Value$$
-Upon a successful completion, the function returns normally and
-set the given output value place holders if it is able to 
-obtain an acceptable estimate for $math%alpHat%$$, the true minimizer
-of $math%LTilde(alp)%$$, within a specified number of iterations. 
-In order for an acceptable estimate for $math%alpHat%$$ to be 
-found, acceptable sets of values must also be found for $math%bHat_i%$$ 
-and $math%bTilde_i%$$ that are calculated using the estimate for 
-$math%alpHat%$$.  The case that too-many-iter occurred during 
-the optimization process is not a successful completion. 
+Upon a successful completion, the function returns normally and set
+the given output value place holders if it is able to obtain
+acceptable estimates for the population mean and covariance of the
+individuals parameters.
 
-If an error is detected or failure occurs during the evaluation, a SpkException object is
-thrown.  The state at which an exception is thrown is defined in
-$xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
+If an error is detected or failure occurs during the evaluation, an
+SpkException object is thrown.  The state at which an exception is
+thrown is defined in $xref/glossary/Exception Handling
+Policy/Exception Handling Policy/$$.
 
 $head Arguments$$
 $syntax/
 /model/
 /$$
 This function expects $italic model$$ to be a function of
-all three parameters: $math%alp%$$, $math%b%$$ and $math%i%$$.
-Refer $xref/glossary/Model Functions Depend on i - alp - b/Model Functions Depend on i - alp - b/$$
+two parameters: $math%b%$$ and $math%i%$$.
+Refer $xref/glossary/Model Functions Depend on i - b/Model Functions Depend on i - b/$$
 for details.
 
 $syntax/
 
 /method/
 /$$
-This string specifies which two-stage method will be used.
-$pre
-
-$$
-The valid values are:
-$code STANDARD_TWO_STAGE specifies the Standard Two-Stage (STS) method,
-$code ITERATIVE_TWO_STAGE specifies the Iterative Two-Stage (ITS) method, and
-$code GLOBAL_TWO_STAGE specifies the Global Two-Stage (GTS) method.
-$code MAP_BAYES_STANDARD_TWO_STAGE specifies the Standard Two-Stage (STS) method with MAP Bayesian objective,
-$code MAP_BAYES_ITERATIVE_TWO_STAGE specifies the Iterative Two-Stage (ITS) method with MAP Bayesian objective, and
-$code MAP_BAYES_GLOBAL_TWO_STAGE specifies the Global Two-Stage (GTS) method with MAP Bayesian objective.
+This enumerated type variable specifies which Two-Stage method will be used.
+The permissible values for $italic objective$$ are defined in 
+the $xref/Objective//Objective/$$ enumerated type definition.
 
 $syntax/
 
@@ -353,20 +277,6 @@ that controls the population level optimization process.
 $pre
 
 $$
-It has attributes for holding the optimization state information 
-that is required to perform a warm start, i.e., to start the
-optimization process using a previous set of optimization state
-information.
-If a warm start is being performed, then before this function is 
-called the optimization state information must be set.
-This information may have been set during a previous call to this
-function, or the information may be set directly using the
-Optimizer class member function, setStateInfo().
-Note that the upper and lower bounds for $math%alp%$$ must be the 
-same as they were during the earlier call to this function.
-$pre
-
-$$
 Most of the optimizer information is accessible directly via public
 get functions, e.g., the value epsilon is returned by the Optimizer 
 class function $code getEpsilon()$$.  
@@ -376,74 +286,28 @@ directly using get functions.
 
 $subhead optInfo.epsilon$$
 This real number is used to specify the convergence criteria
-for the optimizer.
+for the iterative and global two-stage methods.
 It must be greater than $math%0.0%$$.
-$pre
-
-$$
-A population parameter value $math%alpOut%$$ is accepted as an estimate for 
-$math%alpHat%$$ if 
-$math%
-        abs( alpOut - alpHat ) \le epsilon ( alpUp - alpLow )  ,
-%$$
-where $math%abs%$$ is the element-by-element absolute value function
-and $math%alpHat%$$ is a local minimizer of the parametric population 
-objective function.
-Since $math%alpHat%$$ is unknown, this function estimates the left hand
-side of this inequality in a way that is a good approximation when 
-the Hessian of the objective function is positive definite.
-$pre
-
-$$
-Note that if $italic nMaxIter$$ is set to zero, then $math%alpIn%$$ is 
-accepted as the estimate for $math%alpHat%$$.
 
 $subhead optInfo.nMaxIter$$
 This integer must be greater than or equal to zero.
-It specifies the maximum number of 
-iterations to attempt before giving up on convergence.
-If it is equal to zero, then the initial
-value for $math%alp%$$ is accepted as the final value, and any requested output
-values are evaluated at that final value.
+It specifies the maximum number of iterations for the iterative and 
+global Two-Stage methods to attempt before giving up on convergence.
+If it is equal to zero, then the initial values for the population mean
+and covariance are accepted as the final values.
 
 $subhead optInfo.traceLevel$$
-This integer scalar specifies the amount of tracing.
-Larger values of $italic traceLevel$$ entail more tracing, 
-with $math%4%$$ being the highest level of tracing.
+This integer scalar specifies the amount of tracing for the iterative 
+and global Two-Stage methods.
 If $math%level \ge 1%$$, trace values are directed to standard output 
 (stdout).  
-$pre
-
-$$
-Tracing is done using a scaled version of the
-objective function.  For this scaled version the elements of
-the parameter vector are constrained to the interval $math%[0, 1]%$$. 
-$pre
-
-$$
-If $italic traceLevel$$ is equal to $math%4%$$, then the tracing 
-will include the gradient of the objective and a finite difference 
-approximation for that gradient.
-These two gradients can be compared as a check on the consistency 
-of the objective function and its gradient.
-$pre
-
-$$
-For more details on the tracing see the description of the level 
-parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
 
 $subhead optInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
-completed in the optimizer.
+completed for the iterative and global Two-Stage methods..
 
 $subhead optInfo.isTooManyIter$$
 This flag indicates whether the too-many-iteration failure has occurred.  
-
-$subhead optInfo.saveStateAtEndOfOpt$$
-This flag indicates if the state information required for a warm start
-should be saved at the end of the optimization process.
-This state information will not be saved if the optimization process
-results in an exception being thrown by $code quasiNewtonAnyBox$$.
 
 $subhead optInfo.throwExcepIfMaxIter$$
 This flag indicates if the optimizer should throw an exception when
@@ -454,19 +318,6 @@ be thrown and the output values for this function will not be set.
 Otherwise, the calling program will
 need to check the parameter isTooManyIter to see if the 
 maximum number of iterations was exhausted.
-
-$subhead optInfo.isWarmStartPossible$$
-This flag indicates whether it is possible to perform a warm start 
-using the current optimizer state information.
-
-$subhead optInfo.isWarmStart$$
-This flag indicates whether the optimization should run a warm start.  
-
-$subhead optInfo.stateInfo$$
-This $code StateInfo$$ struct contains the optimization state information
-required to perform a warm start.
-Each of its elements is accessed using the Optimizer class member
-functions, $code getStateInfo()$$ and $$setStateInfo()$$.
 
 $syntax/
 
@@ -503,7 +354,7 @@ $math%
         abs( bOut_i - bHat_i ) \le epsilon ( bUp - bLow )  ,
 %$$
 where $math%abs%$$ is the element-by-element absolute value function
-and $math%bHat_i%$$ is a local minimizer of $math%Lambda_i(alp, b)%$$ 
+and $math%bHat_i%$$ is a local minimizer of $math%MapObj(b)%$$ 
 with respect to $math%b%$$.
 Since $math%bHat_i%$$ is unknown, this function estimates the left hand
 side of this inequality in a way that is a good approximation when 
@@ -514,28 +365,6 @@ $$
 Note that if $italic nMaxIter$$ is set to zero, then the $th i$$ 
 column of $math%bIn%$$ is accepted as the estimate for 
 $math%bHat_i%$$.
-$pre
-
-$$
-For a particular value of $math%alp%$$ and for the $math%i%$$-th 
-individual in the population, an individual parameter value 
-$math%bOut_i%$$ is accepted as an estimate for $math%bTilde_i%$$ if 
-$math%
-        abs( bOut_i - bTilde_i ) \le epsilon ( bUp - bLow )  ,
-%$$
-where $math%abs%$$ is the element-by-element absolute value function
-and $math%bTilde_i%$$ is the point where the approximate projected 
-gradient of $math%Lambda_i(alp, b)%$$ with respect to $math%b%$$ 
-is zero.
-Since $math%bTilde_i%$$ is unknown, this function estimates the left hand
-side of this inequality in a way that is a good approximation when 
-the Hessian of the objective function is positive definite.
-$pre
-
-$$
-Note that if $italic nMaxIter$$ is set to zero, then the $th i$$ 
-column of $math%bIn%$$ is accepted as the estimate for 
-$math%bTilde_i%$$.
 
 $subhead optInfo.nMaxIter$$
 This integer must be greater than or equal to zero.
@@ -599,20 +428,20 @@ $syntax/
 /dvecBLow/
 /$$
 The $code DoubleMatrix$$ $italic dvecBLow$$ contains the column vector 
-$math%bLow%$$, which specifies the lower limit for the random parameters 
+$math%bLow%$$, which specifies the lower limit for the individual parameters 
 during the optimization procedure for all the individuals.
 The length of $italic dvecBLow$$ is equal to the length of 
-the random population parameter vector $math%ind%$$.
+the individual parameter vector $math%b_i%$$.
 
 $syntax/
 
 /dvecBUp/
 /$$
 The $code DoubleMatrix$$ $italic dvecBUp$$ contains the column vector 
-$math%bUp%$$, which specifies the upper limit for the random parameters 
+$math%bUp%$$, which specifies the upper limit for the individual parameters 
 during the optimization procedure for all the individuals.
 The length of $italic dvecBUp$$ is equal to the length of 
-the random population parameter vector $math%ind%$$.
+the individual parameter vector $math%b_i%$$.
 
 $syntax/
 
@@ -621,13 +450,13 @@ $syntax/
 The $code DoubleMatrix$$ $italic dmatBIn$$ contains the matrix 
 $math%bIn%$$.  
 The $th i$$ column of $math%bIn%$$ specifies the initial value for 
-the random parameters for the $th i$$ individual.
+the individual parameters for the $th i$$ individual.
 If $math%ind_i%$$ is any column of $math%bIn%$$,
 it is assumed that $math%bLow \le ind_i \le bUp%$$.
 The column dimension of $math%bIn%$$ is equal to the number of 
 individuals in the population, $math%M%$$.
 Note that the number of rows in $italic dmatBIn$$ specifies the 
-length of the random population parameter vector $math%ind%$$.
+length of the individual parameter vector $math%b_i%$$.
 
 $syntax/
 
@@ -646,11 +475,9 @@ Otherwise, this function will not attempt to change the contents of
 the $code DoubleMatrix$$ pointed to by $italic pdmatBOut$$.
 To be specific, the $th i$$ column of $math%bOut%$$ contains a column
 vector that is an estimate for $math%bHat_i%$$, the minimizer 
-of $math%Lambda_i(alpOut, ind)%$$ with respect to $math%ind%$$. 
-This is under the assumption that $math%alpOut%$$
-is the true value for the fixed population parameters.
+of $math%MapObj(b)%$$ with respect to $math%b_i%$$. 
 The value $math%epsilon(1)%$$ is used for accepting the minimizers with 
-respect to the random population parameters.
+respect to the individual parameters.
 
 $syntax/
 
@@ -658,9 +485,9 @@ $syntax/
 /$$
 The $code DoubleMatrix$$ $italic dvecBStep$$ contains the column vector 
 $math%bStep%$$, which specifies the step size used for approximating
-the derivatives with respect to the random population parameters.
+the derivatives with respect to the individual parameters.
 The length of $italic dvecBStep$$ is equal to the length of 
-the random population parameter vector $math%ind%$$.
+the individual parameter vector $math%b_i%$$.
 
 $syntax/
 
@@ -669,8 +496,8 @@ $syntax/
 If $italic pdvecBMeanOut$$ is not $code NULL$$, 
 then the $code DoubleMatrix$$ pointed to by $italic pdvecBMeanOut$$ must 
 be declared in the function that calls this function, 
-and it must have the same length as the random population parameter 
-vector $math%ind%$$.
+and it must have the same length as the individual parameter 
+vector $math%b_i%$$.
 If $italic pdvecBMeanOut$$ is not $code NULL$$, 
 and if this function completed successfully,  
 then the $code DoubleMatrix$$ pointed to by $italic pdvecBMeanOut$$ will 
