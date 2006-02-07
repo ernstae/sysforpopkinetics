@@ -399,9 +399,8 @@ void NonmemTranslator::generatePred( const char* fPredEqn_cpp ) const
   oPred_h << "{" << endl;
 
   oPred_h << "   assert( spk_thetaLen == " << myThetaLen << " );" << endl;
-  oPred_h << "   assert( spk_etaLen   == " << myEtaLen   << " );" << endl;
-  oPred_h << "   assert( spk_epsLen   == " << myEpsLen   << " ||" << endl;
-  oPred_h << "           spk_epsLen   == 0 );    // Allow this to be zero for two-stage methods." << endl;
+  oPred_h << "   assert( ( spk_etaLen == " << myEtaLen << " && spk_epsLen == " << myEpsLen   << " ) ||" << endl;
+  oPred_h << "           ( spk_etaLen == " << myEpsLen << " && spk_epsLen == " << 0          << " ) );   // Allow these for two-stage methods." << endl;
   oPred_h << endl;
 
   ///////////////////////////////////////////////////////////////////////////////////
