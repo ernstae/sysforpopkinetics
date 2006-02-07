@@ -392,7 +392,7 @@ void predTwoStageMethodTest::RailExample_Test()
 
   // Set the diagonal elements for the initial value for Sigma.
   valarray<double> sigmaPopMinRep( nSigmaPopPar );
-  sigmaPopMinRep[0] = 900.0;
+  sigmaPopMinRep[0] = 32.0;
   assert( nSigmaPopPar == 1 );
 
 
