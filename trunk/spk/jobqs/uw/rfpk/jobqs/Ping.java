@@ -25,7 +25,8 @@ import javax.swing.*;
 
 /** This class asks the user to wait for the job-queue server to initialize.  It says "Hi"
  * to the server every second until it receives "Hi" from the server.  Then it tells
- * the user the server initialization has completed.
+ * the user the server initialization has completed.  It also inform the user if the 
+ * job-queue server is not running.
  *
  * @author  Jiaji Du
  */
@@ -38,9 +39,56 @@ public class Ping
     {
         Socket socket = null;
         PrintWriter out = null;
-        BufferedReader in = null;
+        BufferedReader reader = null;
+        BufferedInputStream in = null;
         JDialog dialog = new JDialog();
-        JLabel label = new JLabel("The Job-queue server is initializing. Please wait.");
+        JLabel label = new JLabel();
+        Runtime runtime = Runtime.getRuntime();
+        String[] c = new String[]{"ssh", "localhost", "ps -elf|grep jobqs"};
+        try
+        {
+            Process process = runtime.exec(c);
+            process.waitFor();
+            if(process.exitValue() < 2)
+            {
+                in = new BufferedInputStream(process.getInputStream());
+                String stdout = "";
+                int i;
+                while(true)
+                {
+                    i = in.read();
+                    if(i == -1)
+                        break;
+                    stdout += (char)i;
+                }
+                in.close();
+                if(stdout.indexOf("uw.rfpk.jobqs.JobQueue") != -1)
+                {
+                    label.setText("The Job-queue server is initializing. Please wait.");
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "The Job-queue server is not running.");                    
+                    System.exit(0);
+                }
+            }
+        }
+        catch(IOException e)
+        {
+        }
+        catch(InterruptedException e)
+        {
+        }
+        finally
+        {
+            try
+            {
+                if(in != null) in.close();               
+            }
+            catch(IOException e)
+            {
+            }
+        }       
         label.setHorizontalAlignment(JLabel.CENTER);
         dialog.getContentPane().add(label, BorderLayout.CENTER);
         dialog.setTitle("Message");
@@ -56,15 +104,15 @@ public class Ping
             {
                 socket = new Socket(args[0], Integer.parseInt(args[1]));
                 out = new PrintWriter(socket.getOutputStream(), true);            
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out.println("Hi");
-                String message = in.readLine();
+                String message = reader.readLine();
                 if(message.equals("Hi"))
                 {
                     dialog.setVisible(false);
                     JOptionPane.showMessageDialog(null, "Initialization has completed.");                    
                 }
-                in.close();
+                reader.close();
                 out.close();
                 socket.close();
                 System.exit(0);
@@ -77,7 +125,7 @@ public class Ping
             {
                 try
                 {
-                    if(in != null) in.close();
+                    if(reader != null) reader.close();
                     if(out != null) out.close();
                     if(socket != null) socket.close();
                 }
