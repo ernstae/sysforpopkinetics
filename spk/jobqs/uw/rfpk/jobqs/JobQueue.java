@@ -447,8 +447,9 @@ class ThreadedHandler extends Thread
                             if(jobState.runQueue.size() > 0)
                             {
                                 jobId =(String)jobState.runQueue.remove(0);                                                                  
-                                jobState.jobList.setProperty(jobId.trim(), "run");
-                                out.println(jobId);
+                                jobState.jobList.setProperty(jobId, "run");
+                                if(jobState.restartJobs.remove(jobId)) out.println(" " + jobId);
+                                else out.println(jobId);
                             }
                             else
                                 out.println("none");
@@ -517,9 +518,10 @@ class ThreadedHandler extends Thread
                                     JobQueue.setEndCode(jobId, null);
                                 if(stateCode.equals("run"))
                                 {
-                                    jobState.runQueue.add(" " + jobId);
+                                    jobState.runQueue.add(jobId);
                                     jobState.jobList.setProperty(jobId, "q2r");
-                                    JobQueue.setStateCode(jobId, "q2r");
+                                    jobState.restartJobs.add(jobId);
+                                    JobQueue.setStateCode(jobId, "q2r");                                    
                                 }
                                 if(stateCode.equals("arun"))
                                 {
@@ -555,6 +557,7 @@ class ThreadedHandler extends Thread
                                 {
                                     jobState.runQueue.remove(jobId);
                                     jobState.jobList.remove(jobId);
+                                    jobState.restartJobs.remove(jobId);
                                     String sql = "update job set state_code='end',end_code='abrt',event_time=" +
                                                  eventTime + " where job_id=" + jobId;
                                     stmt.executeUpdate(sql);
@@ -589,6 +592,7 @@ class ThreadedHandler extends Thread
                         if(message[1].equals("end"))
                         {
                             jobState.jobList.remove(jobId);
+                            jobState.restartJobs.remove(jobId);
                             if(stateCode.equals("q2c")) jobState.cmpQueue.remove(jobId);
                             if(stateCode.equals("q2r")) jobState.runQueue.remove(jobId);
                             if(stateCode.equals("q2ac")) jobState.abortCmpQueue.remove(jobId);
@@ -641,7 +645,7 @@ class Monitor extends Thread
             }
             synchronized(jobState)
             {
-                if(JobState.cmpd)
+                if(!JobState.cmpd)
                 {
                     Enumeration keys = jobState.jobList.keys();
                     while(keys.hasMoreElements())
@@ -662,7 +666,9 @@ class Monitor extends Thread
                     }
                 }
                 else
+                {
                     JobState.cmpd = false;
+                }
                 if(!JobState.rund)
                 {
                     Enumeration keys = jobState.jobList.keys();
@@ -684,7 +690,9 @@ class Monitor extends Thread
                     }
                 }
                 else
+                {
                     JobState.rund = false;
+                }
             }
         }
     }

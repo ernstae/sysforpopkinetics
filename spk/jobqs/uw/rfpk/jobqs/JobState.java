@@ -19,6 +19,7 @@ distribution.
 package uw.rfpk.jobqs;
 
 import java.util.Vector;
+import java.util.HashSet;
 import java.util.Properties;
 
 /** This class object contains the states of the currently active jobs.
@@ -42,6 +43,9 @@ public class JobState {
     /** Job state list */
     protected Properties jobList = new Properties();
             
+    /** Restart job set */
+    protected HashSet restartJobs = new HashSet();
+    
     /** Compiler daemon visiting flag */
     protected static boolean cmpd = false;
     
