@@ -25,6 +25,7 @@ import uw.rfpk.mda.nonmem.Utility;
 import uw.rfpk.mda.nonmem.Output;
 import org.netbeans.ui.wizard.*;
 import java.util.Vector;
+import java.util.HashSet;
 import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
@@ -40,6 +41,7 @@ public class MDAIterator implements StepIterator{
     private int actual = 0;
     private boolean isFirst = true;
     private boolean isInd = false;
+    private boolean isTwoStage = false;
     private boolean isPred = false;
     private boolean isCov = false;
     private boolean isEstimation = true;
@@ -93,9 +95,21 @@ public class MDAIterator implements StepIterator{
     private JFileChooser files = null;
     private long jobId = 0;
     private boolean isLast = false;
-
+    
+    /** ADVAN number */
+    protected int adn = 0;
+    
+    /** TRANS number*/
+    protected int trn = 0;
+    
     /** MDA Frame */
     protected MDAFrame frame = null;
+    
+    /** Initialization for ADVAN set */
+    protected HashSet initAdvan = new HashSet();
+
+    /** Initialization for two-stage set */
+    protected HashSet initTwoStage = new HashSet();
     
     /** Constructor to create a MDAIterator object.
      * @param server the web server associated with the MDA.
@@ -148,6 +162,11 @@ public class MDAIterator implements StepIterator{
      * @param b a boolean, true for individual, false for population analysis.
      */    
     public void setIsInd(boolean b) { isInd = b; }
+    
+    /** Set if it is a two-stage analysis.
+     * @param b a boolean, true for two-stage, false for otherwise.
+     */    
+    public void setIsTwoStage(boolean b) { isTwoStage = b; }
     
     /** Set if using user predefined PK model.
      * @param b a boolean, true for using user defined model, false for using ADVANs.
@@ -267,9 +286,14 @@ public class MDAIterator implements StepIterator{
     public boolean getIsSimulation() { return isSimulation; };
     
     /** Get if it is an individual analysis.
-     * @return a boolean, true if individual analysis, false if otherwise.
+     * @return a boolean, true if it is an individual analysis, false if otherwise.
      */    
     public boolean getIsInd() { return isInd; };    
+    
+    /** Get if it is a two-stage analysis.
+     * @return a boolean, true if it is a two-stage analysis, false if otherwise.
+     */    
+    public boolean getIsTwoStage() { return isTwoStage; };
     
     /** Get if using user predefined PK model.
      * @return a boolean, true if using user defined model, false if otherwise.
@@ -404,7 +428,7 @@ public class MDAIterator implements StepIterator{
         }
         steps.add(theta);
         steps.add(omega);
-        if(!isInd)
+        if(!isInd && !isTwoStage)
             steps.add(sigma);
 
         if(isSimulation)
@@ -524,7 +548,7 @@ public class MDAIterator implements StepIterator{
             else
                 return -1;
         }
-
+        
         if(text.indexOf("<spksource>") != -1 && text.indexOf("<spkdata") != -1 && 
            text.indexOf("<spkmodel>") != -1)
         {
@@ -532,13 +556,39 @@ public class MDAIterator implements StepIterator{
             int indexModel = text.lastIndexOf("<?xml ", text.indexOf("<spkmodel"));
             dataXML[0] = text.substring(indexData, indexModel);
             isDataXML = true;
-            parseControl(XMLReader.getModelArchive(text.substring(indexModel)));           
+            String method = null;
+            String covTheta = null;
+            if(text.indexOf("<pop_analysis ") != -1)
+            {
+                int i = text.indexOf("<pop_analysis ");
+                String analysis = text.substring(i, text.indexOf(">", i));
+                if(analysis.indexOf("is_estimation=\"yes\"") != -1)
+                {
+                    i = analysis.indexOf(" approximation=") + 16;                    
+                    String m = analysis.substring(i, analysis.indexOf("\"", i));
+                    if(m.endsWith("two_stage"))
+                    {
+                        method = m;
+                        if(m.startsWith("map")) 
+                        {
+                            covTheta = Utility.getOmegaValues(text);
+                            if(covTheta == null)
+                            {
+                                JOptionPane.showMessageDialog(null, "Omega is not found in source.",
+                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                                return -1;   
+                            }
+                        }
+                    }
+                }
+            }
+            parseControl(XMLReader.getModelArchive(text.substring(indexModel)), method, covTheta);           
         }
         else if(text.indexOf("$PROBLEM") != -1 && text.indexOf("$DATA") != -1 &&
                 text.indexOf("$INPUT") != -1)
         {
             isDataXML = false;
-            parseControl(text);
+            parseControl(text, null, null);
         }
         else
         {
@@ -552,11 +602,17 @@ public class MDAIterator implements StepIterator{
     /** Parse a model (NONMEM control file).
      *  @param text the model text.
      */
-    public void parseControl(String text)
+    public void parseControl(String text, String method, String covTheta)
     {
         StringTokenizer records = new StringTokenizer(text.trim(), "$");
         int nTokens = records.countTokens();
         reload = new Properties();
+        if(method != null)
+        {
+            reload.setProperty("METHOD", method);
+            if(covTheta != null)
+                reload.setProperty("COVTHETA", covTheta);
+        }
         int state = 0;
         for(int i = 0; i < nTokens; i++)
         {

@@ -48,6 +48,7 @@ public class Likelihood {
 //        String model = spkInput.substring(index2 - 22);
 
         // Modify source.
+        source = convertToPopulationAnalysis(source);
         source = replaceSourceParameters(source, report);
  
         // Remove attributes of <pop_analysis>.
@@ -76,7 +77,46 @@ public class Likelihood {
         }
         return source + data + model;
     }
-                
+
+    // Convert individual model to population model
+    private static String convertToPopulationAnalysis(String source)
+    {
+        int index1 = source.indexOf("<pop_analysis ");
+        int index2 = source.indexOf(">", index1);
+        String analysis = source.substring(index1, index2);
+        index1 = analysis.indexOf(" approximation=") + 16;
+        index2 = analysis.indexOf("\"", index1);       
+        String method = analysis.substring(index1, index2);
+        if(method.endsWith("two_stage"))
+        {
+            if(source.indexOf("<pred>") != -1)
+            {
+                index1 = source.indexOf("<pred>");
+                index2 = source.indexOf("</pred>");
+                String pred = source.substring(index1, index2);
+                pred = Utility.addEtaToTheta(Utility.replaceEtaByEps(pred));
+                source = source.substring(0, index1) + pred + source.substring(index2);
+            }
+            if(source.indexOf("<pk>") != -1)
+            {
+                index1 = source.indexOf("<pk>");
+                index2 = source.indexOf("</pk>");
+                String pk = source.substring(index1, index2);
+                pk = Utility.addEtaToTheta(pk);
+                source = source.substring(0, index1) + pk + source.substring(index2);                
+            }
+            if(source.indexOf("<error>") != -1)
+            {
+                index1 = source.indexOf("<error>");
+                index2 = source.indexOf("</error>");
+                String error = source.substring(index1, index2);
+                error = Utility.replaceEtaByEps(error);
+                source = source.substring(0, index1) + error + source.substring(index2);
+            }
+        }
+        return source;
+    }
+    
     // Replace initial values of parameters in the souce by those in the report 
     private static String replaceSourceParameters(String source, String report)
     {
@@ -147,7 +187,8 @@ public class Likelihood {
                     nEvaluation += "\n            <value>" + nGrid + "</value>";
             }
         }
-        else if(jobMethodCode.equals("ml") || jobMethodCode.equals("mi") || jobMethodCode.equals("vl"))
+        else if(jobMethodCode.equals("ml") || jobMethodCode.equals("mi") ||
+                jobMethodCode.equals("ad") || jobMethodCode.equals("vl"))
         {
             nEvaluation = JOptionPane.showInputDialog(null, "Enter number of individual objective evaluations.", "1000");
             if(nEvaluation == null || !Utility.isPosIntNumber(nEvaluation.trim()))
@@ -160,8 +201,6 @@ public class Likelihood {
             else
                 nEvaluation = "\n            <value>" + nEvaluation + "</value>";                
         }
-        else if(jobMethodCode.equals("an"))
-            nEvaluation = "\n            <value>1</value>";
             
         String integrationMethod = "plain";
         if(jobMethodCode.equals("gr"))
@@ -170,8 +209,8 @@ public class Likelihood {
             integrationMethod = "miser";
         else if(jobMethodCode.equals("vl"))
             integrationMethod = "vegas";
-        else if(jobMethodCode.equals("an"))
-            integrationMethod = "analytic";
+        else if(jobMethodCode.equals("ad"))
+            integrationMethod = "adapt";
 
         // Modify the source
         source = source.replaceFirst("</nonmem>", "   <monte_carlo method=\"" + integrationMethod + 

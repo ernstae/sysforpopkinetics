@@ -109,14 +109,15 @@ public class Summary {
                             lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
                             ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                             cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                                  Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                             omega = omega + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
                                     getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;
                             if(j == i + 1)
                                 omega += getSpace(14 - ub.length()) + cv;                    
-                            omega += "\n";                     
+                            omega += "\n";
+                            k++;
                         }
                     }
                 }
@@ -134,12 +135,13 @@ public class Summary {
                         lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
                         ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                         cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                              Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                         omega = omega + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
                                 getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
                                 getSpace(14 - ub.length()) + cv + "\n";
+                        k++;
                     }
                 }
             }
@@ -166,14 +168,15 @@ public class Summary {
                             lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
                             ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                             sd = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                                  Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                             sigma = sigma + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +               
                                     getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;                   
                             if(j == i + 1)
                                 sigma += getSpace(14 - ub.length()) + sd;
-                            sigma += "\n";                    
+                            sigma += "\n";
+                            k++;
                         }
                     }
                 }
@@ -191,12 +194,13 @@ public class Summary {
                         lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
                         ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k++]))) : NA;
+                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                         cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                              Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
                         sigma = sigma + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
                                 getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
                                 getSpace(14 - ub.length()) + cv + "\n";
+                        k++;
                     }
                 }
             }

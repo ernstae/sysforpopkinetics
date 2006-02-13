@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
-    <fileobject name="ExitMDATest.java">
-        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="ExitMDATest"/>
-    </fileobject>
     <fileobject name="UserJobs.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserJobs"/>
     </fileobject>
-    <fileobject name="TestConnection.java">
-        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="TestConnection"/>
-    </fileobject>
-    <fileobject name="UserModels.java">
-        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserModels"/>
-    </fileobject>
-    <fileobject name="GetArchive.java">
-        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetArchive"/>
+    <fileobject name="ExitMDATest.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="ExitMDATest"/>
     </fileobject>
     <fileobject name="UserDatasets.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserDatasets"/>
@@ -25,8 +16,20 @@
     <fileobject name="GetJnlp.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetJnlp"/>
     </fileobject>
+    <fileobject name="TestConnection.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="TestConnection"/>
+    </fileobject>
+    <fileobject name="UserModels.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserModels"/>
+    </fileobject>
     <fileobject name="GetHistory.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetHistory"/>
+    </fileobject>
+    <fileobject name="AbortJob.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="AbortJob"/>
+    </fileobject>
+    <fileobject name="GetArchive.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetArchive"/>
     </fileobject>
     <fileobject name="GetVersions.java">
         <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetVersions"/>

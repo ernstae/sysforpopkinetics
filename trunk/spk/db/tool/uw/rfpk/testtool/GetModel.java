@@ -27,10 +27,11 @@ import javax.swing.JOptionPane;
 import uw.rfpk.mda.nonmem.*;
 import uw.rfpk.mda.*;
 import javax.swing.table.*;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import java.text.SimpleDateFormat;
+import uw.rfpk.rcs.Archive;
 
 /**
  * This is the main class of model archive management tool.
@@ -339,8 +340,10 @@ public class GetModel extends javax.swing.JFrame {
                     jTextArea1.setText(archive);
                 if(action.endsWith("model"))
                 {
-                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes()));
-                    jTextArea1.setText(ToString.arrayToString(arch.getRevision(), "\n"));
+//                    Archive arch = new Archive("", new ByteArrayInputStream(archive.getBytes()));
+//                    jTextArea1.setText(ToString.arrayToString(arch.getRevision(), "\n"));
+                    jTextArea1.setText(Archive.getRevision(archive, perlDir, 
+                                                          workingDir, "filename", "0"));
                 }
                 jTextArea1.setCaretPosition(0);
             }
@@ -373,16 +376,21 @@ public class GetModel extends javax.swing.JFrame {
                 if(versionLog == null)
                     versionLog = "";
                 
-                Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
-                arch.addRevision(jTextArea1.getText().split("\n"), versionLog);
-                arch.findNode(arch.getRevisionVersion()).setAuthor(jTextField3.getText());
+//                Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
+//                arch.addRevision(jTextArea1.getText().split("\n"), versionLog);
+//                arch.findNode(arch.getRevisionVersion()).setAuthor(jTextField3.getText());
+                String archive = Archive.addRevision(strAr, jTextArea1.getText(), perlDir,
+                                                    workingDir, versionLog, 
+                                                    jTextField3.getText(), "filename");                
                 if(Spkdb.updateModel(con, 
                                      modelId, 
-                                     new String[]{"archive"}, 
-                                     new String[]{arch.toString("\n")})) 
+                                     new String[]{"archive"},
+                                     new String[]{archive}));
+//                                     new String[]{arch.toString("\n")})) 
                 JOptionPane.showMessageDialog(null, 
                                               "The Model '" + name + "' was updated to version " + 
-                                              String.valueOf(arch.getRevisionVersion().last()) + ".", 
+//                                              String.valueOf(arch.getRevisionVersion().last()) + ".",
+                                              String.valueOf(Archive.getNumRevision(archive)) + ".",
                                               "Information",
                                               JOptionPane.INFORMATION_MESSAGE);                    
             }
@@ -399,21 +407,13 @@ public class GetModel extends javax.swing.JFrame {
         {
             JOptionPane.showMessageDialog(null, e, "SQLException", JOptionPane.ERROR_MESSAGE);        
         }
-        catch(InvalidFileFormatException e)
-        { 
-            JOptionPane.showMessageDialog(null, e, "InvalidFileFormatException", JOptionPane.ERROR_MESSAGE);
-        }
-        catch(ParseException e)
-        { 
-            JOptionPane.showMessageDialog(null, e, "ParseException", JOptionPane.ERROR_MESSAGE);
-        }
-        catch(PatchFailedException e)
+        catch(IOException e)
         {
-            JOptionPane.showMessageDialog(null, e, "PatchFailedException", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
         }
-        catch(DiffException e)
+        catch(InterruptedException e)
         {
-            JOptionPane.showMessageDialog(null, e, "DiffException", JOptionPane.ERROR_MESSAGE);         
+            JOptionPane.showMessageDialog(null, e, "InterruptedException", JOptionPane.ERROR_MESSAGE);         
         }        
     }//GEN-LAST:event_jTable1MouseClicked
 
@@ -614,5 +614,11 @@ public class GetModel extends javax.swing.JFrame {
     private static final String  userName = "daemon";
     
     // Database password
-    private static final String  password = "daemon";    
+    private static final String  password = "daemon";
+            
+    // Directory of the perl script used to run rcs
+    private final String perlDir = "/usr/local/bin/";
+    
+    // Working directory for running rcs
+    private final String workingDir = "/tmp/";
 }

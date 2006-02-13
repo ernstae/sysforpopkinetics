@@ -50,7 +50,6 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     private JWizardPane wizardPane = null;
     private TableModel tableModel = new ATableModel();
     private DefaultTableModel tableEditModel;
-    private String[] items = null;
     private String[] stdItems = new String[] { "DV", "MDV", "EVID", "TIME", "DATE", 
                                 "DATE1", "DATE2", "DATE3", "AMT", "RATE", "SS", 
                                 "ADDL", "II", "ABS", "LAG", "UPPER", "LOWER", "L1", 
@@ -796,50 +795,26 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             setDataArray();
             input = ((MDAObject)wizard.getCustomizedObject()).getDataLabels();
 
-            index = 0;
+            index = -1;
             jComboBox1.removeItem("ID");
             if(!iterator.getIsInd())
             {
                 input[0] = "ID";
-                index = 1;
             }
             else
             {
                 jComboBox1.insertItemAt("ID", 1);
             }
-            if(exist(input, "DV"))
-            {
-                isValid = true;
-                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-            }
-            if(iterator.getIsReload() && iterator.getReload().getProperty("INPUT") != null &&
-               iterator.getIsDataXML())
-            {
-                items = iterator.getReload().getProperty("INPUT").substring(6).trim().split(" ");
-                if(iterator.getNDataCol() == items.length)
-                {
-                    input = items;
-                    iterator.getReload().remove("INPUT");
-                    isValid = true;
-                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, "The number of columns found in the data file " +
-                                                  "does not match the $INPUT record of the reloaded model",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-            if(iterator.getIsDataXML())
-                input = items;
+
+            isValid = exist(input, "DV");
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
             
             setTable();
-
-            if(items != null)
-            {
-                isValid = iterator.getNDataCol() == items.length;
-                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-            }
+            if(!isValid && !exist(input, ""))
+                JOptionPane.showMessageDialog(null, 
+                                              "Data item \"DV\" is required.",   
+                                              "Input Error",    
+                                              JOptionPane.ERROR_MESSAGE);
 	}
         
         private void setDataArray()
@@ -877,9 +852,11 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 nDataCol = input.length;
                 setDataObject();
             }
+            object.getSource().input = inputs.split(" ");
+            if(iterator.getIsTwoStage())
+                inputs = inputs.substring(3);
             String record = "$INPUT " + inputs.replaceAll("\r", "");
-            object.getRecords().setProperty("Input", record);
-            object.getSource().input = record.substring(7).split(" ");
+            object.getRecords().setProperty("Input", record);            
 	}
 
 	public boolean isValid(){

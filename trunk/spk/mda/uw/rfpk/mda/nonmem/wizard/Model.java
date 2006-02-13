@@ -350,6 +350,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("NPARAMETERS");
+        jLabel3.setToolTipText("Enter 0 unless using P(n) as parameter names");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -393,6 +394,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextField2, gridBagConstraints);
 
+        jTextField3.setToolTipText("Enter 0 unless using P(n) as parameter names");
         jTextField3.setPreferredSize(new java.awt.Dimension(8, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -737,6 +739,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                             jTextField3.setText(numbers.substring(beginIndex + 12, endIndex));
                         }
                     }
+
                     model.removeAllElements();
                     beginIndex = text.indexOf("COMP=(");
                     while(beginIndex != -1)
@@ -747,18 +750,34 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                     }
                     index = model.size() - 1;
                     jList1.setSelectedIndex(index);
-                    setLastDefaultCompNumber();
-                    isValid = true;
-                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
+                    setLastDefaultCompNumber();                    
                 }
                 else
                     for(int i = 0; i < model.size(); i++)
                         model.set(i, checkAttribute((String)model.get(i)));
+                
+                if(iterator.getAdvan() == 6 && iterator.initAdvan.contains("model"))
+                {
+                    initModel();
+                    iterator.initAdvan.remove("model");
+                }
+                isValid = true;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
             }
             else
             {
-                for(int i = 0; i < model.size(); i++)
-                    model.set(i, checkAttribute((String)model.get(i)));
+                if(iterator.getAdvan() == 6 && iterator.initAdvan.contains("model"))
+                {
+                    initModel();
+                    iterator.initAdvan.remove("model");
+                }
+                else
+                {
+                    for(int i = 0; i < model.size(); i++)
+                        model.set(i, checkAttribute((String)model.get(i)));
+                }
+                isValid = true;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
             }
             jTextField1.setText(String.valueOf(model.size()));
             jTextField2.setEditable(iterator.getAdvan() == 9);
@@ -958,5 +977,48 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             return "Model";
         }
         
+        private void initModel()
+        {
+            int adn = iterator.adn;
+            if(adn > 0)
+            {
+                model.removeAllElements();
+                index = -1;
+            }
+            switch(adn)
+            {
+                case 1: 
+                    model.add(++index, "COMP=(CENTRAL DEFDOSE DEFOBSERVATION NOOFF)");
+                    break;
+                case 2: 
+                    model.add(++index, "COMP=(DEPOT INITIALOFF DEFDOSE)");
+                    model.add(++index, "COMP=(CENTRAL DEFOBSERVATION NOOFF)");
+                    break;
+                case 3:
+                    model.add(++index, "COMP=(CENTRAL DEFOBSERVATION DEFDOSE NOOFF)");
+                    model.add(++index, "COMP=(PERIPH NOOFF)");
+                    break;
+                case 4:
+                    model.add(++index, "COMP=(DEPOT INITIALOFF DEFDOSE)");
+                    model.add(++index, "COMP=(CENTRAL DEFOBSERVATION NOOFF)");
+                    model.add(++index, "COMP=(PERIPH NOOFF)");
+                    break;
+                case 10:
+                    model.add(++index, "COMP=(CENTRAL DEFDOSE DEFOBSERVATION NOOFF)");
+                    break;
+                case 11:
+                    model.add(++index, "COMP=(CENTRAL DEFOBSERVATION DEFDOSE NOOFF)");
+                    model.add(++index, "COMP=(PERIPH1 NOOFF)");
+                    model.add(++index, "COMP=(PERIPH2 NOOFF)");
+                    break;
+                case 12:
+                    model.add(++index, "COMP=(DEPOT INITIALOFF DEFDOSE)");
+                    model.add(++index, "COMP=(CENTRAL DEFOBSERVATION NOOFF)");
+                    model.add(++index, "COMP=(PERIPH1 NOOFF)");
+                    model.add(++index, "COMP=(PERIPH2 NOOFF)");
+            }
+            jTextField1.setText(String.valueOf(model.size()));
+            jList1.setSelectedIndex(index);
+        }
     }
 }

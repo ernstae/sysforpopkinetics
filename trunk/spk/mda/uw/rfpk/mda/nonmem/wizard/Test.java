@@ -88,10 +88,10 @@ public class Test{
 //            Data step = new Data(i);
 //            Des step = new Des(i);
 //            Error step = new Error(i);
-//            GettingStarted step = new GettingStarted(i);
-//            Estimation step = new Estimation(i);
+            Estimation step = new Estimation(i);
+//            GettingStarted step = new GettingStarted(i);          
 //            Input step = new Input(i);
-            Model step = new Model(i);
+//            Model step = new Model(i);
 //            Omega step = new Omega(i);
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);

@@ -188,7 +188,18 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("PRED");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(6, text.length() - 1));
+                    text = text.substring(6, text.length() - 1);
+                    
+                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+                       iterator.getReload().getProperty("METHOD") != null &&
+                       iterator.initTwoStage.contains("pred"))
+                    {
+                        text = Utility.replaceEtaByEps(text);
+                        text = Utility.addEtaToTheta(text);
+                        iterator.initTwoStage.remove("pred");
+                    }
+                    
+                    jTextArea1.setText(text);
                     iterator.getReload().remove("PRED");
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -219,11 +230,17 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 // Find number of ETAs
                 iterator.setNEta(Utility.find(code, "ETA"));
                 if(iterator.getNEta() == 0)
-                    JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);      
+                {
+                    if(!iterator.getIsInd() && !iterator.getIsTwoStage())
+                        JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
+                    else
+                        JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
                 // Find number of EPSs
                 iterator.setNEps(Utility.find(code, "EPS"));                
-                if(!iterator.getIsInd() && iterator.getNEps() == 0)
+                if(!iterator.getIsInd() && !iterator.getIsTwoStage() && iterator.getNEps() == 0)
                     JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
 
