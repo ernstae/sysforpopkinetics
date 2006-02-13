@@ -221,7 +221,7 @@ public class TestSpkdb {
 		    target = true;
 		    s = "userJobs, maxNum = 1\n";
 		    rs = Spkdb.userJobs(conn, userId, 1, 0);
-		    if (rs.next()) {
+		    if (rs.last()) {
 			b = rs.getLong("job_id") == newestJobId;
 			/*
 			Blob report = rs.getBlob("xml_source");
@@ -245,7 +245,8 @@ public class TestSpkdb {
 		    jobId = newestJobId;
 
 		    count = 0;
-		    while (rs.next()) {
+                    rs.last();
+		    do{
 			long j;
 			if ((j = rs.getLong("job_id")) >= jobId) {
 			    s += "; jobId = " + j + " is out of order";
@@ -254,7 +255,7 @@ public class TestSpkdb {
 			}
 			jobId = j;
 			count++;
-		    }
+		    } while(rs.previous());
 		    s += "; " + count + " were returned";
 		    break;
 		case 18:
@@ -551,7 +552,7 @@ public class TestSpkdb {
 		    while (rs.next()) {
 			count++;
 		    }
-		    b = count == 5;
+		    b = count == 21;
 		    break;
 		case 40:
 		    target = true;
