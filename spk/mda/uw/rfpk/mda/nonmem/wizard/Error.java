@@ -150,7 +150,17 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("ERROR");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(7, text.length() - 1));
+                    text = text.substring(7, text.length() - 1);
+                    
+                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+                       iterator.getReload().getProperty("METHOD") != null &&
+                       iterator.initTwoStage.contains("error"))
+                    {
+                        text = Utility.replaceEtaByEps(text);
+                        iterator.initTwoStage.remove("error");
+                    }
+                    
+                    jTextArea1.setText(text);
                     iterator.getReload().remove("ERROR");
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -160,10 +170,13 @@ public class Error extends javax.swing.JPanel implements WizardStep {
             {            
 //                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("Error");
                 String value = jTextArea1.getText();
-                if(value.equals("") && !iterator.getIsInd())
-                    jTextArea1.setText("Y=F+EPS(1)");
-                if(value.equals("") && iterator.getIsInd())
-                    jTextArea1.setText("Y=F+ETA(1)");
+                if(value.equals(""))
+                {
+                    if(!iterator.getIsInd() && !iterator.getIsTwoStage())
+                        jTextArea1.setText("Y=F+EPS(1)");
+                    else
+                        jTextArea1.setText("Y=F+ETA(1)");
+                }
             }
             jTextArea1.requestFocusInWindow();
 	}
@@ -181,7 +194,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 // Eliminate comments
                 errorCode = Utility.eliminateComments(errorCode); 
                 // Find number of EPSs for population analysis or Etas for individual analysis                    
-                if(!iterator.getIsInd())
+                if(!iterator.getIsInd() && !iterator.getIsTwoStage())
                 {
                     String pkCode = object.getRecords().getProperty("PK");
                     if(pkCode != null)

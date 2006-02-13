@@ -106,13 +106,13 @@ public class AbortJob extends HttpServlet
                                 
                 // Check if the job belongs to the user
                 if(jobRS.getLong("user_id") == userId)
-                {                  
+                {
                     Socket socket = new Socket(context.getInitParameter("jobqs_host"),
                                                Integer.parseInt(context.getInitParameter("jobqs_port")));
                     PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);                    
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));                    
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     writer.println("set-abrt-" + jobId);                    
-                    String message = reader.readLine();                    
+                    String message = reader.readLine();
                     if(message.equals("done")) success = "true";
                     reader.close();
                     writer.close();

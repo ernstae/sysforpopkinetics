@@ -274,6 +274,7 @@ public class MDAFrame extends JFrame
         indIDDialog = new javax.swing.JDialog();
         jScrollPane11 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
+        jList1 = new javax.swing.JList();
         jPanel1 = new javax.swing.JPanel();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -379,6 +380,13 @@ public class MDAFrame extends JFrame
         jSeparator1 = new javax.swing.JSeparator();
         useMDAMenu = new javax.swing.JMenuItem();
         useRMenu = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
 
         archiveDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -719,7 +727,7 @@ public class MDAFrame extends JFrame
         jPanel5.add(jRadioButton10, gridBagConstraints);
 
         jRadioButton11.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton11.setText("Analytical integration on likelihood");
+        jRadioButton11.setText("Adapt integration of likelihood");
         buttonGroup3.add(jRadioButton11);
         jRadioButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1900,6 +1908,27 @@ public class MDAFrame extends JFrame
 
         jMenu1.add(useRMenu);
 
+        jMenu3.setText("Default Plots");
+        jMenuItem1.setText("Item");
+        jMenu3.add(jMenuItem1);
+
+        jMenuItem2.setText("Item");
+        jMenu3.add(jMenuItem2);
+
+        jMenuItem3.setText("Item");
+        jMenu3.add(jMenuItem3);
+
+        jMenuItem4.setText("Item");
+        jMenu3.add(jMenuItem4);
+
+        jMenuItem5.setText("Item");
+        jMenu3.add(jMenuItem5);
+
+        jMenuItem6.setText("Item");
+        jMenu3.add(jMenuItem6);
+
+        jMenu1.add(jMenu3);
+
         jMenuBar1.add(jMenu1);
 
         jInternalFrame1.setJMenuBar(jMenuBar1);
@@ -2077,7 +2106,7 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_jRadioButton12ActionPerformed
 
     private void jRadioButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton11ActionPerformed
-        jobMethodCode = "an";
+        jobMethodCode = "ad";
     }//GEN-LAST:event_jRadioButton11ActionPerformed
 
     private void jRadioButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton10ActionPerformed
@@ -2963,9 +2992,11 @@ public class MDAFrame extends JFrame
 
     private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
         jTextField4.setEditable(false);
-        if(recentDataset.name != null && 
-           XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")), true)
-           .equals(XMLReader.parseDataXML(dataArchive.text.substring(dataArchive.text.indexOf("<spkdata ")), true)))
+        if(recentDataset.name != null &&
+            recentDataset.text.substring(recentDataset.text.indexOf("<spkdata "))
+           .equals(dataArchive.text.substring(dataArchive.text.indexOf("<spkdata "))))
+//           XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")), true)
+//           .equals(XMLReader.parseDataXML(dataArchive.text.substring(dataArchive.text.indexOf("<spkdata ")), true)))
         {
             datasetRadioButtonState = 3;
             jTextField4.setText(recentDataset.name);
@@ -3219,6 +3250,12 @@ public class MDAFrame extends JFrame
                     if(approximation.equals("fo")) method = "fo";
                     else if(approximation.equals("foce")) method = "eh";
                     else if(approximation.equals("laplace")) method = "la";
+                    else if(approximation.equals("std_two_stage")) method = "s2";
+                    else if(approximation.equals("iterative_two_stage")) method = "i2";
+                    else if(approximation.equals("global_two_stage")) method = "g2";
+                    else if(approximation.equals("map_std_two_stage")) method = "sm";
+                    else if(approximation.equals("map_iterative_two_stage")) method = "im";
+                    else if(approximation.equals("map_global_two_stage")) method = "gm";
                     if(!method.equals("")) jobMethodCode = method;
                 }
                 else if(analysis.indexOf("is_estimation=\"no\"") != -1 && text.indexOf("<simulation ") != -1)
@@ -3286,8 +3323,10 @@ public class MDAFrame extends JFrame
             else
                 jRadioButton1.doClick();
             if(recentDataset.name != null &&
-               XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")), true)
-               .equals(XMLReader.parseDataXML(dataset.substring(dataset.indexOf("<spkdata ")), true)))
+               recentDataset.text.substring(recentDataset.text.indexOf("<spkdata "))
+               .equals(dataset.substring(dataset.indexOf("<spkdata "))))
+//               XMLReader.parseDataXML(recentDataset.text.substring(recentDataset.text.indexOf("<spkdata ")), true)
+//               .equals(XMLReader.parseDataXML(dataset.substring(dataset.indexOf("<spkdata ")), true)))
                 jRadioButton6.doClick();
             else
                 jRadioButton4.doClick();
@@ -3307,7 +3346,7 @@ public class MDAFrame extends JFrame
         jRadioButton8.setEnabled(((String[])methodTable.get("ml"))[2].equals("0") || isDeveloper);
         jRadioButton9.setEnabled(((String[])methodTable.get("vl"))[2].equals("0") || isDeveloper);
         jRadioButton10.setEnabled(((String[])methodTable.get("gr"))[2].equals("0") || isDeveloper);
-        jRadioButton11.setEnabled(((String[])methodTable.get("an"))[2].equals("0") || isDeveloper);
+        jRadioButton11.setEnabled(((String[])methodTable.get("ad"))[2].equals("0") || isDeveloper);
         jRadioButton12.setEnabled(((String[])methodTable.get("mi"))[2].equals("0") || isDeveloper);        
         if(jobMethodCode.equals("ia") || jobMethodCode.equals("so"))
         {
@@ -3318,7 +3357,9 @@ public class MDAFrame extends JFrame
             jRadioButton11.setEnabled(false);
             jRadioButton12.setEnabled(false);
         }
-        else if(jobMethodCode.equals("fo") || jobMethodCode.equals("eh") || jobMethodCode.equals("la"))
+        else if(jobMethodCode.equals("fo") || jobMethodCode.equals("eh") || jobMethodCode.equals("la") ||
+                jobMethodCode.equals("s2") || jobMethodCode.equals("i2") || jobMethodCode.equals("g2") ||
+                jobMethodCode.equals("sm") || jobMethodCode.equals("im") || jobMethodCode.equals("gm"))
         {
             jRadioButton7.setText(((String[])methodTable.get(jobMethodCode))[0]);
             jRadioButton7.doClick();
@@ -4487,12 +4528,20 @@ public class MDAFrame extends JFrame
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JList jList1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu9;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;

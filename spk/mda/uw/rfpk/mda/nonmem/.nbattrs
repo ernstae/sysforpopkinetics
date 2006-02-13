@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
+    <fileobject name="JobInfo.java">
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="JobInfo"/>
+    </fileobject>
+    <fileobject name="MDAFrame.java">
+        <attr name="class_dependency_javax.swing.table.AbstractTableModel" stringvalue="MDAFrame.DisplayTableModel"/>
+        <attr name="class_dependency_java.awt.event.AdjustmentListener" stringvalue="MDAFrame.ScrollBarListener"/>
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="MDAFrame"/>
+        <attr name="class_dependency_javax.swing.table.DefaultTableCellRenderer" stringvalue="MDAFrame.CellRenderer"/>
+        <attr name="class_dependency_javax.swing.event.CaretListener" stringvalue="MDAFrame.ACaretListener"/>
+    </fileobject>
     <fileobject name="MDA.java">
         <attr name="NetBeansAttrArguments" serialvalue="aced0005757200135b4c6a6176612e6c616e672e537472696e673badd256e7e91d7b47020000787000000000"/>
     </fileobject>

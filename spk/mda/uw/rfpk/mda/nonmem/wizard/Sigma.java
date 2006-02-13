@@ -150,7 +150,6 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         jDialog1.getContentPane().add(jButton2, gridBagConstraints);
 
         jCheckBox1.setText("The entire block is fixed.");
-        jCheckBox1.setEnabled(false);
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -427,10 +426,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
     }
     
     private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
-        if(evt.getKeyCode() == 10)
-            jButton2.setEnabled(true);
-        else
-            jButton2.setEnabled(false);
+        jButton1.setEnabled(evt.getKeyCode() == 10);
     }//GEN-LAST:event_jTable1KeyPressed
 
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
@@ -523,12 +519,12 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     item = items[i];
                     if(item.endsWith("F"))
                     {
-                        diagonalValues[i][1] = ""; //new Boolean(true); temporary
+                        diagonalValues[i][1] = new Boolean(true);
                         item = item.substring(0, item.length() - 1);
                     }
                     else
                     {
-                        diagonalValues[i][1] = ""; //new Boolean(false); temporary
+                        diagonalValues[i][1] = new Boolean(false);
                         isAllFixed = false;
                     }
                     diagonalValues[i][0] = item;
@@ -687,7 +683,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                 if(diagonalValues == null)
                 {
                     data[i][1] = "";
-                    data[i][2] = "";   //new Boolean(false); temporary
+                    data[i][2] = new Boolean(false);
                     jButton2.setEnabled(false);
                     jCheckBox1.setSelected(false);                    
                 }
@@ -1072,10 +1068,23 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
             wizardPane = wizard;
             if(iterator.getIsReload())
             {
-                String text = iterator.getReload().getProperty("SIGMA");
+                String text = null;
+                if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+                   iterator.getReload().getProperty("METHOD") != null &&
+                   iterator.initTwoStage.contains("sigma"))
+                {
+                    text = iterator.getReload().getProperty("OMEGA");
+                    if(text != null) iterator.getReload().remove("OMEGA");
+                    iterator.initTwoStage.remove("sigma");
+                }
+                else
+                {
+                    text = iterator.getReload().getProperty("SIGMA");
+                    if(text != null) iterator.getReload().remove("SIGMA");
+                }
+                
                 if(text != null)
                 {
-                    iterator.getReload().remove("SIGMA");
                     model.removeAllElements();
                     dimList.removeAllElements();
                     String[] values = text.trim().split(",");
@@ -1102,12 +1111,9 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     // Set delete button
                     deleteButton.setEnabled(index > -1);
                     
-                    // Set left buttons
-                    if(nEps == iterator.getNEps())
-                    {
-                        isValid = true;
-                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-                    }
+                    // Set left buttons                   
+                    isValid = nEps == iterator.getNEps();
+                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
                     
                     // Set up and down buttons
                     Utility.setUpDownButton(index, model, upButton, downButton);                    
@@ -1157,7 +1163,27 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                     sigma[i][1] = dimen;
                     sigma[i][2] = same;
                     for(int j = 0; j < items.length; j++)
-                        sigma[i][j + 3] = items[j];                    
+                        sigma[i][j + 3] = items[j];
+                    
+                    // Conversions
+                    if(struc.equals("block") && !sigma[i][3].endsWith("F"))
+                    {
+                        int bandWidth = Utility.bandWidth(sigma[i]);
+                        if(bandWidth == 1)
+                        {
+                            if(JOptionPane.showConfirmDialog(null, 
+                                "Do you intend to use a diagonal covariance matrix for Block " + (i + 1) + "?", 
+                                "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
+                                sigma[i] = Utility.diagonalMatrix(sigma[i]);
+                        }
+                        else if(bandWidth < Integer.parseInt(dimen))
+                        {
+                            if(JOptionPane.showConfirmDialog(null, 
+                                "Do you intend to use a banded covariance matrix for Block " + (i + 1) + "?",
+                                "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
+                                Utility.bandedMatrix(sigma[i], bandWidth);
+                        }
+                    }
                 }
                 object.getSource().sigma = sigma;
             }

@@ -28,7 +28,7 @@ public class Source {
     public Source() {
     }
     
-    /** The analysis type: population or individual. */
+    /** The analysis type: population, two-stage, or individual. */
     public String analysis = null;            
     /** The problem heading. */
     public String problem = null;         
@@ -54,11 +54,11 @@ public class Source {
     public String des = null;
     /** The Theta values: (Low, In, Up, fixed)s. */
     public String[][] theta = null;
-    /** The Omega values: (form, dim, same, elem1, elem2, ...)s. */
+    /** The Omega values: (form, dimension, same, element1, element2, ...)s. */
     public String[][] omega = null;
-    /** The Sigma values: (form, dim, same, elem1, elem2, ...)s. */
+    /** The Sigma values: (form, dimension, same, element1, element2, ...)s. */
     public String[][] sigma = null; 
-    /** The options for Estimation: method, sigdigits, maxevals, print, noabort, ind_out, centering, interaction. */
+    /** The options for Estimation: method, sigdigits, maxevals, print, noabort, ind_out, centering, interaction */
     public String[] estimation = null; 
     /** The formulation for statistics. */
     public String covariance = null;
@@ -72,4 +72,6 @@ public class Source {
     public String[][][] tableSim = null; 
     /** The specification of Scatterplot for Simulation: ((from, to, unit, Y0, X0), (list1), (list2), (list3))s. */
     public String[][][] splotSim = null;
+    /** The covariance matrix for Theta: elment1, element2, ... */
+    public String[] covTheta = null;
 }

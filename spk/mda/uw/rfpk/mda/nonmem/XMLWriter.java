@@ -76,7 +76,7 @@ public class XMLWriter
         Element constraint = docSource.createElement("constraint");
         nonmem.appendChild(constraint);
         Element analysis = null;
-        if(source.analysis.equals("population"))
+        if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
             analysis = docSource.createElement("pop_analysis"); 
         else
             analysis = docSource.createElement("ind_analysis"); 
@@ -85,7 +85,7 @@ public class XMLWriter
             analysis.setAttribute("is_estimation", "yes");
             analysis.setAttribute("sig_digits", source.estimation[1]);
             analysis.setAttribute("mitr", source.estimation[2]);
-            if(source.analysis.equals("population"))
+            if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
             {
                 analysis.setAttribute("approximation", source.estimation[0]);
                 if(source.estimation[0].equals("fo"))
@@ -98,14 +98,14 @@ public class XMLWriter
         {
             analysis.setAttribute("is_estimation", "no");
         }
-        if(source.analysis.equals("population"))
+        if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
             analysis.setAttribute("pop_size", String.valueOf(data.size()));
         constraint.appendChild(analysis); 
         setDescription(analysis);
         setInput(analysis);
         setTheta(analysis);
         setOmega(analysis);
-        if(source.analysis.equals("population"))
+        if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
         {
             setSigma(analysis);
             setPop_stat(analysis);
@@ -195,6 +195,8 @@ public class XMLWriter
     // Generate sigma
     private void setSigma(Element parent)
     {
+        if(source.analysis.equals("two-stage"))
+            source.sigma = source.omega;
         if(source.sigma != null)
         {
             for(int i = 0; i < source.sigma.length; i++)
@@ -233,32 +235,70 @@ public class XMLWriter
     {
         if(source.omega != null)
         {
-            for(int i = 0; i < source.omega.length; i++)
-	    {
+            if(!source.analysis.equals("two-stage"))
+            { 
+                for(int i = 0; i < source.omega.length; i++)
+	        {
+                    Element omega = docSource.createElement("omega");     
+                    omega.setAttribute("struct", source.omega[i][0]);
+                    omega.setAttribute("dimension", source.omega[i][1]);
+                    omega.setAttribute("same_as_previous", source.omega[i][2]);
+
+                    Element in = docSource.createElement("in");
+                    omega.appendChild(in);
+                    int nData = source.omega[i].length;
+                    for(int j = 3; j < nData; j++)
+	            {   
+                        Element value = docSource.createElement("value");                    
+                        if(source.omega[i][j].endsWith("F"))
+	                {
+                            value.setAttribute("fixed", "yes"); 
+                            value.appendChild(docSource.createTextNode(source.omega[i][j].substring(
+                                              0, source.omega[i][j].length() - 1)));
+		        }
+                        else
+	                {
+                            value.setAttribute("fixed", "no");
+                            value.appendChild(docSource.createTextNode(source.omega[i][j]));
+		        }                      
+                        in.appendChild(value);
+                    }            
+                    parent.appendChild(omega);
+                }
+            }
+            else
+            {
+                int size = source.theta.length; 
+                String length = String.valueOf(size);
                 Element omega = docSource.createElement("omega");     
-                omega.setAttribute("struct", source.omega[i][0]);
-                omega.setAttribute("dimension", source.omega[i][1]);
-                omega.setAttribute("same_as_previous", source.omega[i][2]);
+                omega.setAttribute("struct", "block");
+                omega.setAttribute("dimension", length);
+                omega.setAttribute("same_as_previous", "no");
 
                 Element in = docSource.createElement("in");
                 omega.appendChild(in);
-                int nData = source.omega[i].length;
-                for(int j = 3; j < nData; j++)
-	        {   
-                    Element value = docSource.createElement("value");
-                    if(source.omega[i][j].endsWith("F"))
-	            {
-                        value.setAttribute("fixed", "yes"); 
-                        value.appendChild(docSource.createTextNode(source.omega[i][j].substring(
-                                          0, source.omega[i][j].length() - 1)));
-		    }
-                    else
-	            {
+                int l = 0;
+                for(int k = 0; k < size; k++)
+                {
+                    for(int j = 0; j <= k; j++)
+	            {   
+                        Element value = docSource.createElement("value");                    
                         value.setAttribute("fixed", "no");
-                        value.appendChild(docSource.createTextNode(source.omega[i][j]));
-		    }
-                    in.appendChild(value);
+                        if(source.covTheta != null)
+                        {
+                            value.appendChild(docSource.createTextNode(source.covTheta[l++]));
+                        }
+                        else
+                        {
+                            if(j == k)
+                                value.appendChild(docSource.createTextNode("1")); 
+                            else
+                                value.appendChild(docSource.createTextNode("0"));
+                        }
+                        in.appendChild(value);
+                    }
                 }
+                
                 parent.appendChild(omega);
             }
         }

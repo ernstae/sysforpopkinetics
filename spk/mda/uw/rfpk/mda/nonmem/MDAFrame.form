@@ -529,7 +529,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Default" size="12" style="0"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Analytical integration on likelihood"/>
+                    <Property name="text" type="java.lang.String" value="Adapt integration of likelihood"/>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="buttonGroup3"/>
                     </Property>
@@ -1469,6 +1469,8 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JList" name="jList1">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -2339,6 +2341,43 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="useRMenuActionPerformed"/>
                       </Events>
                     </MenuItem>
+                    <Menu class="javax.swing.JMenu" name="jMenu3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Default Plots"/>
+                      </Properties>
+                      <SubComponents>
+                        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Item"/>
+                          </Properties>
+                        </MenuItem>
+                        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Item"/>
+                          </Properties>
+                        </MenuItem>
+                        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Item"/>
+                          </Properties>
+                        </MenuItem>
+                        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Item"/>
+                          </Properties>
+                        </MenuItem>
+                        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem5">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Item"/>
+                          </Properties>
+                        </MenuItem>
+                        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem6">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Item"/>
+                          </Properties>
+                        </MenuItem>
+                      </SubComponents>
+                    </Menu>
                   </SubComponents>
                 </Menu>
               </SubComponents>

@@ -23,13 +23,14 @@ import java.sql.*;
 import java.util.Vector;
 import java.util.Properties;
 import rfpk.spk.spkdb.*;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import uw.rfpk.mda.*;
 import uw.rfpk.mda.nonmem.*;
+import uw.rfpk.rcs.Archive;
 
 /** This class encapsulates the database calls for the transactions required by the model
  *  dasign agent of the SPK.  
@@ -83,12 +84,13 @@ public class Database {
             // Get model archive information
             if(modelInfo.isNewArchive)
             {
-                Archive arch = new Archive(modelArchive.split("\n"), ""); 
+//                Archive arch = new Archive(modelArchive.split("\n"), ""); 
                 modelId = Spkdb.newModel(con, 
                                          userId, 
                                          modelInfo.name, 
                                          modelInfo.description, 
-                                         arch.toString("\n"));
+//                                         arch.toString("\n"));
+                                         modelArchive);
                 JOptionPane.showMessageDialog(null, "A new model, " + modelInfo.name +
                                               ", has been added to the database.",  
                                               "model archive information",
@@ -104,13 +106,14 @@ public class Database {
                                                        modelId);
                     modelRS.next();
                     String strAr = modelRS.getString("archive");
-                    Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
-                    arch.addRevision(modelArchive.split("\n"), modelInfo.log);
+//                    Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
+//                    arch.addRevision(modelArchive.split("\n"), modelInfo.log);
                     String[] name = new String[1];
                     name[0] = "archive";
                     String[] value = new String[1];
-                    value[0] = arch.toString("\n");
-                    
+//                    value[0] = arch.toString("\n");
+                    value[0] = Archive.addRevision(strAr, modelArchive, perlDir, 
+                                                  workingDir, "versionLog", "author", "filename");
                     Spkdb.updateModel(con, 
                                       modelId, 
                                       name, 
@@ -119,7 +122,8 @@ public class Database {
                                                   ", in the database has been updated.",  
                                                   "model archive information",
                                                   JOptionPane.INFORMATION_MESSAGE);                    
-                    modelVersion = String.valueOf(arch.getRevisionVersion().last());
+//                    modelVersion = String.valueOf(arch.getRevisionVersion().last());
+                    modelVersion = "1." + Archive.getNumRevision(value[0]);
                 }
                 else
                     modelVersion = modelInfo.version;
@@ -128,12 +132,14 @@ public class Database {
             // Get data archive information
             if(dataInfo.isNewArchive)
             {
-                Archive arch = new Archive(dataset.split("\n"), "");                       
+//                Archive arch = new Archive(dataset.split("\n"), "");                       
                 datasetId = Spkdb.newDataset(con, 
                                              userId, 
                                              dataInfo.name, 
                                              dataInfo.description, 
-                                             arch.toString("\n"));
+//                                             arch.toString("\n"));
+                                             Archive.newArchive(dataset, perlDir, workingDir,
+                                                                "versionLog", "author", "filename"));
                 JOptionPane.showMessageDialog(null, "A new dataset, " + dataInfo.name +
                                               ", has been added to the database.",  
                                               "Dataset archive information",
@@ -149,13 +155,15 @@ public class Database {
                                                            datasetId);;
                     datasetRS.next();
                     String strAr = datasetRS.getString("archive");
-                    Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
-
-                    arch.addRevision(dataset.split("\n"), dataInfo.log);
+                    //Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
+                    
+                    //arch.addRevision(dataset.split("\n"), dataInfo.log);
                     String[] name = new String[1];
                     name[0] = "archive";
                     String[] value = new String[1];
-                    value[0] = arch.toString("\n");                  
+//                    value[0] = arch.toString("\n"); 
+                    value[0] = Archive.addRevision(strAr, dataset, perlDir, workingDir, "versionLog", 
+                                                  "author", "filename");
                     Spkdb.updateDataset(con, 
                                         datasetId, 
                                         name, 
@@ -164,7 +172,8 @@ public class Database {
                                                   ", in the database has been updated.",  
                                                   "Dataset archive information",
                                                   JOptionPane.INFORMATION_MESSAGE);                    
-                    datasetVersion = String.valueOf(arch.getRevisionVersion().last());
+//                    datasetVersion = String.valueOf(arch.getRevisionVersion().last());
+                    datasetVersion = "1." + Archive.getNumRevision(value[0]);
                 }
                 else
                     datasetVersion = dataInfo.version;
@@ -204,28 +213,16 @@ public class Database {
                                           "Spkdb exception",
                                           JOptionPane.ERROR_MESSAGE);            
         } 
-        catch(ParseException e)
+        catch(IOException e)
         {
             JOptionPane.showMessageDialog(null, e,  
-                                          "Parse exception",
+                                          "IO exception",
                                           JOptionPane.ERROR_MESSAGE);            
-        }
-        catch(InvalidFileFormatException e)
+        }      
+        catch(InterruptedException e)
         {
             JOptionPane.showMessageDialog(null, e,  
-                                          "Invalid file format exception", 
-                                          JOptionPane.ERROR_MESSAGE);            
-        }        
-        catch(DiffException e)
-        {
-            JOptionPane.showMessageDialog(null, e,  
-                                          "Diff exception",
-                                          JOptionPane.ERROR_MESSAGE);            
-        } 
-        catch(FileNotFoundException e)
-        {
-            JOptionPane.showMessageDialog(null, e,  
-                                          "File not found exception",
+                                          "Interrupted exception",
                                           JOptionPane.ERROR_MESSAGE);            
         }         
     }
@@ -274,7 +271,8 @@ public class Database {
 
             // Fill in the List
             SimpleDateFormat formater = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
-            while(userJobsRS.next())
+            userJobsRS.last();
+            for(int i = 0; i < maxNum; i++)
             {                  
                 String[] job = new String[5];   
                 job[0] = String.valueOf(userJobsRS.getLong("job_id"));
@@ -287,6 +285,7 @@ public class Database {
                     job[3] = "";
                 job[4] = userJobsRS.getString("abstract");
                 jobList.add(job);
+                userJobsRS.previous();
             }
         }
         catch(SQLException e)
@@ -443,14 +442,17 @@ public class Database {
                 ResultSet modelRS = Spkdb.getModel(con, modelId);
                 modelRS.next();
                 String modelArchive = modelRS.getString("archive");
-                archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
-                    
+//                archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
+                archive = modelArchive;
+                
                 // Fill in the list 
                 String[] model = new String[5];
                 model[0] = String.valueOf(modelId); 
                 model[1] = userModelsRS.getString("name");
-                model[2] = String.valueOf(archive.getRevisionVersion().last());
-                model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+//                model[2] = String.valueOf(archive.getRevisionVersion().last());
+//                model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                model[2] = String.valueOf(Archive.getNumRevision(archive));
+                model[3] = Archive.getRevisionDate(archive);
                 model[4] = userModelsRS.getString("abstract");
                 modelList.add(model);
             }
@@ -472,13 +474,13 @@ public class Database {
                                           JOptionPane.ERROR_MESSAGE); 
             return null;
         }         
-        catch(ParseException e)
-        {
-            JOptionPane.showMessageDialog(null, e,  
-                                          "Parse exception",
-                                          JOptionPane.ERROR_MESSAGE); 
-            return null;
-        }
+//        catch(ParseException e)
+//        {
+//            JOptionPane.showMessageDialog(null, e,  
+//                                          "Parse exception",
+//                                          JOptionPane.ERROR_MESSAGE); 
+//            return null;
+//        }
             
         int nModel = modelList.size();
         if(nModel == 0)
@@ -518,18 +520,19 @@ public class Database {
             Spkdb.disconnect(con);
             
             // Generate version list for the model
-            archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes())); 
-            int number = archive.getRevisionVersion().last(); 
-            versionList = new String[number][4];
-            for(int i = 0; i < number; i++)
-            {
-                int n = number - i;
-                Node node = archive.findNode(new Version("1." + n));  
-                versionList[i][0] = String.valueOf(n);
-                versionList[i][1] = node.getAuthor().toString();
-                versionList[i][2] = node.getDate().toString();
-                versionList[i][3] = archive.getLog("1." + n);
-            }
+//            archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes())); 
+//            int number = archive.getRevisionVersion().last(); 
+//            versionList = new String[number][4];
+//            for(int i = 0; i < number; i++)
+//            {
+//                int n = number - i;
+//                Node node = archive.findNode(new Version("1." + n));  
+//                versionList[i][0] = String.valueOf(n);
+//                versionList[i][1] = node.getAuthor().toString();
+//                versionList[i][2] = node.getDate().toString();
+//                versionList[i][3] = archive.getLog("1." + n);
+//            }
+            versionList = Archive.getVersionList(modelArchive);
         }
         catch(SQLException e)
         {
@@ -545,13 +548,13 @@ public class Database {
                                           JOptionPane.ERROR_MESSAGE);
             return null;
         } 
-        catch(ParseException e)
-        {
-            JOptionPane.showMessageDialog(null, e,  
-                                          "Parse exception",
-                                          JOptionPane.ERROR_MESSAGE); 
-            return null;
-        }       
+//        catch(ParseException e)
+//        {
+//            JOptionPane.showMessageDialog(null, e,  
+//                                          "Parse exception",
+//                                          JOptionPane.ERROR_MESSAGE); 
+//            return null;
+//        }       
         return versionList;
     }
     
@@ -564,20 +567,22 @@ public class Database {
     {
         // Prepare for the return
         String modelArchive = null;
-        
+
         try
         {
-            Object[] revision = archive.getRevision("1." + version);
-            modelArchive = ToString.arrayToString(revision, "\n"); 
+            modelArchive = Archive.getRevision(archive, perlDir, workingDir, 
+                                               "filename", "1." + version);
+//            Object[] revision = archive.getRevision("1." + version);
+//            modelArchive = ToString.arrayToString(revision, "\n");
         }
-        catch(InvalidFileFormatException e)
+        catch(IOException e)
         {
             JOptionPane.showMessageDialog(null, e,  
                                           "Invalid file format exception",
                                           JOptionPane.ERROR_MESSAGE);  
             return null;
         }    
-        catch(PatchFailedException e)
+        catch(InterruptedException e)
         {
             JOptionPane.showMessageDialog(null, e,  
                                           "Patch failed exception",
@@ -624,14 +629,17 @@ public class Database {
                 ResultSet datasetRS = Spkdb.getDataset(con, datasetId);                   
                 datasetRS.next();
                 String datasetArchive = datasetRS.getString("archive");
-                archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
-                    
+//                archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
+                archive = datasetArchive;    
+                
                 // Fill in the list
                 String[] dataset = new String[5];                
                 dataset[0] = String.valueOf(userDatasetsRS.getLong("dataset_id"));
                 dataset[1] = userDatasetsRS.getString("name");
-                dataset[2] = String.valueOf(archive.getRevisionVersion().last());                
-                dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+//                dataset[2] = String.valueOf(archive.getRevisionVersion().last());                
+//                dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                dataset[2] = String.valueOf(Archive.getNumRevision(archive));
+                dataset[3] = Archive.getRevisionDate(archive);
                 dataset[4] = userDatasetsRS.getString("abstract");
                 datasetList.add(dataset);
             } 
@@ -653,13 +661,13 @@ public class Database {
                                           JOptionPane.ERROR_MESSAGE);
             return null;
         } 
-        catch(ParseException e)
-        {
-            JOptionPane.showMessageDialog(null, e,  
-                                          "Parse exception",
-                                          JOptionPane.ERROR_MESSAGE); 
-            return null;
-        }
+//        catch(ParseException e)
+//        {
+//            JOptionPane.showMessageDialog(null, e,  
+//                                          "Parse exception",
+//                                          JOptionPane.ERROR_MESSAGE); 
+//            return null;
+//        }
         int nDataset = datasetList.size();
         if(nDataset == 0)
             return null;
@@ -697,18 +705,19 @@ public class Database {
             Spkdb.disconnect(con);
             
             // Generate version list for the model
-            archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes())); 
-            int number = archive.getRevisionVersion().last(); 
-            versionList = new String[number][4];
-            for(int i = 0; i < number; i++)
-            {
-                int n = number - i;
-                Node node = archive.findNode(new Version("1." + n));  
-                versionList[i][0] = String.valueOf(n);
-                versionList[i][1] = node.getAuthor().toString();
-                versionList[i][2] = node.getDate().toString();
-                versionList[i][3] = archive.getLog("1." + n);
-            }
+//            archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes())); 
+//            int number = archive.getRevisionVersion().last(); 
+//            versionList = new String[number][4];
+//            for(int i = 0; i < number; i++)
+//            {
+//                int n = number - i;
+//                Node node = archive.findNode(new Version("1." + n));  
+//                versionList[i][0] = String.valueOf(n);
+//                versionList[i][1] = node.getAuthor().toString();
+//                versionList[i][2] = node.getDate().toString();
+//                versionList[i][3] = archive.getLog("1." + n);
+//            }
+            versionList = Archive.getVersionList(datasetArchive);
         }
         catch(SQLException e)
         {
@@ -724,12 +733,12 @@ public class Database {
                                           JOptionPane.ERROR_MESSAGE);
             return null;
         } 
-        catch(ParseException e)
-        {
-            JOptionPane.showMessageDialog(null, e,  
-                                          "Parse exception",
-                                          JOptionPane.ERROR_MESSAGE);            
-        }       
+//        catch(ParseException e)
+//        {
+//            JOptionPane.showMessageDialog(null, e,  
+//                                          "Parse exception",
+//                                          JOptionPane.ERROR_MESSAGE);            
+//        }       
         return versionList;
     }
     
@@ -741,27 +750,28 @@ public class Database {
     public String getDatasetArchive(String version)    
     {
         // Prepare for the return
-        String datasetArchive = null;
-        
+        String datasetArchive = null;       
         try
         {
-            Object[] revision = archive.getRevision("1." + version);
-            datasetArchive = ToString.arrayToString(revision, "\n"); 
+            datasetArchive = Archive.getRevision(archive, perlDir, workingDir, 
+                                                 "filename", "1." + version);
+//            Object[] revision = archive.getRevision("1." + version);
+//            datasetArchive = ToString.arrayToString(revision, "\n"); 
         }
-        catch(InvalidFileFormatException e)
+        catch(IOException e)
         {
             JOptionPane.showMessageDialog(null, e,  
-                                          "Invalid file format exception",
+                                          "IO exception",
                                           JOptionPane.ERROR_MESSAGE); 
             return null;
         }    
-        catch(PatchFailedException e)
+        catch(InterruptedException e)
         {
             JOptionPane.showMessageDialog(null, e,  
-                                          "Patch failed exception",
+                                          "Interrupted exception",
                                           JOptionPane.ERROR_MESSAGE);
             return null;
-        }                                
+       }                                
         return datasetArchive; 
     }            
 
@@ -781,5 +791,12 @@ public class Database {
     private String user = null;
     
     // Archive
-    private Archive archive = null;
+//    private Archive archive = null;
+    private String archive = null;
+    
+    // Directory of the perl script used to run rcs
+    private final String perlDir = "/usr/local/bin/";
+    
+    // Working directory for running rcs
+    private final String workingDir = "/tmp/";
 }

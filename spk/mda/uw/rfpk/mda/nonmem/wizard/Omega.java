@@ -150,7 +150,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         jDialog1.getContentPane().add(jButton2, gridBagConstraints);
 
         jCheckBox1.setText("The entire block is fixed.");
-        jCheckBox1.setEnabled(false);
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -428,10 +427,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
     }
     
     private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
-        if(evt.getKeyCode() == 10)
-            jButton2.setEnabled(true);
-        else
-            jButton2.setEnabled(false);
+        jButton2.setEnabled(evt.getKeyCode() == 10);
     }//GEN-LAST:event_jTable1KeyPressed
 
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
@@ -524,12 +520,12 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                     item = items[i];
                     if(item.endsWith("F"))
                     {
-                        diagonalValues[i][1] = ""; //new Boolean(true); temporary
+                        diagonalValues[i][1] = new Boolean(true);
                         item = item.substring(0, item.length() - 1);
                     }
                     else
                     {
-                        diagonalValues[i][1] = ""; //new Boolean(false); temporary
+                        diagonalValues[i][1] = new Boolean(false);
                         isAllFixed = false;
                     }
                     diagonalValues[i][0] = item;
@@ -687,7 +683,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                 if(diagonalValues == null)
                 {
                     data[i][1] = "";
-                    data[i][2] = ""; //new Boolean(false);  temporary
+                    data[i][2] = new Boolean(false);
                     jButton2.setEnabled(false);
                     jCheckBox1.setSelected(false);                    
                 }
@@ -1062,12 +1058,14 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-            if(iterator.getIsInd()) return "Residual Unknown\nVariability Covariance";
+            if(iterator.getIsInd() || iterator.getIsTwoStage())
+                return "Residual Unknown\nVariability Covariance";
   	    return "Random Effects\nCovariance";
   	}
 
 	public String getStepTitle(){
-            if(iterator.getIsInd()) return "Residual Unknown Variability Covariance";
+            if(iterator.getIsInd() || iterator.getIsTwoStage())
+                return "Residual Unknown Variability Covariance";
 	    return "Random Effects Covariance";
 	}
 
@@ -1075,10 +1073,23 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
             wizardPane = wizard;
             if(iterator.getIsReload())
             {
-                String text = iterator.getReload().getProperty("OMEGA");
-                if(text != null)
+                String text = null;
+                if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+                   iterator.getReload().getProperty("METHOD") != null &&
+                   iterator.initTwoStage.contains("omega"))
                 {
-                    iterator.getReload().remove("OMEGA");
+                    text = iterator.getReload().getProperty("COVTHETA");
+                    if(text != null) iterator.getReload().remove("COVTHETA");
+                    text = "OMEGA BLOCK(" + text.split(" ").length + ") " + text;
+                    iterator.initTwoStage.remove("omega");
+                }
+                else
+                {
+                    text = iterator.getReload().getProperty("OMEGA");
+                    if(text != null) iterator.getReload().remove("OMEGA");
+                }
+                if(text != null)
+                {                  
                     model.removeAllElements();
                     dimList.removeAllElements();
                     String[] values = text.trim().split(",");
@@ -1096,7 +1107,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                         }
                         else
                         {
-                            if(iterator.getIsInd())
+                            if(iterator.getIsInd() || iterator.getIsTwoStage())
                                 JOptionPane.showMessageDialog(null, "Error in random effects covariance" +
                                                               "\n($OMEGA record) of the reloaded model.",
                                                               "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -1105,22 +1116,28 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                                               "\n($OMEGA record) of the reloaded model.",
                                                               "Input Error", JOptionPane.ERROR_MESSAGE);
                         }
+                        index = values.length - 1;
+                        jList1.setSelectedIndex(index);
                     }
-                    index = values.length - 1;
-                    jList1.setSelectedIndex(index);
                     
                     // Set delete button
                     deleteButton.setEnabled(index > -1);
                     
-                    // Set left buttons
-                    if(nEta == iterator.getNEta())
-                    {
-                        isValid = true;
-                        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-                    }
+                    // Set left buttons     
+                    isValid = nEta == iterator.getNEta();
+                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
                     
                     // Set up and down buttons
                     Utility.setUpDownButton(index, model, upButton, downButton);
+                }
+                                    
+                if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+                   iterator.initAdvan.contains("omega"))
+                {
+                    model.removeAllElements();
+                    dimList.removeAllElements();
+                    index = -1;
+                    iterator.initAdvan.remove("omega");
                 }
             }
             if(nEta != iterator.getNEta())
@@ -1129,7 +1146,11 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                 isValid = false;
                 wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                
             }
-	}
+            if(iterator.getIsInd() || iterator.getIsTwoStage())
+                jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or more blocks of the residual unknown variability covariance matrix.  You may either enter data for a new  block or constrain the block to be equal to the preceding block.  However, in the current development stage the SPK compiler supports only single-block covariance matrix.");
+            else
+                jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or more blocks of the random effect covariance matrix.  You may either enter data for a new  block or constrain the block to be equal to the preceding block.  However, in the current development stage the SPK compiler supports only single-block covariance matrix.");
+        }
 
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
@@ -1168,6 +1189,26 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                     omega[i][2] = same;
                     for(int j = 0; j < items.length; j++)
                         omega[i][j + 3] = items[j];
+                                        
+                    // Conversions
+                    if(struc.equals("block") && !omega[i][3].endsWith("F"))
+                    {
+                        int bandWidth = Utility.bandWidth(omega[i]);
+                        if(bandWidth == 1)
+                        {
+                            if(JOptionPane.showConfirmDialog(null, 
+                                "Do you intend to use a diagonal covariance matrix for Block " + (i + 1) + "?", 
+                                "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
+                                omega[i] = Utility.diagonalMatrix(omega[i]);
+                        }
+                        else if(bandWidth < Integer.parseInt(dimen))
+                        {
+                            if(JOptionPane.showConfirmDialog(null, 
+                                "Do you intend to use a banded covariance matrix for Block " + (i + 1) + "?",
+                                "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
+                                Utility.bandedMatrix(omega[i], bandWidth);
+                        }
+                    }
                 }
                 object.getSource().omega = omega;
             }

@@ -86,40 +86,162 @@ public class Utility {
         }
         return list.size();
     }
-        
-/*        
-        String[] strs = ("a" + record).split(s); 
-        int m = 0, n = 0;
-        for(int i = 1; i < strs.length; i++)
-        {   
-            String str = strs[i].trim();
-            int endIndex = str.length();
-            if(str.startsWith("("))
-            {
-                str = str.substring(1).trim();
-                if(str.indexOf(")") != -1)
-                    endIndex = str.indexOf(")");
-                else
-                    return 0;
-            }
-            else
-            {
-                for(int j = 0; j < str.length(); j++)
-                    if(!Character.isDigit(str.charAt(j)))
-                    {
-                        endIndex = j;
-                        break;
-                    }
-            }
-            if(endIndex > 0 && isPosIntNumber(str.substring(0, endIndex).trim()))
-                m = Integer.parseInt(str.substring(0, endIndex).trim());
-            else
-                return 0;
-            if(m > n) n = m;
-        }      
-        return n;
+
+    /** Add ETA(n) to THETA(n) in a text, i.e., THETA(n)+ETA(n).
+     * @param text a text to be modified.
+     * @return the modified text.
+     */
+    public static String addEtaToTheta(String text)
+    {
+        String n;
+        String regExp = "\\bTHETA\\s*\\(?(\\d+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
+        Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+        Matcher matcher = pattern.matcher(" " + text.toUpperCase());
+        while(matcher.find())
+        {
+            n = matcher.group(1);
+            regExp = "\\bTHETA\\s*\\(?" + n + "?[\\s|\\)|+|-|*|/|\n|$]";
+            text = text.replaceAll(regExp, "THETA(" + n + ")+ETA(" + n + ")");
+        }
+        return text;
     }
-*/
+    
+    /** Replace all occurrences of ETA(n) by EPS(n) in a text.
+     * @param text a text to be modified.
+     * @return the modified text.
+     */
+    public static String replaceEtaByEps(String text)
+    {
+        String n;
+        String regExp = "\\bETA\\s*\\(?(\\d+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
+        Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+        Matcher matcher = pattern.matcher(" " + text.toUpperCase());
+        while(matcher.find())
+        {
+            n = matcher.group(1);
+            regExp = "\\bETA\\s*\\(?" + n + "?[\\s|\\)|+|-|*|/|\n|$]";
+            text = text.replaceAll(regExp, "EPS(" + n + ")");
+        }        
+        return text;
+    }
+    
+    /** Extract omega values from source.
+     * @param source source text.
+     * @return a String object of text of values: value value ... value,
+     *         or null if omega is not found.
+     */
+    public static String getOmegaValues(String source)
+    {
+        StringBuffer values = new StringBuffer();
+        int i1 = source.indexOf("<omega");
+        int i2 = source.indexOf("</omega>");
+        if(i1 == -1 || i2 == -1) return null;
+        source = source.substring(i1, i2);
+        i2 = 0;
+        while(true)
+        {
+            i1 = source.indexOf("<value", i2);
+            if(i1 == -1) break;
+            i1 = source.indexOf(">", i1) + 1;
+            i2 = source.indexOf("</value>", i1);
+            if(i2 == -1) return null;
+            values.append(source.substring(i1, i2));
+            values.append(" ");
+        }
+        return values.toString().trim();   
+    }
+    
+    /** Find bandwidth of a matrix in SPK format.
+     * @param cov a String[] containing a row-major, lower-triangle cov matrix.
+     * @return the bandwidth of the matrix.
+     */
+    public static int bandWidth(String[] cov)
+    {
+        if(cov[3].endsWith("F")) return 0;
+        int dimension = Integer.parseInt(cov[1]);
+        String[][] matrix = new String[dimension][];
+        int k = 3;
+        for(int i = 0; i < dimension; i++)
+        {
+            matrix[i] = new String[i + 1];
+            for(int j = 0; j <= i; j++)
+                matrix[i][j] = cov[k++];
+        }
+        for(int i = dimension - 1; i >= 0; i--)
+        {
+            if(zero(matrix[i][0]))
+            {
+                k = i + 1;
+                for(int j = 1; j < dimension - i; j++)
+                    if(!zero(matrix[k++][j]))
+                        return i + 1;                    
+            }
+            else
+                return i + 1;
+        }
+        return 0;
+    }
+    
+    /** Convert a full matrix to a banded matrix by fixing the off-band elements.
+     * @param cov a String[] containing a full cov matrix.
+     * @param bandwidth bandwidth of the cov matrix. 
+     */
+    public static void bandedMatrix(String[] cov, int bandwidth)
+    {
+        int dimension = Integer.parseInt(cov[1]);
+        String[][] matrix = new String[dimension][];
+        int k = 3;
+        for(int i = 0; i < dimension; i++)
+        {
+            matrix[i] = new String[i + 1];
+            for(int j = 0; j <= i; j++)
+                matrix[i][j] = cov[k++];
+        }
+        for(int i = dimension - 1; i >= bandwidth; i--)
+        {
+            k = i;
+            for(int j = 0; j < dimension - i; j++)
+            {
+                matrix[k][j] = matrix[k][j] + "F";
+                k++;
+            }
+        }
+        k = 3;
+        for(int i = 0; i < dimension; i++)
+            for(int j = 0; j <= i; j++)
+                cov[k++] = matrix[i][j];
+    }
+    
+    private static boolean zero(String s)
+    {
+        for(int i = 0; i < s.length(); i++)
+            if((int)s.charAt(i) >= 49 && (int)s.charAt(i) <= 57)
+                return false;
+        return true;
+    }
+    
+    /** Convert a full matrix of unit bandwidth to a diagonal matrix.
+     * @param cov a String[] containing a full cov matrix of unit bandwidth.
+     * @return a String[] containing the converted diagonal matrix.
+     */
+    public static String[] diagonalMatrix(String[] cov)
+    {
+        int dimension = Integer.parseInt(cov[1]);
+        String[] dia = new String[dimension + 3];
+        dia[0] = "diagonal";
+        dia[1] = cov[1];
+        dia[2] = cov[2];
+        int k = 3;
+        int l = 3;
+        for(int i = 0; i < dimension; i++)
+            for(int j = 0; j <= i; j++)
+            {
+                if(i == j) dia[l++] = cov[k];
+                k++;   
+            }
+        return dia;
+    }
+    
     /** Prepare the default $PK code.
      * @param advan an int, the ADVAN number.
      * @param trans an int, the TRANS number.
@@ -896,9 +1018,38 @@ public class Utility {
      * @param args argument not used.
      */    
     public static void main(String[] args)
-    {
-        String input = "ETA(4)*ETA(2) +  (ETA(5)\nETA(3) /BETA(1)\n";
-        System.out.println(find(input, "ETA"));
+    {              
+//        String[] cov = {"block", "4", "no", "11", 
+//                                            "0", "22", 
+//                                            "0", "0", "33",
+//                                            "0", "0", "0", "44"};
+//        String[] dia = diagonalMatrix(cov);
+//        for(int i = 0; i < dia.length; i++)
+//            System.out.println(dia[i]);
+        
+        String[] cov = {"", "4", "", "11", 
+                                     "21", "22", 
+                                     "31", "32", "33",
+                                     "41", "0", "43", "44"};
+        int bandwidth = bandWidth(cov);
+        System.out.println(bandwidth);
+        bandedMatrix(cov, bandwidth);
+        System.out.println(cov[3]);
+        System.out.println(cov[4] + " " + cov[5]);
+        System.out.println(cov[6] + " " + cov[7] + " " + cov[8]);
+        System.out.println(cov[9] + " " + cov[10] + " " + cov[11] + " " + cov[12]);
+        
+//        String text = "a<omega ><in>\n<value fixed=\"no\">1</value>\n<value fixed=\"no\">2</value>\n<value fixed=\"no\">3</value></in></omega>b";
+//        System.out.println(getOmegaValues(text));
+        
+//        String text = "ETA(1)\nETA(2)\nETA(3)";
+//        System.out.println(replaceEtaByEps(text));
+        
+//        String text = "THETA(1)\nTHETA(2)\nTHETA(3)";
+//        System.out.println(addEtaToTheta(text));
+        
+//        String input = "ETA(4)*ETA(2) +  (ETA(5)\nETA(3) /BETA(1)\n";
+//        System.out.println(find(input, "ETA"));
         
 /*        
         String[] colList = {"11", "21", "22"};

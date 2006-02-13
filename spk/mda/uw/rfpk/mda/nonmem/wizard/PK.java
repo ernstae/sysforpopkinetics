@@ -180,18 +180,45 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("PK");
                 if(text != null)
                 {
-                    jTextArea1.setText(text.substring(4, text.length() - 1));
+                    text = text.substring(4, text.length() - 1);
+                    
+                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+                       iterator.getReload().getProperty("METHOD") != null &&
+                       iterator.initTwoStage.contains("pk"))
+                    {
+                        text = Utility.addEtaToTheta(text);
+                        iterator.initTwoStage.remove("pk");
+                    }
+                                       
                     iterator.getReload().remove("PK");
+                    jTextArea1.setText(text);
+                    isValid = true;
+                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+                }
+                                    
+                if(iterator.getAdvan() == 6 && iterator.initAdvan.contains("pk"))
+                {
+                    text = initPK();
+                    iterator.initAdvan.remove("pk");
+                    jTextArea1.setText(text);
                     isValid = true;
                     wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
                 }
             }
             else
             {
-//                String value = ((MDAObject)wizard.getCustomizedObject()).getRecords().getProperty("PK");
-                String value = jTextArea1.getText();
-                if(value.equals(""))
-                    jTextArea1.setText(Utility.defaultPK(iterator.getAdvan(), iterator.getTrans()));
+                if(iterator.getAdvan() == 6 && iterator.initAdvan.contains("pk"))
+                {
+                    jTextArea1.setText(initPK());
+                    iterator.initAdvan.remove("pk");
+                }
+                else
+                {
+                    String value = jTextArea1.getText();
+                    if(value.equals(""))
+                        jTextArea1.setText(Utility.defaultPK(iterator.getAdvan(), iterator.getTrans()));
+
+                }
             }
             jTextArea1.requestFocusInWindow();
 	}
@@ -213,7 +240,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 String code = Utility.eliminateComments(record); 
                 // Find number of THETAs and number of ETAS
                 iterator.setNTheta(Utility.find(code, "THETA"));
-                if(!iterator.getIsInd())
+                if(!iterator.getIsInd() && !iterator.getIsTwoStage())
                 {
                     if(iterator.getNTheta() == 0)
                         JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
@@ -306,5 +333,99 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             return "PK";
         }
         
+        private String initPK()
+        {
+            String pk = "";
+            int adn = iterator.adn;
+            int trn = iterator.trn;
+            switch(adn)
+            {
+                case 1: 
+                    switch(trn)
+                    {
+                        case 1:
+                            pk = "K=";
+                            break;
+                        case 2:
+                            pk = "CL=\nV=\nK=CL/V";    
+                    }
+                    break;
+                case 2: 
+                    switch(trn)
+                    {
+                        case 1:
+                            pk = "K=\nKA=";
+                            break;
+                        case 2:
+                            pk = "CL=\nV=\nKA=\nK=CL/V";
+                    }
+                    break;
+                case 3: 
+                    switch(trn)
+                    {
+                        case 1:
+                            pk = "K=\nK12=\nK21=";
+                            break;
+                        case 3:
+                            pk = "CL=\nV=\nQ=\nVSS=\nK=CL/V\nK12=Q/V\nK21=Q/(VSS-V)";
+                            break;
+                        case 4:
+                            pk = "CL=\nV1=\nQ=\nV2=\nK=CL/V1\nK12=Q/V1\nK21=Q/V2";
+                            break;
+                        case 5:
+                            pk = "AOB=\nALPHA=\nBETA=\nK21= (AOB*BETA+ALPHA)/(AOB+1)\nK= ALPHA*BETA/K21\nK12= ALPHA+BETA-K21-K";    
+                    }
+                    break;
+                case 4: 
+                    switch(trn)
+                    {
+                        case 1:
+                            pk = "K=\nK23=\nK32=\nKA=";
+                            break;
+                        case 3:
+                            pk = "CL=\nV=\nQ=\nVSS=\nKA=\nK=CL/V\nK23=Q/V\nK32=Q/(VSS-V)";
+                            break;
+                        case 4:
+                            pk = "CL=\nV2=\nQ=\nV3=\nKA=\nK=CL/V2\nK23=Q/V2\nK32=Q/V3";
+                            break;
+                        case 5:
+                            pk = "AOB=\nALPHA=\nBETA=\nKA=\nK32= (AOB*BETA+ALPHA)/(AOB+1)\nK= ALPHA*BETA/K32\nK12= ALPHA+BETA-K32-K";
+                    }
+                    break;
+                case 10: 
+                    switch(trn)
+                    {
+                        case 1:
+                            pk = "VM=\nKM=";
+                    }
+                    break;
+                case 11: 
+                    switch(trn)
+                    {
+                        case 1:
+                            pk = "K=\nK12=\nK21=\nK13=\nK31=";
+                            break;
+                        case 4:
+                            pk = "CL=\nV1=\nQ2=\nV2=\nQ3=\nV3=\nK=CL/V1\nK12=Q2/V1\nK21=Q2/V2\nK13=Q3/V1\nK31=Q3/V2";
+                            break;
+                        case 6:
+                            pk = "ALPHA=\nBETA=\nGAMMA=\nK21=\nK31=\nK=ALPHA*BETA*GAMMA/(K21*K31)\nS=ALPHA+BETA+GAMMA\nP=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA\nK13=(P+K31*K31-K31*S-K*K21)/(K21-K31)\nK12=S-K-K13-K21-K31";
+                    }
+                    break;
+                case 12: 
+                    switch(trn)
+                    {
+                        case 1:
+                            pk = "K=\nK23=\nK32=\nK24=\nK42=\nKA=";
+                            break;
+                        case 4:
+                            pk = "CL=\nV2=\nQ3=\nV3=\nQ4=\nV4=\nKA=\nK=CL/V2\nK23=Q3/V2\nK32=Q3/V3\nK24=Q4/V2\nK42=Q4/V4";
+                            break;
+                        case 6:
+                            pk = "ALPHA=\nBETA=\nGAMMA=\nK32=\nK42=\nKA=\nK=ALPHA*BETA*GAMMA/(K32*K42)\nS=ALPHA+BETA+GAMMA\nP=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA\nK24=(P+K42*K42-K42*S-K*K32)/(K32-K42)\nK23=S-K-K24-K32-K42";
+                    }
+            }
+            return pk;
+        }
     }
 }

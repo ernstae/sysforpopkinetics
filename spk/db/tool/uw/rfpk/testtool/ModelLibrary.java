@@ -27,10 +27,11 @@ import javax.swing.JOptionPane;
 import uw.rfpk.mda.nonmem.*;
 import uw.rfpk.mda.*;
 import javax.swing.table.*;
-import org.apache.commons.jrcs.rcs.*;
-import org.apache.commons.jrcs.util.ToString;
-import org.apache.commons.jrcs.diff.*;
+//import org.apache.commons.jrcs.rcs.*;
+//import org.apache.commons.jrcs.util.ToString;
+//import org.apache.commons.jrcs.diff.*;
 import java.text.SimpleDateFormat;
+import uw.rfpk.rcs.Archive;
 
 /**
  * This is the main class of model library management tool.
@@ -307,8 +308,9 @@ public class ModelLibrary extends javax.swing.JFrame {
                 author = "unknown";
             if(modelStatus.equals("new"))
             {
-                Archive arch = new Archive(model.split("\n"), ""); 
-                arch.findNode(new Version("1.1")).setAuthor(author); 
+//                Archive arch = new Archive(model.split("\n"), ""); 
+//                arch.findNode(new Version("1.1")).setAuthor(author);
+                String archive = Archive.newArchive(model, perlDir, workingDir, "versionLog", author, "filename");
                 ResultSet userRS = Spkdb.getUser(con, "librarian");
                 userRS.next();
                 long userId = userRS.getLong("user_id"); 
@@ -316,7 +318,8 @@ public class ModelLibrary extends javax.swing.JFrame {
                                userId, 
                                jTextField2.getText(), 
                                jTextField3.getText(),
-                               arch.toString("\n"));
+                               archive);
+//                               arch.toString("\n"));
                 JOptionPane.showMessageDialog(null, "A new model, " + jTextField2.getText() +
                                               ", has been added to the database.",  
                                               "Model Archive Information",
@@ -328,14 +331,17 @@ public class ModelLibrary extends javax.swing.JFrame {
                                                    modelId);
                 modelRS.next();
                 String strAr = modelRS.getString("archive");
-                Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
-                arch.addRevision(jTextArea1.getText().split("\n"), versionLog);
-                int number = arch.getRevisionVersion().last();
-                arch.findNode(new Version("1." + number)).setAuthor(author); 
+//                Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
+//                arch.addRevision(jTextArea1.getText().split("\n"), versionLog);
+//                int number = arch.getRevisionVersion().last();
+//                arch.findNode(new Version("1." + number)).setAuthor(author); 
+                String archive = Archive.addRevision(strAr, jTextArea1.getText(), perlDir, workingDir, 
+                                                    "versionLog", author, "filename");
                 Spkdb.updateModel(con, 
                                   modelId, 
-                                  new String[]{"archive"}, 
-                                  new String[]{arch.toString("\n")});                                   
+                                  new String[]{"archive"},
+                                  new String[]{archive});
+//                                  new String[]{arch.toString("\n")});                                   
                 JOptionPane.showMessageDialog(null, "The model, " + jTextField2.getText() +
                                                   ", in the database has been updated.",  
                                                   "Model Archive Information",
@@ -351,13 +357,10 @@ public class ModelLibrary extends javax.swing.JFrame {
         catch(SpkdbException e)
         {
         }  
-        catch(ParseException e)
+        catch(IOException e)
         { 
         }   
-        catch(InvalidFileFormatException e)
-        { 
-        }
-        catch(DiffException e)
+        catch(InterruptedException e)
         { 
         }
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -434,14 +437,16 @@ public class ModelLibrary extends javax.swing.JFrame {
                     ResultSet modelRS = Spkdb.getModel(con, modelId);
                     modelRS.next();
                     String modelArchive = modelRS.getString("archive");
-                    Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
+//                    Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
                     
                     // Fill in the list 
                     String[] model = new String[5];
                     model[0] = String.valueOf(modelId); 
                     model[1] = userModelsRS.getString("name");
-                    model[2] = String.valueOf(archive.getRevisionVersion().last());
-                    model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+//                    model[2] = String.valueOf(archive.getRevisionVersion().last());                   
+//                    model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                    model[2] = String.valueOf(Archive.getNumRevision(modelArchive));
+                    model[3] = Archive.getRevisionDate(modelArchive);
                     model[4] = userModelsRS.getString("abstract");
                     modelList.add(model);
                 }
@@ -463,10 +468,7 @@ public class ModelLibrary extends javax.swing.JFrame {
             }
             catch(SpkdbException e)
             {
-            }
-            catch(ParseException e)
-            { 
-            }            
+            }          
             if(archiveList == null)
             {
                 JOptionPane.showMessageDialog(null, "No library model was found in the database.",
@@ -618,5 +620,11 @@ public class ModelLibrary extends javax.swing.JFrame {
     private int indexList = 0; 
     
     // Maximum number of items
-    private static final int maxNum = 25; 
+    private static final int maxNum = 25;
+                    
+    // Directory of the perl script used to run rcs
+    private final String perlDir = "/usr/local/bin/";
+    
+    // Working directory for running rcs
+    private final String workingDir = "/tmp/";
 }

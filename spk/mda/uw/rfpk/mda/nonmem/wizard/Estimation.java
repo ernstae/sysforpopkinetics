@@ -27,6 +27,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.*;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.SwingConstants;
+import java.awt.Dimension;
+import java.awt.Color;
 
 /**
  * This class defines a step to create the $ESTIMATION record.
@@ -37,6 +43,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private StepDescriptor sd = new MyStepDescriptor(); 
     private JComponent panel = this;
     private MDAIterator iterator = null;
+    private boolean first = true;
     private boolean isValid = false;
     private JWizardPane wizardPane = null;
     private String method = "METHOD=0 ";
@@ -44,7 +51,11 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private String interaction = "";
     private String centering = "";
     private String noabort = "";
-
+    private String map = "";
+    private Object[][] data;
+    private TableModel tableModel = new ATableModel();
+    private String covTheta = null;
+    
     /** Creates new form Estimation.
      * @param iter a MDAIterator object to initialize the field iterator.     
      */
@@ -62,6 +73,11 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jDialog1 = new javax.swing.JDialog();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jTextArea2 = new javax.swing.JTextArea();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
         jTextPane3 = new javax.swing.JTextPane();
@@ -73,11 +89,16 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
+        jRadioButton4 = new javax.swing.JRadioButton();
+        jRadioButton5 = new javax.swing.JRadioButton();
+        jRadioButton6 = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
         jCheckBox3 = new javax.swing.JCheckBox();
         jCheckBox4 = new javax.swing.JCheckBox();
+        jCheckBox5 = new javax.swing.JCheckBox();
+        jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -88,6 +109,55 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
 
+        jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTable1KeyPressed(evt);
+            }
+        });
+
+        jScrollPane2.setViewportView(jTable1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 11, 0, 11);
+        jDialog1.getContentPane().add(jScrollPane2, gridBagConstraints);
+
+        jButton1.setText("OK");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        jDialog1.getContentPane().add(jButton1, gridBagConstraints);
+
+        jTextArea2.setEditable(false);
+        jTextArea2.setText("This form allow you to enter initial estimates of the covariance matrix for the random\neffect parameters.  Enter data values for the lower triangle elements.  Click the cell\nto enter data.  Please press the \"Enter\" key after typing in the last element.\n");
+        jTextArea2.setFocusable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(11, 11, 11, 11);
+        jDialog1.getContentPane().add(jTextArea2, gridBagConstraints);
+
         setLayout(new java.awt.GridBagLayout());
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
@@ -97,8 +167,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jTextPane1.setMinimumSize(new java.awt.Dimension(377, 21));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextPane1, gridBagConstraints);
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
@@ -167,8 +237,9 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator2, gridBagConstraints);
 
-        jPanel1.setLayout(new java.awt.GridLayout(3, 1));
+        jPanel1.setLayout(new java.awt.GridLayout(6, 1));
 
+        jPanel1.setPreferredSize(new java.awt.Dimension(180, 128));
         jRadioButton1.setSelected(true);
         jRadioButton1.setText("First Order");
         buttonGroup1.add(jRadioButton1);
@@ -200,11 +271,41 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 
         jPanel1.add(jRadioButton3);
 
+        jRadioButton4.setText("Standard Two-Stage");
+        buttonGroup1.add(jRadioButton4);
+        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton4ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton4);
+
+        jRadioButton5.setText("Iteractive Two-Stage");
+        buttonGroup1.add(jRadioButton5);
+        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton5ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton5);
+
+        jRadioButton6.setText("Global Two-Stage");
+        buttonGroup1.add(jRadioButton6);
+        jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton6ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton6);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 6, 30, 3);
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 3);
         add(jPanel1, gridBagConstraints);
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
@@ -213,6 +314,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jPanel2.setMinimumSize(new java.awt.Dimension(200, 92));
         jPanel2.setPreferredSize(new java.awt.Dimension(200, 92));
         jCheckBox1.setText("Obtain individual estimates");
+        jCheckBox1.setMargin(new java.awt.Insets(1, 2, 1, 2));
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -224,6 +326,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jPanel2.add(jCheckBox1, gridBagConstraints);
 
         jCheckBox2.setText("RUV depends on random effects");
+        jCheckBox2.setMargin(new java.awt.Insets(1, 2, 1, 2));
         jCheckBox2.setEnabled(false);
         jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -238,6 +341,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jPanel2.add(jCheckBox2, gridBagConstraints);
 
         jCheckBox3.setText("Center random effects");
+        jCheckBox3.setMargin(new java.awt.Insets(1, 2, 1, 2));
         jCheckBox3.setEnabled(false);
         jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -252,6 +356,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jPanel2.add(jCheckBox3, gridBagConstraints);
 
         jCheckBox4.setText("Make automatic error recovery");
+        jCheckBox4.setMargin(new java.awt.Insets(1, 2, 1, 2));
         jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox4ActionPerformed(evt);
@@ -263,6 +368,38 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(jCheckBox4, gridBagConstraints);
+
+        jCheckBox5.setText("Use MAP Bayesian Objective");
+        jCheckBox5.setMargin(new java.awt.Insets(1, 2, 1, 2));
+        jCheckBox5.setEnabled(false);
+        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox5ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox5, gridBagConstraints);
+
+        jButton2.setText("Enter Cov for THETA");
+        jButton2.setMargin(new java.awt.Insets(1, 5, 1, 5));
+        jButton2.setMaximumSize(new java.awt.Dimension(145, 19));
+        jButton2.setMinimumSize(new java.awt.Dimension(145, 19));
+        jButton2.setPreferredSize(new java.awt.Dimension(145, 19));
+        jButton2.setEnabled(false);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        jPanel2.add(jButton2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -281,7 +418,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(5, 18, 5, 8);
         jPanel3.add(jLabel2, gridBagConstraints);
 
-        jLabel1.setText("Maximum allowable number of evaluations");
+        jLabel1.setText("Maximum number of optimization iterations");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -294,7 +431,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 18, 5, 8);
+        gridBagConstraints.insets = new java.awt.Insets(2, 18, 4, 8);
         jPanel3.add(jLabel3, gridBagConstraints);
 
         jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
@@ -351,7 +488,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 5, 2);
+        gridBagConstraints.insets = new java.awt.Insets(1, 4, 4, 2);
         jPanel3.add(jTextField2, gridBagConstraints);
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -382,6 +519,209 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         add(jPanel3, gridBagConstraints);
 
     }//GEN-END:initComponents
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(jCheckBox5.isSelected())
+        {
+            int dimension = iterator.getNTheta();
+            data = new Object[dimension][dimension + 1];
+            String[] values = null;
+            if(covTheta != null)
+            {
+                values = covTheta.split(" ");
+                covTheta = null;
+            }
+            int k = 0;
+            for(int i = 0; i < dimension; i++)
+            {
+                data[i][0] = String.valueOf(i + 1);
+                for(int j = 1; j <= dimension; j++)
+                {
+                    if(j - i > 1) 
+                    {
+                        data[i][j] = "          ...";
+                    }
+                    else 
+                    {
+                        if(values != null) data[i][j] = values[k++];
+                        else data[i][j] = "";
+                    }
+                }
+            }
+            
+            // Create a column model for the main table.  
+            TableColumnModel cm = new DefaultTableColumnModel() {
+            boolean first = true;
+            public void addColumn(TableColumn tc) {
+                // Drop the first column that will be the row header.
+                if(first) {first = false; return; }
+                tc.setMinWidth(100);
+                super.addColumn(tc);
+            }
+            };
+            
+            // Create a column model that will serve the row header table.
+            TableColumnModel rowHeaderModel = new DefaultTableColumnModel() {
+            boolean first = true; 
+            public void addColumn(TableColumn tc) {
+                if(first) {
+                    tc.setMaxWidth(100);
+                    super.addColumn(tc);
+                    first = false;
+                }
+                // Drop the rest of the columns.
+            }
+            };
+        
+            jDialog1.setSize(560,300);   
+            jScrollPane2.setMinimumSize(new Dimension(510, 120));
+            jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); 
+            jDialog1.setTitle("Full Matrix Entry Form");
+            jTable1.setModel(tableModel);  
+            jTable1.setColumnModel(cm);
+        
+            // Set up the header column and get it hooked up to everything.
+            JTable headerColumn = new JTable(tableModel, rowHeaderModel); 
+            jTable1.createDefaultColumnsFromModel();
+            headerColumn.createDefaultColumnsFromModel();
+            jTable1.setSelectionModel(headerColumn.getSelectionModel());
+            jTable1.setRowSelectionAllowed(false);
+            rowHeaderModel.getColumn(0).setCellRenderer(new HeaderCellRenderer()); 
+        
+            // Make the header column look pretty.
+            headerColumn.setMaximumSize(new Dimension(100,  dimension));
+            headerColumn.setBackground(new Color(204, 204, 204));
+            headerColumn.setColumnSelectionAllowed(false);
+            headerColumn.setCellSelectionEnabled(false);
+
+            // Put it in a viewport.
+            JViewport jv = new JViewport();
+            jv.setView(headerColumn);
+            jv.setPreferredSize(headerColumn.getMaximumSize());
+
+            // Shut off autoResizeMode.
+            jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+            // Attach the row headers.
+            jScrollPane2.setRowHeader(jv);
+        
+            // Display the dialog
+            jDialog1.setLocationRelativeTo(this);
+            jDialog1.setVisible(true);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
+        jButton1.setEnabled(evt.getKeyCode() == 10);
+    }//GEN-LAST:event_jTable1KeyPressed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int dimension = iterator.getNTheta();
+        covTheta = "";
+        for(int i = 0; i < dimension; i++)
+        {
+            for(int j = 1; j < i + 2; j++)
+            {
+                String value = ((String)tableModel.getValueAt(i, j)).trim();
+                if(!Utility.isFloatNumber(value))
+                {
+                    JOptionPane.showMessageDialog(null, 
+                                          "The element [" + (i + 1) + "," + j + 
+                                          "] is not a floating point number.",
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);                          
+                    return; 
+                }
+                if(j == i + 1 && Double.parseDouble(value) <= 0)
+                {
+                    JOptionPane.showMessageDialog(null, 
+                                          "The element [" + j + "," + j + 
+                                          "] is not a positive number.",
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);                       
+                    return;
+                }
+                covTheta += " " + value;                
+            }
+        }
+        covTheta = covTheta.trim();
+        
+        // Close the dialog
+        jDialog1.setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jCheckBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox5ActionPerformed
+        if(jCheckBox5.isSelected())
+        {
+            jButton2.setEnabled(true);
+        }
+        else
+        {
+            jButton2.setEnabled(false);
+            data = null;
+            covTheta = "";
+        }
+    }//GEN-LAST:event_jCheckBox5ActionPerformed
+
+    private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
+        method = "METHOD=0 ";
+        jCheckBox1.setEnabled(false);
+        jCheckBox2.setEnabled(false);
+        jCheckBox3.setEnabled(false);
+        jCheckBox4.setEnabled(false);
+        jCheckBox5.setEnabled(false);      // true temporary
+        jButton2.setEnabled(false);      // true temporary
+        jCheckBox1.setSelected(false);
+        jCheckBox2.setSelected(false);
+        jCheckBox3.setSelected(false);
+        jCheckBox4.setSelected(false);
+        jCheckBox5.setSelected(false);
+        posthoc = "";
+        noabort = "";
+        interaction = "";
+        centering = "";
+        setRecord();
+    }//GEN-LAST:event_jRadioButton6ActionPerformed
+
+    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
+        method = "METHOD=0 ";
+        jCheckBox1.setEnabled(false);
+        jCheckBox2.setEnabled(false);
+        jCheckBox3.setEnabled(false);
+        jCheckBox4.setEnabled(false);
+        jCheckBox5.setEnabled(false);  // true temporary
+        jButton2.setEnabled(false);      // true temporary
+        jCheckBox1.setSelected(false);
+        jCheckBox2.setSelected(false);
+        jCheckBox3.setSelected(false);
+        jCheckBox4.setSelected(false);
+        jCheckBox5.setSelected(false);
+        posthoc = "";
+        noabort = "";
+        interaction = "";
+        centering = "";
+        setRecord();
+    }//GEN-LAST:event_jRadioButton5ActionPerformed
+
+    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+        method = "METHOD=0 ";
+        jCheckBox1.setEnabled(false);
+        jCheckBox2.setEnabled(false);
+        jCheckBox3.setEnabled(false);
+        jCheckBox4.setEnabled(false);
+        jCheckBox5.setEnabled(false);  // true temporary
+        jButton2.setEnabled(false);      // true temporary
+        jCheckBox1.setSelected(false);
+        jCheckBox2.setSelected(false);
+        jCheckBox3.setSelected(false);
+        jCheckBox4.setSelected(false);
+        jCheckBox5.setSelected(false);
+        posthoc = "";
+        noabort = "";
+        interaction = "";
+        centering = "";
+        setRecord();
+    }//GEN-LAST:event_jRadioButton4ActionPerformed
 
     private void grayOutNoabort()
     {
@@ -432,8 +772,12 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jCheckBox3.setEnabled(true);
         jCheckBox1.setSelected(false);
         jCheckBox2.setSelected(false);
+        jCheckBox5.setSelected(false);
+        jCheckBox5.setEnabled(false);
+        jButton2.setEnabled(false);
         posthoc = "";
         interaction = "";
+        map = "";
         setRecord();
     }//GEN-LAST:event_jRadioButton3ActionPerformed
 
@@ -443,7 +787,11 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jCheckBox2.setEnabled(true);
         jCheckBox3.setEnabled(true);
         jCheckBox1.setSelected(false);
+        jCheckBox5.setSelected(false);
+        jCheckBox5.setEnabled(false);
+        jButton2.setEnabled(false);
         posthoc = "";
+        map = "";
         setRecord();
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
@@ -454,11 +802,15 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jCheckBox3.setEnabled(false);
         jCheckBox2.setSelected(false);
         jCheckBox3.setSelected(false);
+        jCheckBox5.setSelected(false);
+        jCheckBox5.setEnabled(false);
+        jButton2.setEnabled(false);
         interaction = "";
         centering = "";
+        map = "";
         setRecord();
     }//GEN-LAST:event_jRadioButton1ActionPerformed
-    
+
     private void setRecord()
     {
         isValid = true;
@@ -498,7 +850,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         }
         if(isValid)
             jTextArea1.setText("$ESTIMATION " + method + posthoc + interaction + 
-                               centering + noabort +
+                               centering + noabort + map +
                                "SIGDIGITS=" + (String)jComboBox1.getSelectedItem() 
                                + " MAXEVALS=" + maxEvals + " PRINT=" + print);   
 
@@ -508,11 +860,15 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -524,10 +880,16 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JRadioButton jRadioButton5;
+    private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextPane jTextPane1;
@@ -567,12 +929,83 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     iterator.getReload().remove("ESTIMATION");
                     text = text.trim() + " ";
                     // Initialize method
-                    if(text.indexOf("METHOD") == -1 || text.indexOf("METHOD=0") != -1) 
-                        jRadioButton1.doClick();
-                    if(text.indexOf("METHOD=1") != -1 && text.indexOf("METHOD=1 LAPLACIAN") == -1)
-                        jRadioButton2.doClick();
-                    if(text.indexOf("METHOD=1 LAPLACIAN") != -1)
-                        jRadioButton3.doClick();
+                    if(iterator.getIsTwoStage())
+                    {
+                        jTextPane1.setText("Select a two-stage method and MAP Bayesian objective");
+                        jRadioButton1.setEnabled(false);
+                        jRadioButton2.setEnabled(false);
+                        jRadioButton3.setEnabled(false);
+                        jRadioButton4.setEnabled(true);
+                        jRadioButton5.setEnabled(true);
+                        jRadioButton6.setEnabled(true);
+                        jCheckBox5.setEnabled(false);  // true temporary
+                        jButton2.setEnabled(false);  // true temporary
+                        String method = iterator.getReload().getProperty("METHOD");
+                        if(method != null)
+                        {                           
+                            if(method.endsWith("std_two_stage"))
+                                jRadioButton4.doClick();
+                            if(method.endsWith("iterative_two_stage"))
+                                jRadioButton5.doClick();     
+                            if(method.endsWith("global_two_stage"))
+                                jRadioButton6.doClick();
+                            if(method.startsWith("map"))
+                            {
+                                covTheta = iterator.getReload().getProperty("COVTHETA");
+                                jCheckBox5.setSelected(true);
+                            }
+                            else
+                                jCheckBox5.setSelected(false);
+                        }
+                        else
+                        {
+                            jRadioButton4.doClick();
+                            jCheckBox5.setSelected(false);
+                        }
+                    }
+                    else
+                    {
+                        jRadioButton4.setEnabled(false);
+                        jRadioButton5.setEnabled(false);
+                        jRadioButton6.setEnabled(false);
+                        jCheckBox5.setEnabled(false);
+                        jButton2.setEnabled(false);
+                        jCheckBox5.setSelected(false);
+                        if(iterator.getIsInd())
+                        {
+                            jTextPane1.setText("");
+                            jRadioButton1.setEnabled(false);
+                            jRadioButton2.setEnabled(false);
+                            jRadioButton3.setEnabled(false);
+                            jCheckBox1.setEnabled(false);
+                            jCheckBox2.setEnabled(false);
+                            jCheckBox3.setEnabled(false);
+                            jCheckBox4.setEnabled(false);                   
+                            jSeparator1.setEnabled(false);
+                            jRadioButton1.doClick();
+                        }
+                        else
+                        {
+                            jTextPane1.setText("Select an estimation method and available option(s) on the right.");
+                            jRadioButton1.setEnabled(true);
+                            jRadioButton2.setEnabled(true);
+                            jRadioButton3.setEnabled(true);
+                            jCheckBox1.setEnabled(jRadioButton1.isSelected());
+                            jCheckBox2.setEnabled(jRadioButton2.isSelected());
+                            jCheckBox3.setEnabled(!jRadioButton1.isSelected());
+                            jCheckBox4.setEnabled(true);
+                            jSeparator1.setEnabled(true);
+       
+                            if(text.indexOf("METHOD") == -1 || text.indexOf("METHOD=0") != -1) 
+                                jRadioButton1.doClick();
+                            if(text.indexOf("METHOD=1") != -1 && text.indexOf("METHOD=1 LAPLACIAN") == -1)
+                                jRadioButton2.doClick();
+                            if(text.indexOf("METHOD=1 LAPLACIAN") != -1)
+                                jRadioButton3.doClick();
+                        }
+                    }
+                    // Remove two-stage method
+                    iterator.getReload().remove("METHOD");                    
                     // Initialize sigdigits
                     int ind= text.indexOf("SIGDIGITS");
                     if(ind != -1)
@@ -599,36 +1032,64 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     jCheckBox3.setSelected(text.indexOf("CENTERING") != -1);
                     // Initialize interaction
                     jCheckBox2.setSelected(text.indexOf("INTERACTION") != -1);
-            
+    
                     if(text.indexOf("METHOD=1") != -1 || text.indexOf("POSTHOC") != -1)
                         iterator.setIsMethod1OrPosthoc(true);          
-                    jTextArea1.setText("$ESTIMATION " + text.substring(11).trim());
+//                    jTextArea1.setText("$ESTIMATION " + text.substring(11).trim());
+                    setRecord();
                 }
             }
-            if(iterator.getIsInd())
+            else if(first)
             {
-                jTextPane1.setText("");
-                jRadioButton1.setEnabled(false);
-                jRadioButton2.setEnabled(false);
-                jRadioButton3.setEnabled(false);
-                jCheckBox1.setEnabled(false);
-                jCheckBox2.setEnabled(false);
-                jCheckBox3.setEnabled(false);
-                jCheckBox4.setEnabled(false);
-                jSeparator1.setEnabled(false);
+                if(iterator.getIsTwoStage())
+                {
+                    jTextPane1.setText("Select a two-stage method and MAP Bayesian objective");
+                    jRadioButton1.setEnabled(false);
+                    jRadioButton2.setEnabled(false);
+                    jRadioButton3.setEnabled(false);
+                    jRadioButton4.setEnabled(true);
+                    jRadioButton5.setEnabled(true);
+                    jRadioButton6.setEnabled(true);
+                    jCheckBox5.setEnabled(false);  // true temporary
+                    jButton2.setEnabled(false);  // true temporary
+                    jRadioButton4.doClick();
+                }
+                else
+                {
+                    jRadioButton4.setEnabled(false);
+                    jRadioButton5.setEnabled(false);
+                    jRadioButton6.setEnabled(false);
+                    jCheckBox5.setEnabled(false);
+                    jButton2.setEnabled(false);
+                    jCheckBox5.setSelected(false);
+                    if(iterator.getIsInd())
+                    {
+                        jTextPane1.setText("");
+                        jRadioButton1.setEnabled(false);
+                        jRadioButton2.setEnabled(false);
+                        jRadioButton3.setEnabled(false);
+                        jCheckBox1.setEnabled(false);
+                        jCheckBox2.setEnabled(false);
+                        jCheckBox3.setEnabled(false);
+                        jCheckBox4.setEnabled(false);                   
+                        jSeparator1.setEnabled(false);
+                    }
+                    else
+                    {
+                        jTextPane1.setText("Select an estimation method and available option(s) on the right.");
+                        jRadioButton1.setEnabled(true);
+                        jRadioButton2.setEnabled(true);
+                        jRadioButton3.setEnabled(true);
+                        jCheckBox1.setEnabled(jRadioButton1.isSelected());
+                        jCheckBox2.setEnabled(jRadioButton2.isSelected());
+                        jCheckBox3.setEnabled(!jRadioButton1.isSelected());
+                        jCheckBox4.setEnabled(true);                       
+                        jSeparator1.setEnabled(true);
+                        jRadioButton1.doClick();                  
+                    }
+                }
             }
-            else
-            {
-                jTextPane1.setText("Select an estimation method and available option(s) on the right.");
-                jRadioButton1.setEnabled(true);
-                jRadioButton2.setEnabled(true);
-                jRadioButton3.setEnabled(true);
-                jCheckBox1.setEnabled(jRadioButton1.isSelected());
-                jCheckBox2.setEnabled(jRadioButton2.isSelected());
-                jCheckBox3.setEnabled(!jRadioButton1.isSelected());
-                jCheckBox4.setEnabled(true);
-                jSeparator1.setEnabled(true);
-            }               
+            first = false;
             isValid = true;
             wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
             grayOutNoabort();
@@ -648,12 +1109,34 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             
             String[] estimation = new String[8];
             // Find method
-            if(record.indexOf("METHOD") == -1 || record.indexOf("METHOD=0") != -1) 
-                estimation[0] = "fo";
-            if(record.indexOf("METHOD=1") != -1 && record.indexOf("METHOD=1 LAPLACIAN") == -1)
-                estimation[0] = "foce";
-            if(record.indexOf("METHOD=1 LAPLACIAN") != -1)
-                estimation[0] = "laplace";
+            if(iterator.getIsTwoStage())
+            {
+                if(jRadioButton4.isSelected())
+                    if(jCheckBox5.isSelected())
+                        estimation[0] = "map_bayes_std_two_stage";
+                    else
+                        estimation[0] = "std_two_stage";
+                if(jRadioButton5.isSelected())
+                    if(jCheckBox5.isSelected())
+                        estimation[0] = "map_bayes_iterative_two_stage";
+                    else
+                        estimation[0] = "iterative_two_stage";
+                if(jRadioButton6.isSelected())
+                    if(jCheckBox5.isSelected())
+                        estimation[0] = "map_bayes_global_two_Stage";
+                    else
+                        estimation[0] = "global_two_Stage";
+            }
+            else
+            {
+                if(record.indexOf("METHOD") == -1 || record.indexOf("METHOD=0") != -1) 
+                    estimation[0] = "fo";
+                if(record.indexOf("METHOD=1") != -1 && record.indexOf("METHOD=1 LAPLACIAN") == -1)
+                    estimation[0] = "foce";
+                if(record.indexOf("METHOD=1 LAPLACIAN") != -1)
+                    estimation[0] = "laplace";
+            }
+            
             // Find sigdigits
             int ind= record.indexOf("SIGDIGITS");
             if(ind != -1)
@@ -693,8 +1176,12 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                 estimation[7] = "yes";
             else
                 estimation[7] = "no";
-            
+
             object.getSource().estimation = estimation;
+            if(estimation[0].startsWith("map"))
+                object.getSource().covTheta = covTheta.split(" ");
+            else
+                object.getSource().covTheta = null;
 	}
 
 	public boolean isValid(){
@@ -718,4 +1205,45 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             return "Prepare_Input_Method_Selection";
         }        
     }
+    
+        private class ATableModel extends AbstractTableModel {
+        public String getColumnName(int c) {
+            String name = null;
+            if(c == 0) 
+                name = "Index";
+            else
+                name = String.valueOf(c);
+            return name;
+        }
+        public Class getColumnClass(int c) {
+            return data[0][c].getClass();
+        }
+        public int getColumnCount() {
+            return data.length + 1; 
+        }
+        public int getRowCount() {
+            return data.length;
+        }
+        public Object getValueAt(int r, int c) {
+            return data[r][c];
+        }
+        public boolean isCellEditable(int r, int c) {
+            if(jRadioButton1.isSelected()) return c - r == 1;
+            else return !(c == 0 || c - r > 1);
+        }
+        public void setValueAt(Object value, int r, int c) {
+            data[r][c] = value;
+        }
+    }
+
+    private class HeaderCellRenderer extends DefaultTableCellRenderer 
+    {
+        public Component getTableCellRendererComponent(JTable table,
+            Object value, boolean isSelected, boolean hasFocus, int row, int col) 
+        {
+            super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,col);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            return this;
+	}
+    }    
 }

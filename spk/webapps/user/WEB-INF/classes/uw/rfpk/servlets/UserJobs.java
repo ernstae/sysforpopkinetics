@@ -143,7 +143,9 @@ public class UserJobs extends HttpServlet
 
                 // Fill in the List
                 SimpleDateFormat formater = new SimpleDateFormat("EEE yyyy-MM-dd HH:mm:ss z");
-                while(userJobsRS.next())
+                userJobsRS.last();                                
+//                while(userJobsRS.next())
+                for(int i = 0; i < maxNum; i++)
                 {                  
                     String[] job = new String[6];   
                     job[0] = String.valueOf(userJobsRS.getLong("job_id"));
@@ -162,6 +164,7 @@ public class UserJobs extends HttpServlet
                     job[4] = datasetRS.getString("name") + "." + userJobsRS.getString("dataset_version").substring(2);
                     job[5] = userJobsRS.getString("abstract");                    
                     jobList.add(job);
+                    userJobsRS.previous();
                 }
                 int nJob = jobList.size();
                 if(nJob > 0)

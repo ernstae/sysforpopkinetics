@@ -84,8 +84,8 @@ public class InitMDATest extends HttpServlet
             String password = messageIn[1];
             ServletContext context = getServletContext();
             String testHost = context.getInitParameter("MDA_test_host");
-            if(testHost != null && req.getRemoteHost().equals(testHost))               
-            {
+//            if(testHost != null && req.getRemoteHost().equals(testHost))               
+//            {
                 // Connect to the database
                 con = Spkdb.connect(context.getInitParameter("database_name"),
                                     context.getInitParameter("database_host"),
@@ -154,12 +154,12 @@ public class InitMDATest extends HttpServlet
                     // Write the outgoing messages
                     messageOut = "Authentication error.";
                 }
-            }
-            else
-            {
+//            }
+//            else
+//            {
                 // Write the outgoing messages
-                messageOut = "Test host error.";              
-            }            
+//                messageOut = "Test host error.";              
+//            }            
         }
         catch(SQLException e)
         {

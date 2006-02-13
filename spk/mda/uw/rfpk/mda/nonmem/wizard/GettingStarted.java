@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.*; 
+import java.io.*;
 
 /**
  * This class defines a step to collect general information.
@@ -71,6 +71,13 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jMenuItem10 = new javax.swing.JMenuItem();
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
+        jPopupMenu2 = new javax.swing.JPopupMenu();
+        trans1 = new javax.swing.JMenuItem();
+        trans2 = new javax.swing.JMenuItem();
+        trans3 = new javax.swing.JMenuItem();
+        trans4 = new javax.swing.JMenuItem();
+        trans5 = new javax.swing.JMenuItem();
+        trans6 = new javax.swing.JMenuItem();
         jTextPane1 = new javax.swing.JTextPane();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
@@ -91,7 +98,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jButton1 = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
-        jLabel1 = new javax.swing.JLabel();
+        jRadioButton6 = new javax.swing.JRadioButton();
 
         jPopupMenu1.setBackground(new java.awt.Color(255, 255, 255));
         jPopupMenu1.setAutoscrolls(true);
@@ -106,7 +113,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         });
 
         jMenuItem1.setText("SUBROUTINE ADVAN1");
-        jMenuItem1.setEnabled(false);
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -116,7 +122,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("SUBROUTINE ADVAN2");
-        jMenuItem2.setEnabled(false);
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -126,7 +131,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem2);
 
         jMenuItem3.setText("SUBROUTINE ADVAN3");
-        jMenuItem3.setEnabled(false);
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
@@ -136,7 +140,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem3);
 
         jMenuItem4.setText("SUBROUTINE ADVAN4");
-        jMenuItem4.setEnabled(false);
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
@@ -195,7 +198,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem9);
 
         jMenuItem10.setText("SUBROUTINE ANVAN10");
-        jMenuItem10.setEnabled(false);
         jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem10ActionPerformed(evt);
@@ -205,7 +207,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem10);
 
         jMenuItem11.setText("SUBROUTINE ADVAN11");
-        jMenuItem11.setEnabled(false);
         jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem11ActionPerformed(evt);
@@ -215,7 +216,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jPopupMenu1.add(jMenuItem11);
 
         jMenuItem12.setText("SUBROUTINE ADVAN12");
-        jMenuItem12.setEnabled(false);
         jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem12ActionPerformed(evt);
@@ -224,11 +224,82 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         jPopupMenu1.add(jMenuItem12);
 
+        jPopupMenu2.setBackground(new java.awt.Color(255, 255, 255));
+        jPopupMenu2.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+                jPopupMenu2PopupMenuCanceled(evt);
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+        });
+
+        trans1.setBackground(new java.awt.Color(255, 255, 255));
+        trans1.setText("Using TRANS1");
+        trans1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trans1ActionPerformed(evt);
+            }
+        });
+
+        jPopupMenu2.add(trans1);
+
+        trans2.setBackground(new java.awt.Color(255, 255, 255));
+        trans2.setText("Using TRANS2");
+        trans2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trans2ActionPerformed(evt);
+            }
+        });
+
+        jPopupMenu2.add(trans2);
+
+        trans3.setBackground(new java.awt.Color(255, 255, 255));
+        trans3.setText("Using TRANS3");
+        trans3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trans3ActionPerformed(evt);
+            }
+        });
+
+        jPopupMenu2.add(trans3);
+
+        trans4.setBackground(new java.awt.Color(255, 255, 255));
+        trans4.setText("Using TRANS4");
+        trans4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trans4ActionPerformed(evt);
+            }
+        });
+
+        jPopupMenu2.add(trans4);
+
+        trans5.setBackground(new java.awt.Color(255, 255, 255));
+        trans5.setText("Using TRANS5");
+        trans5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trans5ActionPerformed(evt);
+            }
+        });
+
+        jPopupMenu2.add(trans5);
+
+        trans6.setBackground(new java.awt.Color(255, 255, 255));
+        trans6.setText("Using TRANS6");
+        trans6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trans6ActionPerformed(evt);
+            }
+        });
+
+        jPopupMenu2.add(trans6);
+
         setLayout(new java.awt.GridBagLayout());
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("This tool is guiding you in the creation of a structural - statistical mixed \neffect model.  The tool converts the model in a NONMEM control file and a\nSPK input file .  Select the following items and then click the \"Next\" button.\n(Note:  This tool is not for preparing a likelihood evaluation only job.)");
+        jTextPane1.setText("This tool is guiding you in the creation of a structural - statistical mixed\neffect model.  The tool converts the model in a NONMEM control file and a\nSPK input file .  (Notes: 1. ADVANs 1-4, 10-12 are converted to ADVAN6;\n2. ADVANs 5,7 should be implemented as either ADVAN6 or ADVAN 8.)");
         jTextPane1.setFocusCycleRoot(false);
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -283,7 +354,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
@@ -299,7 +370,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
@@ -316,7 +387,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setEditable(false);
-        jTextPane2.setText("First, one of the check boxes on the top must be selected. Then, one of the first and the second radio buttons on the left as well as one of the third and the fourth radio buttons on the left must also be selected.");
+        jTextPane2.setText("First, one of the check boxes on the top must be selected.\nThen, one of the first three radio buttons on the left as well as one of the fourth and the fifth radio buttons on the left must also be selected.");
         jTextPane2.setFocusCycleRoot(false);
         jTextPane2.setFocusable(false);
         jTextPane2.setMinimumSize(new java.awt.Dimension(160, 140));
@@ -452,7 +523,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 21, 0, 0);
@@ -466,20 +537,64 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 21, 0, 0);
         add(jSeparator5, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel1.setText("(This library is now in construction.)");
+        jRadioButton6.setText("Performing two-stage analysis");
+        buttonGroup1.add(jRadioButton6);
+        jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton6ActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 42, 0, 0);
-        add(jLabel1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 6);
+        add(jRadioButton6, gridBagConstraints);
 
     }//GEN-END:initComponents
 
-    private void jPopupMenu1PopupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jPopupMenu1PopupMenuCanceled
+    private void trans6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trans6ActionPerformed
+        iterator.trn = 6;
+    }//GEN-LAST:event_trans6ActionPerformed
+
+    private void trans5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trans5ActionPerformed
+        iterator.trn = 5;
+    }//GEN-LAST:event_trans5ActionPerformed
+
+    private void trans4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trans4ActionPerformed
+        iterator.trn = 4;
+    }//GEN-LAST:event_trans4ActionPerformed
+
+    private void trans3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trans3ActionPerformed
+        iterator.trn = 3;
+    }//GEN-LAST:event_trans3ActionPerformed
+
+    private void trans2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trans2ActionPerformed
+        iterator.trn = 2;
+    }//GEN-LAST:event_trans2ActionPerformed
+
+    private void trans1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trans1ActionPerformed
+        iterator.trn = 1;
+    }//GEN-LAST:event_trans1ActionPerformed
+
+    private void jPopupMenu2PopupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jPopupMenu2PopupMenuCanceled
+        iterator.initAdvan.clear();
         jRadioButton3.setSelected(true);
+        jRadioButton4.setText("Using RFPK model library");
+    }//GEN-LAST:event_jPopupMenu2PopupMenuCanceled
+
+    private void jRadioButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton6ActionPerformed
+        iterator.initTwoStage.clear();
+        refresh();
+        setLeftOptions();
+    }//GEN-LAST:event_jRadioButton6ActionPerformed
+
+    private void jPopupMenu1PopupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jPopupMenu1PopupMenuCanceled
+        iterator.initAdvan.clear();
+        jRadioButton3.setSelected(true);
+        jRadioButton4.setText("Using RFPK model library");
     }//GEN-LAST:event_jPopupMenu1PopupMenuCanceled
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -520,6 +635,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             jRadioButton1.setSelected(true);
         else
             jRadioButton2.setSelected(true);
+        if(reload.getProperty("METHOD") != null)
+            jRadioButton6.setSelected(true);
         if(reload.getProperty("PRED") != null)
             jRadioButton3.setSelected(true);
         else
@@ -529,8 +646,25 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             int beginIndex = subroutines.indexOf("ADVAN");
             int endIndex = subroutines.indexOf(" ", beginIndex);
             subroutine = "SUBROUTINE " + subroutines.substring(beginIndex, endIndex);
-            jRadioButton4.setText("Using RFPK " + subroutine);            
+            jRadioButton4.setText("Using RFPK " + subroutine);
+            int advanNumber = Integer.parseInt(subroutine.substring(16));
+            switch(advanNumber)
+            {
+                case 1: jMenuItem1.setSelected(true); break;
+                case 2: jMenuItem2.setSelected(true); break; 
+                case 3: jMenuItem3.setSelected(true); break;
+                case 4: jMenuItem4.setSelected(true); break;
+                case 5: jMenuItem5.setSelected(true); break;
+                case 6: jMenuItem6.setSelected(true); break;
+                case 7: jMenuItem7.setSelected(true); break;
+                case 8: jMenuItem8.setSelected(true); break;
+                case 9: jMenuItem9.setSelected(true); break;
+                case 10: jMenuItem10.setSelected(true); break;
+                case 11: jMenuItem11.setSelected(true); break;
+                case 12: jMenuItem12.setSelected(true);
+            }
         }
+        iterator.initAdvan.clear();
         if(reload.getProperty("COVARIANCE") != null)
             jRadioButton5.setSelected(true);
         setLeftOptions();        
@@ -550,7 +684,18 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         jRadioButton3.setEnabled(isSelected);
         jRadioButton4.setEnabled(isSelected);
         jRadioButton5.setEnabled(isCheckBox1);
-        if(!isCheckBox1) jRadioButton5.setSelected(false);         
+        jRadioButton6.setEnabled(isCheckBox1 && iterator.getIsTester());
+        if(jRadioButton6.isSelected())  // statistics not available for two-stage
+        {
+            jRadioButton5.setSelected(false);
+            jRadioButton5.setEnabled(false);
+        }
+        if(!isCheckBox1)
+        {
+            jRadioButton5.setSelected(false);
+            if(jRadioButton6.isSelected())
+                jRadioButton1.setSelected(true);
+        }
         jCheckBox3.setEnabled(isCheckBox1);
         jCheckBox4.setEnabled(isCheckBox1);
         jCheckBox5.setEnabled(isCheckBox2);
@@ -563,73 +708,88 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 12);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 11);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 10);
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 9);
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 7);
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 6);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 5);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 4);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 3);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
+        iterator.initAdvan.clear();
         jRadioButton4.setText("Using RFPK model library");
         setLeftOptions();
     }//GEN-LAST:event_jRadioButton3ActionPerformed
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        if(iterator.getReload() != null && iterator.getReload().getProperty("METHOD") != null)
+        {
+            iterator.getReload().remove("METHOD");
+            iterator.initTwoStage.clear();
+            iterator.initTwoStage.add("pred");
+            iterator.initTwoStage.add("pk");
+            iterator.initTwoStage.add("error");
+            iterator.initTwoStage.add("omega");
+            iterator.initTwoStage.add("sigma");
+        }
+        refresh();
         setLeftOptions();
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 2);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 1);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+        iterator.initTwoStage.clear();
+        refresh();
         setLeftOptions();
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        addSubroutine(evt);
+        addSubroutine(evt, 8);
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
-        jPopupMenu1.show(this, 300, 200); 
+        jPopupMenu1.show(this, 300, 230);
         setLeftOptions();
     }//GEN-LAST:event_jRadioButton4ActionPerformed
     
-    private void addSubroutine(ActionEvent evt)
+    private void addSubroutine(ActionEvent evt, int n)
     {
+        trans(n);
         subroutine = ((javax.swing.JMenuItem)evt.getSource()).getText();
         jRadioButton4.setText("Using RFPK " + subroutine);
         jRadioButton4.setSelected(true);
@@ -638,12 +798,38 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private void setLeftOptions()
     {       
         if((jCheckBox1.isSelected() || jCheckBox2.isSelected()) && 
-           (jRadioButton1.isSelected() || jRadioButton2.isSelected()) &&
+           (jRadioButton1.isSelected() || jRadioButton2.isSelected() ||
+            jRadioButton6.isSelected()) &&
            (jRadioButton3.isSelected() || jRadioButton4.isSelected())) 
             isValid = true;
         else
             isValid = false;
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                  
+    }
+    
+    private boolean trans(int n)
+    {
+        iterator.adn = n;
+        iterator.initAdvan.clear();
+        if(n <= 4 || n >= 11)
+        {
+            iterator.initAdvan.clear();
+            iterator.initAdvan.add("model");
+            iterator.initAdvan.add("pk");
+            iterator.initAdvan.add("des");
+            iterator.initAdvan.add("theta");
+            iterator.initAdvan.add("omega");
+            trans1.setEnabled(true);
+            trans2.setEnabled(n <= 2);
+            trans3.setEnabled(n == 3 || n == 4);
+            trans4.setEnabled(n == 3 || n == 4 || n >= 11);
+            trans5.setEnabled(n == 3 || n == 4);
+            trans6.setEnabled(n >= 11);
+            jPopupMenu2.show(this, 300, 200);
+        }
+        else
+            iterator.trn = 1;
+        return true;
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -656,7 +842,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
@@ -670,11 +855,13 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JRadioButton jRadioButton5;
+    private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -683,6 +870,12 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
+    private javax.swing.JMenuItem trans1;
+    private javax.swing.JMenuItem trans2;
+    private javax.swing.JMenuItem trans3;
+    private javax.swing.JMenuItem trans4;
+    private javax.swing.JMenuItem trans5;
+    private javax.swing.JMenuItem trans6;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -752,12 +945,36 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             iterator.setIsCov(jRadioButton5.isSelected());
             iterator.setIsPred(jRadioButton3.isSelected());
             iterator.setIsInd(jRadioButton1.isSelected());
+            iterator.setIsTwoStage(jRadioButton6.isSelected());
+            
+            if(jRadioButton1.isSelected())
+            {
+                iterator.setIsInd(true);
+                iterator.setIsTwoStage(false);
+            }
+            if(jRadioButton2.isSelected())
+            {
+                iterator.setIsInd(false);
+                iterator.setIsTwoStage(false);
+            }
+            if(jRadioButton6.isSelected())
+            {
+                iterator.setIsInd(false);
+                iterator.setIsTwoStage(true);
+            }
+            
             if(jRadioButton4.isSelected())
-                iterator.setAdvan(Integer.parseInt(subroutine.substring(16)));
+            {
+                int advanNumber = Integer.parseInt(subroutine.substring(16));
+                if(advanNumber <= 4 || advanNumber >= 10) advanNumber = 6;
+                iterator.setAdvan(advanNumber);                
+            }
             if(jRadioButton2.isSelected())
                 ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "population";
             if(jRadioButton1.isSelected())
-                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "individual"; 
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "individual";
+            if(jRadioButton6.isSelected())
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "two-stage";
 	}
 
 	public boolean isValid(){

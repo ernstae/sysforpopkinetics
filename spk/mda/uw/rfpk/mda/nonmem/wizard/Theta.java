@@ -900,12 +900,14 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-            if(iterator.getIsInd()) return "Random Effects";
+            if(iterator.getIsInd() || iterator.getIsTwoStage()) 
+                return "Random Effects";
   	    return "Fixed Effects";
   	}
 
 	public String getStepTitle(){
-            if(iterator.getIsInd()) return "Random Effects";
+            if(iterator.getIsInd() || iterator.getIsTwoStage()) 
+                return "Random Effects";
 	    return "Fixed Effects Across The Population";
 	}
 
@@ -918,6 +920,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                 {
                     iterator.getReload().remove("THETA");
                     model.removeAllElements();
+
                     int beginIndex = text.indexOf("(");
                     nTheta = 0;
                     while(beginIndex != -1)
@@ -929,7 +932,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                     }
                     index = nTheta - 1;
                     jList1.setSelectedIndex(index);
-
+                    
                     // Set delete button
                     deleteButton.setEnabled(nTheta > 0);
                     
@@ -942,6 +945,25 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
                     
                     // Set up and down buttons
                     Utility.setUpDownButton(index, model, upButton, downButton);
+                }
+                
+                if(iterator.initAdvan.contains("theta"))
+                {
+                    model.removeAllElements();
+                    nTheta = 0;
+                    index = -1;
+                    iterator.initAdvan.remove("theta");
+                    jTextField1.setText("");
+                    jTextField2.setText("");
+                    jTextField3.setText("");
+                    jCheckBox1.setSelected(false);
+                    jCheckBox2.setSelected(false);
+                    jCheckBox3.setSelected(false);
+                    addButton.setEnabled(false);
+                    changeButton.setEnabled(false);
+                    deleteButton.setEnabled(false);
+                    upButton.setEnabled(false);
+                    downButton.setEnabled(false);
                 }
             }
             if(nTheta != iterator.getNTheta())

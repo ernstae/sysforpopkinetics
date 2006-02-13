@@ -59,7 +59,7 @@ public class MDA
                     System.exit(0);
                 }
             }
-            catch(IOException ioe )
+            catch(IOException ioe)
             {
                 JOptionPane.showMessageDialog(null, "Error creating lock file",
                                               "File Error",

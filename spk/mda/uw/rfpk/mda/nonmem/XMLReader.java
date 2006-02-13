@@ -1007,6 +1007,109 @@ public class XMLReader
      */
     public static String parseDataXML(String dataXML, boolean addLabel)
     {
+        StringBuffer data = new StringBuffer();
+        Document docData = null;
+        Element row;
+        String value;
+        int columns, rows;
+        try
+        {
+            // Parse the XML documents
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            docData = builder.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes())));
+//            DOMParser parser = new DOMParser(); 
+//            parser.parse(new InputSource(new ByteArrayInputStream(dataXML.getBytes()))); 
+//            docData = parser.getDocument();            
+        }
+        catch(ParserConfigurationException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "ParserConfigurationException", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        catch(SAXException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "SAXException", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        catch(IOException e)
+        {
+            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }    
+        
+        //Get root element of spkdata
+        Element spkdata = docData.getDocumentElement();  
+        
+        // Get dimensions
+        NodeList tableList = spkdata.getElementsByTagName("table");
+        Element table = (Element)tableList.item(0);
+        columns = Integer.parseInt(table.getAttribute("columns"));
+        rows = Integer.parseInt(table.getAttribute("rows"));
+        
+        // Prepare a String[][] for data and a int[] for column widths
+        String[][] block = new String[rows][columns];
+        int[] length = new int[columns];
+        for(int i = 0; i < columns; i++)
+            length[i] = 1;
+        
+        // Get rows
+        NodeList rowList = spkdata.getElementsByTagName("row");
+        int start = addLabel? 0 : 1;
+        if(rowList.getLength() != rows)
+        {
+            JOptionPane.showMessageDialog(null, "Number of row error was found in data XML."); 
+            return "";
+        }
+        if(rowList.getLength() > 1)
+        {
+            for(int i = start; i < rowList.getLength(); i++)
+            {
+                row = (Element)rowList.item(i);
+                NodeList valueList = row.getElementsByTagName("value");
+                if(valueList.getLength() != columns)
+                {
+                    JOptionPane.showMessageDialog(null, "Number of column error was found in data XML."); 
+                    return "";
+                }
+                if(valueList.getLength() > 0)
+                {
+                    for(int j = 0; j < valueList.getLength(); j++)
+                    {
+                        value = ((Element)valueList.item(j)).getFirstChild().getNodeValue();
+                        block[i][j] = value;
+                        if(value.length() > length[j]) length[j] = value.length();
+                    }
+                }                
+            }
+        }
+        for(int i = start; i < rows; i++)
+        {
+            for(int j = 0; j < columns; j++)
+            {
+                data.append(formatData(length[j], block[i][j]));
+            }
+            data.append("\n");
+        }
+        
+        if(addLabel)
+            data.setCharAt(0, 'C');
+        return data.toString();
+    }
+    
+    private static String formatData(int length, String number)
+    {
+        length += 2;
+        StringBuffer buffer = new StringBuffer(length);
+        for(int i = 0; i < length - number.length(); i++) 
+            buffer.append(" ");
+        buffer.append(number);
+        return buffer.toString();
+    }
+    
+/*
+    public static String parseDataXML(String dataXML, boolean addLabel)
+    {
         String data = "";
         Document docData = null;
         Element row, value;
@@ -1066,7 +1169,7 @@ public class XMLReader
             data = "C" + data.substring(1);
         return data;
     }
-
+*/
     // Format the data of type string
     private static String formatString(String number)
     {

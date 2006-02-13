@@ -92,8 +92,12 @@ public class JobInfo extends javax.swing.JFrame {
             point.translate(40, 30);
             setLocation(point);
         }
-        jButton8.setEnabled(!stateCode.equals("end") && !stateCode.equals("q2a"));
-        ok = (methodCode.equals("fo") || methodCode.equals("eh")|| methodCode.equals("la")) 
+        jButton8.setEnabled(!stateCode.equals("end") && !stateCode.equals("q2ac") &&
+                            !stateCode.equals("acmp") && !stateCode.equals("q2ar") &&
+                            !stateCode.equals("arun") && jobOwner.equals(System.getProperty("user.name")));
+        ok = (methodCode.equals("fo") || methodCode.equals("eh")|| methodCode.equals("la") ||
+              methodCode.equals("s2") || methodCode.equals("i2")|| methodCode.equals("g2") ||
+              methodCode.equals("sm") || methodCode.equals("im")|| methodCode.equals("gm")) 
              && (endCode.equals("srun") || endCode.equals("staf"));
         jButton9.setEnabled(ok);
         jTextArea5.setEnabled(ok);
@@ -307,8 +311,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 6, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 6, 12);
         getContentPane().add(jTextArea1, gridBagConstraints);
 
         jLabel1.setText("Name");
@@ -322,24 +326,24 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Model");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(6, 12, 2, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 2, 12);
         getContentPane().add(jLabel3, gridBagConstraints);
 
         jLabel4.setText("Dataset");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 7, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 7, 12);
         getContentPane().add(jLabel4, gridBagConstraints);
 
         jTextField1.setEditable(false);
@@ -399,8 +403,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jSeparator1, gridBagConstraints);
 
         jTextArea2.setBackground(new java.awt.Color(204, 204, 204));
@@ -411,8 +415,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 12);
         getContentPane().add(jTextArea2, gridBagConstraints);
 
         jButton1.setText("Model");
@@ -465,8 +469,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 12, 3, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 12, 3, 12);
         getContentPane().add(jPanel1, gridBagConstraints);
 
         jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -476,8 +480,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jCheckBox1, gridBagConstraints);
 
         jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -487,8 +491,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jCheckBox2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -496,8 +500,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jSeparator2, gridBagConstraints);
 
         jTextArea3.setBackground(new java.awt.Color(204, 204, 204));
@@ -507,8 +511,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 8, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 8, 12);
         getContentPane().add(jTextArea3, gridBagConstraints);
 
         jButton5.setText("Job History");
@@ -547,16 +551,16 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 4, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 4, 0);
         getContentPane().add(jTextField5, gridBagConstraints);
 
         jLabel6.setText("Method");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 4, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 4, 12);
         getContentPane().add(jLabel6, gridBagConstraints);
 
         jCheckBox3.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -566,8 +570,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
         getContentPane().add(jCheckBox3, gridBagConstraints);
 
         jTextField6.setEditable(false);
@@ -578,8 +582,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         getContentPane().add(jTextField6, gridBagConstraints);
 
         jTextArea5.setBackground(new java.awt.Color(204, 204, 204));
@@ -589,8 +593,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 10, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 10, 12);
         getContentPane().add(jTextArea5, gridBagConstraints);
 
         jTextArea6.setBackground(new java.awt.Color(204, 204, 204));
@@ -601,8 +605,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 9, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 9, 0);
         getContentPane().add(jTextArea6, gridBagConstraints);
 
         jButton7.setText("Warm Start");
@@ -619,8 +623,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 15;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 5, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 5, 12);
         getContentPane().add(jButton7, gridBagConstraints);
 
         jTextArea8.setBackground(new java.awt.Color(204, 204, 204));
@@ -629,8 +633,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 12);
         getContentPane().add(jTextArea8, gridBagConstraints);
 
         jButton8.setText("Abort  Job");
@@ -700,14 +704,11 @@ public class JobInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        if(!jobOwner.equals(System.getProperty("user.name")))
-        {
-            JOptionPane.showMessageDialog(null, "You are not the job owner.",
-                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }        
         if(frame.server.abortJob(id))
-            stateCode = "q2a";
+            JOptionPane.showMessageDialog(null, "Job " + id + " has been aborted");
+        else
+            JOptionPane.showMessageDialog(null, "Job " + id + " is not abortable");
+        jButton8.setEnabled(false);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
@@ -988,8 +989,36 @@ public class JobInfo extends javax.swing.JFrame {
                                                      "Question", JOptionPane.YES_NO_OPTION) == 0)
                         Utility.replaceDataDVbySimDV(report, source, dataset);
                 }
+                String method = null;
+                String covTheta = null;
+                if(methodCode.equals("s2") || methodCode.equals("i2")|| methodCode.equals("g2") ||
+                   methodCode.equals("sm") || methodCode.equals("im")|| methodCode.equals("gm"))
+                {
+                    frame.iterator.setIsTwoStage(true);
+                    frame.iterator.setIsInd(false);
+                    if(methodCode.equals("s2")) method = "std_two_stage";
+                    if(methodCode.equals("i2")) method = "iterative_two_stage";
+                    if(methodCode.equals("g2")) method = "global_two_stage";
+                    if(methodCode.equals("sm")) method = "map_bayes_std_two_stage";
+                    if(methodCode.equals("im")) method = "map_bayes_iterative_two_stage";
+                    if(methodCode.equals("gm")) method = "map_bayes_global_two_stage";
+                    if(method.startsWith("map"))
+                    {
+                        covTheta = Utility.getOmegaValues(source);
+                        if(covTheta == null)
+                        {
+                            JOptionPane.showMessageDialog(null, "Omega is not found in source.",
+                                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+               }
+                else
+                {
+                    frame.iterator.setIsTwoStage(false);
+                }
                 frame.iterator.setDataXML(dataset, 0);
-                frame.iterator.parseControl(model);
+                frame.iterator.parseControl(model, method, covTheta);
                 frame.writeInput(frame.iterator);
                 frame.iterator.getGettingStarted().setOptions();
             }

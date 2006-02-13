@@ -1138,10 +1138,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             jComboBox1.addItem("PRED");
             jComboBox1.addItem("RES");
             jComboBox1.addItem("WRES");
-            
-            boolean isInd = iterator.getIsInd();
-            boolean isMetod1 = iterator.getIsMethod1OrPosthoc();
-            
+ 
             if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
             {
                 for(int i = 0; i < iterator.getNEta(); i++)
