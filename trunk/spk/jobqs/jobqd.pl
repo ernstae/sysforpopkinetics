@@ -86,6 +86,15 @@ my $dbuser = shift;
 my $dbpasswd = shift;
 my $mode = shift;
 my $startjob = shift;
+
+my @a = ("ps -elf|grep jobqs");
+my $stdout = `@a`;
+
+if(index($stdout, "spk$mode") != -1) {
+    print "A jobqserver is alreading running. Another instance cannot be ";
+    die;
+}
+
 my $command = "/usr/java/j2sdk1.4.2_03/bin/java";
 my $classpath = "-cp /usr/local/lib/mysql-connector-java-3.0.10-stable-bin.jar:/usr/local/bin/spk$mode/:.";
 my $lockfile_exists = 0;
