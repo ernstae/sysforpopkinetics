@@ -62,7 +62,8 @@ public class Ping
                     stdout += (char)i;
                 }
                 in.close();
-                if(stdout.indexOf("uw.rfpk.jobqs.JobQueue") != -1)
+                String mode = args[1].equals("9000")? "spkprod" : "spktest";
+                if(stdout.indexOf(mode) != -1)
                 {
                     label.setText("The Job-queue server is initializing. Please wait.");
                 }
@@ -75,9 +76,11 @@ public class Ping
         }
         catch(IOException e)
         {
+            System.exit(0);
         }
         catch(InterruptedException e)
         {
+            System.exit(0);
         }
         finally
         {
@@ -87,7 +90,8 @@ public class Ping
             }
             catch(IOException e)
             {
-            }
+                System.exit(0);
+            }   
         }       
         label.setHorizontalAlignment(JLabel.CENTER);
         dialog.getContentPane().add(label, BorderLayout.CENTER);
@@ -120,6 +124,7 @@ public class Ping
             }
             catch(IOException e)
             {
+                System.exit(0);
             }
             finally
             {
@@ -131,7 +136,8 @@ public class Ping
                 }
                 catch(IOException e)
                 {
-                }
+                    System.exit(0);
+                }               
             }
             try
             {
@@ -139,6 +145,7 @@ public class Ping
             }
             catch(InterruptedException e)
             {
+                System.exit(0);
             }
         }
     }
