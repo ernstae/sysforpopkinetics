@@ -197,7 +197,7 @@ public abstract class Spkdb {
 	if (leftOff != 0) {
 	    sql += " and job_id < " + leftOff;
 	}
-	sql += " order by job_id desc limit " + maxNum + ";";
+//	sql += " order by job_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 
@@ -209,13 +209,13 @@ public abstract class Spkdb {
      * If the job's state code is 'q2r', set the state code to 'end' and the end code to 'abrt'.
      * If the job's state code is 'run', set the state code to 'q2ar'.
      * Set the job's event time and state code to the job's history.
-     * @return true if the job's state_code has been set to 'end', 'q2ac', or 'q2ar', otherwise false.
+     * @return state code if it has been set to 'end', 'q2ac', or 'q2ar', otherwise null.
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
      * @throws SQLException a SQL exception.
      * @throws SpkdbException a Spkdb exception.
      */
-    public static boolean abortJob(Connection conn, long jobId)
+    public static String abortJob(Connection conn, long jobId)
 	throws SQLException, SpkdbException
     {
         java.util.Date date = new java.util.Date(); 
@@ -240,13 +240,13 @@ public abstract class Spkdb {
                     sql ="update job set state_code='" + state +"', event_time=" + 
                          eventTime + " where job_id ='" + jobId + "' and state_code='run';";
                     if(stmt.executeUpdate(sql) != 1)
-                        return false;
+                        return null;
                 }
             }
         }
         stmt.close();
         addToHistory(conn, jobId, state, "unknown");
-	return true;
+	return state;
     }
     /**        Record the end status of a job.
      * @return true if the job's state_code is set to "end" by this method, otherwise false.

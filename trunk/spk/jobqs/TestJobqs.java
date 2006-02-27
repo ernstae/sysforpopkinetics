@@ -47,7 +47,7 @@ public class TestJobqs
 //        String classpath = "/home/jiaji/r2/src/apps/spk/db/api/java/:/home/jiaji/r2/src/apps/spk/jobqs/:" + 
 //        "/home/jiaji/mysql-connector-java-3.0.10-stable/mysql-connector-java-3.0.10-stable-bin.jar:.";
         
-        final int maxTests = 26;
+        final int maxTests = 31;
         final int port = 9001;
 	boolean b = true;
 	boolean target = true;
@@ -177,7 +177,49 @@ public class TestJobqs
                         rs.next();
                         b = rs.getString("state_code").equals("q2ar");
                         break;
-		    case 10: 
+                    case 10:
+                        target = true;
+                        s = "listing jobs in q2c queue";
+                        out.println("list-q2c");                        
+                        b = in.readLine().equals("1 - q2c");
+                        b = in.readLine().equals("2 - q2c") && b;
+                        break;
+                    case 11:
+                        target = true;
+                        s = "listing jobs in q2r queue";
+                        out.println("list-q2r");                        
+                        b = in.readLine().equals("3 - q2r");
+                        b = in.readLine().equals("4 - q2r") && b;
+                        break;
+                    case 12:
+                        target = true;
+                        s = "listing jobs in q2ac queue";
+                        out.println("list-q2ac");                        
+                        b = in.readLine().equals("5 - q2ac");
+                        b = in.readLine().equals("6 - q2ac") && b;
+                        break;
+                    case 13:
+                        target = true;
+                        s = "listing jobs in q2ar queue";
+                        out.println("list-q2ar");                        
+                        b = in.readLine().equals("7 - q2ar");
+                        b = in.readLine().equals("8 - q2ar") && b;
+                        break;
+                    case 14:
+                        target = true;
+                        s = "listing all jobs in jobList";
+                        out.println("list-all");                        
+                        b = in.readLine().equals("1 - q2c");
+                        b = in.readLine().equals("2 - q2c") && b;
+                        b = in.readLine().equals("3 - q2r") && b;
+                        b = in.readLine().equals("4 - q2r") && b;
+                        b = in.readLine().equals("5 - q2ac") && b;
+                        b = in.readLine().equals("6 - q2ac") && b;
+                        b = in.readLine().equals("3 - q2ar") && b;
+                        b = in.readLine().equals("4 - q2ar") && b;
+                        b = true;
+                        break;
+		    case 15: 
                         target = true;
                         s = "getting jobs from q2c queue";
                         out.println("get-q2c");
@@ -187,7 +229,7 @@ public class TestJobqs
                         out.println("get-q2c");
                         b = in.readLine().equals("none") && b;
 		        break;
-		    case 11:
+		    case 16:
                         target = true;
                         s = "getting jobs from q2r queue";
                         out.println("get-q2r");
@@ -197,7 +239,7 @@ public class TestJobqs
                         out.println("get-q2r");
                         b = in.readLine().equals("none") && b;
 		        break;
-                    case 12: 
+                    case 17: 
                         target = true;
                         s = "getting jobs from q2ac queue";
                         out.println("get-q2ac");
@@ -207,7 +249,7 @@ public class TestJobqs
                         out.println("get-q2ac");
                         b = in.readLine().equals("none") && b;
 		        break;
-		    case 13:
+		    case 18:
                         target = true;
                         s = "getting jobs from q2ar queue";
                         out.println("get-q2ar");
@@ -217,7 +259,7 @@ public class TestJobqs
                         out.println("get-q2ar");
                         b = in.readLine().equals("none") && b;
 		        break;
-                    case 14: 
+                    case 19: 
                         target = true;
                         s = "adding jobs to q2c queue";
                         out.println("add-q2c-1");
@@ -231,7 +273,7 @@ public class TestJobqs
                         out.println("get-q2c");
                         b = in.readLine().equals("none") && b;
 		        break;
-		    case 15:
+		    case 20:
                         target = true;
                         s = "adding jobs to q2r queue";
                         out.println("add-q2r-3");
@@ -245,7 +287,7 @@ public class TestJobqs
                         out.println("get-q2r");
                         b = in.readLine().equals("none") && b;
 		        break;
-                    case 16: 
+                    case 21: 
                         target = true;
                         s = "adding jobs to q2ac queue";
                         out.println("add-q2c-5");
@@ -267,7 +309,7 @@ public class TestJobqs
                         out.println("get-q2ac");
                         b = in.readLine().equals("none") && b;
 		        break;
-		    case 17:
+		    case 22:
                         target = true;
                         s = "adding jobs to q2ar queue";
                         out.println("add-q2r-7");
@@ -289,7 +331,7 @@ public class TestJobqs
                         out.println("get-q2ac");
                         b = in.readLine().equals("none") && b;
 		        break;
-                    case 18:
+                    case 23:
                         target = true;
                         s = "setting q2c job to end";
                         out.println("add-q2c-1");
@@ -299,7 +341,7 @@ public class TestJobqs
                         out.println("get-q2c");
                         b = in.readLine().equals("none") && b;
                         break;
-                    case 19:
+                    case 24:
                         target = true;
                         s = "setting q2r job to end";
                         out.println("add-q2r-2");
@@ -309,7 +351,7 @@ public class TestJobqs
                         out.println("get-q2r");
                         b = in.readLine().equals("none") && b;
                         break;
-                    case 20:
+                    case 25:
                         target = true;
                         s = "setting q2ac job to end";
                         out.println("add-q2c-3");
@@ -321,7 +363,7 @@ public class TestJobqs
                         out.println("get-q2ac");
                         b = in.readLine().equals("none") && b;                        
                         break;
-                    case 21:
+                    case 26:
                         target = true;
                         s = "setting q2ar job to end";
                         out.println("add-q2r-4");
@@ -333,7 +375,7 @@ public class TestJobqs
                         out.println("get-q2ar");
                         b = in.readLine().equals("none") && b;                        
                         break;
-                    case 22:
+                    case 27:
                         target = true;
                         s = "init compiler daemon on cmp";
                         out.println("add-q2c-1");
@@ -345,7 +387,7 @@ public class TestJobqs
                         out.println("get-q2c");
                         b = in.readLine().equals(jobId) && b;
                         break;
-                    case 23:
+                    case 28:
                         target = true;
                         s = "init compiler daemon on acmp";
                         out.println("get-q2ac");
@@ -357,7 +399,7 @@ public class TestJobqs
                         out.println("get-q2ac");
                         b = in.readLine().equals(jobId) && b;
                         break;
-                    case 24:
+                    case 29:
                         target = true;
                         s = "init run-time daemon on run";
                         out.println("add-q2r-3");
@@ -369,7 +411,7 @@ public class TestJobqs
                         out.println("get-q2r");
                         b = in.readLine().equals(" " + jobId) && b;
                         break;
-                    case 25:
+                    case 30:
                         target = true;
                         s = "init run-time daemon on arun";
                         out.println("get-q2ar");
@@ -381,7 +423,7 @@ public class TestJobqs
                         out.println("get-q2ar");
                         b = in.readLine().equals(jobId) && b;
                         break;                        
-                    case 26:
+                    case 31:
                         target = true;
                         s = "calling the server Hi";
                         out.println("Hi");
