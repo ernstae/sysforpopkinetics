@@ -32,9 +32,9 @@ struct XmlConstants{
   XMLCh* X_AMT;
 
   /** C array version. */
-  static const char * C_ANALYTIC;
+  static const char * C_ADAPT;
   /** XMLCh array version. */
-  XMLCh* X_ANALYTIC;
+  XMLCh* X_ADAPT;
 
   /** C array version. */
   static const char * C_APPROXIMATION;

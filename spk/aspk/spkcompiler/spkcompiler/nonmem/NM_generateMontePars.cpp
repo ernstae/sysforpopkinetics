@@ -48,14 +48,14 @@ void NonmemTranslator::generateMonteParsNamespace() const
   oMontePars << endl;
 
   oMontePars << "namespace MontePars{" << endl;
-  oMontePars << "   enum METHOD { analytic, grid, plain, miser, monte, vegas };" << endl;
+  oMontePars << "   enum METHOD { adapt, grid, plain, miser, monte, vegas };" << endl;
   oMontePars << "   const enum METHOD method = ";
   if( myIntegMethod == GRID )
     oMontePars << "grid;" << endl;
   else if( myIntegMethod == MISER )
     oMontePars << "miser;" << endl;
-  else if( myIntegMethod == ANALYTIC )
-    oMontePars << "analytic;" << endl;
+  else if( myIntegMethod == ADAPT )
+    oMontePars << "adapt;" << endl;
   else if( myIntegMethod == VEGAS )
     oMontePars << "vegas;" << endl;
   else //if( myIntegMethod == PLAIN )

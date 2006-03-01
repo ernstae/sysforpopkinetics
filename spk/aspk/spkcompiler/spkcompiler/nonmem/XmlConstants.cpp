@@ -72,7 +72,7 @@ const char* XmlConstants::C_GLOBAL_TWO_STAGE          = "global_two_stage";
 const char* XmlConstants::C_ITERATIVE_TWO_STAGE       = "iterative_two_stage";
 const char* XmlConstants::C_MONTE_CARLO               = "monte_carlo";
 const char* XmlConstants::C_METHOD                    = "method";
-const char* XmlConstants::C_ANALYTIC                  = "analytic";
+const char* XmlConstants::C_ADAPT                     = "adapt";
 const char* XmlConstants::C_GRID                      = "grid";
 const char* XmlConstants::C_MISER                     = "miser";
 const char* XmlConstants::C_PLAIN                     = "plain";
@@ -273,7 +273,7 @@ XmlConstants::XmlConstants()
   X_STD_TWO_STAGE              = XMLString::transcode( C_STD_TWO_STAGE );
   X_GLOBAL_TWO_STAGE           = XMLString::transcode( C_GLOBAL_TWO_STAGE );
   X_ITERATIVE_TWO_STAGE        = XMLString::transcode( C_ITERATIVE_TWO_STAGE );
-  X_ANALYTIC                   = XMLString::transcode( C_ANALYTIC );
+  X_ADAPT                      = XMLString::transcode( C_ADAPT );
   X_GRID                       = XMLString::transcode( C_GRID );
   X_PLAIN                      = XMLString::transcode( C_PLAIN );
   X_MISER                      = XMLString::transcode( C_MISER );
@@ -392,7 +392,7 @@ XmlConstants::~XmlConstants()
   XMLString::release( &X_FO );
   XMLString::release( &X_FOCE );
   XMLString::release( &X_LAPLACE );
-  XMLString::release( &X_ANALYTIC );
+  XMLString::release( &X_ADAPT );
   XMLString::release( &X_GRID );
   XMLString::release( &X_PLAIN );
   XMLString::release( &X_MISER );

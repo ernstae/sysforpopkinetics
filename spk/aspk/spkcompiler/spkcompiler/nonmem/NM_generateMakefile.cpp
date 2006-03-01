@@ -115,18 +115,20 @@ void NonmemTranslator::generateMakefile() const
     }
   else
     {
-      oMakefile << "MONTE_SRC = \\" << endl;
+      oMakefile << "MONTE_CPP = \\" << endl;
       oMakefile << "\tmonteDriver.cpp \\" << endl; 
-      oMakefile << "\tAnalyticIntegral.cpp \\" << endl;
+      oMakefile << "\tAdaptIntegral.cpp \\" << endl;
       oMakefile << "\tGridIntegral.cpp \\" << endl;
       oMakefile << "\tMontePopObj.cpp \\" << endl;
       oMakefile << "\tMapBay.cpp \\" << endl;
       oMakefile << "\tMapMonte.cpp \\" << endl;
       oMakefile << "\tGsl2SpkError.cpp" << endl;
       oMakefile << endl;
+      oMakefile << "MONTE_SRC = $(MONTE_CPP) " << endl;
+    
 
       oMakefile << "MONTE_INCLUDE = \\" << endl;
-      oMakefile << "\tAnalyticIntegral.h \\" << endl;
+      oMakefile << "\tAdaptIntegral.h \\" << endl;
       oMakefile << "\tGridIntegral.h \\" << endl;
       oMakefile << "\tMontePopObj.h \\" << endl;
       oMakefile << "\tMapBay.h \\" << endl;
@@ -134,10 +136,11 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tGsl2SpkError.h" << endl;
       oMakefile << endl;
 
-      oMakefile << "prod : " << endl;
+      oMakefile << "prod : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
-      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_SRC) -o monteDriver ";
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.cpp ." << endl;
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.h   ." << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
@@ -147,10 +150,10 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
       
-      oMakefile << "test : " << endl;
+      oMakefile << "test : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_SRC) -o monteDriver ";
+      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
@@ -158,6 +161,18 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "adapt.o : "                       << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/adapt.c ." << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/f2c.h   ." << endl;
+      oMakefile << "\tgcc $(CXX_FLAGS) -c adapt.c"   << endl;
+      oMakefile << endl;
+
+      oMakefile << "pow_ii.o : "                       << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/pow_ii.c ." << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/f2c.h   ." << endl;
+      oMakefile << "\tgcc $(CXX_FLAGS) -c pow_ii.c"   << endl;
       oMakefile << endl;
   
       oMakefile << "monte_clean : " << endl;
