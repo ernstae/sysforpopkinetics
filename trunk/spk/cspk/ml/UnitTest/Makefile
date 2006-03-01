@@ -10,6 +10,7 @@ CPPFLAGS = \
 	-I..
 
 INCLUDES = \
+	AnalyticIntegral.h \
 	GridIntegral.h \
 	MapBay.h \
 	MapMonte.h \
@@ -19,8 +20,11 @@ INCLUDES = \
 	ExpModel.h
 
 OBJECTS = \
-	GridIntegral.o \
+	pow_ii.o \
+	adapt.o \
 	AnalyticIntegral.o \
+	GridIntegral.o \
+	AdaptIntegral.o \
 	MapMonte.o \
 	MapBay.o \
 	MontePopObj.o \
@@ -43,4 +47,4 @@ OBJECTS = \
 	gcc $(CPPFLAGS) $< -o $@
 
 RunTest: $(OBJECTS) $(INCLUDES)
-	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkopt -lCppAD -lgsl -llapack -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c -o RunTest
+	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkpred -lQN01Box -lCppAD -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c -o RunTest

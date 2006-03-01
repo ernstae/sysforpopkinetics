@@ -178,15 +178,16 @@ $end
 # include <cstdlib>
 # include <gsl/gsl_errno.h>
 
-# include "AnalyticIntegral.h"
 # include "GridIntegral.h"
+# include "AdaptIntegral.h"
 # include "MapMonte.h"
 # include "MapBay.h"
+# include "f2c.h"
 
 #ifdef ODEPRED
-   # include "OdePred.h"
+	# include "OdePred.h"
 #else
-   # include "Pred.h"
+	# include "Pred.h"
 #endif
 
 # include "DataSet.h"
@@ -197,14 +198,14 @@ $end
 # define monteDriverDebug 0
 
 enum { SUCCESSFUL             = 0,
-       OTHER_KNOWN_ERROR      = 1,
-       UNKNOWN_FAILURE        = 2,
-       SYSTEM_ERROR           = 10,
-       USER_INPUT_ERROR       = 14,
-       SYSTEM_FAILURE         = 100,
-       POST_OPT_ERROR         = 200,
-       POST_OPT_FAILURE       = 300
-     };
+	OTHER_KNOWN_ERROR      = 1,
+	UNKNOWN_FAILURE        = 2,
+	SYSTEM_ERROR           = 10,
+	USER_INPUT_ERROR       = 14,
+	SYSTEM_FAILURE         = 100,
+	POST_OPT_ERROR         = 200,
+	POST_OPT_FAILURE       = 300
+};
 
 
 // locally defined functions
@@ -212,8 +213,12 @@ namespace {
 	using std::valarray;
 
 	// Map Bayesian objective
-	double ExpNegMapBay(double *x, size_t nB, void *parms)
+	double ExpNegMapBayGrid(double *x, size_t nB, void *parms)
 	{	return exp( - MapBay(x, nB, parms) );
+	}
+	extern "C" doublereal ExpNegMapBayAdapt(integer *ndim, doublereal *x)
+	{	void *parms = 0;
+		return static_cast<doublereal>(exp(-MapBay(x, *ndim, parms)));
 	}
 	void Indent(size_t indent)
 	{	while(indent--)
@@ -288,35 +293,8 @@ namespace {
 		Indent(indent);
 		cout << "</row_major>" << endl;;
 	}
-	// Analytic negative log marginal likelihood for entire data set
-	void AnalyticIntegralAll(
-		double           &pop_obj_estimate, 
-		double           &pop_obj_stderror,
-		PopPredModel     &model           ,
-		const valarray<int>    &N         ,
-		const valarray<double> &y         ,
-		const valarray<double> &alp       ,
-		const valarray<double> &bLow      ,
-		const valarray<double> &bUp
-	)
-	{	pop_obj_estimate = 0.;
-		pop_obj_stderror = 0.;
-		size_t nPop      = N.size();
-		size_t i;
-		for(i = 0; i < nPop; i++)
-		{	pop_obj_estimate += - log( AnalyticIntegral(
-				model               , 
-				N                   ,
-				y                   ,
-				alp                 ,
-				bLow                ,
-				bUp                 ,
-				i
-			) );
-		}
-	}
-	// Grid approximation negative log marginal likelihood for entire data
-	void GridIntegralAll(
+	// Numerical approximation of integral for entire data
+	void NumericIntegralAll(
 		double           &pop_obj_estimate, 
 		double           &pop_obj_stderror,
 		PopPredModel     &model           ,
@@ -333,7 +311,6 @@ namespace {
 		size_t nB        = bLow.size();
 
 		assert( bUp.size() == nB );
-		assert( number_eval.size() == nB );
 
 		size_t i;
 		for(i = 0; i < nPop; i++)
@@ -355,34 +332,50 @@ namespace {
 			MapBaySet(&model, yi, alp, i, nB);
 
 			void *null    = 0;
-# if monteDriverDebug
-			double *Mid   = new double[ nB ];
-			for(j = 0; j < nB; j++)
-				Mid[j] = (bLow[j] + bUp[j]) / 2.;
-			double mapBay = MapBay(Mid, nB, null);
-			delete [] Mid;
-			cerr << "monteDriver: individual = " << i;
-			cerr << ", MapBay(.5*(U + L)) = " << mapBay;
-			cerr << ", y_i = ";
-			for(j = 0; j < yi.size(); j++)
-			{	std::cerr << yi[j];
-				if( j + 1 < yi.size() )
-					std::cerr << ", ";
-			} 
-			std::cerr << std::endl;
-# endif
 			double estimate;
 			double error;
-			GridIntegral(
-				ExpNegMapBay,
-				nB          , 
-				null        ,
-				number_eval  ,
-				bLow        ,
-				bUp         ,
-				estimate    ,
-				error
-			);
+			if( MontePars::method == MontePars::grid )
+			{	if( number_eval.size() != nB )
+				{	throw SpkException (
+                                	SpkError::SPK_USER_INPUT_ERR,
+                                	"grid: length of number eval is not "
+					"equal number of random effects"     ,
+                                	__LINE__                             ,
+                                	__FILE__
+                        		);
+				}
+				GridIntegral(
+					ExpNegMapBayGrid,
+					nB              , 
+					null            ,
+					number_eval     ,
+					bLow            ,
+					bUp             ,
+					estimate        ,
+					error
+				);
+			}
+			else if( MontePars::method == MontePars::adapt )
+			{	if( number_eval.size() != 1 )
+				{	throw SpkException (
+                                	SpkError::SPK_USER_INPUT_ERR,
+                                	"adapt: length of number eval is not "
+					"equal to one"                      ,
+                                	__LINE__                            ,
+                                	__FILE__
+                        		);
+				}
+				AdaptIntegral(
+					ExpNegMapBayAdapt,
+					nB              , 
+					number_eval[0]  ,
+					bLow            ,
+					bUp             ,
+					estimate        ,
+					error
+				);
+			}
+			else	assert(0);
 			pop_obj_estimate -= log( estimate ),
 			pop_obj_stderror += error / estimate;
 		}
@@ -467,18 +460,23 @@ int main(int argc, const char *argv[])
 
 	// method
 	std::string MethodName;
-	bool analytic = false;
-	bool grid     = false;
-	bool monte    = false;
+	bool numeric = false;
+	bool monte   = false;
 	switch( MontePars::method )
 	{
-		case MontePars::analytic:
-		analytic   = true;
-		MethodName = "analytic";
+		case MontePars::adapt:
+		numeric    = true;
+		MethodName = "adapt";
+		if( NonmemPars::nEta < 2 )
+		{	msg = "monteDriver\n"
+		      	"Method is adapt and nEta < 2"; 
+			OutputErrorMsg(msg);
+			return USER_INPUT_ERROR;
+		}
 		break;
 
 		case MontePars::grid:
-		grid       = true;
+		numeric    = true;
 		MethodName = "grid";
 		break;
 
@@ -500,13 +498,7 @@ int main(int argc, const char *argv[])
 		default:
 		msg = "monteDriver\n"
 		      "Method is not one of the following:\n"
-		      "analytic, grid, plain, miser, or vegas";
-		OutputErrorMsg(msg);
-		return USER_INPUT_ERROR;
-	}
-	if( analytic && NonmemPars::nEta != 1 )
-	{	msg = "monteDriver\n"
-		      "Method is analytic and nEta != 1"; 
+		      "grid, adapt, plain, miser, or vegas";
 		OutputErrorMsg(msg);
 		return USER_INPUT_ERROR;
 	}
@@ -533,16 +525,17 @@ int main(int argc, const char *argv[])
 		set.reset( new DataSet< CppAD::AD<double> > );
 #ifdef ODEPRED
 		mPred.reset( new OdePred< CppAD::AD<double> >(set.get(),
-                                                           NonmemPars::nIndividuals,
-                                                           NonmemPars::isPkFunctionOfT,
-                                                           NonmemPars::nCompartments,
-                                                           NonmemPars::nParameters,
-                                                           NonmemPars::defaultDoseComp,
-                                                           NonmemPars::defaultObservationComp,
-                                                           NonmemPars::initialOff,
-                                                           NonmemPars::noOff,
-                                                           NonmemPars::noDose,
-                                                           NonmemPars::relTol ) );
+			NonmemPars::nIndividuals,
+			NonmemPars::isPkFunctionOfT,
+			NonmemPars::nCompartments,
+			NonmemPars::nParameters,
+			NonmemPars::defaultDoseComp,
+			NonmemPars::defaultObservationComp,
+			NonmemPars::initialOff,
+			NonmemPars::noOff,
+			NonmemPars::noDose,
+			NonmemPars::relTol 
+		) );
 #else
 		mPred.reset( new Pred< CppAD::AD<double> >(set.get()) );
 #endif
@@ -662,19 +655,8 @@ int main(int argc, const char *argv[])
 				alp         = alpIn;
 				alp[i]      = alp[i] + step;
 
-				// analytic integral
-				if( analytic ) AnalyticIntegralAll(
-					pop_obj_estimate, 
-					pop_obj_stderror,
-					*model           ,
-					N               ,
-					y               ,
-					alp             ,
-					bLow            ,
-					bUp
-				);
-				// grid integral approximation
-				if( grid ) GridIntegralAll(
+				// numericall integral approximation
+				if( numeric ) NumericIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
 					*model           ,
@@ -710,7 +692,7 @@ int main(int argc, const char *argv[])
 	}
 	catch( SpkException& e )
 	{       e.push(SpkError::SPK_USER_INPUT_ERR,
-			"Monte Carlo or grid integration",
+			"Monte Carlo or numericall integration",
 			__LINE__,
 			__FILE__
 		);
@@ -718,7 +700,7 @@ int main(int argc, const char *argv[])
 		return USER_INPUT_ERROR;
 	}
 	catch( ... )
-	{	OutputErrorMsg("Monte Carlo or grid integration");
+	{	OutputErrorMsg("Monte Carlo or numericall integration");
 		return   UNKNOWN_FAILURE;
 	}
 
