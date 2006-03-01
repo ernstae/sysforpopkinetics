@@ -37,7 +37,7 @@ class ClientTranslator{
                     ITERATIVE_TWO_STAGE /**< Iterative two stage */
                   };
   /** Likelihood evaluation method. */
-  enum INTEG_METHOD { ANALYTIC, GRID, PLAIN, MISER, VEGAS };                                                                                
+  enum INTEG_METHOD { ADAPT, GRID, PLAIN, MISER, VEGAS };                                                                                
 
   /**
    * Analysis type

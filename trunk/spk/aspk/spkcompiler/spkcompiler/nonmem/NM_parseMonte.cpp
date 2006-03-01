@@ -32,16 +32,39 @@ void NonmemTranslator::parseMonte( const DOMElement* monte_carlo )
   if( monte_carlo->hasAttribute( XML.X_METHOD ) )
     {
       const XMLCh* x_temp = monte_carlo->getAttribute( XML.X_METHOD );
-      if( XMLString::equals( x_temp, XML.X_ANALYTIC ) )
-	myIntegMethod = ANALYTIC;
+      if( XMLString::equals( x_temp, XML.X_ADAPT ) )
+	myIntegMethod = ADAPT;
       else if( XMLString::equals( x_temp, XML.X_GRID ) )
 	myIntegMethod = GRID;
       else if( XMLString::equals( x_temp, XML.X_MISER ) )
 	myIntegMethod = MISER;
       else if( XMLString::equals( x_temp, XML.X_VEGAS ) )
 	myIntegMethod = VEGAS;
-      else //if( XMLString::equals( x_temp, XML.X_PLAIN ) )
+      else if( XMLString::equals( x_temp, XML.X_PLAIN ) )
 	myIntegMethod = PLAIN;
+      else
+      {  char method_in_file[21];
+	 char mess[ SpkCompilerError::maxMessageLen() ];
+
+         // convert from XMLString to string
+         XMLString::transcode(x_temp, method_in_file, 20);
+
+         // construct the error message
+         snprintf( mess, 
+	   SpkCompilerError::maxMessageLen(),
+	   "<%s::%s> attribute = %s", 
+           XML.C_MONTE_CARLO, 
+           XML.C_METHOD, 
+           method_in_file
+         );
+         SpkCompilerException e( 
+           SpkCompilerError::ASPK_SOURCEML_ERR, 
+           mess,
+	   __LINE__,
+           __FILE__
+         );
+         throw e;
+      }
     }
   else
     {
@@ -95,7 +118,7 @@ void NonmemTranslator::parseMonte( const DOMElement* monte_carlo )
 	  throw e;
         }
     }
-  else // plain, miser, analytic
+  else // adapt, plain, miser, vegas
     {
       // For these methods, ignore what the user says.
       // They take only one and the first occurence of <number_eval>.
