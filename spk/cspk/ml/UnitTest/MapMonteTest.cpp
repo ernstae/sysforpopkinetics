@@ -3,7 +3,7 @@
 
 # include "../MapBay.h"
 # include "../MapMonte.h"
-# include "../AnalyticIntegral.h"
+# include "AnalyticIntegral.h"
 
 # include "LinearModel.h"
 # include <CppAD/NearEqual.h>

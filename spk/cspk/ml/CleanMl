@@ -1,0 +1,31 @@
+# ! /bin/bash
+#
+if [ "$1" = "-remove" ]
+then
+	rm -r -f `find .               \
+	\( -name 'htm'            \) -or \
+	\( -name 'junk'           \) -or \
+	\( -name 'monteDriver'    \) -or \
+	\( -name 'Sim'            \) -or \
+	\( -name '*.bak'          \) -or \
+	\( -name '*.dat'          \) -or \
+	\( -name '*.log'          \) -or \
+	\( -name '*.new'          \) -or \
+	\( -name '*.o'            \) -or \
+	\( -name '*.tar'          \) -or \
+	\( -name '*.tmp'          \)`
+else
+	find .                         \
+	\( -name 'htm'            \) -or \
+	\( -name 'junk'           \) -or \
+	\( -name 'monteDriver'    \) -or \
+	\( -name 'Sim'            \) -or \
+	\( -name '*.bak'          \) -or \
+	\( -name '*.dat'          \) -or \
+	\( -name '*.log'          \) -or \
+	\( -name '*.new'          \) -or \
+	\( -name '*.tar'          \) -or \
+	\( -name '*.o'            \) -or \
+	\( -name '*.tmp'          \) 
+	echo "To remove files listed above use: CleanMl -remove"
+fi

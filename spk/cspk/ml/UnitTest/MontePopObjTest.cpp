@@ -3,7 +3,7 @@
 
 # include "../MapBay.h"
 # include "../MontePopObj.h"
-# include "../AnalyticIntegral.h"
+# include "AnalyticIntegral.h"
 
 # include "MontePars.h"
 # include "LinearModel.h"

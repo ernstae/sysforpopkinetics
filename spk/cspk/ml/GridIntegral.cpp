@@ -184,9 +184,6 @@ void GridIntegral(
 {
 	integralEstimate  = GridIntegral(Feval, m, p, N, L, U);
 
-        // Brad changed this to 3 but he doesn't remember why he did so.
-        // Since it breaks the regression test, Sachiko retrieved
-        // the original scheme (i.e. devide by 2).
 	std::valarray<int> N2 = N / 2;
 	size_t i;
 	for(i = 0; i < N.size(); i++)
@@ -209,8 +206,10 @@ void GridIntegral(
 		}
 	}
 		
-	std::valarray<int> M = N - N2;
-	double compareEstimate = GridIntegral(Feval, m, p, M, L, U);
+	std::valarray<int> M = N;
+	std::valarray<double> lower(L * 1.33333);
+	std::valarray<double> upper(U * 1.33333);
+	double compareEstimate = GridIntegral(Feval, m, p, M, lower, upper);
 	estimateStd            = fabs(integralEstimate - compareEstimate);
 
 	return;

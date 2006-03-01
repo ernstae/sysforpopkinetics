@@ -37,7 +37,7 @@ bool GridIntegralTest(void)
 	for(i = 1.; i <= m; i += 1.)
 		prod *= (1. - exp(-i)) / i; 
 
-	ok &= estimateStd <= 1e-2;
+	ok &= estimateStd <= 1e-1;
 	ok &= fabs( integralEstimate - prod ) <= 2. * estimateStd;
 
 	// test throw inside of GridIntegral
