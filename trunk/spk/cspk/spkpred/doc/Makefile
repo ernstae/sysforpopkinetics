@@ -6,7 +6,7 @@ T        = spkpredLib
 HTML_DIR = html
 WEB      = $(WEBDIR)/v0.1/specs/$T
 
-VPATH = ../lib/src
+VPATH = ../spkpred
 
 SPKPRED_SRC = \
 	Cov.cpp \
@@ -15,14 +15,18 @@ SPKPRED_SRC = \
 	IndPredModel.cpp \
 	isEqual.cpp \
 	PopPredModel.cpp \
+	predTwoStageMethod.cpp \
 	Cov.h \
+	covStruct.h \
 	DiagCov.h \
 	FullCov.h \
 	IndPredModel.h \
 	isEqual.h \
-	PopPredModel.h \
 	OdeBreak.h \
-	PredBase.h
+	OdePredBase.h \
+	PopPredModel.h \
+	PredBase.h \
+	predTwoStageMethod.h
 
 all:	html
 
