@@ -274,7 +274,7 @@ rm pass pass~
 	  You may configure your computer to use the RHN Satellite server by following the
 	  instructions as provided by the 
 	  <ulink url="https://www.washington.edu/computing/linux/rhnsat.html">
-	   Computing & Communication documentation
+	   Computing and Communication documentation
 	  </ulink> on the subject.
     </para>
   </sect1>
@@ -1076,7 +1076,7 @@ su
     <sect2>
       <title>Add the User to Bugzilla</title>
       <para>
-	Log into <ulink url="http://192.168.2.2:8081/index.cgi">
+	Log into <ulink url="http://bugzilla.rfpk.washington.edu/index.cgi">
 	  Bugzilla
 	</ulink>.
 	To add users, you must have the <emphasis>Editusers</emphasis>
