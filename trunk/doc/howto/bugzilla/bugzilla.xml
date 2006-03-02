@@ -135,9 +135,14 @@ quit;
   <sect1>
     <title>Configure Apache</title>
     <para>
-      Apache httpd should already have been installed in <emphasis>webserver</emphasis> as part
-      of the installation of RedHat Linux.  If, for some reason, it is not there, install
-      the httpd rpm before preceding.
+	  Apache httpd should have already been installed on the server that will host
+	  the web front-end.  In many cases, Apache httpd will be installed during the
+	  installation of RedHat Linux.  If, for some reason, it is not there, install
+	  the httpd rpm before proceeding.
+    </para>
+    <para>
+	  The default Bugzilla installation was moved from <emphasis>webserver</emphasis> to
+	  <emphasis>toronto</emphasis>, and can be accessed via <ulink url="http://bugzilla.rfpk.washington.edu">bugzilla.rfpk.washington.edu</ulink>
     </para>
     <sect2>
       <title>Edit <filename>httpd.conf</filename></title>
@@ -158,7 +163,7 @@ Listen 0.0.0.0:8081
 	The following are changes to lines in the file, with the original text on the 
 	left of the arrow, and the new text on the right:
       <screen>
-#ServerName new.host.name:80                ==>  ServerName 192.168.2.2:8081
+#ServerName new.host.name:80                ==>  ServerName 192.168.1.101:8081
 
 DocumentRoot "/var/www/html"                ==>  DocumentRoot "/var/www/bugzilla"
 
@@ -348,7 +353,7 @@ cd /var/www/bugzilla
 	<emphasis>only administer bugzilla from a workstation
 	  located behind the firewall.</emphasis>
 	The url to use, therefore, is
-	<ulink url="http://192.168.2.2:8081">http://192.168.2.2:8081</ulink>.
+	<ulink url="http://192.168.1.101:8081">http://192.168.1.101:8081</ulink>.
       </para>
       <para>
 	When you click the above link, your browser should arrive at the
@@ -476,7 +481,7 @@ emacs .netrc
 Using your favorite editor (you could use vi, for example,
 rather than emacs in the command, above), insert the following
 	<screen>
-machine         "http://192.168.2.2:8081/"
+machine         "http://192.168.1.101:8081/"
 login           rfpkbugs@u.washington.edu
 password        <emphasis>secretpassword</emphasis>
 	</screen>
