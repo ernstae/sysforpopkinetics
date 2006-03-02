@@ -28,7 +28,14 @@
       </para>
     </abstract>
     <revhistory>
-    
+
+      <revision>
+	<revnumber>1.4</revnumber>
+	<date>March 2, 2006</date>
+	<authorinitials>ernst</authorinitials>
+	<revremark>Bugzilla URL updated.</revremark>
+      </revision>
+          
       <revision>
 	<revnumber>1.2</revnumber>
 	<date>January 18, 2006</date>
