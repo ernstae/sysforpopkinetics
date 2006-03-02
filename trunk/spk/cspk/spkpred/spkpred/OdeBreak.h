@@ -378,6 +378,9 @@ $end
 // Minimum number of Ode steps between the initial and final time.
 # define MinNumberOdeStep   10
 
+// incase a previous preprocessor macro has defined abs
+# undef abs
+
 namespace {
 	// local abs funciton for use of OdeBreak.h without all of CppAD
 	// will cause a conflict if "using namespace CppAD" is also used. 
