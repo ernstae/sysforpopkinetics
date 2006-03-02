@@ -228,7 +228,7 @@ my $hostname = hostname();
 my $from = "rfpksoft\@u.washington.edu";
 
 my $bugzilla_production_only = 1;
-my $bugzilla_url = "http://192.168.2.2:8081/";
+my $bugzilla_url = "http://192.168.1.101:8081/";
 
 my $max_concurrent = 2;
 my $concurrent = 0;
