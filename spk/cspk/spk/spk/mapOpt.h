@@ -50,6 +50,7 @@ void mapOpt(  SpkModel& model,
               DoubleMatrix* pdmatMapObj_b_bOut,
               bool withD,
               bool isFO = false,
-              const DoubleMatrix* pdvecN = 0
+              const DoubleMatrix* pdvecN = 0,
+              const DoubleMatrix* pdvecBMean = 0
            );
 #endif

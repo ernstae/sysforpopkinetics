@@ -34,6 +34,7 @@ void mapObjDiff(
                 DoubleMatrix *dSqrVecMapObj_b_bOut,
                 bool withD,
                 bool isFO,
-                const DoubleMatrix *pN = NULL
+                const DoubleMatrix *pdvecN = NULL,
+                const DoubleMatrix *pdvecBMean = NULL
                 );
 #endif

@@ -94,7 +94,8 @@ $syntax/void mapObj(
     DoubleMatrix       * /pMapObj_bOut/,
     bool                 /withD/,
     bool                 /isFO/,
-    const DoubleMatrix * /pN/ = NULL
+    const DoubleMatrix * /pdvecN/ = NULL,
+    const DoubleMatrix * /pdvecBMean/ = NULL )
     /$$
 
 $tend
@@ -118,14 +119,19 @@ $$
 $head Description$$
 Evaluates the map Bayesian objective function. To be specific,
 $math%
-            1 %          %            1          T   -1
+            1 %          %            1           T   -1
 MapObj(b) = - #logdet[ 2 #pi R(b) ] + - [y - f(b)] R(b) [y - f(b)]
             2 %          %            2
 
-            1 %          %            1  T  -1
-          + - #logdet[ 2 #pi D ]    + - b  D  b
+            1 %          %            1            T  -1
+          + - #logdet[ 2 #pi D ]    + - [bMean - b]  D  [bMean - b]  .
             2 %          %            2
 %$$
+Note that this objective function allows a nonzero mean value
+$math%bMean%$$ to be specified for the parameter $math%b%$$.
+$pre
+
+$$
 (The equation above uses
 $xref/glossary/Individual Notation/individual notation/$$.)
 
@@ -207,12 +213,22 @@ If $math%true%$$ is given, other approximations are assumed.
 
 $syntax/
 
-/pN/(null by default)
+/pdvecN/(null by default)
 /$$ 
-If $italic isFO$$ is specified as $math%true%$$, $italic pN$$ points to a DoubleMatrix 
+If $italic isFO$$ is specified as $math%true%$$, $italic pdvecN$$ points to a DoubleMatrix 
 object that contains the column vector $math%N%$$.  The $th i$$ element of $math%N%$$
 specifies the number of elements of $math%y%$$ that correspond to the $th i$$ individual.
 If $italic isFO$$ is specified as $math%false%$$, set $italic N$$ to null.
+
+$syntax/
+
+/pdvecBMean/(null by default)
+/$$ 
+If the pointer $italic pdvecBMean$$ is not equal to null, then it points to a DoubleMatrix 
+object that contains the column vector $math%bMean%$$.  The $th j$$ element of $math%bMean%$$
+specifies the mean value for the $th j$$ element of $math%b%$$.
+If the mean values for all of the elements of $math%b%$$ are equal to zero, 
+set $italic pdvecBMean$$ to null.
 
 
 $head Example$$
@@ -350,12 +366,13 @@ $codep
         DoubleMatrix mapObj_bOut( 1, nB );
         bool withD = true;
         bool isFO  = false;
-        DoubleMatrix * pN = NULL;
+        DoubleMatrix * pdvecN = NULL;
+        DoubleMatrix * pdvecBMean = NULL;
 
         UserModel model(nY);
 
         try{
-          mapObj( model, y, b, &mapObjOut, &mapObj_bOut, withD, isFO, pN );
+          mapObj( model, y, b, &mapObjOut, &mapObj_bOut, withD, isFO, pdvecN, pdvecBMean );
         }
         catch( ... )
         {
@@ -429,8 +446,9 @@ static DoubleMatrix dmatR_b(__FILE__);
 static DoubleMatrix dmatRInv(__FILE__);
 static DoubleMatrix dmatDInv(__FILE__);
 static DoubleMatrix dvecResidual(__FILE__);
-static DoubleMatrix dvecBTrans(__FILE__);
-static DoubleMatrix drowBTransInvD(__FILE__);
+static DoubleMatrix dvecBResidual(__FILE__);
+static DoubleMatrix dvecBResidualTrans(__FILE__);
+static DoubleMatrix drowBResidualTransInvD(__FILE__);
 static DoubleMatrix mapObj_bOutTemp(__FILE__);
 
 // David: notice that we first calculate the objective, by using the elsq function,
@@ -449,7 +467,8 @@ void mapObj(  SpkModel &model,
               DoubleMatrix *pMapObj_bOut,
               bool withD,
               bool isFO,
-              const   DoubleMatrix* pdvecN 
+              const DoubleMatrix* pdvecN,
+              const DoubleMatrix* pdvecBMean 
            )
 {
     //------------------------------------------------------------
@@ -472,9 +491,21 @@ void mapObj(  SpkModel &model,
     const valarray<double> y = dvecY.toValarray();
     const valarray<double> b = dvecB.toValarray();
 
+    // Set the mean value for b equal to zero if it not specified.
+    valarray<double> bMean(nB);
+    if( pdvecBMean )
+    {
+      bMean = pdvecBMean->toValarray();
+    }
+    else
+    {
+      bMean = 0.0;
+    }
+
     valarray<double> f(nY), f_b(nY*nB);
     valarray<double> R(nY*nY), R_b(nY*nY*nB);
     valarray<double> residual(nY);
+    valarray<double> bResidual(nB);
 
     //
     // Revisit - Exception - Sachiko
@@ -505,11 +536,21 @@ void mapObj(  SpkModel &model,
     model.dataMean(f);
     dvecF.fromValarray( f, 1 );
     assert( dvecF.nr() == nY );
-//cout << __FILE__ << ", " << __LINE__ << "f(b) = " << "f(" << b << ") = " << f << endl;
+    //cout << __FILE__ << ", " << __LINE__ << "f(b) = " << "f(" << b << ") = " << f << endl;
 
-    //subtract(dvecY, dvecF, dvecResidual);
+    // Calculate the data residuals,
+    // 
+    //     y - f(b)  .
+    //
     residual = y - f;
     dvecResidual.fromValarray( residual, 1 );
+
+    // Calculate the parameter residuals,
+    //
+    //     bMean - b  .
+    //
+    bResidual = bMean - b;
+    dvecBResidual.fromValarray( bResidual, 1 );
 
     // Calculate R_b(b) before R(b) to allow caching.
     if( pMapObj_bOut != 0 )
@@ -546,48 +587,48 @@ void mapObj(  SpkModel &model,
         // This function call may throw SpkException.
         //
         if( isFO )
-		{
+    	{
             const int nInd = pdvecN->nr();
             valarray<double> R;
             model.dataVariance( R );
             dmatR.fromValarray( R, nY );
             valarray<double> RInv;
             model.dataVarianceInv( RInv );
-            const double* pN = pdvecN->data();
+            const double* pdNData = pdvecN->data();
             int start = 0;
             double db;
             long int lc;
             double term1 = 0.0;
             double term2 = 0.0;
             for( int ind =0; ind < nInd; ind++ )
-			{
-                int Ni = static_cast<int>( pN[ ind ] );
+            {
+                int Ni = static_cast<int>( pdNData[ ind ] );
                 det( getSubblock( dmatR, start, start, Ni, Ni ), &db, &lc );
                 term1 += log( db ) + lc * log(2.0);
                 for( int j = start; j < start + Ni; j++ )
-				{
+                {
                     int jj = j * nY;
                     for( int i = start; i < start + Ni; i++ )
-					{
+                    {
                         double val = residual[ i ] * residual[ j ] * RInv[ jj + i ];
                         if( i < j ) term2 += val;   
                         if( i == j )term2 += val * 0.5;
-					}
-				}
+                    }
+                }
                 start += Ni;
-			}
+            }
             mapObjOutTemp = 0.5 * ( nY * logTwoPi + term1 ) + term2;
-		}
+        }
         else
             mapObjOutTemp = 0.5 * ( nY * logTwoPi + 
                             model.getDataCovariance().logdet() + 
                             model.getDataCovariance().weightedSumOfSquares( residual ) );
         if( withD )
-		{
+        {
             // Add in the last two terms in MapObj(b), 
             //
-            //     1                       1  T  -1
-            //     - logdet[ 2 pi D ]    + - b  D    b  .
+            //     1                       1            T  -1
+            //     - logdet[ 2 pi D ]    + - [bMean - b]  D  [bMean - b]  .
             //     2                       2
             //
             //
@@ -597,7 +638,7 @@ void mapObj(  SpkModel &model,
             //
             mapObjOutTemp += 0.5 * ( nB * logTwoPi + 
                 model.getIndParCovariance().logdet() + 
-                model.getIndParCovariance().weightedSumOfSquares( b ) );
+                model.getIndParCovariance().weightedSumOfSquares( bResidual ) );
         }
     }
 
@@ -658,8 +699,8 @@ void mapObj(  SpkModel &model,
         {
             // Add in the last term in MapObj_b(b), 
             //
-            //      T  -1
-            //     b  D   .
+            //                  T  -1
+            //     - [bMean - b]  D   .
             //
 
             //
@@ -673,13 +714,13 @@ void mapObj(  SpkModel &model,
             assert( dmatDInv.nr() == nB );
             assert( dmatDInv.nc() == nB );
 
-            transpose(dvecB, dvecBTrans);
-            assert( dvecBTrans.nr() == 1 );
-            assert( dvecBTrans.nc() == nB );
+            transpose(dvecBResidual, dvecBResidualTrans);
+            assert( dvecBResidualTrans.nr() == 1 );
+            assert( dvecBResidualTrans.nc() == nB );
 
-            multiply(dvecBTrans, dmatDInv, drowBTransInvD);
+            multiply(dvecBResidualTrans, dmatDInv, drowBResidualTransInvD);
 
-            mapObj_bOutTemp = add( mapObj_bOutTemp, drowBTransInvD );
+            mapObj_bOutTemp = subtract( mapObj_bOutTemp, drowBResidualTransInvD );
         }
     }
 
@@ -740,7 +781,8 @@ $syntax/MapObj<class /ElemType/>::MapObj(
   const /ElemType/   & /y/, 
   bool             & /withD/, 
   bool             & /isFO/, 
-  const /ElemType/   & /pN/ = NULL )
+  const /ElemType/   & /pN/ = NULL,
+  const /ElemType/   & /pBMean/ = NULL )
 /$$
 $tend
 
@@ -805,6 +847,16 @@ If $italic isFO$$ is specified as $math%true%$$, $italic pN$$ points to a Double
 object that contains the column vector $math%N%$$.  The $th i$$ element of $math%N%$$
 specifies the number of elements of $math%y%$$ that correspond to the $th i$$ individual.
 If $italic isFO$$ is specified as $math%false%$$, set $italic N$$ to null.
+
+$syntax/
+
+/pBMean/(null by default)
+/$$ 
+If the pointer $italic pBMean$$ is not equal to null, then it points to a DoubleMatrix 
+object that contains the column vector $math%bMean%$$.  The $th j$$ element of $math%bMean%$$
+specifies the mean value for the $th j$$ element of $math%b%$$.
+If the mean values for all of the elements of $math%b%$$ are equal to zero, 
+set $italic pBMean$$ to null.
 
 $head Public Members$$
 $syntax/const ElemType operator(const ElemType &/x/) const
@@ -930,10 +982,11 @@ $codep
         bool withD = true;
         bool isFO  = false;
         DoubleMatrix * pN = NULL;
+        DoubleMatrix * pBMean = NULL;
 
         UserModel model(nY);
 
-        MapObj<DoubleMatrix> mapObjOb(&model, y, withD, isFO, pN);
+        MapObj<DoubleMatrix> mapObjOb(&model, y, withD, isFO, pN, pBMean);
 
         try{
           mapObjOut = mapObjOb(b).data()[0];
@@ -1017,7 +1070,8 @@ $syntax/MapObj_b<class /ElemType/>::MapObj_b(
       const /ElemType/ & /y/, 
       bool             /withD/, 
       bool             /isFO/, 
-      const /ElemType/ * /pN/ = NULL )
+      const /ElemType/ * /pN/ = NULL,
+      const /ElemType/ * /pBMean/ = NULL )
 /$$
 $tend
 
@@ -1081,6 +1135,16 @@ If $italic isFO$$ is specified as $math%true%$$, $italic pN$$ points to a Double
 object that contains the column vector $math%N%$$.  The $th i$$ element of $math%N%$$
 specifies the number of elements of $math%y%$$ that correspond to the $th i$$ individual.
 If $italic isFO$$ is specified as $math%false%$$, set $italic N$$ to null.
+
+$syntax/
+
+/pBMean/(null by default)
+/$$ 
+If the pointer $italic pBMean$$ is not equal to null, then it points to a DoubleMatrix 
+object that contains the column vector $math%bMean%$$.  The $th j$$ element of $math%bMean%$$
+specifies the mean value for the $th j$$ element of $math%b%$$.
+If the mean values for all of the elements of $math%b%$$ are equal to zero, 
+set $italic pBMean$$ to null.
 
 $head Public Members$$
 $syntax/const ElemType operator(const ElemType & /x/) const
@@ -1206,11 +1270,12 @@ $codep
         bool withD = true;
         bool isFO  = false;
         DoubleMatrix * pN = NULL;
+        DoubleMatrix * pBMean = NULL;
 
         UserModel model(nY);
 
-        MapObj  <DoubleMatrix> mapObjOb  (&model, y, withD, isFO, pN);
-        MapObj_b<DoubleMatrix> mapObj_bOb(&model, y, withD, isFO, pN);
+        MapObj  <DoubleMatrix> mapObjOb  (&model, y, withD, isFO, pN, pBMean);
+        MapObj_b<DoubleMatrix> mapObj_bOb(&model, y, withD, isFO, pN, pBMean);
 
         try{
           mapObj_bOut = mapObj_bOb(b);

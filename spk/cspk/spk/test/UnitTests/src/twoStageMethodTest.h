@@ -47,10 +47,15 @@ public:
 
 private:
   // Test cases for this unit test.
-  void railExampleTest();
+  void railExampleSTSTest();
+  void railExampleITSTest();
+  void railExampleGTSTest();
 
   // Helper functions.
-  void doTheTest(
+  void twoStageMethodTest::doTheTest(
+    double              epsilon,
+    const DoubleMatrix& dvecBLow,
+    const DoubleMatrix& dvecBUp,
     const DoubleMatrix& dmatBOut,
     const DoubleMatrix& dmatBKnown,
     const DoubleMatrix& dvecBMeanOut,

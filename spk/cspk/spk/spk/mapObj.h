@@ -36,7 +36,8 @@ void mapObj(  SpkModel &model,
               DoubleMatrix *mapObj_bOut,
               bool withD,
               bool isFo,
-              const DoubleMatrix* pdvecN = NULL
+              const DoubleMatrix* pdvecN = NULL,
+              const DoubleMatrix* pdvecBMean = NULL
            );
 
 template <class ElemType>
@@ -46,22 +47,23 @@ class MapObj : public std::unary_function<ElemType, ElemType>
         SpkModel *model;
         const ElemType y;
         const ElemType *pN;
+        const ElemType *pBMean;
         const bool includeD;
         const bool isFo;
 
     public:
-        MapObj( SpkModel *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL )
-            : model(m), y(yi), includeD(withD), isFo(fo), pN(NforAll)
+        MapObj( SpkModel *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL, const ElemType* pBMeanIn = NULL )
+            : model(m), y(yi), includeD(withD), isFo(fo), pN(NforAll), pBMean(pBMeanIn)
         {
         }
         ~MapObj() throw() {}
         MapObj(const MapObj& right)
-            : model(right.model), y(right.y), includeD(right.includeD), pN(right.pN)
+            : model(right.model), y(right.y), includeD(right.includeD), pN(right.pN), pBMean(right.pBMean)
         {}
         const ElemType operator()(const ElemType& b) const
         {
             double mapObjOut;
-            mapObj(*model, y, b, &mapObjOut, 0, includeD, isFo, pN);
+            mapObj(*model, y, b, &mapObjOut, 0, includeD, isFo, pN, pBMean);
             return ElemType(mapObjOut);
         }
 };
@@ -79,16 +81,17 @@ class MapObj_b : public std::unary_function<ElemType, ElemType>
         const bool includeD;
         const bool isFo;
         const ElemType* pN;
+        const ElemType* pBMean;
 
     public:
-        MapObj_b(SpkModel *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL )
-            : model(m), y(yi), includeD(withD), isFo(fo), pN(NforAll)
+        MapObj_b(SpkModel *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL, const ElemType* pBMeanIn = NULL )
+            : model(m), y(yi), includeD(withD), isFo(fo), pN(NforAll), pBMean(pBMeanIn)
         {
         }
         ~MapObj_b() throw() {}
         MapObj_b(const MapObj_b& right)
             : model(right.model), y(right.y), includeD(right.includeD), 
-        isFo(right.isFo), pN(right.pN)
+        isFo(right.isFo), pN(right.pN), pBMean(right.pBMean)
         {}
         const ElemType operator()(const ElemType& b) const
         {
@@ -104,7 +107,7 @@ class MapObj_b : public std::unary_function<ElemType, ElemType>
             ElemType mapObj_bOut;
             resize( mapObj_bOut, 1, size( b ) );
 
-            mapObj(*model, y, b, 0, &mapObj_bOut, includeD, isFo, pN);
+            mapObj(*model, y, b, 0, &mapObj_bOut, includeD, isFo, pN, pBMean);
             return mapObj_bOut;
         }
 };

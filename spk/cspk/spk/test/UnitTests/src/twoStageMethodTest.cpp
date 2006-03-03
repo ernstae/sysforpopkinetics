@@ -55,6 +55,7 @@
 #include "../../../spk/identity.h"
 #include "../../../spk/isDmatEpsEqual.h"
 #include "../../../spk/mapOpt.h"
+#include "../../../spk/matabs.h"
 #include "../../../spk/mulByScalar.h"
 #include "../../../spk/multiply.h"
 #include "../../../spk/pi.h"
@@ -152,7 +153,7 @@ namespace // [Begin: unnamed namespace]
         //         \ omegaPar /
         //                          
         ret.resize(_nYi);
-        ret = _b[1];
+        ret = _b[0];
     }
     bool doDataMean_popPar( valarray<double>& ret ) const
     {
@@ -251,7 +252,13 @@ Test* twoStageMethodTest::suite()
     TestSuite *suiteOfTests = new TestSuite("twoStageMethodTest");
 
     suiteOfTests->addTest(new TestCaller<twoStageMethodTest>(
-      "railExampleTest", &twoStageMethodTest::railExampleTest));
+      "railExampleSTSTest", &twoStageMethodTest::railExampleSTSTest));
+
+    suiteOfTests->addTest(new TestCaller<twoStageMethodTest>(
+      "railExampleITSTest", &twoStageMethodTest::railExampleITSTest));
+
+    suiteOfTests->addTest(new TestCaller<twoStageMethodTest>(
+      "railExampleGTSTest", &twoStageMethodTest::railExampleGTSTest));
 
     return suiteOfTests;
 }
@@ -259,7 +266,7 @@ Test* twoStageMethodTest::suite()
 
 /*************************************************************************
  *
- * Function: railExampleTest
+ * Function: railExampleSTSTest
  *
  *
  * This test uses SpkModel subclasses with model functions that
@@ -275,7 +282,7 @@ Test* twoStageMethodTest::suite()
  *
  *************************************************************************/
 
-void twoStageMethodTest::railExampleTest()
+void twoStageMethodTest::railExampleSTSTest()
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -370,8 +377,8 @@ void twoStageMethodTest::railExampleTest()
   // Set the limits for omega.
   valarray<double> omegaParLow( nOmegaPar );
   valarray<double> omegaParUp ( nOmegaPar );
-  omegaParLow[0] = omegaMinRep[0] / 100.0;
-  omegaParUp[0]  = omegaMinRep[0] * 100.0;
+  omegaParLow[0] = std::log( omegaMinRep[0] / 100.0 ) / 2.0;
+  omegaParUp[0]  = std::log( omegaMinRep[0] * 100.0 ) / 2.0;
 
 
   //------------------------------------------------------------
@@ -598,7 +605,641 @@ void twoStageMethodTest::railExampleTest()
   // Do the test.
   //------------------------------------------------------------
 
-  doTheTest( dmatBOut,
+  doTheTest( popEpsilon,
+             dvecBLow,
+             dvecBUp,
+             dmatBOut,
+             dmatBKnown,
+             dvecBMeanOut,
+             dvecBMeanKnown,
+             dmatBCovOut,
+             dmatBCovKnown );
+  
+}
+
+
+/*************************************************************************
+ *
+ * Function: railExampleITSTest
+ *
+ *
+ * This test uses SpkModel subclasses with model functions that
+ * correspond to the Rail Example that is included in the NLME
+ * distribution.
+ *
+ * The PRED block for the Rail Example after it has been converted
+ * to individual notation for this two-stage method test is
+ *
+ *     $PRED 
+ *     F = THETA(1)
+ *     Y = F + ETA(1)
+ *
+ *************************************************************************/
+
+void twoStageMethodTest::railExampleITSTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i;
+  int j;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population.
+  //------------------------------------------------------------
+
+  // Set the number of individuals.
+  const int nInd = 6;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Set the number of data values per individual.
+  const int nY_i = 3;
+
+  // Set the number of data values for all of the individuals. 
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) nY_i );
+
+  // Set the data values for all of the individuals.
+  //
+  // Note that the data values for the first and fifth individuals
+  // were modified from their original values.
+  DoubleMatrix dvecY( nInd * nY_i, 1 );
+  double* pdYData = dvecY.data();
+  pdYData[ 0] = 4.0000E+01;
+  pdYData[ 1] = 5.1000E+01;
+  pdYData[ 2] = 4.6000E+01;
+  pdYData[ 3] = 2.6000E+01;
+  pdYData[ 4] = 3.7000E+01;
+  pdYData[ 5] = 3.2000E+01;
+  pdYData[ 6] = 7.8000E+01;
+  pdYData[ 7] = 9.1000E+01;
+  pdYData[ 8] = 8.5000E+01;
+  pdYData[ 9] = 9.2000E+01;
+  pdYData[10] = 1.0000E+02;
+  pdYData[11] = 9.6000E+01;
+  pdYData[12] = 7.0000E+01;
+  pdYData[13] = 7.5000E+01;
+  pdYData[14] = 7.3000E+01;
+  pdYData[15] = 8.0000E+01;
+  pdYData[16] = 8.5000E+01;
+  pdYData[17] = 8.3000E+01;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population parameter, alp.
+  //------------------------------------------------------------
+
+  // There are no population parameters for this test.
+  const int nAlp = 0;
+
+
+  //------------------------------------------------------------
+  // Prepare the individual model variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of individual model independent variables.
+  const int nTheta = 1;
+  const int nEta   = 1;
+
+  // Set the initial value for theta.
+  valarray<double> theta( nTheta );
+  theta[0] = 72.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = 7.2;
+  thetaUp[0]  = 720.0;
+
+  // Set the number elements for the parameterization of omega, the
+  // covariance matrix for eta.
+  int nOmegaPar = 1;
+
+  // Set the initial minimal representation.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 32.0;
+
+  // Set the initial omega parameters.
+  valarray<double> omegaPar( nOmegaPar );
+  omegaPar[0] = std::log( omegaMinRep[0] ) / 2.0;
+
+  // Set the limits for omega.
+  valarray<double> omegaParLow( nOmegaPar );
+  valarray<double> omegaParUp ( nOmegaPar );
+  omegaParLow[0] = std::log( omegaMinRep[0] / 100.0 ) / 2.0;
+  omegaParUp[0]  = std::log( omegaMinRep[0] * 100.0 ) / 2.0;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters, b.
+  //------------------------------------------------------------
+
+  // Set the number of individual parameters.
+  const int nB = nTheta + nOmegaPar;
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+  DoubleMatrix dmatBIn  ( nB, nInd );
+
+  double* pdBLowData  = dvecBLow .data();
+  double* pdBUpData   = dvecBUp  .data();
+  double* pdBStepData = dvecBStep.data();
+  double* pdBInData   = dmatBIn  .data();
+
+  // Set the initial values for the individual parameters for all of
+  // the individuals.
+  for ( i = 0; i < nInd; i++ )
+  {
+    pdBInData[0 + i * nB] = theta[0];
+    pdBInData[1 + i * nB] = omegaPar[0];
+  }
+
+  // Set the limits for the individual parameters.
+  pdBLowData[0] = thetaLow[0];
+  pdBUpData [0] = thetaUp[0];
+  pdBLowData[1] = omegaParLow[0];
+  pdBUpData [1] = omegaParUp[0];
+
+  // Set the step sizes for the individual parameters.
+  pdBStepData[0] = ( thetaUp[0] - thetaLow[0] ) / 1000.0;
+  pdBStepData[1] = ( omegaParUp[0] - omegaParLow[0] ) / 1000.0;
+
+
+  //------------------------------------------------------------
+  // Construct the SPK model.
+  //------------------------------------------------------------
+
+  // Construct the individual level model that will be applied to all
+  // of the individuals' data sets.
+  RailExampleModel model( nAlp, nB, nY_i );
+
+
+  //------------------------------------------------------------
+  // Prepare the output variables for the two-stage method.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBOut    ( nB, nB );
+  DoubleMatrix dvecBMeanOut( nB, 1 );
+  DoubleMatrix dmatBCovOut ( nB, nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to twoStageMethod.
+  //------------------------------------------------------------
+
+  // Choose the two-stage method to use.
+  enum Objective method = ITERATIVE_TWO_STAGE;
+
+  // Set the flag that indiciates if the Map Bayesian terms should be
+  // included in the individual objective function MapObj(b).
+  bool withD;
+  if( method == STANDARD_TWO_STAGE  ||
+      method == ITERATIVE_TWO_STAGE ||
+      method == GLOBAL_TWO_STAGE )
+  {
+    withD = false;
+  }
+  else
+  {
+    withD = true;
+  }
+
+  // Set the values for optimization of the individual objective
+  // functions.
+  double indEpsilon = 1.e-6; 
+  int indNMaxIter   = 50; 
+  int indLevel      = 0;
+  Optimizer indOptInfo( indEpsilon, indNMaxIter, indLevel ); 
+
+  // Set the values for optimization of the population objective
+  // function.
+  double popEpsilon = 1.e-3; 
+  int popNMaxIter   = 50; 
+  int popLevel      = 0;
+  Optimizer popOptInfo( popEpsilon, popNMaxIter, popLevel ); 
+
+
+  //------------------------------------------------------------
+  // Perform the two-stage method.
+  //------------------------------------------------------------
+
+  try
+  {
+    twoStageMethod( model,
+                    method,
+                    dvecN,
+                    dvecY,
+                    popOptInfo,
+                    indOptInfo,
+                    dvecBLow,
+                    dvecBUp,
+                    dmatBIn,
+                    &dmatBOut,
+                    dvecBStep,
+                    &dvecBMeanOut,
+                    &dmatBCovOut );
+  }
+  catch( const SpkException& e )
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed!", false );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed for unknown reasons!", false);
+  }
+
+
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBKnown    ( nB, nInd );
+  DoubleMatrix dvecBMeanKnown( nB, 1 );
+  DoubleMatrix dmatBCovKnown ( nB, nB );
+
+  double* pdBKnownData     = dmatBKnown    .data();
+  double* pdBMeanKnownData = dvecBMeanKnown.data();
+  double* pdBCovKnownData  = dmatBCovKnown .data();
+
+  // Set the known values.
+  //
+  // Note that the following values were calculated using R.
+  //     
+  //     [1] "DD"  (bCov)
+  //
+  //               [,1]        [,2]
+  //     [1,] 512.855962 -2.48689687
+  //     [2,]  -2.486897  0.03563247
+  //     
+  //     theta_i    (b_i_1): 45.90834 32.12237 84.45908 95.81735 72.67466 82.60276
+  //     omegaPar_i (b_i_2): 1.421344 1.479556 1.299462 1.168821 1.233321 1.187630
+  //     
+  //     [1] "omegaParMean =  1.29835582063139"  (bMean_2)
+  //     
+  //     [1] "THETA1 =  68.930759775187"         (bMean_1)
+  //     [1] "OMEGA11 =  508.307879473506"
+  //     [1] "SIGMA =  13.7975614035972"
+  //
+  pdBKnownData[0 + 0 * nB] = 45.90834;
+  pdBKnownData[0 + 1 * nB] = 32.12237;
+  pdBKnownData[0 + 2 * nB] = 84.45908;
+  pdBKnownData[0 + 3 * nB] = 95.81735;
+  pdBKnownData[0 + 4 * nB] = 72.67466;
+  pdBKnownData[0 + 5 * nB] = 82.60276;
+  pdBKnownData[1 + 0 * nB] = 1.421344;
+  pdBKnownData[1 + 1 * nB] = 1.479556;
+  pdBKnownData[1 + 2 * nB] = 1.299462;
+  pdBKnownData[1 + 3 * nB] = 1.168821;
+  pdBKnownData[1 + 4 * nB] = 1.233321;
+  pdBKnownData[1 + 5 * nB] = 1.187630;
+
+  pdBMeanKnownData[0] = 68.930759775187;
+  pdBMeanKnownData[1] =  1.298355820631;
+
+  pdBCovKnownData[0 + 0 * nB] = 512.855962;
+  pdBCovKnownData[0 + 1 * nB] =  -2.486897;
+  pdBCovKnownData[1 + 0 * nB] =  -2.48689687;
+  pdBCovKnownData[1 + 1 * nB] =   0.03563247;
+
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest( popEpsilon,
+             dvecBLow,
+             dvecBUp,
+             dmatBOut,
+             dmatBKnown,
+             dvecBMeanOut,
+             dvecBMeanKnown,
+             dmatBCovOut,
+             dmatBCovKnown );
+  
+}
+
+
+
+/*************************************************************************
+ *
+ * Function: railExampleGTSTest
+ *
+ *
+ * This test uses SpkModel subclasses with model functions that
+ * correspond to the Rail Example that is included in the NLME
+ * distribution.
+ *
+ * The PRED block for the Rail Example after it has been converted
+ * to individual notation for this two-stage method test is
+ *
+ *     $PRED 
+ *     F = THETA(1)
+ *     Y = F + ETA(1)
+ *
+ *************************************************************************/
+
+void twoStageMethodTest::railExampleGTSTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i;
+  int j;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population.
+  //------------------------------------------------------------
+
+  // Set the number of individuals.
+  const int nInd = 6;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Set the number of data values per individual.
+  const int nY_i = 3;
+
+  // Set the number of data values for all of the individuals. 
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) nY_i );
+
+  // Set the data values for all of the individuals.
+  DoubleMatrix dvecY( nInd * nY_i, 1 );
+  double* pdYData = dvecY.data();
+  pdYData[ 0] = 5.5000E+01;
+  pdYData[ 1] = 5.3000E+01;
+  pdYData[ 2] = 5.4000E+01;
+  pdYData[ 3] = 2.6000E+01;
+  pdYData[ 4] = 3.7000E+01;
+  pdYData[ 5] = 3.2000E+01;
+  pdYData[ 6] = 7.8000E+01;
+  pdYData[ 7] = 9.1000E+01;
+  pdYData[ 8] = 8.5000E+01;
+  pdYData[ 9] = 9.2000E+01;
+  pdYData[10] = 1.0000E+02;
+  pdYData[11] = 9.6000E+01;
+  pdYData[12] = 4.9000E+01;
+  pdYData[13] = 5.1000E+01;
+  pdYData[14] = 5.0000E+01;
+  pdYData[15] = 8.0000E+01;
+  pdYData[16] = 8.5000E+01;
+  pdYData[17] = 8.3000E+01;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population parameter, alp.
+  //------------------------------------------------------------
+
+  // There are no population parameters for this test.
+  const int nAlp = 0;
+
+
+  //------------------------------------------------------------
+  // Prepare the individual model variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of individual model independent variables.
+  const int nTheta = 1;
+  const int nEta   = 1;
+
+  // Set the initial value for theta.
+  valarray<double> theta( nTheta );
+  theta[0] = 72.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = 7.2;
+  thetaUp[0]  = 720.0;
+
+  // Set the number elements for the parameterization of omega, the
+  // covariance matrix for eta.
+  int nOmegaPar = 1;
+
+  // Set the initial minimal representation.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 32.0;
+
+  // Set the initial omega parameters.
+  valarray<double> omegaPar( nOmegaPar );
+  omegaPar[0] = std::log( omegaMinRep[0] ) / 2.0;
+
+  // Set the limits for omega.
+  valarray<double> omegaParLow( nOmegaPar );
+  valarray<double> omegaParUp ( nOmegaPar );
+  omegaParLow[0] = std::log( omegaMinRep[0] / 100.0 ) / 2.0;
+  omegaParUp[0]  = std::log( omegaMinRep[0] * 100.0 ) / 2.0;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters, b.
+  //------------------------------------------------------------
+
+  // Set the number of individual parameters.
+  const int nB = nTheta + nOmegaPar;
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+  DoubleMatrix dmatBIn  ( nB, nInd );
+
+  double* pdBLowData  = dvecBLow .data();
+  double* pdBUpData   = dvecBUp  .data();
+  double* pdBStepData = dvecBStep.data();
+  double* pdBInData   = dmatBIn  .data();
+
+  // Set the initial values for the individual parameters for all of
+  // the individuals.
+  for ( i = 0; i < nInd; i++ )
+  {
+    pdBInData[0 + i * nB] = theta[0];
+    pdBInData[1 + i * nB] = omegaPar[0];
+  }
+
+  // Set the limits for the individual parameters.
+  pdBLowData[0] = thetaLow[0];
+  pdBUpData [0] = thetaUp[0];
+  pdBLowData[1] = omegaParLow[0];
+  pdBUpData [1] = omegaParUp[0];
+
+  // Set the step sizes for the individual parameters.
+  pdBStepData[0] = ( thetaUp[0] - thetaLow[0] ) / 1000.0;
+  pdBStepData[1] = ( omegaParUp[0] - omegaParLow[0] ) / 1000.0;
+
+
+  //------------------------------------------------------------
+  // Construct the SPK model.
+  //------------------------------------------------------------
+
+  // Construct the individual level model that will be applied to all
+  // of the individuals' data sets.
+  RailExampleModel model( nAlp, nB, nY_i );
+
+
+  //------------------------------------------------------------
+  // Prepare the output variables for the two-stage method.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBOut    ( nB, nB );
+  DoubleMatrix dvecBMeanOut( nB, 1 );
+  DoubleMatrix dmatBCovOut ( nB, nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to twoStageMethod.
+  //------------------------------------------------------------
+
+  // Choose the two-stage method to use.
+  enum Objective method = GLOBAL_TWO_STAGE;
+
+  // Set the flag that indiciates if the Map Bayesian terms should be
+  // included in the individual objective function MapObj(b).
+  bool withD;
+  if( method == STANDARD_TWO_STAGE  ||
+      method == ITERATIVE_TWO_STAGE ||
+      method == GLOBAL_TWO_STAGE )
+  {
+    withD = false;
+  }
+  else
+  {
+    withD = true;
+  }
+
+  // Set the values for optimization of the individual objective
+  // functions.
+  double indEpsilon = 1.e-6; 
+  int indNMaxIter   = 50; 
+  int indLevel      = 0;
+  Optimizer indOptInfo( indEpsilon, indNMaxIter, indLevel ); 
+
+  // Set the values for optimization of the population objective
+  // function.
+  double popEpsilon = 1.e-3; 
+  int popNMaxIter   = 50; 
+  int popLevel      = 0;
+  Optimizer popOptInfo( popEpsilon, popNMaxIter, popLevel ); 
+
+
+  //------------------------------------------------------------
+  // Perform the two-stage method.
+  //------------------------------------------------------------
+
+  try
+  {
+    twoStageMethod( model,
+                    method,
+                    dvecN,
+                    dvecY,
+                    popOptInfo,
+                    indOptInfo,
+                    dvecBLow,
+                    dvecBUp,
+                    dmatBIn,
+                    &dmatBOut,
+                    dvecBStep,
+                    &dvecBMeanOut,
+                    &dmatBCovOut );
+  }
+  catch( const SpkException& e )
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed!", false );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed for unknown reasons!", false);
+  }
+
+
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBKnown    ( nB, nInd );
+  DoubleMatrix dvecBMeanKnown( nB, 1 );
+  DoubleMatrix dmatBCovKnown ( nB, nB );
+
+  double* pdBKnownData     = dmatBKnown    .data();
+  double* pdBMeanKnownData = dvecBMeanKnown.data();
+  double* pdBCovKnownData  = dmatBCovKnown .data();
+
+  // Set the known values.
+  //
+  // Note that the following values were calculated using R.
+  //     
+  //     [1] D ( bCov )
+  //
+  //               [,1]      [,2]
+  //     [1,] 510.56611 5.0945202
+  //     [2,]   5.09452 0.4072278
+  //
+  //     [1] mu ( bMean )
+  //
+  //                [,1]
+  //     [1,] 66.5239521
+  //     [2,]  0.7786256
+  //
+  //          theta_i      omegaPar_i  omega_i
+  //
+  //          (b    )       (b    )
+  //            i(1)          i(2)
+  //
+  //     [1] 54.00181991  0.07015188   1.15062327
+  //     [1] 32.256252    1.163502    10.247198
+  //     [1] 84.463966    1.443051    17.923306
+  //     [1] 95.803746    1.147627     9.926954
+  //     [1] 50.00372897  0.05744019   1.12173925
+  //     [1] 82.6164265   0.7899683    4.8546478
+  //
+  //         thetaMean    omegaParMean  omegaMean
+  //
+  //     [1] 66.5243233   0.7786234    7.5374114
+  //
+  pdBKnownData[0 + 0 * nB] = 54.00181991;
+  pdBKnownData[0 + 1 * nB] = 32.256252;
+  pdBKnownData[0 + 2 * nB] = 84.463966;
+  pdBKnownData[0 + 3 * nB] = 95.803746;
+  pdBKnownData[0 + 4 * nB] = 50.00372897;
+  pdBKnownData[0 + 5 * nB] = 82.6164265;
+  pdBKnownData[1 + 0 * nB] = 0.07015188;
+  pdBKnownData[1 + 1 * nB] = 1.163502;
+  pdBKnownData[1 + 2 * nB] = 1.443051;
+  pdBKnownData[1 + 3 * nB] = 1.147627;
+  pdBKnownData[1 + 4 * nB] = 0.05744019;
+  pdBKnownData[1 + 5 * nB] = 0.7899683;
+
+  pdBMeanKnownData[0] = 66.5239521;
+  pdBMeanKnownData[1] =  0.7786256;
+
+  pdBCovKnownData[0 + 0 * nB] = 510.56611;
+  pdBCovKnownData[0 + 1 * nB] = 5.0945202;
+  pdBCovKnownData[1 + 0 * nB] = 5.0945202;
+  pdBCovKnownData[1 + 1 * nB] = 0.4072278;
+
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest( popEpsilon,
+             dvecBLow,
+             dvecBUp,
+             dmatBOut,
              dmatBKnown,
              dvecBMeanOut,
              dvecBMeanKnown,
@@ -615,6 +1256,9 @@ void twoStageMethodTest::railExampleTest()
  *************************************************************************/
 
 void twoStageMethodTest::doTheTest(
+  double              epsilon,
+  const DoubleMatrix& dvecBLow,
+  const DoubleMatrix& dvecBUp,
   const DoubleMatrix& dmatBOut,
   const DoubleMatrix& dmatBKnown,
   const DoubleMatrix& dvecBMeanOut,
@@ -628,17 +1272,102 @@ void twoStageMethodTest::doTheTest(
 
   using namespace std;
 
+  const double* pdBLowData = dvecBLow.data();
+  const double* pdBUpData  = dvecBUp.data();
+
+  const double* pdBOutData     = dmatBOut    .data();
+  const double* pdBMeanOutData = dvecBMeanOut.data();
+  const double* pdBCovOutData  = dmatBCovOut .data();
+
+  const double* pdBKnownData     = dmatBKnown    .data();
+  const double* pdBMeanKnownData = dvecBMeanKnown.data();
+  const double* pdBCovKnownData  = dmatBCovKnown .data();
+
+  int nB   = dmatBOut.nr();
+  int nInd = dmatBOut.nc();
+
+  bool isConverged;
+
+  int i;
+  int j;
+  int k;
+
 
   //------------------------------------------------------------
-  // Check the values.
+  // Check the individual parameter values.
   //------------------------------------------------------------
 
-  CPPUNIT_ASSERT( isDmatEpsEqual( dmatBKnown, dmatBOut, dmatBKnown ) );
+  // For each pair of vectors bOut_i and bKnown_i, i.e., for each column 
+  // of bOut and bKnown, check to see that the convergence criteria,
+  // 
+  //      abs(bOut  - bKnown ) <= epsilon * (bUp - bLow)  ,
+  //              i         i
+  //
+  // is satisfied.
+  isConverged = true;
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( j = 0; j < nB; j++ )
+    {
+      if ( fabs(pdBOutData[ j + i * nB ] - pdBKnownData[ j + i * nB  ]) > 
+        epsilon * (pdBUpData[ j ] - pdBLowData[ j ]) )
+      {
+        isConverged = false;
+      }
+    }
+  }
   
-  CPPUNIT_ASSERT( isDmatEpsEqual( dvecBMeanKnown, dvecBMeanOut, dvecBMeanKnown ) );
+  CPPUNIT_ASSERT( isConverged);
+
+
+  //------------------------------------------------------------
+  // Check the mean individual parameter values.
+  //------------------------------------------------------------
+
+  // Check to see if any elements of bMeanOut fail to satisfy 
+  // the convergence criteria:
+  // 
+  //      abs(bMeanOut - bMeanKnown) <= epsilon * (bUp - bLow)  .
+  //
+  isConverged = true;
+  for ( i = 0; i < nB; i++ )
+  {
+    if ( fabs(pdBMeanOutData[ i ] - pdBMeanKnownData[ i ]) > 
+            epsilon * (pdBUpData[ i ] - pdBLowData[ i ]) )
+    {
+      isConverged = false;
+    }
+  }
+
+  CPPUNIT_ASSERT( isConverged );
+
+
+  //------------------------------------------------------------
+  // Check the individual parameter covariance values.
+  //------------------------------------------------------------
+
+  // For each pair of vectors bCovOut_j_k and bCovKnown_j_k, i.e., for each column 
+  // of bOut and bKnown, check to see that the convergence criteria,
+  // 
+  //                                                                                                 1/2
+  //      abs(bCovOut      - bCovKnown     ) <= epsilon * [ (bUp    - bLow   ) * (bUp    - bLow   ) ]    ,
+  //                 (j,k)            (j,k)                     (j)       (j)        (k)       (k)
+  //
+  // is satisfied.
+  isConverged = true;
+  for ( j = 0; j < nB; j++ )
+  {
+    for ( k = 0; k < nB; k++ )
+    {
+      if ( fabs(pdBCovOutData[ j + k * nB ] - pdBCovKnownData[ j + k * nB  ]) > 
+	   epsilon * sqrt( (pdBUpData[ j ] - pdBLowData[ j ]) * (pdBUpData[ k ] - pdBLowData[ k ]) ) )
+      {
+        isConverged = false;
+      }
+    }
+  }
   
-  CPPUNIT_ASSERT( isDmatEpsEqual( dmatBCovKnown, dmatBCovOut, dmatBCovKnown ) );
-  
+  CPPUNIT_ASSERT( isConverged);
 }
 
 

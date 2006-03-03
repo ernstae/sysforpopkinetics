@@ -44,6 +44,7 @@ public:
     void tearDown();
 
     void testMapObj();
+    void testNonzeroBMean();
     void testFunctionObjects();
 };
 

@@ -94,6 +94,8 @@ Test* mapOptTest::suite()
     //suiteOfTests->addTest(new TestCaller<mapOptTest>(
     //              "mapOptExampleExactMatchTest", mapOptExampleExactMatchTest));
 
+    suiteOfTests->addTest(new TestCaller<mapOptTest>(
+                  "mapOptNonzeroBMeanTest", &mapOptTest::mapOptNonzeroBMeanTest));
     suiteOfTests->addTest(new TestCaller<mapOptTest>("mapOptQuadraticTest", 
                   &mapOptTest::mapOptQuadraticTest));
     suiteOfTests->addTest(new TestCaller<mapOptTest>("mapOptZeroIterationsTest", 
@@ -689,6 +691,20 @@ void mapOptTest::mapOptExampleTest()
   pdBKnownData[0] = 0.0;
   pdBKnownData[1] = 1.0;
 
+  // For this test,
+  //
+  // MapObj(b) = log{2 pi exp[b(1)]}      + [2 - b(2)]^2 exp[-b(1)]
+  //           + log(2 pi) - (1/2) log(2) + (1/2) b(1)^2 +  b(2)^2
+  //
+  // The gradient of MapObj(b) is equal to
+  //
+  //   / 1 - [2 - b(2)]^2 exp[-b(1)] + b(1) \
+  //   |                                    |
+  //   \ -2 [2 - b(2)] exp[-b(1)] + 2 b(2)  /
+  //
+  // The first order necessary condition for a minimum is that the
+  // gradient is zero. This is true when b(1) = 0 and b(2) = 1.
+  //
   double dMapObjKnown = 2.0 * log( 2.0 * PI ) - 0.5 * log( 2.0 ) + 2.0;
 
   DoubleMatrix dmatMapObj_b_bKnown( nB, nB );
@@ -714,6 +730,13 @@ void mapOptTest::mapOptExampleTest()
               dmatMapObj_b_bKnown );
   
 }
+
+
+/*************************************************************************
+ *
+ * Function: mapOptExampleExactMatchTest
+ *
+ *************************************************************************/
 
 void mapOptTest::mapOptExampleExactMatchTest()
 {
@@ -905,6 +928,192 @@ void mapOptTest::mapOptExampleExactMatchTest()
   }
   CPPUNIT_ASSERT_EQUAL( 3.9999954784966096e+000, dmatMapObj_b_bOut.data()[3] );
 
+}
+
+/*************************************************************************
+ *
+ * Function: mapOptNonzeroBMeanTest
+ *
+ *
+ * This test implements the example problem from the mapOpt
+ * specification with a nonzero value for the mean b value.
+ *
+ *************************************************************************/
+
+void mapOptTest::mapOptNonzeroBMeanTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const int nY = 2;
+  const int nB = 2;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelMapOptExampleTest model(nB, nY);
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecY( nY, 1 );
+  dvecY.fill( 2.0 );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the objective function parameter, b.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatD( nB, nB );
+  double* pdDData = dmatD.data();
+  pdDData[0] = 1.0;
+  pdDData[1] = 0.0;
+  pdDData[2] = 0.0;
+  pdDData[3] = 0.5;
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBIn  ( nB, 1 );
+  DoubleMatrix dvecBOut ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+
+  dvecBLow .fill( -4.0 );
+  dvecBUp  .fill(  4.0 );
+  dvecBIn  .fill(  2.0 );
+  dvecBStep.fill(  0.001 );
+
+  // Set the mean value for b equal to a value other than zero.
+  DoubleMatrix dvecBMean( nB, 1 );
+  dvecBMean.fill( 2.0 );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the objective function, MapObj(b).
+  //------------------------------------------------------------
+
+  double dMapObjOut;
+
+  DoubleMatrix drowMapObj_bOut  ( 1, nB );
+  DoubleMatrix dmatMapObj_b_bOut( nB, nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to mapOpt.
+  //------------------------------------------------------------
+
+  double epsilon  = 1.e-3; 
+  int nMaxIter    = 5; 
+  double fOut     = 0.0; 
+  int level       = 0;
+  void* pFvalInfo = 0;
+  bool withD      = true;
+  bool isFO       = false;
+  Optimizer optimizer( epsilon, nMaxIter, level ); 
+
+  // Set these to exercise the warm start capabilities of mapOpt.
+  optimizer.setThrowExcepIfMaxIter( false );
+  optimizer.setSaveStateAtEndOfOpt( true );
+
+  DoubleMatrix* pdmatNull = 0;
+ 
+
+  //------------------------------------------------------------
+  // Optimize MapObj(b).
+  //------------------------------------------------------------
+
+  model.setIndPar(dvecBIn.toValarray());
+
+  try
+  {
+    while( true )
+    {
+      mapOpt( model,
+              dvecY,
+              optimizer,
+              dvecBLow,
+              dvecBUp,
+              dvecBIn,
+              &dvecBOut,
+              dvecBStep,
+              &dMapObjOut,
+              &drowMapObj_bOut,
+              &dmatMapObj_b_bOut,
+              withD,
+              isFO,
+              pdmatNull,
+              &dvecBMean );
+
+      // Exit this loop if the maximum number of iterations was
+      // not exceeded, i.e., if the optimization was successful.
+      if( !optimizer.getIsTooManyIter() )
+        break;
+
+      // Set this so that ppkaOpt performs a warm start when it
+      // is called again.
+      optimizer.setIsWarmStart( true );
+    }
+  }
+  catch(...)
+  {
+      CPPUNIT_ASSERT(false);
+  }
+
+
+  //------------------------------------------------------------
+  // Known values.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecBKnown( nB, 1 );
+  double* pdBKnownData = dvecBKnown.data();
+  pdBKnownData[0] = 1.0;
+  pdBKnownData[1] = 2.0;
+
+  // For this test,
+  //
+  // MapObj(b) = log{2 pi exp[b(1)]}      + [2 - b(2)]^2 exp[-b(1)]
+  //           + log(2 pi) - (1/2) log(2) + (1/2) (bMean(1)-b(1))^2 +  (bMean(2)-b(2))^2
+  //
+  // The gradient of MapObj(b) is equal to
+  //
+  //   / 1 - [2 - b(2)]^2 exp[-b(1)] - (bMean(1)-b(1)) \
+  //   |                                               |
+  //   \ -2 [2 - b(2)] exp[-b(1)] - 2 (bMean(2)-b(2))  /
+  //
+  // The first order necessary condition for a minimum is that the
+  // gradient is zero. This is true when when b(1) = 1 and b(2) = 2 if
+  // bMean(1) = 2 and bMean(2) = 2.
+  //
+  double dMapObjKnown = 2.0 * log( 2.0 * PI ) - 0.5 * log( 2.0 ) + 1.5;
+
+  DoubleMatrix dmatMapObj_b_bKnown( nB, nB );
+  double* pdMapObj_b_bKnownData = dmatMapObj_b_bKnown.data();
+  pdMapObj_b_bKnownData[0] = 1.0;
+  pdMapObj_b_bKnownData[1] = 0.0;
+  pdMapObj_b_bKnownData[2] = 0.0;
+  pdMapObj_b_bKnownData[3] = 2.0 * ( exp( -1.0 ) + 1.0 );
+
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest(  dMapObjOut, 
+              dMapObjKnown, 
+              epsilon, 
+              dvecBLow, 
+              dvecBUp, 
+              dvecBOut, 
+              dvecBKnown, 
+              dmatMapObj_b_bOut, 
+              dmatMapObj_b_bKnown );
+  
 }
 
 /*************************************************************************

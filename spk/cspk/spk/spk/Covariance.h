@@ -241,6 +241,7 @@ private:
 
 protected:
   void setCacheStatusValid()   const;
+public:
   void setCacheStatusInvalid() const;
 
   bool isCacheStatusValid()    const;
