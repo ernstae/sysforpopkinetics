@@ -133,7 +133,8 @@ $syntax/void mapOpt(
     DoubleMatrix       * /pdmatMapObj_b_bOut/,
     bool                 /withD/,
     bool                 /isFo/ = false,
-    const DoubleMatrix* /pdvecN/ = NULL
+    const DoubleMatrix* /pdvecN/ = NULL,
+    const DoubleMatrix* /pdvecBMean/ = NULL
 )/$$
 
 $tend
@@ -174,10 +175,15 @@ $math%
     MapObj(b) = - \logdet[ 2 \pi R(b) ] + - [y - f(b)]  R(b)   [y - f(b)]
                 2 %          %            2
 
-                1 %          %            1  T  -1
-              + - \logdet[ 2 \pi D ]    + - b  D   b  .
+                1 %          %            1            T  -1
+              + - #logdet[ 2 #pi D ]    + - [bMean - b]  D  [bMean - b]  .
                 2 %          %            2
 %$$
+Note that this objective function allows a nonzero mean value
+$math%bMean%$$ to be specified for the parameter $math%b%$$.
+$pre
+
+$$
 (The equation above uses
 $xref/glossary/Individual Notation/individual notation/$$.)
 
@@ -477,12 +483,22 @@ If $math%true%$$ is given, other approximations are assumed.
 
 $syntax/
 
-/pN/(null by default)
+/pdvecN/(null by default)
 /$$ 
-If $italic isFO$$ is specified as $math%true%$$, $italic pN$$ points to a DoubleMatrix 
+If $italic isFO$$ is specified as $math%true%$$, $italic pdvecN$$ points to a DoubleMatrix 
 object that contains the column vector $math%N%$$.  The $th i$$ element of $math%N%$$
 specifies the number of elements of $math%y%$$ that correspond to the $th i$$ individual.
 If $italic isFO$$ is specified as $math%false%$$, set $italic N$$ to null.
+
+$syntax/
+
+/pdvecBMean/(null by default)
+/$$ 
+If the pointer $italic pdvecBMean$$ is not equal to null, then it points to a DoubleMatrix 
+object that contains the column vector $math%bMean%$$.  The $th j$$ element of $math%bMean%$$
+specifies the mean value for the $th j$$ element of $math%b%$$.
+If the mean values for all of the elements of $math%b%$$ are equal to zero, 
+set $italic pdvecBMean$$ to null.
 
 
 $head Example$$
@@ -669,7 +685,9 @@ int main()
   void* pFvalInfo = 0;
   bool withD      = true;
   bool isFO       = false;
-  DoubleMatrix * pN = NULL;
+  DoubleMatrix * pdvecN = NULL;
+  DoubleMatrix * pdvecBMean = NULL;
+
 
   //------------------------------------------------------------
   // Optimize MapObj(b).
@@ -691,7 +709,8 @@ int main()
             &dmatMapObj_b_bOut,
             withD,
             isFO
-            pN
+            pdvecN,
+            pdvecBMean
             );
   }
   catch( ... )
@@ -905,6 +924,7 @@ namespace // [Begin: unnamed namespace]
       const bool*          pbWithDIn,
       const bool*          pbIsFoIn,
       const DoubleMatrix*  pdvecNIn,
+      const DoubleMatrix*  pdvecBMeanIn,
       Optimizer*           pOptInfoIn )
       :
       nB           ( nBIn ),
@@ -913,6 +933,7 @@ namespace // [Begin: unnamed namespace]
       pbWithD      ( pbWithDIn ),
       pbIsFo       ( pbIsFoIn ),
       pdvecN       ( pdvecNIn ),
+      pdvecBMean   ( pdvecBMeanIn ),
       pOptInfo     ( pOptInfoIn )
     {
       // Give the optimizer controller a pointer to this objective.
@@ -934,6 +955,7 @@ namespace // [Begin: unnamed namespace]
     const bool*          pbWithD;
     const bool*          pbIsFo;
     const DoubleMatrix*  pdvecN;
+    const DoubleMatrix*  pdvecBMean;
 
     Optimizer*  pOptInfo;
 
@@ -972,7 +994,8 @@ namespace // [Begin: unnamed namespace]
           pdmatNull,
           *pbWithD,
           *pbIsFo, 
-          pdvecN );
+          pdvecN,
+          pdvecBMean );
       }
       catch( SpkException& e )
       {
@@ -1015,7 +1038,8 @@ namespace // [Begin: unnamed namespace]
           &drowMapObj_bCurr,
           *pbWithD,
           *pbIsFo,
-          pdvecN );
+          pdvecN,
+          pdvecBMean );
       }
       catch( SpkException& e )
       {
@@ -1052,7 +1076,8 @@ void mapOpt(  SpkModel& model,
               DoubleMatrix* pdmatMapObj_b_bOut,
               bool withD,
               bool isFo,
-              const DoubleMatrix* pdvecN
+              const DoubleMatrix* pdvecN,
+              const DoubleMatrix* pdvecBMean
            )
 {
   //------------------------------------------------------------
@@ -1080,6 +1105,7 @@ void mapOpt(  SpkModel& model,
     &withD,
     &isFo,
     pdvecN,
+    pdvecBMean,
     &optInfo );
 
   // Instantiate a temporary column vector to hold the final b 
@@ -1196,7 +1222,8 @@ void mapOpt(  SpkModel& model,
         pdrowMapObj_bOutTemp,
         withD,
         isFo,
-        pdvecN );
+        pdvecN,
+        pdvecBMean );
     }
   }
 
@@ -1221,7 +1248,8 @@ void mapOpt(  SpkModel& model,
         pdmatMapObj_b_bOutTemp,
         withD,
         isFo,
-        pdvecN );
+        pdvecN,
+        pdvecBMean );
     }
     catch( SpkException& e )
     {

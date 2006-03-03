@@ -161,7 +161,7 @@ $pre
                                      with MAP Bayesian objective.
 
 $$
-For the Standard Two-Stage method (STS), the population mean of
+For the Standard Two-Stage methods (STS), the population mean of
 the individuals' parameter estimates is calculated as
 $math%
 
@@ -185,7 +185,10 @@ $math%$$
                           i = 1 
 
 $$
-
+For the Iterative and Global Two-Stage methods (ITS and GTS), the
+population mean and the population covariance of the individuals' 
+estimates are calculated using the algorithms described in Schumitzky
+(1995).
 
 $head Reference$$
 A. Schumitzky, EM algorithms and two stage methods in phamacokinetic population analysis.
@@ -286,7 +289,7 @@ directly using get functions.
 
 $subhead optInfo.epsilon$$
 This real number is used to specify the convergence criteria
-for the iterative and global two-stage methods.
+for the iterative and global Two-Stage methods.
 It must be greater than $math%0.0%$$.
 
 $subhead optInfo.nMaxIter$$
@@ -534,22 +537,282 @@ $end
 
 // SPK library header files.
 #include "add.h"
+#include "allTrue.h"
 #include "divByScalar.h"
 #include "getCol.h"
 #include "getSubblock.h"
+#include "indStatistics.h"
 #include "intToOrdinalString.h"
+#include "isLessThanOrEqualTo.h"
+#include "inverse.h"
 #include "mapOpt.h"
+#include "mapObjDiff.h"
+#include "matabs.h"
 #include "multiply.h"
 #include "namespace_population_analysis.h"
 #include "replaceJth.h"
 #include "SpkException.h"
+#include "SpkValarray.h"
 #include "subtract.h"
 #include "transpose.h"
 #include "twoStageMethod.h"
+#include "WarningsManager.h"
 
 // Standard library header files.
 #include <cmath>
 #include <string>
+#include <iostream>
+#include <iomanip>
+
+using SPK_VA::valarray;
+
+
+/*------------------------------------------------------------------------
+ * Local class definitions
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+
+  //**********************************************************************
+  //
+  // Class: TwoStageModel
+  //
+  //
+  // This class behaves the same as the class passed in when it is
+  // constructed except that it returns a stored version of the model
+  // for the covariance of the individual parameters.
+  //
+  //**********************************************************************
+
+  class TwoStageModel : public SpkModel
+  {
+    //----------------------------------------------------------
+    // Class members.
+    //----------------------------------------------------------
+
+  private:
+    SpkModel*        pModel;
+    int              nIndPar;
+    valarray<double> indParVarStored;
+
+
+    //----------------------------------------------------------
+    // Constructors.
+    //----------------------------------------------------------
+
+  public:
+    TwoStageModel( SpkModel* pModelIn, int nIndParIn )
+      :
+      pModel         ( pModelIn ),
+      nIndPar        ( nIndParIn ),
+      indParVarStored( nIndParIn * nIndParIn )
+    {
+    }
+
+
+    //----------------------------------------------------------
+    // State changing functions related to the individual parameter variance.
+    //----------------------------------------------------------
+
+    void setIndParVariance( const valarray<double>& indParVarStoredIn )
+    {
+      assert( indParVarStoredIn.size() == nIndPar * nIndPar );
+
+      // Invalidate the stored model's cached value for the variance.
+      pModel->invalidateIndParCovarianceCache();
+
+      // Invalidate this model's cached value for the variance.
+      invalidateIndParCovarianceCache();
+
+      // Set the new value for the variance.
+      indParVarStored = indParVarStoredIn;
+    }
+
+
+    //----------------------------------------------------------
+    // State changing functions that just call the contained model.
+    //----------------------------------------------------------
+
+    void doSelectIndividual( int iIn )
+    {
+      pModel->selectIndividual( iIn );
+    }
+
+    void doSetPopPar( const valarray<double>& popParIn )
+    {
+      pModel->setPopPar( popParIn );
+    }
+
+    void doSetIndPar( const valarray<double>& indParIn )
+    {
+      pModel->setIndPar( indParIn );
+    }
+
+
+    //----------------------------------------------------------
+    // Model evaluation functions that just call the contained model.
+    //----------------------------------------------------------
+
+    void doDataMean( valarray<double>& ret ) const
+    {
+      pModel->dataMean( ret );
+    }
+
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+      return pModel->dataMean_indPar( ret );
+    }
+
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+      return pModel->dataMean_popPar( ret );
+    }
+
+    void doDataVariance( valarray<double>& ret ) const
+    {
+      pModel->dataVariance( ret );
+    }
+
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVariance_indPar( ret );
+    }
+
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVariance_popPar( ret );
+    }
+
+    void doDataVarianceInv( valarray<double>& ret ) const
+    {
+      pModel->dataVarianceInv( ret );
+    }
+
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVarianceInv_indPar( ret );
+    }
+
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+      return pModel->dataVarianceInv_popPar( ret );
+    }
+
+
+    //----------------------------------------------------------
+    // Model evaluation functions related to the individual parameter variance.
+    //----------------------------------------------------------
+
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+      ret.resize( nIndPar * nIndPar );
+
+      ret = indParVarStored;
+    }
+
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+      throw SpkException(
+        SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR, 
+        "doIndParVariance_popPar() is not implemented",
+        __LINE__,
+        __FILE__ );
+    }
+
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+      ret.resize( nIndPar * nIndPar );
+
+      ret = inverse( indParVarStored, nIndPar );
+    }
+
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+      throw SpkException(
+        SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR, 
+        "doIndParVarianceInv_popPar() is not implemented",
+        __LINE__,
+        __FILE__ );
+    }
+
+  };
+
+} // [End: unnamed namespace]
+
+
+/*------------------------------------------------------------------------
+ * Local function declarations
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+  void standardTwoStage( TwoStageModel&       twoStageModel,
+                         bool                 withD,
+                         const DoubleMatrix&  dvecN,
+                         const DoubleMatrix&  dvecY,
+                         Optimizer&           popOptInfo,
+                         Optimizer&           indOptInfo,
+                         const DoubleMatrix&  dvecBMeanIn,
+                         const DoubleMatrix&  dvecBLow,
+                         const DoubleMatrix&  dvecBUp,
+                         const DoubleMatrix&  dmatBIn,
+                         DoubleMatrix*        pdmatBOut,
+                         const DoubleMatrix&  dvecBStep,
+                         DoubleMatrix*        pdvecBMeanOut,
+                         DoubleMatrix*        pdmatBCovOut );
+
+  void iterativeTwoStage( TwoStageModel&       twoStageModel,
+                          const DoubleMatrix&  dvecN,
+                          const DoubleMatrix&  dvecY,
+                          Optimizer&           popOptInfo,
+                          Optimizer&           indOptInfo,
+                          const DoubleMatrix&  dvecBLow,
+                          const DoubleMatrix&  dvecBUp,
+                          const DoubleMatrix&  dmatBIn,
+                          DoubleMatrix*        pdmatBOut,
+                          const DoubleMatrix&  dvecBStep,
+                          DoubleMatrix*        pdvecBMeanOut,
+                          DoubleMatrix*        pdmatBCovOut );
+
+  void globalTwoStage( TwoStageModel&       twoStageModel,
+                       const DoubleMatrix&  dvecN,
+                       const DoubleMatrix&  dvecY,
+                       Optimizer&           popOptInfo,
+                       Optimizer&           indOptInfo,
+                       const DoubleMatrix&  dvecBLow,
+                       const DoubleMatrix&  dvecBUp,
+                       const DoubleMatrix&  dmatBIn,
+                       DoubleMatrix*        pdmatBOut,
+                       const DoubleMatrix&  dvecBStep,
+                       DoubleMatrix*        pdvecBMeanOut,
+                       DoubleMatrix*        pdmatBCovOut );
+
+  void checkIndPar(
+    const Optimizer&    indOptimizer,
+    const DoubleMatrix& dvecBLow,
+    const DoubleMatrix& dvecBUp,
+    const DoubleMatrix& dmatBOut );
+
+  void printTracingInfo( std::ostream&        outputStream,
+                         int                  k,
+                         const DoubleMatrix&  dvecBLow,
+                         const DoubleMatrix&  dvecBUp,
+                         const DoubleMatrix&  dmatBCurr,
+                         const DoubleMatrix&  dmatBPrev );
+
+  bool checkOptStatus( Optimizer&           popOptInfo,
+                       const Optimizer&     indOptInfo,
+                       std::ostream&        outputStream,
+                       bool                 isWithinTol,
+                       int                  k,
+                       const DoubleMatrix&  dvecBLow,
+                       const DoubleMatrix&  dvecBUp,
+                       const DoubleMatrix&  dmatBCurr,
+                       SpkError::ErrorCode  errorCode,
+                       std::string&         stringMessage );
+
+} // [End: unnamed namespace]
 
 
 /*------------------------------------------------------------------------
@@ -582,8 +845,8 @@ void twoStageMethod( SpkModel&            model,
     return;
   }
 
-  const int nInd = dvecN    .nr();
-  const int nB   = dmatBIn  .nr();
+  const int nInd = dvecN  .nr();
+  const int nB   = dmatBIn.nr();
 
 
   //------------------------------------------------------------
@@ -598,6 +861,229 @@ void twoStageMethod( SpkModel&            model,
   // no individual level optimizer state information is saved.
   indOptInfo.setSaveStateAtEndOfOpt( false );
   indOptInfo.setThrowExcepIfMaxIter( true);
+
+
+  //------------------------------------------------------------
+  // Prepare the objects to hold the output values.
+  //------------------------------------------------------------
+
+  // Since this function always needs to calculate the individual
+  // parameter estimates for each individual instantiate a temporary
+  // row vector to hold it.
+  DoubleMatrix dmatBOutTemp;
+  DoubleMatrix* pdmatBOutTemp;
+  dmatBOutTemp.resize( nB, nInd );
+  pdmatBOutTemp = &dmatBOutTemp;
+
+
+  //------------------------------------------------------------
+  // Prepare to perform the Two-Stage method.
+  //------------------------------------------------------------
+
+  // Construct the model that returns a stored version of the model
+  // for the covariance of the individual parameters.
+  TwoStageModel twoStageModel( &model, nB );
+
+  // Set the method name string.
+  string methodString;
+  if ( method == STANDARD_TWO_STAGE || method == MAP_BAYES_STANDARD_TWO_STAGE )
+  {
+    methodString = "Standard Two-Stage (STS)";
+  }
+  else if ( method == ITERATIVE_TWO_STAGE || method == MAP_BAYES_ITERATIVE_TWO_STAGE )
+  {
+    methodString = "Iterative Two-Stage (ITS)";
+  }
+  else
+  {
+    methodString = "Global Two-Stage (GTS)";
+  }
+
+  // This flag is used to indicate if the Bayesian terms should be
+  // included in the objective function during the Standard Two-Stage
+  // (STS) method.
+  bool withD;
+
+
+  //------------------------------------------------------------
+  // Perform the Two-Stage method.
+  //------------------------------------------------------------
+
+  string messageString;
+
+  // Perform the requested Two-Stage method.
+  try
+  {
+    if ( method == STANDARD_TWO_STAGE             || 
+         method == MAP_BAYES_STANDARD_TWO_STAGE )
+    {
+      // Set this so that the Bayesian terms will not be included in
+      // the individual level objective functions during the Standard
+      // Two-Stage analysis.
+      withD = false;
+
+      // Set the mean value for the individual parameters that would
+      // be used if the Bayesian terms were included in the individual
+      // level objective functions.
+      DoubleMatrix dvecBMeanIn( nB, 1 );
+      dvecBMeanIn.fill( 0.0 );
+
+      // Perform the Standard-Two Stage (STS) method.
+      standardTwoStage( twoStageModel,
+                        withD,
+                        dvecN,
+                        dvecY,
+                        popOptInfo,
+                        indOptInfo,
+                        dvecBMeanIn,
+                        dvecBLow,
+                        dvecBUp,
+                        dmatBIn,
+                        pdmatBOutTemp,
+                        dvecBStep,
+                        pdvecBMeanOut,
+                        pdmatBCovOut );
+    }
+    else if ( method == ITERATIVE_TWO_STAGE             ||
+              method == MAP_BAYES_ITERATIVE_TWO_STAGE )
+    {
+      // Perform the Iterative-Two Stage (ITS) method.
+      iterativeTwoStage( twoStageModel,
+                         dvecN,
+                         dvecY,
+                         popOptInfo,
+                         indOptInfo,
+                         dvecBLow,
+                         dvecBUp,
+                         dmatBIn,
+                         pdmatBOutTemp,
+                         dvecBStep,
+                         pdvecBMeanOut,
+                         pdmatBCovOut );
+    }
+    else
+    {
+      // Perform the Global-Two Stage (GTS) method.
+      globalTwoStage( twoStageModel,
+                      dvecN,
+                      dvecY,
+                      popOptInfo,
+                      indOptInfo,
+                      dvecBLow,
+                      dvecBUp,
+                      dmatBIn,
+                      pdmatBOutTemp,
+                      dvecBStep,
+                      pdvecBMeanOut,
+                      pdmatBCovOut );
+    }
+  }
+  catch( SpkException& e )
+  {         
+    messageString = "The " + methodString + " method failed.";
+
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      messageString.c_str(),
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    messageString = "A standard exception was thrown during the " + methodString + " method.", 
+
+    throw SpkException(
+      stde,
+      messageString.c_str(),
+      __LINE__,
+      __FILE__ );
+  }
+  catch( ... )
+  {
+    messageString = "An unknown exception was thrown during the " + methodString + " method.", 
+
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR,
+      messageString.c_str(),
+      __LINE__,
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Issue warning messages for parameters that are constrained.
+  //------------------------------------------------------------
+
+  // Check for individual level parameters that are constrained.
+  checkIndPar( indOptInfo, dvecBLow, dvecBUp, dmatBOutTemp );
+
+
+  //------------------------------------------------------------
+  // Set the values to be returned.
+  //------------------------------------------------------------
+
+  // Set the matrix of individual parameter estimates for each
+  // individual, if necessary.
+  if ( pdmatBOut )
+  {
+    *pdmatBOut = dmatBOutTemp;
+  }
+
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
+  // Reset these individual optimizer flags to their original values.
+  indOptInfo.setSaveStateAtEndOfOpt( oldIndSaveState );
+  indOptInfo.setThrowExcepIfMaxIter( oldIndThrowExcep );
+
+}
+
+
+/*=========================================================================
+ *
+ *
+ * Local Function Definitions
+ *
+ *
+ =========================================================================*/
+
+namespace // [Begin: unnamed namespace]
+{
+
+/*************************************************************************
+ *
+ * Function: standardTwoStage
+ *
+ *
+ * Performs the Standard Two-Stage (STS) method.
+ *
+ *************************************************************************/
+
+void standardTwoStage( TwoStageModel&       twoStageModel,
+                       bool                 withD,
+                       const DoubleMatrix&  dvecN,
+                       const DoubleMatrix&  dvecY,
+                       Optimizer&           popOptInfo,
+                       Optimizer&           indOptInfo,
+                       const DoubleMatrix&  dvecBMeanIn,
+                       const DoubleMatrix&  dvecBLow,
+                       const DoubleMatrix&  dvecBUp,
+                       const DoubleMatrix&  dmatBIn,
+                       DoubleMatrix*        pdmatBOut,
+                       const DoubleMatrix&  dvecBStep,
+                       DoubleMatrix*        pdvecBMeanOut,
+                       DoubleMatrix*        pdmatBCovOut )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const int nInd = dvecN  .nr();
+  const int nB   = dmatBIn.nr();
 
 
   //------------------------------------------------------------
@@ -626,7 +1112,7 @@ void twoStageMethod( SpkModel&            model,
   // instantiate a temporary row vector to hold it.
   DoubleMatrix dvecBMeanOutTemp( nB, 1 );
   DoubleMatrix* pdvecBMeanOutTemp = &dvecBMeanOutTemp;
-  
+
   // If this function is going to return the population covariance of the
   // individual parameter estimates for each individual, instantiate a
   // temporary row vector to hold it.  Otherwise, set the temporary
@@ -646,23 +1132,8 @@ void twoStageMethod( SpkModel&            model,
 
 
   //------------------------------------------------------------
-  // Prepare to perform one of the two-stage methods.
+  // Prepare to perform the Standard Two-Stage (STS) method.
   //------------------------------------------------------------
-
-  // Set the flag that indicates if the MAP Bayesian objective
-  // function should be used when estimating the individuals'
-  // parameters.
-  bool withD;
-  if ( method == MAP_BAYES_STANDARD_TWO_STAGE ||
-       method == MAP_BAYES_ITERATIVE_TWO_STAGE ||
-       method == MAP_BAYES_GLOBAL_TWO_STAGE )
-  {
-    withD = true;
-  }
-  else
-  {
-    withD = false;
-  }
 
   DoubleMatrix dvecBIn_i    ( nB, 1 );
   DoubleMatrix dvecBOut_i   ( nB, 1 );
@@ -670,272 +1141,219 @@ void twoStageMethod( SpkModel&            model,
 
 
   //------------------------------------------------------------
-  // Handle the case of the Standard Two-Stage (STS) method.
+  // Perform the Standard Two-Stage (STS) method.
   //------------------------------------------------------------
 
   double* pdNull = 0;
   DoubleMatrix* pdmatNull = 0;
+  bool isFO = false;
 
   int i;
 
-  if ( method == STANDARD_TWO_STAGE ||
-       method == MAP_BAYES_STANDARD_TWO_STAGE )
+  try
   {
-    try
+    //--------------------------------------------------------
+    // Calculate the population mean.
+    //--------------------------------------------------------
+
+    const double* pdNData = dvecN.data();
+
+    DoubleMatrix dvecY_i;
+
+    int nY_i;
+    int nYTotal = 0;
+
+    // Initially set this equal to zero.
+    dvecBOut_iSum.fill( 0.0 );
+
+    // Calculate each individual's contribution to the population mean of
+    // the individual parameter estimates.
+    for ( i = 0; i < nInd; i++ )
     {
-    // [Remove]==========================================
+      try
+      {
+        // Set the current individual's index for the model.
+        twoStageModel.selectIndividual( i );
+
+        // Get the number of data values for this individual.
+        nY_i = static_cast<int>( pdNData[i] );
+
+        // Get this individual's data values.
+        dvecY_i = getSubblock( dvecY, nYTotal, 0, nY_i, 1 );
+        nYTotal += nY_i;
+
+        // Get this individual's initial parameter value.
+        dvecBIn_i = getCol( dmatBIn, i );
+
+        // Determine this individual's final parameter estimate.    
+        mapOpt(
+          twoStageModel,
+          dvecY_i,
+          indOptInfo,
+          dvecBLow,
+          dvecBUp,
+          dvecBIn_i,
+          &dvecBOut_i,
+          dvecBStep,
+          pdNull,
+          pdmatNull,
+          pdmatNull,
+          withD,
+          isFO,
+          pdmatNull,
+          &dvecBMeanIn );
+
+        // Add in this individual's parameter estimate.
+        dvecBOut_iSum = add( dvecBOut_iSum, dvecBOut_i );
+
+        // Set this individual's final parameter estimate in the
+        // matrix of estimates for each individual, if necessary.
+        if ( pdmatBOut )
+        {
+          replaceJth( dmatBOutTemp, i, dvecBOut_i);
+        }
+      }
+      catch( SpkException& e )
+      {         
+        const int max = SpkError::maxMessageLen();
+        char message[max];
+        snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's contribution to the population mean.",
+                  intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+      
+        throw e.push(
+          SpkError::SPK_UNKNOWN_ERR, 
+          message,
+          __LINE__, 
+          __FILE__ );
+      }
+      catch( const std::exception& stde )
+      {
+        const int max = SpkError::maxMessageLen();
+        char message[max];
+        snprintf( message, max, "The Two-Stage method failed because a standard exception \nwas thrown during the calculation of the %s individual's contribution to the population mean.",
+                  intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+      
+        throw SpkException(
+          stde,
+          message,
+          __LINE__,
+          __FILE__ );
+      }
+      catch( ... )
+      {
+        const int max = SpkError::maxMessageLen();
+        char message[max];
+        snprintf( message, max, "The Two-Stage method failed because an unknown exception \nwas thrown during the calculation of the %s individual's contribution to the population mean.",
+                  intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+      
+        throw SpkException(
+          SpkError::SPK_UNKNOWN_ERR,
+          message,
+          __LINE__,
+          __FILE__ );
+      }
+    }
+
+    // Divide by the number of individuals to get the population mean of
+    // the parameter estimates,
     //
-    /*
-      MOVE EVERYTHING INSIDE THIS TRY BLOCK TO A SEPARATE FUNCTION: standardTwoStage( ... )
-    */
+    //                            nInd
+    //                            ----
+    //          (STS)       1     \    
+    //     bMean       =  ------  /     bOut   .
+    //                     nInd   ----      i
+    //                            i = 1 
     //
-    // [Remove]==========================================
+    // This expression is based on the "Standard Two Stage" section of
+    // Schumitzky (1995).
+    divByScalar( dvecBOut_iSum, nInd, dvecBMeanOutTemp );
 
-      //--------------------------------------------------------
-      // Calculate the population mean.
-      //--------------------------------------------------------
 
-      const double* pdNData = dvecN.data();
+    //--------------------------------------------------------
+    // Calculate the population covariance.
+    //--------------------------------------------------------
 
-      DoubleMatrix dvecY_i;
-
-      int nY_i;
-      int nYTotal = 0;
+    if ( pdmatBCovOut )
+    {
+      DoubleMatrix dvecBOut_iMinusBMean            ( nB, 1 );
+      DoubleMatrix dvecBOut_iMinusBMeanTrans       ( 1,  nB );
+      DoubleMatrix dmatBOut_iMinusBMeanCrossProd   ( nB, nB );
+      DoubleMatrix dmatBOut_iMinusBMeanCrossProdSum( nB, nB );
 
       // Initially set this equal to zero.
-      dvecBOut_iSum.fill( 0.0 );
+      dmatBOut_iMinusBMeanCrossProdSum.fill( 0.0 );
 
-      // Calculate each individual's contribution to the population mean of
-      // the individual parameter estimates.
-      for ( i = 0; i < nInd; i++)
+      // Calculate each individual's contribution to the population
+      // covariance of the individual parameter estimates.
+      for ( i = 0; i < nInd; i++ )
       {
-        try
-        {
-	  // Set the current individual's index for the model.
-          model.selectIndividual( i );
+        // Get this individual's final parameter value.
+        dvecBOut_i = getCol( dmatBOutTemp, i );
 
-          // Get the number of data values for this individual.
-          nY_i = static_cast<int>( pdNData[i] );
+        // Calculate
+        //
+        //     bOut  -  bMean  
+        //         i
+        //
+        // and its transpose.
+        subtract( dvecBOut_i, dvecBMeanOutTemp, dvecBOut_iMinusBMean );
+        transpose( dvecBOut_iMinusBMean, dvecBOut_iMinusBMeanTrans );
 
-          // Get this individual's data values.
-          dvecY_i = getSubblock( dvecY, nYTotal, 0, nY_i, 1 );
-          nYTotal += nY_i;
-    
-          // Get this individual's initial parameter value.
-          dvecBIn_i = getCol( dmatBIn, i );
-    
-          // Determine this individual's final parameter estimate.    
-          mapOpt(
-            model,
-            dvecY_i,
-            indOptInfo,
-            dvecBLow,
-            dvecBUp,
-            dvecBIn_i,
-            &dvecBOut_i,
-            dvecBStep,
-            pdNull,
-            pdmatNull,
-            pdmatNull,
-            withD );
-    
-          // Add in this individual's parameter estimate.
-          dvecBOut_iSum = add( dvecBOut_iSum, dvecBOut_i );
-    
-          // Set this individual's final parameter estimate in the
-          // matrix of estimates for each individual, if necessary.
-          if ( pdmatBOut )
-          {
-            replaceJth( dmatBOutTemp, i, dvecBOut_i);
-          }
-        }
-        catch( SpkException& e )
-        {         
-          const int max = SpkError::maxMessageLen();
-          char message[max];
-          snprintf( message, max, "The Standard Two-Stage (STS) method failed during the calculation of the %s individual's contribution to the population mean.",
-                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-        
-          throw e.push(
-            SpkError::SPK_UNKNOWN_ERR, 
-            message,
-            __LINE__, 
-            __FILE__ );
-        }
-        catch( const std::exception& stde )
-        {
-          const int max = SpkError::maxMessageLen();
-          char message[max];
-          snprintf( message, max, "The Standard Two-Stage (STS) method failed because a standard exception \nwas thrown during the calculation of the %s individual's contribution to the population mean.",
-                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-        
-          throw SpkException(
-            stde,
-            message,
-            __LINE__,
-            __FILE__ );
-        }
-        catch( ... )
-        {
-          const int max = SpkError::maxMessageLen();
-          char message[max];
-          snprintf( message, max, "The Standard Two-Stage (STS) method failed because an unknown exception \nwas thrown during the calculation of the %s individual's contribution to the population mean.",
-                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-        
-          throw SpkException(
-            SpkError::SPK_UNKNOWN_ERR,
-            message,
-            __LINE__,
-            __FILE__ );
-        }
+        // Calculate the cross product
+        //
+        //                                          T
+        //     ( bOut  -  bMean ) ( bOut  -  bMean )   .
+        //           i                  i
+        //
+        multiply( 
+          dvecBOut_iMinusBMean,
+          dvecBOut_iMinusBMeanTrans,
+          dmatBOut_iMinusBMeanCrossProd );
+
+        // Add in this individual's contribution.
+        dmatBOut_iMinusBMeanCrossProdSum = add( 
+          dmatBOut_iMinusBMeanCrossProdSum,
+          dmatBOut_iMinusBMeanCrossProd );
       }
 
-      // Divide by the number of individuals to get the population mean of
-      // the parameter estimates,
+      // Divide by the number of individuals to get the population
+      // covariance,
       //
-      //                            nInd
-      //                            ----
-      //          (STS)       1     \    
-      //     bMean       =  ------  /     bOut   .
-      //                     nInd   ----      i
-      //                            i = 1 
+      //                           nInd
+      //                           ----
+      //         (STS)       1     \                                           T
+      //     bCov       =  ------  /      ( bOut  -  bMean ) ( bOut  -  bMean )   .
+      //                    nInd   ----         i                  i       
+      //                           i = 1 
       //
-      divByScalar( dvecBOut_iSum, nInd, dvecBMeanOutTemp );
-
-    
-      //--------------------------------------------------------
-      // Calculate the population covariance.
-      //--------------------------------------------------------
-
-      if ( pdmatBCovOut )
-      {
-        DoubleMatrix dvecBOut_iMinusBMean            ( nB, 1 );
-        DoubleMatrix dvecBOut_iMinusBMeanTrans       ( 1,  nB );
-        DoubleMatrix dmatBOut_iMinusBMeanCrossProd   ( nB, nB );
-        DoubleMatrix dmatBOut_iMinusBMeanCrossProdSum( nB, nB );
-  
-        // Initially set this equal to zero.
-        dmatBOut_iMinusBMeanCrossProdSum.fill( 0.0 );
-  
-        // Calculate each individual's contribution to the population
-        // covariance of the individual parameter estimates.
-        for ( i = 0; i < nInd; i++)
-        {
-          // Get this individual's final parameter value.
-          dvecBOut_i = getCol( dmatBOutTemp, i );
-    
-          // Calculate
-          //
-          //     bOut  -  bMean  
-          //         i
-          //
-          // and its transpose.
-          subtract( dvecBOut_i, dvecBMeanOutTemp, dvecBOut_iMinusBMean );
-          transpose( dvecBOut_iMinusBMean, dvecBOut_iMinusBMeanTrans );
-
-          // Calculate the cross product
-          //
-          //                                          T
-          //     ( bOut  -  bMean ) ( bOut  -  bMean )   .
-          //           i                  i
-          //
-          multiply( 
-            dvecBOut_iMinusBMean,
-            dvecBOut_iMinusBMeanTrans,
-            dmatBOut_iMinusBMeanCrossProd );
-
-          // Add in this individual's contribution.
-          dmatBOut_iMinusBMeanCrossProdSum = add( 
-            dmatBOut_iMinusBMeanCrossProdSum,
-            dmatBOut_iMinusBMeanCrossProd );
-        }
-  
-
-        // Divide by the number of individuals to get the population
-        // covariance,
-        //
-        //                           nInd
-        //                           ----
-        //         (STS)       1     \                                           T
-        //     bCov       =  ------  /      ( bOut  -  bMean ) ( bOut  -  bMean )   .
-        //                    nInd   ----         i                  i       
-        //                           i = 1 
-        //
-        divByScalar( dmatBOut_iMinusBMeanCrossProdSum, nInd, dmatBCovOutTemp );
-      }
-
-
-    // [Remove]==========================================
-    //
-    /*
-      MOVE EVERYTHING IN THIS TRY BLOCK TO A SEPARATE FUNCTION: standardTwoStage( ... )
-    */
-    //
-    // [Remove]==========================================
-
-    }
-    catch( SpkException& e )
-    {         
-      throw e.push(
-        SpkError::SPK_UNKNOWN_ERR, 
-        "The Standard Two-Stage (STS) method failed.",
-        __LINE__, 
-        __FILE__ );
-    }
-    catch( const std::exception& stde )
-    {
-      throw SpkException(
-        stde,
-        "A standard exception was thrown during the Standard Two-Stage (STS) method.",
-        __LINE__,
-        __FILE__ );
-    }
-    catch( ... )
-    {
-      throw SpkException(
-        SpkError::SPK_UNKNOWN_ERR,
-        "An unknown exception was thrown during the Standard Two-Stage (STS) method.",
-        __LINE__,
-        __FILE__ );
+      // This expression is based on the "Standard Two Stage" section of
+      // Schumitzky (1995).
+      divByScalar( dmatBOut_iMinusBMeanCrossProdSum, nInd, dmatBCovOutTemp );
     }
   }
-
-  
-  //------------------------------------------------------------
-  // Handle the case of the Iterative Two-Stage (ITS) method.
-  //------------------------------------------------------------
-
-  if ( method == ITERATIVE_TWO_STAGE ||
-       method == MAP_BAYES_ITERATIVE_TWO_STAGE )
-  {
-    // [Remove]==========================================
-    //
-      throw SpkException(
-        SpkError::SPK_USER_INPUT_ERR, 
-        "The Iterative Two-Stage (ITS) method has not yet been implemented.",
-        __LINE__,
-        __FILE__ );
-    //
-    // [Remove]==========================================
+  catch( SpkException& e )
+  {         
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The Two-Stage method failed.",
+      __LINE__, 
+      __FILE__ );
   }
-
-
-  //------------------------------------------------------------
-  // Handle the case of the Global Two-Stage (GTS) method.
-  //------------------------------------------------------------
-
-  if ( method == GLOBAL_TWO_STAGE ||
-       method == MAP_BAYES_GLOBAL_TWO_STAGE )
+  catch( const std::exception& stde )
   {
-    // [Remove]==========================================
-    //
-      throw SpkException(
-        SpkError::SPK_USER_INPUT_ERR, 
-        "The Global Two-Stage (GTS) method has not yet been implemented.",
-        __LINE__,
-        __FILE__ );
-    //
-    // [Remove]==========================================
+    throw SpkException(
+      stde,
+      "A standard exception was thrown during the Two-Stage method.",
+      __LINE__,
+      __FILE__ );
+  }
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR,
+      "An unknown exception was thrown during the Two-Stage method.",
+      __LINE__,
+      __FILE__ );
   }
 
 
@@ -964,14 +1382,1801 @@ void twoStageMethod( SpkModel&            model,
     *pdmatBCovOut = dmatBCovOutTemp;
   }
 
+}
+
+
+/*************************************************************************
+ *
+ * Function: iterativeTwoStage
+ *
+ *
+ * Performs the Iterative Two-Stage (ITS) method.
+ *
+ *************************************************************************/
+
+void iterativeTwoStage( TwoStageModel&       twoStageModel,
+                        const DoubleMatrix&  dvecN,
+                        const DoubleMatrix&  dvecY,
+                        Optimizer&           popOptInfo,
+                        Optimizer&           indOptInfo,
+                        const DoubleMatrix&  dvecBLow,
+                        const DoubleMatrix&  dvecBUp,
+                        const DoubleMatrix&  dmatBIn,
+                        DoubleMatrix*        pdmatBOut,
+                        const DoubleMatrix&  dvecBStep,
+                        DoubleMatrix*        pdvecBMeanOut,
+                        DoubleMatrix*        pdmatBCovOut )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const int nInd = dvecN  .nr();
+  const int nB   = dmatBIn.nr();
+
+  double popEpsilon  = popOptInfo.getEpsilon();
+  int    popNMaxIter = popOptInfo.getNMaxIter();
+  int    popLevel    = popOptInfo.getLevel();
+
 
   //------------------------------------------------------------
-  // Finish up.
+  // Prepare the objects to hold the output values.
   //------------------------------------------------------------
 
-  // Reset these individual optimizer flags to their original values.
-  indOptInfo.setSaveStateAtEndOfOpt( oldIndSaveState );
-  indOptInfo.setThrowExcepIfMaxIter( oldIndThrowExcep );
+  // Instantiate a temporary matrix to hold the values for the
+  // individual parameters calculated using the Standard Two-Stage
+  // (STS) method.
+  DoubleMatrix dmatBOutSTS;
+  DoubleMatrix* pdmatBOutSTS;
+  dmatBOutSTS.resize( nB, nInd );
+  pdmatBOutSTS = &dmatBOutSTS;
+
+  // Instantiate a temporary matrix to hold the values for the
+  // population mean of the individual parameter estimates for each
+  // individual calculated using the Standard Two-Stage (STS) method.
+  DoubleMatrix dvecBMeanOutSTS;
+  DoubleMatrix* pdvecBMeanOutSTS;
+  dvecBMeanOutSTS.resize( nB, 1 );
+  pdvecBMeanOutSTS = &dvecBMeanOutSTS;
+
+  // Instantiate a temporary matrix to hold the values for the
+  // population covariance of the individual parameter estimates for
+  // each individual calculated using the Standard Two-Stage (STS)
+  // method.
+  DoubleMatrix dmatBCovOutSTS;
+  DoubleMatrix* pdmatBCovOutSTS;
+  dmatBCovOutSTS.resize( nB, nB );
+  pdmatBCovOutSTS = &dmatBCovOutSTS;
+
+
+  //------------------------------------------------------------
+  // Calculate initial values for the individual parameter's mean and covariance.
+  //------------------------------------------------------------
+
+  // Set this so that the Bayesian terms will not be included in the
+  // individual objective functions during the initial Standard
+  // Two-Stage analysis.
+  bool withD = false;
+
+  // Set the initial value for all of the individuals' parameters.
+  DoubleMatrix dmatBInSTS( dmatBIn );
+
+  // Set the mean value for the individual parameters that would
+  // be used if the Bayesian terms were included in the individual
+  // level objective functions.
+  DoubleMatrix dvecBMeanInSTS( nB, 1 );
+  dvecBMeanInSTS.fill( 0.0 );
+
+  // Do an initial Standard Two-Stage method to get the starting
+  // values for the individual parameter's mean and covariance.
+  try
+  {
+    // Perform the Standard-Two Stage (STS) method.
+    standardTwoStage( twoStageModel,
+                      withD,
+                      dvecN,
+                      dvecY,
+                      popOptInfo,
+                      indOptInfo,
+                      dvecBMeanInSTS,
+                      dvecBLow,
+                      dvecBUp,
+                      dmatBInSTS,
+                      pdmatBOutSTS,
+                      dvecBStep,
+                      pdvecBMeanOutSTS,
+                      pdmatBCovOutSTS );
+  }
+  catch( SpkException& e )
+  {         
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The calculation of the initial values for the Two-Stage method failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+
+    throw SpkException(
+      stde,
+      "A standard exception was thrown during the calculation of the initial values for the Two-Stage method.",
+      __LINE__,
+      __FILE__ );
+  }
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR,
+      "An unknown exception was thrown during the calculation of the initial values for the Two-Stage method.",
+      __LINE__,
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare to perform the Iterative Two-Stage (ITS) method.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecBOut_i   ( nB, 1 );
+  DoubleMatrix dvecBOut_iSum( nB, 1 );
+
+  DoubleMatrix dmatBCov_k       ( nB, nB );
+  DoubleMatrix dmatBOutCov_i    ( nB, nB );
+  DoubleMatrix dmatBOutCov_iSum ( nB, nB );
+  DoubleMatrix dmatBOutCov_iMean( nB, nB );
+  
+  valarray<double> bOutCov_i( nB * nB );
+
+  DoubleMatrix dmatMapObj_b_bOut( nB, nB );
+
+  DoubleMatrix dvecY_i;
+
+  // Set the initial value for the covariance of the individual
+  // parameters equal to the value calculated using the Standard
+  // Two-Stage (STS) method,
+  //
+  //                   (STS)
+  //     bCov   =  bCov       ,
+  //         1
+  //
+  // where the 1 subscript is for k = 1, i.e., the beginning of the
+  // first iteration.
+  dmatBCov_k = dmatBCovOutSTS;
+
+  // Set this so that the Bayesian terms will be included in the
+  // individual objective functions during the rest of the Standard
+  // Two-Stage analysis that will be performed.
+  withD = true;
+
+  // Set this so that all of the individual parameter elements will be
+  // used in the calculation of the covariances of the individuals'
+  // parameter estimates.  
+  valarray<bool> bMask( true, nB );
+
+  // Set the formulation that will be used to approximate the
+  // covariance of the individual parameter estimates.
+  IndCovForm bStatisticsForm = R;
+
+  // Initialize the convergence flag.
+  bool isWithinTol;
+  if ( popNMaxIter > 0 )
+  {
+    // Set the value for the case of one or more iterations.
+    isWithinTol = false;
+  }
+  else
+  {
+    // If zero iterations have been requested, then accept the values
+    // calculated during the initial Standard Two-Stage method above.
+    isWithinTol = true;
+  }
+
+  // Send the output to standard cout.
+  std::ostream& outputStream = std::cout;
+
+
+  //------------------------------------------------------------
+  // Perform the Iterative Two-Stage (ITS) method.
+  //------------------------------------------------------------
+
+  const double* pdBLowData    = dvecBLow.data();
+  const double* pdBUpData     = dvecBUp.data();
+  const double* pdBInSTSData  = dmatBInSTS.data();
+  const double* pdBOutSTSData = dmatBOutSTS.data();
+  const double* pdNData       = dvecN.data();
+
+  int i;
+  int j;
+  int k;
+
+  double* pdNull = 0;
+  DoubleMatrix* pdmatNull = 0;
+  valarray<double>* pVANull = 0;
+  bool isFO = false;
+
+  int nY_i;
+  int nYTotal;
+
+  k = 1;
+
+  // Do some tracing if necessary.
+  if ( popLevel > 0 && popNMaxIter > 0 )
+  {
+    outputStream << endl;
+    outputStream << "Begin search for optimal parameter values." << endl;
+    outputStream << endl;
+
+    // In order to get the scaled change in the parameter values (dx)
+    // to be zero, pass the tracing function the same value for the
+    // current and previous set of individual parameters.
+    printTracingInfo(
+      outputStream,
+      k,
+      dvecBLow,
+      dvecBUp,
+      dmatBOutSTS,
+      dmatBOutSTS );
+  }
+
+  // Perform the number of iterations that were requested.
+  try
+  {
+    while ( !isWithinTol && ( k < popNMaxIter + 1 ) )
+    {
+      //----------------------------------------------------------
+      // Do preparations related to the current iteration.
+      //----------------------------------------------------------
+
+      k++;
+
+
+      //----------------------------------------------------------
+      // Calculate the current set of individual parameter estimates.
+      //----------------------------------------------------------
+
+      // Set the SpkModel subclass's value for the covariance of the
+      // individual parameters equal to the current value,
+      //
+      //     D  =  bCov       .
+      //               k
+      //
+      twoStageModel.setIndParVariance( dmatBCov_k.toValarray() );
+
+      // Set the current value for each of the individuals' parameters
+      // and the mean of the individual parameters,
+      //
+      //              (STS)
+      //     b   =  b        ,
+      //      i      i
+      //
+      // and
+      //
+      //                    (STS)
+      //     bMean  =  bMean      .
+      //
+      dmatBInSTS     = dmatBOutSTS;
+      dvecBMeanInSTS = dvecBMeanOutSTS;
+
+      // Do a Standard Two-Stage (STS) analysis using the value for the
+      // covariance of the individual parameters that was just set.
+      // 
+      // Because the Bayesian terms are included in the individual
+      // objective functions, this will calculate the set of MAP Bayesian
+      // estimates referred to in equation (16) of Schumitzky (1995), i.e.,
+      //
+      //     bOut   =  arg max [ MapObj ( b ) ]  ,
+      //         i                     i
+      //
+      // where
+      //     
+      //                  1                        1             T      -1
+      //     MapObj (b) = - logdet[ 2 pi R (b) ] + - [y  - f (b)]  R (b)  [y  - f (b)]
+      //           i      2               i        2   i    i       i       i    i
+      //
+      //                  1                        1            T  -1
+      //                + - logdet[ 2 pi D ]     + - [bMean - b]  D  [bMean - b]  .
+      //                  2                        2             
+      //
+      standardTwoStage( twoStageModel,
+                        withD,
+                        dvecN,
+                        dvecY,
+                        popOptInfo,
+                        indOptInfo,
+                        dvecBMeanInSTS,
+                        dvecBLow,
+                        dvecBUp,
+                        dmatBInSTS,
+                        pdmatBOutSTS,
+                        dvecBStep,
+                        pdvecBMeanOutSTS,
+                        pdmatBCovOutSTS );
+
+      pdBInSTSData  = dmatBInSTS.data();
+      pdBOutSTSData = dmatBOutSTS.data();
+
+  
+      //--------------------------------------------------------
+      // See if this function's convergence criterion has been met.
+      //--------------------------------------------------------
+
+      // Check all of the individuals' parameter values to see if
+      //
+      //     abs( b     -  b      )  <=  popEpsilon * ( bUp - bLow )  ,
+      //           i,k      i,k-1
+      //
+      // where abs is the element-by-element absolute value function.
+      isWithinTol = true;
+      i = 0;
+      while ( isWithinTol && i < nInd )
+      {
+        j = 0;
+        while ( isWithinTol && j < nB )
+        {
+          if ( abs( pdBOutSTSData[j + i * nB] - pdBInSTSData[j + i * nB] ) > 
+                 popEpsilon * ( pdBUpData[j] -  pdBLowData[j] ) )
+          {
+            isWithinTol = false;
+          }
+          j++;
+        }
+        i++;
+      }
+
+      // Do some tracing if necessary.
+      if ( popLevel > 0 )
+      {
+        printTracingInfo(
+          outputStream,
+          k,
+          dvecBLow,
+          dvecBUp,
+          dmatBOutSTS,
+          dmatBInSTS );
+      }
+
+  
+      //----------------------------------------------------------
+      // Calculate the mean of all of the parameter estimates' covariances.
+      //----------------------------------------------------------
+
+      nYTotal = 0;
+
+      // Initially set this equal to zero.
+      dmatBOutCov_iSum.fill( 0.0 );
+
+      // Calculate the sum of the covariances of the individual
+      // parameter estimates,
+      //
+      //                     nInd
+      //                     ----
+      //                     \   
+      //     bOutCov Sum  =  /      P     ,
+      //            i        ----    i,k
+      //                     i = 1
+      //
+      // where
+      //
+      //     P     =  cov[ bOut , bOut  ]
+      //      i,k              i      i
+      //
+      //           =  bOutCov
+      //                     i
+      //
+      // is an approximation for the covariance of each individual
+      // parameter estimate.
+      for ( i = 0; i < nInd; i++ )
+      {
+        try
+        {
+          // Set the current individual's index in the model.
+          twoStageModel.selectIndividual( i );
+      
+          // Get the number of data values for this individual.
+          nY_i = static_cast<int>( pdNData[i] );
+
+          // Get this individual's data values.
+          dvecY_i = getSubblock( dvecY, nYTotal, 0, nY_i, 1 );
+          nYTotal += nY_i;
+
+          // Get this individual's final parameter value.
+          dvecBOut_i = getCol( dmatBOutSTS, i );
+
+          // Set this individual's parameter value in the model.
+          twoStageModel.setIndPar( dvecBOut_i.toValarray() );
+
+          // Get the Hessian of this individual's objective function.
+          mapObjDiff(
+            twoStageModel,
+            dvecY_i,
+            dvecBStep,
+            dvecBOut_i,
+            pdmatNull,
+            &dmatMapObj_b_bOut,
+            withD,
+            isFO,
+            pdmatNull,
+            &dvecBMeanInSTS );
+
+          // Get the covariance of this individual's parameter estimate.
+          indStatistics(
+            twoStageModel,
+            dvecY_i.toValarray(),
+            dvecBOut_i.toValarray(),
+            bMask,
+            dmatMapObj_b_bOut.toValarray(),
+            bStatisticsForm,
+            &bOutCov_i,
+            pVANull,                          
+            pVANull,
+            pVANull,
+            pVANull,
+            withD );
+          dmatBOutCov_i.fromValarray( bOutCov_i, nB );
+       
+          // Add in this individual's contribution.
+          dmatBOutCov_iSum = add( dmatBOutCov_iSum, dmatBOutCov_i );
+        }
+        catch( SpkException& e )
+        {         
+          const int max = SpkError::maxMessageLen();
+          char message[max];
+          snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's \ncontribution to the sum of the covariances for the parameter estimates.",
+                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+        
+          throw e.push(
+            SpkError::SPK_UNKNOWN_ERR, 
+            message,
+            __LINE__, 
+            __FILE__ );
+        }
+        catch( const std::exception& stde )
+        {
+          const int max = SpkError::maxMessageLen();
+          char message[max];
+          snprintf( message, max, "The Two-Stage method failed because a standard exception was thrown during \nthe calculation of the %s individual's contribution to the sum of the covariances for the parameter estimates.",
+                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+        
+          throw SpkException(
+            stde,
+            message,
+            __LINE__,
+            __FILE__ );
+        }
+        catch( ... )
+        {
+          const int max = SpkError::maxMessageLen();
+          char message[max];
+          snprintf( message, max, "The Two-Stage method failed because an unknown exception was thrown during \nthe calculation of the %s individual's contribution to the sum of the covariances for the parameter estimates.",
+                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+        
+          throw SpkException(
+            SpkError::SPK_UNKNOWN_ERR,
+            message,
+            __LINE__,
+            __FILE__ );
+        }
+      }
+
+      // Calculate the mean of the covariances of the individual
+      // parameter estimates,
+      //
+      //                              nInd
+      //                              ----
+      //                        1     \   
+      //     bOutCov Mean  =  ------  /     bOutCov   .
+      //            i          nInd   ----         i
+      //                              i = 1
+      //
+      // Note that this sum corresponds to the mean of the first term
+      // from Equation (17b) of Schumitzky (1995).
+      divByScalar( dmatBOutCov_iSum, nInd, dmatBOutCov_iMean );
+
+  
+      //----------------------------------------------------------
+      // Calculate the updated version of the covariance of the parameters.
+      //----------------------------------------------------------
+
+      // Calculate the updated value for the model for the covariance of
+      // the individual parameters.
+      //
+      // The updated value for the covariance of the individual
+      // parameters that will be used for the next iteration (k + 1 )
+      // is given by Equation (17b) of Schumitzky (1995),
+      //
+      //                       nInd
+      //                       ----    -                                                 -
+      //                 1     \      |                                                T  |
+      //     bCov   =  ------  /      |  P     +  ( bOut  -  bMean ) ( bOut  -  bMean )   |
+      //         k      nInd   ----   |   i,k           i                  i              |
+      //                       i = 1   -                                                 -
+      //
+      //                       nInd                          nInd   
+      //                       ----    -      -              ----    -                                        - 
+      //                 1     \      |        |       1     \      |                                       T  |
+      //            =  ------  /      |  P     |  +  ------  /      |  ( bOut  -  bMean ) ( bOut  -  bMean )   |
+      //                nInd   ----   |   i,k  |      nInd   ----   |        i                  i              |
+      //                       i = 1   -      -              i = 1   -                                        - 
+      //
+      //                                    (STS)
+      //            =  bOutCov Mean  +  bCov      .
+      //                      i
+      //
+      dmatBCov_k = add( dmatBOutCov_iMean, dmatBCovOutSTS );
+    }
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_OPT_ERR, 
+      "The iterations for the Two-Stage method failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "A standard exception was thrown during the iterations for the Two-Stage method.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the iteration for the Two-Stage method.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Check the status of the optimization.
+  //------------------------------------------------------------
+
+  bool ok;
+  SpkError::ErrorCode errorCode;
+  string stringMessage;
+
+  // See if the optimization converged successfully and check to see
+  // if any individual parameter values are at or near their bounds.
+  ok = checkOptStatus(
+    popOptInfo,
+    indOptInfo,
+    outputStream,
+    isWithinTol,
+    k,
+    dvecBLow,
+    dvecBUp,
+    dmatBOutSTS,
+    errorCode,
+    stringMessage );
+
+  // If something went wrong, exit without setting the return values.
+  if ( !ok )
+  {
+    throw SpkException(
+      errorCode,
+      stringMessage.c_str(),
+      __LINE__,
+      __FILE__ );
+  }
+
+  // Set this flag to indicate the main optimization loop did not
+  // cause an error.
+  popOptInfo.setDidOptFinishOk( true );
+
+
+  //------------------------------------------------------------
+  // Set the values to be returned.
+  //------------------------------------------------------------
+
+  // Set the matrix of individual parameter estimates for each
+  // individual, if necessary.
+  if ( pdmatBOut )
+  {
+    *pdmatBOut = dmatBOutSTS;
+  }
+
+  // Set the population mean of the individual parameter estimates
+  // for each individual, if necessary.
+  if ( pdvecBMeanOut )
+  {
+    *pdvecBMeanOut = dvecBMeanOutSTS;
+  }
+    
+  // Set the population covariance of the individual parameter estimates
+  // for each individual, if necessary.
+  if ( pdmatBCovOut )
+  {
+    *pdmatBCovOut = dmatBCov_k;
+  }
 
 }
 
+
+/*************************************************************************
+ *
+ * Function: globalTwoStage
+ *
+ *
+ * Performs the Global Two-Stage (GTS) method.
+ *
+ *************************************************************************/
+
+void globalTwoStage( TwoStageModel&       twoStageModel,
+                     const DoubleMatrix&  dvecN,
+                     const DoubleMatrix&  dvecY,
+                     Optimizer&           popOptInfo,
+                     Optimizer&           indOptInfo,
+                     const DoubleMatrix&  dvecBLow,
+                     const DoubleMatrix&  dvecBUp,
+                     const DoubleMatrix&  dmatBIn,
+                     DoubleMatrix*        pdmatBOut,
+                     const DoubleMatrix&  dvecBStep,
+                     DoubleMatrix*        pdvecBMeanOut,
+                     DoubleMatrix*        pdmatBCovOut )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const int nInd = dvecN  .nr();
+  const int nB   = dmatBIn.nr();
+
+  double popEpsilon  = popOptInfo.getEpsilon();
+  int    popNMaxIter = popOptInfo.getNMaxIter();
+  int    popLevel    = popOptInfo.getLevel();
+
+
+  //------------------------------------------------------------
+  // Prepare the objects to hold the output values.
+  //------------------------------------------------------------
+
+  // Instantiate a temporary matrix to hold the values for the
+  // individual parameters calculated using the Standard Two-Stage
+  // (STS) method.
+  DoubleMatrix dmatBOutSTS;
+  DoubleMatrix* pdmatBOutSTS;
+  dmatBOutSTS.resize( nB, nInd );
+  pdmatBOutSTS = &dmatBOutSTS;
+
+  // Instantiate a temporary matrix to hold the values for the
+  // population mean of the individual parameter estimates for each
+  // individual calculated using the Standard Two-Stage (STS) method.
+  DoubleMatrix dvecBMeanOutSTS;
+  DoubleMatrix* pdvecBMeanOutSTS;
+  dvecBMeanOutSTS.resize( nB, 1 );
+  pdvecBMeanOutSTS = &dvecBMeanOutSTS;
+
+  // Instantiate a temporary matrix to hold the values for the
+  // population covariance of the individual parameter estimates for
+  // each individual calculated using the Standard Two-Stage (STS)
+  // method.
+  DoubleMatrix dmatBCovOutSTS;
+  DoubleMatrix* pdmatBCovOutSTS;
+  dmatBCovOutSTS.resize( nB, nB );
+  pdmatBCovOutSTS = &dmatBCovOutSTS;
+
+
+  //------------------------------------------------------------
+  // Calculate initial values for the individual parameter's mean and covariance.
+  //------------------------------------------------------------
+
+  // Set this so that the Bayesian terms will not be included in the
+  // individual objective functions during the initial Standard
+  // Two-Stage analysis.
+  bool withD = false;
+
+  // Set the initial value for all of the individuals' parameters.
+  DoubleMatrix dmatBInSTS( dmatBIn );
+
+  // Set the mean value for the individual parameters that would
+  // be used if the Bayesian terms were included in the individual
+  // level objective functions.
+  DoubleMatrix dvecBMeanInSTS( nB, 1 );
+  dvecBMeanInSTS.fill( 0.0 );
+
+  // Do an initial Standard Two-Stage method to get the starting
+  // values for the individual parameter's mean and covariance.
+  try
+  {
+    // Perform the Standard-Two Stage (STS) method.
+    standardTwoStage( twoStageModel,
+                      withD,
+                      dvecN,
+                      dvecY,
+                      popOptInfo,
+                      indOptInfo,
+                      dvecBMeanInSTS,
+                      dvecBLow,
+                      dvecBUp,
+                      dmatBInSTS,
+                      pdmatBOutSTS,
+                      dvecBStep,
+                      pdvecBMeanOutSTS,
+                      pdmatBCovOutSTS );
+  }
+  catch( SpkException& e )
+  {         
+    throw e.push(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "The calculation of the initial values for the Two-Stage method failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+
+    throw SpkException(
+      stde,
+      "A standard exception was thrown during the calculation of the initial values for the Two-Stage method.",
+      __LINE__,
+      __FILE__ );
+  }
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR,
+      "An unknown exception was thrown during the calculation of the initial values for the Two-Stage method.",
+      __LINE__,
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare to perform the Global Two-Stage (GTS) method.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecBOut_i              ( nB, 1 ); 
+  DoubleMatrix dvecBMeanCurr           ( nB, 1 ); 
+  DoubleMatrix dvecBOut_iMinusBMeanCurr( nB, 1 ); 
+
+  DoubleMatrix dmatBCov_k                   ( nB, nB );
+  DoubleMatrix dmatBCovInv_k                ( nB, nB );
+  DoubleMatrix dmatBOutCovInv_i             ( nB, nB ); 
+  DoubleMatrix dmatBCovInv_kPlusBOutCovInv_i( nB, nB ); 
+
+  DoubleMatrix dvecP_i_kTimesBOutCovInv_iTimesBOut_iMinusBMeanCurr( nB, 1 );
+
+  DoubleMatrix dmatP_i_k                 ( nB, nB ); 
+  DoubleMatrix dmatP_i_kSum              ( nB, nB ); 
+  DoubleMatrix dmatP_i_kMean             ( nB, nB ); 
+  DoubleMatrix dmatP_i_kTimesBOutCovInv_i( nB, nB ); 
+
+  DoubleMatrix dvecQ_i_k               ( nB, 1 ); 
+  DoubleMatrix dvecQ_i_kSum            ( nB, 1 ); 
+  DoubleMatrix dvecQ_i_kMinusBMean     ( nB, 1 ); 
+  DoubleMatrix dvecQ_i_kMinusBMeanTrans( nB, 1 ); 
+
+  DoubleMatrix dmatQ_i_kCov                   ( nB, nB ); 
+  DoubleMatrix dmatQ_i_kMinusBMeanCrossProdSum( nB, nB ); 
+  DoubleMatrix dmatQ_i_kMinusBMeanCrossProd   ( nB, nB ); 
+
+  DoubleMatrix dmatQPrev( nB, nInd );
+  DoubleMatrix dmatQCurr( nB, nInd );
+
+  valarray<double> bOutCov_i   ( nB * nB );
+  valarray<double> bOutCovInv_i( nB * nB );
+
+  valarray<double> bOutCovInvAll( nInd * nB * nB );
+
+  DoubleMatrix dmatMapObj_b_bOut( nB, nB );
+
+  DoubleMatrix dvecY_i;
+
+  // Set the initial values for the mean and covariance of the
+  // individual parameters equal to the value calculated using the
+  // Standard Two-Stage (STS) method,
+  //
+  //                     (STS)
+  //     bMean   =  bMean       ,
+  //          1
+  //
+  //                    (STS)
+  //     bCov    =  bCov       ,
+  //         1
+  //
+  // where the 1 subscript is for k = 1, i.e., the beginning of the
+  // first iteration.
+  dvecBMeanCurr = dvecBMeanOutSTS;
+  dmatBCov_k    = dmatBCovOutSTS;
+
+  // Set the current and previous values for the auxiliary mean
+  // parameters equal to each individual's parameter value calculated
+  // using the Standard Two-Stage (STS) method,
+  //
+  //      (Curr)         (STS)
+  //     q        =  bOut       ,
+  //      i,1            i
+  //
+  //      (Prev)         (STS)
+  //     q        =  bOut       ,
+  //      i,1            i
+  //
+  // where the 1 subscript is for k = 1, i.e., the beginning of the
+  // first iteration.
+  dmatQCurr = dmatBOutSTS;
+  dmatQPrev = dmatQCurr;
+
+  // Set this so that all of the individual parameter elements will be
+  // used in the calculation of the covariances of the individuals'
+  // parameter estimates.  
+  valarray<bool> bMask( true, nB );
+
+  // Set the formulation that will be used to approximate the
+  // covariance of the individual parameter estimates.
+  IndCovForm bStatisticsForm = R;
+
+  // Initialize the convergence flag.
+  bool isWithinTol;
+  if ( popNMaxIter > 0 )
+  {
+    // Set the value for the case of one or more iterations.
+    isWithinTol = false;
+  }
+  else
+  {
+    // If zero iterations have been requested, then accept the values
+    // calculated during the initial Standard Two-Stage method above.
+    isWithinTol = true;
+  }
+
+  // Send the output to standard cout.
+  std::ostream& outputStream = std::cout;
+
+
+  //------------------------------------------------------------
+  // Calculate the covariances of the initial STS parameter estimates.
+  //------------------------------------------------------------
+
+  const double* pdNData = dvecN.data();
+
+  int i;
+  int j;
+  int k;
+
+  double* pdNull = 0;
+  DoubleMatrix* pdmatNull = 0;
+  valarray<double>* pVANull = 0;
+  bool isFO = false;
+
+  int nY_i;
+  int nYTotal;
+
+  nYTotal = 0;
+
+  // Calculate the covariances of each of the individuals'
+  // parameter estimates,
+  //
+  //     V   =  cov[ bOut , bOut  ]
+  //      i              i      i
+  //
+  //         =  bOutCov     .
+  //                     i
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    try
+    {
+      // Set the current individual's index in the model.
+      twoStageModel.selectIndividual( i );
+  
+      // Get the number of data values for this individual.
+      nY_i = static_cast<int>( pdNData[i] );
+
+      // Get this individual's data values.
+      dvecY_i = getSubblock( dvecY, nYTotal, 0, nY_i, 1 );
+      nYTotal += nY_i;
+
+      // Get this individual's final parameter value.
+      dvecBOut_i = getCol( dmatBOutSTS, i );
+
+      // Set this individual's parameter value in the model.
+      twoStageModel.setIndPar( dvecBOut_i.toValarray() );
+
+      // Get the Hessian of this individual's objective function.
+      mapObjDiff(
+        twoStageModel,
+        dvecY_i,
+        dvecBStep,
+        dvecBOut_i,
+        pdmatNull,
+        &dmatMapObj_b_bOut,
+        withD,
+        isFO,
+        pdmatNull,
+        &dvecBMeanInSTS );
+
+      // Get the covariance of this individual's parameter estimate.
+      indStatistics(
+        twoStageModel,
+        dvecY_i.toValarray(),
+        dvecBOut_i.toValarray(),
+        bMask,
+        dmatMapObj_b_bOut.toValarray(),
+        bStatisticsForm,
+        &bOutCov_i,
+        pVANull,                          
+        pVANull,
+        pVANull,
+        pVANull,
+        withD );
+
+      // Calculate the inverse of the covariance of this individual's
+      // parameter estimate.
+      bOutCovInv_i = inverse( bOutCov_i, nB );
+
+      // Save the inverse of the covariance of this individual's
+      // parameter estimate.
+      bOutCovInvAll[ slice( i * nB * nB, nB * nB, 1 ) ] = bOutCovInv_i;
+    }
+    catch( SpkException& e )
+    {         
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's \nparameter estimate covariance inverse.",
+                intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+    
+      throw e.push(
+        SpkError::SPK_UNKNOWN_ERR, 
+        message,
+        __LINE__, 
+        __FILE__ );
+    }
+    catch( const std::exception& stde )
+    {
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      snprintf( message, max, "The Two-Stage method failed because a standard exception was thrown during \nthe calculation of the %s individual's parameter estimate covariance inverse.",
+                intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+    
+      throw SpkException(
+        stde,
+        message,
+        __LINE__,
+        __FILE__ );
+    }
+    catch( ... )
+    {
+      const int max = SpkError::maxMessageLen();
+      char message[max];
+      snprintf( message, max, "The Two-Stage method failed because an unknown exception was thrown during \nthe calculation of the %s individual's parameter estimate covariance inverse.",
+                intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+    
+      throw SpkException(
+        SpkError::SPK_UNKNOWN_ERR,
+        message,
+        __LINE__,
+        __FILE__ );
+    }
+  }
+
+  
+  //------------------------------------------------------------
+  // Perform the Global Two-Stage (GTS) method.
+  //------------------------------------------------------------
+
+  const double* pdBLowData  = dvecBLow.data();
+  const double* pdBUpData   = dvecBUp.data();
+  const double* pdQPrevData = dmatQPrev.data();
+  const double* pdQCurrData = dmatQCurr.data();
+
+  k = 1;
+
+  // Do some tracing if necessary.
+  if ( popLevel > 0 && popNMaxIter > 0 )
+  {
+    outputStream << endl;
+    outputStream << "Begin search for optimal parameter values." << endl;
+    outputStream << endl;
+
+    printTracingInfo(
+      outputStream,
+      k,
+      dvecBLow,
+      dvecBUp,
+      dmatQCurr,
+      dmatQPrev );
+  }
+
+  // Perform the number of iterations that were requested.
+  try
+  {
+    while ( !isWithinTol && ( k < popNMaxIter + 1 ) )
+    {
+      //----------------------------------------------------------
+      // Do preparations related to the current iteration.
+      //----------------------------------------------------------
+
+      k++;
+
+      // Calculate the inverse of the updated value for the model for
+      // the covariance of the individual parameters,
+      //
+      //          -1
+      //     bCov    .
+      //         k
+      //
+      dmatBCovInv_k = inverse( dmatBCov_k );
+
+      // Save the current set of auxiliary means.
+      dmatQPrev = dmatQCurr;
+
+      // Initially set these equal to zero.
+      dmatP_i_kSum.fill( 0.0 );
+      dvecQ_i_kSum.fill( 0.0 );
+
+
+      //----------------------------------------------------------
+      // Calculate the current values for each individual's auxiliary quantities.
+      //----------------------------------------------------------
+
+      // Calculate the following auxiliary mean and auxiliary
+      // covariance that are defined in Equations (14a) and (14b) of
+      // Schumitzky (1995):
+      //
+      //                                    -1
+      //     q     =  bMean   +  P     *  V     *  ( bOut  -  bMean  )
+      //      i,k          k      i,k      i             i         k   
+      //
+      // and
+      //               -                 -
+      //              |       -1     -1   |  -1
+      //     P     =  |  bCov   +  V      |      ,
+      //      i,k     |      k      i     |
+      //               -                 -
+      //
+      // where bCov_k is the updated value for the model for the
+      // covariance of the individual parameters and V_i is the
+      // covariance of the i-th individual's parameter estimate,
+      // bOut_i.
+      for ( i = 0; i < nInd; i++ )
+      {
+        try
+        {
+          // Get the inverse of the covariance of this individual's
+          // parameter estimate,
+          //
+          //       -1
+          //     V    .
+          //      i
+          //
+          bOutCovInv_i = bOutCovInvAll[ slice( i * nB * nB, nB * nB, 1 ) ];
+          dmatBOutCovInv_i.fromValarray( bOutCovInv_i, nB );
+
+          // Calculate this individual's auxiliary covariance,
+          //
+          //     P     .
+          //      i,k
+          //
+          dmatBCovInv_kPlusBOutCovInv_i = add( dmatBCovInv_k, dmatBOutCovInv_i );
+          dmatP_i_k = inverse( dmatBCovInv_kPlusBOutCovInv_i );
+
+          // Add in this individual's contribution to the sum of
+          // auxiliary covariancs.
+          dmatP_i_kSum = add( dmatP_i_kSum, dmatP_i_k );
+
+          // Get this individual's final parameter value.
+          dvecBOut_i = getCol( dmatBOutSTS, i );
+
+          // Calculate
+          //
+          //                -1
+          //     P     *  V     *  ( bOut  -  bMean  )  .
+          //      i,k      i             i         k   
+          //
+          dvecBOut_iMinusBMeanCurr = subtract( dvecBOut_i, dvecBMeanCurr );
+          dmatP_i_kTimesBOutCovInv_i = multiply( dmatP_i_k, dmatBOutCovInv_i );
+          dvecP_i_kTimesBOutCovInv_iTimesBOut_iMinusBMeanCurr = 
+            multiply( dmatP_i_kTimesBOutCovInv_i, dvecBOut_iMinusBMeanCurr );
+
+          // Calculate this individual's auxiliary mean,
+          //
+          //     q     .
+          //      i,k
+          //
+          dvecQ_i_k = add( dvecBMeanCurr, dvecP_i_kTimesBOutCovInv_iTimesBOut_iMinusBMeanCurr );
+
+          // Save this individual's auxiliary mean.
+          replaceJth( dmatQCurr, i, dvecQ_i_k );
+
+          // Add in this individual's contribution to the sum of
+          // auxiliary means.
+          dvecQ_i_kSum = add( dvecQ_i_kSum, dvecQ_i_k );
+        }
+        catch( SpkException& e )
+        {         
+          const int max = SpkError::maxMessageLen();
+          char message[max];
+          snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's \ncontribution to the mean and covariance of the individual parameters.",
+                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+        
+          throw e.push(
+            SpkError::SPK_UNKNOWN_ERR, 
+            message,
+            __LINE__, 
+            __FILE__ );
+        }
+        catch( const std::exception& stde )
+        {
+          const int max = SpkError::maxMessageLen();
+          char message[max];
+          snprintf( message, max, "The Two-Stage method failed because a standard exception was thrown during \nthe calculation of the %s individual's contribution to the mean and covariance of the individual parameters.",
+                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+        
+          throw SpkException(
+            stde,
+            message,
+            __LINE__,
+            __FILE__ );
+        }
+        catch( ... )
+        {
+          const int max = SpkError::maxMessageLen();
+          char message[max];
+          snprintf( message, max, "The Two-Stage method failed because an unknown exception was thrown during \nthe calculation of the %s individual's contribution  to the mean and covariance of the individual parameters.",
+                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+        
+          throw SpkException(
+            SpkError::SPK_UNKNOWN_ERR,
+            message,
+            __LINE__,
+            __FILE__ );
+        }
+      }
+
+      pdQPrevData = dmatQPrev.data();
+      pdQCurrData = dmatQCurr.data();
+
+  
+      //--------------------------------------------------------
+      // See if this function's convergence criterion has been met.
+      //--------------------------------------------------------
+
+      // Check all of the individuals' parameter values to see if
+      //
+      //     abs( q     -  q      )  <=  popEpsilon * ( bUp - bLow )  ,
+      //           i,k      i,k-1
+      //
+      // where abs is the element-by-element absolute value function.
+      isWithinTol = true;
+      i = 0;
+      while ( isWithinTol && i < nInd )
+      {
+        j = 0;
+        while ( isWithinTol && j < nB )
+        {
+          if ( abs( pdQCurrData[j + i * nB] - pdQPrevData[j + i * nB] ) > 
+                 popEpsilon * ( pdBUpData[j] -  pdBLowData[j] ) )
+          {
+            isWithinTol = false;
+          }
+          j++;
+        }
+        i++;
+      }
+
+      // Do some tracing if necessary.
+      if ( popLevel > 0 )
+      {
+        printTracingInfo(
+          outputStream,
+          k,
+          dvecBLow,
+          dvecBUp,
+          dmatQCurr,
+          dmatQPrev );
+      }
+
+  
+      //----------------------------------------------------------
+      // Calculate the updated version of the mean of the parameters.
+      //----------------------------------------------------------
+
+      // Calculate the updated value for the mean of the individual
+      // parameters that will be used for the next iteration (k + 1 )
+      // using Equation (15a) of Schumitzky (1995),
+      //
+      //                        nInd
+      //                        ---- 
+      //                  1     \    
+      //     bMean   =  ------  /      q     .
+      //          k      nInd   ----    i,k
+      //                        i = 1
+      //
+      divByScalar( dvecQ_i_kSum, nInd, dvecBMeanCurr );
+
+
+      //----------------------------------------------------------
+      // Calculate the updated version of the covariance of the parameters.
+      //----------------------------------------------------------
+
+      // Calculate the mean of the auxiliary covariances,
+      //
+      //                          nInd
+      //                          ---- 
+      //                    1     \    
+      //     P   Mean  =  ------  /      P     .
+      //      i,k          nInd   ----    i,k
+      //                          i = 1
+      //
+      // Note that this sum corresponds to the mean of the first term
+      // from Equation (15b) of Schumitzky (1995).
+      divByScalar( dmatP_i_kSum, nInd, dmatP_i_kMean );
+
+      // Initially set this equal to zero.
+      dmatQ_i_kMinusBMeanCrossProdSum.fill( 0.0 );
+
+      // Calculate the mean of the cross products of the differences
+      // between the auxiliary means and the current mean of the
+      // individual parameters,
+      //
+      //                       nInd
+      //                       ----    -                                        -
+      //                 1     \      |                                       T  |
+      //     bCov   =  ------  /      |  ( q     -  bMean ) ( q     -  bMean )   |  .
+      //         k      nInd   ----   |     i,k                i,k               |
+      //                       i = 1   -                                        -
+      //
+      // Note that this sum corresponds to the mean of the second term
+      // from Equation (15b) of Schumitzky (1995).
+      for ( i = 0; i < nInd; i++ )
+      {
+        // Get this individual's auxiliary mean.
+        dvecQ_i_k = getCol( dmatQCurr, i );
+
+        // Calculate
+        //
+        //     q     -  bMean  
+        //      i,k 
+        //
+        // and its transpose.
+        subtract( dvecQ_i_k, dvecBMeanCurr, dvecQ_i_kMinusBMean );
+        transpose( dvecQ_i_kMinusBMean, dvecQ_i_kMinusBMeanTrans );
+
+        // Calculate the cross product
+        //
+        //                                          T
+        //     ( q     -  bMean ) ( q     -  bMean )   .
+        //        i,k                i,k 
+        //
+        multiply( 
+          dvecQ_i_kMinusBMean,
+          dvecQ_i_kMinusBMeanTrans,
+          dmatQ_i_kMinusBMeanCrossProd );
+
+        // Add in this individual's contribution.
+        dmatQ_i_kMinusBMeanCrossProdSum = add( 
+          dmatQ_i_kMinusBMeanCrossProdSum,
+          dmatQ_i_kMinusBMeanCrossProd );
+      }
+      divByScalar( dmatQ_i_kMinusBMeanCrossProdSum, nInd, dmatQ_i_kCov );
+
+      // Calculate the updated value for the model for the covariance of
+      // the individual parameters.
+      //
+      // The updated value for the covariance of the individual
+      // parameters that will be used for the next iteration (k + 1) is
+      // given by Equation (15b) of Schumitzky (1995),
+      //
+      //                       nInd
+      //                       ----    -                                                 -
+      //                 1     \      |                                                T  |
+      //     bCov   =  ------  /      |  P     +  ( q     -  bMean ) ( q     -  bMean )   |
+      //         k      nInd   ----   |   i,k        i,k                i,k               |
+      //                       i = 1   -                                                 -
+      //
+      //                       nInd                          nInd   
+      //                       ----    -      -              ----    -                                        - 
+      //                 1     \      |        |       1     \      |                                       T  |
+      //            =  ------  /      |  P     |  +  ------  /      |  ( q     -  bMean ) ( q     -  bMean )   |
+      //                nInd   ----   |   i,k  |      nInd   ----   |     i,k                i,k               |
+      //                       i = 1   -      -              i = 1   -                                        - 
+      //
+      dmatBCov_k = add( dmatP_i_kMean, dmatQ_i_kCov );
+    }
+  }
+  catch( SpkException& e )
+  {
+    throw e.push(
+      SpkError::SPK_OPT_ERR, 
+      "The iterations for the Two-Stage method failed.",
+      __LINE__, 
+      __FILE__ );
+  }
+  catch( const std::exception& stde )
+  {
+    throw SpkException(
+      stde,
+      "A standard exception was thrown during the iterations for the Two-Stage method.",
+      __LINE__, 
+      __FILE__ );
+  }  
+  catch( ... )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR, 
+      "An unknown exception was thrown during the iteration for the Two-Stage method.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //------------------------------------------------------------
+  // Check the status of the optimization.
+  //------------------------------------------------------------
+
+  bool ok;
+  SpkError::ErrorCode errorCode;
+  string stringMessage;
+
+  // See if the optimization converged successfully and check to see
+  // if any individual parameter values are at or near their bounds.
+  ok = checkOptStatus(
+    popOptInfo,
+    indOptInfo,
+    outputStream,
+    isWithinTol,
+    k,
+    dvecBLow,
+    dvecBUp,
+    dmatQCurr,
+    errorCode,
+    stringMessage );
+
+  // If something went wrong, exit without setting the return values.
+  if ( !ok )
+  {
+    throw SpkException(
+      errorCode,
+      stringMessage.c_str(),
+      __LINE__,
+      __FILE__ );
+  }
+
+  // Set this flag to indicate the main optimization loop did not
+  // cause an error.
+  popOptInfo.setDidOptFinishOk( true );
+
+
+  //------------------------------------------------------------
+  // Set the values to be returned.
+  //------------------------------------------------------------
+
+  // Set the matrix of individual parameter estimates for each
+  // individual, if necessary.
+  if ( pdmatBOut )
+  {
+    *pdmatBOut = dmatQCurr;
+  }
+
+  // Set the population mean of the individual parameter estimates
+  // for each individual, if necessary.
+  if ( pdvecBMeanOut )
+  {
+    *pdvecBMeanOut = dvecBMeanCurr;
+  }
+    
+  // Set the population covariance of the individual parameter estimates
+  // for each individual, if necessary.
+  if ( pdmatBCovOut )
+  {
+    *pdmatBCovOut = dmatBCov_k;
+  }
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: checkIndPar
+ *
+ *
+ * Checks the matrix of output individual parameters to see if any of
+ * its elements is constrained by its corresponding lower or upper
+ * limit but not by both.
+ *
+ *************************************************************************/
+
+void checkIndPar(
+  const Optimizer&    indOptimizer,
+  const DoubleMatrix& dvecBLow,
+  const DoubleMatrix& dvecBUp,
+  const DoubleMatrix& dmatBOut )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const double* pdBLowData = dvecBLow.data();
+  const double* pdBUpData  = dvecBUp .data();
+  const double* pdBOutData = dmatBOut.data();
+
+  int nB   = dmatBOut.nr();
+  int nInd = dmatBOut.nc();
+
+
+  //------------------------------------------------------------
+  // Check the parameters to see if any are constrained.
+  //------------------------------------------------------------
+
+  // Prepare a warning message that will only be issued if there
+  // are constrained parameters.
+  ostringstream warning;
+
+  int i;
+  int k;
+  double bOut_i_k;
+  double maxDistFromBound_k;
+
+  int colWidth1 = 10 - 2;
+  int colWidth2 = 9;
+  int colWidth3 = 13 + 2;
+  int colWidth4 = 12;
+  string colSpacer = "  ";
+
+  warning << "The following individual parameters are at or near their bounds." << endl;
+  warning << endl;
+  warning << "Individual  Parameter       Value            Bound"      << endl;
+  warning << "----------  ---------  ---------------  ---------------" << endl;
+
+  // Check each individual's final parameter value to see if they
+  // are constrained by their lower or upper bound;
+  bool isAnyBAtOrNearLimit = false;
+  bool printIndex;
+  for ( i = 0; i < nInd; i++ )
+  {
+    printIndex = true;
+
+    for ( k = 0; k < nB; k++ )
+    {
+      // Don't give a warning if the value is constrained by both
+      // of its bounds.
+      if ( pdBLowData[k] != pdBUpData[k] )
+      {
+        // Set the maximum distance allowed from either bound.
+        maxDistFromBound_k = 
+          indOptimizer.getEpsilon() * ( pdBUpData[k] - pdBLowData[k] );
+    
+        bOut_i_k = pdBOutData[k + i * nB];
+    
+        // Give a warning if the value is within the maximum distance of
+        // either bound.
+        if ( bOut_i_k     - pdBLowData[k] <= maxDistFromBound_k ||
+             pdBUpData[k] - bOut_i_k      <= maxDistFromBound_k )
+        {
+          isAnyBAtOrNearLimit = true;
+    
+          // Column 1.
+          warning << setw( colWidth1 );
+          if ( printIndex )
+          {
+            warning << i + 1;
+          }
+          else
+          {
+            warning << "";
+          }
+          warning << colSpacer;
+    
+          // Column 2.
+          warning << setw( colWidth2 ) << k + 1 << colSpacer;
+    
+          // Column 3.
+          warning << setw( colWidth3 ) << scientific 
+                  << setprecision( 3 ) << bOut_i_k << colSpacer;
+    
+          // Column 4.
+          warning << colSpacer << colSpacer << setw( colWidth4 );
+          if ( bOut_i_k == pdBLowData[k] )
+          {
+            warning << "Lower (at)  ";
+          }
+          else if ( bOut_i_k == pdBUpData[k] )
+          {
+            warning << "Upper (at)  ";
+          }
+          else if ( pdBUpData[k] - pdBLowData[k] <= maxDistFromBound_k ) 
+          {
+            warning << "Both (near) ";
+          }
+          else if ( bOut_i_k - pdBLowData[k] <= maxDistFromBound_k )
+          {
+            warning << "Lower (near)";
+          }
+          else
+          {
+            warning << "Upper (near)";
+          }
+    
+          warning << endl;
+    
+          printIndex = false;
+        }
+      }
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Issue a warning message if necessary.
+  //------------------------------------------------------------
+
+  // Only issue the warning message if at least one of the
+  // values is constrained.
+  if ( isAnyBAtOrNearLimit )
+  {
+    string warningStr = warning.str();
+    WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
+  }
+}
+
+
+/*************************************************************************
+ *
+ * Function: printTracingInfo
+ *
+ *
+ * Prints information related to the current iteration of the
+ * optimization being performed.
+ *
+ *************************************************************************/
+
+void printTracingInfo( std::ostream&        outputStream,
+                       int                  k,
+                       const DoubleMatrix&  dvecBLow,
+                       const DoubleMatrix&  dvecBUp,
+                       const DoubleMatrix&  dmatBCurr,
+                       const DoubleMatrix&  dmatBPrev )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const int nInd = dmatBCurr.nc();
+  const int nB   = dvecBLow .nr();
+
+  const double* pdBLowData  = dvecBLow.data();
+  const double* pdBUpData   = dvecBUp.data();
+  const double* pdBPrevData = dmatBPrev.data();
+  const double* pdBCurrData = dmatBCurr.data();
+
+
+  //------------------------------------------------------------
+  // Print the tracing information.
+  //------------------------------------------------------------
+
+  int i;
+  int j;
+
+  outputStream << "k = " << k << endl;
+
+  for ( i = 0; i < nInd; i++ )
+  {
+    outputStream << "Individual " << i + 1 << ", x = [";
+    for ( j = 0; j < nB; j++ )
+    {
+      if ( pdBLowData[j] != pdBUpData[j] )
+      {
+        outputStream << ( pdBCurrData[j + i * nB] - pdBLowData[j] ) /
+                          ( pdBUpData[j] -  pdBLowData[j] );
+      }
+      else
+      {
+        outputStream << 0.0;
+      }
+      if ( j < nB - 1 )
+      {
+        outputStream << ", ";
+      }
+    }
+    outputStream << "], dx = [";
+    for ( j = 0; j < nB; j++ )
+    {
+      if ( pdBLowData[j] != pdBUpData[j] )
+      {
+        outputStream << ( pdBCurrData[j + i * nB] - pdBPrevData[j + i * nB] ) /
+                          ( pdBUpData[j] -  pdBLowData[j] );
+      }
+      else
+      {
+        outputStream << 0.0;
+      }
+      if ( j < nB - 1 )
+      {
+        outputStream << ", ";
+      }
+    }
+    outputStream << "]" << endl;
+  }
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: checkOptStatus
+ *
+ *
+ * Checks the status of the values calculated during the optimization.
+ *
+ * The return value for this function will be true if the optimization
+ * converged successfully.
+ *
+ *************************************************************************/
+
+bool checkOptStatus( Optimizer&           popOptInfo,
+                     const Optimizer&     indOptInfo,
+                     std::ostream&        outputStream,
+                     bool                 isWithinTol,
+                     int                  k,
+                     const DoubleMatrix&  dvecBLow,
+                     const DoubleMatrix&  dvecBUp,
+                     const DoubleMatrix&  dmatBCurr,
+                     SpkError::ErrorCode  errorCode,
+                     std::string&         stringMessage )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  const int nInd = dmatBCurr.nc();
+  const int nB   = dvecBLow .nr();
+
+  const double* pdBLowData  = dvecBLow .data();
+  const double* pdBUpData   = dvecBUp  .data();
+  const double* pdBCurrData = dmatBCurr.data();
+
+  double popEpsilon  = popOptInfo.getEpsilon();
+  int    popNMaxIter = popOptInfo.getNMaxIter();
+  int    popLevel    = popOptInfo.getLevel();
+
+  double indEpsilon = indOptInfo.getEpsilon();
+
+
+  //------------------------------------------------------------
+  // Check for parameter values that are at or near their bounds.
+  //------------------------------------------------------------
+
+  int i;
+  int j;
+
+  const string parAtOrNearBoundsMessage = 
+    "Note that some parameter values are at or near their bounds.";
+
+  double bOut_i_j;
+  double maxDistFromBound_j;
+
+  bool parAtOrNearBounds = false;
+
+  // See if any of the free elements of the parameter is at or near
+  // its bounds, i.e., within epsilon.
+  if ( !isWithinTol )
+  {
+    for ( i = 0; i < nInd; i++ )
+    {
+      for ( j = 0; j < nB; j++ )
+      {
+        if ( pdBLowData[j] != pdBUpData[j] )
+        {
+          // Set the maximum distance allowed from either bound.
+          maxDistFromBound_j = indEpsilon * ( pdBUpData[j] - pdBLowData[j] );
+      
+          bOut_i_j = pdBCurrData[j + i * nB];
+      
+          // Give a warning if the value is within the maximum distance of
+          // either bound.
+          if ( bOut_i_j     - pdBLowData[j] <= maxDistFromBound_j ||
+               pdBUpData[j] - bOut_i_j      <= maxDistFromBound_j )
+          {
+            bool parAtOrNearBounds = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Check the status of the optimization.
+  //------------------------------------------------------------
+
+  bool ok = false;
+
+  if ( isWithinTol )
+  {
+    //----------------------------------------------------------
+    // This function's convergence criterion was satisfied.
+    //----------------------------------------------------------
+
+    if ( popLevel > 0 && popNMaxIter > 0 )
+    {
+      outputStream << endl;
+      outputStream << "Optimal parameter values found." << endl;
+      outputStream << endl;
+    }
+
+    popOptInfo.setIsTooManyIter( false );
+    ok = true;
+  }
+  else if ( k == popNMaxIter + 1 )
+  {
+    //----------------------------------------------------------
+    // The maximum number of iterations have been performed.
+    //----------------------------------------------------------
+
+    if ( popLevel > 0 && popNMaxIter > 0 )
+    {
+      outputStream << endl;
+      outputStream << "Maximum number of iterations performed without convergence." << endl;
+      outputStream << endl;
+      if ( parAtOrNearBounds )
+      {
+        outputStream << parAtOrNearBoundsMessage << endl;
+        outputStream << endl;
+      }
+    }
+
+    popOptInfo.setIsTooManyIter( true );
+    if ( popOptInfo.getThrowExcepIfMaxIter() )
+    {
+      errorCode = SpkError::SPK_TOO_MANY_ITER;
+      stringMessage = "Maximum number of iterations performed without convergence.";
+      if ( parAtOrNearBounds )
+      {
+        stringMessage += "\n" + parAtOrNearBoundsMessage;
+      }
+      ok = false;
+    }
+    else
+    {
+      ok = true;
+    }
+  }
+  else
+  {
+    //----------------------------------------------------------
+    // This function's convergence criterion was not satisfied.
+    //----------------------------------------------------------
+
+    if ( popLevel > 0 && popNMaxIter > 0 )
+    {
+      outputStream << endl;
+      outputStream << "Unable to find optimal parameter values." << endl;
+      outputStream << endl;
+      if ( parAtOrNearBounds )
+      {
+        outputStream << parAtOrNearBoundsMessage << endl;
+        outputStream << endl;
+      }
+    }
+
+    popOptInfo.setIsTooManyIter( false );
+    errorCode = SpkError::SPK_NOT_CONVERGED;
+    stringMessage = "Unable to find optimal parameter values in twoStageMethod.";
+    if ( parAtOrNearBounds )
+    {
+      stringMessage += "\n" + parAtOrNearBoundsMessage;
+    }
+    ok = false;
+  }
+
+  return ok;
+}
+
+
+} // [End: unnamed namespace]

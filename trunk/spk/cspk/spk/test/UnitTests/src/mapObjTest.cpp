@@ -62,6 +62,7 @@ Test* mapObjTest::suite()
     TestSuite *suiteOfTests = new TestSuite("mapObjTest");
 
     suiteOfTests->addTest(new TestCaller<mapObjTest>("testMapObj", &mapObjTest::testMapObj));
+    suiteOfTests->addTest(new TestCaller<mapObjTest>("testNonzeroBMean", &mapObjTest::testNonzeroBMean));
     suiteOfTests->addTest(new TestCaller<mapObjTest>("testFunctionObjects", &mapObjTest::testFunctionObjects));
 
     return suiteOfTests;
@@ -218,6 +219,25 @@ void mapObjTest::testMapObj(){
 
     pdMapObj_bOut = mapObj_bOut.data();
 
+    // For this test,
+    //
+    //     MapObj(b) = (1/2) log{[2 pi b(1)]^2} + [1 - b(2)]^2 / b(1)
+    //               + (1/2) log{[2 pi]^2}      + (1/2) [b(1)^2 + b(2)^2]
+    //
+    // The gradient of MapObj(b) is equal to
+    //
+    //         / 1 / b(1) - [1 - b(2)]^2 / b(1)^2 + b(1) \
+    //         |                                         |
+    //         \     - 2 [1 - b(2)] / b(1) + b(2)        /
+    //
+    // If all the components of b are two,
+    //
+    //     MapObj(b)   = log(4 pi) + log(2 pi) + 1 / 2 + 4
+    //                 = log(8 pi^2) + 4.5
+    // 
+    //     MapObj_b(b) = [ 1 / 2 - 1 / 4 + 2 , 1 + 2  ]
+    //                 = [ 2.25 , 3 ]
+    //
     CPPUNIT_ASSERT_DOUBLES_EQUAL(mapObjOut, 
 		       8.868901313378768, 
 		       fabs(mapObjOut - 8.868901313378768) / fabs(mapObjOut) * DBL_EPS_EQUAL_MULT );
@@ -227,6 +247,80 @@ void mapObjTest::testMapObj(){
     CPPUNIT_ASSERT_DOUBLES_EQUAL(pdMapObj_bOut[1], 
 		       3.0, 
 		       fabs(pdMapObj_bOut[1] - 3.0) / fabs(pdMapObj_bOut[1]) * DBL_EPS_EQUAL_MULT );
+}
+
+//
+// Correspondence:
+//
+//    mapObj               elsq/elsq_x
+//       y                     z
+//       f                     h
+//       f_b                   h_x
+//       R                     Q
+//       Rinv                  Qinv
+//       R_b                   Q_x
+//
+void mapObjTest::testNonzeroBMean(){
+
+    const int nB = 2;
+    const int nY = 2;
+    UserModelMapObjTest model( nB, nY );
+    DoubleMatrix b(nB,1); b.fill(2.0);
+    DoubleMatrix y(nY,1); y.fill(1.0);
+
+    // Set the mean value for b equal to a value other than zero.
+    DoubleMatrix bMean(b);
+
+    DoubleMatrix mapObj_bOut(1, nB);
+    DoubleMatrix dmatCorrectObj_bAns(1,2);
+    double       mapObjOut;
+    double       *pdMapObj_bOut;
+
+    try{
+        mapObj( model, y, b, &mapObjOut, 0, true, false, NULL );
+    }
+    catch(...)
+    {
+        CPPUNIT_ASSERT(false);
+    }
+    try{
+        mapObj( model, y, b, 0, &mapObj_bOut, true, false, NULL );
+    }
+    catch(...)
+    {
+        CPPUNIT_ASSERT(false);
+    }
+
+    pdMapObj_bOut = mapObj_bOut.data();
+
+    // For this test,
+    //
+    //     MapObj(b) = (1/2) log{[2 pi b(1)]^2} + [1 - b(2)]^2 / b(1)
+    //               + (1/2) log{[2 pi]^2}      + (1/2) [(bMean(1)-b(1))^2 + (bMean(2)-b(2))^2]
+    //
+    // The gradient of MapObj(b) is equal to
+    //
+    //         / 1 / b(1) - [1 - b(2)]^2 / b(1)^2 - (bMean(1)-b(1)) \
+    //         |                                                    |
+    //         \     - 2 [1 - b(2)] / b(1) - (bMean(2)-b(2))        /
+    //
+    // If all the components of b and bMean are two,
+    //
+    //     MapObj(b)   = log(4 pi) + log(2 pi) + 1 / 2
+    //                 = log(8 pi^2) + 0.5
+    // 
+    //     MapObj_b(b) = [ 1 / 2 - 1 / 4, 1 ]
+    //                 = [ 0.25 , 1 ]
+    //
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(mapObjOut, 
+		       4.868901313378768, 
+		       fabs(mapObjOut - 4.868901313378768) / fabs(mapObjOut) * DBL_EPS_EQUAL_MULT );
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(pdMapObj_bOut[0], 
+		       0.25, 
+		       fabs(pdMapObj_bOut[0] - 0.25) / fabs(pdMapObj_bOut[0]) * DBL_EPS_EQUAL_MULT );
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(pdMapObj_bOut[1], 
+		       1.0, 
+		       fabs(pdMapObj_bOut[1] - 1.0) / fabs(pdMapObj_bOut[1]) * DBL_EPS_EQUAL_MULT );
 }
 
 void mapObjTest::testFunctionObjects()

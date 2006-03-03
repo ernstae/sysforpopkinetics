@@ -61,91 +61,73 @@ using SPK_VA::valarray;
  * population means and covariances for individual parameters.
  *
  * This function performs a two-stage method analysis using the
- * individual model, $italic indModel$$, which should contain the same
- * data and model as the population model, $italic popModel$$.
+ * individual model, indModelWithPopData, which should contain the same
+ * data and model as the population model, popModel.
  *
  * At the end, the population parameters for the population model are
  * set to the values determined by the two-stage method.
  *
  * To be specific, at the end of these methods,
- *
- *                                           nInd
- *                                           ----
- *                                     1     \    
- *     thetaPop  =  thetaIndMean  =  ------  /     thetaInd   ,
- *                                    nInd   ----          i
- *                                           i = 1 
- *
- *                                           nInd
- *                                           ----
- *                                     1     \                                                                 T
- *     OmegaPop  =  thetaIndCov   =  ------  /      ( thetaInd  -  thetaIndMean ) ( thetaInd  -  thetaIndMean )   ,
- *                                    nInd   ----             i                             i
- *                                           i = 1 
- *
- *                                           nInd
- *                                           ----
- *                                     1     \    
- *     SigmaPop  =  OmegaIndMean  =  ------  /     OmegaInd   .
- *                                    nInd   ----          i
- *                                           i = 1 
- *
+ * \f[
+ *     theta^{\mbox{Pop}}  =  thetaMean^{\mbox{Ind}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  theta_i^{\mbox{Ind}}   ,
+ * \f]
+ * \f[
+ *     Omega^{\mbox{Pop}}  =  thetaCov^{\mbox{Ind}}   =  \frac{1}{nInd} \sum_{i = 1}^{nInd}   ( theta_i^{\mbox{Ind}}  -  thetaMean^{\mbox{Ind}} ) ( theta_i^{\mbox{Ind}}  -  thetaMean^{\mbox{Ind}} )^T   ,
+ * \f]
+ * \f[
+ *     Sigma^{\mbox{Pop}}  =  OmegaMean^{\mbox{Ind}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  Omega_i^{\mbox{Ind}}   .
+ * \f]
  * This function, therefore, requires that the following be true:
- *
- *     nThetaPop       =  nThetaInd  ,
- *
- *     nEtaPop         =  nThetaInd  ,
- *
- *     nEpsPop         =  nEtaInd  ,
- *
- *     SigmaStructPop  =  OmegaStructInd  ,
- *
- *     OmegaPop        =  nEtaPop by nEtaPop ,
- *
- *     SigmaPop        =  nEpsPop by nEpsPop ,
- *
- *     OmegaInd        =  nEtaInd by nEtaInd  .
- *
+ * \f[
+ *     nTheta^{\mbox{Pop}}       =  nTheta^{\mbox{Ind}}  ,
+ * \f]
+ * \f[
+ *     nEta^{\mbox{Pop}}         =  nTheta^{\mbox{Ind}}  ,
+ * \f]
+ * \f[
+ *     nEps^{\mbox{Pop}}         =  nEta^{\mbox{Ind}}  ,
+ * \f]
+ * \f[
+ *     SigmaStruct^{\mbox{Pop}}  =  OmegaStruct^{\mbox{Ind}}  ,
+ * \f]
+ * \f[
+ *     Omega^{\mbox{Pop}}        =  nEta^{\mbox{Pop}} \times nEta^{\mbox{Pop}} ,
+ * \f]
+ * \f[
+ *     Sigma^{\mbox{Pop}}        =  nEps^{\mbox{Pop}} \times nEps^{\mbox{Pop}} ,
+ * \f]
+ * \f[
+ *     Omega^{\mbox{Ind}}        =  nEta^{\mbox{Ind}} \times nEta^{\mbox{Ind}}  .
+ * \f]
  * 
  * This function allows the following Two-Stage methods to be used:
  * 
- *     STANDARD_TWO_STAGE            =  Standard Two-Stage (STS) method,
- *     ITERATIVE_TWO_STAGE           =  Iterative Two-Stage (ITS) method,
- *     GLOBAL_TWO_STAGE              =  Global Two-Stage (GTS) method.
- *     MAP_BAYES_STANDARD_TWO_STAGE  =  Standard Two-Stage (STS) method
- *                                      with MAP Bayesian objective,
- *     MAP_BAYES_ITERATIVE_TWO_STAGE =  Iterative Two-Stage (ITS) method
- *                                      with MAP Bayesian objective, and
- *     MAP_BAYES_GLOBAL_TWO_STAGE    =  Global Two-Stage (GTS) method 
- *                                      with MAP Bayesian objective.
+ *    - STANDARD_TWO_STAGE  = Standard Two-Stage (STS) method,
+ *    - ITERATIVE_TWO_STAGE = Iterative Two-Stage (ITS) method,
+ *    - GLOBAL_TWO_STAGE    = Global Two-Stage (GTS) method.
  * 
- * For the Standard Two-Stage method (STS), the population mean of
+ * For the Standard Two-Stage methods (STS), the population mean of
  * the individuals' parameter estimates is calculated as
- * 
- *                            nInd
- *                            ----
- *          (STS)       1     \    
- *     bMean       =  ------  /     bOut_i   
- *                     nInd   ----      
- *                            i = 1 
+ * \f[
+ *     bMean       =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  bOut_i   
+ * \f]
  * 
  * and the population covariance of the individuals' estimates is
  * calculated as
+ * \f[
+ *     bCov       =  \frac{1}{nInd} \sum_{i = 1}^{nInd}   ( bOut_i  -  bMean ) ( bOut_i  -  bMean )^T   .
+ * \f]
  * 
- *                           nInd
- *                           ----
- *         (STS)       1     \                                              T
- *     bCov       =  ------  /      ( bOut_i  -  bMean ) ( bOut_i  -  bMean )   .
- *                    nInd   ----          
- *                           i = 1 
+ * For the Iterative and Global Two-Stage methods (ITS and GTS), the
+ * population mean and the population covariance of the individuals' 
+ * estimates are calculated using the algorithms described in Schumitzky
+ * (1995).
  * 
- * 
- * These algorithms are defined in the following reference:
+ * Reference:
  *
  * A. Schumitzky, EM algorithms and two stage methods in phamacokinetic population analysis.
- * in $italic Advanced Methods of Pharmacokinetic and Pharmacodynamic Systems Analysis$$, 
+ * in "Advanced Methods of Pharmacokinetic and Pharmacodynamic Systems Analysis", 
  * edited by D. Z. D'Argenio. New York: Plenum, 1995, p. 145-160.
- * 
  */
 /*************************************************************************/
 

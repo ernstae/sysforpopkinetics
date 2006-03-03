@@ -111,9 +111,12 @@ public:
     const Covariance& getDataCovariance()   const;
     const Covariance& getIndParCovariance() const;
     //
-private:
+protected:
     FullDataCovariance* pDataCovariance;
     FullIndParCovariance* pIndParCovariance;
+    //
+public:
+    void invalidateIndParCovarianceCache();
     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

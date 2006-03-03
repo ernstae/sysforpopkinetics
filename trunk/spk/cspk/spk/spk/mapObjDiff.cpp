@@ -67,14 +67,15 @@ $table
 $bold Prototype:$$   $cend  
 $syntax/void mapObjDiff(
           SpkModel           & /model/,
-          const DoubleMatrix & /y/,
-          const DoubleMatrix & /bStep/,
-          const DoubleMatrix & /b/,
+          const DoubleMatrix & /dvecY/,
+          const DoubleMatrix & /dvecBStep/,
+          const DoubleMatrix & /dvecB/,
           DoubleMatrix       * /pMapObj_bOut/,
           DoubleMatrix       * /pMapObj_b_bOut/,
           bool                 /withD/,
           bool                 /isFO/,
-          DoubleMatrix       * /pN/ = NULL
+          const DoubleMatrix * /pdvecN/ = NULL,
+          const DoubleMatrix * /pdvecBMean/ = NULL
           )
           /$$
 $tend
@@ -125,23 +126,23 @@ for details.
 
 $syntax/
 
-/y/
+/dvecY/
 /$$
 The $math%m%$$ dimensional column vector contains the individual's data.
 
 $syntax/
 
-/bStep/
+/dvecBStep/
 /$$
 The $math%n%$$ dimensional column vector specifies the step sizes for 
-approximating derivatives.  $math%i-th%$$ element of $italic bStep$$
+approximating derivatives.  $math%i-th%$$ element of $italic dvecBStep$$
 is the step size for $math%i-th%$$ element of 
 the parameter vector, $italic b$$.  Every step size must be
 greater than 0.0; otherwise the program terminates.
 
 $syntax/
 
-/b/
+/dvecB/
 /$$
 The $math%n%$$ dimensional column vector is the parameter vector.
 
@@ -189,12 +190,22 @@ If $math%true%$$ is given, other approximations are assumed.
 
 $syntax/
 
-/pN/(null by default)
+/pdvecN/(null by default)
 /$$ 
-If $italic isFO$$ is specified as $math%true%$$, $italic pN$$ points to a DoubleMatrix 
+If $italic isFO$$ is specified as $math%true%$$, $italic pdvecN$$ points to a DoubleMatrix 
 object that contains the column vector $math%N%$$.  The $th i$$ element of $math%N%$$
 specifies the number of elements of $math%y%$$ that correspond to the $th i$$ individual.
 If $italic isFO$$ is specified as $math%false%$$, set $italic N$$ to null.
+
+$syntax/
+
+/pdvecBMean/(null by default)
+/$$ 
+If the pointer $italic pdvecBMean$$ is not equal to null, then it points to a DoubleMatrix 
+object that contains the column vector $math%bMean%$$.  The $th j$$ element of $math%bMean%$$
+specifies the mean value for the $th j$$ element of $math%b%$$.
+If the mean values for all of the elements of $math%b%$$ are equal to zero, 
+set $italic pdvecBMean$$ to null.
 
 
 
@@ -381,7 +392,8 @@ void mapObjDiff(
                 DoubleMatrix *pMapObj_b_bOut,
                 bool withD,
                 bool isFO,
-                const DoubleMatrix *pN
+                const DoubleMatrix *pdvecN,
+                const DoubleMatrix *pdvecBMean
                 )
 {
     using namespace std;
@@ -443,7 +455,7 @@ void mapObjDiff(
                          __FILE__);
         }
     }
-    MAPOBJ_B_PROTO mapObj_bDerivOb(&model, dvecY, withD, isFO, pN);
+    MAPOBJ_B_PROTO mapObj_bDerivOb(&model, dvecY, withD, isFO, pdvecN, pdvecBMean);
     if(pMapObj_b_bOut!=0)
     {
         try{

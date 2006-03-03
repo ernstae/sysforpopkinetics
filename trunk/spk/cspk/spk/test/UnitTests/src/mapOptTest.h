@@ -58,6 +58,7 @@ public:
     // add test cases as void member functions
     void mapOptExampleTest();
     void mapOptExampleExactMatchTest();
+    void mapOptNonzeroBMeanTest();
     void mapOptQuadraticTest();
     void mapOptZeroIterationsTest();
 };

@@ -62,7 +62,9 @@ public:
 
 private:
   // Test cases for this unit test.
-  void RailExample_Test();
+  void RailExampleSTS_Test();
+  void RailExampleITS_Test();
+  void RailExampleGTS_Test();
 };
 
 #endif

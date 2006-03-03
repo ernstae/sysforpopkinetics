@@ -3026,3 +3026,60 @@ const Covariance& SpkModel::getIndParCovariance() const
   return *pIndParCovariance; 
 }
 
+
+/*************************************************************************
+ *
+ * Function: void SpkModel::invalidateIndParCovarianceCache()
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+/*
+$begin SpkModel_invalidateIndParCovarianceCache$$
+$spell
+	Model model
+  SPK_VA
+  Covariance
+  ind
+  const 
+  cov
+  Spk
+  ind
+  valarray
+$$
+
+$section Invalidates the Cached Values for the Covariance of the Individual Parameters$$
+
+$index SpkModel, invalidateIndParCovarianceCache()$$
+$index User-provided Model, individual parameter covariance cache$$
+
+$table
+$bold Public Interface:$$   $rend  
+$syntax/public: void SpkModel::invalidateIndParCovarianceCache()/$$  $rend
+$tend
+
+$table
+$bold See also:$$ $cend
+$xref/CovarianceClasses//Covariance classes/$$ $rend 
+$tend
+
+$fend 30$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$head Description$$
+Invalidates the cached values for the covariance of the individual parameters.
+
+$end
+*/
+
+void SpkModel::invalidateIndParCovarianceCache()
+{ 
+  pIndParCovariance->setCacheStatusInvalid(); 
+}
+
