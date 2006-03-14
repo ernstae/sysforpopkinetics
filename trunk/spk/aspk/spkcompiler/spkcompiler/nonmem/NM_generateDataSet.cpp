@@ -3,7 +3,7 @@
  * Define NonmemTranslator::generateDataSet().
  */
 #include <fstream>
-
+#include <string>
 #include "NonmemTranslator.h"
 #include "SpkCompilerException.h"
 
@@ -1028,11 +1028,12 @@ void NonmemTranslator::generateDataSet( ) const
   //-----------------------------------------------------------------------------
   // Begin printing out labels.
   //
-  oDataSet_h << "   o << \"<data_labels>\" << endl;" << endl;
+//  oDataSet_h << "   o << \"<data_labels>\" << endl;" << endl;
   
   // Put ID first in the sequence
   whatGoesIn.push_back( pID->name );
-  oDataSet_h << "   o << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
+//  oDataSet_h << "   o << \"<label name=\\\"" << pID->name << "\\\"/>\" << endl;" << endl;
+  oDataSet_h << "   o << \"ID";
   
   // ...aaand, following ID is, all the left hand side quantities in the model definition.
   // cntColumns is initialized to 1 because the ID column is already printed out.
@@ -1053,9 +1054,10 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 		    {
-		      oDataSet_h << "   o << \"<label name=\\\"";
+                      oDataSet_h << ",";
+//		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cntTheta+1 << ")";
-		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+//		      oDataSet_h << "\\\"/>\" << endl;" << endl;
 		      cntColumns++;
 		    }
 		}
@@ -1073,9 +1075,10 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 		    {
-		      oDataSet_h << "   o << \"<label name=\\\"";
+                      oDataSet_h << ",";
+//		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cntEta+1 << ")";
-		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+//		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
 		      cntColumns++;
 		    }
 		}
@@ -1085,9 +1088,10 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 		    {
-		      oDataSet_h << "   o << \"<label name=\\\"";
+                      oDataSet_h << ",";
+//		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cntEps+1 << ")";
-		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+//		      oDataSet_h << "\\\"/>\" << endl;" << endl;
 		      cntColumns++;
 		    }
 		}
@@ -1097,9 +1101,10 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cnt=0; cnt<myCompModel->getNCompartments(); cnt++ )
 		    {
-		      oDataSet_h << "   o << \"<label name=\\\"";
+                      oDataSet_h << ",";
+//		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cnt+1 << ")";
-		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+//		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
 		      cntColumns++;
 		    }
 		}
@@ -1108,9 +1113,10 @@ void NonmemTranslator::generateDataSet( ) const
 		{
 		  for( int cnt=0; cnt<myCompModel->getNParameters(); cnt++ )
 		    {
-		      oDataSet_h << "   o << \"<label name=\\\"";
+                      oDataSet_h << ",";
+//		      oDataSet_h << "   o << \"<label name=\\\"";
 		      oDataSet_h << pEntry->second.name << "(" << cnt+1 << ")";
-		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
+//		      oDataSet_h << "\\\"/>\" << endl;" << endl;		      
 		      cntColumns++;
 		    }
 		}
@@ -1124,9 +1130,10 @@ void NonmemTranslator::generateDataSet( ) const
 	      // scalar variables (user-defined variables & NONMEM reserved variables).
 	      else
 		{
-		  oDataSet_h << "   o << \"<label name=\\\"";
+                  oDataSet_h << ",";
+//		  oDataSet_h << "   o << \"<label name=\\\"";
 		  oDataSet_h << pEntry->second.name;
-		  oDataSet_h << "\\\"/>\" << endl;" << endl;
+//		  oDataSet_h << "\\\"/>\" << endl;" << endl;
 		  cntColumns++;
 		}
 	    }
@@ -1146,8 +1153,8 @@ void NonmemTranslator::generateDataSet( ) const
       throw e;
     }
 
-  oDataSet_h << "   o << \"</data_labels>\" << endl;" << endl;
-  oDataSet_h << endl;
+//  oDataSet_h << "   o << \"</data_labels>\" << endl;" << endl;
+  oDataSet_h << "\" << endl;" << endl;
   //
   // End of labels.
   //-----------------------------------------------------------------------------
@@ -1159,7 +1166,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   {" << endl;
   oDataSet_h << "      for( int j=0; j<A.NRecords[i]; j++, position++ )" << endl;
   oDataSet_h << "      {" << endl;
-  oDataSet_h << "         o << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
+//  oDataSet_h << "         o << \"<row position=\\\"\" << position << \"\\\">\" << endl;" << endl;
 
   for( cntColumns=0, pWhatGoesIn = whatGoesIn.begin(); pWhatGoesIn!=whatGoesIn.end(); pWhatGoesIn++ )
     {
@@ -1167,10 +1174,11 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cntTheta=0; cntTheta<myThetaLen; cntTheta++ )
 	    {
-	      oDataSet_h << "         o << \"<value ref=\\\"";
-	      oDataSet_h << *pWhatGoesIn << "(" << cntTheta+1 << ")" << "\\\"" << ">\" << ";
+              oDataSet_h << " << \",\" << ";
+//	      oDataSet_h << "         o << \"<value ref=\\\"";
+//	      oDataSet_h << *pWhatGoesIn << "(" << cntTheta+1 << ")" << "\\\"" << ">\" << ";
 	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cntTheta << "]";
-	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+//	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
 	}
@@ -1186,10 +1194,11 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cntEta=0; cntEta<myEtaLen; cntEta++ )
 	    {
-	      oDataSet_h << "         o << \"<value ref=\\\"";
-	      oDataSet_h << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
+              oDataSet_h << " << \",\" << ";
+//	      oDataSet_h << "         o << \"<value ref=\\\"";
+//	      oDataSet_h << *pWhatGoesIn << "(" << cntEta+1 << ")"<< "\\\"" << ">\" << ";
 	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cntEta << "]";
-	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+//	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
 	}
@@ -1197,10 +1206,11 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cntEps=0; cntEps<myEpsLen; cntEps++ )
 	    {
-	      oDataSet_h << "         o << \"<value ref=\\\"";
-	      oDataSet_h << *pWhatGoesIn << "(" << cntEps+1 << ")"<< "\\\"" << ">\" << ";
+              oDataSet_h << " << \",\" << ";
+//	      oDataSet_h << "         o << \"<value ref=\\\"";
+//	      oDataSet_h << *pWhatGoesIn << "(" << cntEps+1 << ")"<< "\\\"" << ">\" << ";
 	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cntEps << "]";
-	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+//	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
 	}
@@ -1213,10 +1223,11 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cnt=0; cnt<myCompModel->getNCompartments(); cnt++ )
 	    {
-	      oDataSet_h << "         o << \"<value ref=\\\"";
-	      oDataSet_h << *pWhatGoesIn << "(" << cnt+1 << ")"<< "\\\"" << ">\" << ";
+              oDataSet_h << " << \",\" << ";
+//	      oDataSet_h << "         o << \"<value ref=\\\"";
+//	      oDataSet_h << *pWhatGoesIn << "(" << cnt+1 << ")"<< "\\\"" << ">\" << ";
 	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cnt << "]";
-	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+//	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
 	}
@@ -1224,10 +1235,11 @@ void NonmemTranslator::generateDataSet( ) const
 	{
 	  for( int cnt=0; cnt<myCompModel->getNParameters(); cnt++ )
 	    {
-	      oDataSet_h << "         o << \"<value ref=\\\"";
-	      oDataSet_h << *pWhatGoesIn << "(" << cnt+1 << ")"<< "\\\"" << ">\" << ";
+              oDataSet_h << " << \",\" << ";
+//	      oDataSet_h << "         o << \"<value ref=\\\"";
+//	      oDataSet_h << *pWhatGoesIn << "(" << cnt+1 << ")"<< "\\\"" << ">\" << ";
 	      oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j][" << cnt << "]";
-	      oDataSet_h << " << \"</value>\" << endl;" << endl;
+//	      oDataSet_h << " << \"</value>\" << endl;" << endl;
 	      cntColumns++;
 	    }
 	}
@@ -1235,11 +1247,14 @@ void NonmemTranslator::generateDataSet( ) const
         {
           // ignore
         }
-      else
+      else 
 	{
-	  oDataSet_h << "         o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
+          string s(*pWhatGoesIn);
+          if(s.compare(0, 2, "ID") == 0) oDataSet_h << "         o << ";
+          else oDataSet_h << " << \",\" << ";
+//	  oDataSet_h << "         o << \"<value ref=\\\"" << *pWhatGoesIn << "\\\"" << ">\" << ";
 	  oDataSet_h << "A.data[i]->" << *pWhatGoesIn << "[j]";
-	  oDataSet_h << " << \"</value>\" << endl;" << endl;
+//	  oDataSet_h << " << \"</value>\" << endl;" << endl;
 	  cntColumns++;
 	}
     }
@@ -1253,7 +1268,8 @@ void NonmemTranslator::generateDataSet( ) const
       SpkCompilerException e( SpkCompilerError::ASPK_USER_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  oDataSet_h << "         o << \"</row>\" << endl;" << endl;
+//  oDataSet_h << "         o << \"</row>\" << endl;" << endl;
+  oDataSet_h << " << endl;" << endl;
   oDataSet_h << "      }" << endl;
   oDataSet_h << "   }" << endl;
   //
