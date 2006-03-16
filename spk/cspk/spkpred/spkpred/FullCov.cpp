@@ -145,10 +145,10 @@ void FullCov::cov( SPK_VA::valarray<double>& covOut ) const
     for ( k = 0; k < i; k++ )
     {
       covCurr[covIndex] += parCurr[sumI + k] * parCurr[sumI + k];
-    }    
+    }
 
     covCurr[covIndex] += exp( 2.0 * parCurr[sumI + i] );
-  }    
+  }
 
   // Set the elements below the diagonal (j < i),
   //
@@ -178,11 +178,11 @@ void FullCov::cov( SPK_VA::valarray<double>& covOut ) const
       for ( k = 0; k < j; k++ )
       {
         covCurr[covIndex] += parCurr[sumI + k] * parCurr[sumJ + k];
-      }    
+      }
     
       covCurr[covIndex] += parCurr[sumI + j] * exp( parCurr[sumJ + j] );
     }
-  }    
+  }
 
   // Set the elements above the diagonal (j > i),
   //
@@ -195,7 +195,7 @@ void FullCov::cov( SPK_VA::valarray<double>& covOut ) const
     {
       covCurr[i + j * nRow] = covCurr[j + i * nRow];
     }
-  }    
+  }
 
 
   //------------------------------------------------------------
@@ -301,11 +301,11 @@ void FullCov::cov_par( SPK_VA::valarray<double>& cov_parOut ) const
     {
       // Add the derivative of this term with respect to this parameter.
       cov_parCurr[row + ( sumI + k ) * nCov_parRow] += 2.0 * parCurr[sumI + k];
-    }    
+    }
 
     // Add the derivative of this term with respect to this parameter.
     cov_parCurr[row + ( sumI + i ) * nCov_parRow] += 2.0 * exp( 2.0 * parCurr[sumI + i] );
-  }    
+  }
 
   // Set the partial derivatives of the elements below the 
   // diagonal (j < i) for the case k < j,
@@ -371,7 +371,7 @@ void FullCov::cov_par( SPK_VA::valarray<double>& cov_parOut ) const
         // Add the derivative of this term with respect to this parameter to the derivative element below and above the diagonal.
         cov_parCurr[rowBelow + ( sumJ + k ) * nCov_parRow] += parCurr[sumI + k];
         cov_parCurr[rowAbove + ( sumJ + k ) * nCov_parRow] += parCurr[sumI + k];
-      }    
+      }
     
       // Add the derivative of this term with respect to this parameter to the derivative element below and above the diagonal.
       cov_parCurr[rowBelow + ( sumI + j ) * nCov_parRow] += exp( parCurr[sumJ + j] );
@@ -381,7 +381,7 @@ void FullCov::cov_par( SPK_VA::valarray<double>& cov_parOut ) const
       cov_parCurr[rowBelow + ( sumJ + j ) * nCov_parRow] += parCurr[sumI + j] * exp( parCurr[sumJ + j] );
       cov_parCurr[rowAbove + ( sumJ + j ) * nCov_parRow] += parCurr[sumI + j] * exp( parCurr[sumJ + j] );
     }
-  }    
+  }
 
 
   //------------------------------------------------------------
@@ -651,15 +651,15 @@ void FullCov::getParLimits(
     {
       if( parFixed[sumI + k] )
       {
-	parLow[sumI + k] = parCurr[sumI + k];
-	parUp [sumI + k] = parCurr[sumI + k];
+        parLow[sumI + k] = parCurr[sumI + k];
+        parUp [sumI + k] = parCurr[sumI + k];
       }
       else
       {
         parLow[sumI + k] = - sqrt( covDiag * 100.0 );
-	parUp [sumI + k] = + sqrt( covDiag * 100.0 );
+        parUp [sumI + k] = + sqrt( covDiag * 100.0 );
       }
-    }    
+    }
 
     // Set the limits for the parameter that is on the diagonal.
     if( parFixed[sumI + i] )
@@ -671,7 +671,7 @@ void FullCov::getParLimits(
     {
       parLow[sumI + i] = 0.5 * log( covDiag / 100.0 );
       parUp [sumI + i] = 0.5 * log( covDiag * 100.0 );
-    }    
+    }
 
   }
 }
@@ -746,11 +746,11 @@ void FullCov::calcPar(
     for ( k = 0; k < i; k++ )
     {
       parOut[sumI + k] = chol[i + k * nCovInRow];
-    }    
+    }
 
     // Set the parameter that is on the diagonal.
     parOut[sumI + i] = log( chol[i + i * nCovInRow] );
-  }    
+  }
 
 }
 
@@ -802,8 +802,8 @@ void FullCov::calcCovMinRep(
     for ( i = j; i < nCovInRow; i++ )
     {
       covMinRepOut[sumI++] = covIn[i + j * nCovInRow];
-    }    
-  }    
+    }
+  }
 
 }
 
@@ -867,9 +867,138 @@ void FullCov::calcCovMinRep_par(
       {
         covMinRep_parOut[( sumI++ )            + k * nCovMinRep_parOutRow] = 
           cov_parIn     [( i + j * nCovInRow ) + k * nCov_parInRow];
-      }    
-    }    
-  }    
+      }
+    }
+  }
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: calcCovMinRepMask
+ *
+ *//**
+ * Sets covMinRepMaskOut equal to the minimal representation ordered
+ * mask that corresponds to the covariance parameter ordered mask
+ * parMaskIn.
+ *
+ * The minimal representation is the elements from the lower triangle
+ * of the covariance matrix stored in column major order.
+ *//*
+ *************************************************************************/
+
+void FullCov::calcCovMinRepMask( 
+  const SPK_VA::valarray<bool>& parMaskIn,
+  SPK_VA::valarray<bool>&       covMinRepMaskOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  // Set the number of parameters for the covariance matrix.
+  int nMaskInPar = parMaskIn.size();
+
+  // Set the number of rows in the covariance matrix that corresponds
+  // to the parameter ordered mask.
+  int nCovInRow = ( -1 + static_cast<int>( sqrt( 
+    static_cast<double>( 1 + 8 * nMaskInPar ) ) ) ) / 2;
+  assert( nMaskInPar == nCovInRow * ( nCovInRow + 1 ) / 2 );
+
+  covMinRepMaskOut.resize( nMaskInPar );
+
+
+  //------------------------------------------------------------
+  // Set the mask for the covariance matrix minimal representation.
+  //------------------------------------------------------------
+
+  int i;
+  int j;
+  int k;
+
+  // Set the elements of the minimal representation ordered mask.
+  //
+  // Note that the elements of the lower triangle of the covariance
+  // matrix that make up the minimal representation,
+  //
+  //                -                                             -
+  //               |     cov                                       |
+  //               |        (0, 0)                                 |
+  //               |                                               |
+  //               |     cov          cov                          |
+  //               |        (1, 0)       (1, 1)                    |
+  //               |                                               |
+  //    MinRep  =  |     cov          cov          cov             |  ,
+  //               |        (2, 0)       (2, 1)       (2, 2)       |
+  //               |                                               |
+  //               |       .            .    .             .       |
+  //               |       .            .      .             .     |
+  //               |       .            .        .             .   |
+  //               |                                               |
+  //                -                                             -
+  //
+  // are stored in column major order, but the elements of the
+  // covariance parameters that make up the Cholesky factor,
+  //
+  //                  -                                                                      -
+  //                 |  exp[ par  ]                                                     0     |
+  //                 |          0                                                             |
+  //                 |                                                                        |
+  //                 |     par       exp[ par  ]                                              |
+  //                 |        1              2                                                |
+  //                 |                                                                        |
+  //    L( par )  =  |     par          par       exp[ par  ]                                 |  ,
+  //                 |        3            4              5                                   |
+  //                 |                                                                        |
+  //                 |       .            .    .             .                                |
+  //                 |       .            .      .             .                              |
+  //                 |       .            .        .             .                            |
+  //                 |                                                                        |
+  //                 |                               par              exp[ par             ]  |
+  //                 |                                  nMaskInPar-2          nMaskInPar-1    |
+  //                  -                                                                      -
+  //
+  // are stored in row major order.
+  int sumI = 0;
+  int minRepIndex = 0;
+  for ( i = 0; i < nCovInRow; i++ )
+  {
+    sumI += i;
+
+    for ( j = 0; j <= i; j++ )
+    {
+      // Add the elements in the minimal representation columns that
+      // come before this column.
+      minRepIndex = 0;
+      for ( k = 0; k < j; k++ )
+      {
+        minRepIndex += nCovInRow - k;
+      }
+
+      // Add in this elements position in this column of the minimal
+      // representation.
+      minRepIndex += i - j;
+
+      // Set the element of the minimal representation ordered mask
+      // that corresponds to
+      //
+      //     cov        .
+      //        (i, j)
+      //
+      // In particular, set
+      //
+      //    MinRepMask               =  parMask           ,
+      //              (minRepIndex)            (sum(i)+j)
+      //
+      // where
+      //
+      //     sum( m )  =  0 + 1 + 2 + ... + m  .
+      //
+      covMinRepMaskOut[minRepIndex] = parMaskIn[sumI + j];
+    }
+
+  }
+
 
 }
 
@@ -926,8 +1055,8 @@ void FullCov::expandCovMinRep(
     {
       covOut[i + j * nCovInRow] = covMinRepIn[sumI];
       covOut[j + i * nCovInRow] = covMinRepIn[sumI++];
-    }    
-  }    
+    }
+  }
 
 }
 

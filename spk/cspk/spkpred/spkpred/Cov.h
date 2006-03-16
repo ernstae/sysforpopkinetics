@@ -77,7 +77,9 @@ public:
 protected:
   int nRow;                 ///< Number of rows.
   int nPar;                 ///< Number of minimal representation parameters.
+
   SPK_VA::valarray<bool> parFixed;  ///< Fixed cov matrix pars
+
  public:
   // Special Block Diagonal matrix member varibles.
   int nBlocks; 
@@ -156,29 +158,35 @@ public:
   /// at the current parameter value.  These limits are for use during the
   /// optimization of objective functions that depend on these parameters.
   virtual void getParLimits( SPK_VA::valarray<double>&  parLow,
-			     SPK_VA::valarray<double>&  parUp) const = 0;
+                             SPK_VA::valarray<double>&  parUp) const = 0;
 
   /// Sets parOut equal to the covariance matrix parameters that
   /// correspond to the covariance matrix covIn.
   virtual void calcPar( const SPK_VA::valarray<double>& covIn,
-			SPK_VA::valarray<double>&       parOut ) const = 0;
+                        SPK_VA::valarray<double>&       parOut ) const = 0;
 
   /// Sets covMinRepOut equal to the minimal representation for the
   /// covariance matrix covIn.
   virtual void calcCovMinRep( const SPK_VA::valarray<double>& covIn,
-			      SPK_VA::valarray<double>&       covMinRepOut ) const = 0;
+                              SPK_VA::valarray<double>&       covMinRepOut ) const = 0;
 
   /// Sets covMinRep_parOut equal to the derivative of the minimal
   /// representation for the covariance matrix with derivative cov_parIn.
   virtual void calcCovMinRep_par( const SPK_VA::valarray<double>& cov_parIn,
-				  int                             nCov_parInCol,
-				  SPK_VA::valarray<double>&       covMinRep_parOut ) const = 0;
+                                  int                             nCov_parInCol,
+                                  SPK_VA::valarray<double>&       covMinRep_parOut ) const = 0;
+
+  /// Sets covMinRepMaskOut equal to the minimal representation
+  /// ordered mask that corresponds to the covariance parameter
+  /// ordered mask parMaskIn.
+  virtual void calcCovMinRepMask( const SPK_VA::valarray<bool>& parMaskIn,
+                                  SPK_VA::valarray<bool>&       covMinRepMaskOut ) const = 0;
 
   /// Sets covOut equal to the covariance matrix that corresponds
   /// to the minimal representation for the covariance matrix that
   /// is contained in covMinRepIn.
   virtual void expandCovMinRep( const SPK_VA::valarray<double>& covMinRepIn,
-				SPK_VA::valarray<double>&       covOut ) const = 0;
+                                SPK_VA::valarray<double>&       covOut ) const = 0;
 
 
   //------------------------------------------------------------
