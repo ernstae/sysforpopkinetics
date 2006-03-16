@@ -390,10 +390,10 @@ void derParStatisticsTest::testWrapper()
   x[2] = -0.2;
 
   // Set the mask indicating which x(i) are valid.
-  valarray<bool> mask( nX );
-  mask[0] = true;
-  mask[1] = false;
-  mask[2] = true;
+  valarray<bool> xMask( nX );
+  xMask[0] = true;
+  xMask[1] = false;
+  xMask[2] = true;
 
   // Set the covariance of x,
   //
@@ -423,7 +423,7 @@ void derParStatisticsTest::testWrapper()
   valarray<double> xSETemp( nX );
   valarray<double> xCITemp( 2 * nX );
   valarray<double>* pNull = 0;
-  statistics(mask,
+  statistics(xMask,
 	     x,
 	     xCov,
 	     nDegFreedom,
@@ -476,6 +476,9 @@ void derParStatisticsTest::testWrapper()
   z[0] =       x[0] + 2.0 * x[1];
   z[2] = 3.0 * x[0] + 4.0 * x[1];
 
+  // Set the mask indicating which z(i) are valid.
+  valarray<bool> zMask( xMask );
+
   // Set the derivative of the derived parameter with respect to the
   // original parameter,
   //
@@ -504,8 +507,9 @@ void derParStatisticsTest::testWrapper()
   //------------------------------------------------------------
 
   // Calculate the statistics.
-  derParStatistics( mask,
+  derParStatistics( xMask,
 		    xCov,
+		    zMask,
 		    z,
 		    z_x,
 		    nDegFreedom,
@@ -607,16 +611,19 @@ void derParStatisticsTest::testWrapper()
   zCIKnown[0 + 1 * nX] = z[0] + t * zSEKnown[0];
   zCIKnown[2 + 1 * nX] = z[2] + t * zSEKnown[2];
 
+
   //------------------------------------------------------------
   // Compare the calculated and known values.
-  //
-  // Note: To verify a NaN is a NaN, test a == a?
-  // If it is a NaN, it will fail because NaN is not equal to anything.
   //------------------------------------------------------------
 
   int k;
 
   double tol = 1.0e-13;
+
+  //
+  // Note: To verify a NaN is a NaN, test a == a?
+  // If it is a NaN, it will fail because NaN is not equal to anything.
+  //
 
   // Check the covariance of the derived parameter.
   for ( k = 0; k < nZ * nZ; k++ )
@@ -678,4 +685,5 @@ void derParStatisticsTest::testWrapper()
 	  CPPUNIT_ASSERT(false);
 	}
     }
+
 }
