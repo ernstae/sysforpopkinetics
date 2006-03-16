@@ -161,6 +161,10 @@ void DiagCovTest::oneByOneCovTest()
   // Set the current value for the parameters.
   omega.setPar( par );
 
+  // Initialize the current value for the parameter mask.
+  valarray<bool> parMask( nPar );
+  parMask[0] = true;
+
 
   //------------------------------------------------------------
   // Calculate various quantities for the test.
@@ -179,6 +183,7 @@ void DiagCovTest::oneByOneCovTest()
 
   valarray<double> omegaMinRep    ( nPar );
   valarray<double> omegaMinRep_par( nPar * nPar );
+  valarray<bool>   omegaMinRepMask( nPar );
 
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
@@ -200,9 +205,13 @@ void DiagCovTest::oneByOneCovTest()
   omega.cov( omegaAtParUp );
 
   // Calculate the minimal representation for the covariance matrix
-  // and its derivative.
+  // its derivative.
   omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
   omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
+
+  // Calculate the mask for the minimal representation for the
+  // covariance matrix.
+  omega.calcCovMinRepMask( parMask, omegaMinRepMask );
 
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
@@ -222,6 +231,7 @@ void DiagCovTest::oneByOneCovTest()
 
   valarray<double> omegaMinRepKnown    ( nPar );
   valarray<double> omegaMinRep_parKnown( nPar * nPar );
+  valarray<bool>   omegaMinRepMaskKnown( nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -249,6 +259,10 @@ void DiagCovTest::oneByOneCovTest()
   // covariance matrix and its derivative.
   omegaMinRepKnown[0]     = omegaCovKnown[0];
   omegaMinRep_parKnown[0] = omegaCov_parKnown[0];
+
+  // Set the known value for the mask for the minimal representation
+  // for the covariance matrix.
+  omegaMinRepMaskKnown = parMask;
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
@@ -310,6 +324,11 @@ void DiagCovTest::oneByOneCovTest()
     tol );
 
   compareToKnown( 
+    omegaMinRepMask,
+    omegaMinRepMaskKnown,
+    "omegaMinRepMask" );
+
+  compareToKnown( 
     omegaCovTimesInv,
     omegaCovTimesInvKnown,
     "omegaCov times omegaInv",
@@ -365,6 +384,12 @@ void DiagCovTest::twoByTwoCovTest()
   // Set the current value for the parameters.
   omega.setPar( par );
 
+  // Initialize the current value for the parameter mask.
+  valarray<bool> parMask( nPar );
+  parMask[0] = true;
+  parMask[1] = false;
+
+
   //------------------------------------------------------------
   // Calculate various quantities for the test.
   //------------------------------------------------------------
@@ -382,6 +407,7 @@ void DiagCovTest::twoByTwoCovTest()
 
   valarray<double> omegaMinRep    ( nPar );
   valarray<double> omegaMinRep_par( nPar * nPar );
+  valarray<bool>   omegaMinRepMask( nPar );
 
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
@@ -407,6 +433,10 @@ void DiagCovTest::twoByTwoCovTest()
   omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
   omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
 
+  // Calculate the mask for the minimal representation for the
+  // covariance matrix.
+  omega.calcCovMinRepMask( parMask, omegaMinRepMask );
+
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
@@ -425,6 +455,7 @@ void DiagCovTest::twoByTwoCovTest()
 
   valarray<double> omegaMinRepKnown    ( nPar );
   valarray<double> omegaMinRep_parKnown( nPar * nPar );
+  valarray<bool>   omegaMinRepMaskKnown( nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -488,6 +519,10 @@ void DiagCovTest::twoByTwoCovTest()
     }
   }
 
+  // Set the known value for the mask for the minimal representation
+  // for the covariance matrix.
+  omegaMinRepMaskKnown = parMask;
+
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
   identity( nRow, omegaCovTimesInvKnown );
@@ -546,6 +581,11 @@ void DiagCovTest::twoByTwoCovTest()
     omegaMinRep_parKnown,
     "omegaMinRep_par",
     tol );
+
+  compareToKnown( 
+    omegaMinRepMask,
+    omegaMinRepMaskKnown,
+    "omegaMinRepMask" );
 
   compareToKnown( 
     omegaCovTimesInv,
