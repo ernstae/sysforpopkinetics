@@ -281,6 +281,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      valarray<double> bCov( nB * nB );"                   << endl;
   oIndDriver << "      valarray<double> stdPar( nB );"                      << endl;
   oIndDriver << "      valarray<double> stdPar_b( nB * nB );"               << endl;
+  oIndDriver << "      valarray<bool>   stdParMask( nB );"                  << endl;
   oIndDriver << "      bool isCovOut         = " << ( myIsCov?         "true" : "false" ) << ";" << endl;    
   oIndDriver << "      bool isInvCovOut      = " << ( myIsInvCov?      "true" : "false" ) << ";" << endl;    
   oIndDriver << "      bool isStdErrOut      = " << ( myIsStderr?      "true" : "false" ) << ";" << endl;    
@@ -500,6 +501,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               {" << endl;
   oIndDriver << "                  bMask[i] =!( bLow[i]==bUp[i] || bOut[i]==bLow[i] || bOut[i]==bUp[i] );" << endl;
   oIndDriver << "               }" << endl;
+  oIndDriver << "               model.getStandardParMask( bMask, stdParMask );" << endl;
   oIndDriver << "               model.getStandardPar( stdPar );"          << endl;
   oIndDriver << "               model.getStandardPar_indPar( stdPar_b );" << endl;
   oIndDriver << "               indStatistics(    modelForDisposal,"      << endl;
@@ -516,6 +518,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "                                 withD );"       << endl;
   oIndDriver << "               derParStatistics( bMask,"         << endl;
   oIndDriver << "                                 bCov,"          << endl;
+  oIndDriver << "                                 stdParMask,"    << endl;
   oIndDriver << "                                 stdPar,"        << endl;
   oIndDriver << "                                 stdPar_b,"      << endl;
   oIndDriver << "                                 nDegOfFreedom," << endl;
