@@ -289,6 +289,10 @@ public:
   void getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
   void getStandardPar_indPar( SPK_VA::valarray<double>& ret ) const;
 
+  void getStandardParMask( 
+    const SPK_VA::valarray<bool>& indParMaskIn,
+    SPK_VA::valarray<bool>&       standardParMaskOut ) const;
+
 
   //------------------------------------------------------------
   // Disallowed, implicitly generated member functions.

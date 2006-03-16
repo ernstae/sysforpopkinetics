@@ -2986,3 +2986,90 @@ void IndPredModel::getStandardPar_indPar( SPK_VA::valarray<double>& ret ) const
 
 }
 
+
+/*************************************************************************
+ *
+ * Function: getStandardParMask
+ *
+ *//**
+ * Gets the mask used to calculate statistics for the standard
+ * parameters based on the mask for the individual parameters.
+ *
+ * In particular, this function gets the masks for theta and the
+ * minimal representation for omega,
+ * \f[
+ *     \mbox{standardParMask} =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaMask} \\
+ *           \mbox{omegaMinRepMask}
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
+
+void IndPredModel::getStandardParMask( 
+  const SPK_VA::valarray<bool>& indParMaskIn,
+  SPK_VA::valarray<bool>&       standardParMaskOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  standardParMaskOut.resize( nIndPar );
+  assert( indParMaskIn.size() == nIndPar );
+
+
+  //------------------------------------------------------------
+  // Split up the individual parameters mask into pieces.
+  //------------------------------------------------------------
+
+  int k;
+
+  valarray<bool> thetaMask      ( nTheta );
+  valarray<bool> omegaParMask( nOmegaPar );
+
+  // Get the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    thetaMask[k] = indParMaskIn[k + thetaOffsetInIndPar];
+  }
+
+  // Get the elements that correspond to the parameters for omega.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    omegaParMask[k] = indParMaskIn[k + omegaParOffsetInIndPar];
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare the mask for the covariance minimal representation.
+  //------------------------------------------------------------
+
+  // Get the mask for omega's minimal representation.
+  valarray<bool> omegaMinRepMask( nOmegaPar );
+  pOmegaCurr->calcCovMinRepMask( omegaParMask, omegaMinRepMask );
+
+
+  //------------------------------------------------------------
+  // Set the mask for the standard parameters.
+  //------------------------------------------------------------
+
+  // Set the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    standardParMaskOut[k + thetaOffsetInIndPar] = thetaMask[k];
+  }
+
+  // Set the elements that correspond to the minimal representation
+  // for omega.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    standardParMaskOut[k + omegaParOffsetInIndPar] = omegaMinRepMask[k];
+  }
+
+}
+
