@@ -550,6 +550,52 @@ void DiagCov::calcCovMinRep(
 
 /*************************************************************************
  *
+ * Function: calcCovMinRepMask
+ *
+ *//**
+ * Sets covMinRepMaskOut equal to the minimal representation ordered
+ * mask that corresponds to the covariance parameter ordered mask
+ * parMaskIn.
+ *
+ * The minimal representation is the set of diagonal elements.
+ *//*
+ *************************************************************************/
+
+void DiagCov::calcCovMinRepMask( 
+  const SPK_VA::valarray<bool>& parMaskIn,
+  SPK_VA::valarray<bool>&       covMinRepMaskOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  // Set the number of parameters for the covariance matrix.
+  int nMaskInPar = parMaskIn.size();
+
+  covMinRepMaskOut.resize( nMaskInPar );
+
+
+  //------------------------------------------------------------
+  // Set the mask for the covariance matrix minimal representation.
+  //------------------------------------------------------------
+
+  // Set the minimal representation ordered mask equal to the
+  // covariance parameter ordered mask since the orders for their
+  // elements are the same,
+  //
+  //    MinRep     =  cov      ( par ) 
+  //          (i)        (i, i)        
+  //               			 
+  //               =  exp[ 2 par  ]  ,
+  //                            i      
+  //
+  covMinRepMaskOut = parMaskIn;
+
+}
+
+
+/*************************************************************************
+ *
  * Function: calcCovMinRep_par
  *
  *//**
