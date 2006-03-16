@@ -366,6 +366,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      valarray<double> alpCov( nAlp * nAlp );"                   << endl;
   oPopDriver << "      valarray<double> stdPar( nAlp );"                          << endl;
   oPopDriver << "      valarray<double> stdPar_alp( nAlp * nAlp );"               << endl;
+  oPopDriver << "      valarray<bool>   stdParMask( nAlp );"                      << endl;
   oPopDriver << "      const int nDegOfFreedom = nY - nAlp;"                      << endl;
   oPopDriver << "      bool isCovOut         = " << ( myIsCov?    "true" : "false" ) << ";"      << endl;
   oPopDriver << "      bool isInvCovOut      = " << ( myIsInvCov? "true" : "false" ) << ";"      << endl;
@@ -875,6 +876,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               {" << endl;
   oPopDriver << "                  alpMask[i] = !( alpLow[i]==alpUp[i] || alpOut[i]==alpLow[i] || alpOut[i]==alpUp[i] );" << endl;
   oPopDriver << "               }" << endl;
+  oPopDriver << "               model.getStandardParMask( alpMask, stdParMask );" << endl;
   oPopDriver << "               model.getStandardPar( stdPar );" << endl;
   oPopDriver << "               model.getStandardPar_popPar( stdPar_alp );" << endl;
   oPopDriver << "               popStatistics(    modelForDisposal, "                  << endl;
@@ -897,6 +899,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << endl;
   oPopDriver << "               derParStatistics( alpMask,"                 << endl;
   oPopDriver << "                                 alpCov,"                  << endl;
+  oPopDriver << "                                 stdParMask,"              << endl;
   oPopDriver << "                                 stdPar,"                  << endl;
   oPopDriver << "                                 stdPar_alp,"              << endl;
   oPopDriver << "                                 nDegOfFreedom,"           << endl;
@@ -1033,7 +1036,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               oResults << \"<value>\" << sigmaIn[i] << \"</value>\" << endl;" << endl;
   oPopDriver << "            }" << endl;
   */
-  oPopDriver << "            if( NonmemPars::omegaStruct==DIAGONAL )" << endl;
+  oPopDriver << "            if( NonmemPars::sigmaStruct==DIAGONAL )" << endl;
   oPopDriver << "            {" << endl;
   oPopDriver << "               for( int i=0; i<NonmemPars::sigmaDim; i++ )" << endl;
   oPopDriver << "               {" << endl;
