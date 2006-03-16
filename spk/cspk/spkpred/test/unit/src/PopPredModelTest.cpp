@@ -3658,11 +3658,26 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
 
   valarray<double> standardPar       ( nPopPar );
   valarray<double> standardPar_popPar( nPopPar * nPopPar );
+  valarray<bool>   standardParMask   ( nPopPar );
 
   // Get the current value for the standard parameter and its
   // derivative.
   model.getStandardPar       ( standardPar );
   model.getStandardPar_popPar( standardPar_popPar );
+
+  // Set the population parameter mask.
+  valarray<bool> popParMask( nPopPar );
+  popParMask[0] = true;
+  popParMask[1] = false;
+  popParMask[2] = false;
+  popParMask[3] = true;
+  popParMask[4] = false;
+  popParMask[5] = false;
+  popParMask[6] = true;
+  popParMask[7] = false;
+
+  // Calculate the mask for the standard parameters.
+  model.getStandardParMask( popParMask, standardParMask );
 
 
   //------------------------------------------------------------
@@ -3748,6 +3763,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
 
   valarray<double> standardParKnown       ( nPopPar );
   valarray<double> standardPar_popParKnown( nPopPar * nPopPar );
+  valarray<bool>   standardParMaskKnown   ( nPopPar );
 
   // Set the known value for the standard parameter.
   //
@@ -3828,6 +3844,9 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
     nSigmaPar,
     sigmaParOffsetInPopPar,
     sigmaParOffsetInPopPar );
+
+  // Set the known value for the mask for the standard parameters.
+  standardParMaskKnown = popParMask;
 
 
   //------------------------------------------------------------
@@ -4309,6 +4328,12 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
     standardPar_popParKnown,
     "standardPar_popPar",
     tol );
+
+  compareToKnown( 
+    standardParMask,
+    standardParMaskKnown,
+    "standardParMask" );
+
 }
 
 
