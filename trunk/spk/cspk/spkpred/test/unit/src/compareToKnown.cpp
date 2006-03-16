@@ -32,19 +32,11 @@
 
 /*************************************************************************
  *
- * Function: compareToKnown
+ * Function: compareToKnown  (bool version)
  *
  *
  * Compares an array of calculated values xCalc to an array of known
  * xKnown values.
- *
- * If an element of xKnown is nonzero, then this function checks to 
- * see the corresponding element in xCalc is within relative tolerance 
- * tol of the known value.
- *
- * If an element of xKnown zero, then this function checks to see the
- * corresponding element in xCalc is within absolute tolerance tol of
- * the origin.
  *
  *************************************************************************/
 
@@ -68,6 +60,63 @@ using namespace CppUnit;
 using std::string;
 using SPK_VA::valarray;
 
+
+/*------------------------------------------------------------------------
+ * Function definition
+ *------------------------------------------------------------------------*/
+
+void compareToKnown(
+  const valarray<bool>&  xCalc,
+  const valarray<bool>&  xKnown,
+  const string&          name )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+
+  //------------------------------------------------------------
+  // Compare the arrays.
+  //------------------------------------------------------------
+
+  assert( xCalc.size() == xKnown.size() );
+
+  int i;
+  bool ok = true;
+
+  for ( i = 0; i < xCalc.size(); i++ )
+  {
+    if ( xKnown[i] != xCalc[i] )
+    {
+      ok &= false;
+    }
+  }
+
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The calculated and known values for " + name + " do not agree.",
+    ok );
+
+}
+
+/*************************************************************************
+ *
+ * Function: compareToKnown  (double version)
+ *
+ *
+ * Compares an array of calculated values xCalc to an array of known
+ * xKnown values.
+ *
+ * If an element of xKnown is nonzero, then this function checks to 
+ * see the corresponding element in xCalc is within relative tolerance 
+ * tol of the known value.
+ *
+ * If an element of xKnown zero, then this function checks to see the
+ * corresponding element in xCalc is within absolute tolerance tol of
+ * the origin.
+ *
+ *************************************************************************/
 
 /*------------------------------------------------------------------------
  * Function definition

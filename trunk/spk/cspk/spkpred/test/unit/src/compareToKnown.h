@@ -49,6 +49,11 @@
  *------------------------------------------------------------------------*/
 
 void compareToKnown(
+  const SPK_VA::valarray<bool>&  xCalc,
+  const SPK_VA::valarray<bool>&  xKnown,
+  const std::string&             name );
+
+void compareToKnown(
   const SPK_VA::valarray<double>&  xCalc,
   const SPK_VA::valarray<double>&  xKnown,
   const std::string&               name,
