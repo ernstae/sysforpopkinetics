@@ -1124,13 +1124,19 @@ void indStatistics( SpkModel&                model,
     DInvMask   .resize( nB * nB );
     DInvReduced.resize( nB * nB );
 
-    for ( i = 0; i < nB; i++ )
+    for ( j = 0; j < nB; j++ )
     {
-      //  Set the mask elements for this column.
-      DInvMask[ slice( i * nB, nB, 1  ) ] = indParMask[i];
-
-      //  Set the mask elements for this row.
-      DInvMask[ slice( i,      nB, nB ) ] = indParMask[i];
+      if ( indParMask[j] )
+      {
+        for ( i = 0; i < nB; i++ )
+        {
+          DInvMask[ i + j * nB ] = indParMask[i];
+        }
+      }
+      else
+      {
+        DInvMask[ slice( j * nB, nB, 1 ) ] = false;
+      }
     }
 
     DInvReduced = DInv[ DInvMask ];
@@ -1171,13 +1177,19 @@ void indStatistics( SpkModel&                model,
 
       // Get the reduced version of the symmetrized Hessian.
       valarray<bool> infoMatrixMask( nB * nB );
-      for ( i = 0; i < nB; i++ )
+      for ( j = 0; j < nB; j++ )
       {
-        //  Set the mask elements for this column.
-        infoMatrixMask[ slice( i * nB, nB, 1  ) ] = indParMask[i];
-  
-        //  Set the mask elements for this row.
-        infoMatrixMask[ slice( i,      nB, nB ) ] = indParMask[i];
+        if ( indParMask[j] )
+        {
+          for ( i = 0; i < nB; i++ )
+          {
+            infoMatrixMask[ i + j * nB ] = indParMask[i];
+          }
+        }
+        else
+        {
+          infoMatrixMask[ slice( j * nB, nB, 1 ) ] = false;
+        }
       }
       infoMatrixReduced = indObj_indPar_indParSymm[ infoMatrixMask ];
     }
