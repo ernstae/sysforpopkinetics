@@ -429,7 +429,7 @@ void derParStatistics(
 }
 /*************************************************************************
  *
- * Function: derParStatistics - allows inactive elements
+ * Function: derParStatistics - allows fixed elements
  *
  *************************************************************************/
 
@@ -437,7 +437,7 @@ void derParStatistics(
  * Function Specification
  *------------------------------------------------------------------------*/
 /*
-$begin derParStatisticsInactiveElem$$
+$begin derParStatisticsFixedElem$$
 
 $spell
   Model model
@@ -491,24 +491,25 @@ $spell
   deg
 $$
 
-$section Computing Statistics of Derived Parameter Estimates when Some Elements are not Active$$
+$section Computing Statistics of Derived Parameter Estimates when Some Elements are Fixed$$
 
 $index derParStatistics$$
 $index derived parameter, covariance, standard error, correlation matrix$$
 
 $table
 $bold Prototype:$$ $cend
-$syntax/void derParStatistics( const SPK_VA::valarray<bool>   & /mask/,
-		       const SPK_VA::valarray<double> & /xCov/,
-		       const SPK_VA::valarray<double> & /z/,
-		       const SPK_VA::valarray<double> & /z_x/,
-		       int                              /nDegOfFreedom/,
-		       SPK_VA::valarray<double>       * /zCovOut/,
+$syntax/void derParStatistics( const SPK_VA::valarray<bool>   & /xMask/,
+                       const SPK_VA::valarray<bool>   & /zMask/,
+                       const SPK_VA::valarray<double> & /xCov/,
+                       const SPK_VA::valarray<double> & /z/,
+                       const SPK_VA::valarray<double> & /z_x/,
+                       int                              /nDegOfFreedom/,
+                       SPK_VA::valarray<double>       * /zCovOut/,
                        SPK_VA::valarray<double>       * /zInvCovOut/,
-		       SPK_VA::valarray<double>       * /zSEOut/,
-		       SPK_VA::valarray<double>       * /zCorOut/,
-		       SPK_VA::valarray<double>       * /zCVOut/,
-		       SPK_VA::valarray<double>       * /zCIOut/
+                       SPK_VA::valarray<double>       * /zSEOut/,
+                       SPK_VA::valarray<double>       * /zCorOut/,
+                       SPK_VA::valarray<double>       * /zCVOut/,
+                       SPK_VA::valarray<double>       * /zCIOut/
                       )
 /$$
 $tend
@@ -593,11 +594,20 @@ $xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
 
 $head Arguments$$
 $syntax/
-/mask/
+/xMask/
 /$$
-$code mask$$ is a vector of boolean values of length equal to the parameter
-vector, $code popPar$$.  $code mask[i]$$ tells as to whether $code popPar[i]$$
-is active or not.  If $math%mask[i]%$$ is $math%false%$$, the i-th element of
+$code xMask$$ is a vector of boolean values of length equal to the parameter
+vector, $code x$$.  $code xMask[i]$$ tells as to whether $code x[i]$$
+is fixed or not.  If $math%xMask[i]%$$ is $math%false%$$, the i-th element of
+the parameter vector are treated as if it does not exist and further 
+statistics computations are performed based upon the assumption.
+
+$syntax/
+/zMask/
+/$$
+$code zMask$$ is a vector of boolean values of length equal to the derived parameter
+vector, $code z$$.  $code zMask[i]$$ tells as to whether $code z[i]$$
+is fixed or not.  If $math%zMask[i]%$$ is $math%false%$$, the i-th element of
 the parameter vector are treated as if it does not exist and further 
 statistics computations are performed based upon the assumption.
 
@@ -607,6 +617,10 @@ $syntax/
 /$$
 is an n * n dimensional vector that contains the covariance matrix for
 x in column major order.
+
+The $math%(i,j)%$$-the element of the covariance matrix
+will be removed from the calculation of the derived statistics if 
+$code xMask[i]$$ or $code xMask[j]$$ is $math%false%$$.
 
 $syntax/
 
@@ -644,7 +658,7 @@ If it points to a valarray sized other than n * n, the resulting
 behavior is undetermined.
 
 The $math%(i,j)%$$-the element of the covariance matrix
-will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+will be replaced by NaN if $code zMask[i]$$ or $code zMask[j]$$ is $math%false%$$.
 
 $syntax/
 
@@ -658,7 +672,7 @@ If it points to a valarray sized other than n * n, the resulting
 behavior is undetermined.
 
 The $math%(i,j)%$$-the element of the inverse of the covariance matrix
-will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+will be replaced by NaN if $code zMask[i]$$ or $code zMask[j]$$ is $math%false%$$.
 
 $syntax/
 
@@ -671,7 +685,7 @@ If it points to a valarray sized other than n, the resulting behavior
 is undetermined.
 
 The $math%i%$$-th element of the standard error vector
-will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+will be replaced by NaN if $code zMask[i]$$ is $math%false%$$.
 
 $syntax/
 
@@ -685,7 +699,7 @@ If it points to a valarray sized other than n * n, the resulting
 behavior is undetermined.
 
 The $math%(i, j)%$$-th element of the correlation matrix
-will be replaced by NaN if $code mask[i]$$ or $code mask[j]$$ is $math%false%$$.
+will be replaced by NaN if $code zMask[i]$$ or $code zMask[j]$$ is $math%false%$$.
 
 $syntax/
 
@@ -700,7 +714,7 @@ $pre
 
 $$
 The $math%i%$$-th element of the coefficient vector
-will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+will be replaced by NaN if $code zMask[i]$$ is $math%false%$$.
 
 $syntax/
 
@@ -717,7 +731,7 @@ If it points to a valarray sized other than n * 2, the resulting
 behavior is undetermined.
 
 The $math%(i,1)%$$ and $math%(i,2)%$$ elements of the confidence interval matrix
-will be replaced by NaN if $code mask[i]$$ is $math%false%$$.
+will be replaced by NaN if $code zMask[i]$$ is $math%false%$$.
 
 
 $end
@@ -731,122 +745,225 @@ namespace
   //=========================================================
 
   void placeVal( const valarray<bool>   & mask,
-		 const valarray<double> & x,
-		 valarray<double>       & y,
-		 double val = NAN )
+                 const valarray<double> & x,
+                 valarray<double>       & y,
+                 double val = NAN )
   {
     assert( mask.size() == y.size() );
     const int nX = x.size();
     const int nY = y.size();
+
+    int i;
+    int ii;
     
-    for( int i=0, ii=0; i<nY; i++ )
+    for ( i = 0, ii = 0; i < nY; i++ )
+    {
+      if( mask[i] )
       {
-	if( mask[i] )
-	  {
-	    y[i] = x[ii];
-	    ii++;
-	  }
-	else
-	  y[i] = val;
+        y[i] = x[ii];
+        ii++;
       }
+      else
+        y[i] = val;
+    }
   }
+
 }
-void derParStatistics( const SPK_VA::valarray<bool>   & mask,
-		       const SPK_VA::valarray<double> & xCov,
-		       const SPK_VA::valarray<double> & z,
-		       const SPK_VA::valarray<double> & z_x,
-		       int                              nDegOfFreedom,
-		       SPK_VA::valarray<double>       * zCovOut,
+
+void derParStatistics( const SPK_VA::valarray<bool>   & xMask,
+                       const SPK_VA::valarray<double> & xCov,
+                       const SPK_VA::valarray<bool>   & zMask,
+                       const SPK_VA::valarray<double> & z,
+                       const SPK_VA::valarray<double> & z_x,
+                       int                              nDegOfFreedom,
+                       SPK_VA::valarray<double>       * zCovOut,
                        SPK_VA::valarray<double>       * zInvCovOut,
-		       SPK_VA::valarray<double>       * zSEOut,
-		       SPK_VA::valarray<double>       * zCorOut,
-		       SPK_VA::valarray<double>       * zCVOut,
-		       SPK_VA::valarray<double>       * zCIOut
+                       SPK_VA::valarray<double>       * zSEOut,
+                       SPK_VA::valarray<double>       * zCorOut,
+                       SPK_VA::valarray<double>       * zCVOut,
+                       SPK_VA::valarray<double>       * zCIOut
                       )
 {
-   const int nZ = z.size();
-   const int nX = z_x.size() / nZ;
-   assert( nX * nZ == z_x.size() );
-   assert( nX * nX == xCov.size() );
-   assert( nX == nZ );
-   
-   const int nY = mask[ mask ].size();
-   const int nW = nY;
-   valarray<double> yCov   ( nY * nY );
-   valarray<double> yInvCov( nY * nY );
-   valarray<double> w      ( nY );
-   valarray<double> w_y    ( nY * nY );
-   valarray<double> ySE    ( nY );
-   valarray<double> yCor   ( nY * nY );
-   valarray<double> yCV    ( nY );
-   valarray<double> yCI    ( nY * 2 );
+  //----------------------------------------------------------------
+  // Preliminaries.
+  //----------------------------------------------------------------
 
-   // eliminating fixed elements from xCov
-   for( int j=0, jj=0; j<nX; j++ )
-   {
-      if( mask[j] )
+  // Return if there are no output values to compute.
+  if ( zCovOut    == 0 && 
+       zInvCovOut == 0 && 
+       zSEOut     == 0 && 
+       zCorOut    == 0 && 
+       zCVOut     == 0 && 
+       zCIOut     == 0 )
+  {
+    return;
+  }
+
+  // Get the number of parameters in x and z.
+  const int nX = xMask.size();
+  const int nZ = zMask.size();
+
+
+  //----------------------------------------------------------------
+  // Validate the inputs.
+  //----------------------------------------------------------------
+
+  if ( nZ != nX )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR,  
+      "The number of derived parameters must be equal to the number of original parameters.",
+      __LINE__, 
+      __FILE__ );
+  }
+    
+  if ( nZ < 1 )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR,  
+      "The number of derived parameters must be greater than zero.",
+      __LINE__, 
+      __FILE__ );
+  }
+    
+  if ( xCov.size() != nX * nX )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR,  
+      "The covariance matrix for the original parameter has the wrong dimensions.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+  if ( z.size() != nZ )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR,  
+      "The derived parameter has the wrong dimensions.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+  if ( z_x.size() != nZ * nX )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR,  
+      "The derivative of the derived parameter has the wrong dimensions.",
+      __LINE__, 
+      __FILE__ );
+  }
+
+
+  //----------------------------------------------------------------
+  // Get the free parameters vector, covariance, and derivative.
+  //----------------------------------------------------------------
+
+  int i;
+  int j;
+  int ii;
+  int jj;
+
+  // Determine the number of parameter elements that are fixed and
+  // should be removed from the derived statistics calculation.
+  int nXFixed = 0;
+  for ( i = 0; i < nX; i++ )
+  {
+    if ( !xMask[i] )
+    {
+      nXFixed++;
+    }
+  }  
+
+  // Set the number of parameter elements that are free should be
+  // included the derived statistics calculation.
+  const int nXFree = nX - nXFixed;
+  const int nZFree = nXFree;
+
+  valarray<double> xFreeCov   ( nXFree * nXFree );
+  valarray<double> xFreeInvCov( nXFree * nXFree );
+  valarray<double> xFreeSE    ( nXFree );
+  valarray<double> xFreeCor   ( nXFree * nXFree );
+  valarray<double> xFreeCV    ( nXFree );
+  valarray<double> xFreeCI    ( nXFree * 2 );
+  valarray<double> zFree      ( nZFree );
+  valarray<double> zFree_xFree( nZFree * nXFree );
+
+  // Get the covariance of the free elements in x.
+  for ( j = 0, jj = 0; j<nX; j++ )
+  {
+    if ( xMask[j] )
+    {
+      for ( i = 0, ii = 0; i<nX; i++ )
       {
-         for( int i=0, ii=0; i<nX; i++ )
-         {
-            if( mask[i] )
-            {
-               yCov[ ii + jj * nY ] = xCov[ i + j * nX ];
-               ii++;
-            }
-         }
-         jj++;
+        if ( xMask[i] )
+        {
+          xFreeCov[ ii + jj * nXFree ] = xCov[ i + j * nX ];
+          ii++;
+        }
       }
-   }   
-   for( int i=0, ii=0; i<nZ; i++ )
-     {
-       if( mask[i] )
-	 {
-	   w[ ii ] = z[ i ];
-	   ii++;
-	 }
-     }
+      jj++;
+    }
+  }  
 
-   // eliminating fixed elements from z_x
-   for( int j=0, jj=0; j<nX; j++ )
-   {
-      if( mask[j] )
+  // Get the free elements in z.
+  for ( i = 0, ii = 0; i < nZ; i++ )
+  {
+    if ( zMask[i] )
+    {
+      zFree[ ii ] = z[ i ];
+      ii++;
+    }
+  }
+
+  // Get the derivative of the free elements in z with respect to the
+  // free elements in x.
+  for ( j = 0, jj = 0; j < nX; j++ )
+  {
+    if ( xMask[j] )
+    {
+      for ( i = 0, ii = 0; i < nZ; i++ )
       {
-         for( int i=0, ii=0; i<nZ; i++ )
-         {
-	   if( mask[i] )
-	     {
-               w_y[ ii + jj * nW ] = z_x[ i + j * nZ ];
-	       ii++;
-	     }
-         }
-         jj++;
+        if ( zMask[i] )
+        {
+          zFree_xFree[ ii + jj * nZFree ] = z_x[ i + j * nZ ];
+          ii++;
+        }
       }
-   }
-   derParStatistics( yCov, 
-		     w, 
-		     w_y, 
-		     nDegOfFreedom,
-		     ( zCovOut? &yCov : NULL ),
-		     ( zSEOut?  &ySE  : NULL ),
-		     ( zCorOut? &yCor : NULL ),
-		     ( zCVOut?  &yCV  : NULL ),
-		     ( zCIOut?  &yCI  : NULL )
-		     );
+      jj++;
+    }
+  }
 
-   double val = NAN;
 
-   // Calculate the inverse of the covariance of the original
-   // parameters after its fixed elements have been eliminated.
-   try
-   {
-      yInvCov = inverse( yCov, nY );
-   }
-   catch ( ... )
-   {
-      // If the inverse calculation fails, set the inverse elements to
-      // indicate that its values could not be calculated.
-      yInvCov = val;
-   }
+  //----------------------------------------------------------------
+  // Calculate the derived statistics for the free parameters.
+  //----------------------------------------------------------------
+
+  // Calculate the derived statistics for the set of free parameters.
+  derParStatistics(
+    xFreeCov, 
+    zFree, 
+    zFree_xFree, 
+    nDegOfFreedom,
+    ( zCovOut? &xFreeCov : NULL ),
+    ( zSEOut?  &xFreeSE  : NULL ),
+    ( zCorOut? &xFreeCor : NULL ),
+    ( zCVOut?  &xFreeCV  : NULL ),
+    ( zCIOut?  &xFreeCI  : NULL ) );
+
+  double val = NAN;
+
+  // Calculate the inverse of the covariance of the original
+  // parameters after its fixed elements have been eliminated.
+  try
+  {
+    xFreeInvCov = inverse( xFreeCov, nXFree );
+  }
+  catch ( ... )
+  {
+    // If the inverse calculation fails, set the inverse elements to
+    // indicate that its values could not be calculated.
+    xFreeInvCov = val;
+  }
 
   valarray<bool> zCI_mask ( nZ * 2 );
   valarray<bool> zSE_mask ( nZ );
@@ -854,57 +971,95 @@ void derParStatistics( const SPK_VA::valarray<bool>   & mask,
   valarray<bool> zCov_mask( nZ * nZ );
   valarray<bool> zCor_mask( nZ * nZ );
 
-  for( int j=0; j<2; j++ )
+  for ( j = 0; j < 2; j++ )
+  {
+    for ( i = 0; i < nZ; i++ )
     {
-      for( int i=0; i<nZ; i++ )
-	{
-	  zCI_mask[ i + j * nZ ] = mask[i];
-	}
+      zCI_mask[ i + j * nZ ] = zMask[i];
     }
+  }
 
-  for( int j=0; j<nZ; j++ )
+  for ( j = 0; j < nZ; j++ )
+  {
+    if ( zMask[j] )
     {
-      if( mask[j] )
-	{
-	  for( int i=0; i<nZ; i++ )
-	    {
-	      zCov_mask[ i + j * nZ ] = mask[i];
-	      zCor_mask[ i + j * nZ ] = mask[i];
-	    }
-       
-	  zSE_mask[ j ] = mask[j];
-	  zCV_mask[ j ] = mask[j];
-	}
-      else
-	{
-	  zCov_mask[ slice( j * nZ, nZ, 1 ) ] = false;
-	  zCor_mask[ slice( j * nZ, nZ, 1 ) ] = false;
-	}
+      for ( i = 0; i < nZ; i++ )
+      {
+        zCov_mask[ i + j * nZ ] = zMask[i];
+        zCor_mask[ i + j * nZ ] = zMask[i];
+      }
+   
+      zSE_mask[ j ] = zMask[j];
+      zCV_mask[ j ] = zMask[j];
     }
-  if( zCIOut )
+    else
     {
-      placeVal( zCI_mask, yCI, *zCIOut, val );
+      zCov_mask[ slice( j * nZ, nZ, 1 ) ] = false;
+      zCor_mask[ slice( j * nZ, nZ, 1 ) ] = false;
     }
-  if( zCovOut )
-    {
-      placeVal( zCov_mask, yCov, *zCovOut, val );
-    }
-  if( zInvCovOut )
-    {
-      placeVal( zCov_mask, yInvCov, *zInvCovOut, val );
-    }
-  if( zCorOut )
-    {
-      placeVal( zCor_mask, yCor, *zCorOut, val );
-    }
-  if( zSEOut )
-    {
-      placeVal( zSE_mask, ySE, *zSEOut, val );
-    }
-  if( zCVOut )
-    {
-      placeVal( zCV_mask, yCV, *zCVOut, val );
-    }
+  }
 
-   return;
+
+  //----------------------------------------------------------------
+  // Finish up.
+  //----------------------------------------------------------------
+
+  if ( zCIOut )
+  {
+    placeVal( zCI_mask, xFreeCI, *zCIOut, val );
+  }
+  if ( zCovOut )
+  {
+    placeVal( zCov_mask, xFreeCov, *zCovOut, val );
+  }
+  if ( zInvCovOut )
+  {
+    placeVal( zCov_mask, xFreeInvCov, *zInvCovOut, val );
+  }
+  if ( zCorOut )
+  {
+    placeVal( zCor_mask, xFreeCor, *zCorOut, val );
+  }
+  if ( zSEOut )
+  {
+    placeVal( zSE_mask, xFreeSE, *zSEOut, val );
+  }
+  if ( zCVOut )
+  {
+    placeVal( zCV_mask, xFreeCV, *zCVOut, val );
+  }
+
+  return;
 }
+
+// The version that takes two masks should be used instead of this
+// version, which is here for backwards compatability.
+void derParStatistics( const SPK_VA::valarray<bool>   & mask,
+                       const SPK_VA::valarray<double> & xCov,
+                       const SPK_VA::valarray<double> & z,
+                       const SPK_VA::valarray<double> & z_x,
+                       int                              nDegOfFreedom,
+                       SPK_VA::valarray<double>       * zCovOut,
+                       SPK_VA::valarray<double>       * zInvCovOut,
+                       SPK_VA::valarray<double>       * zSEOut,
+                       SPK_VA::valarray<double>       * zCorOut,
+                       SPK_VA::valarray<double>       * zCVOut,
+                       SPK_VA::valarray<double>       * zCIOut
+                      )
+{
+  // Use the same mask for x and z.
+  derParStatistics(
+    mask,
+    xCov,
+    mask,
+    z,
+    z_x,
+    nDegOfFreedom,
+    zCovOut,
+    zInvCovOut,
+    zSEOut,
+    zCorOut,
+    zCVOut,
+    zCIOut );
+}
+

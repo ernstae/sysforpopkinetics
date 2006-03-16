@@ -46,6 +46,22 @@ void derParStatistics( const SPK_VA::valarray<double>& xCov,        // Covarianc
 		       SPK_VA::valarray<double>*       zCVOut,      // Derived parameter coefficients of variation.
 		       SPK_VA::valarray<double>*       zCIOut );    // Derived parameter confidence intervals.
 
+void derParStatistics( const SPK_VA::valarray<bool>   & xMask,
+		       const SPK_VA::valarray<double> & xCov,
+		       const SPK_VA::valarray<bool>   & zMask,
+		       const SPK_VA::valarray<double> & z,
+		       const SPK_VA::valarray<double> & z_x,
+		       int                              nDegOfFreedom,
+		       SPK_VA::valarray<double>       * alpCovOut,
+		       SPK_VA::valarray<double>       * alpInvCovOut,
+		       SPK_VA::valarray<double>       * alpSEOut,
+		       SPK_VA::valarray<double>       * alpCorOut,
+		       SPK_VA::valarray<double>       * alpCVOut,
+		       SPK_VA::valarray<double>       * alpCIOut
+		       );
+
+// The version that takes two masks should be used instead of this
+// version, which is here for backwards compatability.
 void derParStatistics( const SPK_VA::valarray<bool>   & mask,
 		       const SPK_VA::valarray<double> & xCov,
 		       const SPK_VA::valarray<double> & z,
@@ -58,4 +74,5 @@ void derParStatistics( const SPK_VA::valarray<bool>   & mask,
 		       SPK_VA::valarray<double>       * alpCVOut,
 		       SPK_VA::valarray<double>       * alpCIOut
 		       );
+
 #endif
