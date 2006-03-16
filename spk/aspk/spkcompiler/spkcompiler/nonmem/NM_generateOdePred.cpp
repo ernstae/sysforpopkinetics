@@ -248,6 +248,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "   const int                     spk_nParameters;"              << endl;
   oOdePred_h << "   int                           spk_curWho;" << endl;
   oOdePred_h << "   int                           spk_curWhichRecord;" << endl;
+  oOdePred_h << "   std::vector<spk_ValueType>    spk_p;" << endl;
   oOdePred_h << endl;
 
   //
@@ -404,7 +405,9 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "  spk_nCompartments  ( nCompartmentsWithOutputIn )," << endl;
   oOdePred_h << "  spk_nParameters    ( nParametersIn ),"             << endl;
   oOdePred_h << "  spk_curWho         ( 0 ),"                         << endl;
-  oOdePred_h << "  spk_curWhichRecord ( 0 )"                          << endl;
+  oOdePred_h << "  spk_curWhichRecord ( 0 ),"                         << endl;
+  oOdePred_h << "  spk_p              ( nParametersIn ),"             << endl;
+  oOdePred_h << "  P                  ( spk_p.begin() )"              << endl;
   oOdePred_h << "{" << endl;
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
