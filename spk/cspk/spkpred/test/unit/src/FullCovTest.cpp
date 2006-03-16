@@ -172,6 +172,10 @@ void FullCovTest::oneByOneCovTest()
   // Set the current value for the parameters.
   omega.setPar( par );
 
+  // Initialize the current value for the parameter mask.
+  valarray<bool> parMask( nPar );
+  parMask[0] = true;
+
 
   //------------------------------------------------------------
   // Calculate various quantities for the test.
@@ -192,6 +196,7 @@ void FullCovTest::oneByOneCovTest()
 
   valarray<double> omegaMinRep    ( nPar );
   valarray<double> omegaMinRep_par( nPar * nPar );
+  valarray<bool>   omegaMinRepMask( nPar );
 
   valarray<double> omegaCovTimesInv( nRow * nRow );
 
@@ -221,6 +226,10 @@ void FullCovTest::oneByOneCovTest()
   omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
   omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
 
+  // Calculate the mask for the minimal representation for the
+  // covariance matrix.
+  omega.calcCovMinRepMask( parMask, omegaMinRepMask );
+
   // Multiply the covariance matrix and its inverse.
   omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
 
@@ -239,6 +248,7 @@ void FullCovTest::oneByOneCovTest()
 
   valarray<double> omegaMinRepKnown    ( nPar );
   valarray<double> omegaMinRep_parKnown( nPar * nPar );
+  valarray<bool>   omegaMinRepMaskKnown( nPar );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
 
@@ -266,6 +276,10 @@ void FullCovTest::oneByOneCovTest()
   // covariance matrix and its derivative.
   omegaMinRepKnown[0]     = omegaCovKnown[0];
   omegaMinRep_parKnown[0] = omegaCov_parKnown[0];
+
+  // Set the known value for the mask for the minimal representation
+  // for the covariance matrix.
+  omegaMinRepMaskKnown = parMask;
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
@@ -325,6 +339,11 @@ void FullCovTest::oneByOneCovTest()
     omegaMinRep_parKnown,
     "omegaMinRep_par",
     tol );
+
+  compareToKnown( 
+    omegaMinRepMask,
+    omegaMinRepMaskKnown,
+    "omegaMinRepMask" );
 
   compareToKnown( 
     omegaCovTimesInv,
@@ -777,6 +796,15 @@ void FullCovTest::threeByThreeCovTest()
   // Set the current value for the parameters.
   omega.setPar( par );
 
+  // Initialize the current value for the parameter mask.
+  valarray<bool> parMask( nPar );
+  parMask[0] = true;
+  parMask[1] = false;
+  parMask[2] = true;
+  parMask[3] = false;
+  parMask[4] = false;
+  parMask[5] = true;
+
 
   //------------------------------------------------------------
   // Calculate various quantities for the test.
@@ -797,6 +825,7 @@ void FullCovTest::threeByThreeCovTest()
 
   valarray<double> omegaMinRep    ( nPar );
   valarray<double> omegaMinRep_par( nPar * nPar );
+  valarray<bool>   omegaMinRepMask( nPar );
   valarray<double> omegaExpMinRep ( nRow * nRow );
 
   valarray<double> omegaCovTimesInv( nRow * nRow );
@@ -830,6 +859,10 @@ void FullCovTest::threeByThreeCovTest()
   omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
   omega.calcCovMinRep_par( omegaCov_par, nPar, omegaMinRep_par );
 
+  // Calculate the mask for the minimal representation for the
+  // covariance matrix.
+  omega.calcCovMinRepMask( parMask, omegaMinRepMask );
+
   // Expand the minimal representation for the covariance matrix.
   omega.expandCovMinRep( omegaMinRep, omegaExpMinRep );
 
@@ -855,6 +888,7 @@ void FullCovTest::threeByThreeCovTest()
 
   valarray<double> omegaMinRepKnown    ( nPar );
   valarray<double> omegaMinRep_parKnown( nPar * nPar );
+  valarray<bool>   omegaMinRepMaskKnown( nPar );
   valarray<double> omegaExpMinRepKnown ( nRow * nRow );
 
   valarray<double> omegaCovTimesInvKnown( nRow * nRow );
@@ -1019,6 +1053,20 @@ void FullCovTest::threeByThreeCovTest()
     }    
   }    
 
+  // Set the known value for the mask for the minimal representation
+  // for the covariance matrix.
+  //
+  // Note that the third and fourth elements of the masks are switched
+  // because the elements of the minimal representation are stored in
+  // column major order, but the elements of the covariance parameters
+  // that make up the Cholesky factor are stored in row major order.
+  omegaMinRepMaskKnown[0] = parMask[0];
+  omegaMinRepMaskKnown[1] = parMask[1];
+  omegaMinRepMaskKnown[2] = parMask[3];    // This element is switched.
+  omegaMinRepMaskKnown[3] = parMask[2];    // This element is switched.
+  omegaMinRepMaskKnown[4] = parMask[4];
+  omegaMinRepMaskKnown[5] = parMask[5];
+
   // The known value for the expanded minimal representation 
   // should just be the original covariance matrix.
   omegaExpMinRepKnown = omegaCovKnown;
@@ -1085,6 +1133,11 @@ void FullCovTest::threeByThreeCovTest()
     omegaMinRep_parKnown,
     "omegaMinRep_par",
     tol );
+
+  compareToKnown( 
+    omegaMinRepMask,
+    omegaMinRepMaskKnown,
+    "omegaMinRepMask" );
 
   compareToKnown( 
     omegaExpMinRep,
