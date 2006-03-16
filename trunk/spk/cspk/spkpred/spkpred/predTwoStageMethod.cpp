@@ -69,35 +69,35 @@ using SPK_VA::valarray;
  *
  * To be specific, at the end of these methods,
  * \f[
- *     theta^{\mbox{Pop}}  =  thetaMean^{\mbox{Ind}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  theta_i^{\mbox{Ind}}   ,
+ *     theta^{\mbox{(Pop)}}  =  thetaMean^{\mbox{(Ind)}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  theta_i^{\mbox{(Ind)}}   ,
  * \f]
  * \f[
- *     Omega^{\mbox{Pop}}  =  thetaCov^{\mbox{Ind}}   =  \frac{1}{nInd} \sum_{i = 1}^{nInd}   ( theta_i^{\mbox{Ind}}  -  thetaMean^{\mbox{Ind}} ) ( theta_i^{\mbox{Ind}}  -  thetaMean^{\mbox{Ind}} )^T   ,
+ *     Omega^{\mbox{(Pop)}}  =  thetaCov^{\mbox{(Ind)}}  ,
  * \f]
  * \f[
- *     Sigma^{\mbox{Pop}}  =  OmegaMean^{\mbox{Ind}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  Omega_i^{\mbox{Ind}}   .
+ *     Sigma^{\mbox{(Pop)}}  =  OmegaMean^{\mbox{(Ind)}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  Omega_i^{\mbox{(Ind)}}   .
  * \f]
  * This function, therefore, requires that the following be true:
  * \f[
- *     nTheta^{\mbox{Pop}}       =  nTheta^{\mbox{Ind}}  ,
+ *     nTheta^{\mbox{(Pop)}}       =  nTheta^{\mbox{(Ind)}}  ,
  * \f]
  * \f[
- *     nEta^{\mbox{Pop}}         =  nTheta^{\mbox{Ind}}  ,
+ *     nEta^{\mbox{(Pop)}}         =  nTheta^{\mbox{(Ind)}}  ,
  * \f]
  * \f[
- *     nEps^{\mbox{Pop}}         =  nEta^{\mbox{Ind}}  ,
+ *     nEps^{\mbox{(Pop)}}         =  nEta^{\mbox{(Ind)}}  ,
  * \f]
  * \f[
- *     SigmaStruct^{\mbox{Pop}}  =  OmegaStruct^{\mbox{Ind}}  ,
+ *     SigmaStruct^{\mbox{(Pop)}}  =  OmegaStruct^{\mbox{(Ind)}}  ,
  * \f]
  * \f[
- *     Omega^{\mbox{Pop}}        =  nEta^{\mbox{Pop}} \times nEta^{\mbox{Pop}} ,
+ *     Omega^{\mbox{(Pop)}}        =  nEta^{\mbox{(Pop)}} \times nEta^{\mbox{(Pop)}} ,
  * \f]
  * \f[
- *     Sigma^{\mbox{Pop}}        =  nEps^{\mbox{Pop}} \times nEps^{\mbox{Pop}} ,
+ *     Sigma^{\mbox{(Pop)}}        =  nEps^{\mbox{(Pop)}} \times nEps^{\mbox{(Pop)}} ,
  * \f]
  * \f[
- *     Omega^{\mbox{Ind}}        =  nEta^{\mbox{Ind}} \times nEta^{\mbox{Ind}}  .
+ *     Omega^{\mbox{(Ind)}}        =  nEta^{\mbox{(Ind)}} \times nEta^{\mbox{(Ind)}}  .
  * \f]
  * 
  * This function allows the following Two-Stage methods to be used:
@@ -439,12 +439,8 @@ void predTwoStageMethod( PopPredModel&                    popModel,
   //
   // and the covariance of the individuals' values for theta,
   //
-  //                              nInd
-  //                              ----
-  //                        1     \                                                                 T
-  //     thetaIndCov   =  ------  /      ( thetaInd  -  thetaIndMean ) ( thetaInd  -  thetaIndMean )   ,
-  //                       nInd   ----             i                             i
-  //                              i = 1 
+  //     thetaIndCov   =  cov[ thetaInd , thetaInd  ]  .
+  //                                   i          i
   //
   dvecThetaIndMean = getSubblock( dvecBMeanOut, 0, 0, nThetaInd, 1 );
   dmatThetaIndCov  = getSubblock( dmatBCovOut,  0, 0, nThetaInd, nThetaInd );
