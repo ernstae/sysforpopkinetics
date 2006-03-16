@@ -2541,7 +2541,7 @@ void PopPredModel::evalPredSecondDeriv() const
  */
 /*************************************************************************/
 
-void PopPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2665,7 +2665,7 @@ void PopPredModel::doDataMean( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-bool PopPredModel::doDataMean_popPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doDataMean_popPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2808,7 +2808,7 @@ bool PopPredModel::doDataMean_popPar( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-bool PopPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -2907,7 +2907,7 @@ bool PopPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3058,7 +3058,7 @@ void PopPredModel::doDataVariance( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-bool PopPredModel::doDataVariance_popPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doDataVariance_popPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3317,7 +3317,7 @@ bool PopPredModel::doDataVariance_popPar( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-bool PopPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3525,7 +3525,7 @@ bool PopPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::doDataVarianceInv( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::doDataVarianceInv( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3616,7 +3616,7 @@ void PopPredModel::doDataVarianceInv( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-bool PopPredModel::doDataVarianceInv_popPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doDataVarianceInv_popPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3744,7 +3744,7 @@ bool PopPredModel::doDataVarianceInv_popPar( SPK_VA::valarray<double>& ret ) con
  */
 /*************************************************************************/
 
-bool PopPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3858,7 +3858,7 @@ bool PopPredModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) con
  */
 /*************************************************************************/
 
-void PopPredModel::doIndParVariance( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::doIndParVariance( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -3925,7 +3925,7 @@ void PopPredModel::doIndParVariance( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-bool PopPredModel::doIndParVariance_popPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doIndParVariance_popPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -4062,7 +4062,7 @@ bool PopPredModel::doIndParVariance_popPar( SPK_VA::valarray<double>& ret ) cons
  */
 /*************************************************************************/
 
-void PopPredModel::doIndParVarianceInv( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::doIndParVarianceInv( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -4130,7 +4130,7 @@ void PopPredModel::doIndParVarianceInv( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-bool PopPredModel::doIndParVarianceInv_popPar( SPK_VA::valarray<double>& ret ) const 
+bool PopPredModel::doIndParVarianceInv_popPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -4503,7 +4503,7 @@ int PopPredModel::getNIndPar() const
  */
 /*************************************************************************/
 
-void PopPredModel::getPopPar( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getPopPar( SPK_VA::valarray<double>& ret ) const
 {
   ret.resize( nPopPar );
 
@@ -4520,7 +4520,7 @@ void PopPredModel::getPopPar( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getIndPar( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getIndPar( SPK_VA::valarray<double>& ret ) const
 {
   ret.resize( nIndPar );
 
@@ -4537,7 +4537,7 @@ void PopPredModel::getIndPar( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getTheta( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getTheta( SPK_VA::valarray<double>& ret ) const
 {
   ret.resize( nTheta );
 
@@ -4554,7 +4554,7 @@ void PopPredModel::getTheta( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getEta( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getEta( SPK_VA::valarray<double>& ret ) const
 {
   ret.resize( nEta );
 
@@ -4571,7 +4571,7 @@ void PopPredModel::getEta( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getEps( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getEps( SPK_VA::valarray<double>& ret ) const
 {
   ret.resize( nEps );
 
@@ -4588,7 +4588,7 @@ void PopPredModel::getEps( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getOmega( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getOmega( SPK_VA::valarray<double>& ret ) const
 {
   ret.resize( pOmegaCurr->getNPar() );
 
@@ -4610,7 +4610,7 @@ void PopPredModel::getOmega( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getSigma( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getSigma( SPK_VA::valarray<double>& ret ) const
 {
   ret.resize( pSigmaCurr->getNPar() );
 
@@ -4645,7 +4645,7 @@ void PopPredModel::getSigma( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getStandardPar( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getStandardPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -4727,7 +4727,7 @@ void PopPredModel::getStandardPar( SPK_VA::valarray<double>& ret ) const
  */
 /*************************************************************************/
 
-void PopPredModel::getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const 
+void PopPredModel::getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -4844,6 +4844,113 @@ void PopPredModel::getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const
     
       ret[row + col * nPopPar] = sigmaMinRep_sigmaParTemp[j + k * nSigmaPar];
     }
+  }
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: getStandardParMask
+ *
+ *//**
+ * Gets the mask used to calculate statistics for the standard
+ * parameters based on the mask for the population parameters.
+ *
+ * In particular, this function gets the masks for theta, the minimal
+ * representation for omega, and the minimal representation for sigma
+ * combined into a single vector,
+ * \f[
+ *     \mbox{standardParMask} =
+ *       \left[ 
+ *         \begin{array}{c}
+ *           \mbox{thetaMask} \\
+ *           \mbox{omegaMinRepMask} \\
+ *           \mbox{sigmaMinRepMask}
+ *         \end{array}
+ *       \right] .
+ * \f]
+ */
+/*************************************************************************/
+
+void PopPredModel::getStandardParMask( 
+  const SPK_VA::valarray<bool>& popParMaskIn,
+  SPK_VA::valarray<bool>&       standardParMaskOut ) const
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  standardParMaskOut.resize( nPopPar );
+  assert( popParMaskIn.size() == nPopPar );
+
+
+  //------------------------------------------------------------
+  // Split up the population parameters mask into pieces.
+  //------------------------------------------------------------
+
+  int k;
+
+  valarray<bool> thetaMask      ( nTheta );
+  valarray<bool> omegaParMask( nOmegaPar );
+  valarray<bool> sigmaParMask( nSigmaPar );
+
+  // Get the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    thetaMask[k] = popParMaskIn[k + thetaOffsetInPopPar];
+  }
+
+  // Get the elements that correspond to the parameters for omega.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    omegaParMask[k] = popParMaskIn[k + omegaParOffsetInPopPar];
+  }
+
+  // Get the elements that correspond to the parameters for sigma.
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    sigmaParMask[k] = popParMaskIn[k + sigmaParOffsetInPopPar];
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare the masks for the covariances minimal representations.
+  //------------------------------------------------------------
+
+  // Get the mask for omega's minimal representation.
+  valarray<bool> omegaMinRepMask( nOmegaPar );
+  pOmegaCurr->calcCovMinRepMask( omegaParMask, omegaMinRepMask );
+
+  // Get the mask for sigma's minimal representation.
+  valarray<bool> sigmaMinRepMask( nSigmaPar );
+  pSigmaCurr->calcCovMinRepMask( sigmaParMask, sigmaMinRepMask );
+
+
+  //------------------------------------------------------------
+  // Set the mask for the standard parameters.
+  //------------------------------------------------------------
+
+  // Set the elements that correspond to theta.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    standardParMaskOut[k + thetaOffsetInPopPar] = thetaMask[k];
+  }
+
+  // Set the elements that correspond to the minimal representation
+  // for omega.
+  for ( k = 0; k < nOmegaPar; k++ )
+  {
+    standardParMaskOut[k + omegaParOffsetInPopPar] = omegaMinRepMask[k];
+  }
+
+  // Set the elements that correspond to the minimal representation
+  // for sigma.
+  for ( k = 0; k < nSigmaPar; k++ )
+  {
+    standardParMaskOut[k + sigmaParOffsetInPopPar] = sigmaMinRepMask[k];
   }
 
 }
