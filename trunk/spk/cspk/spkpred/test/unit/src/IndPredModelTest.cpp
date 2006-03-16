@@ -1213,11 +1213,23 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
   valarray<double> standardPar       ( nIndPar );
   valarray<double> standardPar_indPar( nIndPar * nIndPar );
+  valarray<bool>   standardParMask   ( nIndPar );
 
   // Get the current value for the standard parameter and its
   // derivative.
   model.getStandardPar       ( standardPar );
   model.getStandardPar_indPar( standardPar_indPar );
+
+  // Set the individual parameter mask.
+  valarray<bool> indParMask( nIndPar );
+  indParMask[0] = true;
+  indParMask[1] = false;
+  indParMask[2] = false;
+  indParMask[3] = true;
+  indParMask[4] = false;
+
+  // Calculate the mask for the standard parameters.
+  model.getStandardParMask( indParMask, standardParMask );
 
 
   //------------------------------------------------------------
@@ -1274,6 +1286,7 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
   valarray<double> standardParKnown       ( nIndPar );
   valarray<double> standardPar_indParKnown( nIndPar * nIndPar );
+  valarray<bool>   standardParMaskKnown   ( nIndPar );
 
   // Set the known value for the standard parameter.
   //
@@ -1332,6 +1345,9 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     nOmegaPar,
     omegaParOffsetInIndPar,
     omegaParOffsetInIndPar );
+
+  // Set the known value for the mask for the standard parameters.
+  standardParMaskKnown = indParMask;
 
 
   //------------------------------------------------------------
@@ -1614,6 +1630,12 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     standardPar_indParKnown,
     "standardPar_indPar",
     tol );
+
+  compareToKnown( 
+    standardParMask,
+    standardParMaskKnown,
+    "standardParMask" );
+
 }
 
 
