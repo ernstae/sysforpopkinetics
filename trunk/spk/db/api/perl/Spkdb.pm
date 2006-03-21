@@ -30,8 +30,8 @@ use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = (
     'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 'set_state_code',
-    'de_q2c', 'de_q2ac', 'get_job_ids', 'get_cmp_jobs', 'get_run_jobs', 'en_q2r', 
-    'de_q2r', 'de_q2ar', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
+    'de_q2c', 'de_q2ac', 'get_q2c_job', 'get_job_ids', 'get_cmp_jobs', 'get_run_jobs', 'en_q2r', 
+    'de_q2r', 'de_q2ar', 'get_q2r_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
     'new_user', 'update_user', 'get_user', 'set_mail_notice', 'get_mail_notice', 'email_for_job'
@@ -476,20 +476,18 @@ sub set_state_code() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "update job set state_code='$state_code',event_time='$event_time' where job_id='$job_id';";
+    $dbh->begin_work;
 
-    my $nrows = $dbh->do($sql);
-    unless ($nrows)
-    {
+    my $sql = "update job set state_code='$state_code',event_time='$event_time' "
+              . "where job_id='$job_id';";
+
+    unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
-	$dbh->rollback;        
-        return undef;
+	$dbh->rollback;
+	return undef;
     }
-    unless ($nrows == 1)
-    {
-        return 0;
-    }
+    $dbh->commit;
     &add_to_history($dbh, $job_id, $state_code);
     return 1;
 }
@@ -559,7 +557,8 @@ sub de_q2c() {
     my $state_code = "cmp";
     my $event_time = time();
     
-    $sql = "update job set state_code = '$state_code', event_time = '$event_time' where job_id=$job_id;";
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' "
+           . "where job_id=$job_id;";
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
@@ -571,6 +570,80 @@ sub de_q2c() {
     return $row;
 }
 
+=head2 get_q2c_job -- get a queued-to-compile job from the database
+
+Remove the highest priority job from the compiler queue, so that
+it can be compiled.
+
+    $row = &Spkdb::get_q2c_job($dbh, $job_id);
+
+$dbh is the handle to an open database connection.
+$job_id is the key to a row in the job table.
+
+Returns
+
+  success: 
+    reference to a hash for the row of highest priority, 
+    containing the following fields:
+        dataset_id
+        dataset_version
+        xml_source
+    false if compiler queue is empty   
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub get_q2c_job() {
+    my $dbh = shift;
+    my $job_id = shift;
+    $err = 0;
+    $errstr = "";
+    
+    $dbh->begin_work;
+
+    my $sql = "select dataset_id, dataset_version, xml_source from job "
+	      . "where job_id='$job_id' for update;";
+
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	$dbh->rollback;
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute $sql; error returned "
+	    . $sth->errstr;
+	$dbh->rollback;
+        return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    $sth->finish;
+    unless ($row) {
+	$dbh->rollback;
+	return 0;
+    }
+    my $state_code = "cmp";
+    my $event_time = time();
+    
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' "
+           . "where job_id=$job_id;";
+    unless ($dbh->do($sql)) {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;
+	return undef;
+    }
+    $dbh->commit;
+    &add_to_history($dbh, $job_id, $state_code);
+    return $row;
+}
 =head2 de_q2ac -- remove highest priority job from aborting compile queue
 
 Remove the highest priority job from the aborting compiler queue, so that
@@ -873,7 +946,81 @@ sub de_q2r() {
     my $event_time = time();
     
     my $state_code = "run";
-    $sql = "update job set state_code = '$state_code', event_time = '$event_time' where job_id=$job_id;";
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' "
+           . "where job_id=$job_id;";
+    unless ($dbh->do($sql)) {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;
+	return;
+    }
+    $dbh->commit;
+    &add_to_history($dbh, $job_id, $state_code);
+    return $row;
+}
+
+=head2 get_q2r_job -- get a queued-to-run job from the database
+Remove the highest priority job from the ready to run queue, so
+that it can be run.
+
+    $row = &Spkdb::get_q2r_job($dbh, $job_id);
+
+$dbh is the handle to an open database connection.
+$job_id is the key to a row in the job table.
+
+Returns
+
+  success: 
+
+    reference to a hash for the row of highest priority, 
+    containing the following fields:
+        cpp_source
+        checkpoint
+    false if ready to run queue is empty   
+
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed
+
+=cut
+
+sub get_q2r_job() {
+    my $dbh = shift;
+    my $job_id = shift;
+    $err = 0;
+    $errstr = "";
+    
+    $dbh->begin_work;
+
+    my $sql = "select cpp_source, checkpoint from job "
+	      . "where job_id='$job_id' for update;";
+
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	$dbh->rollback;
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute $sql; error returned "
+	    . $sth->errstr;
+	$dbh->rollback;
+        return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    $sth->finish;
+    unless ($row) {
+	$dbh->rollback;
+	return 0;
+    }
+    my $event_time = time();
+    my $state_code = "run";
+    $sql = "update job set state_code = '$state_code', event_time = '$event_time' "
+           . "where job_id=$job_id;";
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
@@ -1072,6 +1219,7 @@ sub end_job() {
 	      .  "set state_code='$state_code', "
               .      "end_code='$end_code', "
 	      .      "event_time=$event_time, "
+              .      "cpp_source=null, "
               .      "report=?, "
 	      .      "checkpoint=? "
               .  "where job_id=$job_id;";
