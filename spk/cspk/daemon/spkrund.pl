@@ -778,6 +778,8 @@ sub reaper {
         close(FH);
     }
 
+    $report = compress($report);
+
     # Remove working directory if not needed
     if ($remove_working_dir && !$retain_working_dir) {
 	File::Path::rmtree($working_dir);
@@ -929,6 +931,27 @@ sub abort_job {
     else {
         death('emerg', "error ending job in job-queue: job_id=$jobid");
     }
+}
+# Compress the report
+sub compress {
+    my $report = shift;
+    open(FH, ">result.xml");
+    print FH $report;
+    close(FH);
+    my @args = ($pathname_tar, 'czf', "result.tar.gz", $filename_results);
+    system(@args);
+    my $exit_status = $? >> 8;
+    if ($exit_status != 0) {
+    death('emerg', "tar failed creating result.tar.gz file."
+	  . " exit_status=$exit_status");
+    }
+    # Read the tar file into memory
+    open(FH, "result.tar.gz")
+        or death('emerg', "failed to open result.tar.gz");
+    read(FH, $report, -s FH)
+        or death('emerg', "failed to read result.tar.gz");
+    close(FH);
+    return $report;
 }
 # become a daemon
 Proc::Daemon::Init();
