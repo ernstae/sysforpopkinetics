@@ -194,6 +194,15 @@ public class JobQueue
         JobState jobState = new JobState();
         if(args[5] != null && isPosLongNumber(args[5])) startingJobId = args[5];
         
+        // Get localhost name
+        try
+        {
+            localhostName = InetAddress.getLocalHost().getHostName();
+        }
+        catch (UnknownHostException e)
+        {
+        }
+        
         // Connect to the database
         String hostName = args[0];
         String dbName = args[1];
@@ -358,7 +367,7 @@ public class JobQueue
     {
         String sql = "insert into history (job_id, state_code, event_time, host) "
 	             + "values(" + jobId + ", '" + stateCode + "'," + eventTime
-	             + ", 'unknown')";
+	             + ", '" + localhostName + "')";
 	stmt.execute(sql);
     }
     
@@ -400,6 +409,7 @@ public class JobQueue
     protected static Connection conn;
     
     private static String startingJobId = "1";
+    private static String localhostName = "unknown";
 }
 
 
@@ -568,7 +578,7 @@ class ThreadedHandler extends Thread
                                     jobState.cmpQueue.remove(jobId);
                                     jobState.jobList.remove(jobId);
                                     String sql = "update job set state_code='end',end_code='abrt',event_time=" +
-                                                 eventTime + " where job_id=" + jobId;
+                                                 eventTime + ",cpp_source=null where job_id=" + jobId;
                                     stmt.executeUpdate(sql);
                                     JobQueue.addHistory(jobId, "end", eventTime, stmt);
                                     out.println("done");
@@ -579,7 +589,7 @@ class ThreadedHandler extends Thread
                                     jobState.jobList.remove(jobId);
                                     jobState.restartJobs.remove(jobId);
                                     String sql = "update job set state_code='end',end_code='abrt',event_time=" +
-                                                 eventTime + " where job_id=" + jobId;
+                                                 eventTime + ",cpp_source=null where job_id=" + jobId;
                                     stmt.executeUpdate(sql);
                                     JobQueue.addHistory(jobId, "end", eventTime, stmt);
                                     out.println("done");
@@ -589,7 +599,7 @@ class ThreadedHandler extends Thread
                                     jobState.abortCmpQueue.add(jobId);
                                     jobState.jobList.setProperty(jobId, "q2ac");
                                     String sql = "update job set state_code='q2ac',event_time=" + eventTime +
-                                                 " where job_id=" + jobId;
+                                                 ",cpp_source=null where job_id=" + jobId;
                                     stmt.executeUpdate(sql);
                                     JobQueue.addHistory(jobId, "q2ac", eventTime, stmt);
                                     out.println("done");
@@ -599,8 +609,8 @@ class ThreadedHandler extends Thread
                                     jobState.abortRunQueue.add(jobId);
                                     jobState.jobList.setProperty(jobId, "q2ar");
                                     String sql = "update job set state_code='q2ar',event_time=" + eventTime +
-                                                 " where job_id=" + jobId;
-                                    stmt.executeUpdate(sql); 
+                                                 ",cpp_source=null where job_id=" + jobId;
+                                    stmt.executeUpdate(sql);
                                     JobQueue.addHistory(jobId, "q2ar", eventTime, stmt);
                                     out.println("done");
                                 }

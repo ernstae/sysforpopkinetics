@@ -102,7 +102,8 @@ public class Ping
         dialog.setLocation((int)wndSize.width / 2 - 180, (int)wndSize.height / 2 - 50);
         dialog.setVisible(true);
   
-        while(true)
+        boolean ok = true;
+        while(ok)
         {
             try
             {
@@ -114,13 +115,12 @@ public class Ping
                 if(message.equals("Hi"))
                 {
                     dialog.setVisible(false);
-                    JOptionPane.showMessageDialog(null, "Initialization has completed.");                    
+                    JOptionPane.showMessageDialog(null, "Initialization has completed.");
+                    ok = false;
                 }
                 reader.close();
                 out.close();
                 socket.close();
-                System.exit(0);
-
             }
             catch(IOException e)
             {
@@ -148,5 +148,6 @@ public class Ping
                 System.exit(0);
             }
         }
+        System.exit(0);
     }
 }
