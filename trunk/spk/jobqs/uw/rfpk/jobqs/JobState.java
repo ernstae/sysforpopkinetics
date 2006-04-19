@@ -18,6 +18,8 @@ distribution.
 **********************************************************************/
 package uw.rfpk.jobqs;
 
+import java.sql.*;
+import java.util.Date;
 import java.util.Vector;
 import java.util.HashSet;
 import java.util.Properties;
@@ -28,6 +30,80 @@ import java.util.Properties;
  */
 public class JobState {
 
+        /** Add job history to the database.
+     * @param jobId job ID of the job.
+     * @param stateCode state code of the job.
+     * @param eventTime time of this event.
+     * @param stmt statement to execute sql command.
+     * @throws SQLException a SQL exception.
+     */
+    protected void addHistory(String jobId, String stateCode, long eventTime,
+                                     Statement stmt)
+        throws SQLException
+    {
+        String sql = "insert into history (job_id, state_code, event_time, host) "
+	             + "values(" + jobId + ", '" + stateCode + "'," + eventTime
+	             + ", '" + JobQueue.localhostName + "')";
+	stmt.execute(sql);
+    }
+    
+    /** Set job's state code to the specified value and job's end code to null into the database.
+     * @param jobId job ID of the job.
+     * @param stateCode state code of the job.
+     * @throws SQLException a SQL exception.
+     */ 
+    protected void setStateCode(String jobId, String stateCode)
+        throws SQLException
+    {
+        long eventTime = (new Date()).getTime()/1000;
+        Statement stmt = JobQueue.conn.createStatement();
+        String sql = "update job set state_code='" + stateCode + "',end_code=null,event_time=" +
+                     eventTime + " where job_id=" + jobId;
+        stmt.executeUpdate(sql);
+        addHistory(jobId, stateCode, eventTime, stmt);
+        stmt.close();
+    }
+    
+    /** Set job's end code to the specified value into the database.
+     * @param jobId job ID of the job.
+     * @param endCode end code of the job.
+     * @throws SQLException a SQL exception.
+     */ 
+    protected void setEndCode(String jobId, String endCode)
+        throws SQLException
+    {
+        Statement stmt = JobQueue.conn.createStatement();
+        String sql;
+        if(endCode != null)
+            sql = "update job set end_code='" + endCode + "' where job_id=" + jobId;
+        else
+            sql = "update job set end_code=null where job_id=" + jobId;
+        stmt.executeUpdate(sql);
+        stmt.close();
+    }
+    
+    /** Abort job.
+     * @param jobId job ID of the job.
+     * @param stateCode state code of the job.
+     * @throws SQLException a SQL exception.
+     */
+    protected void abortJob(String jobId, String stateCode)
+        throws SQLException
+    {
+        long eventTime = (new Date()).getTime()/1000;
+        Statement stmt = JobQueue.conn.createStatement();
+        String sql;
+        if(stateCode.equals("end"))
+            sql = "update job set state_code='end',end_code='abrt',event_time=" +
+                  eventTime + ",cpp_source=null where job_id=" + jobId;
+        else
+            sql = "update job set state_code='" + stateCode + "',event_time=" 
+                  + eventTime + ",cpp_source=null where job_id=" + jobId;
+        stmt.executeUpdate(sql);
+        addHistory(jobId, stateCode, eventTime, stmt);
+        stmt.close();
+    }
+    
     /** Compiler queue */
     protected Vector cmpQueue = new Vector();
    
@@ -47,8 +123,8 @@ public class JobState {
     protected HashSet restartJobs = new HashSet();
     
     /** Compiler daemon visiting flag */
-    protected static boolean cmpd = false;
+    protected boolean cmpd = false;
     
     /** Run-time daemon visiting flag */
-    protected static boolean rund = false;
+    protected boolean rund = false;
 }
