@@ -63,9 +63,10 @@ Symbol* SymbolTable::insertVector( const string& name, int len,
 }
 
 Symbol* SymbolTable::insertSymmetricMatrix( const string& name, 
-				   Symbol::Structure mt, int dim,
-				   enum Symbol::Ownership owner,
-				   enum Symbol::Access access )
+					    valarray<Symbol::Structure>& mt,
+					    valarray<unsigned int>& dim,
+					    enum Symbol::Ownership owner,
+					    enum Symbol::Access access )
 {
    Symbol a = Symbol::createSymmetricMatrix( name, mt, dim, owner, access );
    table[ name ] = a;

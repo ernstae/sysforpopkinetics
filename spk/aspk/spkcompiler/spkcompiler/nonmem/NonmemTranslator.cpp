@@ -80,12 +80,14 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myIndWriteCheckpoint    ( true ),
     myPopWriteCheckpoint    ( true ),
     myThetaLen              ( 0 ),
-    myOmegaDim              ( 0 ),
-    myOmegaOrder            ( 0 ),
-    myOmegaStruct           ( Symbol::TRIANGLE ),
-    mySigmaDim              ( 0 ),
-    mySigmaOrder            ( 0 ),
-    mySigmaStruct           ( Symbol::TRIANGLE ),
+    myOmegaDim              ( 0 ),                 //valarray
+    myOmegaOrder            ( 0 ),                 //valarray
+    myOmegaStruct           ( Symbol::TRIANGLE ),  //valarray
+    myOmegaSameAsPrev       ( false ),             //valarray
+    mySigmaDim              ( 0 ),                 //valarray
+    mySigmaOrder            ( 0 ),                 //valarray
+    mySigmaStruct           ( Symbol::TRIANGLE ),  //valarray
+    mySigmaSameAsPrev       ( false ),             //valarray
     myEtaLen                ( 0 ),
     myEpsLen                ( 0 ),
     mySigDigits             ( 3 ),

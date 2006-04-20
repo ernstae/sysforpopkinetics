@@ -23,13 +23,13 @@ Symbol::Symbol( const string&   nameIn,
                 enum Ownership  ownerIn,
                 enum Access     accessIn,
                 enum ObjectType objectTypeIn,
-                enum Structure  structureIn,
+                valarray <enum Structure>&  structureIn,
                 const valarray<int>& dimIn )
 
 : name       ( nameIn ),
   synonym    ( synonymIn ),
   object_type( objectTypeIn ),
-  structure  ( structureIn ),
+  structure  ( structureIn.size() ),
   access     ( accessIn ),
   owner      ( ownerIn )
 {
@@ -37,6 +37,7 @@ Symbol::Symbol( const string&   nameIn,
      return;
    dimension.resize( dimIn.size() );
    dimension = dimIn;
+   structure = structureIn;
 
    int n = dimension.size();
    assert( n > 0 );
@@ -50,11 +51,11 @@ Symbol::Symbol( const string&   nameIn,
      {
        if( object_type == MATRIX )
 	 {
-	   if( structure == TRIANGLE )
+	   if( structure[i] == TRIANGLE )
 	     {
 	       len = series( 1, 1, dimension[i] );
 	     }
-	   else if( structure == FULL )
+	   else if( structure[i] == FULL )
 	     {
 	       len = dimension[i] * dimension[i];
 	     }
@@ -79,7 +80,7 @@ Symbol::Symbol( const Symbol& right )
 : name       ( right.name ),
   synonym    ( right.synonym ),
   object_type( right.object_type ),
-  structure  ( right.structure ),
+  structure  ( right.structure.size() ),
   access     ( right.access ),
   owner      ( right.owner )
 {
@@ -88,6 +89,7 @@ Symbol::Symbol( const Symbol& right )
 
    dimension.resize( right.dimension.size() );
    dimension = right.dimension;
+   structure = right.structure;
 
    int n = dimension.size();
    assert( n > 0 );
@@ -101,11 +103,11 @@ Symbol::Symbol( const Symbol& right )
      {
        if( object_type == MATRIX )
 	 {
-	   if( structure == TRIANGLE )
+	   if( structure[i] == TRIANGLE )
 	     {
 	       len = series( 1, 1, dimension[i] );
 	     }
-	   else if( structure == FULL )
+	   else if( structure[i] == FULL )
 	     {
 	       len = dimension[i] * dimension[i];
 	     }
@@ -136,6 +138,7 @@ Symbol& Symbol::operator=( const Symbol& right )
    name        = right.name;
    synonym     = right.synonym;
    object_type = right.object_type;
+   structure.resize( right.structure.size() );
    structure   = right.structure;
    access      = right.access;
    owner       = right.owner;
@@ -158,11 +161,11 @@ Symbol& Symbol::operator=( const Symbol& right )
      {
        if( object_type == MATRIX )
 	 {
-	   if( structure == TRIANGLE )
+	   if( structure[i] == TRIANGLE )
 	     {
 	       len = series( 1, 1, dimension[i] );
 	     }
-	   else if( structure == FULL )
+	   else if( structure[i] == FULL )
 	     {
 	       len = dimension[i] * dimension[i];
 	     }
@@ -206,7 +209,7 @@ bool Symbol::operator==( const Symbol& right ) const
      return false;
    if( object_type != right.object_type )
      return false;
-   if( structure   != right.structure )
+   if( structure.size()   != right.structure.size() )
      return false;
    if( access      != right.access )
      return false;
@@ -238,34 +241,44 @@ bool Symbol::operator!=( const Symbol& right ) const
 
 Symbol Symbol::createScalar( const string& var, enum Ownership owner, enum Access access )
 {
+   valarray<enum Structure> st( 1 );
+   st[0] = FULL;
    valarray<int> one( 1 );
    one[0] = 1;
-   return Symbol( var, "", owner, access, SCALAR, FULL, one );
+   return Symbol( var, "", owner, access, SCALAR, st, one );
 }
 
 Symbol Symbol::createVector( const string& var, int veclen, enum Ownership ownerIn, enum Access accessIn )
 {
+   valarray<enum Structure> st( 1 );
+   st[0] = FULL;
    valarray<int> len( 1 );
    len[0] = veclen;
-   return Symbol( var, "", ownerIn, accessIn, VECTOR, FULL, len );
+   return Symbol( var, "", ownerIn, accessIn, VECTOR, st, len );
 }
 
 Symbol Symbol::createSymmetricMatrix( const string& var, 
-				   enum Structure mt, 
-				   int matdim, 
+				   valarray<enum Structure>& mt, 
+				   valarray<unsigned int>& matdim, 
 				   enum Ownership ownerIn, 
 				   enum Access accessIn )
 {
-   valarray<int> dim( 1 );
-   dim[0] = matdim;
+  //Revisit:  Dave.  had to cast valarray<unsigned int> to valarray<int>.
+  // This is lame, but Symbol expects valarray<int>.
+  valarray<int> dim( matdim.size() ) ;
+  for(int i=0; i<matdim.size(); i++ )
+	  {
+	    dim[i] = (int)matdim[i];
+	  }
    return Symbol( var, "", ownerIn, accessIn, MATRIX, mt, dim );
 }
 Symbol Symbol::createLabel( const string& label, 
                             const string& alias,
 			    const valarray<int>& N )
 {
-  //return Symbol( label, alias, DATALABEL, VECTOR, FULL, N );
-  return Symbol( label, alias, DATASET, READONLY, VECTOR, FULL, N );
+  valarray<enum Structure> st( 1 );
+  st[0] = FULL; 
+  return Symbol( label, alias, DATASET, READONLY, VECTOR, st, N );
 }
 
 /**
@@ -356,15 +369,21 @@ std::ostream& operator<<( std::ostream& o, const Symbol& s )
   o << endl;
 
   o << "Data Structure : ";
-  if( s.structure == Symbol::FULL )
-      o << "full";
-  else if( s.structure == Symbol::TRIANGLE )
-      o << "triangle";
-  else if( s.structure == Symbol::DIAGONAL )
-	  o << "diagonal";
-  else
-    o << "unknown";
-  o << endl;
+  int n= s.structure.size();
+  if( n > 1 )
+    o << "block diagonal" << endl;;
+  for (int i=0; i<n; i++ )
+    {
+      if( s.structure[i] == Symbol::FULL )
+	o << "   full";
+      else if( s.structure[i] == Symbol::TRIANGLE )
+	o << "   triangle";
+      else if( s.structure[i] == Symbol::DIAGONAL )
+	o << "   diagonal";
+      else
+	o << "   unknown";
+      o << endl;
+    }
 
   o << "Access         : ";
   if( s.access == Symbol::READONLY )

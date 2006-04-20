@@ -70,6 +70,8 @@ testall_SOURCES      = \
                        pop_mdvTest.h \
 	               pop_basicTest.cpp \
 	               pop_basicTest.h \
+	               pop_blockDiagCovTest.cpp \
+	               pop_blockDiagCovTest.h \
 	               pop_monteTest.cpp \
 	               pop_monteTest.h \
 	               pop_fixedParaTest.cpp \

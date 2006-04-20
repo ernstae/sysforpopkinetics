@@ -38,6 +38,7 @@ const char* XmlConstants::C_DIAGONAL                  = "diagonal";
 const char* XmlConstants::C_BLOCK                     = "block";
 const char* XmlConstants::C_STRUCT                    = "struct";
 const char* XmlConstants::C_DIMENSION                 = "dimension";
+const char* XmlConstants::C_SAME_AS_PREVIOUS          = "same_as_previous";
 const char* XmlConstants::C_LABEL                     = "label";
 const char* XmlConstants::C_LABELS                    = "labels";
 const char* XmlConstants::C_COV_R                     = "r";
@@ -233,6 +234,7 @@ XmlConstants::XmlConstants()
   //  X_VALUE                      = XMLString::transcode( C_VALUE );
   X_STRUCT                     = XMLString::transcode( C_STRUCT );
   X_DIMENSION                  = XMLString::transcode( C_DIMENSION );
+  X_SAME_AS_PREVIOUS           = XMLString::transcode( C_SAME_AS_PREVIOUS );
   X_IS_ERR_OUT                 = XMLString::transcode( C_IS_STDERROR_OUT );
   X_IS_CORR_OUT                = XMLString::transcode( C_IS_CORRELATION_OUT );
   X_IS_COV_OUT                 = XMLString::transcode( C_IS_COVARIANCE_OUT );
@@ -354,6 +356,7 @@ XmlConstants::~XmlConstants()
   //  XMLString::release( &X_VALUE );
   XMLString::release( &X_STRUCT );
   XMLString::release( &X_DIMENSION );
+  XMLString::release( &X_SAME_AS_PREVIOUS );
   XMLString::release( &X_LABEL );
   XMLString::release( &X_COV_R );
   XMLString::release( &X_COV_RSR );

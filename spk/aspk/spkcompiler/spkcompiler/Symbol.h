@@ -27,7 +27,7 @@ public:
    */
   enum Structure  { FULL,        /**< Full matrix */
 		    TRIANGLE,    /**< Triangle (symmetrical) matrix */
-		    DIAGONAL     /**< Diagonal matrix */ };
+		    DIAGONAL,     /**< Diagonal matrix */ };
 
   /**
    * Access permission.
@@ -81,7 +81,7 @@ public:
 	   enum  Ownership    ownerIn,
 	   enum  Access       accessIn,
 	   enum  ObjectType   objectTypeIn,
-	   enum  Structure    structureIn,
+	   std::valarray<enum  Structure>&  structureIn,
 	   const std::valarray<int>& dimIn );
   /**
    * The copy constructor. 
@@ -176,8 +176,8 @@ public:
    * @param access     The access permission of the matrix.
    */
    static Symbol createSymmetricMatrix( const std::string& var, 
-			       enum Structure structure, 
-			       int dim,
+			       std::valarray<enum Structure>& structure, 
+			       std::valarray <unsigned int>& dim,
 			       enum Symbol::Ownership owner, 
 			       enum Symbol::Access access );
 
@@ -228,7 +228,7 @@ public:
    /**
     * The data structure.
     */
-   enum Structure  structure;
+   std::valarray<enum Structure>  structure;
   
    /**
     * The access permission.

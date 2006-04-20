@@ -46,52 +46,56 @@ void SymbolTest::testConstructor()
   string aaa_name = "aaa";
   string aaa_synonym = "AAA";
   valarray<int> aaa_dim( 1, 1 );
-  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, aaa_dim );
+  valarray<Symbol::Structure> aaa_full(Symbol::FULL, 1);
+  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, aaa_full, aaa_dim );
   CPPUNIT_ASSERT_EQUAL( aaa_name, aaa.name );
   CPPUNIT_ASSERT_EQUAL( aaa_synonym, aaa.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::USER, aaa.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, aaa.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, aaa.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, aaa.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa_full[0], aaa.structure[0] );
   CPPUNIT_ASSERT_EQUAL( aaa_dim[0], aaa.dimension[0] );
 
   // User, read only, scalar
   string bbb_name = "bbb";
   string bbb_synonym = "BBB";
   valarray<int> bbb_dim( 1, 1 );
-  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, bbb_dim );
+  valarray<Symbol::Structure> bbb_full(Symbol::FULL, 1);
+  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, bbb_full, bbb_dim );
   CPPUNIT_ASSERT_EQUAL( bbb_name, bbb.name );
   CPPUNIT_ASSERT_EQUAL( bbb_synonym, bbb.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::USER, bbb.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, bbb.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, bbb.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, bbb.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb_full[0], bbb.structure[0] );
   CPPUNIT_ASSERT_EQUAL( bbb_dim[0], bbb.dimension[0] );
 
   // System, read-write, scalar
   string ccc_name = "ccc";
   string ccc_synonym = "CCC";
   valarray<int> ccc_dim( 1, 1 );
-  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, ccc_dim );
+  valarray<Symbol::Structure> ccc_full(Symbol::FULL, 1);
+  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, ccc_full, ccc_dim );
   CPPUNIT_ASSERT_EQUAL( ccc_name, ccc.name );
   CPPUNIT_ASSERT_EQUAL( ccc_synonym, ccc.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ccc.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, ccc.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ccc.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ccc.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc_full[0], ccc.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ccc_dim[0], ccc.dimension[0] );
 
   // System, read only, scalar
   string ddd_name = "ddd";
   string ddd_synonym = "DDD";
   valarray<int> ddd_dim( 1, 1 );
-  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, ddd_dim );
+  valarray<Symbol::Structure> ddd_full(Symbol::FULL, 1);
+  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, ddd_full, ddd_dim );
   CPPUNIT_ASSERT_EQUAL( ddd_name, ddd.name );
   CPPUNIT_ASSERT_EQUAL( ddd_synonym, ddd.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ddd.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, ddd.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ddd.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ddd.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd_full[0], ddd.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ddd_dim[0], ddd.dimension[0] );
 
   // User, read-write, vector
@@ -118,14 +122,15 @@ void SymbolTest::testCopyConstructor()
   string aaa_name = "aaa";
   string aaa_synonym = "AAA";
   valarray<int> aaa_dim( 1, 1 );
-  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, aaa_dim );
+  valarray<Symbol::Structure> aaa_full(Symbol::FULL, 1);
+  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, aaa_full, aaa_dim );
   Symbol a( aaa );
   CPPUNIT_ASSERT_EQUAL( aaa_name, aaa.name );
   CPPUNIT_ASSERT_EQUAL( aaa_synonym, aaa.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::USER, aaa.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, aaa.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, aaa.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, aaa.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa_full[0], aaa.structure[0] );
   CPPUNIT_ASSERT_EQUAL( aaa_dim[0], aaa.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( aaa.name, a.name );
@@ -133,7 +138,7 @@ void SymbolTest::testCopyConstructor()
   CPPUNIT_ASSERT_EQUAL( aaa.owner, a.owner );
   CPPUNIT_ASSERT_EQUAL( aaa.access, a.access );
   CPPUNIT_ASSERT_EQUAL( aaa.object_type, a.object_type );
-  CPPUNIT_ASSERT_EQUAL( aaa.structure, a.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa.structure[0], a.structure[0] );
   CPPUNIT_ASSERT_EQUAL( aaa.dimension[0], a.dimension[0] );
 
 
@@ -141,14 +146,15 @@ void SymbolTest::testCopyConstructor()
   string bbb_name = "bbb";
   string bbb_synonym = "BBB";
   valarray<int> bbb_dim( 1, 1 );
-  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, bbb_dim );
+  valarray<Symbol::Structure> bbb_full(Symbol::FULL, 1);
+  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, bbb_full, bbb_dim );
   Symbol b( bbb );
   CPPUNIT_ASSERT_EQUAL( bbb_name, bbb.name );
   CPPUNIT_ASSERT_EQUAL( bbb_synonym, bbb.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::USER, bbb.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, bbb.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, bbb.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, bbb.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb_full[0], bbb.structure[0] );
   CPPUNIT_ASSERT_EQUAL( bbb_dim[0], bbb.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( bbb.name, b.name );
@@ -156,7 +162,7 @@ void SymbolTest::testCopyConstructor()
   CPPUNIT_ASSERT_EQUAL( bbb.owner, b.owner );
   CPPUNIT_ASSERT_EQUAL( bbb.access, b.access );
   CPPUNIT_ASSERT_EQUAL( bbb.object_type, b.object_type );
-  CPPUNIT_ASSERT_EQUAL( bbb.structure, b.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb.structure[0], b.structure[0] );
   CPPUNIT_ASSERT_EQUAL( bbb.dimension[0], b.dimension[0] );
 
 
@@ -164,14 +170,15 @@ void SymbolTest::testCopyConstructor()
   string ccc_name = "ccc";
   string ccc_synonym = "CCC";
   valarray<int> ccc_dim( 1, 1 );
-  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, ccc_dim );
+  valarray<Symbol::Structure> ccc_full(Symbol::FULL, 1);
+  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, ccc_full, ccc_dim );
   Symbol c( ccc );
   CPPUNIT_ASSERT_EQUAL( ccc_name, ccc.name );
   CPPUNIT_ASSERT_EQUAL( ccc_synonym, ccc.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ccc.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, ccc.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ccc.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ccc.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc_full[0], ccc.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ccc_dim[0], ccc.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( ccc.name, c.name );
@@ -179,7 +186,7 @@ void SymbolTest::testCopyConstructor()
   CPPUNIT_ASSERT_EQUAL( ccc.owner, c.owner );
   CPPUNIT_ASSERT_EQUAL( ccc.access, c.access );
   CPPUNIT_ASSERT_EQUAL( ccc.object_type, c.object_type );
-  CPPUNIT_ASSERT_EQUAL( ccc.structure, c.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc.structure[0], c.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ccc.dimension[0], c.dimension[0] );
 
 
@@ -187,14 +194,15 @@ void SymbolTest::testCopyConstructor()
   string ddd_name = "ddd";
   string ddd_synonym = "DDD";
   valarray<int> ddd_dim( 1, 1 );
-  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, ddd_dim );
+  valarray<Symbol::Structure> ddd_full(Symbol::FULL, 1);
+  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, ddd_full, ddd_dim );
   Symbol d( ddd );
   CPPUNIT_ASSERT_EQUAL( ddd_name, ddd.name );
   CPPUNIT_ASSERT_EQUAL( ddd_synonym, ddd.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ddd.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, ddd.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ddd.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ddd.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd_full[0], ddd.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ddd_dim[0], ddd.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( ddd.name, d.name );
@@ -202,7 +210,7 @@ void SymbolTest::testCopyConstructor()
   CPPUNIT_ASSERT_EQUAL( ddd.owner, d.owner );
   CPPUNIT_ASSERT_EQUAL( ddd.access, d.access );
   CPPUNIT_ASSERT_EQUAL( ddd.object_type, d.object_type );
-  CPPUNIT_ASSERT_EQUAL( ddd.structure, d.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd.structure[0], d.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ddd.dimension[0], d.dimension[0] );
 
   // User, read-write, vector
@@ -229,14 +237,15 @@ void SymbolTest::testAssign()
   string aaa_name = "aaa";
   string aaa_synonym = "AAA";
   valarray<int> aaa_dim( 1, 1 );
-  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, aaa_dim );
+  valarray<Symbol::Structure> aaa_full(Symbol::FULL, 1);
+  Symbol aaa( aaa_name, aaa_synonym, Symbol::USER, Symbol::READWRITE, Symbol::SCALAR, aaa_full, aaa_dim );
   Symbol a = aaa;
   CPPUNIT_ASSERT_EQUAL( aaa_name, aaa.name );
   CPPUNIT_ASSERT_EQUAL( aaa_synonym, aaa.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::USER, aaa.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, aaa.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, aaa.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, aaa.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa_full[0], aaa.structure[0] );
   CPPUNIT_ASSERT_EQUAL( aaa_dim[0], aaa.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( aaa.name, a.name );
@@ -244,7 +253,7 @@ void SymbolTest::testAssign()
   CPPUNIT_ASSERT_EQUAL( aaa.owner, a.owner );
   CPPUNIT_ASSERT_EQUAL( aaa.access, a.access );
   CPPUNIT_ASSERT_EQUAL( aaa.object_type, a.object_type );
-  CPPUNIT_ASSERT_EQUAL( aaa.structure, a.structure );
+  CPPUNIT_ASSERT_EQUAL( aaa.structure[0], a.structure[0] );
   CPPUNIT_ASSERT_EQUAL( aaa.dimension[0], a.dimension[0] );
 
 
@@ -252,14 +261,15 @@ void SymbolTest::testAssign()
   string bbb_name = "bbb";
   string bbb_synonym = "BBB";
   valarray<int> bbb_dim( 1, 1 );
-  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, bbb_dim );
+  valarray<Symbol::Structure> bbb_full(Symbol::FULL, 1);
+  Symbol bbb( bbb_name, bbb_synonym, Symbol::USER, Symbol::READONLY, Symbol::SCALAR, bbb_full, bbb_dim );
   Symbol b = bbb;
   CPPUNIT_ASSERT_EQUAL( bbb_name, bbb.name );
   CPPUNIT_ASSERT_EQUAL( bbb_synonym, bbb.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::USER, bbb.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, bbb.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, bbb.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, bbb.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb_full[0], bbb.structure[0] );
   CPPUNIT_ASSERT_EQUAL( bbb_dim[0], bbb.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( bbb.name, b.name );
@@ -267,7 +277,7 @@ void SymbolTest::testAssign()
   CPPUNIT_ASSERT_EQUAL( bbb.owner, b.owner );
   CPPUNIT_ASSERT_EQUAL( bbb.access, b.access );
   CPPUNIT_ASSERT_EQUAL( bbb.object_type, b.object_type );
-  CPPUNIT_ASSERT_EQUAL( bbb.structure, b.structure );
+  CPPUNIT_ASSERT_EQUAL( bbb.structure[0], b.structure[0] );
   CPPUNIT_ASSERT_EQUAL( bbb.dimension[0], b.dimension[0] );
 
 
@@ -275,14 +285,15 @@ void SymbolTest::testAssign()
   string ccc_name = "ccc";
   string ccc_synonym = "CCC";
   valarray<int> ccc_dim( 1, 1 );
-  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, Symbol::FULL, ccc_dim );
+  valarray<Symbol::Structure> ccc_full(Symbol::FULL, 1);
+  Symbol ccc( ccc_name, ccc_synonym, Symbol::SYSTEM, Symbol::READWRITE, Symbol::SCALAR, ccc_full, ccc_dim );
   Symbol c = ccc;
   CPPUNIT_ASSERT_EQUAL( ccc_name, ccc.name );
   CPPUNIT_ASSERT_EQUAL( ccc_synonym, ccc.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ccc.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READWRITE, ccc.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ccc.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ccc.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc_full[0], ccc.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ccc_dim[0], ccc.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( ccc.name, c.name );
@@ -290,7 +301,7 @@ void SymbolTest::testAssign()
   CPPUNIT_ASSERT_EQUAL( ccc.owner, c.owner );
   CPPUNIT_ASSERT_EQUAL( ccc.access, c.access );
   CPPUNIT_ASSERT_EQUAL( ccc.object_type, c.object_type );
-  CPPUNIT_ASSERT_EQUAL( ccc.structure, c.structure );
+  CPPUNIT_ASSERT_EQUAL( ccc.structure[0], c.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ccc.dimension[0], c.dimension[0] );
 
 
@@ -298,14 +309,15 @@ void SymbolTest::testAssign()
   string ddd_name = "ddd";
   string ddd_synonym = "DDD";
   valarray<int> ddd_dim( 1, 1 );
-  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, Symbol::FULL, ddd_dim );
+  valarray<Symbol::Structure> ddd_full(Symbol::FULL, 1);
+  Symbol ddd( ddd_name, ddd_synonym, Symbol::SYSTEM, Symbol::READONLY, Symbol::SCALAR, ddd_full, ddd_dim );
   Symbol d = ddd;
   CPPUNIT_ASSERT_EQUAL( ddd_name, ddd.name );
   CPPUNIT_ASSERT_EQUAL( ddd_synonym, ddd.synonym );
   CPPUNIT_ASSERT_EQUAL( Symbol::SYSTEM, ddd.owner );
   CPPUNIT_ASSERT_EQUAL( Symbol::READONLY, ddd.access );
   CPPUNIT_ASSERT_EQUAL( Symbol::SCALAR, ddd.object_type );
-  CPPUNIT_ASSERT_EQUAL( Symbol::FULL, ddd.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd_full[0], ddd.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ddd_dim[0], ddd.dimension[0] );
 
   CPPUNIT_ASSERT_EQUAL( ddd.name, d.name );
@@ -313,7 +325,7 @@ void SymbolTest::testAssign()
   CPPUNIT_ASSERT_EQUAL( ddd.owner, d.owner );
   CPPUNIT_ASSERT_EQUAL( ddd.access, d.access );
   CPPUNIT_ASSERT_EQUAL( ddd.object_type, d.object_type );
-  CPPUNIT_ASSERT_EQUAL( ddd.structure, d.structure );
+  CPPUNIT_ASSERT_EQUAL( ddd.structure[0], d.structure[0] );
   CPPUNIT_ASSERT_EQUAL( ddd.dimension[0], d.dimension[0] );
 
   // User, read-write, vector
@@ -343,7 +355,7 @@ void SymbolTest::testCreateLabel()
   CPPUNIT_ASSERT_EQUAL( label,     cp.name );
   CPPUNIT_ASSERT_EQUAL( synonym,   cp.synonym );
   CPPUNIT_ASSERT_EQUAL( vec,       cp.object_type );
-  CPPUNIT_ASSERT_EQUAL( full,      cp.structure );
+  CPPUNIT_ASSERT_EQUAL( full,      cp.structure[0] );   //????????????
   CPPUNIT_ASSERT_EQUAL( Symbol::DATASET,     cp.owner );
   CPPUNIT_ASSERT_EQUAL( readonly,  cp.access );
   CPPUNIT_ASSERT_EQUAL( 3,         static_cast<int>( cp.dimension.size() ) );
@@ -466,14 +478,15 @@ void SymbolTest::testCreateSymmetricMatrix()
   //==================================
   // User & read-write, diagonal
   string aaa_name( "aaa" );
-  int aaa_dim = 2;
-  Symbol aaa = Symbol::createSymmetricMatrix( aaa_name, Symbol::DIAGONAL, aaa_dim, Symbol::USER, Symbol::READWRITE );
+  valarray<unsigned int> aaa_dim( 2, 1 );
+  valarray<Symbol::Structure> aaa_diag(Symbol::DIAGONAL, 1);
+  Symbol aaa = Symbol::createSymmetricMatrix( aaa_name, aaa_diag, aaa_dim, Symbol::USER, Symbol::READWRITE );
   CPPUNIT_ASSERT( aaa.name == aaa_name );
   CPPUNIT_ASSERT( aaa.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( aaa.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( aaa.structure[0] == Symbol::DIAGONAL );
   CPPUNIT_ASSERT( aaa.access == Symbol::READWRITE );
   CPPUNIT_ASSERT( aaa.owner == Symbol::USER );
-  CPPUNIT_ASSERT( aaa.dimension[0] == aaa_dim );
+  CPPUNIT_ASSERT( aaa.dimension[0] == aaa_dim[0] );
 
   aaa.initial[0][0] = "3.0";
   aaa.initial[0][1] = "2.0";
@@ -482,14 +495,15 @@ void SymbolTest::testCreateSymmetricMatrix()
 
   // User & read only, diagonal
   string bbb_name( "bbb" );
-  int bbb_dim = 2;
-  Symbol bbb = Symbol::createSymmetricMatrix( bbb_name, Symbol::DIAGONAL, bbb_dim, Symbol::USER, Symbol::READONLY );
+  valarray<unsigned int> bbb_dim( 2, 1 );
+  valarray<Symbol::Structure> bbb_diag(Symbol::DIAGONAL, 1);
+  Symbol bbb = Symbol::createSymmetricMatrix( bbb_name, bbb_diag, bbb_dim, Symbol::USER, Symbol::READONLY );
   CPPUNIT_ASSERT( bbb.name == bbb_name );
   CPPUNIT_ASSERT( bbb.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( bbb.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( bbb.structure[0] == Symbol::DIAGONAL );
   CPPUNIT_ASSERT( bbb.access == Symbol::READONLY );
   CPPUNIT_ASSERT( bbb.owner == Symbol::USER );
-  CPPUNIT_ASSERT( bbb.dimension[0] == bbb_dim );
+  CPPUNIT_ASSERT( bbb.dimension[0] == bbb_dim[0] );
 
   bbb.initial[0][0] = "3.0";
   bbb.initial[0][1] = "2.0";
@@ -498,14 +512,15 @@ void SymbolTest::testCreateSymmetricMatrix()
 
   // System & read-write, diagonal
   string ccc_name( "ccc" );
-  int ccc_dim = 2;
-  Symbol ccc = Symbol::createSymmetricMatrix( ccc_name, Symbol::DIAGONAL, ccc_dim, Symbol::SYSTEM, Symbol::READWRITE );
+  valarray<unsigned int> ccc_dim( 2, 1 );
+  valarray<Symbol::Structure> ccc_diag(Symbol::DIAGONAL, 1);
+  Symbol ccc = Symbol::createSymmetricMatrix( ccc_name, ccc_diag, ccc_dim, Symbol::SYSTEM, Symbol::READWRITE );
   CPPUNIT_ASSERT( ccc.name == ccc_name );
   CPPUNIT_ASSERT( ccc.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( ccc.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( ccc.structure[0] == Symbol::DIAGONAL );
   CPPUNIT_ASSERT( ccc.access == Symbol::READWRITE );
   CPPUNIT_ASSERT( ccc.owner == Symbol::SYSTEM );
-  CPPUNIT_ASSERT( ccc.dimension[0] == ccc_dim );
+  CPPUNIT_ASSERT( ccc.dimension[0] == ccc_dim[0] );
 
   ccc.initial[0][0] = "3.0";
   ccc.initial[0][1] = "2.0";
@@ -514,14 +529,15 @@ void SymbolTest::testCreateSymmetricMatrix()
 
   // System & read only, diagonal
   string ddd_name( "ddd" );
-  int ddd_dim = 2;
-  Symbol ddd = Symbol::createSymmetricMatrix( ddd_name, Symbol::DIAGONAL, ddd_dim, Symbol::SYSTEM, Symbol::READONLY );
+  valarray<unsigned int> ddd_dim( 2, 1 );
+  valarray<Symbol::Structure> ddd_diag(Symbol::DIAGONAL, 1);
+  Symbol ddd = Symbol::createSymmetricMatrix( ddd_name, ddd_diag, ddd_dim, Symbol::SYSTEM, Symbol::READONLY );
   CPPUNIT_ASSERT( ddd.name == ddd_name );
   CPPUNIT_ASSERT( ddd.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( ddd.structure == Symbol::DIAGONAL );
+  CPPUNIT_ASSERT( ddd.structure[0] == Symbol::DIAGONAL );
   CPPUNIT_ASSERT( ddd.access == Symbol::READONLY );
   CPPUNIT_ASSERT( ddd.owner == Symbol::SYSTEM );
-  CPPUNIT_ASSERT( ddd.dimension[0] == ddd_dim );
+  CPPUNIT_ASSERT( ddd.dimension[0] == ddd_dim[0] );
 
   ddd.initial[0][0] = "3.0";
   ddd.initial[0][1] = "2.0";
@@ -533,14 +549,15 @@ void SymbolTest::testCreateSymmetricMatrix()
   //==================================
   // User & read-write, full
   string eee_name( "eee" );
-  int eee_dim = 2;
-  Symbol eee = Symbol::createSymmetricMatrix( eee_name, Symbol::FULL, eee_dim, Symbol::USER, Symbol::READWRITE );
+  valarray<unsigned int> eee_dim( 2, 1 );
+  valarray<Symbol::Structure> eee_full(Symbol::FULL, 1);
+  Symbol eee = Symbol::createSymmetricMatrix( eee_name, eee_full, eee_dim, Symbol::USER, Symbol::READWRITE );
   CPPUNIT_ASSERT( eee.name == eee_name );
   CPPUNIT_ASSERT( eee.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( eee.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( eee.structure[0] == Symbol::FULL );
   CPPUNIT_ASSERT( eee.access == Symbol::READWRITE );
   CPPUNIT_ASSERT( eee.owner == Symbol::USER );
-  CPPUNIT_ASSERT( eee.dimension[0] == eee_dim );
+  CPPUNIT_ASSERT( eee.dimension[0] == eee_dim[0] );
 
   eee.initial[0][0] = "3.0";
   eee.initial[0][1] = "2.0";
@@ -551,14 +568,15 @@ void SymbolTest::testCreateSymmetricMatrix()
 
   // User & read only, full
   string fff_name( "fff" );
-  int fff_dim = 2;
-  Symbol fff = Symbol::createSymmetricMatrix( fff_name, Symbol::FULL, fff_dim, Symbol::USER, Symbol::READONLY );
+  valarray<unsigned int> fff_dim( 2, 1 );
+  valarray<Symbol::Structure> fff_full(Symbol::FULL, 1);
+  Symbol fff = Symbol::createSymmetricMatrix( fff_name, fff_full, fff_dim, Symbol::USER, Symbol::READONLY );
   CPPUNIT_ASSERT( fff.name == fff_name );
   CPPUNIT_ASSERT( fff.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( fff.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( fff.structure[0] == Symbol::FULL );
   CPPUNIT_ASSERT( fff.access == Symbol::READONLY );
   CPPUNIT_ASSERT( fff.owner == Symbol::USER );
-  CPPUNIT_ASSERT( fff.dimension[0] == fff_dim );
+  CPPUNIT_ASSERT( fff.dimension[0] == fff_dim[0] );
 
   fff.initial[0][0] = "3.0";
   fff.initial[0][1] = "2.0";
@@ -569,14 +587,15 @@ void SymbolTest::testCreateSymmetricMatrix()
 
   // System & read-write, full
   string ggg_name( "ggg" );
-  int ggg_dim = 2;
-  Symbol ggg = Symbol::createSymmetricMatrix( ggg_name, Symbol::FULL, ggg_dim, Symbol::SYSTEM, Symbol::READWRITE );
+  valarray<unsigned int> ggg_dim( 2, 1 );
+  valarray<Symbol::Structure> ggg_full(Symbol::FULL, 1);
+  Symbol ggg = Symbol::createSymmetricMatrix( ggg_name, ggg_full, ggg_dim, Symbol::SYSTEM, Symbol::READWRITE );
   CPPUNIT_ASSERT( ggg.name == ggg_name );
   CPPUNIT_ASSERT( ggg.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( ggg.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( ggg.structure[0] == Symbol::FULL );
   CPPUNIT_ASSERT( ggg.access == Symbol::READWRITE );
   CPPUNIT_ASSERT( ggg.owner == Symbol::SYSTEM );
-  CPPUNIT_ASSERT( ggg.dimension[0] == ggg_dim );
+  CPPUNIT_ASSERT( ggg.dimension[0] == ggg_dim[0] );
 
   ggg.initial[0][0] = "3.0";
   ggg.initial[0][1] = "2.0";
@@ -587,14 +606,15 @@ void SymbolTest::testCreateSymmetricMatrix()
 
   // System & read only, full
   string hhh_name( "hhh" );
-  int hhh_dim = 2;
-  Symbol hhh = Symbol::createSymmetricMatrix( hhh_name, Symbol::FULL, hhh_dim, Symbol::SYSTEM, Symbol::READONLY );
+  valarray<unsigned int> hhh_dim( 2, 1 );
+  valarray<Symbol::Structure> hhh_full(Symbol::FULL, 1);
+  Symbol hhh = Symbol::createSymmetricMatrix( hhh_name, hhh_full, hhh_dim, Symbol::SYSTEM, Symbol::READONLY );
   CPPUNIT_ASSERT( hhh.name == hhh_name );
   CPPUNIT_ASSERT( hhh.object_type == Symbol::MATRIX );
-  CPPUNIT_ASSERT( hhh.structure == Symbol::FULL );
+  CPPUNIT_ASSERT( hhh.structure[0] == Symbol::FULL );
   CPPUNIT_ASSERT( hhh.access == Symbol::READONLY );
   CPPUNIT_ASSERT( hhh.owner == Symbol::SYSTEM );
-  CPPUNIT_ASSERT( hhh.dimension[0] == hhh_dim );
+  CPPUNIT_ASSERT( hhh.dimension[0] == hhh_dim[0] );
 
   hhh.initial[0][0] = "3.0";
   hhh.initial[0][1] = "2.0";
