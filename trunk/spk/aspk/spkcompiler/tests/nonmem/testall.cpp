@@ -14,6 +14,7 @@
 #include "ind_fixedParaTest.h"
 #include "pop_basicTest.h"
 #include "pop_fixedParaTest.h"
+#include "pop_blockDiagCovTest.h"
 #include "pop_monteTest.h"
 #include "ind_mdvTest.h"
 #include "pop_mdvTest.h"
@@ -95,6 +96,9 @@ int main( int argc, const char * argv[] )
 
   // test for NonmemTranslator: ability to handle fixed parameters (not fixed effects)
   master[ "pop_fixedParaTest" ] = pop_fixedParaTest::suite();
+
+  // test for NonmemTranslator: ability to handle block diagonal cov (omega)
+  master[ "pop_blockDiagCovTest" ] = pop_blockDiagCovTest::suite();
 
   // test for NonmemTranslator: ability to handle a data set with rows without DVs.
   master[ "ind_mdvTest" ] = ind_mdvTest::suite();

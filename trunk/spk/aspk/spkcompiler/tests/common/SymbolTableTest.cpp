@@ -186,16 +186,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // User & read-write, diagonal
    string aaa_name( "aaa" );
-   int aaa_dim = 2;
-   table.insertSymmetricMatrix( aaa_name, Symbol::DIAGONAL, aaa_dim, Symbol::USER, Symbol::READWRITE );
+   valarray<unsigned int> aaa_dim( 2, 1 );
+   valarray<Symbol::Structure> aaa_diag(Symbol::DIAGONAL, 1);
+   table.insertSymmetricMatrix( aaa_name, aaa_diag , aaa_dim, Symbol::USER, Symbol::READWRITE );
    Symbol *aaa = table.find( aaa_name );
    CPPUNIT_ASSERT( aaa != Symbol::empty() );
    CPPUNIT_ASSERT( aaa->name == aaa_name );
    CPPUNIT_ASSERT( aaa->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( aaa->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( aaa->structure[0] == Symbol::DIAGONAL );
    CPPUNIT_ASSERT( aaa->access == Symbol::READWRITE );
    CPPUNIT_ASSERT( aaa->owner == Symbol::USER );
-   CPPUNIT_ASSERT( aaa->dimension[0] == aaa_dim );
+   CPPUNIT_ASSERT( aaa->dimension[0] == aaa_dim[0] );
 
    aaa->initial[0][0] = "3.0";
    aaa->initial[0][1] = "2.0";
@@ -204,16 +205,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // User & read only, diagonal
    string bbb_name( "bbb" );
-   int bbb_dim = 2;
-   table.insertSymmetricMatrix( bbb_name, Symbol::DIAGONAL, bbb_dim, Symbol::USER, Symbol::READONLY );
+   valarray<unsigned int> bbb_dim( 2, 1 );
+   valarray<Symbol::Structure> bbb_diag(Symbol::DIAGONAL, 1);
+   table.insertSymmetricMatrix( bbb_name, bbb_diag, bbb_dim, Symbol::USER, Symbol::READONLY );
    Symbol *bbb = table.find( bbb_name );
    CPPUNIT_ASSERT( bbb != Symbol::empty() );
    CPPUNIT_ASSERT( bbb->name == bbb_name );
    CPPUNIT_ASSERT( bbb->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( bbb->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( bbb->structure[0] == Symbol::DIAGONAL );
    CPPUNIT_ASSERT( bbb->access == Symbol::READONLY );
    CPPUNIT_ASSERT( bbb->owner == Symbol::USER );
-   CPPUNIT_ASSERT( bbb->dimension[0] == bbb_dim );
+   CPPUNIT_ASSERT( bbb->dimension[0] == bbb_dim[0] );
 
    bbb->initial[0][0] = "3.0";
    bbb->initial[0][1] = "2.0";
@@ -222,16 +224,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // System & read-write, diagonal
    string ccc_name( "ccc" );
-   int ccc_dim = 2;
-   table.insertSymmetricMatrix( ccc_name, Symbol::DIAGONAL, ccc_dim, Symbol::SYSTEM, Symbol::READWRITE );
+   valarray<unsigned int> ccc_dim( 2, 1 );
+   valarray<Symbol::Structure> ccc_diag(Symbol::DIAGONAL, 1);
+   table.insertSymmetricMatrix( ccc_name, ccc_diag, ccc_dim, Symbol::SYSTEM, Symbol::READWRITE );
    Symbol *ccc = table.find( ccc_name );
    CPPUNIT_ASSERT( ccc != Symbol::empty() );
    CPPUNIT_ASSERT( ccc->name == ccc_name );
    CPPUNIT_ASSERT( ccc->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( ccc->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( ccc->structure[0] == Symbol::DIAGONAL );
    CPPUNIT_ASSERT( ccc->access == Symbol::READWRITE );
    CPPUNIT_ASSERT( ccc->owner == Symbol::SYSTEM );
-   CPPUNIT_ASSERT( ccc->dimension[0] == ccc_dim );
+   CPPUNIT_ASSERT( ccc->dimension[0] == ccc_dim[0] );
 
    ccc->initial[0][0] = "3.0";
    ccc->initial[0][1] = "2.0";
@@ -240,16 +243,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // System & read only, diagonal
    string ddd_name( "ddd" );
-   int ddd_dim = 2;
-   table.insertSymmetricMatrix( ddd_name, Symbol::DIAGONAL, ddd_dim, Symbol::SYSTEM, Symbol::READONLY );
+   valarray<unsigned int> ddd_dim( 2, 1 );
+   valarray<Symbol::Structure> ddd_diag(Symbol::DIAGONAL, 1);
+   table.insertSymmetricMatrix( ddd_name, ddd_diag, ddd_dim, Symbol::SYSTEM, Symbol::READONLY );
    Symbol *ddd = table.find( ddd_name );
    CPPUNIT_ASSERT( ddd != Symbol::empty() );
    CPPUNIT_ASSERT( ddd->name == ddd_name );
    CPPUNIT_ASSERT( ddd->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( ddd->structure == Symbol::DIAGONAL );
+   CPPUNIT_ASSERT( ddd->structure[0] == Symbol::DIAGONAL );
    CPPUNIT_ASSERT( ddd->access == Symbol::READONLY );
    CPPUNIT_ASSERT( ddd->owner == Symbol::SYSTEM );
-   CPPUNIT_ASSERT( ddd->dimension[0] == ddd_dim );
+   CPPUNIT_ASSERT( ddd->dimension[0] == ddd_dim[0] );
 
    ddd->initial[0][0] = "3.0";
    ddd->initial[0][1] = "2.0";
@@ -260,16 +264,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // User & read-write, full
    string eee_name( "eee" );
-   int eee_dim = 2;
-   table.insertSymmetricMatrix( eee_name, Symbol::FULL, eee_dim, Symbol::USER, Symbol::READWRITE );
+   valarray<unsigned int> eee_dim( 2, 1 );
+   valarray<Symbol::Structure> eee_full(Symbol::FULL, 1);
+   table.insertSymmetricMatrix( eee_name, eee_full, eee_dim, Symbol::USER, Symbol::READWRITE );
    Symbol *eee = table.find( eee_name );
    CPPUNIT_ASSERT( eee != Symbol::empty() );
    CPPUNIT_ASSERT( eee->name == eee_name );
    CPPUNIT_ASSERT( eee->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( eee->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( eee->structure[0] == Symbol::FULL );
    CPPUNIT_ASSERT( eee->access == Symbol::READWRITE );
    CPPUNIT_ASSERT( eee->owner == Symbol::USER );
-   CPPUNIT_ASSERT( eee->dimension[0] == eee_dim );
+   CPPUNIT_ASSERT( eee->dimension[0] == eee_dim[0] );
 
    eee->initial[0][0] = "3.0";
    eee->initial[0][1] = "2.0";
@@ -280,16 +285,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // User & read only, full
    string fff_name( "fff" );
-   int fff_dim = 2;
-   table.insertSymmetricMatrix( fff_name, Symbol::FULL, fff_dim, Symbol::USER, Symbol::READONLY );
+   valarray<unsigned int> fff_dim( 2, 1 );
+   valarray<Symbol::Structure> fff_full(Symbol::FULL, 1);
+   table.insertSymmetricMatrix( fff_name, fff_full, fff_dim, Symbol::USER, Symbol::READONLY );
    Symbol *fff = table.find( fff_name );
    CPPUNIT_ASSERT( fff != Symbol::empty() );
    CPPUNIT_ASSERT( fff->name == fff_name );
    CPPUNIT_ASSERT( fff->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( fff->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( fff->structure[0] == Symbol::FULL );
    CPPUNIT_ASSERT( fff->access == Symbol::READONLY );
    CPPUNIT_ASSERT( fff->owner == Symbol::USER );
-   CPPUNIT_ASSERT( fff->dimension[0] == fff_dim );
+   CPPUNIT_ASSERT( fff->dimension[0] == fff_dim[0] );
 
    fff->initial[0][0] = "3.0";
    fff->initial[0][1] = "2.0";
@@ -300,16 +306,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // System & read-write, full
    string ggg_name( "ggg" );
-   int ggg_dim = 2;
-   table.insertSymmetricMatrix( ggg_name, Symbol::FULL, ggg_dim, Symbol::SYSTEM, Symbol::READWRITE );
+   valarray<unsigned int> ggg_dim( 2, 1 );
+   valarray<Symbol::Structure> ggg_full(Symbol::FULL, 1);
+   table.insertSymmetricMatrix( ggg_name, ggg_full, ggg_dim, Symbol::SYSTEM, Symbol::READWRITE );
    Symbol *ggg = table.find( ggg_name );
    CPPUNIT_ASSERT( ggg != Symbol::empty() );
    CPPUNIT_ASSERT( ggg->name == ggg_name );
    CPPUNIT_ASSERT( ggg->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( ggg->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( ggg->structure[0] == Symbol::FULL );
    CPPUNIT_ASSERT( ggg->access == Symbol::READWRITE );
    CPPUNIT_ASSERT( ggg->owner == Symbol::SYSTEM );
-   CPPUNIT_ASSERT( ggg->dimension[0] == ggg_dim );
+   CPPUNIT_ASSERT( ggg->dimension[0] == ggg_dim[0] );
 
    ggg->initial[0][0] = "3.0";
    ggg->initial[0][1] = "2.0";
@@ -320,16 +327,17 @@ void SymbolTableTest::testInsertSymmetricMatrix()
 
    // System & read only, full
    string hhh_name( "hhh" );
-   int hhh_dim = 2;
-   table.insertSymmetricMatrix( hhh_name, Symbol::FULL, hhh_dim, Symbol::SYSTEM, Symbol::READONLY );
+   valarray<unsigned int> hhh_dim( 2, 1 );
+   valarray<Symbol::Structure> hhh_full(Symbol::FULL, 1);
+   table.insertSymmetricMatrix( hhh_name, hhh_full, hhh_dim, Symbol::SYSTEM, Symbol::READONLY );
    Symbol *hhh = table.find( hhh_name );
    CPPUNIT_ASSERT( hhh != Symbol::empty() );
    CPPUNIT_ASSERT( hhh->name == hhh_name );
    CPPUNIT_ASSERT( hhh->object_type == Symbol::MATRIX );
-   CPPUNIT_ASSERT( hhh->structure == Symbol::FULL );
+   CPPUNIT_ASSERT( hhh->structure[0] == Symbol::FULL );
    CPPUNIT_ASSERT( hhh->access == Symbol::READONLY );
    CPPUNIT_ASSERT( hhh->owner == Symbol::SYSTEM );
-   CPPUNIT_ASSERT( hhh->dimension[0] == hhh_dim );
+   CPPUNIT_ASSERT( hhh->dimension[0] == hhh_dim[0] );
 
    hhh->initial[0][0] = "3.0";
    hhh->initial[0][1] = "2.0";

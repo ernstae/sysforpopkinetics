@@ -498,20 +498,19 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   //-------------------------------------------
   DOMNodeList * omega_list = pop_analysis->getElementsByTagName( XML.X_OMEGA );
   int nOmegaSpecs = omega_list->getLength();
-  if( nOmegaSpecs > 1 )
-    {
-      // v0.1 supports only one (full) Omega specification
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess, 
-		SpkCompilerError::maxMessageLen(),
-		"Multiple <%s> elements found.",
-	       XML.C_OMEGA );
-      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }  
+  //if( nOmegaSpecs > 1 )
+  //{
+  //    // v0.1 supports only one (full) Omega specification
+  //    char mess[ SpkCompilerError::maxMessageLen() ];
+  //    snprintf( mess, 
+  //		SpkCompilerError::maxMessageLen(),
+  //		"Multiple <%s> elements found.",
+  //	       XML.C_OMEGA );
+  //    SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+  //    throw e;
+      //}  
   if( nOmegaSpecs < 1 )
     {
-      // v0.1 supports only one (full) Omega specification
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
@@ -520,86 +519,109 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  DOMElement * omega = dynamic_cast<DOMElement*>( omega_list->item(0) );
-  if( !omega->hasAttribute( XML.X_DIMENSION ) )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess, 
-		SpkCompilerError::maxMessageLen(),
-		"Missing <%s::%s> attribute.",
-		XML.C_OMEGA, XML.C_DIMENSION );
-      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  const XMLCh* xml_omega_dim = omega->getAttribute( XML.X_DIMENSION );
-  if( !XMLString::textToBin( xml_omega_dim, myOmegaDim ) )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess,
-		SpkCompilerError::maxMessageLen(),
-		"Invalid <%s::%s> attribute value: \"%s\".", 
-		XML.C_OMEGA, XML.C_DIMENSION, XMLString::transcode( xml_omega_dim ) );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-
-  if( !omega->hasAttribute( XML.X_STRUCT ) )
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess, 
-		SpkCompilerError::maxMessageLen(),
-		"Missing <%s::%s> attribute.",
-		XML.C_OMEGA, XML.C_STRUCT );
-      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  const XMLCh* xml_omega_struct = omega->getAttribute( XML.X_STRUCT );
-  if( XMLString::equals( xml_omega_struct, XML.X_DIAGONAL ) )
-    {
-      myOmegaStruct = Symbol::DIAGONAL;
-      myOmegaOrder = myOmegaDim;
-    }
-  else if( XMLString::equals( xml_omega_struct, XML.X_BLOCK ) )
-    {
-      myOmegaStruct = Symbol::TRIANGLE;
-      myOmegaOrder = series( 1, 1, myOmegaDim );
-    }
-  else
-    {
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess,
-		SpkCompilerError::maxMessageLen(),
-		"Invalid <%s::%s> attribute value: \"%s\".", 
-		XML.C_OMEGA, XML.C_STRUCT, XMLString::transcode( xml_omega_struct ) );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
-  Symbol * sym_omega = table->insertSymmetricMatrix( nonmem::OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
+  myOmegaDim.resize( nOmegaSpecs );
+  myOmegaOrder.resize( nOmegaSpecs );
+  myOmegaStruct.resize( nOmegaSpecs );
+  myOmegaSameAsPrev.resize( nOmegaSpecs );
+  
+  DOMElement * omega;
+  for (int ii = 0; ii < nOmegaSpecs; ii++)    // loop through blocks
   {
+     omega = dynamic_cast<DOMElement*>( omega_list->item(ii) );
+     if( !omega->hasAttribute( XML.X_DIMENSION ) )
+       {
+	 char mess[ SpkCompilerError::maxMessageLen() ];
+	 snprintf( mess, 
+		   SpkCompilerError::maxMessageLen(),
+		   "Missing <%s::%s> attribute.",
+		   XML.C_OMEGA, XML.C_DIMENSION );
+	 SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	 throw e;
+       }
+     const XMLCh* xml_omega_dim = omega->getAttribute( XML.X_DIMENSION );
+     if( !XMLString::textToBin( xml_omega_dim, myOmegaDim[ii] ) )
+       {
+	 char mess[ SpkCompilerError::maxMessageLen() ];
+	 snprintf( mess,
+		   SpkCompilerError::maxMessageLen(),
+		   "Invalid <%s::%s> attribute value: \"%s\".", 
+		   XML.C_OMEGA, XML.C_DIMENSION, XMLString::transcode( xml_omega_dim ) );
+	 SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	 throw e;
+       }
+      if( omega->hasAttribute( XML.X_SAME_AS_PREVIOUS ) )
+       {
+	 const XMLCh* xml_omega_sameAsPrev = omega->getAttribute( XML.X_SAME_AS_PREVIOUS );
+	 myOmegaSameAsPrev[ii] = (XMLString::equals( xml_omega_sameAsPrev, XML.X_YES )? true : false );
+       }
+      if( !omega->hasAttribute( XML.X_STRUCT ) )
+       {
+	 char mess[ SpkCompilerError::maxMessageLen() ];
+	 snprintf( mess, 
+		   SpkCompilerError::maxMessageLen(),
+		   "Missing <%s::%s> attribute.",
+		   XML.C_OMEGA, XML.C_STRUCT );
+	 SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	 throw e;
+       }
+     const XMLCh* xml_omega_struct = omega->getAttribute( XML.X_STRUCT );
+     if( XMLString::equals( xml_omega_struct, XML.X_DIAGONAL ) )
+       {
+	 myOmegaStruct[ii] = Symbol::DIAGONAL;
+	 myOmegaOrder[ii] = myOmegaDim[ii];
+       }
+     else if( XMLString::equals( xml_omega_struct, XML.X_BLOCK ) )
+       {
+	 myOmegaStruct[ii] = Symbol::TRIANGLE;
+	 myOmegaOrder[ii] = series( 1, 1, myOmegaDim[ii] );
+       }
+     else
+       {
+	 char mess[ SpkCompilerError::maxMessageLen() ];
+	 snprintf( mess,
+		   SpkCompilerError::maxMessageLen(),
+		   "Invalid <%s::%s> attribute value: \"%s\".", 
+		   XML.C_OMEGA, XML.C_STRUCT, XMLString::transcode( xml_omega_struct ) );
+	 SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+	 throw e;
+       }
+  }  
+  // end of first "loop through blocks"
+
+
+  Symbol * sym_omega = table->insertSymmetricMatrix( nonmem::OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
+ 
+
+  DOMElement * omega_in;
+  DOMNodeList * value_list;
+  for (int ii = 0; ii < nOmegaSpecs; ii++)    // loop through blocks
+  {
+     omega = dynamic_cast<DOMElement*>( omega_list->item(ii) );
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( XML.X_IN );
-    if( omega_in_list->getLength() > 1 )
-      {
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	snprintf( mess, 
-		  SpkCompilerError::maxMessageLen(),
-		  "Multiple <%s> elements found under <%s>.",
-		  XML.C_OMEGA, XML.C_IN );
-	SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	throw e;
-      }
+    //if( omega_in_list->getLength() > 1 )
+    //  {
+    //	char mess[ SpkCompilerError::maxMessageLen() ];
+    //	snprintf( mess, 
+    //		  SpkCompilerError::maxMessageLen(),
+    //		  "Multiple <%s> elements found under <%s>.",
+    //		  XML.C_OMEGA, XML.C_IN );
+    //	SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+    //	throw e;
+    //  }
     if( omega_in_list->getLength() < 1 )
       {
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	snprintf( mess, 
-		  SpkCompilerError::maxMessageLen(),
-		  "Missing <%s> element under <%s>.",
-		  XML.C_OMEGA, XML.C_IN );
-	SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	throw e;
-      }
-    DOMElement * omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(0) );
+    	char mess[ SpkCompilerError::maxMessageLen() ];
+    	snprintf( mess, 
+    		  SpkCompilerError::maxMessageLen(),
+    		  "Missing <%s> element under <%s>.",
+    		  XML.C_OMEGA, XML.C_IN );
+    	SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+    	throw e;
+     }
 
+    omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(0) );  //there is only one set of items (value)
+ 
     //
     // Omega specification contains the minimal representation of the matrix.
     //
@@ -621,8 +643,9 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       // Thus, A has to be reorganized and stored in an internal array in the following order:
       // A" = { a11, a21, a31, a22, a32, a33 }
       //
-      DOMNodeList * value_list = omega_in->getElementsByTagName( XML.X_VALUE );
-      if( myOmegaOrder != value_list->getLength() )
+      value_list = omega_in->getElementsByTagName( XML.X_VALUE );
+
+      if( myOmegaOrder[ii] != value_list->getLength() )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
 	  snprintf( mess,
@@ -632,18 +655,20 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	  throw e;
 	}
-      if( myOmegaStruct == Symbol::TRIANGLE )
+
+      DOMElement * value;
+      if( myOmegaStruct[ii] == Symbol::TRIANGLE )
 	{
 	  // First construct a full n by n matrix.
-	  valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
-	  valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
-	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	  valarray<string> omega_in_full ( myOmegaDim[ii] * myOmegaDim[ii] );
+	  valarray<bool> omega_fix_full( myOmegaDim[ii] * myOmegaDim[ii] );
+	  for( int i=0, cnt=0; i<myOmegaDim[ii]; i++ )
 	    {
 	      for( int j=0; j<=i; j++, cnt++ )
 		{
 		  char str_val[128];
 		  bool isFixed = false;
-		  DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
+		  value = dynamic_cast<DOMElement*>( value_list->item(cnt) );
 		  if( value->hasAttribute( XML.X_FIXED ) )
 		    {
 		      const XMLCh* xml_fixed = value->getAttribute( XML.X_FIXED );
@@ -660,27 +685,27 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 		      delete tmp_c_val;
 		    }
 		  //omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
-		  omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
-		  omega_fix_full[ i + j*myOmegaDim ] = isFixed;
+		  omega_in_full [ i + j*myOmegaDim[ii] ] = str_val; // filling a upper triangle element
+		  omega_fix_full[ i + j*myOmegaDim[ii] ] = isFixed;
 		}
 	    }
 	  // Then, extract only the upper half in the row major order.
-	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	  for( int i=0, cnt=0; i<myOmegaDim[ii]; i++ )
 	    {
-	      for( int j=i; j<myOmegaDim; j++, cnt++ )
+	      for( int j=i; j<myOmegaDim[ii]; j++, cnt++ )
 		{
-		  sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
-		  sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
+		  sym_omega->initial[ii][cnt] = omega_in_full [ j + i * myOmegaDim[ii] ];
+		  sym_omega->fixed  [ii][cnt] = omega_fix_full[ j + i * myOmegaDim[ii] ];
 		}
 	    }
 	}
       else // diagonal case
 	{
-	  for( int i=0; i<myOmegaDim; i++ )
+	  for( int i=0; i<myOmegaDim[ii]; i++ )
 	    {
 	      char str_val[128];
 	      bool isFixed = false;
-	      DOMElement * value = dynamic_cast<DOMElement*>( value_list->item(i) );
+	      value = dynamic_cast<DOMElement*>( value_list->item(i) );
 	      if( value->hasAttribute( XML.X_FIXED ) )
 		{
 		  const XMLCh* xml_fixed = value->getAttribute( XML.X_FIXED );
@@ -696,11 +721,10 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 		  strcpy( str_val, tmp_c_val );
 		  delete tmp_c_val;
 		}
-	      sym_omega->initial[0][i] = str_val;
-	      sym_omega->fixed[0][i]   = isFixed;
+	      sym_omega->initial[ii][i] = str_val;
+	      sym_omega->fixed[ii][i]   = isFixed;
 	    }
 	}
-
   }
 
   //-------------------------------------------
@@ -708,20 +732,19 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   //-------------------------------------------
   DOMNodeList * sigma_list = pop_analysis->getElementsByTagName( XML.X_SIGMA );
   int nSigmaSpecs = sigma_list->getLength();
-  if( nSigmaSpecs > 1 )
-    { 
-      // v0.1 supports only one (full) Sigma specification
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess, 
-		SpkCompilerError::maxMessageLen(),
-		"Multiple <%s> elements found.",
-		XML.C_SIGMA );
-      SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+  //if( nSigmaSpecs > 1 )
+  //  { 
+  //    // v0.1 supports only one (full) Sigma specification
+  //    char mess[ SpkCompilerError::maxMessageLen() ];
+  //    snprintf( mess, 
+  //		SpkCompilerError::maxMessageLen(),
+  //		"Multiple <%s> elements found.",
+  //		XML.C_SIGMA );
+  //    SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+  //    throw e;
+  //  }
   if( nSigmaSpecs < 1 )
     { 
-      // v0.1 supports only one (full) Sigma specification
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
@@ -730,7 +753,15 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  DOMElement * sigma = dynamic_cast<DOMElement*>( sigma_list->item(0) );
+  mySigmaDim.resize( nSigmaSpecs );
+  mySigmaOrder.resize( nSigmaSpecs  );
+  mySigmaStruct.resize( nSigmaSpecs );
+  mySigmaSameAsPrev.resize( nSigmaSpecs );
+
+  DOMElement * sigma;
+  for (int ii = 0; ii < nSigmaSpecs; ii++)    // loop through blocks
+    {
+  sigma = dynamic_cast<DOMElement*>( sigma_list->item(ii) );
   if( !sigma->hasAttribute( XML.X_DIMENSION ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
@@ -742,7 +773,7 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       throw e;
     }
   const XMLCh* xml_sigma_dim = sigma->getAttribute( XML.X_DIMENSION );
-  if( !XMLString::textToBin( xml_sigma_dim, mySigmaDim ) )
+  if( !XMLString::textToBin( xml_sigma_dim, mySigmaDim[ii] ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess,
@@ -752,7 +783,13 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-
+  // SAME_AS_PREVIOUS  ---------------------------------------------
+  if( sigma->hasAttribute( XML.X_SAME_AS_PREVIOUS ) )
+    {
+      const XMLCh* xml_sigma_sameAsPrev = sigma->getAttribute( XML.X_SAME_AS_PREVIOUS );
+      mySigmaSameAsPrev[ii] = (XMLString::equals( xml_sigma_sameAsPrev, XML.X_YES )? true : false );
+    }
+  // --------------------------------------------------------------
   if( !sigma->hasAttribute( XML.X_STRUCT ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
@@ -766,13 +803,13 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   const XMLCh* xml_sigma_struct = sigma->getAttribute( XML.X_STRUCT );
   if( XMLString::equals( xml_sigma_struct, XML.X_DIAGONAL ) )
     {
-      mySigmaStruct = Symbol::DIAGONAL;
-      mySigmaOrder = mySigmaDim;
+      mySigmaStruct[ii] = Symbol::DIAGONAL;
+      mySigmaOrder[ii] = mySigmaDim[ii];
     }
   else if( XMLString::equals( xml_sigma_struct, XML.X_BLOCK ) )
     {
-      mySigmaStruct = Symbol::TRIANGLE;
-      mySigmaOrder = series( 1, 1, mySigmaDim );
+      mySigmaStruct[ii] = Symbol::TRIANGLE;
+      mySigmaOrder[ii] = series( 1, 1, mySigmaDim[ii] );
     }
   else
     {
@@ -784,21 +821,28 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
+  }  // end of first "loop through blocks"
 
-  Symbol * sym_sigma = table->insertSymmetricMatrix( nonmem::SIGMA, mySigmaStruct, mySigmaDim, Symbol::SYSTEM, Symbol::READONLY ); 
-  {
-    //<in>
-    DOMNodeList * sigma_in_list = sigma->getElementsByTagName( XML.X_IN );
-    if( sigma_in_list->getLength() > 1 )
-      {
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	snprintf( mess, 
-		  SpkCompilerError::maxMessageLen(),
-		  "Multiple <%s> elements found under <%s>.",
-		  XML.C_SIGMA, XML.C_IN );
-	SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	throw e;
-      }
+  Symbol * sym_sigma = table->insertSymmetricMatrix( nonmem::SIGMA, mySigmaStruct, mySigmaDim, Symbol::SYSTEM, Symbol::READONLY );
+
+
+  DOMNodeList * sigma_in_list;
+  DOMElement * sigma_in;
+  for (int ii = 0; ii < nSigmaSpecs; ii++)    // loop through blocks
+    {
+      sigma = dynamic_cast<DOMElement*>( sigma_list->item(ii) );
+      //<in>
+      sigma_in_list = sigma->getElementsByTagName( XML.X_IN );
+    //if( sigma_in_list->getLength() > 1 )
+    //  {
+    //	char mess[ SpkCompilerError::maxMessageLen() ];
+    //	snprintf( mess, 
+    //		  SpkCompilerError::maxMessageLen(),
+    //		  "Multiple <%s> elements found under <%s>.",
+    //		  XML.C_SIGMA, XML.C_IN );
+    //	SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+    //	throw e;
+    //  }
     if( sigma_in_list->getLength() < 1 )
       {
 	char mess[ SpkCompilerError::maxMessageLen() ];
@@ -809,7 +853,9 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	SpkCompilerException e ( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	throw e;
       }
-    DOMElement * sigma_in = dynamic_cast<DOMElement*>( sigma_in_list->item(0) );
+ 
+
+    sigma_in = dynamic_cast<DOMElement*>( sigma_in_list->item(ii) );
 
     //
     // Sigma specification contains the minimal representation of the matrix.
@@ -833,7 +879,7 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       // A" = { a11, a21, a31, a22, a32, a33 }
       //
       DOMNodeList * value_list = sigma_in->getElementsByTagName( XML.X_VALUE );
-      if( mySigmaOrder != value_list->getLength() )
+      if( mySigmaOrder[ii] != value_list->getLength() )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
 	  snprintf( mess,
@@ -843,12 +889,12 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	  throw e;
 	}
-      if( mySigmaStruct == Symbol::TRIANGLE )
+      if( mySigmaStruct[ii] == Symbol::TRIANGLE )
 	{
 	  // First construct a full n by n matrix.
-	  valarray<string> sigma_in_full ( mySigmaDim * mySigmaDim );
-	  valarray<bool>   sigma_fix_full( mySigmaDim * mySigmaDim );
-	  for( int i=0, cnt=0; i<mySigmaDim; i++ )
+	  valarray<string> sigma_in_full ( mySigmaDim[ii] * mySigmaDim[ii] );
+	  valarray<bool>   sigma_fix_full( mySigmaDim[ii] * mySigmaDim[ii] );
+	  for( int i=0, cnt=0; i<mySigmaDim[ii]; i++ )
 	    {
 	      for( int j=0; j<=i; j++, cnt++ )
 		{
@@ -871,23 +917,23 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 		      delete tmp_c_val;
 		    }
 		  //sigma_in_full[ j + i*dim ] = str_val; // filling a lower triangle element
-		  sigma_in_full [ i + j*mySigmaDim ] = str_val; // filling a upper triangle element
-		  sigma_fix_full[ i + j*mySigmaDim ] = isFixed;
+		  sigma_in_full [ i + j*mySigmaDim[ii] ] = str_val; // filling a upper triangle element
+		  sigma_fix_full[ i + j*mySigmaDim[ii] ] = isFixed;
 		}
 	    }
 	  // Then, extract only the upper half in the row major order.
-	  for( int i=0, cnt=0; i<mySigmaDim; i++ )
+	  for( int i=0, cnt=0; i<mySigmaDim[ii]; i++ )
 	    {
-	      for( int j=i; j<mySigmaDim; j++, cnt++ )
+	      for( int j=i; j<mySigmaDim[ii]; j++, cnt++ )
 		{
-		  sym_sigma->initial[0][cnt] = sigma_in_full [ j + i * mySigmaDim ];
-		  sym_sigma->fixed  [0][cnt] = sigma_fix_full[ j + i * mySigmaDim ];
+		  sym_sigma->initial[ii][cnt] = sigma_in_full [ j + i * mySigmaDim[ii] ];
+		  sym_sigma->fixed  [ii][cnt] = sigma_fix_full[ j + i * mySigmaDim[ii] ];
 		}
 	    }
 	}
       else // diagonal case
 	{
-	  for( int i=0; i<mySigmaDim; i++ )
+	  for( int i=0; i<mySigmaDim[ii]; i++ )
 	    {
 	      char str_val[128];
 	      bool isFixed = false;
@@ -907,8 +953,8 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 		  strcpy( str_val, tmp_c_val );
 		  delete tmp_c_val;
 		}
-	      sym_sigma->initial[0][i] = str_val;
-	      sym_sigma->fixed[0][i]   = isFixed;
+	      sym_sigma->initial[ii][i] = str_val;
+	      sym_sigma->fixed[ii][i]   = isFixed;
 	    }
 	}
   }
@@ -921,7 +967,7 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   // eta's initial estimate is initialized to
   // 0.0 here.
   //-------------------------------------------
-  myEtaLen = myOmegaDim;
+  myEtaLen = myOmegaDim.sum();
   char etaDefault[] = "0.0";
   Symbol * sym_eta = table->insertVector( nonmem::ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
@@ -930,7 +976,7 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   //-------------------------------------------
   // <eps> 
   //-------------------------------------------
-  myEpsLen = mySigmaDim;
+  myEpsLen = mySigmaDim.sum();
   char epsDefault[] = "0.0";
   Symbol * sym_eps = table->insertVector( nonmem::EPS, myEpsLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEpsLen; i++ ) sym_eps->initial[0][i] = epsDefault;

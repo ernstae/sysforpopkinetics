@@ -159,9 +159,12 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // The structure of OMEGA matrix." << endl;
   oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
   oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
+  oNonmemPars << "   // \"BLOCKDIAG\" indicates that blocks along the diagonal are either FULL or DIAGONAL and the rest are all zero." << endl;
+
+  int nOmegaBlock = myOmegaStruct.size();
      
   oNonmemPars << "   const enum covStruct omegaStruct = ";
-  oNonmemPars << (myOmegaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+  oNonmemPars << (nOmegaBlock > 1?  "BLOCKDIAG" : (myOmegaStruct[0] == Symbol::TRIANGLE? "FULL" : "DIAGONAL" )) << ";" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   // The dimension of OMEGA matrix is detemined by the length of ETA vector." << endl;
@@ -172,17 +175,23 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
   oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
   oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
-  oNonmemPars << "   const int omegaOrder = " << (myOmegaStruct==Symbol::DIAGONAL? "omegaDim" : "omegaDim * (omegaDim+1) / 2" ) << ";" << endl;
+  oNonmemPars << "   // If the matrix is block diagonal, it is equal to the sum of the orders of the individual blocks." << endl;
+
+  //oNonmemPars << "   const int omegaOrder = " << (myOmegaStruct[0]==Symbol::DIAGONAL? "omegaDim" : "omegaDim * (omegaDim+1) / 2" ) << ";" << endl;
+  oNonmemPars << "   const int omegaOrder = " << myOmegaOrder.sum() <<  ";" << endl;
   oNonmemPars << endl;
 
   oNonmemPars << "   // A C-arrary containing the initial estimates for OMEGA." << endl;
   oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   double c_omegaIn[ omegaOrder ] = { "; 
-  for( int j=0; j<myOmegaOrder; j++ )
+  oNonmemPars << "   double c_omegaIn[ omegaOrder ] = { ";
+  for( int i=0; i<nOmegaBlock; i++ )
     {
-      if( j>0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pOmega->initial[0][j];
+      for( int j=0; j<myOmegaOrder[i]; j++ )
+	{
+	  if( i+j>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << pOmega->initial[i][j];
+	}
     }
   oNonmemPars << " };" << endl;
   oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, omegaOrder );" << endl;
@@ -190,17 +199,56 @@ void NonmemTranslator::generateNonmemParsNamespace() const
 
   oNonmemPars << "   // A C-arrary containing the fixation flags for OMEGA." << endl;
   oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   bool c_omegaFixed[ omegaOrder ] = { "; 
-  for( int j=0; j<myOmegaOrder; j++ )
-    {
-      if( j>0 )
-	oNonmemPars << ", ";
-      oNonmemPars << (pOmega->fixed[0][j]? "true":"false");
+  oNonmemPars << "   bool c_omegaFixed[ omegaOrder ] = { ";
+  for( int i=0; i<nOmegaBlock; i++ )
+    { 
+      for( int j=0; j<myOmegaOrder[i]; j++ )
+	{
+	  if( i+j>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << (pOmega->fixed[i][j]? "true":"false");
+	}
     }
   oNonmemPars << " };" << endl;
   oNonmemPars << "   const valarray<bool> omegaFixed( c_omegaFixed, omegaOrder );" << endl;
   oNonmemPars << endl;
 
+  //Block Diagonal Omega
+  oNonmemPars << "   const int nOmegaBlk = " << nOmegaBlock <<  ";" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   enum covStruct c_omegaBlockStruct[ nOmegaBlk ] = { ";
+  for( int i=0; i<nOmegaBlock; i++ )
+    {
+      if( i>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << (myOmegaStruct[i] == Symbol::TRIANGLE? "FULL" : "DIAGONAL" );
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<covStruct> omegaBlockStruct( c_omegaBlockStruct, nOmegaBlk );" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   int c_omegaBlockDims[ nOmegaBlk ] = { ";
+  for( int i=0; i<nOmegaBlock; i++ )
+    {
+      if( i>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << myOmegaDim[i];
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<int> omegaBlockDims( c_omegaBlockDims, nOmegaBlk );" << endl;
+  oNonmemPars << endl;
+
+  oNonmemPars << "   bool c_omegaBlockSameAsPrev[ nOmegaBlk ] = { ";
+  for( int i=0; i<nOmegaBlock; i++ )
+    {
+      if( i>0 )
+	oNonmemPars << ", ";
+      oNonmemPars << (myOmegaSameAsPrev[i]? "true":"false");
+    }
+  oNonmemPars << " };" << endl;
+  oNonmemPars << "   const valarray<bool> omegaBlockSameAsPrev( c_omegaBlockSameAsPrev, nOmegaBlk );" << endl;
+  oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // EPS" << endl;
@@ -227,8 +275,12 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // The structure of SIGMA matrix." << endl;
       oNonmemPars << "   // \"FULL\" indicates that possibly all elements of the symmetric matrix may be non-zero." << endl;
       oNonmemPars << "   // \"DIAGONAL\" indicates that only the diagonal elements are non-zero and the rest are all zero." << endl;
+      oNonmemPars << "   // \"BLOCKDIAG\" indicates that blocks along the diagonal are either FULL or DIAGONAL and the rest are all zero." << endl;
+      
+      int nSigmaBlock = mySigmaStruct.size();
+
       oNonmemPars << "   const enum covStruct sigmaStruct = ";
-      oNonmemPars << "" << (mySigmaStruct == Symbol::TRIANGLE? "FULL" : "DIAGONAL" ) << ";" << endl;
+      oNonmemPars << (nSigmaBlock > 1?  "BLOCKDIAG" : (mySigmaStruct[0] == Symbol::TRIANGLE? "FULL" : "DIAGONAL" )) << ";" << endl;
       oNonmemPars << endl;
 
       oNonmemPars << "   // The dimension of SIGMA matrix is detemined by the length of EPS vector." << endl;
@@ -239,31 +291,81 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // If the matrix is full, the value is equal to the number of " << endl;
       oNonmemPars << "   // elements in a half triangle (diagonal elements included)." << endl;
       oNonmemPars << "   // If the matrix is diagonal, it is equal to the dimension of the symmetric matrix." << endl;
-      oNonmemPars << "   const int sigmaOrder = " << (mySigmaStruct==Symbol::DIAGONAL? "sigmaDim;" : "sigmaDim * ( sigmaDim + 1 ) / 2;") << endl;
+      oNonmemPars << "   // If the matrix is block diagonal, it is equal to the sum of the orders of the individual blocks." << endl;
+      
+      //oNonmemPars << "   const int sigmaOrder = " << (mySigmaStruct==Symbol::DIAGONAL? "sigmaDim;" : "sigmaDim * ( sigmaDim + 1 ) / 2;") << endl;
+      oNonmemPars << "   const int sigmaOrder = " << mySigmaOrder.sum() <<  ";" << endl;
+      oNonmemPars << endl;
 
       oNonmemPars << "   // A C-arrary containing the initial estimates for SIGMA." << endl;
       oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
       oNonmemPars << "   double c_sigmaIn[ sigmaOrder ] = { ";
-      for( int j=0; j<mySigmaOrder; j++ )
+      for( int i=0; i<nSigmaBlock; i++ )
 	{
-	  if( j>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << pSigma->initial[0][j];
+	  for( int j=0; j<mySigmaOrder[i]; j++ )
+	    {
+	      if( i+j>0 )
+		oNonmemPars << ", ";
+	      oNonmemPars << pSigma->initial[i][j];
+	    }
 	}
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );" << endl;
+      oNonmemPars << endl;
 
       oNonmemPars << "   // A C-arrary containing the fixation flags for SIGMA." << endl;
       oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
       oNonmemPars << "   bool c_sigmaFixed[ sigmaOrder ] = { ";
-      for( int j=0; j<mySigmaOrder; j++ )
-	{
-	  if( j>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << (pSigma->fixed[0][j]? "true":"false");
+      for( int i=0; i<nSigmaBlock; i++ )
+	{ 
+	  for( int j=0; j<mySigmaOrder[i]; j++ )
+	    {
+	      if( i+j>0 )
+		oNonmemPars << ", ";
+	      oNonmemPars << (pSigma->fixed[i][j]? "true":"false");
+	    }
 	}
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<bool> sigmaFixed( c_sigmaFixed, sigmaOrder );" << endl;
+      oNonmemPars << endl;
+
+      //Block Diagonal SIGMA
+      oNonmemPars << "   const int nSigmaBlk = " << nSigmaBlock <<  ";" << endl;
+      oNonmemPars << endl;
+
+      oNonmemPars << "   enum covStruct c_sigmaBlockStruct[ nSigmaBlk ] = { ";
+      for( int i=0; i<nSigmaBlock; i++ )
+	{
+	  if( i>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << (mySigmaStruct[i] == Symbol::TRIANGLE? "FULL" : "DIAGONAL" );
+	}
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<covStruct> sigmaBlockStruct( c_sigmaBlockStruct, nSigmaBlk );" << endl;
+      oNonmemPars << endl;
+      
+      oNonmemPars << "   int c_sigmaBlockDims[ nSigmaBlk ] = { ";
+      for( int i=0; i<nSigmaBlock; i++ )
+	{
+	  if( i>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << mySigmaDim[i];
+	}
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<int> sigmaBlockDims( c_sigmaBlockDims, nSigmaBlk );" << endl;
+      oNonmemPars << endl;
+      
+      oNonmemPars << "   bool c_sigmaBlockSameAsPrev[ nSigmaBlk ] = { ";
+      for( int i=0; i<nSigmaBlock; i++ )
+	{
+	  if( i>0 )
+	    oNonmemPars << ", ";
+	  oNonmemPars << (mySigmaSameAsPrev[i]? "true":"false");
+	}
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<bool> sigmaBlockSameAsPrev( c_sigmaBlockSameAsPrev, nSigmaBlk );" << endl;
+      oNonmemPars << endl;
+      // end sigma block
     }
   else
     {

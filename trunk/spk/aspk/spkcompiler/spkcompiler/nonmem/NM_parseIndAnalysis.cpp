@@ -524,20 +524,19 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
   // OMEGA
   DOMNodeList * omega_list = ind_analysis->getElementsByTagName( XML.X_OMEGA );
   int nOmegaSpecs = omega_list->getLength();
-  if( nOmegaSpecs > 1 )
-    {
-      // v0.1 supports only one Omega specification
-      char mess[ SpkCompilerError::maxMessageLen() ];
-      snprintf( mess, 
-		SpkCompilerError::maxMessageLen(),
-		"Multiple <%s> elements found under <%s>.",
-		XML.C_OMEGA, XML.C_IND_ANALYSIS );
-      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-      throw e;
-    }
+  //if( nOmegaSpecs > 1 )
+  //  {
+  //    // v0.1 supports only one Omega specification
+  //    char mess[ SpkCompilerError::maxMessageLen() ];
+  //    snprintf( mess, 
+  //		SpkCompilerError::maxMessageLen(),
+  //		"Multiple <%s> elements found under <%s>.",
+  //		XML.C_OMEGA, XML.C_IND_ANALYSIS );
+  //   SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+  //   throw e;
+  //  }
   if( nOmegaSpecs < 1 )
     {
-      // v0.1 supports only one Omega specification
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
 		SpkCompilerError::maxMessageLen(),
@@ -546,7 +545,15 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-  DOMElement * omega = dynamic_cast<DOMElement*>( omega_list->item(0) );
+  myOmegaDim.resize( nOmegaSpecs );
+  myOmegaOrder.resize( nOmegaSpecs );
+  myOmegaStruct.resize( nOmegaSpecs );
+  myOmegaSameAsPrev.resize( nOmegaSpecs );
+
+  DOMElement * omega;
+  for (int ii = 0; ii < nOmegaSpecs; ii++)    // loop through blocks
+    {
+    omega = dynamic_cast<DOMElement*>( omega_list->item(ii) );
   if( !omega->hasAttribute( XML.X_DIMENSION ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
@@ -558,7 +565,7 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
       throw e;
     }
   const XMLCh* xml_omega_dim = omega->getAttribute( XML.X_DIMENSION );
-  if( !XMLString::textToBin( xml_omega_dim, myOmegaDim ) )
+  if( !XMLString::textToBin( xml_omega_dim, myOmegaDim[ii] ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
@@ -568,7 +575,13 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
       SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
-
+  // SAME_AS_PREVIOUS  ---------------------------------------------
+  if( omega->hasAttribute( XML.X_SAME_AS_PREVIOUS ) )
+    {
+      const XMLCh* xml_omega_sameAsPrev = omega->getAttribute( XML.X_SAME_AS_PREVIOUS );
+      myOmegaSameAsPrev[ii] = (XMLString::equals( xml_omega_sameAsPrev, XML.X_YES )? true : false );
+    }
+  // --------------------------------------------------------------
   if( !omega->hasAttribute( XML.X_STRUCT ) )
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
@@ -592,23 +605,25 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
       throw e;
     }
 
-  myOmegaStruct = Symbol::DIAGONAL;
-  myOmegaOrder = myOmegaDim;
+  myOmegaStruct[ii] = Symbol::DIAGONAL;
+  myOmegaOrder[ii] = myOmegaDim[ii];
+  } // end of first "loop through blocks"
 
-  Symbol * sym_omega = table->insertSymmetricMatrix( nonmem::OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
+ Symbol * sym_omega = table->insertSymmetricMatrix( nonmem::OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
+ 
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( XML.X_IN );
-    if( omega_in_list->getLength() > 1 )
-      {
-	char mess[ SpkCompilerError::maxMessageLen() ];
-	snprintf( mess, 
-		  SpkCompilerError::maxMessageLen(),
-		  "Multiple <%s> elements found under <%s>.",
-		  XML.C_IN, XML.C_OMEGA );
-	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
-	throw e;
-      }
+    //if( omega_in_list->getLength() > 1 )
+    //  {
+    //	char mess[ SpkCompilerError::maxMessageLen() ];
+    //	snprintf( mess, 
+    //		  SpkCompilerError::maxMessageLen(),
+    //		  "Multiple <%s> elements found under <%s>.",
+    //	  XML.C_IN, XML.C_OMEGA );
+    //	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+    //	throw e;
+    //  }
     if( omega_in_list->getLength() < 1 )
       {
 	char mess[ SpkCompilerError::maxMessageLen() ];
@@ -619,7 +634,13 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 	SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	throw e;
       }
-    DOMElement * omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(0) );
+
+   DOMElement * omega_in;
+    for (int ii = 0; ii < nOmegaSpecs; ii++)    // loop through blocks (to get data values)
+      {
+
+    omega_in = dynamic_cast<DOMElement*>( omega_in_list->item(ii) );
+
     //
     // Omega specification contains the minimal representation of the matrix.
     //
@@ -643,7 +664,7 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
       //
       char valueDefault[] = "0.0";
       DOMNodeList * value_list = omega_in->getElementsByTagName( XML.X_VALUE );
-      if( myOmegaOrder != value_list->getLength() )
+      if( myOmegaOrder[ii] != value_list->getLength() )
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
 	  snprintf( mess,
@@ -653,12 +674,12 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 	  SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
 	  throw e;
 	}
-      if( myOmegaStruct == Symbol::TRIANGLE )
+      if( myOmegaStruct[ii] == Symbol::TRIANGLE )
 	{
 	  // First construct a full n by n matrix.
-	  valarray<string> omega_in_full ( myOmegaDim * myOmegaDim );
-	  valarray<bool> omega_fix_full( myOmegaDim * myOmegaDim );
-	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	  valarray<string> omega_in_full ( myOmegaDim[ii] * myOmegaDim[ii] );
+	  valarray<bool> omega_fix_full( myOmegaDim[ii] * myOmegaDim[ii] );
+	  for( int i=0, cnt=0; i<myOmegaDim[ii]; i++ )
 	    {
 	      for( int j=0; j<=i; j++, cnt++ )
 		{
@@ -681,23 +702,23 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 		      delete tmp_c_val;
 		    }
 		  //omega_in_full[ j + i*dim ] = a[cnt]; // filling a lower triangle element
-		  omega_in_full [ i + j*myOmegaDim ] = str_val; // filling a upper triangle element
-		  omega_fix_full[ i + j*myOmegaDim ] = isFixed;
+		  omega_in_full [ i + j*myOmegaDim[ii] ] = str_val; // filling a upper triangle element
+		  omega_fix_full[ i + j*myOmegaDim[ii] ] = isFixed;
 		}
 	    }
 	  // Then, extract only the upper half in the row major order.
-	  for( int i=0, cnt=0; i<myOmegaDim; i++ )
+	  for( int i=0, cnt=0; i<myOmegaDim[ii]; i++ )
 	    {
-	      for( int j=i; j<myOmegaDim; j++, cnt++ )
+	      for( int j=i; j<myOmegaDim[ii]; j++, cnt++ )
 		{
-		  sym_omega->initial[0][cnt] = omega_in_full [ j + i * myOmegaDim ];
-		  sym_omega->fixed  [0][cnt] = omega_fix_full[ j + i * myOmegaDim ];
+		  sym_omega->initial[ii][cnt] = omega_in_full [ j + i * myOmegaDim[ii] ];
+		  sym_omega->fixed  [ii][cnt] = omega_fix_full[ j + i * myOmegaDim[ii] ];
 		}
 	    }
 	}
       else // diagonal case
 	{
-	  for( int i=0; i<myOmegaDim; i++ )
+	  for( int i=0; i<myOmegaDim[ii]; i++ )
 	    {
 	      char str_val[128];
 	      bool isFixed = false;
@@ -717,10 +738,11 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 		  strcpy( str_val, tmp_c_val );
 		  delete tmp_c_val;
 		}
-	      sym_omega->initial[0][i] = str_val;
-	      sym_omega->fixed[0][i]   = isFixed;
+	      sym_omega->initial[ii][i] = str_val;
+	      sym_omega->fixed[ii][i]   = isFixed;
 	    }
 	}
+      } // end block omega loop
   }
 
   // ETA
@@ -728,7 +750,20 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
   // Variance of data?
   char etaDefault[] = "0.0";
   //  myEtaLen = myOmegaOrder;
-  myEtaLen = myOmegaDim;
+  int sumOmegaDim = 0;
+  if ( nOmegaSpecs > 1 )   //block diag case
+    {
+      for (int nBlk = 0; nBlk < nOmegaSpecs; nBlk) 
+	{
+	  sumOmegaDim += myOmegaDim[nBlk];
+	}
+    }
+  else
+    {
+      sumOmegaDim = myOmegaDim[0];
+    }
+  myEtaLen = sumOmegaDim;
+  //myEtaLen = myOmegaDim;
   Symbol * sym_eta = table->insertVector( nonmem::ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;

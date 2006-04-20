@@ -124,10 +124,10 @@ class SymbolTable{
    * @param access    The access permission to the object.
    */
   Symbol* insertSymmetricMatrix( const std::string& name, 
-			const Symbol::Structure structure, 
-			int dim,
-			enum Symbol::Ownership owner, 
-			enum Symbol::Access access );
+				 std::valarray<Symbol::Structure>& structure, 
+				 std::valarray<unsigned int>& dim,
+				 enum Symbol::Ownership owner, 
+				 enum Symbol::Access access );
 
   /**
    * Create and insert a data label into the table.

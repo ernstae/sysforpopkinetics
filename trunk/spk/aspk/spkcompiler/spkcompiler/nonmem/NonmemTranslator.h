@@ -634,24 +634,30 @@ private:
   unsigned int      myThetaLen;
 
   /** The dimension of OMEGA square matrix. */
-  unsigned int      myOmegaDim;
+  std::valarray<unsigned int>      myOmegaDim;
 
   /** The order of OMEGA matrix. */
-  unsigned int      myOmegaOrder;
+  std::valarray<unsigned int>      myOmegaOrder;
 
   /** The matrix structure of OMEGA. */
-  Symbol::Structure myOmegaStruct;
+  std::valarray<Symbol::Structure> myOmegaStruct;
+
+  /** True if the OMEGA block is constrained eqaul to the previous block */
+  std::valarray<bool>              myOmegaSameAsPrev;
 
   /** The dimension of SIGMA matrix. */
-  unsigned int      mySigmaDim;
+  std::valarray<unsigned int>      mySigmaDim;
 
   /** The order of SIGMA matrix. */
-  int               mySigmaOrder;
+  std::valarray<unsigned int>      mySigmaOrder;
 
   /** The matrix structure of SIGMA. */
-  Symbol::Structure mySigmaStruct;
+  std::valarray<Symbol::Structure> mySigmaStruct;
 
-  /** The length of ETA vector. */
+  /** True if the SIGMA block is constrained eqaul to the previous block */
+  std::valarray<bool>              mySigmaSameAsPrev;
+
+   /** The length of ETA vector. */
   int               myEtaLen;
 
   /** The length of EPS vector. */

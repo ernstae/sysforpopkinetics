@@ -586,6 +586,11 @@ struct XmlConstants{
   XMLCh* X_ROWS;
 
   /** C array version. */
+  static const char * C_SAME_AS_PREVIOUS;
+  /** XMLCh array version. */
+  XMLCh* X_SAME_AS_PREVIOUS;
+
+  /** C array version. */
   static const char * C_SCATTERPLOT;
   /** XMLCh array version. */
   XMLCh* X_SCATTERPLOT;
