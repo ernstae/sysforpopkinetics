@@ -9,6 +9,7 @@ WEB      = $(WEBDIR)/v0.1/specs/$T
 VPATH = ../spkpred
 
 SPKPRED_SRC = \
+	BlkDiagCov.cpp \
 	Cov.cpp \
 	DiagCov.cpp \
 	FullCov.cpp \
@@ -16,8 +17,8 @@ SPKPRED_SRC = \
 	isEqual.cpp \
 	PopPredModel.cpp \
 	predTwoStageMethod.cpp \
+	BlkDiagCov.h \
 	Cov.h \
-	covStruct.h \
 	DiagCov.h \
 	FullCov.h \
 	IndPredModel.h \

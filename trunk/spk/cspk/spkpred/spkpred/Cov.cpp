@@ -81,7 +81,7 @@ Cov::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn )
   :
   nRow             ( nRowIn ),
   nPar             ( nParIn ),
-  parFixed         ( minRepFixedIn ),
+  parFixed         ( nParIn),
   parCurr          ( nParIn ),
   covCurr          ( nRowIn * nRowIn ),
   cov_parCurr      ( nRowIn * nRowIn * nParIn ),
@@ -119,6 +119,8 @@ Cov::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn )
     }
   }
   }
+  else
+    parFixed = minRepFixedIn;
 
 }
 
