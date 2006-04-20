@@ -37,6 +37,7 @@
 // SPK Pred library header files.
 #include "DiagCov.h"
 #include "FullCov.h"
+#include "BlkDiagCov.h"
 #include "PopPredModel.h"
 #include "isEqual.h"
 #include "PredBase.h"
@@ -771,6 +772,14 @@ PopPredModel::PopPredModel(
   {
     pOmegaCurr = new FullCov( nEta, omegaMinRepFixedIn );
   }
+  else if ( omegaStructIn == BLOCKDIAG )
+  {
+    pOmegaCurr = new BlkDiagCov( nEta, 
+				 omegaMinRepFixedIn,
+				 omegaBlockStruct,
+				 omegaBlockDims,
+				 omegaBlockSameAsPrev );
+  }
   else
   {
     throw SpkException(
@@ -838,6 +847,14 @@ PopPredModel::PopPredModel(
   else if ( sigmaStructIn == FULL )
   {
     pSigmaCurr = new FullCov( nEps, sigmaMinRepFixedIn );
+  }
+  else if ( sigmaStructIn == BLOCKDIAG )
+  {
+    pSigmaCurr = new BlkDiagCov( nEta, 
+				 sigmaMinRepFixedIn,
+				 sigmaBlockStruct,
+				 sigmaBlockDims,
+				 sigmaBlockSameAsPrev );
   }
   else
   {

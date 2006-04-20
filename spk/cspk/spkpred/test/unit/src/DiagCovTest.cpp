@@ -39,7 +39,7 @@
 #include "compareToKnown.h"
 
 // SPK Pred library header files.
-#include "../../../spkpred/DiagCov.h"
+#include <spkpred/DiagCov.h>
 
 // SPK library header files.
 #include <spk/identity.h>
@@ -116,6 +116,10 @@ Test* DiagCovTest::suite()
   suiteOfTests->addTest(new TestCaller<DiagCovTest>(
     "isCachingProperlyTest", 
     &DiagCovTest::isCachingProperlyTest ));
+
+  suiteOfTests->addTest(new TestCaller<DiagCovTest>(
+    "FixedTwoByTwoCovTest", 
+    &DiagCovTest::fixedTwoByTwoCovTest ));
 
   return suiteOfTests;
 }
@@ -719,3 +723,210 @@ void DiagCovTest::isCachingProperlyTest()
 }
 
  
+/*************************************************************************
+ *
+ * Function: fixedTwoByTwoCovTest
+ *
+ *
+ * The goal of this test is to check that an element of a diagonal covariance 
+ * can be fixed - for the case of a two-by-two covariance matrix.
+ *
+ *************************************************************************/
+
+void DiagCovTest::fixedTwoByTwoCovTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i;
+  int k;
+
+
+  //------------------------------------------------------------
+  // Prepare the covariance matrix.
+  //------------------------------------------------------------
+
+  // Set the number of rows in the covariance matrix.
+  const int nRow = 2;
+
+  // Set only the 2,2 element as fixed
+  valarray<bool> parFixed( nRow );
+  parFixed[0] = false;
+  parFixed[1] = true;
+
+  // Set the number of rows in the derivative of the covariance matrix.
+  //...int nCov_parRow = nRow * nRow;
+
+  // Construct the covariance matrix.
+  DiagCov omega( nRow, parFixed );
+
+  // Get the number of parameters.
+  int nPar = omega.getNPar();
+  assert( nPar == 2 );
+
+  // Initialize the current value for the parameters.
+  valarray<double> par( nPar );
+  par[0] = 0.1;
+  par[1] = -3.0;
+
+  // Set the current value for the parameters.
+  omega.setPar( par );
+
+  //------------------------------------------------------------
+  // Calculate various quantities for the test.
+  //------------------------------------------------------------
+
+  valarray<double> omegaCov    ( nRow * nRow );
+ 
+  valarray<double> parLow( nPar );
+  valarray<double> parUp ( nPar );
+
+  valarray<double> omegaAtParLow( nRow * nRow );
+  valarray<double> omegaAtParUp ( nRow * nRow );
+
+  valarray<double> omegaMinRep    ( nPar );
+ 
+  // Calculate the covariance matrix, its derivative, its inverse,
+  // and the derivative of its inverse.
+  omega.cov    ( omegaCov );
+ 
+  // Get the limits for the covariance matrix parameters.
+  omega.getParLimits( parLow, parUp );
+
+  // Evaluate the covariance matrix at the upper and lower limits
+  // for the parameters.
+  omega.setPar( parLow );
+  omega.cov( omegaAtParLow );
+  omega.setPar( parUp );
+  omega.cov( omegaAtParUp );
+
+  // Calculate the minimal representation for the covariance matrix
+  // and its derivative.
+  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+ 
+  // Multiply the covariance matrix and its inverse.
+  //...omegaCovTimesInv = multiply( omegaCov, nRow, omegaInv, nRow );
+
+
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  valarray<double> omegaCovKnown    ( nRow * nRow );
+ 
+  valarray<double> omegaAtParLowKnown( nRow * nRow );
+  valarray<double> omegaAtParUpKnown ( nRow * nRow );
+
+  valarray<double> omegaMinRepKnown    ( nPar );
+ 
+  // Create a matrices that have only zeroes.
+  omegaCovKnown     = 0.0;
+ 
+  // The diagonal elements should be 
+  //
+  //    cov      ( par )  =  exp[ 2 par  ]  .
+  //       (i, i)                      i   
+  //
+  for ( i = 0; i < nPar; i++ )
+  {
+    omegaCovKnown[i + i * nRow] = exp( 2.0 * par[i] );
+    //... omegaInvKnown[i + i * nRow] = exp( -2.0 * par[i] );
+  }
+
+  // The partial derivatives of the diagonal elements of
+  // the covariance should be
+  //
+  //     (i)     
+  //    d     cov      ( par )  =  2 exp[ 2 par  ]  .
+  //     par     (i, i)                        i
+  //
+  int row;
+  for ( i = 0; i < nPar; i++ )
+  {
+    // Set the row in the rvec version of the covariance.
+    row = i * nRow + i;
+
+    //...omegaCov_parKnown[row + i * nCov_parRow] = 2.0 * exp( 2.0 * par[i] );
+    //...omegaInv_parKnown[row + i * nCov_parRow] = -2.0 * exp( -2.0 * par[i] );
+  }    
+
+  // The diagonal elements of the covariance matrix should be
+  // constrained as follows,
+  //
+  //      1      (curr)                              (curr)
+  //     ---  cov        <=   cov        <=  100  cov        .
+  //     100     (i,i)           (i,i)               (i,i) 
+  //
+
+  //this should purposely break it
+  //parFixed[0] = true;
+  //parFixed[1] = false;
+  //
+  for ( i = 0; i < nPar; i++ )
+  {
+    if( parFixed[i] )
+    {
+      omegaAtParLowKnown[i + i * nRow] = omegaCovKnown[i + i * nRow];
+      omegaAtParUpKnown[ i + i * nRow] = omegaCovKnown[i + i * nRow];
+    }
+    else
+    {
+      omegaAtParLowKnown[i + i * nRow] = omegaCovKnown[i + i * nRow] / 100.0;
+      omegaAtParUpKnown[ i + i * nRow] = omegaCovKnown[i + i * nRow] * 100.0;
+    }
+  }
+
+  // Set the known value for the minimal representation for the
+  // covariance matrix and its derivative.
+  for ( i = 0; i < nPar; i++ )
+  {
+    omegaMinRepKnown[i] = omegaCovKnown[i + i * nRow];
+
+    for ( k = 0; k < nPar; k++ )
+    {
+      //... omegaMinRep_parKnown[( i            ) + k * nPar] = 
+      //...omegaCov_parKnown [( i * nRow + i ) + k * nCov_parRow];
+    }
+  }
+
+  // The covariance matrix multiplied by its inverse should be
+  // equal to the identity matrix.
+  //...  identity( nRow, omegaCovTimesInvKnown );
+
+
+  //------------------------------------------------------------
+  // Compare the calculated and known values.
+  //------------------------------------------------------------
+
+  double tol = 1.0e-14;
+
+  compareToKnown( 
+    omegaCov,
+    omegaCovKnown,
+    "omegaCov",
+    tol );
+
+  
+  compareToKnown( 
+    omegaAtParLow,
+    omegaAtParLowKnown,
+    "omega at parLow",
+    tol );
+
+  compareToKnown( 
+    omegaAtParUp,
+    omegaAtParUpKnown,
+    "omega at parUp",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep,
+    omegaMinRepKnown,
+    "omegaMinRep",
+    tol );
+
+}
+

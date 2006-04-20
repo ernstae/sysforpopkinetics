@@ -37,6 +37,7 @@
 // SPK Pred library header files.
 #include "DiagCov.h"
 #include "FullCov.h"
+#include "BlkDiagCov.h"
 #include "IndPredModel.h"
 #include "isEqual.h"
 #include "PredBase.h"
@@ -504,6 +505,14 @@ IndPredModel::IndPredModel(
   else if ( omegaStructIn == FULL )
   {
     pOmegaCurr = new FullCov( nEta, omegaMinRepFixedIn );
+  }
+  else if ( omegaStructIn == BLOCKDIAG )
+  {
+    pOmegaCurr = new BlkDiagCov( nEta,
+				 omegaMinRepFixedIn,
+				 omegaBlockStruct,
+				 omegaBlockDims,
+				 omegaBlockSameAsPrev );
   }
   else
   {

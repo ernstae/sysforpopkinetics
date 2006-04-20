@@ -975,17 +975,17 @@ void PopPredModelTest::NoEta_OneExpF_ModelBasedExpY_Test()
   // Set the diagonal elements for the current value for omega.
   valarray<double> omegaMinRep( nOmegaPar );
 
+  // Set the structure of sigma, the covariance matrix for eps.
+  covStruct sigmaStruct = DIAGONAL;
+
   // Set the number elements for this parameterization.
   int nSigmaPar = nEps;
-
- // Set the structure of sigma, the covariance matrix for eps.
-  covStruct sigmaStruct = DIAGONAL;
 
   // Set the diagonal elements for the current value for sigma.
   valarray<double> sigmaMinRep( nSigmaPar );
   sigmaMinRep[0] = 0.25;
 
- 
+
   //------------------------------------------------------------
   // Construct the population level Pred model.
   //------------------------------------------------------------
@@ -2714,8 +2714,6 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
  * Pred block expression evaluator, for which analytical results 
  * can be calculated and which does not use any data values. 
  *
- *  Edited by D. Salinger to test overloaded PopPredModel constructor
- *
  *************************************************************************/
 
 void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
@@ -2790,7 +2788,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
   // Set the bool of fixed elements for omega.
   valarray<bool> omegaMinRepFixed( nOmegaPar );
-  omegaMinRepFixed = true;
+  omegaMinRepFixed = false;
 
   // Set the structure of sigma, the covariance matrix for eps.
   covStruct sigmaStruct = DIAGONAL;
@@ -2803,7 +2801,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   sigmaMinRep[0] = 0.25;
   sigmaMinRep[1] = 0.001;
 
-  // Set the bool of fixed elements for omega.
+  // Set the bool of fixed elements for sigma.
   valarray<bool> sigmaMinRepFixed( nSigmaPar );
   sigmaMinRepFixed = false;
 
@@ -2825,7 +2823,6 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   omegaBlockDims[0] = 1;
   valarray<bool>    sigmaBlockSameAsPrev( nsigmaBlocks );
   omegaBlockSameAsPrev = false;
-
 
 
   //------------------------------------------------------------
@@ -2853,6 +2850,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
     sigmaBlockStruct,
     sigmaBlockDims,
     sigmaBlockSameAsPrev );
+
 
 
   //------------------------------------------------------------
@@ -3369,7 +3367,7 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   {
     CPPUNIT_ASSERT_MESSAGE( 
       "The limits for an individual parameter element are invalid.",
-      indParLow[k] <= indParUp [k] ||  omegaMinRepFixed[ k - omegaParOffsetInPopPar ]);
+      indParLow[k] <= indParUp [k] ||  omegaMinRepFixed[ k - omegaParOffsetInPopPar ] );
   }
   
   // Since the step sizes may change as PopPredModel evolves, only 

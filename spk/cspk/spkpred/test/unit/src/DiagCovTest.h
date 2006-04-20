@@ -60,12 +60,13 @@ public:
   void setUp();
   void tearDown();
 
+
 private:
   // Test cases for this unit test.
   void oneByOneCovTest();
   void twoByTwoCovTest();
   void isCachingProperlyTest();
-
+  void fixedTwoByTwoCovTest();
 };
 
 #endif

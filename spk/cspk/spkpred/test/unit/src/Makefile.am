@@ -41,6 +41,7 @@ testall_SOURCES = \
 	compareToKnown.cpp \
 	DiagCovTest.cpp \
 	FullCovTest.cpp \
+	BlkDiagCovTest.cpp \
 	IndPredModelTest.cpp \
 	OdeBreakTest.cpp \
 	OdePredBaseTest.cpp \
@@ -50,6 +51,7 @@ testall_SOURCES = \
 	compareToKnown.h \
 	DiagCovTest.h \
 	FullCovTest.h \
+	BlkDiagCovTest.h \
 	IndPredModelTest.h \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \
@@ -61,6 +63,7 @@ pkginclude_HEADERS = \
 	compareToKnown.h \
 	DiagCovTest.h \
 	FullCovTest.h \
+	BlkDiagCovTest.h \
 	IndPredModelTest.h \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \

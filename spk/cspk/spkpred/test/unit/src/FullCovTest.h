@@ -66,6 +66,7 @@ private:
   void twoByTwoCovTest();
   void threeByThreeCovTest();
   void isCachingProperlyTest();
+  void fixedTwoByTwoCovTest();
 
 };
 

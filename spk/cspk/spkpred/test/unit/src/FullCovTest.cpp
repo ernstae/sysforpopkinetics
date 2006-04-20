@@ -126,6 +126,10 @@ Test* FullCovTest::suite()
     "isCachingProperlyTest", 
     &FullCovTest::isCachingProperlyTest ));
 
+ suiteOfTests->addTest(new TestCaller<FullCovTest>(
+    "FixedTwoByTwoCovTest", 
+    &FullCovTest::fixedTwoByTwoCovTest ));
+
   return suiteOfTests;
 }
 
@@ -1275,3 +1279,234 @@ void FullCovTest::isCachingProperlyTest()
 }
 
  
+
+/*************************************************************************
+ *
+ * Function: FixedTwoByTwoCovTest
+ *
+ *
+ * The goal of this test is to check that the covariance class works
+ * for the case of a FIXed two-by-two covariance matrix.
+ *
+ *************************************************************************/
+
+void FullCovTest::fixedTwoByTwoCovTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i;
+  int j;
+  int k;
+
+
+  //------------------------------------------------------------
+  // Prepare the covariance matrix.
+  //------------------------------------------------------------
+
+  // Set the number of rows in the covariance matrix.
+  const int nRow = 2;
+
+  // Set all ek=lements as fixed
+  valarray<bool> parFixed( nRow );
+  parFixed = true;
+
+  // Set the number of rows in the derivative of the covariance matrix.
+  //...int nCov_parRow = nRow * nRow;
+
+  // Construct the covariance matrix.
+  FullCov omega( nRow, parFixed );
+
+  // Get the number of parameters.
+  int nPar = omega.getNPar();
+  assert( nPar == 3 );
+
+  // Initialize the current value for the parameters.
+  valarray<double> par( nPar );
+  par[0] = 0.1;
+  par[1] = 0.005;
+  par[2] = -3.0;
+
+  // Set the current value for the parameters.
+  omega.setPar( par );
+
+  //------------------------------------------------------------
+  // Calculate various quantities for the test.
+  //------------------------------------------------------------
+
+  valarray<double> omegaCov    ( nRow * nRow );
+  
+  valarray<double> parLow( nPar );
+  valarray<double> parUp ( nPar );
+
+  valarray<double> omegaAtParLow    ( nRow * nRow );
+  valarray<double> omegaDiagAtParLow( nRow );
+  valarray<double> omegaAtParUp     ( nRow * nRow );
+  valarray<double> omegaDiagAtParUp ( nRow );
+
+  valarray<double> omegaMinRep    ( nPar );
+  
+  // Calculate the covariance matrix, its derivative, its inverse,
+  // and the derivative of its inverse.
+  omega.cov    ( omegaCov );
+ 
+  // Get the limits for the covariance matrix parameters.
+  omega.getParLimits( parLow, parUp );
+
+  // Evaluate the covariance matrix at the upper and lower limits
+  // for the parameters.
+  omega.setPar( parLow );
+  omega.cov( omegaAtParLow );
+  omega.setPar( parUp );
+  omega.cov( omegaAtParUp );
+
+  // Get the covariance matrix diagonals at the limits.
+  for ( i = 0; i < nRow; i++ )
+  {
+    omegaDiagAtParLow[i] = omegaAtParLow[i + i * nRow];
+    omegaDiagAtParUp [i] = omegaAtParUp [i + i * nRow];
+  }    
+
+  // Calculate the minimal representation for the covariance matrix
+  // and its derivative.
+  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+  
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  valarray<double> omegaCovKnown    ( nRow * nRow );
+  
+  valarray<double> omegaCholKnown        ( nRow * nRow );
+  valarray<double> omegaCholTranKnown    ( nRow * nRow );
+ 
+  valarray<double> omegaDiagAtParLowKnown( nRow );
+  valarray<double> omegaDiagAtParUpKnown ( nRow );
+
+  valarray<double> omegaMinRepKnown    ( nPar );
+ 
+
+  // Create matrices that have only zeroes.
+  omegaCholKnown         = 0.0;
+  omegaCholTranKnown     = 0.0;
+  
+
+  // Calculate the Cholesky factor for the covariance,
+  int parIndex = 0;
+  for ( i = 0; i < nRow; i++ )
+  {
+    for ( j = 0; j < i; j++ )
+    {
+      omegaCholKnown[i + j * nRow] = par[parIndex];
+      parIndex++;
+    }
+
+    omegaCholKnown[i + i * nRow] = exp( par[parIndex] );
+    parIndex++;
+  }
+
+  // The covariance should be 
+  //
+  //                                     T
+  //    cov( par )  =  L( par )  L( par )  .
+  //
+  omegaCholTranKnown = transpose( omegaCholKnown, nRow );
+  omegaCovKnown = multiply(
+    omegaCholKnown,
+    nRow,
+    omegaCholTranKnown,
+    nRow );
+
+  // Calculate the derivative of the Cholesky factor.
+  int row;
+  parIndex = 0;
+  for ( i = 0; i < nRow; i++ )
+  {
+    for ( j = 0; j < i; j++ )
+    {
+      // Note that an rvec operation is performed on the elements
+      // of the Cholesky factor, and its transpose, before the
+      // derivatives are calculated.
+    }
+
+    // Note that an rvec operation is performed on the elements
+    // of the Cholesky factor, and its transpose, before the
+    // derivatives are calculated.
+  }
+
+  
+  // The diagonal elements of the covariance matrix at the lower
+  // limits of all of its parameters should be:
+  //
+  //                  (low)          1                   (curr)
+  //     cov     ( par      )  =  [ ---  +  i  100 ]  cov        .
+  //        (i,i)                   100                  (i,i) 
+  //
+  // The diagonal elements of the covariance matrix at the upper
+  // limits of all of its parameters should be:
+  //
+  //                  (up)                              (curr)
+  //     cov     ( par     )   =  [ ( i + 1 ) 100 ]  cov        .
+  //        (i,i)                                       (i,i) 
+  //
+  for ( i = 0; i < nRow; i++ )
+  {
+    omegaDiagAtParLowKnown[i] = omegaCovKnown[i + i * nRow];
+    omegaDiagAtParUpKnown [i] = omegaCovKnown[i + i * nRow];
+  }    
+
+  // Set the known value for the minimal representation for the
+  // covariance matrix and its derivative.
+  int nCovMinRep_parRow = nPar;
+  int sumI = 0;
+  for ( i = 0; i < nRow; i++ )
+  {
+    sumI += i;
+
+    // Set the elements from this row including the diagonal.
+    for ( j = 0; j <= i; j++ )
+    {
+      omegaMinRepKnown[sumI + j] = omegaCovKnown[i + j * nRow];
+    }
+  }
+
+  // The covariance matrix multiplied by its inverse should be
+  // equal to the identity matrix.
+  //...identity( nRow, omegaCovTimesInvKnown );
+
+
+  //------------------------------------------------------------
+  // Compare the calculated and known values.
+  //------------------------------------------------------------
+
+  double tol = 1.0e-14;
+
+  compareToKnown( 
+    omegaCov,
+    omegaCovKnown,
+    "omegaCov",
+    tol );
+
+ 
+  compareToKnown( 
+    omegaDiagAtParLow,
+    omegaDiagAtParLowKnown,
+    "omega diagonals at parLow",
+    tol );
+
+  compareToKnown( 
+    omegaDiagAtParUp,
+    omegaDiagAtParUpKnown,
+    "omega diagonals at parUp",
+    tol );
+
+  compareToKnown( 
+    omegaMinRep,
+    omegaMinRepKnown,
+    "omegaMinRep",
+    tol );
+
+}

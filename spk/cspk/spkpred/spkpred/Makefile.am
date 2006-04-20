@@ -26,6 +26,7 @@ libspkpred_a_SOURCES = \
 	Cov.cpp \
 	DiagCov.cpp \
 	FullCov.cpp \
+	BlkDiagCov.cpp \
 	IndPredModel.cpp \
 	isEqual.cpp \
 	PopPredModel.cpp \
@@ -33,6 +34,7 @@ libspkpred_a_SOURCES = \
 	Cov.h \
 	DiagCov.h \
 	FullCov.h \
+	BlkDiagCov.h \
 	IndPredModel.h \
 	isEqual.h \
 	OdeBreak.h \
@@ -46,6 +48,7 @@ pkginclude_HEADERS = \
 	Cov.h \
 	DiagCov.h \
 	FullCov.h \
+	BlkDiagCov.h \
 	IndPredModel.h \
 	isEqual.h \
 	OdeBreak.h \
