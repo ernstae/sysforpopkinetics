@@ -100,7 +100,7 @@ alter the normal execution flow.-->
 
 <!-- <omega_in> A minimal representation of the initial value of Omega matrix
 
-For full (ie. "block") matrix, <omega_in> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_in> lists only the diagonal elements from the upper left corner. 
+For full (ie. "block") matrix, <omega_in> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_in> lists only the diagonal elements from the upper left corner.  For block diagonal, each <omega_in> block is listed individually using full or diagonal specifications as appropriate.
 
 Given a 3 by 3 matrix, A:
 <html:pre>
@@ -127,6 +127,16 @@ If A were <html:font color='red'>diagonal</html:font>, <omega_in> specifies as f
                                            &lt;value&gt;a33&lt;/value&gt;
     &lt;/omega_in&gt;
 </html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <omega_in> specifies as two blocks as follows:
+<html:pre>
+    &lt;omega_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/omega_in&gt;
+    &lt;omega_in&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_in&gt;
+</html:pre>
 -->
 <!ELEMENT omega_in (value)+>
 
@@ -136,9 +146,12 @@ If A were <html:font color='red'>diagonal</html:font>, <omega_in> specifies as f
 <!-- <omega_in dimension=""> The dimension of the Omega matrix. -->
 <!ATTLIST omega_in dimension CDATA #REQUIRED>
 
+<!-- <omega_in same_as_previous=""> If "yes", constrains the block equal to the previous block of a block diagaonal Omega matrix. -->
+<!ATTLIST omega_in same_as_previous (yes|no) #IMPLIED>
+
 <!-- <sigma_in> A minimal representation of the initial value for Omega matrix.
 
-For full (ie. "block") matrix, <sigma_in> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_in> lists only the diagonal elements from the upper left corner.
+For full (ie. "block") matrix, <sigma_in> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_in> lists only the diagonal elements from the upper left corner.  For block diagonal, each <sigma_in> block is listed individually using full or diagonal specifications as appropriate.
 
 Given a 3 by 3 matrix, A:
 <html:pre>
@@ -165,6 +178,16 @@ If A were <html:font color='red'>diagonal</html:font>, <sigma_in> specifies as f
                                            &lt;value&gt;a33&lt;/value&gt;
     &lt;/sigma_in&gt;
 </html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <sigma_in> specifies as two blocks as follows:
+<html:pre>
+    &lt;sigma_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/sigma_in&gt;
+    &lt;sigma_in&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_in&gt;
+</html:pre>
 -->
 <!ELEMENT sigma_in (value)+>
 
@@ -174,6 +197,8 @@ If A were <html:font color='red'>diagonal</html:font>, <sigma_in> specifies as f
 <!-- <sigma_in dimension=""> The dimension of the Simga matrix. -->
 <!ATTLIST sigma_in dimension CDATA #REQUIRED>
 
+<!-- <sigma_in same_as_previous=""> If "yes", constrains the block equal to the previous block of a block diagaonal Sigma matrix. -->
+<!ATTLIST sigma_in same_as_previous (yes|no) #IMPLIED>
 
 <!-- <theta_out> Final value for theta when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.-->
 <!ELEMENT theta_out (value)+>
@@ -183,7 +208,7 @@ If A were <html:font color='red'>diagonal</html:font>, <sigma_in> specifies as f
 
 <!-- <omega_out> A minimal representation of the final value of Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
 
-For full (ie. "block") matrix, <omega_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_out> lists only the diagonal elements from the upper left corner. 
+For full (ie. "block") matrix, <omega_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_out> lists only the diagonal elements from the upper left corner.  For block diagonal, each <omega_out> block is listed individually using full or diagonal specifications as appropriate.
 
 Given a 3 by 3 matrix, A:
 <html:pre>
@@ -210,6 +235,16 @@ If A were <html:font color='red'>diagonal</html:font>, <omega_out> specifies as 
                                            &lt;value&gt;a33&lt;/value&gt;
     &lt;/omega_out&gt;
 </html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <omega_out> specifies as two blocks as follows:
+<html:pre>
+    &lt;omega_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/omega_out&gt;
+    &lt;omega_out&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_out&gt;
+</html:pre>
 -->
 <!ELEMENT omega_out (value)+>
 
@@ -221,7 +256,7 @@ If A were <html:font color='red'>diagonal</html:font>, <omega_out> specifies as 
 
 <!-- <sigma_out> A minimal representation of NONMEM Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
 
-For full (ie. "block") matrix, <sigma_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_out> lists only the diagonal elements from the upper left corner.
+For full (ie. "block") matrix, <sigma_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_out> lists only the diagonal elements from the upper left corner.  For block diagonal, each <sigma_out> block is listed individually using full or diagonal specifications as appropriate.
 
 Given a 3 by 3 matrix, A:
 <html:pre>
@@ -246,6 +281,16 @@ If A were <html:font color='red'>diagonal</html:font>, <sigma_out> specifies as 
        &lt;value&gt;a11&lt;/value&gt;
                          &lt;value&gt;a22&lt;/value&gt;
                                            &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <sigma_out> specifies as two blocks as follows:
+<html:pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/sigma_out&gt;
+    &lt;sigma_out&gt;
+       &lt;value&gt;a33&lt;/value&gt;
     &lt;/sigma_out&gt;
 </html:pre>
 -->
@@ -434,7 +479,7 @@ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector
 <!ATTLIST ind_coefficient_out length CDATA #REQUIRED>
 
 
-<!-- <presentation_data> An augmented data set: a set of all values associated with or evaluated at each individual's sampling points. Note: The format has been changed to comma separated data items.  The first row lists all the data labels, and the subsequent rows contains the data values.  While the SPK compiler currently generates the data in the new format, the MDA works for both formats with automatically switching (rev. 1.3).
+<!-- <presentation_data> An augmented data set: a set of all values associated with or evaluated at each individual's sampling points.
         
 The first <label> value in <data_labels> will be always a label for ID.  If ID was not given for an individual data set,
 the field would be populated with a value "1".  For a population data set, sequencial numbers (beginning with 1)
@@ -520,7 +565,7 @@ Conceptual Example:
 -->
 <!ELEMENT presentation_data (data_labels | row*) > 
 
-<!-- <data_labels> Sequence of data lables.  The <label>s are matched to the columns of data values from left to rigth, in the order of appearance.  Note: Currently this is only for the MDA (rev. 1.3).
+<!-- <data_labels> Sequence of data lables.  The <label>s are matched to the columns of data values from left to rigth, in the order of appearance.
 -->
 <!ELEMENT data_labels (label)+>
 
@@ -540,7 +585,7 @@ Conceptual Example:
 <!-- <presentation_data rows="0"> The number of rows in the table, >=0. -->
 <!ATTLIST presentation_data rows CDATA #REQUIRED>
 
-<!-- <row> A row in the table/matrix. Note: Currently this is only for the MDA (rev. 1.3).  -->
+<!-- <row> A row in the table/matrix.  -->
 <!ELEMENT row (value)*>
 
 <!-- <row position="1"> The position of the <row> in the table/matrix, >= 1.  "1" means the row is the first row in the table/matrix.  If any <row> in the table/matrix had this attribute setting, all other <row>s must have the setting consistently.  If no <row> had this setting, the order of appearance of <row>s is taken as the order of rows.-->
