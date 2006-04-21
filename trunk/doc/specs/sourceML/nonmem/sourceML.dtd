@@ -186,7 +186,7 @@ Either label or synonym may be one of the NONMEM reserved identifiers, among whi
 <!-- <theta length="10"> Length of the theta vector. The value must match the number of values appeared under the tree. -->
 <!ATTLIST theta length CDATA #REQUIRED>
 
-<!-- <omega> A minimal representation of NONMEM Omega (symmetric positive definite) matrix. For full (ie. "block") matrix, <omega> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega> lists only the diagonal elements from the upper left corner.
+<!-- <omega> A minimal representation of NONMEM Omega (symmetric positive definite) matrix. For full (ie. "block") matrix, <omega> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega> lists only the diagonal elements from the upper left corner.  For block diagonal, each <omega> block is listed individually using full or diagonal specifications as appropriate.
 
 Given a 3 by 3 matrix, A:
 <html:pre>
@@ -213,6 +213,16 @@ If A were <html:font color='red'>diagonal</html:font>, <omega> specifies as foll
                                            &lt;value&gt;a33&lt;/value&gt;
     &lt;/omega&gt;
 </html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <omega> specifies as two blocks as follows:
+<html:pre>
+    &lt;omega&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/omega&gt;
+    &lt;omega&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega&gt;
+</html:pre>
 -->
 <!ELEMENT omega (in)>
 
@@ -224,7 +234,7 @@ If A were <html:font color='red'>diagonal</html:font>, <omega> specifies as foll
 <!ATTLIST omega struct (block|diagonal) #REQUIRED>
 
 <!-- <sigma>  
-A minimal representation of NONMEM Omega matrix. For full (ie. "block") matrix, <sigma> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma> lists only the diagonal elements from the upper left corner.
+A minimal representation of NONMEM Omega matrix. For full (ie. "block") matrix, <sigma> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma> lists only the diagonal elements from the upper left corner.  For block diagonal, each <sigma> block is listed individually using full or diagonal specifications as appropriate.
 
 Given a 3 by 3 matrix, A:
 <html:pre>
@@ -249,6 +259,16 @@ If A were <html:font color='red'>diagonal</html:font>, <omega> specifies as foll
        &lt;value&gt;a11&lt;/value&gt;
                          &lt;value&gt;a22&lt;/value&gt;
                                            &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma&gt;
+</html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <sigma> specifies as two blocks as follows:
+<html:pre>
+    &lt;sigma&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/sigma&gt;
+    &lt;sigma&gt;
+       &lt;value&gt;a33&lt;/value&gt;
     &lt;/sigma&gt;
 </html:pre>
 -->

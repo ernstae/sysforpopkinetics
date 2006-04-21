@@ -150,7 +150,7 @@ SPK Compiler.
             <term><literal>const valarray&lt;bool&gt; thetaFixed</literal></term>
             <listitem>
                <para>
-               contains a vector of boolean flags telling as to whether
+               contains a vector of boolean flags specifying whether
                the corresponding i-th element of 
                <emphasis>theta</emphasis> is fixed to the initial estimate value or not.
                <literal>thetaFixed[i]</literal> = true causes <emphasis>theta(i+1)</emphasis>
@@ -176,34 +176,31 @@ SPK Compiler.
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const enum PopPredModel::covStruct omegaStruct</literal></term>
+            <term><literal>const enum covStruct omegaStruct</literal></term>
             <listitem>
                <para>
                is present only if the <emphasis>population analysis</emphasis>
                is requested in the given SpkSourceML document.
-               The value is one of <varname>PopPredModel::DIAGONAL</varname>, 
-               <varname>PopPredModel::FULL</varname> or <varname>PopPredModel::BLOCKDIAG</varname>.
-               <varname>DIAGONAL</varname> means that only the diagonal elements of 
+               The value is either <varname>DIAGONAL</varname>,  
+               <varname>FULL</varname> or <varname>BLOCKDIAG</varname>.
+               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
                <emphasis>Omega</emphasis> matrix
-               are subject to optimization.  <varname>FULL</varname> means that potentially all elements
-               are subject to optimization (but remember, <emphasis>Omega</emphasis> is symmetric).  
-               <varname>BLOCKDIAG</varname> means that the matrix is composed of 
-               multiple block-diagonal sub-matrices and these diagonal elements within 
-               the blocks are subject to optimization.    
+               are subject to optimization.  <varname>FULL</varname> indicates that potentially all elements
+               are subject to optimization (but remember, <emphasis>Omega</emphasis> is symmetric).
                </para>
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const enum IndPredModel::covStruct omegaStruct</literal></term>
+            <term><literal>const enum covStruct omegaStruct</literal></term>
             <listitem>
                <para>
                is present only if the <emphasis>individual analysis</emphasis>
                is requested in the given SpkSourceML document.
-               The value can be either <varname>PopPredModel::DIAGONAL</varname> or
-               <varname>PopPredModel::BLOCKDIAG</varname>.
-               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
-               <emphasis>Omega</emphasis> matrix are subject to optimization. 
-<varname>BLOCKDIAG</varname> means that the matrix is composed of multiple block-diagonal sub-matrices and these diagonal elements within the blocks are subject to optimization. 
+               The value is always <varname>DIAGONAL</varname> for this type of analysis. 
+               <varname>DIAGONAL</varname>  indicates that potentially all lower triangle elements
+               are subject to optimization (remember, <emphasis>Omega</emphasis> is symmetric). 
+               <varname>BLOCKDIAG</varname> indicates that the <emphasis>Omega</emphasis> matrix is potentially 
+               made up of multiple <varname>DIAGONAL</varname> and <varname>FULL</varname> blocks.  
                </para>
             </listitem>
          </varlistentry>
@@ -239,11 +236,51 @@ SPK Compiler.
             <term><literal>const valarray&lt;bool&gt; omegaFixed</literal></term>
             <listitem>
                <para>
-               contains a vector of boolean values telling as to whether the corresponding i-th
+               contains a vector of boolean values specifying whether the corresponding i-th
                element of <emphasis>Omega</emphasis> should be fixed to the initial estimate value or not.
                If Omega is 3 by 3 and only the diagonal elements are subject to optimization,
                setting <literal>omegaFixed[2] = true</literal> causes the (3,3) element of the matrix
                to be fixed.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nOmegaBlk</literal></term>
+            <listitem>
+               <para>
+               is the number of blocks in the block diagonal representation of <emphasis>Omega</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;covStruct&gt; omegaBlockStruct</literal></term>
+            <listitem>
+               <para>
+               contains a vector of <varname>covStruct</varname> values specifying whether the corresponding i-th
+               block is <varname>DIAGONAL</varname> or <varname>FULL</varname>.
+               If <emphasis>Omega</emphasis> is made up of 3 blocks, 
+               setting <literal>omegaBlockStruct[1] = FULL</literal> causes the second block to be recorded as 
+               <varname>FULL</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; omegaBlockdims</literal></term>
+            <listitem>
+               <para>
+               contains a vector of integers specifying the dimension corresponding i-th block.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;bool&gt; omegaBlockSameAsPrev</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean values specifying whether the corresponding i-th
+               block of <emphasis>Omega</emphasis> should be constrained equal to the previous block.
+               If <emphasis>Omega</emphasis> is made up of 3 blocks, 
+               setting <literal>omegaBlockSameAsPrev[3] = true</literal> causes the third block to be constrained 
+               equal to the second.
                </para>
             </listitem>
          </varlistentry>
@@ -258,19 +295,18 @@ SPK Compiler.
             </listitem>
          </varlistentry>
          <varlistentry>
-            <term><literal>const enum PopPredModel::covStruct sigmaStruct</literal></term>
+            <term><literal>const enum covStruct sigmaStruct</literal></term>
             <listitem>
                <para>
                is present only if the <emphasis>population analysis</emphasis> is requested.
-               The value is one of <varname>PopPredModel::DIAGONAL</varname>,
-               <varname>PopPredModel::FULL</varname> or <varname>PopPredModel::BLOCKDIAG</varname>.
+               The value is either <varname>DIAGONAL</varname>, <varname>FULL</varname> or
+               <varname>BLOCKDIAG</varname>. 
                <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
                <emphasis>Sigma</emphasis> matrix
-               are subject to optimization.  <varname>FULL</varname> indicates that potentially all elements
-               are subject to optimization (but remember, <emphasis>Sigma</emphasis> is symmetric)
-               <varname>BLOCKDIAG</varname> means that the matrix is composed of 
-               multiple block-diagonal sub-matrices and these diagonal elements within 
-               the blocks are subject to optimization.
+               are subject to optimization.  <varname>FULL</varname> indicates that potentially all lower triangle elements
+               are subject to optimization (remember, <emphasis>Sigma</emphasis> is symmetric). 
+               <varname>BLOCKDIAG</varname> indicates that the <emphasis>Sigma</emphasis> matrix is potentially 
+               made up of multiple <varname>DIAGONAL</varname> and <varname>FULL</varname> blocks.
                </para>
             </listitem>
          </varlistentry>
@@ -302,6 +338,46 @@ SPK Compiler.
                that are subject to optimization.  Thus, the length of <varname>simgaIn</varname>
                is <varname>sigmaOrder</varname>.
                This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nSigmaBlk</literal></term>
+            <listitem>
+               <para>
+               is the number of blocks in the block diagonal representation of <emphasis>Sigma</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;covStruct&gt; sigmaBlockStruct</literal></term>
+            <listitem>
+               <para>
+               contains a vector of <varname>covStruct</varname> values specifying whether the corresponding i-th
+               block is <varname>DIAGONAL</varname> or <varname>FULL</varname>.
+               If <emphasis>Sigma</emphasis> is made up of 3 blocks, 
+               setting <literal>sigmaBlockStruct[1] = FULL</literal> causes the second block to be recorded as 
+               <varname>FULL</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; sigmaBlockdims</literal></term>
+            <listitem>
+               <para>
+               contains a vector of integers specifying the dimension corresponding i-th block.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;bool&gt; sigmaBlockSameAsPrev</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean values specifying whether the corresponding i-th
+               block of <emphasis>Sigma</emphasis> should be constrained equal to the previous block.
+               If <emphasis>Sigma</emphasis> is made up of 3 blocks, 
+               setting <literal>sigmaBlockSameAsPrev[3] = true</literal> causes the third block to be constrained 
+               equal to the second.
                </para>
             </listitem>
          </varlistentry>
