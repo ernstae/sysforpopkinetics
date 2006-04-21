@@ -54,21 +54,22 @@
  * This class supports block diagonal covariance matrices.  It is a concrete 
  * subclass of the abstract covariance base class.
  *
- * This class utilizes block diagonal structure ...(((fix this up)))
- *       the following parameterization for the covariance
- * matrix in order to insure that it is positive definite and symmetric:
+ * This class utilizes block diagonal structure where each block is either
+ * diagonal or full:
  * \f[
  *     \mbox{cov}(\mbox{par}) =
  *       \left[ 
  *         \begin{array}{cccc}
- *           \exp(2 \mbox{par}_1) &                      &        &                                0   \\
- *                                & \exp(2 \mbox{par}_2) &        &                                    \\
+ *           \mbox{block}_1 &                      &        &                                0   \\
+ *                                &  \mbox{block}_2 &        &                                    \\
  *                                &                      & \ddots &                                    \\
- *           0                    &                      &        & \exp(2 \mbox{par}_{\mbox{nPar}})
+ *           0                    &                      &        & \mbox{block}_{\mbox{nPar}}
  *         \end{array}
  *       \right] ,
  * \f]
- * where par contains the current value for the parameters.
+ * The  parameterization of the covariance matirx is made up of the 
+ * parameterizations of the individual blocks (see DiagCov and FullCov) to 
+ * ensure that  it is positive definite and symmetric.
  *//*
  *************************************************************************/
 
