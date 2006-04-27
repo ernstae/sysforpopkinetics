@@ -1372,7 +1372,7 @@ void FullCovTest::fixedTwoByTwoCovTest()
 
   // Calculate the minimal representation for the covariance matrix
   // and its derivative.
-  omega.calcCovMinRep    ( omegaCov,           omegaMinRep );
+  omega.calcCovMinRep    ( omegaCov, omegaMinRep );
   
   //------------------------------------------------------------
   // Calculate the known values.
@@ -1472,6 +1472,15 @@ void FullCovTest::fixedTwoByTwoCovTest()
       omegaMinRepKnown[sumI + j] = omegaCovKnown[i + j * nRow];
     }
   }
+
+
+  //Revisit 2006-04-27 (Dave).  The following two lines prevent a compiler segmentation fault
+  // when compiling in *release* mode.  I don't even use omegaMinRepKnown2... but any
+  // line of code which touches omegaMinRepKnown prevents this compile error.
+  // gcc version 3.2.3  is being used.  I am hoping this issue dissapears when we update the compiler version.
+  valarray<double> omegaMinRepKnown2    ( nPar );
+  omegaMinRepKnown2 = omegaMinRepKnown;
+
 
   // The covariance matrix multiplied by its inverse should be
   // equal to the identity matrix.
