@@ -55,7 +55,7 @@ public abstract class Spkdb {
 	conn.close();
 	return true;
     }
-    /**        Submit a job
+    /**        Submit a job.
      * @return key to the new row in the job table
      * @param conn open connection to the database
      * @param userId key to a row in the user table
@@ -147,10 +147,9 @@ public abstract class Spkdb {
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet jobHistory(Connection conn, long jobId)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	String sql = "select * from history where job_id=" + jobId + ";";
 	Statement stmt = conn.createStatement();
@@ -164,16 +163,34 @@ public abstract class Spkdb {
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getJob(Connection conn, long jobId)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	String sql = "select * from job where job_id=" + jobId + ";";
 	Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 
 	return rs;
+    }
+    /** Set job abstract.
+     * @return true if the job's state_code is set to "end" by this method, otherwise false.
+     * @param userId job owner's user ID
+     * @param abstraction job abstraction to set.
+     * @param conn open connection to the database
+     * @param jobId id number of the job.
+     * @throws SQLException a SQL exception.
+     */
+    public static boolean setJobAbstract(Connection conn, long userId, long jobId, String abstraction)
+        throws SQLException
+    {
+        String sql = "update job set abstract=? where job_id=" + jobId 
+                     + " and user_id=" + userId;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+	pstmt.setString(1, abstraction);
+        boolean ok = pstmt.executeUpdate() == 1;
+        pstmt.close();
+        return ok;
     }
     /**        Get a sequence of jobs for a given user.
      * @return Object of type java.sql.Resultset, containing a sequence of rows of the
@@ -184,11 +201,17 @@ public abstract class Spkdb {
      * @param userId key to the given user in user table
      * @param maxNum maximum number of jobs to provide status for
      * @param leftOff least jobId previously returned (0 if first call in sequence)
+     * @param startID starting jobID.
+     * @param startTime starting submission time.
+     * @param keyWords key words either in job abstract, in model name on in dataset name.
+     * @param modelID finding jobs that use this model.
+     * @param datasetID finding jobs that use thos dataset.
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
-    public static ResultSet userJobs(Connection conn, long userId, int maxNum, long leftOff)
-	throws SQLException, SpkdbException 
+    public static ResultSet userJobs(Connection conn, long userId, int maxNum, long leftOff,
+                                     String startID, String startTime, String keyWords,
+                                     String modelID, String datasetID)
+	throws SQLException
     {
 	String
 	    sql = "select job_id, abstract, state_code, start_time, event_time, "
@@ -197,13 +220,47 @@ public abstract class Spkdb {
 	if (leftOff != 0) {
 	    sql += " and job_id < " + leftOff;
 	}
+        if(startID != null)
+            sql += " and job_id <= " + startID;
+        if(startTime != null)
+            sql += " and start_time <= " + startTime;
+        if(modelID != null)
+            sql += " and model_id=" + modelID;
+        if(datasetID != null)
+            sql += " and dataset_id=" + datasetID;
+        if(keyWords != null)
+        {
+            String[] words = keyWords.split(" ");
+            sql = "select j.job_id, j.abstract, j.state_code, j.start_time, j.event_time, "
+	          + "j.end_code, j.model_id, j.model_version, j.dataset_id, j.dataset_version "
+	          + "from job j, model m, dataset d where j.user_id=" + userId 
+                  + " and j.model_id=m.model_id and j.dataset_id=d.dataset_id";
+	    if (leftOff != 0)
+	        sql += " and j.job_id < " + leftOff;
+            if(startID != null)
+                sql += " and j.job_id <= " + startID;
+            if(startTime != null)
+                sql += " and j.start_time <= " + startTime;
+            if(modelID != null)
+                sql += " and j.model_id=" + modelID;
+            if(datasetID != null)
+                sql += " and j.dataset_id=" + datasetID;
+            sql += " and (";
+            for(int i = 0; i < words.length; i++)
+            {
+                if(i != 0 ) sql += " or ";
+                sql += "j.abstract like '%" + words[i] + "%'"
+                       + " or m.name like '%" + words[i] + "%' or d.name like '%" + words[i] + "%'";
+            }
+            sql += ")";
+        }
 //	sql += " order by job_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 
 	return rs;
     }
-    /** Abort a job when the job is in one of the four possible states. 
+    /** Abort a job when the job is in one of the four possible states.
      * If the job's state code is 'q2c', set the state code to 'end' and end code to 'abrt'.
      * If the job's state code is 'cmp', set the state code to 'q2ac'.
      * If the job's state code is 'q2r', set the state code to 'end' and the end code to 'abrt'.
@@ -212,8 +269,8 @@ public abstract class Spkdb {
      * @return state code if it has been set to 'end', 'q2ac', or 'q2ar', otherwise null.
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
-     * @throws SQLException a SQL exception.
      * @throws SpkdbException a Spkdb exception.
+     * @throws SQLException a SQL exception.
      */
     public static String abortJob(Connection conn, long jobId)
 	throws SQLException, SpkdbException
@@ -248,14 +305,14 @@ public abstract class Spkdb {
         addToHistory(conn, jobId, state, "unknown");
 	return state;
     }
-    /**        Record the end status of a job.
+    /** Record the end status of a job.
      * @return true if the job's state_code is set to "end" by this method, otherwise false.
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
      * @param endCode the type of end that this job reached
      * @param report final report
-     * @throws SQLException a SQL exception.
      * @throws SpkdbException a Spkdb exception.
+     * @throws SQLException a SQL exception.
      */
     public static boolean endJob(Connection conn, long jobId, String endCode, String report)
 	throws SQLException, SpkdbException
@@ -287,11 +344,10 @@ public abstract class Spkdb {
      * @param abstraction short description of the dataset
      * @param archive the entire data set in rcs-compatible format
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static long 
 	newDataset(Connection conn, long userId, String name, String abstraction, String archive)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	long datasetId = 0;
 	String sql
@@ -317,10 +373,9 @@ public abstract class Spkdb {
      * @param conn open connection to the database
      * @param datasetId key to a row in the dataset table
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getDataset(Connection conn, long datasetId)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	String sql = "select * from dataset where dataset_id=" + datasetId + ";";
 	Statement stmt = conn.createStatement();
@@ -369,17 +424,17 @@ public abstract class Spkdb {
      * @param maxNum maximum number of datasets to return
      * @param leftOff least datasetId previously returned (0 if first call in sequence)
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet userDatasets(Connection conn, long userId, int maxNum, long leftOff)
-	throws SQLException, SpkdbException 
+	throws SQLException
     {
 	String
 	    sql = "select * from dataset where user_id=" + userId;
 	if (leftOff != 0) {
 	    sql += " and dataset_id < " + leftOff;
 	}
-	sql += " order by dataset_id desc limit " + maxNum + ";";
+        sql += " order by dataset_id";
+//	sql += " order by dataset_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 
@@ -393,11 +448,10 @@ public abstract class Spkdb {
      * @param abstraction short description of the model
      * @param archive the entire model in rcs-compatible format
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static long 
 	newModel(Connection conn, long userId, String name, String abstraction, String archive)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	long modelId = 0;
 	String sql
@@ -423,10 +477,9 @@ public abstract class Spkdb {
      * @param conn open connection to the database
      * @param modelId key to a row in the model table
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getModel(Connection conn, long modelId)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	String sql = "select * from model where model_id=" + modelId + ";";
 	Statement stmt = conn.createStatement();
@@ -475,17 +528,17 @@ public abstract class Spkdb {
      * @param maxNum maximum number of models to return
      * @param leftOff least modelId previously returned (0 if first call in sequence)
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet userModels(Connection conn, long userId, int maxNum, long leftOff)
-	throws SQLException, SpkdbException 
+	throws SQLException
     {
 	String 
 	    sql = "select * from model where user_id=" + userId;
 	if (leftOff != 0) {
 	    sql += " and model_id < " + leftOff;
 	}
-	sql += " order by model_id desc limit " + maxNum + ";";
+        sql += " order by model_id";
+//	sql += " order by model_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 
@@ -572,18 +625,32 @@ public abstract class Spkdb {
          stmt.close();
          return ok;
     }
-    /**        Get a row from the user table
+    /**        Get a row from the user table by username
      * @return Object of a class which implements the java.sql.ResultSet interface,
      *        containing one complete row of the user table.
      * @param conn open connection to the database
      * @param username name which is an alternate key to the user table
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getUser(Connection conn, String username)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	String sql = "select * from user where username='" + username +"';";
+	Statement stmt = conn.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	return rs;
+    }
+    /** Get a row from the user table by user_id
+     * @return Object of a class which implements the java.sql.ResultSet interface,
+     *        containing one complete row of the user table.
+     * @param userId user ID
+     * @param conn open connection to the database
+     * @throws SQLException a SQL exception.
+     */
+    public static ResultSet getUserById(Connection conn, long userId)
+	throws SQLException
+    {
+	String sql = "select * from user where user_id=" + userId;
 	Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 	return rs;
@@ -593,10 +660,9 @@ public abstract class Spkdb {
      *        containing a row for each row of the table.
      * @param conn open connection to the database
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getEndTable(Connection conn)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	String sql = "select * from end;";
 	Statement stmt = conn.createStatement();
@@ -608,10 +674,9 @@ public abstract class Spkdb {
      *        containing a row for each row of the table.
      * @param conn open connection to the database
      * @throws SQLException a SQL exception.
-     * @throws SpkdbException a Spkdb exception.
      */
     public static ResultSet getMethodTable(Connection conn)
-	throws SQLException, SpkdbException
+	throws SQLException
     {
 	String sql = "select * from method;";
 	Statement stmt = conn.createStatement();
@@ -683,8 +748,8 @@ public abstract class Spkdb {
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
      * @param stateCode state code to set
-     * @throws SQLException a SQL exception.
      * @throws SpkdbException a Spkdb exception.
+     * @throws SQLException a SQL exception.
      */
     public static boolean setStateCode(Connection conn, long jobId, String stateCode)
         throws SQLException, SpkdbException
@@ -705,8 +770,8 @@ public abstract class Spkdb {
      * @param conn open connection to the database
      * @param jobId key to the given job in the job table
      * @param checkpoint to set
-     * @throws SQLException a SQL exception.
      * @throws SpkdbException a Spkdb exception.
+     * @throws SQLException a SQL exception.
      */
     public static boolean setCheckpoint(Connection conn, long jobId, String checkpoint)
         throws SQLException, SpkdbException
@@ -721,5 +786,61 @@ public abstract class Spkdb {
 	if(ok)
             return false;
         return true;   
-    }    
+    }
+    /** Inserts a new group in the database, returning a unique key.
+     * @return long integer which is the unique key of the new row
+     * @see #connect
+     * @param conn open connection to the database
+     * @param name name of the group    
+     * @throws SQLException a SQL exception.
+     */
+    public static long newGroup(Connection conn, String name)
+	throws SQLException
+    {
+	long groupId = 0;
+	String sql = "insert into team (team_name) values ('" + name + "')";
+	Statement stmt = conn.createStatement();
+	stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+	ResultSet rs = stmt.getGeneratedKeys();
+	if (rs.next()) {
+	    groupId = rs.getLong(1);
+	}
+        stmt.close();
+	return groupId;
+    }
+    /** Add a user to a group
+     * @see #connect
+     * @param conn open connection to the database
+     * @param username username to be added to the group 
+     * @param groupId group ID of the group
+     * @return true if successfull, false otherwise
+     * @throws SQLException a SQL exception.
+     */
+    public static boolean newGroupMember(Connection conn, String username, long groupId)
+        throws SQLException
+    {
+        String sql = "update user set team_id=" + groupId + " where username='" + 
+                     username + "'";
+        Statement stmt = conn.createStatement();
+        boolean ok = stmt.executeUpdate(sql) != 1;
+        stmt.close();
+	if(ok)
+            return false;
+        return true;   
+    }
+    /** Get group user names
+     * @param conn open connection to the database
+     * @param group_id group ID
+     * @return usernames of the group
+     * @throws SQLException a SQL exception.
+     */
+    public static ResultSet getGroupUsers(Connection conn, long group_id)
+        throws SQLException
+    {
+        String sql = "select username from user where team_id=" + group_id + 
+                     " order by username";
+        Statement stmt = conn.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	return rs;
+    }
 }
