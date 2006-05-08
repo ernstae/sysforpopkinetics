@@ -8,7 +8,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 56;
+	final int maxTests = 60;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -25,7 +25,7 @@ public class TestSpkdb {
 	long newestModelId = 0;
 	long userId = 0;
 	long jobId = 0;
-
+        long groupId = 0;
 	long newerJobId = 0;
 	long newestJobId = 0;
 	
@@ -70,9 +70,13 @@ public class TestSpkdb {
 			String n[] = {"username", "password", "first_name", "surname"};
 			String v[] = { username,  password, firstName, surname };
 			s = "newUser";
-			userId = Spkdb.newUser(conn, n, v);		    
+			userId = Spkdb.newUser(conn, n, v);   
 			s += " is user number " + userId;
 			b = userId == 1;
+                        String u[] = {"water", "secret", "unknown", "unknown"};
+                        userId = Spkdb.newUser(conn, n, u);
+                        b = b && userId == 2;
+                        s += " and another new user is user number " + userId;
 		    }
 		    break;
 		case 5:
@@ -136,7 +140,7 @@ public class TestSpkdb {
 		    ResultSet rs = Spkdb.getUser(conn, username);
 		    if (rs.next()) {
 			String name = rs.getString("first_name");
-			b = name.compareTo("Gary") == 0;
+			b = name.compareTo("Mike") == 0;
 		    } 
 		    else {
 			s += ": no record for userId=" + userId;
@@ -220,7 +224,7 @@ public class TestSpkdb {
 		case 16:
 		    target = true;
 		    s = "userJobs, maxNum = 1\n";
-		    rs = Spkdb.userJobs(conn, userId, 1, 0);
+		    rs = Spkdb.userJobs(conn, userId, 1, 0, null, null, null, null, null);
 		    if (rs.last()) {
 			b = rs.getLong("job_id") == newestJobId;
 			/*
@@ -241,7 +245,7 @@ public class TestSpkdb {
 		case 17:
 		    b = target = true;
 		    s = "userJobs, maxNum = 3";
- 		    rs = Spkdb.userJobs(conn, userId, 3, newestJobId);
+ 		    rs = Spkdb.userJobs(conn, userId, 3, newestJobId, null, null, null, null, null);
 		    jobId = newestJobId;
 
 		    count = 0;
@@ -410,7 +414,8 @@ public class TestSpkdb {
  		    rs = Spkdb.userDatasets(conn, userId, 3, 0);
 		    
 		    count = 0;
-		    while (rs.next()) {
+                    rs.last();
+		    do {
 			long j = rs.getLong("dataset_id");
 			if (count != 0 && j >= datasetId) {
 			    s += "; datasetId" + j + " is out of order";
@@ -419,15 +424,17 @@ public class TestSpkdb {
 			}
 			datasetId = j;
 			count++;
-		    }
+		    } while (rs.previous());
 		    s += "; " + count + " were returned";
 		    break;
 		case 30:
 		    b = target = true;
 		    s = "userDatasets, maxNum = 3";
+                    datasetId = 4;
  		    rs = Spkdb.userDatasets(conn, userId, 3, datasetId);
 		    count = 0;
-		    while (rs.next()) {
+                    rs.last();
+		    do {
 			long j;
 			if ((j = rs.getLong("dataset_id")) >= datasetId) {
 			    s += "; datasetId" + j + " is out of order";
@@ -436,7 +443,7 @@ public class TestSpkdb {
 			}
 			datasetId = j;
 			count++;
-		    }
+		    } while (rs.previous());
 		    s += "; " + count + " were returned";
 		    break;
 		case 31:
@@ -514,7 +521,8 @@ public class TestSpkdb {
  		    rs = Spkdb.userModels(conn, userId, 3, 0);
 		    
 		    count = 0;
-		    while (rs.next()) {
+                    rs.last();
+		    do {
 			long j = rs.getLong("model_id");
 			if (count != 0 && j >= modelId) {
 			    s += "; modelId" + j + " is out of order";
@@ -523,16 +531,18 @@ public class TestSpkdb {
 			}
 			modelId = j;
 			count++;
-		    }
+		    } while (rs.previous());
 		    s += "; " + count + " were returned";
 		    break;
 		case 38:
 		    b = target = true;
 		    s = "userModels, maxNum = 3";
+                    modelId = 4;
  		    rs = Spkdb.userModels(conn, userId, 3, modelId);
 
 		    count = 0;
-		    while (rs.next()) {
+                    rs.last();
+		    do {
 			long j;
 			if ((j = rs.getLong("model_id")) >= modelId) {
 			    s += "; modelId" + j + " is out of order";
@@ -541,7 +551,7 @@ public class TestSpkdb {
 			}
 			modelId = j;
 			count++;
-		    }
+		    } while (rs.previous());
 		    s += "; " + count + " were returned";
 		    break;
 		case 39:
@@ -741,6 +751,37 @@ public class TestSpkdb {
                     else
                         b = false;
 		    break;
+                case 57:
+                    target = true;
+                    s = "newGroup";
+                    groupId = Spkdb.newGroup(conn, "testing");
+                    b = groupId == 1;
+                    break;
+                case 58:
+                    target = true;
+                    s = "newGroupMember";
+                    b = Spkdb.newGroupMember(conn, "air", groupId);
+                    b = b && Spkdb.newGroupMember(conn, "water", groupId);
+                    break;
+                case 59:
+                    target = true;
+                    s = "getGroupUsers";
+                    rs = Spkdb.getGroupUsers(conn, groupId);
+                    rs.next();
+                    b = rs.getString("username").equals("air");
+                    rs.next();
+                    b = b && rs.getString("username").equals("water");
+                    break;
+                case 60:
+                    target = true;
+                    s = "getUserById";
+                    rs = Spkdb.getUserById(conn, 1);
+                    rs.next();
+                    b = rs.getString("username").equals("air");
+                    rs = Spkdb.getUserById(conn, 2);
+                    rs.next();
+                    b = b && rs.getString("username").equals("water");
+                    break;
 		default:
 		    break;
 		}
