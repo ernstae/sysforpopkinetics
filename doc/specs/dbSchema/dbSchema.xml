@@ -33,8 +33,14 @@
       </revision>
       <revision>
 	<revnumber>1.04</revnumber>
-	<date>November 19, 2003</date>
-	<authorinitials>jiaji</authorinitials>
+	<date>November 19, 2005</date>
+	<authorinitials>jd</authorinitials>
+	<revremark>More additions to schema.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.05</revnumber>
+	<date>May 9, 2006</date>
+	<authorinitials>jd</authorinitials>
 	<revremark>More additions to schema.</revremark>
       </revision>
     </revhistory>
@@ -393,6 +399,12 @@ CREATE TABLE user (
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
 
+CREATE TABLE team (
+  team_id int(10) unsigned NOT NULL auto_increment,
+  team_name varchar(20) NOT NULL default '',
+  PRIMARY KEY  (team_id),
+  UNIQUE KEY `team_name` (team_name)
+) Type=InnoDB;
 
       </screen>
     </para>
@@ -1191,6 +1203,13 @@ INSERT INTO state (state_code, state_name) VALUES ('arun','Aborting run');
 		  Whether the user is one of the developers of this software.
 		</entry>
 	      </row>
+	      <row>
+		<entry>team_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+                  The team_id of the user, 0 if the user is not in a team.
+                </entry>
+	      </row>
 	    </tbody>
 	  </tgroup>
 	</table>
@@ -1213,6 +1232,59 @@ INSERT INTO state (state_code, state_name) VALUES ('arun','Aborting run');
 	same username. Problems are avoided by specifying
 	<command>UNIQUE KEY (username)</command> and 
 	<command>TYPE=InnoDB</command>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>team</title>
+      <para>
+	The <emphasis>team</emphasis> table contains information about
+	the team.  The MDA consults this table when a user logs in.
+	This table identifies users of the team.  Rows must never be
+	deleted from this table.
+      </para>
+      <para>
+	<table frame='all'><title>team</title>
+	  <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+	    <colspec colwidth="1*" colname='c1'/>
+	    <colspec colwidth="2*" colname='c2'/>
+	    <colspec colwidth="4*" colname='c3'/>
+	    <thead>
+	      <row>
+		<entry>Field</entry>
+		<entry>Type</entry>
+		<entry>Description</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>team_id</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>
+		  Primary key.  Provided automatically when the row is created.
+		</entry>
+	      </row>
+	      <row>
+		<entry>team_name</entry>
+		<entry>int(10) unsigned</entry>
+		<entry>The given name of this team.</entry>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
+      </para>
+      <bridgehead renderas="sect3">Transaction Processing Considerations</bridgehead>
+      <para>
+	Teams are added by an administrative application.  The
+	key field, <emphasis>team_id</emphasis>, is automatically
+	assigned to be unique by MySQL, as long as the 
+	<command>auto_increment</command> modifier is used
+	and the table has <command>TYPE=InnoDB</command> when
+	the table is created.  This insures that there are no
+	concurrency issues when adding a team.
+      </para>
+      <para>
+	Once a team is in the database, users can join the team. A team
+        can have many users, but a user can join only one team. 
       </para>
     </sect2>
   </sect1>
