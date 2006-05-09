@@ -35,8 +35,14 @@
       <revision>
 	<revnumber>1.04</revnumber>
 	<date>August 19, 2005</date>
-	<authorinitials>jiaji</authorinitials>
+	<authorinitials>jd</authorinitials>
 	<revremark>Added 'Aborting Job' section and five API functions.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.05</revnumber>
+	<date>May 9, 2006</date>
+	<authorinitials>jd</authorinitials>
+	<revremark>Added five API functions.</revremark>
       </revision>
     </revhistory>
   <abstract>
@@ -3995,6 +4001,542 @@
 	  </table>
 	</para>
       </sect3>
+      <sect3>
+	<title id="get_user_by_id">get_user_by_id -- retrieve a user record by user_id</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		list = get_user_by_id handle user_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		This function retrieves the entire row in the 
+		<emphasis>user</emphasis> table corresponding to the user_id.
+		Since user_id is a unique key, there will be no
+		more than one row returned.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_user_by_id</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>pair list</entry>
+		  <entry>
+		    List of all field names for the <emphasis>user</emphasis>
+		    table, along with their associated values.
+		  </entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle or the user_id is invalid.
+		    Information sufficient to distinguish the case of a nonexistent
+		    user from various error conditions is provided by the 
+		    language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_user_by_id</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>user_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>User ID of the user.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="set_job_abstract">set_job_abstract -- set job abstract.</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		r = set_job_abstract handle job_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		This function sets the job abstact 
+		<emphasis>job</emphasis> table corresponding to the job_id.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by set_job_abstract</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>true</entry>
+		  <entry></entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>false</entry>
+		  <entry>
+		    Failure occurs if the handle, the user_id or the job_id is invalid.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_user_by_id</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>user_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>User ID of the user.</entry>
+		</row>
+                <row>
+		  <entry>job_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>Job ID of the job.</entry>
+		</row>
+                <row>
+		  <entry>abstraction</entry>
+		  <entry>string</entry>
+		  <entry>The specified job abstract.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="new_group">new_group -- add a new group</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		group_id = new_group handle group_name
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		Add a new Spk user group.	      
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <emphasis>group_id</emphasis> field carries the auto_increment
+		modifier.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by new_group</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>positive integer</entry>
+		  <entry>Key to a row newly added to the <emphasis>team</emphasis> table.</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>0</entry>
+		  <entry>
+		    Failure occurs if the handle is invalid, or if the group_name has already
+                    been used by an existing group.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to new_group</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>group_name</entry>
+		  <entry>string</entry>
+		  <entry>
+		   Specified group name. 
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="new_group_member">new_group_member -- add a new group member</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		r = new_group_member handle username group_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		Add a user to a group.	      
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by new_group</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>true</entry>
+		  <entry>Group ID is set to the user in the <emphasis>user</emphasis> table.</entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>false</entry>
+		  <entry>
+		    Failure occurs if the handle is invalid, or if the username or the group_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to new_group</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>username</entry>
+		  <entry>string</entry>
+		  <entry>
+		   Specified username. 
+		  </entry>
+		</row>
+                <row>
+		  <entry>group_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>
+		   Specified group_id. 
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>
+      <sect3>
+	<title id="get_group_users">get_group_users -- retrieve all users of a group</title>
+	<glosslist>
+	  <glossentry>
+	    <glossterm>Synopsis</glossterm>
+	    <glossdef>
+	      <para>
+		list = get_group_users handle group_id
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Description</glossterm>
+	    <glossdef>
+	      <para>
+		This function retrieves the a list of entire rows in the 
+		<emphasis>user</emphasis> table corresponding to the group_id.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Side Effects</glossterm>
+	    <glossdef>
+	      <para>
+		None.
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	  <glossentry>
+	    <glossterm>Transaction Processing Considerations</glossterm>
+	    <glossdef>
+	      <para>
+		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </para>
+	    </glossdef>
+	  </glossentry>
+	</glosslist>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Values returned by get_group_users</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Condition</entry>
+		  <entry>Values</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>success</entry>
+		  <entry>pair list</entry>
+		  <entry>
+		    List of all field names for the <emphasis>user</emphasis>
+		    table, along with their associated values.
+		  </entry>
+		</row>
+		<row>
+		  <entry>failure</entry>
+		  <entry>null or undefined</entry>
+		  <entry>
+		    Failure occurs if the handle or the group_id is invalid.
+		    Information sufficient to distinguish the case of a nonexistent
+		    user from various error conditions is provided by the 
+		    language bindings.
+		  </entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+	<para>
+	  <table frame="all" pgwide="1">
+	    <title>Arguments to get_user</title>
+	    <tgroup cols="3">
+	      <colspec colname="c1" colwidth="3*"/>
+	      <colspec colname="c2" colwidth="2*"/>
+	      <colspec colname="c3" colwidth="7*"/>
+	      <thead>
+		<row>
+		  <entry>Name of Argument</entry>
+		  <entry>Data Type</entry>
+		  <entry>Description</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>handle</entry>
+		  <entry>database handle</entry>
+		  <entry>Handle to an open database connection.</entry>
+		</row>
+		<row>
+		  <entry>group_id</entry>
+		  <entry>positive integer</entry>
+		  <entry>Specified group ID.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	</para>
+      </sect3>  
 <!--
       <sect3>
 	<title id="blah">blah - - blah blah</title>
@@ -4262,6 +4804,31 @@
 		<entry><link linkend="get_mail_notice">get_mail_notice</link></entry>
 		<entry>x</entry>
 		<entry></entry>
+	      </row>
+              <row>
+		<entry><link linkend="get_user_by_id">get_user_by_id</link></entry>
+		<entry></entry>
+		<entry>x</entry>
+	      </row>
+              <row>
+		<entry><link linkend="set_job_abstract">set_job_abstract</link></entry>
+		<entry></entry>
+		<entry>x</entry>
+	      </row>
+              <row>
+		<entry><link linkend="new_group"></link>new_group</entry>
+		<entry></entry>
+		<entry>x</entry>
+	      </row>
+              <row>
+		<entry><link linkend="new_group_member">new_group_member</link></entry>
+		<entry></entry>
+		<entry>x</entry>
+	      </row>
+              <row>
+		<entry><link linkend="get_group_users">get_group_users</link></entry>
+		<entry></entry>
+		<entry>x</entry>
 	      </row>
 
 <!--

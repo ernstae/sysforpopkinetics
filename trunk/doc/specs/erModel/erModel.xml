@@ -19,6 +19,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Added additional entities.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>May 9, 2006</date>
+	<authorinitials>jd</authorinitials>
+	<revremark>Added entitie team.</revremark>
+      </revision>
     </revhistory>
   <abstract>
       <para>
@@ -164,6 +170,13 @@
       <para>
 	User represents the user of Spk. A user may have many
 	jobs, many models and many datasets.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Team</title>
+      <para>
+	Team represents the user group of Spk. A team may have many
+	users, but a user can only join one team.
       </para>
     </sect2>
     <sect2>
