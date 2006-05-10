@@ -2089,7 +2089,6 @@ sub set_mail_notice() {
     {
 	$err = $UPDATE_FAILED;
 	$errstr = "could not execute $sql; error returned ";
-	$dbh->rollback;        
         return undef;
     }
     unless ($nrows == 1)
