@@ -8,7 +8,7 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 60;
+	final int maxTests = 61;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -781,6 +781,14 @@ public class TestSpkdb {
                     rs = Spkdb.getUserById(conn, 2);
                     rs.next();
                     b = b && rs.getString("username").equals("water");
+                    break;
+                case 61:
+                    target = true;
+                    s = "setJobAbstract";
+                    b = Spkdb.setJobAbstract(conn, 2, 1, "Abstract 1: updated");
+                    rs = Spkdb.getJob(conn, 1);
+                    rs.next();
+                    b = b && rs.getString("abstract").equals("Abstract 1: updated");
                     break;
 		default:
 		    break;
