@@ -37,8 +37,7 @@ public class JobState {
      * @param stmt statement to execute sql command.
      * @throws SQLException a SQL exception.
      */
-    protected void addHistory(String jobId, String stateCode, long eventTime,
-                                     Statement stmt)
+    protected void addHistory(String jobId, String stateCode, long eventTime, Statement stmt)
         throws SQLException
     {
         String sql = "insert into history (job_id, state_code, event_time, host) "

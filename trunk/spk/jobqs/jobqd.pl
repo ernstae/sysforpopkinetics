@@ -85,7 +85,6 @@ my $dbname = shift;
 my $dbuser = shift;
 my $dbpasswd = shift;
 my $mode = shift;
-my $startjob = shift;
 
 my @a = ("ps -elf|grep jobqs");
 my $stdout = `@a`;
@@ -109,7 +108,7 @@ my $lockfile_path = "/tmp/lock_$service_name";
 
 Proc::Daemon::Init();    
 start();
-my @args = ("$command $classpath uw.rfpk.jobqs.JobQueue $dbhost $dbname $dbuser $dbpasswd $jobqs_port $startjob");
+my @args = ("$command $classpath uw.rfpk.jobqs.JobQueue $dbhost $dbname $dbuser $dbpasswd $jobqs_port $mode");
 my $e = exec(@args);
 
 # This statement will never be reached, unless the exec failed

@@ -82,7 +82,7 @@ public class TestJobqs
         
         // Start job-queue server and connect to it
         String[] command = {"java", "-cp", classpath, "uw.rfpk.jobqs.JobQueue", 
-                            host, dbName, dbUser, dbPassword, String.valueOf(port), "1"};
+                            host, dbName, dbUser, dbPassword, String.valueOf(port), "test"};
         Process process = null;
         Socket socket = null;
         PrintWriter out = null;
@@ -379,7 +379,7 @@ public class TestJobqs
                         target = true;
                         s = "init compiler daemon on cmp";
                         out.println("add-q2c-1");
-                        in.readLine();
+                        in.readLine();                       
                         out.println("get-q2c");
                         String jobId = in.readLine();
                         out.println("init-cmpd");
@@ -394,8 +394,6 @@ public class TestJobqs
                         jobId = in.readLine();
                         out.println("init-cmpd");
                         b = in.readLine().equals("done");
-                        out.println("get-q2ac");
-                        in.readLine();
                         out.println("get-q2ac");
                         b = in.readLine().equals(jobId) && b;
                         break;
@@ -417,9 +415,7 @@ public class TestJobqs
                         out.println("get-q2ar");
                         jobId = in.readLine();
                         out.println("init-rund");
-                        b = in.readLine().equals("done");
-                        out.println("get-q2ar");
-                        in.readLine();
+                        b = in.readLine().equals("done");                        
                         out.println("get-q2ar");
                         b = in.readLine().equals(jobId) && b;
                         break;                        
@@ -428,7 +424,7 @@ public class TestJobqs
                         s = "calling the server Hi";
                         out.println("Hi");
                         b = in.readLine().equals("Hi");
-                        break;
+                        break;  
 		    default:
 		        break;
                 }
