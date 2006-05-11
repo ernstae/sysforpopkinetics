@@ -10,7 +10,6 @@ DBUSER=daemon
 DBPASSWD=daemon
 BIN=/usr/local/bin/spkprod
 MODE=prod
-STARTJOB=1000
 
 SERVICE_NAME=jobqd
 LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
@@ -18,7 +17,7 @@ LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 ulimit -c 10000000  # this enables a core dump if the server crashes
 
 start() {
-    $BIN/${SERVICE_NAME}.pl $DBHOST $DATABASE $DBUSER $DBPASSWD $MODE $STARTJOB
+    $BIN/${SERVICE_NAME}.pl $DBHOST $DATABASE $DBUSER $DBPASSWD $MODE
     echo "started"
 }
 stop() {

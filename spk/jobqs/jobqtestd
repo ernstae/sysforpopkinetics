@@ -10,7 +10,6 @@ DBUSER=tester
 DBPASSWD=tester
 BIN=/usr/local/bin/spktest
 MODE=test
-STARTJOB=1
 
 SERVICE_ROOT=jobq
 SERVICE_NAME=${SERVICE_ROOT}testd
@@ -19,7 +18,7 @@ LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 ulimit -c 10000000  # this enables a core dump if the server crashes
 
 start() {
-    $BIN/${SERVICE_ROOT}d.pl $DBHOST $DATABASE $DBUSER $DBPASSWD $MODE $STARTJOB
+    $BIN/${SERVICE_ROOT}d.pl $DBHOST $DATABASE $DBUSER $DBPASSWD $MODE
     echo "started"
 }
 stop() {

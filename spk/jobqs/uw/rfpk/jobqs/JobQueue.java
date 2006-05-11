@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.Vector;
 import java.util.Properties;
 import java.util.Enumeration;
+import java.text.SimpleDateFormat;
 
 /** This class defines a server to handle job queues.  The server keeps four job-queues: 
  *  Compiler queue, Run queue, Aborting compiler queue and Aborting run queue.  The server 
@@ -192,8 +193,7 @@ public class JobQueue
     public static void main(String[] args)
     {       
         JobState jobState = new JobState();
-        if(args[5] != null && isPosLongNumber(args[5])) startingJobId = args[5];
-        
+
         // Get localhost name
         try
         {
@@ -201,13 +201,16 @@ public class JobQueue
         }
         catch (UnknownHostException e)
         {
+            stop(e.getMessage());
         }
-        
+
         // Connect to the database
         String hostName = args[0];
         String dbName = args[1];
         String dbUser = args[2];
         String dbPassword = args[3];
+        mode = args[5];
+        
         try 
         {
 	    Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -219,6 +222,7 @@ public class JobQueue
         }
         catch(Exception e)
         {
+            stop(e.getMessage());
         }
 
         // Initialize queues
@@ -241,6 +245,7 @@ public class JobQueue
         }
         catch(IOException e)
         {
+            stop(e.getMessage());
         }
         
         // Disconnect from the database
@@ -248,51 +253,71 @@ public class JobQueue
         {
             if(conn != null) conn.close();
         }
-        catch(SQLException e) {}
+        catch(SQLException e)
+        {
+            stop(e.getMessage());
+        }
     }
-    private static boolean isPosLongNumber(String s)
+    protected static void stop(String errorMessage)
     {
-        long l;
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
+        String time = formatter.format(new Date());
+        String filename = "/tmp/log_jobq";
+        if(mode.equals("test")) filename += "testd";
+        else filename += "d";
+        File logFile = new File(filename);
         try
         {
-            l = Long.parseLong(s);   
+            BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
+            writer.write(time + "\n\n" + errorMessage);
+            writer.flush();
         }
-        catch(NumberFormatException e)
+        catch(IOException e) {}
+        finally
         {
-            return false;   
+            File lockFile = new File("/tmp/lock_jobqtestd");
+            lockFile.delete();
+            System.exit(0);
         }
-        if(l <= 0)
-            return false;
-        return true;
     }
     private static void initQueue(JobState jobState)
-    {	
+    {
         Statement stmt = null;
-	try 
+	try
         {
             stmt = JobQueue.conn.createStatement();
-            setJobQueue(stmt, jobState, "cmp");
-            setJobQueue(stmt, jobState, "q2c");
-            setJobQueue(stmt, jobState, "run");
-            setJobQueue(stmt, jobState, "q2r");
-            setJobQueue(stmt, jobState, "acmp");
-            setJobQueue(stmt, jobState, "q2ac");
-            setJobQueue(stmt, jobState, "arun");
-            setJobQueue(stmt, jobState, "q2ar");
+            String sql = "select job_id from job where state_code != 'end' limit 1";
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.next())
+            {
+                String startingJobId = String.valueOf(rs.getLong("job_id"));
+                setJobQueue(stmt, jobState, "cmp", startingJobId);
+                setJobQueue(stmt, jobState, "q2c", startingJobId);
+                setJobQueue(stmt, jobState, "run", startingJobId);
+                setJobQueue(stmt, jobState, "q2r", startingJobId);
+                setJobQueue(stmt, jobState, "acmp", startingJobId);
+                setJobQueue(stmt, jobState, "q2ac", startingJobId);
+                setJobQueue(stmt, jobState, "arun", startingJobId);
+                setJobQueue(stmt, jobState, "q2ar", startingJobId);
+            }
         }
         catch(SQLException e)
-        {         
+        {
+            stop(e.getMessage());
         }
         finally
         {
             try
-            {
+            {             
                 if(stmt != null) stmt.close();
             }
-            catch(SQLException e) {}
+            catch(SQLException e)
+            {
+                stop(e.getMessage());
+            }
         }
     }
-    private static void setJobQueue(Statement stmt, JobState jobState, String stateCode)
+    private static void setJobQueue(Statement stmt, JobState jobState, String stateCode, String startingJobId)
         throws SQLException
     {      
         String jobId;
@@ -358,7 +383,7 @@ public class JobQueue
     /** Database connection object */
     protected static Connection conn;
     
-    private static String startingJobId = "1";
+    private static String mode;
     
     /** Local host name */
     protected static String localhostName = "unknown";
@@ -388,14 +413,12 @@ class ThreadedHandler extends Thread
         {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            String message[];
-            String jobId;
-            String stateCode;
+            String[] message;
             while(true)
             {
                 message = in.readLine().split("-");
                 synchronized(jobState)
-                {
+                {                   
                     if(message[0].equals("add"))
                     {
                         if(message[1].equals("q2c"))
@@ -404,121 +427,147 @@ class ThreadedHandler extends Thread
                             jobState.jobList.setProperty(message[2], "q2c");
                             out.println("done");
                         }
-                        if(message[1].equals("q2r"))
+                        else if(message[1].equals("q2r"))
                         {
                             jobState.runQueue.add(message[2]);
                             jobState.jobList.setProperty(message[2], "q2r");
                             out.println("done");
                         }
+                        else
+                        {
+                            out.println("N/A");
+                        }
                     }
-                    if(message[0].equals("get"))
+                    else if(message[0].equals("get"))
                     {
                         if(message[1].equals("q2c"))
                         {
                             if(jobState.cmpQueue.size() > 0)
                             {
-                                jobId =(String)jobState.cmpQueue.remove(0);
+                                String jobId =(String)jobState.cmpQueue.remove(0);
                                 jobState.jobList.setProperty(jobId, "cmp");
                                 out.println(jobId);
                             }
                             else
+                            {
                                 out.println("none");
+                            }
                         }
-                        if(message[1].equals("q2r"))
+                        else if(message[1].equals("q2r"))
                         {
                             if(jobState.runQueue.size() > 0)
                             {
-                                jobId =(String)jobState.runQueue.remove(0);
+                                String jobId =(String)jobState.runQueue.remove(0);
                                 jobState.jobList.setProperty(jobId, "run");
                                 if(jobState.restartJobs.remove(jobId)) out.println(" " + jobId);
                                 else out.println(jobId);
                             }
                             else
+                            {
                                 out.println("none");
+                            }
                         }
-                        if(message[1].equals("q2ac"))
+                        else if(message[1].equals("q2ac"))
                         {
                             jobState.cmpd = true;
                             if(jobState.abortCmpQueue.size() > 0)
                             {
-                                jobId = (String)jobState.abortCmpQueue.remove(0);
+                                String jobId = (String)jobState.abortCmpQueue.remove(0);
                                 jobState.jobList.setProperty(jobId, "acmp");
                                 out.println(jobId);
                             }
                             else
+                            {
                                 out.println("none");
+                            }
                         }
-                        if(message[1].equals("q2ar"))
+                        else if(message[1].equals("q2ar"))
                         {
                             jobState.rund = true;
                             if(jobState.abortRunQueue.size() > 0)
                             {
-                                jobId = (String)jobState.abortRunQueue.remove(0);
+                                String jobId = (String)jobState.abortRunQueue.remove(0);
                                 jobState.jobList.setProperty(jobId, "arun");
                                 out.println(jobId);
                             }
                             else
+                            {
                                 out.println("none");
+                            }
+                        }
+                        else
+                        {
+                            out.println("N/A");
                         }
                     }
-                    if(message[0].equals("init"))
+                    else if(message[0].equals("init"))
                     {
                         if(message[1].equals("cmpd"))
                         {
                             jobState.cmpd = true;
                             Enumeration keys = jobState.jobList.keys();
+                            String jobId, stateCode;
                             while(keys.hasMoreElements())
                             {
                                 jobId = (String)keys.nextElement();
                                 stateCode = jobState.jobList.getProperty(jobId);
                                 if(stateCode.equals("q2c") || stateCode.equals("q2ac"))
+                                {
                                     jobState.setEndCode(jobId, null);
+                                }
                                 if(stateCode.equals("cmp"))
                                 {
-                                    jobState.cmpQueue.add(jobId);
+                                    jobState.cmpQueue.insertElementAt(jobId, 0);
                                     jobState.jobList.setProperty(jobId, "q2c");
                                     jobState.setStateCode(jobId, "q2c");
                                 }
                                 if(stateCode.equals("acmp"))
                                 {
-                                    jobState.abortCmpQueue.add(jobId);
+                                    jobState.abortCmpQueue.insertElementAt(jobId, 0);
                                     jobState.jobList.setProperty(jobId, "q2ac");
                                     jobState.setStateCode(jobId, "q2ac");
-                                }
+                                }                               
                             }
                             out.println("done");
                         }
-                        if(message[1].equals("rund"))
+                        else if(message[1].equals("rund"))
                         {
                             jobState.rund = true;
                             Enumeration keys = jobState.jobList.keys();
+                            String jobId, stateCode;
                             while(keys.hasMoreElements())
                             {
                                 jobId = (String)keys.nextElement();
                                 stateCode = jobState.jobList.getProperty(jobId);
                                 if(stateCode.equals("q2r") || stateCode.equals("q2ar"))
+                                {
                                     jobState.setEndCode(jobId, null);
+                                }
                                 if(stateCode.equals("run"))
                                 {
-                                    jobState.runQueue.add(jobId);
+                                    jobState.runQueue.insertElementAt(jobId, 0);                                   
                                     jobState.jobList.setProperty(jobId, "q2r");
                                     jobState.restartJobs.add(jobId);
                                     jobState.setStateCode(jobId, "q2r");
                                 }
                                 if(stateCode.equals("arun"))
                                 {
-                                    jobState.abortRunQueue.add(jobId);
+                                    jobState.abortRunQueue.insertElementAt(jobId, 0);
                                     jobState.jobList.setProperty(jobId, "q2ar");
                                     jobState.setStateCode(jobId, "q2ar");
-                                }
+                                }                                
                             }
                             out.println("done");
                         }
+                        else
+                        {
+                            out.println("N/A");   
+                        }
                     }
-                    if(message[0].equals("set"))
+                    else if(message[0].equals("set"))
                     {
-                        jobId = message[2];
-                        stateCode = jobState.jobList.getProperty(jobId);
+                        String stateCode = jobState.jobList.getProperty(message[2]);
+                        String jobId = message[2];
                         if(message[1].equals("abrt"))
                         {
                             if(stateCode != null)
@@ -553,10 +602,16 @@ class ThreadedHandler extends Thread
                                     out.println("done");
                                 }
                                 else
+                                {
                                     out.println("none");
+                                }
+                            }
+                            else
+                            {
+                                out.println("none");
                             }
                         }
-                        if(message[1].equals("end"))
+                        else if(message[1].equals("end"))
                         {
                             jobState.jobList.remove(jobId);
                             jobState.restartJobs.remove(jobId);
@@ -566,14 +621,20 @@ class ThreadedHandler extends Thread
                             if(stateCode.equals("q2ar")) jobState.abortRunQueue.remove(jobId);
                             out.println("done");
                         }
+                        else
+                        {
+                            out.println("N/A");
+                        }
                     }
-                    if(message[0].equals("list"))
+                    else if(message[0].equals("list"))
                     {
                         if(message[1].equals("q2c"))
                         {
                             int size = jobState.cmpQueue.size();
                             if(size == 0)
+                            {
                                 out.println("none");
+                            }
                             else
                             {
                                 String list = "";
@@ -582,11 +643,13 @@ class ThreadedHandler extends Thread
                                 out.println(list.trim());
                             }
                         }
-                        if(message[1].equals("q2r"))
+                        else if(message[1].equals("q2r"))
                         {
                             int size = jobState.runQueue.size();
                             if(size == 0)
+                            {
                                 out.println("none");
+                            }
                             else
                             {
                                 String list = "";
@@ -595,11 +658,13 @@ class ThreadedHandler extends Thread
                                 out.println(list.trim());
                             }
                         }
-                        if(message[1].equals("q2ac"))
+                        else if(message[1].equals("q2ac"))
                         {
                             int size = jobState.abortCmpQueue.size();
                             if(size == 0)
+                            {
                                 out.println("none");
+                            }
                             else
                             {
                                 String list = "";
@@ -608,11 +673,13 @@ class ThreadedHandler extends Thread
                                 out.println(list.trim());
                             }
                         }
-                        if(message[1].equals("q2ar"))
+                        else if(message[1].equals("q2ar"))
                         {
                             int size = jobState.abortRunQueue.size();
                             if(size == 0)
+                            {
                                 out.println("none");
+                            }
                             else
                             {
                                 String list = "";
@@ -621,14 +688,17 @@ class ThreadedHandler extends Thread
                                 out.println(list.trim());
                             }
                         }
-                        if(message[1].equals("all"))
+                        else if(message[1].equals("all"))
                         {
                             if(jobState.jobList.isEmpty())
+                            {
                                 out.println("none");
+                            }
                             else
                             {
                                 String list = "";
                                 Enumeration keys = jobState.jobList.keys();
+                                String jobId;
                                 while(keys.hasMoreElements())
                                 {
                                     jobId = (String)keys.nextElement();
@@ -637,14 +707,25 @@ class ThreadedHandler extends Thread
                                 out.println(list.trim());
                             }
                         }
+                        else
+                        {
+                            out.println("N/A");
+                        }
                     }
-                    if(message[0].equals("Hi"))
+                    else if(message[0].equals("Hi"))
+                    {
                         out.println("Hi");
+                    }
+                    else
+                    {
+                        out.println("N/A");
+                    }
                 }
             }
         }
         catch(Exception e)
         {
+            JobQueue.stop(e.getMessage());
         }
     }
    
@@ -670,7 +751,6 @@ class Monitor extends Thread
     public void run()
     {
         long now;
-        String jobId, stateCode;
         while(true)
         {
             try
@@ -679,13 +759,14 @@ class Monitor extends Thread
             }
             catch(InterruptedException e)
             {
-                return;
+                JobQueue.stop(e.getMessage());
             }
             synchronized(jobState)
             {
                 if(!jobState.cmpd)
                 {
                     Enumeration keys = jobState.jobList.keys();
+                    String jobId, stateCode;
                     while(keys.hasMoreElements())
                     {
                         jobId = (String)keys.nextElement();
@@ -699,6 +780,7 @@ class Monitor extends Thread
                             }
                             catch(SQLException e)
                             {
+                                JobQueue.stop(e.getMessage());
                             }
                         }
                     }
@@ -710,6 +792,7 @@ class Monitor extends Thread
                 if(!jobState.rund)
                 {
                     Enumeration keys = jobState.jobList.keys();
+                    String jobId, stateCode;
                     while(keys.hasMoreElements())
                     {
                         jobId = (String)keys.nextElement();
@@ -723,6 +806,7 @@ class Monitor extends Thread
                             }
                             catch(SQLException e)
                             {
+                                JobQueue.stop(e.getMessage());
                             }
                         }
                     }
