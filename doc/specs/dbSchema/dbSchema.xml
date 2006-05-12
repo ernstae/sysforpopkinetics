@@ -354,7 +354,6 @@ CREATE TABLE job (
   end_code varchar(4) default NULL,
   method_code char(2) default NULL,
   parent int(10) unsigned default '0',
-  owner varchar(40) NOT NULL default '',
   mail tinyint(1) default '0',
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
@@ -884,14 +883,6 @@ INSERT INTO state (state_code, state_name) VALUES ('arun','Aborting run');
 		<entry>
 		  The job_id of the parent job, if this job depends on
 		  a previous one. A foreign key to the job table.
-		</entry>
-	      </row>
-	      <row>
-		<entry>owner</entry>
-		<entry>varchar(40)</entry>
-		<entry>
-		  The job owner, the username of the person on the computer 
-                  system by which the job was submitted.
 		</entry>
 	      </row>
 	      <row>

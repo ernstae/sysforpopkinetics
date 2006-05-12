@@ -608,7 +608,7 @@
 	    <glossterm>Synopsis</glossterm>
 	    <glossdef>
 	      <para>
-		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source method_code owner parent is_warm_start is_mail_notice
+		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source method_code parent is_warm_start is_mail_notice
 	      </para>
 	    </glossdef>
 	  </glossentry>
@@ -772,13 +772,6 @@
 		  <entry>string</entry>
 		  <entry>
 		    The method that is to be used for the computation.
-		  </entry>
-		</row>
-		<row>
-		  <entry>owner</entry>
-		  <entry>string</entry>
-		  <entry>
-		    The name of the job owner.
 		  </entry>
 		</row>
 		<row>
@@ -4816,7 +4809,7 @@
 		<entry>x</entry>
 	      </row>
               <row>
-		<entry><link linkend="new_group"></link>new_group</entry>
+		<entry><link linkend="new_group">new_group</link></entry>
 		<entry></entry>
 		<entry>x</entry>
 	      </row>

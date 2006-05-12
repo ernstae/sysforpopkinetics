@@ -159,7 +159,6 @@ public class TestSpkdb {
 					 "1.4.3",
 					 xmlSource,
 				         "fo",
-                                         "owner",
 					 0,
 					 false,
                                          false);
@@ -193,7 +192,6 @@ public class TestSpkdb {
 					      "1.4.3",
 					      xmlSource,
 					      "la",
-                                              "owner",
 					      0,
 					      false,
                                               false);
@@ -214,7 +212,6 @@ public class TestSpkdb {
 					       "1.4.3",
 					       xmlSource,
 					       "eh",
-                                               "owner",
 					       0,
                                                false,
                                                false);
@@ -611,7 +608,6 @@ public class TestSpkdb {
 					 "1.4.3",
 					 xmlSource,
 					 "fo",
-                                         "owner",
 					 2,
 					 true,
                                          true);
