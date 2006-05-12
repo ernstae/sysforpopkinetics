@@ -66,7 +66,6 @@ public abstract class Spkdb {
      * @param modelVersion rcs version code for the model
      * @param xmlSource source code for the job
      * @param methodCode key to a row in the method table
-     * @param owner owner of the job
      * @param parent the job_id of the job that is the parent; otherwise 0
      * @param isWarmStart true for being a warm start job; false for otherwise
      * @param isMailNotice true for requesting end-job mail notice; false for otherwise
@@ -83,7 +82,6 @@ public abstract class Spkdb {
 			      String modelVersion,
 			      String xmlSource,
 			      String methodCode,
-                              String owner,
 			      long parent,
                               boolean isWarmStart,
                               boolean isMailNotice)
@@ -111,20 +109,20 @@ public abstract class Spkdb {
 	        throw new SpkdbException("This job cannot restart because the\ncheckpoint file does not exist.");
 	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
-                                    + "xml_source, method_code, owner, parent, start_time, event_time, checkpoint, mail)"
+                                    + "xml_source, method_code, parent, start_time, event_time, checkpoint, mail)"
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
-                              + "', ?,'" + methodCode + "','" + owner + "'," + parent + "," 
+                              + "', ?,'" + methodCode + "'," + parent + "," 
 	                      + startTime + "," + eventTime + ", ?," + mail + ");";
         }
         else
         {
 	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
-                                    + "xml_source, method_code, owner, parent, start_time, event_time, mail)"
+                                    + "xml_source, method_code, parent, start_time, event_time, mail)"
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
-                              + "', ?,'" + methodCode + "','" + owner + "'," + parent + "," 
+                              + "', ?,'" + methodCode + "'," + parent + "," 
 	                      + startTime + "," + eventTime + "," + mail + ");";
         }
 	PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -174,7 +172,7 @@ public abstract class Spkdb {
 	return rs;
     }
     /** Set job abstract.
-     * @return true if the job's state_code is set to "end" by this method, otherwise false.
+     * @return true if the job's abstract is set as the specified, otherwise false.
      * @param userId job owner's user ID
      * @param abstraction job abstraction to set.
      * @param conn open connection to the database
