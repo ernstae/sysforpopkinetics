@@ -201,7 +201,7 @@ public class JobQueue
         }
         catch (UnknownHostException e)
         {
-            stop(e.getMessage());
+            stop("Localhost", e.getMessage());
         }
 
         // Connect to the database
@@ -222,7 +222,7 @@ public class JobQueue
         }
         catch(Exception e)
         {
-            stop(e.getMessage());
+            stop("Database connection", e.getMessage());
         }
 
         // Initialize queues
@@ -245,7 +245,7 @@ public class JobQueue
         }
         catch(IOException e)
         {
-            stop(e.getMessage());
+            stop("New server socket and new threads", e.getMessage());
         }
         
         // Disconnect from the database
@@ -255,11 +255,20 @@ public class JobQueue
         }
         catch(SQLException e)
         {
-            stop(e.getMessage());
+            stop("Database disconnection", e.getMessage());
         }
     }
-    protected static void stop(String errorMessage)
+    protected static void stop(String location, String errorMessage)
     {
+        // Disconnect from the database
+        try
+        {
+            if(conn != null) conn.close();
+        }
+        catch(SQLException e)
+        {
+        }
+        // Put a log file in the /tmp directory 
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
         String time = formatter.format(new Date());
         String filename = "/tmp/log_jobq";
@@ -269,7 +278,7 @@ public class JobQueue
         try
         {
             BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
-            writer.write(time + "\n\n" + errorMessage);
+            writer.write(time + "\n" + location + "\n" + errorMessage);
             writer.flush();
         }
         catch(IOException e) {}
@@ -303,7 +312,7 @@ public class JobQueue
         }
         catch(SQLException e)
         {
-            stop(e.getMessage());
+            stop("Server initialization", e.getMessage());
         }
         finally
         {
@@ -313,7 +322,7 @@ public class JobQueue
             }
             catch(SQLException e)
             {
-                stop(e.getMessage());
+                stop("Statement closing", e.getMessage());
             }
         }
     }
@@ -725,7 +734,7 @@ class ThreadedHandler extends Thread
         }
         catch(Exception e)
         {
-            JobQueue.stop(e.getMessage());
+            if(e.getMessage() != null) JobQueue.stop("Request handling", e.getMessage());
         }
     }
    
@@ -759,7 +768,7 @@ class Monitor extends Thread
             }
             catch(InterruptedException e)
             {
-                JobQueue.stop(e.getMessage());
+                JobQueue.stop("Monitor", e.getMessage());
             }
             synchronized(jobState)
             {
@@ -780,7 +789,7 @@ class Monitor extends Thread
                             }
                             catch(SQLException e)
                             {
-                                JobQueue.stop(e.getMessage());
+                                JobQueue.stop("Compiler daemon spku", e.getMessage());
                             }
                         }
                     }
@@ -806,7 +815,7 @@ class Monitor extends Thread
                             }
                             catch(SQLException e)
                             {
-                                JobQueue.stop(e.getMessage());
+                                JobQueue.stop("Run-time daemon spku", e.getMessage());
                             }
                         }
                     }
