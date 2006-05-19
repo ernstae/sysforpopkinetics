@@ -214,6 +214,7 @@ use Spkdb('connect', 'disconnect', 'get_q2r_job', 'set_state_code', 'end_job',
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 use Sys::Hostname;
 use IO::Socket;
+use MIME::Lite;
 
 my $database = shift;
 my $host     = shift;
@@ -223,9 +224,10 @@ my $mode     = shift;
 my $shost    = shift;
 my $sport    = shift;
 
-my $mailserver = "smtp.washington.edu:25";
+my $mailserver = "localhost:25";
 my $hostname = hostname();
 my $from = "rfpksoft\@u.washington.edu";
+my $alert = "jjdu@u.washington.edu,ernst@u.washington.edu";
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.1.101:8081/";
@@ -289,6 +291,21 @@ sub death {
 
     # log the reason for termination
     syslog($level, $msg);
+
+    # send an e-mail indicating failure
+    # added by:  andrew 05/19/2006
+    my $mail_from = "rfpk@spk.washington.edu";
+    my $mail_subject = "spkrund shut down: $mode";
+    my $mail_body = "$msg\n\n$level\n\n$mode";
+
+    use MIME::Lite;
+    $msg = MIME::Lite->new(
+        From     => $mail_from,
+	To	 => $alert,
+        Subject  => $mail_subject,
+	Data     => $mail_body
+    );
+    $msg->send; # send via default
 
     # close the connection to the database
     if ($database_open) {
