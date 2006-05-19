@@ -130,8 +130,13 @@ It returns true if the test passes and false otherwise.
 $end
 */
 
-# include <cstdlib>
-# include <cassert>
+#include <cstdlib>
+#include <cassert>
+
+#include "intToOrdinalString.h"
+#include "SpkError.h"
+#include "SpkException.h"
+
 
 template <typename Scalar, typename Vector>
 Scalar linearInterpolate(
@@ -145,10 +150,41 @@ Scalar linearInterpolate(
 	// number of data points for this call
 	size_t n = x.size();
 
-	assert( n      >= 2 );
-	assert( n      == y.size() );
-	assert( x[0]   <= t );
-	assert( t      <= x[n-1] );
+	// check the number of independent variables
+	if( n < 2 )
+	{	throw SpkException(
+			SpkError::SPK_USER_INPUT_ERR, 
+			"Linear interpolation is not possible because there is less than two values \nfor the independent variable.",
+			__LINE__,
+			__FILE__ );
+	}
+
+	// check the number of dependent variables
+	if( n != y.size() )
+	{	throw SpkException(
+			SpkError::SPK_USER_INPUT_ERR, 
+			"Linear interpolation is not possible because the number of dependent variables \ndoes not match the number of independent variables.",
+			__LINE__,
+			__FILE__ );
+	}
+
+	// check the first value for the independent variable
+	if( x[0] > t )
+	{	throw SpkException(
+			SpkError::SPK_USER_INPUT_ERR, 
+			"Linear interpolation is not possible because the requested value for the \nindependent variable is less than the first value for the independent variables.",
+			__LINE__,
+			__FILE__ );
+	}
+
+	// check the last value for the independent variable
+	if( t > x[n-1] )
+	{	throw SpkException(
+			SpkError::SPK_USER_INPUT_ERR, 
+			"Linear interpolation is not possible because the requested value for the \nindependent variable is greater than the last value for the independent variables.",
+			__LINE__,
+			__FILE__ );
+	}
 
 	// initialize as previous interval index (maximum allowable is n-2)
 	size_t i = i_last;
@@ -171,7 +207,18 @@ Scalar linearInterpolate(
 
 	// interpolate i-th interval value
 	Scalar dx = x[i+1] - x[i];
-	assert( dx > Scalar(0) );
+	if( dx <= Scalar(0) )
+	{	const int max = SpkError::maxMessageLen();
+		char message[max];
+		snprintf( message, max, "Linear interpolation is not possible because the %s value for the \nindependent variable is less than or equal to the previous value.",
+		        intToOrdinalString( i+1, ZERO_IS_FIRST_INT ).c_str() );
+
+		throw SpkException(
+			SpkError::SPK_UNKNOWN_ERR, 
+			message,
+			__LINE__, 
+			__FILE__ );
+	}
 	Scalar z  = y[i]*(x[i+1]-t)/dx + y[i+1]*(t-x[i])/dx;
 
 	// remember previous value of i to speed up search

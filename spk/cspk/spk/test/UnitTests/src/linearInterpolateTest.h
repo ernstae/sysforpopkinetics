@@ -63,6 +63,7 @@ public:
 private:
   // Test cases for this unit test.
   void doTest();
+  void equalIndepVarTest();
 };
 
 #endif
