@@ -37,12 +37,14 @@
 // SPK Pred test suite header files.
 #include "linearInterpolateTest.h"
 
-
 // SPK library header files.
 #include "../../../spk/identity.h"
 #include "../../../spk/multiply.h"
 #include "../../../spk/SpkValarray.h"
 #include "../../../spk/linearInterpolate.h"
+
+// CppAD header files.
+#include <CppAD/CppAD.h>
 
 // CppUnit framework header files.
 #include <cppunit/TestSuite.h>
@@ -106,6 +108,10 @@ Test* linearInterpolateTest::suite()
   suiteOfTests->addTest(new TestCaller<linearInterpolateTest>(
     "doTest", 
     &linearInterpolateTest::doTest ));
+
+  suiteOfTests->addTest(new TestCaller<linearInterpolateTest>(
+    "equalIndepVarTest", 
+    &linearInterpolateTest::equalIndepVarTest ));
 
   return suiteOfTests;
 }
@@ -193,6 +199,56 @@ void linearInterpolateTest::doTest()
   zf    = CppAD::Runge45(F, M, ti, tf, zi, e);
   CPPUNIT_ASSERT( e[0] <= 1e-10 );
   CPPUNIT_ASSERT( CppAD::NearEqual(Z(tf), zf[0], 0., 1e-10 ) );
+  
+  return;
+}
+
+
+/*************************************************************************
+ *
+ * Function: equalIndepVarTest
+ *
+ * See if the linearInterpolate function can detect equal values for
+ * the independent variables.
+ *
+ *************************************************************************/
+
+void linearInterpolateTest::equalIndepVarTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  bool   ok = true;
+  size_t  n = 3;
+  using std::vector;
+  
+  // Set the time and insulin values with identical values for two
+  // consecutive independent variables.
+  vector< CppAD::AD<double> > time(n), insu(n);
+  time[0] =  0.; insu[0] = 3.9;
+  time[1] =  0.; insu[1] = 3.9;
+  time[2] =  2.; insu[2] = 76.2;
+
+  // Set the time for the interpolation.
+  CppAD::AD<double> t = 0.0;
+
+  // This will contain the interpolated value for insulin.
+  CppAD::AD<double> insuInterp;
+
+  // See if the equal independent variable values are detected.
+  bool wasEqualIndepVarDetected = false;
+  try
+  {
+    insuInterp = linearInterpolate( t, time, insu );
+  }
+  catch ( ... )
+  {
+    wasEqualIndepVarDetected = true;
+  }
+  CPPUNIT_ASSERT( wasEqualIndepVarDetected ); 
   
   return;
 }
