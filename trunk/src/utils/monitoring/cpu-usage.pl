@@ -11,18 +11,20 @@
 $numArgs = $#ARGV;
 
 if ( length($ARGV[0]) <= 0 ) {
-  $hostname = "localhost";
+  $hostname = "";
 }
 else {
   $hostname = $ARGV[0];
 }
 
 # get load average from server
-if ( $hostname ne "localhost" ) {
+if ( $hostname ne "" ) {
   $load = `ssh $hostname uptime`;
 }
 else {
   $load = `uptime`;
+  $hostname = `hostname -s`;
+  chop($hostname);
 }
 
 chop($load);
