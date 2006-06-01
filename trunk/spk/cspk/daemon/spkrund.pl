@@ -226,8 +226,8 @@ my $sport    = shift;
 
 my $mailserver = "localhost:25";
 my $hostname = hostname();
-my $from = "rfpksoft\@u.washington.edu";
-my $alert = "jjdu@u.washington.edu,ernst@u.washington.edu";
+my $from = 'rfpksoft\@u.washington.edu';
+my $alert = 'jjdu@u.washington.edu,ernst@u.washington.edu';
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.1.101:8081/";
@@ -261,7 +261,7 @@ my $filename_source = "source.xml";
 my $spk_library_path = "/usr/local/lib/spkprod";
 my $cpath = "/usr/local/include/spkprod";
 
-if ($mode =~ "test") {
+if ($mode =~ m/test/i ) {
     $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
     $bugzilla_product = "TestProduct";
@@ -294,7 +294,7 @@ sub death {
 
     # send an e-mail indicating failure
     # added by:  andrew 05/19/2006
-    my $mail_from = "rfpk@spk.washington.edu";
+    my $mail_from = 'rfpk@spk.washington.edu';
     my $mail_subject = "spkrund shut down: $mode";
     my $mail_body = "$msg\n\n$level\n\n$mode";
 
