@@ -238,7 +238,7 @@ my $concurrent = 0;
 my $service_root = "spkrun";
 my $bugzilla_product = "SPK";
 my $submit_to_bugzilla = 1;
-my $retain_working_dir = 0;
+my $retain_working_dir = 1;
 
 my $dbh;
 my $build_failure_exit_value = 101;
