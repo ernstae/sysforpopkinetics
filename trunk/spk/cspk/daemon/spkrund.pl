@@ -795,15 +795,16 @@ sub reaper {
         close(FH);
     }
 
-    # Remove working directory if not needed
-    if ($remove_working_dir && !$retain_working_dir) {
-	File::Path::rmtree($working_dir);
-    }
     if ($end_code ne "abrt" && length($optimizer_trace) > 0) {
 	$report = insert_optimizer_trace($optimizer_trace, $report);
     }
 
     $report = compress($report);
+
+    # Remove working directory if not needed
+    if ($remove_working_dir && !$retain_working_dir) {
+	File::Path::rmtree($working_dir);
+    }
 
     print $sh "set-end-$job_id\n";
     my $answer = <$sh>;
