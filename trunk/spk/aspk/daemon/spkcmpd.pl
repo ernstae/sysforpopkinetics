@@ -324,6 +324,9 @@ sub fork_compiler {
     # Remove the archive file, leaving just the extracted dataset.
     File::Path::rmtree("data.xml,v", 0, 0);
 
+    # Change the dataset file permission
+    chmod 0666, 'data.xml';
+
     # Fork into parent and child
   FORK: {
       if ($pid = fork) {
@@ -594,6 +597,8 @@ sub reaper {
             $email = &email_for_job($dbh, $job_id);	
         }
 
+        $report = compress($report);
+
         # End the job
         print $sh "set-end-$job_id\n";
         my $answer = <$sh>;
@@ -703,6 +708,27 @@ sub stop {
     }
     # Now we must die
     death('info', 'received the TERM signal (normal mode of termination)');
+}
+# Compress the report
+sub compress {
+    my $report = shift;
+    open(FH, ">result.xml");
+    print FH $report;
+    close(FH);
+    my @args = ($pathname_tar, 'czf', "result.tar.gz", $filename_results);
+    system(@args);
+    my $exit_status = $? >> 8;
+    if ($exit_status != 0) {
+    death('emerg', "tar failed creating result.tar.gz file."
+	  . " exit_status=$exit_status");
+    }
+    # Read the tar file into memory
+    open(FH, "result.tar.gz")
+        or death('emerg', "failed to open result.tar.gz");
+    read(FH, $report, -s FH)
+        or death('emerg', "failed to read result.tar.gz");
+    close(FH);
+    return $report;
 }
 # Abort a non-compiling job, which was queued to abort cmp or aborting cmp
 # state left by the last termination of this daemon).
