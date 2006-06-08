@@ -62,6 +62,7 @@ private:
   void NoEta_OneExpF_OneBolus_ModelBasedExpY_Test();
 
   void OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test();
+  void OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_Test();
 
   void ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test();
   void ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_Test();
