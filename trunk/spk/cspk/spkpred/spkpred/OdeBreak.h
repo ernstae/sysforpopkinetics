@@ -370,6 +370,7 @@ $end
 # include <CppAD/Rosen34.h>
 # include <cmath>
 # include <spk/SpkException.h>
+# include <spk/WarningsManager.h>
 
 // Maximum number of Ode steps per time interval where the time intervals
 // are defined by the union of the break point times and output times.
@@ -707,9 +708,11 @@ void OdeBreak(
 			if( !( ok | shrink ) )
 			{	ok      = true;
 				message =
-				"Ode solver cannot obtain desired accuracy";
+				"The ordinary differential equation (ODE) solver could not obtain the desired accuracy.";
 				if( ! OdeBreakWarning )
-					std::cout << message << std::endl;	
+				{	std::cout << message << std::endl;	
+					WarningsManager::addWarning( message, __LINE__, __FILE__);
+				}
 				OdeBreakWarning = true;
 			}
 
