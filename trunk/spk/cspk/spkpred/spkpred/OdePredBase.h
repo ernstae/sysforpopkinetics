@@ -51,6 +51,55 @@
 #include <vector>
 
 
+/*------------------------------------------------------------------------
+ * Local functions
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
+  /***********************************************************************
+   *
+   * Function: isEqualtoLastElem
+   *
+   * Returns true if value is equal to the last element of valueVector.
+   *
+  /***********************************************************************/
+
+  template<class Value>
+  bool isEqualtoLastElem(
+    const Value&              value,
+    const std::vector<Value>& valueVector )
+  {
+    //----------------------------------------------------------
+    // Preliminaries.
+    //----------------------------------------------------------
+
+    using namespace std;
+
+
+    //----------------------------------------------------------
+    // Handle the case where there are no values in the vector.
+    //----------------------------------------------------------
+
+    // If no values have been added to the vector, then the input
+    // value cannot be equal to the last one.
+    if ( valueVector.size() == 0 )
+    {
+      return false;
+    }
+
+
+    //----------------------------------------------------------
+    // Handle the case where there are values in the vector.
+    //----------------------------------------------------------
+
+    // Return true if the input value is equal to the last value.
+    return ( valueVector.back() == value );
+  }
+
+} // [End: unnamed namespace]
+
+
 /*************************************************************************
  *
  * Class: OdePredBase
@@ -717,6 +766,7 @@ private:
   std::vector<int>   odeSolnComp;                 ///< ODE solution compartments.
   std::vector<int>   odeSolnBreakIndex;           ///< ODE solution break point indices.
   std::vector<Value> odeSolnTime;                 ///< ODE solution times.
+  std::vector<bool>  odeSolnIsLeftCont;           ///< Indicates if ODE solution is left continuous.
 
   int nObserv;                                    ///< Number of observations.
   int nDosePred;                                  ///< Number of predictions at dose times.
@@ -901,6 +951,7 @@ protected:
 
     odeSolnComp         .resize( 0 );
     odeSolnTime         .resize( 0 );
+    odeSolnIsLeftCont   .resize( 0 );
 
     breakPoint          .resize( 0 );
     breakTime           .resize( 0 );
@@ -991,6 +1042,11 @@ protected:
 
         // Set the time.
         odeSolnTime.push_back( time );
+
+        // The ODE solution should be left continuous unless there is
+        // already an instantaneous bolus dose at the same time, which
+        // means that the bolus data record came before this one.
+        odeSolnIsLeftCont.push_back( !isEqualtoLastElem( time, bolusTime ) );
 
         // If this observation event is for the output compartment,
         // then see if it needs to be turned off after the
@@ -1232,6 +1288,11 @@ protected:
           // Set the time.
           odeSolnTime.push_back( time );
 
+          // The ODE solution should be left continuous unless there is
+          // already an instantaneous bolus dose at the same time, which
+          // means that the bolus data record came before this one.
+          odeSolnIsLeftCont.push_back( !isEqualtoLastElem( time, bolusTime ) );
+
           // Set this data record's index in the vector of
           // ODE solutions.
           dataRecOdeSolnIndex[j] = ( odeSolnTime.size() - 1 );
@@ -1320,6 +1381,11 @@ protected:
           // Set the time.
           odeSolnTime.push_back( time );
   
+          // The ODE solution should be left continuous unless there is
+          // already an instantaneous bolus dose at the same time, which
+          // means that the bolus data record came before this one.
+          odeSolnIsLeftCont.push_back( !isEqualtoLastElem( time, bolusTime ) );
+
           // Set this data record's index in the vector of
           // ODE solutions.
           dataRecOdeSolnIndex[j] = ( odeSolnTime.size() - 1 );
@@ -1352,11 +1418,12 @@ protected:
         {
           // If the last two ODE solution times are equal, then remove
           // the last one.
-          odeSolnTime.pop_back();
-          odeSolnComp.pop_back();
+          odeSolnTime      .pop_back();
+          odeSolnComp      .pop_back();
+          odeSolnIsLeftCont.pop_back();
 
           nOdeSoln--;
-	  nOdeSolnRemoved++;
+          nOdeSolnRemoved++;
     
           // Find any data records with ODE solution indices equal to
           // the removed ODE solution time's index and reset them to
@@ -1696,6 +1763,7 @@ protected:
     assert( nOdeSoln == nObserv + nDosePred + nNonObservPred - nOdeSolnRemoved );
 
     assert( odeSolnComp        .size() == nOdeSoln );
+    assert( odeSolnIsLeftCont  .size() == nOdeSoln );
 
     assert( bolusComp          .size() == nBolus );
     assert( bolusAmount        .size() == nBolus );
@@ -2226,13 +2294,6 @@ private:
     // functions and members.
     OdePredBase& odeBreakEvalClass = *this;
 
-    // Set the flags that specify whether or not the ODE solutions
-    // correspond to the left continuous solution as opposed to being
-    // right continuous.
-    //
-    // For now, they will all be considered to be left continuous.
-    std::vector<bool> isLeftOdeSoln( nOdeSoln, true );
-
     // Since only the relative tolerance is currently provided to this
     // class, set the absolute tolerances for integration of the
     // ordinary differential equations equal to zero.
@@ -2258,7 +2319,7 @@ private:
           method,
           breakTime,
           odeSolnTime,
-          isLeftOdeSoln,
+          odeSolnIsLeftCont,
           tolAbs,
           tolRel );
       }
@@ -2270,7 +2331,7 @@ private:
           method,
           breakTime,
           odeSolnTime,
-          isLeftOdeSoln,
+          odeSolnIsLeftCont,
           tolAbs,
           tolRel );
       }
