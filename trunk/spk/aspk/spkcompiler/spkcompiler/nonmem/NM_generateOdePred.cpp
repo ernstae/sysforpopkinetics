@@ -373,13 +373,13 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                              noDoseIn,"                    << endl; 
   oOdePred_h << "                              tolRelIn"                     << endl;
   oOdePred_h << "                            )," << endl;
-  oOdePred_h << "  F                  ( getF() )," << endl;
-  oOdePred_h << "  Y                  ( getY() )," << endl;
-  oOdePred_h << "  F0                 ( getCompBioavailFrac(" << myCompModel->getNCompartments()-1 << ") )," << endl;
-  oOdePred_h << "  FO                 ( getFO() )," << endl;
-  oOdePred_h << "  S0                 ( getCompScaleParam(" << myCompModel->getNCompartments()-1 << ") )," << endl;
-  oOdePred_h << "  T                  ( getT() )," << endl;
-  oOdePred_h << "  TSCALE             ( getTSCALE() )," << endl;
+  oOdePred_h << "  F                  ( OdePredBase<spk_ValueType>::getF() )," << endl;
+  oOdePred_h << "  Y                  ( OdePredBase<spk_ValueType>::getY() )," << endl;
+  oOdePred_h << "  F0                 ( OdePredBase<spk_ValueType>::getCompBioavailFrac(" << myCompModel->getNCompartments()-1 << ") )," << endl;
+  oOdePred_h << "  FO                 ( OdePredBase<spk_ValueType>::getFO() )," << endl;
+  oOdePred_h << "  S0                 ( OdePredBase<spk_ValueType>::getCompScaleParam(" << myCompModel->getNCompartments()-1 << ") )," << endl;
+  oOdePred_h << "  T                  ( OdePredBase<spk_ValueType>::getT() )," << endl;
+  oOdePred_h << "  TSCALE             ( OdePredBase<spk_ValueType>::getTSCALE() )," << endl;
 
   for( int i=0; i<myCompModel->getNCompartments(); i++ )
     {
@@ -393,11 +393,11 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       snprintf( ALAGi, 64, "ALAG%d", i+1 );
       snprintf( Si,    64, "S%d", i+1 );
       snprintf( Fi,    64, "F%d", i+1 );
-      oOdePred_h << "  " << Ri << "                 ( getCompInfusRate("     << i << ") )," << endl;
-      oOdePred_h << "  " << Di << "                 ( getCompInfusDurat("    << i << ") )," << endl;
-      oOdePred_h << "  " << ALAGi << "              ( getCompAbsorpLagTime(" << i << ") )," << endl;
-      oOdePred_h << "  " << Si << "                 ( getCompScaleParam("    << i << ") )," << endl;
-      oOdePred_h << "  " << Fi << "                 ( getCompBioavailFrac(" << i << ") )," << endl;
+      oOdePred_h << "  " << Ri << "                 ( OdePredBase<spk_ValueType>::getCompInfusRate("     << i << ") )," << endl;
+      oOdePred_h << "  " << Di << "                 ( OdePredBase<spk_ValueType>::getCompInfusDurat("    << i << ") )," << endl;
+      oOdePred_h << "  " << ALAGi << "              ( OdePredBase<spk_ValueType>::getCompAbsorpLagTime(" << i << ") )," << endl;
+      oOdePred_h << "  " << Si << "                 ( OdePredBase<spk_ValueType>::getCompScaleParam("    << i << ") )," << endl;
+      oOdePred_h << "  " << Fi << "                 ( OdePredBase<spk_ValueType>::getCompBioavailFrac(" << i << ") )," << endl;
     }
   oOdePred_h << "  spk_perm           ( dataIn ),"                    << endl;
   oOdePred_h << "  spk_nIndividuals   ( nPopSizeIn ),"                << endl;
@@ -550,35 +550,35 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
 	    }
         }
     }
-  oOdePred_h << "  setDV  ( DV );"   << endl;
-  oOdePred_h << "  setTIME( TIME );" << endl;
-  oOdePred_h << "  setAMT ( AMT );"  << endl;
-  oOdePred_h << "  setMDV ( MDV );" << endl;
-  oOdePred_h << "  setEVID( EVID );" << endl;
+  oOdePred_h << "  OdePredBase<spk_ValueType>::setDV  ( DV );"   << endl;
+  oOdePred_h << "  OdePredBase<spk_ValueType>::setTIME( TIME );" << endl;
+  oOdePred_h << "  OdePredBase<spk_ValueType>::setAMT ( AMT );"  << endl;
+  oOdePred_h << "  OdePredBase<spk_ValueType>::setMDV ( MDV );" << endl;
+  oOdePred_h << "  OdePredBase<spk_ValueType>::setEVID( EVID );" << endl;
 
   if( myIsMissingCmt )
     {
-      oOdePred_h << "  setCMT ( 0 ); // implying the default compartment" << endl;
+      oOdePred_h << "  OdePredBase<spk_ValueType>::setCMT ( 0 ); // implying the default compartment" << endl;
     }
   else
     {
-      oOdePred_h << "  setCMT ( spk_perm->data[spk_i]->CMT[spk_j] );" << endl;
+      oOdePred_h << "  OdePredBase<spk_ValueType>::setCMT ( spk_perm->data[spk_i]->CMT[spk_j] );" << endl;
     }
   if( myIsMissingPcmt )
     {
-      oOdePred_h << "  setPCMT( 0 ); // implying the default compartment" << endl;
+      oOdePred_h << "  OdePredBase<spk_ValueType>::setPCMT( 0 ); // implying the default compartment" << endl;
     }
   else
     {
-      oOdePred_h << "  setPCMT( spk_perm->data[spk_i]->PCMT[spk_j] );" << endl;
+      oOdePred_h << "  OdePredBase<spk_ValueType>::setPCMT( spk_perm->data[spk_i]->PCMT[spk_j] );" << endl;
     }
   if( myIsMissingRate )
     {
-      oOdePred_h << "  setRATE( 0.0 ); // implying an instanteneous bolus dose" << endl;
+      oOdePred_h << "  OdePredBase<spk_ValueType>::setRATE( 0.0 ); // implying an instanteneous bolus dose" << endl;
     }
   else
     {
-      oOdePred_h << "  setRATE( spk_perm->data[spk_i]->RATE[spk_j] );" << endl;
+      oOdePred_h << "  OdePredBase<spk_ValueType>::setRATE( spk_perm->data[spk_i]->RATE[spk_j] );" << endl;
     }
 
   oOdePred_h << "}" << endl;
@@ -608,13 +608,13 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << endl;
 
   oOdePred_h << "   // Get non-const references" << endl;
-  oOdePred_h << "   F      = getF();" << endl;
-  oOdePred_h << "   Y      = getY();" << endl;
-  oOdePred_h << "   F0     = getCompBioavailFrac(" << myCompModel->getNCompartments()-1 << ");" << endl;
-  oOdePred_h << "   FO     = getFO();" << endl;
-  oOdePred_h << "   S0     = getCompScaleParam  (" << myCompModel->getNCompartments()-1 << ");" << endl;
-  oOdePred_h << "   T      = getT();" << endl;
-  oOdePred_h << "   TSCALE = getTSCALE();" << endl;
+  oOdePred_h << "   F      = OdePredBase<spk_ValueType>::getF();" << endl;
+  oOdePred_h << "   Y      = OdePredBase<spk_ValueType>::getY();" << endl;
+  oOdePred_h << "   F0     = OdePredBase<spk_ValueType>::getCompBioavailFrac(" << myCompModel->getNCompartments()-1 << ");" << endl;
+  oOdePred_h << "   FO     = OdePredBase<spk_ValueType>::getFO();" << endl;
+  oOdePred_h << "   S0     = OdePredBase<spk_ValueType>::getCompScaleParam  (" << myCompModel->getNCompartments()-1 << ");" << endl;
+  oOdePred_h << "   T      = OdePredBase<spk_ValueType>::getT();" << endl;
+  oOdePred_h << "   TSCALE = OdePredBase<spk_ValueType>::getTSCALE();" << endl;
 
   for( int i=0; i<myCompModel->getNCompartments(); i++ )
     {
@@ -628,21 +628,21 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
       snprintf( ALAGi, 64, "ALAG%d", i+1 );
       snprintf( Si,    64, "S%d", i+1 );
       snprintf( Fi,    64, "F%d", i+1 );
-      oOdePred_h << "   " << Ri << "     = getCompInfusRate    (" << i << ");" << endl;
-      oOdePred_h << "   " << Di << "     = getCompInfusDurat   (" << i << ");" << endl;
-      oOdePred_h << "   " << ALAGi << "  = getCompAbsorpLagTime(" << i << ");" << endl;
-      oOdePred_h << "   " << Si << "     = getCompScaleParam   (" << i << ");" << endl;
-      oOdePred_h << "   " << Fi << "     = getCompBioavailFrac (" << i << ");" << endl;
+      oOdePred_h << "   " << Ri << "     = OdePredBase<spk_ValueType>::getCompInfusRate    (" << i << ");" << endl;
+      oOdePred_h << "   " << Di << "     = OdePredBase<spk_ValueType>::getCompInfusDurat   (" << i << ");" << endl;
+      oOdePred_h << "   " << ALAGi << "  = OdePredBase<spk_ValueType>::getCompAbsorpLagTime(" << i << ");" << endl;
+      oOdePred_h << "   " << Si << "     = OdePredBase<spk_ValueType>::getCompScaleParam   (" << i << ");" << endl;
+      oOdePred_h << "   " << Fi << "     = OdePredBase<spk_ValueType>::getCompBioavailFrac (" << i << ");" << endl;
     }
   oOdePred_h << endl;
   oOdePred_h << "   // Get const iterators" << endl;
-  oOdePred_h << "   A     = getCompAmountIterator();" << endl;
+  oOdePred_h << "   A     = OdePredBase<spk_ValueType>::getCompAmountIterator();" << endl;
   oOdePred_h << endl;
   oOdePred_h << "   // Get non-const iterators" << endl;
-  oOdePred_h << "   DADT  = getCompAmount_tIterator();" << endl;
+  oOdePred_h << "   DADT  =  OdePredBase<spk_ValueType>::getCompAmount_tIterator();" << endl;
   oOdePred_h << endl;
   oOdePred_h << "   // Get a constant value" << endl;
-  oOdePred_h << "   T     = getT();" << endl;
+  oOdePred_h << "   T     = OdePredBase<spk_ValueType>::getT();" << endl;
   oOdePred_h << endl;
 
   //
@@ -892,7 +892,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                                int spk_j,"                                       << endl;
   oOdePred_h << "                                const std::vector<spk_ValueType>& spk_indepVar )" << endl;
   oOdePred_h << "{" << endl;
-  oOdePred_h << "   evalPk( getT() );" << endl;
+  oOdePred_h << "   evalPk(  OdePredBase<spk_ValueType>::getT() );" << endl;
   oOdePred_h << "}" << endl;
 
   oOdePred_h << "template <class spk_ValueType>" << endl;
@@ -933,7 +933,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_h << "                                   int spk_i, int spk_j,"                            << endl;
   oOdePred_h << "                                   const std::vector<spk_ValueType>& spk_indepVar )" << endl;
   oOdePred_h << "{" << endl;
-  oOdePred_h << "   evalDes( getT(), getCompAmountIterator() );" << endl;
+  oOdePred_h << "   evalDes(  OdePredBase<spk_ValueType>::getT(),  OdePredBase<spk_ValueType>::getCompAmountIterator() );" << endl;
   oOdePred_h << "}" << endl;
   oOdePred_h << endl;
 
