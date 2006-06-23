@@ -138,8 +138,7 @@ void NonmemTranslator::generateMakefile() const
 
       oMakefile << "prod : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
-      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.cpp ." << endl;
-      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.h   ." << endl;
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* . " << endl;
       oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
