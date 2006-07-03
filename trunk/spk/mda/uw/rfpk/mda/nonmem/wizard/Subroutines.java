@@ -22,6 +22,7 @@ import uw.rfpk.mda.nonmem.Utility;
 import uw.rfpk.mda.nonmem.compartment.DesignTool;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
+import java.util.Vector;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -39,7 +40,8 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     private boolean isValid = false;
     private int advan = 0;
     private boolean isInit = false;
-
+    private JWizardPane wizardPane = null;
+    
     /** Creates new form Subroutines.
      * @param iter a MDAIterator object to initialize the field iterator.
      */
@@ -198,8 +200,24 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 
     }//GEN-END:initComponents
 
+    public void setValid()
+    {
+        isValid = true;
+        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());   
+    }
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        String[] subjects = {"1"};
+        if(object.getDataLabels()[0].equals("ID"))
+        {
+            Vector data = object.getData();
+            subjects = new String[data.size()];
+            for(int i = 0; i < data.size(); i++)
+                subjects[i] = ((String[])((Vector)data.get(i)).get(0))[0];
+        }
+        new DesignTool(subjects, "", object, iterator, this);
+        isValid = false;
+        wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
@@ -266,7 +284,8 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            object = (MDAObject)wizard.getCustomizedObject();
+            wizardPane = wizard;
             int advanCurrent = iterator.getAdvan();
             String text = null;
             
@@ -408,7 +427,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public boolean isValid(){
-	    return true;
+	    return isValid;
 	}
 
 	public ActionListener getHelpAction(){
