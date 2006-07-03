@@ -427,7 +427,7 @@ public class MDAIterator implements StepIterator{
                 steps.add(aesinitial); 
                 steps.add(aes); 
             }
-            steps.add(error); 
+            if(!isGraphic) steps.add(error); 
         }
         steps.add(theta);
         steps.add(omega);
