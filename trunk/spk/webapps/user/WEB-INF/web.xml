@@ -39,7 +39,7 @@
 
     <context-param>
         <param-name>database_host</param-name>
-        <param-value>rose.rfpk.washington.edu</param-value>
+        <param-value>localhost</param-value>
         <description>The host of the database</description>
     </context-param>
 
@@ -58,7 +58,7 @@
     <!-- Sevlet job queue server calls -->
     <context-param>
         <param-name>jobqs_host</param-name>
-        <param-value>rose.rfpk.washington.edu</param-value>
+        <param-value>localhost</param-value>
         <description>The host of the job-queue server</description>
     </context-param>
 
@@ -74,19 +74,19 @@
         javax.servlet.jsp.jstl.sql.dataSource
       </param-name>
       <param-value>
-        jdbc:mysql:/rose.rfpk.washington.edu:3306/spktest,com.mysql.jdbc.Driver,tester,tester
+        jdbc:mysql:/localhost:3306/spktest,com.mysql.jdbc.Driver,tester,tester
       </param-value>
     </context-param>
 
     <context-param>
         <param-name>maxNum</param-name>
-        <param-value>20</param-value>
+        <param-value>60</param-value>
         <description>The maximum number of rows</description>
     </context-param>
 
     <context-param>
         <param-name>timeLimit</param-name>
-        <param-value>1000</param-value>
+        <param-value>100</param-value>
         <description>The time limit for running diff in seconds</description>
     </context-param>
 
