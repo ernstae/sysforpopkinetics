@@ -185,7 +185,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter initial estimates and/or bounds for the fixed effects means.  \nIf FIXED is selected, only the initial estimate is required.  If you use \nexponential expression, be aware that your control file may be \nuncompatible with NONMEM.");
+        jTextPane1.setText("Enter initial estimates and bounds (except that FIXED is selected) \n- To get default bounds, press ENTER after entering initial estimate\n- Bounds influence stopping criteria (INF bounds not recommended)\n- Note: exponential expression may not be NONMEM compatible");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
@@ -908,7 +908,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 	public String getStepTitle(){
             if(iterator.getIsInd() || iterator.getIsTwoStage()) 
                 return "Random Effects";
-	    return "Fixed Effects Across The Population";
+	    return "Fixed Effects";
 	}
 
 	public void showingStep(JWizardPane wizard){

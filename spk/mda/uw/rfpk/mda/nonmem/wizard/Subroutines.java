@@ -19,6 +19,7 @@ distribution.
 package uw.rfpk.mda.nonmem.wizard;
 
 import uw.rfpk.mda.nonmem.Utility;
+import uw.rfpk.mda.nonmem.compartment.DesignTool;
 import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import java.awt.Component;
@@ -34,6 +35,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     private StepDescriptor sd = new MyStepDescriptor(); 
     private JComponent panel = this;
     private MDAIterator iterator = null;
+    private MDAObject object = null;
     private boolean isValid = false;
     private int advan = 0;
     private boolean isInit = false;
@@ -64,6 +66,9 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
         jTextPane3 = new javax.swing.JTextPane();
         jSeparator1 = new javax.swing.JSeparator();
         jComboBox1 = new javax.swing.JComboBox();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -172,7 +177,30 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 84);
         add(jComboBox1, gridBagConstraints);
 
+        jLabel3.setText("Click this button to enter Graphical Model Editor");
+        jPanel1.add(jLabel3);
+
+        jButton1.setText("Enter");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
+        add(jPanel1, gridBagConstraints);
+
     }//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         setRecord();
@@ -200,10 +228,13 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
@@ -235,6 +266,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();
             int advanCurrent = iterator.getAdvan();
             String text = null;
             
@@ -362,8 +394,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
                 iterator.setIsBack(false);
                 return;
             }            
-            String record = jTextArea1.getText();
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            String record = jTextArea1.getText();           
             object.getRecords().setProperty("Subroutines", record);
             String[] subroutines = new String[3];
             subroutines[0] = "advan" + String.valueOf(advan);

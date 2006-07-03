@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
+    <fileobject name="Tabler.java">
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="Tabler"/>
+    </fileobject>
     <fileobject name="OpenBrowser.java">
         <attr name="class_dependency_javax.swing.JButton" stringvalue="OpenBrowser"/>
     </fileobject>
@@ -21,6 +24,9 @@
         <attr name="class_dependency_java.awt.print.Printable" stringvalue="MDAFrame.Printer"/>
         <attr name="class_dependency_javax.swing.AbstractAction" stringvalue="MDAFrame.OperationAction;MDAFrame.FileAction"/>
         <attr name="class_dependency_javax.swing.JFrame" stringvalue="MDAFrame"/>
+    </fileobject>
+    <fileobject name="DefaultPlot.java">
+        <attr name="class_dependency_javax.swing.JDialog" stringvalue="DefaultPlot"/>
     </fileobject>
     <fileobject name="Printer.java">
         <attr name="class_dependency_java.awt.print.Printable" stringvalue="Printer"/>

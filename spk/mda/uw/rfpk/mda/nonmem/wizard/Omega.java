@@ -66,7 +66,8 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
      */     
     public Omega(MDAIterator iter) {  
         initComponents();
-        iterator = iter;     
+        iterator = iter;
+        jTable1.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
     
     /** This method is called from within the constructor to
@@ -80,9 +81,12 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         jDialog1 = new javax.swing.JDialog();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
         jTextArea1 = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
         jComboBox1 = new javax.swing.JComboBox();
@@ -90,7 +94,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         jTextPane1 = new javax.swing.JTextPane();
-        jTextPane2 = new javax.swing.JTextPane();
         changeButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
@@ -103,6 +106,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         jRadioButton2 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
         jRadioButton4 = new javax.swing.JRadioButton();
+        jLabel2 = new javax.swing.JLabel();
 
         jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -122,12 +126,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
             }
         ));
         jTable1.setMinimumSize(new java.awt.Dimension(600, 300));
-        jTable1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTable1KeyPressed(evt);
-            }
-        });
-
         jScrollPane2.setViewportView(jTable1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -136,20 +134,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         jDialog1.getContentPane().add(jScrollPane2, gridBagConstraints);
 
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(6, 54, 12, 54);
-        jDialog1.getContentPane().add(jButton2, gridBagConstraints);
-
-        jCheckBox1.setText("The entire block is fixed.");
+        jCheckBox1.setText("Entire block is fixed.");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -169,6 +154,47 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(12, 0, 12, 0);
         jDialog1.getContentPane().add(jTextArea1, gridBagConstraints);
+
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 0));
+
+        jButton2.setText("Done");
+        jButton2.setMaximumSize(new java.awt.Dimension(81, 25));
+        jButton2.setMinimumSize(new java.awt.Dimension(81, 25));
+        jButton2.setPreferredSize(new java.awt.Dimension(81, 25));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton2);
+
+        jButton3.setText("Add");
+        jButton3.setMaximumSize(new java.awt.Dimension(81, 25));
+        jButton3.setMinimumSize(new java.awt.Dimension(81, 25));
+        jButton3.setPreferredSize(new java.awt.Dimension(81, 25));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton3);
+
+        jButton4.setText("Change");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton4);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
+        jDialog1.getContentPane().add(jPanel1, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -217,9 +243,9 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(16, 16, 6, 16);
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 6, 16);
         add(upButton, gridBagConstraints);
 
         downButton.setText("Down");
@@ -232,32 +258,19 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 16, 56, 16);
+        gridBagConstraints.insets = new java.awt.Insets(4, 16, 33, 16);
         add(downButton, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or\nmore blocks of the random effect covariance matrix.  You may either \nenter data for a new  block or constrain the block to be equal to the \npreceding block.  However, in the current development stage the SPK\ncompiler supports only single-block covariance matrix.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 12);
         add(jTextPane1, gridBagConstraints);
-
-        jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane2.setText("List of the  \nblocks\nyou have \nentered in\nNONMEM syntax");
-        jTextPane2.setPreferredSize(new java.awt.Dimension(60, 66));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 16, 30, 0);
-        add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
         changeButton.setEnabled(false);
@@ -292,7 +305,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator1, gridBagConstraints);
@@ -301,7 +314,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 6;
+        gridBagConstraints.gridheight = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         add(jSeparator2, gridBagConstraints);
 
@@ -318,14 +331,14 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         jScrollPane1.setViewportView(jList1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipady = 88;
+        gridBagConstraints.ipady = 70;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(16, 0, 12, 16);
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 6, 16);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("Block size");
@@ -400,8 +413,9 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(11, 14, 11, 0);
         add(jRadioButton3, gridBagConstraints);
 
-        jRadioButton4.setText("Constrained to be equal to the preceding block");
+        jRadioButton4.setText("Constrained to be equal to preceding block");
         buttonGroup2.add(jRadioButton4);
+        jRadioButton4.setEnabled(false);
         jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton4ActionPerformed(evt);
@@ -417,7 +431,27 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(8, 13, 18, 13);
         add(jRadioButton4, gridBagConstraints);
 
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel2.setText("Covariance blocks and initial estimates in NONMEM syntax");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 16, 0, 12);
+        add(jLabel2, gridBagConstraints);
+
     }//GEN-END:initComponents
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        if(setElement())
+            changeButton.doClick();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if(setElement())
+            addButton.doClick();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void reset()
     {
@@ -426,10 +460,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         jCheckBox1.setSelected(false);
     }
     
-    private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
-        jButton2.setEnabled(evt.getKeyCode() == 10);
-    }//GEN-LAST:event_jTable1KeyPressed
-
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
         if(model.getSize() == 0)
         {
@@ -550,6 +580,11 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        setElement();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private boolean setElement()
+    {
         // Create an element to add to the list
         if(jRadioButton1.isSelected())
         {
@@ -564,7 +599,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           "] is not a floating point number.",
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                         
-                    return;
+                    return false;
                 }
                 if(Double.parseDouble(value) <= 0)
                 {
@@ -573,7 +608,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           "] is not a positive number.",
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                       
-                    return;
+                    return false;
                 }
                 if(value.length() > 8) 
                 {
@@ -605,7 +640,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           "] is not a floating point number.",
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                          
-                        return; 
+                        return false; 
                     }
                     if(j == i + 1 && Double.parseDouble(value) <= 0)
                     {
@@ -614,7 +649,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                                           "] is not a positive number.",
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);                       
-                        return;
+                        return false;
                     }
                     if(value.length() > 8)
                     {
@@ -641,8 +676,10 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
         // Close the dialog
         jDialog1.setVisible(false);
         jDialog1.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
+        
+        return true;
+    }
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Check number of ETAs
         if(nEta == 0)
@@ -684,14 +721,12 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                 {
                     data[i][1] = "";
                     data[i][2] = new Boolean(false);
-                    jButton2.setEnabled(false);
                     jCheckBox1.setSelected(false);                    
                 }
                 else
                 {
                     data[i][1] = diagonalValues[i][0];
                     data[i][2] = diagonalValues[i][1];
-                    jButton2.setEnabled(true);
                 }
             }            
         }
@@ -712,15 +747,12 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                         if(blockValues == null)
                         {
                             data[i][j] = "";
-                            jButton2.setEnabled(false);
                             jCheckBox1.setSelected(false);                            
                         }
                         else
                         {
                             data[i][j] = blockValues[i][j - 1];
-                            jButton2.setEnabled(true);
                         }
-                        
                     }
             }            
         }
@@ -761,17 +793,13 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                 jDialog1.setSize(365,300);
                 jScrollPane2.setMinimumSize(new Dimension(318, 120));
             }
-            jTextArea1.setText("Enter data for the diagonal elements of the block." +
-                               "\nClick the cell to enter data.  Please press the" + 
-                               "\n\"Enter\" key after typing in the last element.");
+            jTextArea1.setText("Click cell to enter initial matrix diagonal elements.");
             jDialog1.setTitle("Diagonal Matrix Entry Form");
         }
         else
         {
             jDialog1.setSize(560,300);  
-            jTextArea1.setText("Enter data for the lower triangle elements of the block." +
-                               "\nClick the cell to enter data.  Please press the" +
-                               "\n\"Enter\" key after typing in the last element."); 
+            jTextArea1.setText("Click cell to enter initial matrix lower triangle elements.");
             jScrollPane2.setMinimumSize(new Dimension(510, 120));
             jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); 
             jDialog1.setTitle("Full Matrix Entry Form");
@@ -971,7 +999,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                 if(jRadioButton1.isSelected())
                 {
                     if(c == 1) name = "Initial Estimate"; 
-                    if(c == 2) name = "Is Value Fixed";
+                    if(c == 2) name = "Value Fixed";
                 }
                 else
                 {
@@ -1023,11 +1051,15 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JButton downButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JList jList1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
@@ -1039,7 +1071,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
     
@@ -1071,23 +1102,33 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
+            if(iterator.getIsInd() || iterator.getIsTwoStage())
+                jTextPane1.setText("Enter residual unknown variability covariance initial estimate." + 
+                                   "\nBounds on residual unknown variability covariance set internally" +
+                                   "\nby SPK.");
+            else
+                jTextPane1.setText("Enter random effects covariance initial estimate." + 
+                                   "\nBounds on random effects coviarance and individual" +
+                                   "\nrandom effects set internally by SPK.");
             if(iterator.getIsReload())
             {
                 String text = null;
-                if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
-                   iterator.getReload().getProperty("METHOD") != null &&
-                   iterator.initTwoStage.contains("omega"))
-                {
-                    text = iterator.getReload().getProperty("COVTHETA");
-                    if(text != null) iterator.getReload().remove("COVTHETA");
-                    text = "OMEGA BLOCK(" + text.split(" ").length + ") " + text;
-                    iterator.initTwoStage.remove("omega");
-                }
-                else
-                {
+//                if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+//                   iterator.initTwoStage.contains("omega"))
+//                {
+//                    text = iterator.getReload().getProperty("COVTHETA");
+//                    if(text != null)
+//                    {
+//                        iterator.getReload().remove("COVTHETA");
+//                        text = "OMEGA BLOCK(" + text.split(" ").length + ") " + text;
+//                    }
+//                    iterator.initTwoStage.remove("omega");
+//                }
+//                else
+//                {
                     text = iterator.getReload().getProperty("OMEGA");
                     if(text != null) iterator.getReload().remove("OMEGA");
-                }
+//                }
                 if(text != null)
                 {                  
                     model.removeAllElements();
@@ -1146,10 +1187,6 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                 isValid = false;
                 wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                
             }
-            if(iterator.getIsInd() || iterator.getIsTwoStage())
-                jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or more blocks of the residual unknown variability covariance matrix.  You may either enter data for a new  block or constrain the block to be equal to the preceding block.  However, in the current development stage the SPK compiler supports only single-block covariance matrix.");
-            else
-                jTextPane1.setText("Enter the initial estimates and constraints for the elements of one or more blocks of the random effect covariance matrix.  You may either enter data for a new  block or constrain the block to be equal to the preceding block.  However, in the current development stage the SPK compiler supports only single-block covariance matrix.");
         }
 
 	public void hidingStep(JWizardPane wizard){

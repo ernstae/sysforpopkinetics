@@ -639,10 +639,12 @@ public class XMLWriter
         Element data = docJob.createElement("data");
         model.setAttribute("name", replaceCharacter(spkOutput.getProperty("modelName")));
         model.setAttribute("version", spkOutput.getProperty("modelVersion"));
-        model.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("modelAbstract"))); 
+        model.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("modelAbstract")));
+        model.setAttribute("log", replaceCharacter(spkOutput.getProperty("modelVersionLog")));
         data.setAttribute("name", replaceCharacter(spkOutput.getProperty("datasetName")));
         data.setAttribute("version", spkOutput.getProperty("datasetVersion"));
         data.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("datasetAbstract")));
+        data.setAttribute("log", replaceCharacter(spkOutput.getProperty("datasetVersionLog")));
         spkjob.appendChild(model);
         spkjob.appendChild(data);
         docJob.appendChild(spkjob);

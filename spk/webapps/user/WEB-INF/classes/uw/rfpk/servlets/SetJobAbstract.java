@@ -27,17 +27,18 @@ import java.net.Socket;
 import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet abort the job specified by the client.
- * The servlet receives a String array containing two String objects from the client.
+/** This servlet sets the job abstract specified by the client.
+ * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
- * object is the job_id.  The servlet sends an aborting job message to the job-queue server. 
+ * object is the job_id.  The third String is the job abstract.  The servlet uses database
+ * API method setJobAbstract to update the abstract field of the given job in the database. 
  * The servlet sends back two String objects.  The first String object contains the error 
  * message if there is an error or an empty String if there is not any error.  The secod
  * String object is a text "true" if this operation is successful, "false" otherwise.
  *
  * @author Jiaji Du
  */
-public class AbortJob extends HttpServlet
+public class SetJobAbstract extends HttpServlet
 {
     /**
      * Dispatches client requests to the protected service method.
@@ -56,7 +57,7 @@ public class AbortJob extends HttpServlet
         
         // Database connection
         Connection con = null;
-        Statement jobStmt = null;
+        Statement userStmt = null;
 
         // Prepare output message
         String messageOut = "";
@@ -84,6 +85,7 @@ public class AbortJob extends HttpServlet
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
             {                        
                 long jobId = Long.parseLong(messageIn[1]);
+                String jobAbstract = messageIn[2];
 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -91,26 +93,10 @@ public class AbortJob extends HttpServlet
                                     context.getInitParameter("database_host"),
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
-           
-                // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId);
-                jobStmt = jobRS.getStatement();
-                jobRS.next();
-                                
-                // Check if the job belongs to the user
-                if(jobRS.getLong("user_id") == userId)
-                {
-                    Socket socket = new Socket(context.getInitParameter("jobqs_host"),
-                                               Integer.parseInt(context.getInitParameter("jobqs_port")));
-                    PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);                    
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    writer.println("set-abrt-" + jobId);
-                    String message = reader.readLine();                   
-                    reader.close();
-                    writer.close();
-                    socket.close();
-                    if(message != null && message.equals("done")) success = "true";
-                }
+
+                // Set job abstract
+                if(Spkdb.setJobAbstract(con, userId, jobId, jobAbstract))
+                    success = "true";
             }
             else
             {
@@ -134,7 +120,7 @@ public class AbortJob extends HttpServlet
         {
             try
             {
-                if(jobStmt != null) jobStmt.close();
+                if(userStmt != null) userStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
             catch(SQLException e){messageOut += "\n" + e.getMessage();}

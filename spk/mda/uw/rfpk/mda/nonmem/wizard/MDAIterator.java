@@ -109,7 +109,10 @@ public class MDAIterator implements StepIterator{
     protected HashSet initAdvan = new HashSet();
 
     /** Initialization for two-stage set */
-    protected HashSet initTwoStage = new HashSet();
+//    protected HashSet initTwoStage = new HashSet();
+    
+    /** Is graphic */
+    protected boolean isGraphic = false;
     
     /** Constructor to create a MDAIterator object.
      * @param server the web server associated with the MDA.
@@ -415,10 +418,10 @@ public class MDAIterator implements StepIterator{
         {
             steps.add(subroutines); 
             if(advan >= 5 && advan <= 9)
-                steps.add(model);
-            steps.add(pk);
+                if(!isGraphic) steps.add(model);
+            if(!isGraphic) steps.add(pk);
             if(advan == 6 || advan == 8 || advan == 9)
-                steps.add(des);
+                if(!isGraphic) steps.add(des);
             if(advan == 9)
             {
                 steps.add(aesinitial); 

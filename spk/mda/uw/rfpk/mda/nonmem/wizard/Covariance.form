@@ -34,7 +34,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="You can use one of the formulations to calculate the statistics&#xa;of the parameter estimates.   Select one or use the default.  &#xa;The last two formulations apply only to individual analysis.&#xa;"/>
+        <Property name="text" type="java.lang.String" value="Select method&#xa;Note: the H and HSH options apply only to individual analysis.&#xa;"/>
         <Property name="focusable" type="boolean" value="false"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[360, 51]"/>
@@ -58,7 +58,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="The statistics option you have selected in NONMEM syntax"/>
+        <Property name="text" type="java.lang.String" value="Selection expressed in NONMEM syntax"/>
         <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Constraints>

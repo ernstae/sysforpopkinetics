@@ -92,7 +92,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Please type in code for your model equations.");
+        jTextPane1.setText("Enter model equations.              ");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -189,15 +189,14 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 if(text != null)
                 {
                     text = text.substring(6, text.length() - 1);
-                    
-                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
-                       iterator.getReload().getProperty("METHOD") != null &&
-                       iterator.initTwoStage.contains("pred"))
-                    {
-                        text = Utility.replaceEtaByEps(text);
-                        text = Utility.addEtaToTheta(text);
-                        iterator.initTwoStage.remove("pred");
-                    }
+ 
+//                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+//                       iterator.initTwoStage.contains("pred"))
+//                    {
+//                        text = Utility.replaceEtaByEps(text);
+//                        text = Utility.addEtaToTheta(text);
+//                        iterator.initTwoStage.remove("pred");
+//                    }
                     
                     jTextArea1.setText(text);
                     iterator.getReload().remove("PRED");
@@ -213,7 +212,9 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 return;
            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().replaceAll("\r", "").toUpperCase();
+            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            while(record.indexOf("\n\n") != -1)
+                record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
             if(!record.equals(""))
             {
@@ -228,6 +229,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                     JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
                 // Find number of ETAs
+                int nE = Utility.find(code, "ETA");
                 iterator.setNEta(Utility.find(code, "ETA"));
                 if(iterator.getNEta() == 0)
                 {
@@ -247,14 +249,16 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
-                Vector lines = Utility.checkParenthesis(record, title);
+                Vector lines = Utility.checkParenthesis(code, title);
+                // Check expression left hand side
+                Vector errors = Utility.checkLeftExpression(code, title);
                 // Highlight the incompatible function names and mismatched parenthesis lines
                 if(isHighlighted)
                 {                
                     highlighter.removeAllHighlights();
                     isHighlighted = false;
                 }
-                if(names.size() > 0 || lines.size() > 0)
+                if(names.size() > 0 || lines.size() > 0 || errors.size() > 0)
                 {
                     jTextArea1.setHighlighter(highlighter);
                     Element paragraph = jTextArea1.getDocument().getDefaultRootElement();          
@@ -286,6 +290,14 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                         for(int i = 0; i < lines.size(); i++)
                         {
                             int n = ((Integer)lines.get(i)).intValue(); 
+                            highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                                     paragraph.getElement(n).getEndOffset() - 1,
+                                                     highlight_painter2); 
+                            isHighlighted = true;                    
+                        }
+                        for(int i = 0; i < errors.size(); i++)
+                        {
+                            int n = ((Integer)errors.get(i)).intValue(); 
                             highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
                                                      paragraph.getElement(n).getEndOffset() - 1,
                                                      highlight_painter2); 

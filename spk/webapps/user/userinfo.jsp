@@ -65,6 +65,7 @@ author: Jiaji Du
             <p>
             <table border="1">
               <tr><td>User ID</td><td>${fn:escapeXml(validUser.userId)}</td></tr>
+              <tr><td>Group ID</td><td>${fn:escapeXml(validUser.teamId)}</td></tr>
               <tr><td>Username</td><td>${fn:escapeXml(validUser.userName)}</td></tr>
               <tr><td>First Name</td><td>${fn:escapeXml(validUser.firstName)}</td></tr>
               <tr><td>Last Name</td><td>${fn:escapeXml(validUser.lastName)}</td></tr>

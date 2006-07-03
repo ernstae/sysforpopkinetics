@@ -73,6 +73,12 @@ author: Jiaji Du
                 <a href="userlistupdate.jsp">Update user account</a><br>
                 <a href="searchuser.jsp">Search in user database</a><br>
                 <a href="usagelist.jsp">View SPK usage list</a><br>
+                <a href="grouplist.jsp">View all user groups</a><br>
+                <form action="newgroup.jsp" method="post">
+                  New group:<input type="text" name="groupName" value="${fn:escapeXml(param.groupName)}">
+                  <input type="submit" value="Submit"><br>
+                  <font color="red">${fn:escapeXml(groupNameError)}</font><br>
+                </form>
                 <form action="notice.jsp" method="post">
                   <c:choose>
                     <c:when test="${notice == '1'}">
@@ -82,7 +88,7 @@ author: Jiaji Du
                       <input type="checkbox" name="alert" value="1">Display maintenance notice&nbsp
                     </c:otherwise>
                   </c:choose>
-                  <input type="submit" value="Set"<br>
+                  <input type="submit" value="Set"><br>
                 </form>
                 <c:choose>
                   <c:when test="${notice == '1'}">

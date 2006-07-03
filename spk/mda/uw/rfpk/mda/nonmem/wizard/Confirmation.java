@@ -58,7 +58,7 @@ public class Confirmation extends javax.swing.JPanel implements WizardStep {
 
         setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(0, 12, 12, 12)));
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane1.setText("This is the NONMEM control file you have created.");
+        jTextPane1.setText("Control file in NONMEM syntax:");
         add(jTextPane1, java.awt.BorderLayout.NORTH);
 
         jTextArea1.setEditable(false);

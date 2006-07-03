@@ -156,19 +156,19 @@ public class Plotter extends JPanel
             if(xLine)
             {
                 this.name[more] = "X = " + xLineX;
-                this.symbol[more] = 11;
+                this.symbol[more] = 12;
                 legendColor[more++] = addedLineColor[0];
             }
             if(yLine)
             {
                 this.name[more] = "Y = " + yLineY;
-                this.symbol[more] = 11;
+                this.symbol[more] = 12;
                 legendColor[more++] = addedLineColor[1];
             }
             if(uLine)
             {
-                this.name[more] = "X = Y";
-                this.symbol[more] = 11;
+                this.name[more] = "Y = X";
+                this.symbol[more] = 12;
                 legendColor[more++] = addedLineColor[2];
             }
             if(rLine)
@@ -656,7 +656,7 @@ public class Plotter extends JPanel
             }
             legendWidth = nameWidth + 54;
             legendHeight = 8 + name.length * 12;
-            
+            if(nCurve == 1) legendHeight -= 12;
             if(legendLocation.equals("Inside"))
             {
                 width = d.width - rightInset - leftInset;
@@ -791,18 +791,29 @@ public class Plotter extends JPanel
         // Draw x = 0 line, y = 0 line, slope = 1 line
         if(xLine && minX < xLineX && maxX > xLineX)
         {
+            gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));
             gc2D.setColor(addedLineColor[0]);
             gc2D.drawLine(leftInset - (int)((minX - xLineX) * width / spanX), top, 
                           leftInset - (int)((minX - xLineX) * width / spanX), top + height);
+            gc2D.setStroke(new BasicStroke());
         }
         if(yLine && minY < yLineY && maxY > yLineY)
         {
+            gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));
             gc2D.setColor(addedLineColor[1]);
             gc2D.drawLine(leftInset,         top + (int)((maxY - yLineY) * height / spanY), 
                           leftInset + width, top + (int)((maxY - yLineY) * height / spanY));
+            gc2D.setStroke(new BasicStroke());
         }
         if(uLine)
         {
+            gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));
             gc2D.setColor(addedLineColor[2]);
             double point1 = 0;
             double point2 = 0;
@@ -821,6 +832,7 @@ public class Plotter extends JPanel
                           top + height - (int)((point1 - minY) * height / spanY), 
                           leftInset + (int)((point2 - minX) * width / spanX), 
                           top + height - (int)((point2 - minY) * height / spanY));
+            gc2D.setStroke(new BasicStroke());
         }
                 	         	
 	// Draw numbers for not being histogram
@@ -1053,19 +1065,21 @@ public class Plotter extends JPanel
     
     private void drawLegend(Graphics2D gc2D)
     {
+        if(name.length == 1) return;
         gc2D.setColor(bg);        
         gc2D.fill(legendArea);
         gc2D.setColor(fg);
-        gc2D.draw(legendArea);        
-        for(int i = 0; i < name.length; i++)
+        gc2D.draw(legendArea);
+        int j = nCurve > 1? 0 : 1;
+        for(int i = j; i < name.length; i++)
         {
             int x = (int)legendArea.getMinX() + 26;
             int y = (int)legendArea.getMinY() + 12;
             gc2D.setColor(legendColor[i]);
-            drawSymbol(gc2D, symbol[i],  x, y + 12 * i);
+            drawSymbol(gc2D, symbol[i],  x, y + 12 * (i - j));
             gc2D.setColor(fg);
             gc2D.setFont(legendFont);
-            gc2D.drawString(name[i], x + 25, y + 4 + 12 * i);
+            gc2D.drawString(name[i], x + 25, y + 4 + 12 * (i - j));
         }
     }
     
@@ -1145,7 +1159,7 @@ public class Plotter extends JPanel
                 }
                 legendWidth = nameWidth + 54;
                 legendHeight = 8 + name.length * 12;            
-            
+                if(nCurve == 1) legendHeight -= 12;
                 if(legendLocation.equals("Inside"))
                 {
                     width = d.width - rightInset - leftInset;
@@ -1203,18 +1217,29 @@ public class Plotter extends JPanel
             
             if(xLine && minX < xLineX && maxX > xLineX)
             {
+                gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));
                 gc2D.setColor(addedLineColor[0]);
                 gc2D.drawLine(left - (int)((minX - xLineX) * width / spanX), top, 
                               left - (int)((minX - xLineX) * width / spanX), top + height);
+                gc2D.setStroke(new BasicStroke());
             }
             if(yLine && minY < yLineY && maxY > yLineY)
             {
+                gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));
                 gc2D.setColor(addedLineColor[1]);
                 gc2D.drawLine(left,         top + (int)((maxY - yLineY) * height / spanY), 
                               left + width, top + (int)((maxY - yLineY) * height / spanY));
+                gc2D.setStroke(new BasicStroke());
             }
             if(uLine)
             {
+                gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
+                                           BasicStroke.JOIN_BEVEL, 0, 
+                                           new float[]{5.0f, 2.0f}, 0));
                 gc2D.setColor(addedLineColor[2]);
                 double point1 = 0;
                 double point2 = 0;
@@ -1233,6 +1258,7 @@ public class Plotter extends JPanel
                               top + height - (int)((point1 - minY) * height / spanY), 
                               left + (int)((point2 - minX) * width / spanX), 
                               top + height - (int)((point2 - minY) * height / spanY));
+                gc2D.setStroke(new BasicStroke());
             }
             
             // Draw grid lines

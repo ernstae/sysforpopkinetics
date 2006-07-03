@@ -55,7 +55,9 @@ public class Test{
         window.setVisible(true);
 
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTimeInMillis(Long.parseLong("1075929317964"));
+//        calendar.setTimeInMillis(Long.parseLong("1140633044000"));
+        calendar.setTimeInMillis(Long.parseLong("1072994943356"));
+//        calendar.setTimeInMillis(Long.parseLong("1086299943000"));
         System.out.println("day = " + calendar.get(Calendar.DAY_OF_MONTH));
         System.out.println("month = " + calendar.get(Calendar.MONTH));
         System.out.println("year = " + calendar.get(Calendar.YEAR));        
@@ -63,6 +65,10 @@ public class Test{
         System.out.println("minute = " + calendar.get(Calendar.MINUTE));
         System.out.println("second = " + calendar.get(Calendar.SECOND)); 
         System.out.println("time = " + calendar.getTime().getTime());
+        
+        calendar = new GregorianCalendar();
+        calendar.set(2006, 1, 1);
+        System.out.println("time = " + calendar.getTimeInMillis());
 /*        
         Date date = new Date(Long.parseLong("1075029317964"));
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
@@ -88,11 +94,11 @@ public class Test{
 //            Data step = new Data(i);
 //            Des step = new Des(i);
 //            Error step = new Error(i);
-            Estimation step = new Estimation(i);
+//            Estimation step = new Estimation(i);
 //            GettingStarted step = new GettingStarted(i);          
 //            Input step = new Input(i);
 //            Model step = new Model(i);
-//            Omega step = new Omega(i);
+            Omega step = new Omega(i);
 //            PK step = new PK(i);
 //            Pred step = new Pred(i);
 //            Problem step = new Problem(i);

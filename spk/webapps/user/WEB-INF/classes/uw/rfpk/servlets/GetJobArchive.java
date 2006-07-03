@@ -33,19 +33,18 @@ import uw.rfpk.beans.UserInfo;
 import uw.rfpk.rcs.Archive;
 
 /** This servlet sends back either the model or the dataset that is used by the job.
- * The servlet receives a String array containing four String objects from the client.
+ * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String 
- * is the job_id.  The third String is either "model" or "data".  The fourth String object 
- * is a flag that specified if this call is from a library patron.  The servlet first checks 
- * if the job_id belongs to the user using database API method, getUser, to get the user_id
- * and using database API method, getJob, to get user_id, then comparing them.  If they
- * are the same, the servlet calls database API method, getJob, to get either model_id, 
+ * is the job_id.  The third String is either "model" or "data".   The servlet first checks 
+ * if the job belongs to the user in the group or to the library, then calls database API 
+ * method, getJob, to get either model_id, 
  * model_version, or dataset_id, dataset_version according to the third String. Then,
  * the model_id is passed in the database API method getModel to get model archive  and 
  * model name, or the dataset_id is passed in the database API method getDataset to get 
  * dataset archive and dataset name.  The servlet calls RCS API method getRevision to 
- * get the archive text of the version that has been returned from the 
- * database API method getJob call.  The servlet puts the archive text, name and version
+ * get the archive text of the version that has been returned from the database API method
+ * getJob call.  Then the servlet calls RCS API method getRevision to get the version log.
+ * The servlet puts the archive text, name, version and log
  * into a java,util.Properties object.  The servlet sends back two objects.  The first 
  * object is a String containing the error message if there is an error or an empty String 
  * if there is not any error.  The second object is the Properties object containing the 
@@ -66,9 +65,9 @@ public class GetJobArchive extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long groupId = Long.parseLong(user.getTeamId());
         
         // Database connection
         Connection con = null;
@@ -101,10 +100,6 @@ public class GetJobArchive extends HttpServlet
             String secret = messageIn[0]; 
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))               
             {           
-                long jobId = Long.parseLong(messageIn[1]);
-                if(messageIn[3].equals("true"))
-                    username = "librarian";
-                
                 // Connect to the database
                 ServletContext context = getServletContext();
                 con = Spkdb.connect(context.getInitParameter("database_name"),
@@ -112,19 +107,21 @@ public class GetJobArchive extends HttpServlet
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
                 
-                // Get user id
-                ResultSet userRS = Spkdb.getUser(con, username);
-                userStmt = userRS.getStatement();
-                userRS.next();
-                long userId = userRS.getLong("user_id");
-                 
                 // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                ResultSet jobRS = Spkdb.getJob(con, Long.parseLong(messageIn[1]));
                 jobStmt = jobRS.getStatement();
                 jobRS.next();
-                 
-                // Check if the job belongs to the user
-                if(jobRS.getLong("user_id") == userId)
+                
+                // Get job's owner
+                long userId = jobRS.getLong("user_id");
+                ResultSet userRS = Spkdb.getUserById(con, userId);
+                userStmt = userRS.getStatement();
+                userRS.next();
+                
+                // Check if the job belongs to the user in the group or to the library
+                if((groupId != 0 && userRS.getLong("team_id") == groupId) || 
+                   (groupId == 0 && Long.parseLong(user.getUserId()) == userId) || 
+                   userRS.getString("username").equals("librarian"))
                 {
                     // Get model or dataset for the job
                     ResultSet rs = null;
@@ -159,6 +156,7 @@ public class GetJobArchive extends HttpServlet
                     archive.setProperty("name", rs.getString("name")); 
                     archive.setProperty("version", version.substring(2));
                     archive.setProperty("text", text);
+                    archive.setProperty("log", Archive.getVersionList(ar)[Integer.parseInt(version.substring(2)) - 1][3]);
                 }
                 else
                 {

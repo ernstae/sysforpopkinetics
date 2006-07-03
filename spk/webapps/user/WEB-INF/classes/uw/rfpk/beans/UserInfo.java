@@ -36,6 +36,14 @@ public class UserInfo implements java.io.Serializable
         this.userId = userId;
     }
     
+    /** Sets teamId.
+     * @param teamId the team ID as a character string.
+     */
+    public void setTeamId(String teamId)
+    {
+        this.teamId = teamId;
+    }
+    
     /** Sets userName.
      * @param userName the user name as a character string.
      */
@@ -115,7 +123,15 @@ public class UserInfo implements java.io.Serializable
     {
         return userId;
     }
-       
+
+    /** Gets teamId.
+     * @return the team ID as a character string.
+     */    
+    public String getTeamId()
+    {
+        return teamId;
+    }
+      
     /** Gets userName.
      * @return the user name as a character string.
      */    
@@ -198,4 +214,5 @@ public class UserInfo implements java.io.Serializable
     private String email = null;
     private String tester = null;
     private String developer = null;
+    private String teamId = null;
 }

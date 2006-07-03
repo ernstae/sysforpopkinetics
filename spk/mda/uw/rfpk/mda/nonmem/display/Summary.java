@@ -235,9 +235,11 @@ public class Summary {
         String modelName = output.modelName != null ? output.modelName : NA;
         String modelVersion = output.modelVersion != null ? output.modelVersion : NA;
         String modelAbstract = output.modelAbstract != null ? output.modelAbstract : NA;
+        String modelVersionLog = output.modelVersionLog != null ? output.modelVersionLog : NA;
         String dataName = output.dataName != null ? output.dataName : NA;
         String dataVersion = output.dataVersion != null ? output.dataVersion : NA;
         String dataAbstract = output.dataAbstract != null ? output.dataAbstract : NA;
+        String dataVersionLog = output.dataVersionLog != null ? output.dataVersionLog : NA;
         String objective = output.objective != null ? output.objective : NA;
         String likelihood = output.likelihood != null ? output.likelihood[0][1] : NA;
         String objStdErr = output.likelihood_std != null ? output.likelihood_std[0][1] : NA;
@@ -263,7 +265,7 @@ public class Summary {
             }
         }
         else
-            errorMessage = "\nNone\n";
+            errorMessage = "\nNone";
         errorMessage = errorMessage.replaceAll("\n", "\n     ");
         String warningMessage = "";
         if(output.warning != null)
@@ -282,22 +284,22 @@ public class Summary {
         warningMessage = warningMessage.replaceAll("\n", "\n     ");
         
         // Write summary
-        String summary = "Summary Report\n" +
+        String summary = "Summary Report" +
                          "\n\nJob Identification number: " + jobId +
-                         "\n\nJob Description: " + jobAbstract + 
+                         "\nJob Description: " + jobAbstract + 
                          "\n\nTime of Job Submission: " + submissionTime + 
-                         "\n\nTime of Job Completion: " + completionTime +
-                         "\n\nSPK Computing Time: " + computingTime +
+                         "\nTime of Job Completion: " + completionTime +
+                         "\nSPK Computing Time: " + computingTime +
                          "\n\nAnalysis Type: " + analysis +
                          "\n\nSub-problem Number: " + subProblem +
-                         "\n\nSeed for Simulation: " + simulationSeed +
+                         "\nSeed for Simulation: " + simulationSeed +
                          "\n\nAnalysis Method: " + jobMethod +                      
-                         "\n\nModel Name: " + modelName +
-                         "\n\nModel Version: " + modelVersion +
-                         "\n\nModel Description: " + modelAbstract +
-                         "\n\nDataset Name: " + dataName +
-                         "\n\nDataset Version: " + dataVersion +
-                         "\n\nDataset Description: " + dataAbstract +                    
+                         "\n\nModel Name: " + modelName + "   Model Version: " + modelVersion +
+                         "\nModel Description: " + modelAbstract +
+                         "\nModel Version Log: " + modelVersionLog +
+                         "\n\nDataset Name: " + dataName + "   Dataset Version: " + dataVersion +
+                         "\nDataset Description: " + dataAbstract +
+                         "\nDataset Version Log: " + dataVersionLog +
                          "\n\nError Messages: " + errorMessage +
                          "\n\nWarning Messages: " + warningMessage +
                          objectiveItem + objStdErrItem +

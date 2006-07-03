@@ -116,6 +116,13 @@ author: Jiaji Du
                   <td><font color="red">${fn:escapeXml(emailAddressError)}</font></td>
                 </tr>
                 <tr>
+                  <td>Group ID:</td>
+                  <td><input type="text" name="teamId"
+                    value="${fn:escapeXml(param.team_id)}">
+                  </td>
+                  <td><font color="red">${fn:escapeXml(teamIdError)}</font></td>
+                </tr>
+                <tr>
                   <td>Tester?:</td>
                   <td><input type="checkbox" name="tester"
                     <c:if test="${param.tester == '1'}">

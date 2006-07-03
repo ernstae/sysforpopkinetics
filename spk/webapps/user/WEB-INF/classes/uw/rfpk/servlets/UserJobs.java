@@ -29,12 +29,15 @@ import java.util.Properties;
 import java.text.SimpleDateFormat;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet sends back information about a list of jobs belonging to the user.
- * The servlet receives a String array containing four String objects from the client.
+/** This servlet sends back information about a list of jobs belonging to the specified user.
+ * The servlet receives a String array containing nine String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of jobs to provide status for.  The third String object is
- * the least job_id previously returned.  The fourth String object is a flag that specified 
- * if this call is from a library patron.  The servlet calls database API method, userJobs,
+ * the least job_id previously returned.  The fourth String object is specified username. 
+ * The following String objects are for the searching conditions.  They are start job ID, 
+ * start time, keywords in a text string, modeld ID and dataset ID, respectively. The servlet 
+ * first checks if the specified user is in the same group of the session user 
+ * or the specified user is the librarian, then calls database API method, userJobs,
  * to get job status that includes id, start_time, state_code, end-code, model_id, 
  * model_version, dataset_id, dataset_version and abstract of the jobs.  The servlet uses 
  * the model_id to get model_name using database API method getModel and uses the dataset_id
@@ -46,8 +49,8 @@ import uw.rfpk.beans.UserInfo;
  " dataset_name.dataset_version.  The servletThe servlet puts the job_id, start_time(formated), 
  * status_code, model_info, dataset_info and arbstract of the jobs into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
- * message if there is an error or an empty String if there is not any error.  The second 
- * object is the returning data String[][] object.
+ * message if there is an error or a String containing the total number of jobs found 
+ * following "count=" otherwise.  The second object is the returning data String[][] object.
  *
  * @author Jiaji Du
  */
@@ -64,9 +67,9 @@ public class UserJobs extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long groupId = Long.parseLong(user.getTeamId());
         
         // Database connection
         Connection con = null;
@@ -79,6 +82,7 @@ public class UserJobs extends HttpServlet
         
         // Prepare output message
         String messageOut = "";
+        String count = null;
         String[][] userJobs = null;
  
         // Get the input stream for reading data from the client
@@ -107,8 +111,15 @@ public class UserJobs extends HttpServlet
             {                        
  	        int maxNum = Integer.parseInt(messageIn[1]); 
                 long leftOff = Long.parseLong(messageIn[2]);
-                if(messageIn[3].equals("true"))
-                    username = "librarian";
+                String username = messageIn[3];
+                if(groupId == 0 && !username.equals("librarian"))
+                    username = user.getUserName();
+                
+                String startID = messageIn[4];
+                String startTime = messageIn[5];
+                String keyWords = messageIn[6];
+                String modelID = messageIn[7];
+                String datasetID = messageIn[8];
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -117,64 +128,78 @@ public class UserJobs extends HttpServlet
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
                 
-                // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
                 userStmt = userRS.getStatement();
                 userRS.next();
-                long userId = userRS.getLong("user_id");
-
-                // Get user jobs
-                ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff);
-                jobStmt = userJobsRS.getStatement();
-
-                // Set state_code - name conversion
-                ResultSet stateRS = Spkdb.getStateTable(con);
-                stateStmt = stateRS.getStatement();
-                Properties state = new Properties();                
-                while(stateRS.next())
-                    state.setProperty(stateRS.getString(1), stateRS.getString(2));
-
-                // Set end_code - name conversion
-                ResultSet endRS = Spkdb.getEndTable(con);
-                endStmt = endRS.getStatement();
-                Properties end = new Properties();
-                while(endRS.next())
-                    end.setProperty(endRS.getString(1), endRS.getString(2));
-
-                // Fill in the List
-                SimpleDateFormat formater = new SimpleDateFormat("EEE yyyy-MM-dd HH:mm:ss z");
-                userJobsRS.last();                                
-//                while(userJobsRS.next())
-                for(int i = 0; i < maxNum; i++)
-                {                  
-                    String[] job = new String[6];   
-                    job[0] = String.valueOf(userJobsRS.getLong("job_id"));
-                    job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));                   
-                    job[2] = state.getProperty(userJobsRS.getString("state_code"));
-                    String endCode = userJobsRS.getString("end_code");
-                    if(endCode != null)
-                        job[2] = end.getProperty(endCode); 
-                    ResultSet modelRS = Spkdb.getModel(con, userJobsRS.getLong("model_id"));
-                    modelStmt.add(modelRS.getStatement());                   
-                    modelRS.next();
-                    job[3] = modelRS.getString("name") + "." + userJobsRS.getString("model_version").substring(2);
-                    ResultSet datasetRS = Spkdb.getDataset(con, userJobsRS.getLong("dataset_id"));
-                    datasetStmt.add(datasetRS.getStatement());
-                    datasetRS.next();
-                    job[4] = datasetRS.getString("name") + "." + userJobsRS.getString("dataset_version").substring(2);
-                    job[5] = userJobsRS.getString("abstract");                    
-                    jobList.add(job);
-                    userJobsRS.previous();
-                }
-                int nJob = jobList.size();
-                if(nJob > 0)
+                if(userRS.getLong("team_id") == groupId || username.equals("librarian"))
                 {
-                    userJobs = new String[nJob][];    
-                    for(int i = 0; i < nJob; i++)
-                        userJobs[i] = (String[])jobList.get(i);                     
+                    // Get user id
+                    long userId = userRS.getLong("user_id");
+
+                    // Get user jobs
+                    ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff, startID,
+                                                          startTime, keyWords, modelID, datasetID);
+                    jobStmt = userJobsRS.getStatement();
+
+                    // Set state_code - name conversion
+                    ResultSet stateRS = Spkdb.getStateTable(con);
+                    stateStmt = stateRS.getStatement();
+                    Properties state = new Properties();                
+                    while(stateRS.next())
+                        state.setProperty(stateRS.getString(1), stateRS.getString(2));
+
+                    // Set end_code - name conversion
+                    ResultSet endRS = Spkdb.getEndTable(con);
+                    endStmt = endRS.getStatement();
+                    Properties end = new Properties();
+                    while(endRS.next())
+                        end.setProperty(endRS.getString(1), endRS.getString(2));
+
+                    // Fill in the List
+                    SimpleDateFormat formater = new SimpleDateFormat("EEE yyyy-MM-dd HH:mm:ss z");
+                    userJobsRS.last();
+                    count = "count= " + String.valueOf(userJobsRS.getRow());
+                    
+//                    while(userJobsRS.next())
+                    for(int i = 0; i < maxNum; i++)
+                    {                  
+                        String[] job = new String[6];   
+                        job[0] = String.valueOf(userJobsRS.getLong("job_id"));
+                        job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));                   
+                        job[2] = state.getProperty(userJobsRS.getString("state_code"));
+                        String endCode = userJobsRS.getString("end_code");
+                        if(endCode != null)
+                            job[2] = end.getProperty(endCode); 
+                        ResultSet modelRS = Spkdb.getModel(con, userJobsRS.getLong("model_id"));
+                        modelStmt.add(modelRS.getStatement());                   
+                        modelRS.next();
+                        job[3] = modelRS.getString("name") + "." + userJobsRS.getString("model_version").substring(2);
+                        ResultSet datasetRS = Spkdb.getDataset(con, userJobsRS.getLong("dataset_id"));
+                        datasetStmt.add(datasetRS.getStatement());
+                        datasetRS.next();
+                        job[4] = datasetRS.getString("name") + "." + userJobsRS.getString("dataset_version").substring(2);
+                        job[5] = userJobsRS.getString("abstract");
+                        jobList.add(job);
+                        if(!userJobsRS.previous()) break;
+                    }
+                    int nJob = jobList.size();
+                    if(nJob > 0)
+                    {
+                        userJobs = new String[nJob][];    
+                        for(int i = 0; i < nJob; i++)
+                            userJobs[i] = (String[])jobList.get(i);                     
+                    }
+                    else
+                    {
+                        // Write the outgoing messages
+                        messageOut = "No job was found in the database";
+                    }
                 }
                 else
-                    messageOut = "No job was found in the database"; 
+                {
+                    // Write the outgoing messages
+                    messageOut = "Authorization error.";
+                }
             }
             else
             {
@@ -210,9 +235,15 @@ public class UserJobs extends HttpServlet
         }
         
         // Write the data to our internal buffer
-        out.writeObject(messageOut);
-        if(messageOut.equals(""))
+        if(!messageOut.equals(""))
+        {
+            out.writeObject(messageOut);
+        }
+        else
+        {
+            out.writeObject(count);
             out.writeObject(userJobs);
+        }
 
         // Flush the contents of the output stream to the byte array
         out.flush();

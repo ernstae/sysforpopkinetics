@@ -56,7 +56,7 @@ public class InitMDATest extends HttpServlet
     {
         // Prepare output message
         String messageOut = "";
-        String[] sessionCodes = new String[2];
+        String[] sessionCodes = new String[3];
         
         // Database connection
         Connection con = null;
@@ -135,6 +135,10 @@ public class InitMDATest extends HttpServlet
                         session.setAttribute("SECRET", sessionCodes[1]);                     
                     }
                 
+                    userRS = Spkdb.getUser(con, username);
+                    userRS.next();
+                    sessionCodes[2] = String.valueOf(userRS.getLong("team_id"));
+                    
                     // Create a UserInfo object for the session
                     UserInfo user = new UserInfo();
                     user.setUserName(username);
@@ -147,6 +151,7 @@ public class InitMDATest extends HttpServlet
                     user.setEmail(userRS.getString("email"));
                     user.setTester(String.valueOf(userRS.getInt("test")));
                     user.setDeveloper(String.valueOf(userRS.getInt("dev")));
+                    user.setTeamId(sessionCodes[2]);
                     session.setAttribute("validUser", user);
                 }
                 else

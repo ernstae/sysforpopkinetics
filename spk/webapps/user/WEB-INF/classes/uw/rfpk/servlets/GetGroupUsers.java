@@ -23,21 +23,21 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
 import java.sql.*;
-import java.net.Socket;
+import java.util.Vector;
 import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet abort the job specified by the client.
+/** This servlet sends back the usernames of a specified group in a Vector object.
  * The servlet receives a String array containing two String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
- * object is the job_id.  The servlet sends an aborting job message to the job-queue server. 
- * The servlet sends back two String objects.  The first String object contains the error 
- * message if there is an error or an empty String if there is not any error.  The secod
- * String object is a text "true" if this operation is successful, "false" otherwise.
+ * object is the group ID.  The servlet calls database API method getGroupUsers to get the usernames.
+ * The servlet sends back two objects.  The first object is a String containing the error 
+ * message if there is an error or an empty String if there is not any error.  The second 
+ * object is the usernames contained in a Vector object.
  *
  * @author Jiaji Du
  */
-public class AbortJob extends HttpServlet
+public class GetGroupUsers extends HttpServlet
 {
     /**
      * Dispatches client requests to the protected service method.
@@ -50,18 +50,18 @@ public class AbortJob extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user ID of the session
+        // Get the group ID of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        long userId = Long.parseLong(user.getUserId());  
-        
-        // Database connection
-        Connection con = null;
-        Statement jobStmt = null;
+        long groupId = Long.parseLong(user.getTeamId());
 
         // Prepare output message
         String messageOut = "";
-        String success = "false";
- 
+        Vector usernames = new Vector();
+        
+        // Database connection
+        Connection con = null;
+        Statement groupStmt = null;
+        
         // Get the input stream for reading data from the client
         ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
        
@@ -82,46 +82,30 @@ public class AbortJob extends HttpServlet
             String[] messageIn = (String[])in.readObject();
             String secret = messageIn[0];
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
-            {                        
-                long jobId = Long.parseLong(messageIn[1]);
-
+            {                     
                 // Connect to the database
                 ServletContext context = getServletContext();
                 con = Spkdb.connect(context.getInitParameter("database_name"),
                                     context.getInitParameter("database_host"),
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
-           
-                // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId);
-                jobStmt = jobRS.getStatement();
-                jobRS.next();
-                                
-                // Check if the job belongs to the user
-                if(jobRS.getLong("user_id") == userId)
-                {
-                    Socket socket = new Socket(context.getInitParameter("jobqs_host"),
-                                               Integer.parseInt(context.getInitParameter("jobqs_port")));
-                    PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);                    
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    writer.println("set-abrt-" + jobId);
-                    String message = reader.readLine();                   
-                    reader.close();
-                    writer.close();
-                    socket.close();
-                    if(message != null && message.equals("done")) success = "true";
-                }
+                
+                // Get user id
+                ResultSet groupRS = Spkdb.getGroupUsers(con, groupId);
+                groupStmt = groupRS.getStatement();
+                while(groupRS.next())
+                    usernames.add(groupRS.getString("username"));                
             }
             else
             {
                 // Write the outgoing messages
                 messageOut = "Authentication error.";              
-            }           
+            }                
         }      
         catch(SQLException e)
         {
             messageOut = e.getMessage();
-        }    
+        }
         catch(SpkdbException e)
         {
             messageOut = e.getMessage();
@@ -129,37 +113,35 @@ public class AbortJob extends HttpServlet
         catch(ClassNotFoundException e)
         {
             messageOut = e.getMessage();
-        } 
+        }
         finally
         {
             try
             {
-                if(jobStmt != null) jobStmt.close();
+                if(groupStmt != null) groupStmt.close();               
                 if(con != null) Spkdb.disconnect(con);
             }
             catch(SQLException e){messageOut += "\n" + e.getMessage();}
-        }
-        
+        }        
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))
-            out.writeObject(success);
-        
+            out.writeObject(usernames);
+
         // Flush the contents of the output stream to the byte array
         out.flush();
-
+        
         // Get the buffer that is holding our response
         byte[] buf = byteOut.toByteArray();
-
+        
         // Notify the client how much data is being sent
         resp.setContentLength(buf.length);
-
+        
         // Send the buffer to the client
         ServletOutputStream servletOut = resp.getOutputStream();
         
         // Wrap up
         servletOut.write(buf);
-
         servletOut.close();
     }
 }

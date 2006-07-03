@@ -113,7 +113,9 @@ public class MatrixShow extends javax.swing.JFrame {
         jTable1.createDefaultColumnsFromModel();
         headerColumn.createDefaultColumnsFromModel();
         jTable1.setSelectionModel(headerColumn.getSelectionModel());
-        jTable1.setRowSelectionAllowed(false);
+        jTable1.setRowSelectionAllowed(true);
+        jTable1.setCellSelectionEnabled(true);
+        jTable1.setColumnSelectionAllowed(true);
         rowHeaderModel.getColumn(0).setCellRenderer(new HeaderCellRenderer());
         
         // Make the header column look pretty.
@@ -154,7 +156,7 @@ public class MatrixShow extends javax.swing.JFrame {
         });
 
         jScrollPane1.setFont(new java.awt.Font("Dialog", 0, 14));
-        jTable1.setFont(new java.awt.Font("Monospaced", 0, 14));
+        jTable1.setFont(new java.awt.Font("Monospaced", 0, 12));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null}
@@ -171,9 +173,9 @@ public class MatrixShow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.setCellSelectionEnabled(true);
         jTable1.setName("");
         jTable1.setRowHeight(20);
-        jTable1.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(jTable1);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);

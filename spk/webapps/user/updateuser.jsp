@@ -101,6 +101,10 @@ author: Jiaji Du
                   <td><input type="text" name="email" value="${fn:escapeXml(dbValues.email)}"></td>
                 </tr>
                 <tr>
+                  <td>Group ID:</td>
+                  <td><input type="text" name="teamId" value="${fn:escapeXml(dbValues.team_id)}"></td>
+                </tr>
+                <tr>
                   <td>Tester?:</td>
                   <td><input type="checkbox" name="tester"
                     <c:if test="${dbValues.test == 1}">
@@ -158,6 +162,11 @@ author: Jiaji Du
                   <td>Email:</td>
                   <td><input type="text" name="email" value="${fn:escapeXml(param.email)}"></td>
                   <td><font color="red">${fn:escapeXml(emailAddressError)}</font></td>
+                </tr>
+                <tr>
+                  <td>Group ID:</td>
+                  <td><input type="text" name="teamId" value="${fn:escapeXml(param.team_id)}"></td>
+                  <td><font color="red">${fn:escapeXml(teamIdError)}</font></td>
                 </tr>
                 <tr>
                   <td>Tester?:</td>

@@ -147,24 +147,66 @@ public class Server {
         }
         return success.equals("true");
     }
+    
+    /** Send a message to the server to set job abstract.
+     * @param jobId id number of the job.
+     * @param jobAbstract abstract field of the job to set.
+     * @return true if the job's state_code is set to "end" by this method, otherwise false.
+     */
+    public boolean setJobAbstract(long jobId, String jobAbstract)
+    {
+        String[] messageOut = new String[3];
+        messageOut[0] = secret;
+        messageOut[1] = String.valueOf(jobId);
+        messageOut[2] = jobAbstract;
+        String success = "false";
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.SetJobAbstract",
+                                          sessionId);
+            success = (String)network.talk(messageOut);
+         }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return success.equals("true");
+    }
+    
     /** Get a sequence of jobs for a given user.
      * @param maxNum maximum number of jobs to provide status for.
      * @param leftOff least jobId previously returned (0 if first call in sequence).
-     * @param isLibrary a boolean specifying if it is a library call.
+     * @param username job owner's username.
+     * @param startID starting jobID.
+     * @param startTime starting submission time.
+     * @param keyWords key words either in job abstract, in model name on in dataset name.
+     * @param modelID finding jobs that use this model.
+     * @param datasetID finding jobs that use thos dataset.
      * @return a String[][] object that contains job id, start time(date format), 
      *         state code(long format), end code(long format) and job abstract of the jobs.  
      *         The first index of the array is the job sequence in reversed order.  
      *         The second index designates the fields. 
      *         null if failed.         
      */
-    public String[][] getUserJobs(int maxNum, long leftOff, boolean isLibrary)
+    public String[][] getUserJobs(int maxNum, long leftOff, String username,
+                                  String startID, String startTime, String keyWords, 
+                                  String modelID, String datasetID)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[4];
+        String[] messageOut = new String[9];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(maxNum);
         messageOut[2] = String.valueOf(leftOff);
-        messageOut[3] = String.valueOf(isLibrary);
+        messageOut[3] = username;
+        messageOut[4] = startID;
+        messageOut[5] = startTime;
+        messageOut[6] = keyWords;
+        messageOut[7] = modelID;
+        messageOut[8] = datasetID;
         
         // Prepare for the return
         String jobList[][] = null;
@@ -187,19 +229,17 @@ public class Server {
     }
 
     /** Get job information including model name, model version dataset name dataset version. 
-     * @param jobId id number of the job.
-     * @param isLibrary a boolean specifying if it is a library call.
+     * @param jobId id number of the job.    
      * @return a Properties object containing the job information including 
      * model name, model version dataset name dataset version.  null if failed.
      */
-    public Properties getJobInfo(long jobId, boolean isLibrary)
+    public Properties getJobInfo(long jobId)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[3];
+        String[] messageOut = new String[2];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(jobId);
-        messageOut[2] = String.valueOf(isLibrary);
-        
+                
         // Prepare for the return
         Properties jobInfo = null;
         
@@ -222,19 +262,17 @@ public class Server {
 
     /** Get either model archive or dataset archive for the job. 
      * @param jobId id number of the job.
-     * @param type either "model" or "data" to specify the type.
-     * @param isLibrary a boolean specifying if it is a library call.
+     * @param type either "model" or "data" to specify the type.     
      * @return a Properties object containing the archive text, name and version.
      */
-    public Properties getJobArchive(long jobId, String type, boolean isLibrary)
+    public Properties getJobArchive(long jobId, String type)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[4];
+        String[] messageOut = new String[3];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(jobId);
         messageOut[2] = type;
-        messageOut[3] = String.valueOf(isLibrary);
-        
+         
         // Prepare for the return
         Properties archive = null;
         
@@ -256,18 +294,16 @@ public class Server {
     }
     
     /** Get SPK input data. 
-     * @param jobId id number of the job.
-     * @param isLibrary a boolean specifying if it is a library call.
+     * @param jobId id number of the job.    
      * @return a Properties object containing the SPK input data. 
      *         null if failed.
      */
-    public Properties getInput(long jobId, boolean isLibrary)
+    public Properties getInput(long jobId)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[3];
+        String[] messageOut = new String[2];
         messageOut[0] = secret;
-        messageOut[1] = String.valueOf(jobId);
-        messageOut[2] = String.valueOf(isLibrary);
+        messageOut[1] = String.valueOf(jobId);        
         
         // Prepare for the return
         Properties spkInput = null;
@@ -290,18 +326,16 @@ public class Server {
     }
         
     /** Get SPK output data. 
-     * @param jobId id number of the job.
-     * @param isLibrary a boolean specifying if it is a library call.
+     * @param jobId id number of the job.    
      * @return a Properties object containing the SPK output data. 
      *         null if failed.
      */
-    public Properties getOutput(long jobId, boolean isLibrary)
+    public Properties getOutput(long jobId)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[3];
+        String[] messageOut = new String[2];
         messageOut[0] = secret;
-        messageOut[1] = String.valueOf(jobId);
-        messageOut[2] = String.valueOf(isLibrary);        
+        messageOut[1] = String.valueOf(jobId);       
         
         // Prepare for the return
         Properties spkOutput = null;
@@ -324,20 +358,18 @@ public class Server {
     }
 
     /** Get job history. 
-     * @param jobId id number of the job.
-     * @param isLibrary a boolean specifying if it is a library call.
+     * @param jobId id number of the job.    
      * @return a String[][] object containing the job history including event time, 
      * state code and host. 
      *         null if failed.
      */
-    public String[][] getHistory(long jobId, boolean isLibrary)
+    public String[][] getHistory(long jobId)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[3];
+        String[] messageOut = new String[2];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(jobId);
-        messageOut[2] = String.valueOf(isLibrary);
-        
+                
         // Prepare for the return
         String[][] jobHistory = null;
         
@@ -359,23 +391,24 @@ public class Server {
     }    
     
     /** Get a sequence of models for a given user.
+     * @return a String[][] object that contains model id, model name,
+     *         last revision time(date format), and model abstract of the models.
+     *         The first index of the array is the model sequence in reversed order.
+     *         The second index designates the fields.
+     *         null if failed.
+     * @param username model owner's username.
      * @param maxNum maximum number of models to provide status for.
      * @param leftOff least modelId previously returned (0 if first call in sequence).
-     * @param isLibrary a boolean specifying if it is a library call.
-     * @return a String[][] object that contains model id, model name,  
-     *         last revision time(date format), and model abstract of the models.  
-     *         The first index of the array is the model sequence in reversed order.  
-     *         The second index designates the fields. 
-     *         null if failed.          
+     * @param username model owner's username.
      */
-    public String[][] getUserModels(int maxNum, long leftOff, boolean isLibrary)
+    public String[][] getUserModels(int maxNum, long leftOff, String username)
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[4];
+        String[] messageOut = new String[5];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(maxNum);
         messageOut[2] = String.valueOf(leftOff);
-        messageOut[3] = String.valueOf(isLibrary);
+        messageOut[3] = username;
         
         // Prepare for the return
         String modelList[][] = null;
@@ -398,23 +431,24 @@ public class Server {
     } 
 
     /** Get a sequence of datasets for a given user.
+     * @return a String[][] object that contains dataset id, dataset name,
+     *         last revision time(date format), and dataset abstract of the datasets.
+     *         The first index of the array is the dataset sequence in reversed order.
+     *         The second index designates the fields.
+     *         null if failed.
+     * @param username dataset owner's username.
      * @param maxNum maximum number of datasets to provide status for.
      * @param leftOff least datasetId previously returned (0 if first call in sequence).
-     * @param isLibrary a boolean specifying if it is a library call.
-     * @return a String[][] object that contains dataset id, dataset name,  
-     *         last revision time(date format), and dataset abstract of the datasets.  
-     *         The first index of the array is the dataset sequence in reversed order.  
-     *         The second index designates the fields.  
-     *         null if failed.        
+     * @param username dataset owner's username.
      */    
-    public String[][] getUserDatasets(int maxNum, long leftOff, boolean isLibrary)
+    public String[][] getUserDatasets(int maxNum, long leftOff, String username)
     {
         // Put secret and arguments in a String array
         String[] messageOut = new String[4];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(maxNum);
         messageOut[2] = String.valueOf(leftOff);
-        messageOut[3] = String.valueOf(isLibrary);
+        messageOut[3] = username;
         
         // Prepare for the return
         String datasetList[][] = null;
@@ -438,22 +472,20 @@ public class Server {
     
     /** Get a sequence of versions for a given model or a given dataset.
      * @param id the id number of the model or the dataset.
-     * @param type a String specifying model or dataset.
-     * @param isLibrary a boolean specifying if it is a library call.
+     * @param type a String specifying model or dataset.     
      * @return a String[][] object that contains version number, author name,  
      *         revision time(date format) and log message of the versions.  
      *         The first index of the array is the version sequence in reversed order.  
      *         The second index designates the fields. 
      *         null if failed.         
      */        
-    public String[][] getVersions(long id, String type, boolean isLibrary)    
+    public String[][] getVersions(long id, String type)    
     {
         // Put secret and arguments in a String array
-        String[] messageOut = new String[4];
+        String[] messageOut = new String[3];
         messageOut[0] = secret;
         messageOut[1] = String.valueOf(id);
         messageOut[2] = type;
-        messageOut[3] = String.valueOf(isLibrary);        
         
         // Prepare for the return
         String[][] versionList = null;
@@ -593,6 +625,35 @@ public class Server {
                 JOptionPane.showMessageDialog(null, e, "Exception", JOptionPane.ERROR_MESSAGE);       
             }
         }
+    }
+    
+    /** Get group usernames.
+     * @return usernames of the group
+     */
+    public Vector getGoupUsers()    
+    {
+        // Put secret and arguments in a String array
+        String[] messageOut = new String[1];
+        messageOut[0] = secret;
+        
+        // Prepare for the return
+        Vector usernames = null;
+        
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.GetGroupUsers",
+                                          sessionId);
+            usernames = (Vector)network.talk(messageOut); 
+        }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
+                                          JOptionPane.ERROR_MESSAGE);
+        }               
+        return usernames;   
     }
     
     // Server host

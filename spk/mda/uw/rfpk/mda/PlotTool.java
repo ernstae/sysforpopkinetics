@@ -994,7 +994,7 @@ public class PlotTool extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 0);
         getContentPane().add(jCheckBox2, gridBagConstraints);
 
-        jCheckBox3.setText("Add a unit slope line passing the origin X = Y");
+        jCheckBox3.setText("Add a unit slope line passing the origin Y = X");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
@@ -1126,8 +1126,8 @@ public class PlotTool extends JFrame {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
         getContentPane().add(jCheckBox4, gridBagConstraints);
 
         xlComboBox.setMaximumRowCount(10);
@@ -1745,19 +1745,15 @@ public class PlotTool extends JFrame {
             int startRow = ((Integer)startIndex.get(selectedIndex[j])).intValue();
             int endRow = ((Integer)startIndex.get(selectedIndex[j] + 1)).intValue();
             int nRow = endRow - startRow;
-            dataX = new double[nCurve][nRow];   
+            dataX = new double[nCurve][nRow];
             dataY = new double[nCurve][nRow];
             for(int i = 0; i < nCurve; i++)
-            {
-                Vector tempX = new Vector();
-                Vector tempY = new Vector();
                 for(int k = 0; k < nRow; k++)
                 {
                     int l = startRow + k;
                     dataY[i][k] = dataAll[((Integer)selection.get(i)).intValue() - 1][l];    
                     dataX[i][k] = dataAll[xComboBox.getSelectedIndex() - 1][l];
                 }
-            }
             if(selectedMinX != minX || selectedMaxX != maxX || selectedMinY != minY || selectedMaxY != maxY)
             {
                 if(plottingRange(dataX, dataY) == 0)

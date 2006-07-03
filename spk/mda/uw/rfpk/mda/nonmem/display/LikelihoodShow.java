@@ -24,6 +24,7 @@ import uw.rfpk.mda.nonmem.Output;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
 import javax.help.*;
 
@@ -53,30 +54,39 @@ public class LikelihoodShow extends javax.swing.JDialog {
         dataX = new double[nAlpha][8][];
         dataY = new double[nAlpha][8][];
         double x2, dx, y1, y2, y3, s1, s2, s3;
+        int l = 0;
         for(int i = 0; i < nAlpha; i++)
         {
-          
-            x2 = Double.parseDouble(output.alpha[0][i]);
-            dx = Double.parseDouble(output.alpha[1][i]);
-            y1 = Double.parseDouble(output.likelihood[i][0]);
-            y2 = Double.parseDouble(output.likelihood[i][1]);
-            y3 = Double.parseDouble(output.likelihood[i][2]);
-            s1 = Double.parseDouble(output.likelihood_std[i][0]);
-            s2 = Double.parseDouble(output.likelihood_std[i][1]);
-            s3 = Double.parseDouble(output.likelihood_std[i][2]);            
-            plotData(x2 - dx, x2, x2 + dx, y1, y2, y3, s1, s2, s3, dataX[i], dataY[i]);
+            try
+            {
+                x2 = Double.parseDouble(output.alpha[0][i]);
+                dx = Double.parseDouble(output.alpha[1][i]);
+                y1 = Double.parseDouble(output.likelihood[i][0]);
+                y2 = Double.parseDouble(output.likelihood[i][1]);
+                y3 = Double.parseDouble(output.likelihood[i][2]);
+                s1 = Double.parseDouble(output.likelihood_std[i][0]);
+                s2 = Double.parseDouble(output.likelihood_std[i][1]);
+                s3 = Double.parseDouble(output.likelihood_std[i][2]);
+                plotData(x2 - dx, x2, x2 + dx, y1, y2, y3, s1, s2, s3, dataX[l], dataY[l]);
+                l++;
+                model.addElement("Likelihood versus alpha-" + (i + 1));
+            }        
+            catch(NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog(null, "Results for plotting alpha-" + (i + 1) + " are unavailable.");
+            }
         }
         maxY = dataY[0][0][0];
         minY = maxY;
-        for(int k = 0; k <dataY.length; k++)
+        for(int k = 0; k < l; k++)
             for(int i = 0; i < dataY[k].length; i++)
                 for(int j = 0; j < dataY[k][i].length; j++)
                 {
                     maxY = Math.max(maxY, dataY[k][i][j]);
                     minY = Math.min(minY, dataY[k][i][j]);
                 }
-        for(int i = 0; i < dataX.length; i++)
-            model.addElement("Likelihood versus alpha-" + (i + 1));
+//        for(int i = 0; i < dataX.length; i++)
+//            model.addElement("Likelihood versus alpha-" + (i + 1));
         name = new String[]{"evaluated at parameter estimate", "evaluated at two bias positions", "parabolic curve fitted likelihood", "estimated standard error bound"};
         symbol = new int[]{0, 1, 10, 12, 12, 11, 11, 11};
         color = new Color[]{Color.red, Color.blue, Color.black, Color.black, Color.black,
@@ -146,7 +156,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
             Plotter plotter = new Plotter(dataX[j],
                                           dataY[j],
                                           "Likelihood Versus Parameter",
-                                          "Fixed Effect Parameter alpha-" + (j + 1),
+                                          "Fixed Effect Parameter " + ((String)model.get(selectedIndex[i])).substring(18),
                                           "Negative Log Likelihood",
                                           name, symbol, color,
                                           false, false, false, false, false, true, true,
