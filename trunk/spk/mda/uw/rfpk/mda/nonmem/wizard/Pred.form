@@ -39,7 +39,7 @@
               <Color blue="cc" green="cc" red="cc" type="rgb"/>
             </Property>
             <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="Please type in code for your model equations."/>
+            <Property name="text" type="java.lang.String" value="Enter model equations.              "/>
             <Property name="focusable" type="boolean" value="false"/>
           </Properties>
           <Constraints>

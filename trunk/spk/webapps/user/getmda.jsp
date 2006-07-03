@@ -109,13 +109,14 @@ author: Jiaji Du
               "<jar href=\"JavaHelp.jar\"/>\n"+
               "</resources>\n"+
               "<application-desc main-class=\"uw.rfpk.mda.nonmem.MDA\">\n"+
-              "<argument>" + host + "</argument>\n"+    
+              "<argument>" + host + "</argument>\n"+
               "<argument>" + port + "</argument>\n"+
-              "<argument>" + sessionId + "</argument>\n"+    
-              "<argument>" + secret + "</argument>\n"+ 
-              "<argument>" + validUser.getTester() + "</argument>\n"+    
+              "<argument>" + sessionId + "</argument>\n"+
+              "<argument>" + secret + "</argument>\n"+
+              "<argument>" + validUser.getTester() + "</argument>\n"+
               "<argument>" + validUser.getDeveloper() + "</argument>\n"+
-              "<argument>" + validUser.getUserName() + "</argument>\n"+ 
+              "<argument>" + validUser.getUserName() + "</argument>\n"+
+              "<argument>" + validUser.getTeamId() + "</argument>\n"+
               "</application-desc>\n"+
               "</jnlp>\n"
              );

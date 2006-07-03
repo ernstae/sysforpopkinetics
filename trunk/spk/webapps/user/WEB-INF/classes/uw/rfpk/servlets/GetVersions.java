@@ -35,15 +35,12 @@ import uw.rfpk.rcs.Archive;
 /** This servlet sends bsck the version list of the model or datsset that was selected by 
  * the user from model list by the immediately previous call to the servlet UserModels
  * or from dataset list by the immediately previous call to the servlet UserDatasets.
- * The servlet receives a String array containing four String objects from the client.
+ * The servlet receives a String array containing three String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the id of the model or the dataset.  The third String object is archive type
- * that is either model or data.  The fourth String object is a flag that specified if 
- * this call is from a library patron.  The servlet first checks if this id belongs to the user
- * using ,database API method, getUser, to get the user_id and using database API method, 
- * getModel or getDataset, to get user_id, then comparing them.  If they are the same,
- * the servlet uses the archive from the previous database API method call and 
- * the RCS API methods to get the status of the versions including 
+ * that is either model or data.  The servlet first checks if the archive belongs to the 
+ * user in the group or to the library, then uses the archive from the previous database 
+ * API method call and the RCS API methods to get the status of the versions including 
  * version number, author name, revision time and log of the versions.  The servlet puts 
  * these data into a String[][] object. 
  * The servlet sends back two objects.  The first object is a String containing the error 
@@ -65,9 +62,9 @@ public class GetVersions extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long groupId = Long.parseLong(user.getTeamId());
         
         // Database connection
         Connection con = null;
@@ -102,8 +99,6 @@ public class GetVersions extends HttpServlet
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
             {                        
  	        long id = Long.parseLong(messageIn[1]);
-                if(messageIn[3].equals("true"))
-                    username = "librarian";
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -112,12 +107,6 @@ public class GetVersions extends HttpServlet
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));                
 
-                // Get user id
-                ResultSet userRS = Spkdb.getUser(con, username);
-                userStmt = userRS.getStatement();
-                userRS.next();
-                long userId = userRS.getLong("user_id");                
-                
                 // Get model or data archive
                 ResultSet archiveRS = null;
                 if(type.equals("model"))
@@ -127,8 +116,16 @@ public class GetVersions extends HttpServlet
                 archiveStmt = archiveRS.getStatement();
                 archiveRS.next();
                 
-                // Check if the job belongs to the user
-                if(archiveRS.getLong("user_id") == userId)
+                // Get archive's owner
+                long userId = archiveRS.getLong("user_id");
+                ResultSet userRS = Spkdb.getUserById(con, userId);
+                userStmt = userRS.getStatement();
+                userRS.next();
+                
+                // Check if the archive belongs to the user in the group or to the library
+                if((groupId != 0 && userRS.getLong("team_id") == groupId) || 
+                   (groupId == 0 && Long.parseLong(user.getUserId()) == userId) || 
+                   userRS.getString("username").equals("librarian"))
                 {                
       	            Blob blobArchive = archiveRS.getBlob("archive");
 	            long length = blobArchive.length(); 

@@ -58,9 +58,19 @@ public class MDAObject {
     public String[] getDataLabels() { return dataLabels; }
     
     /** Set data labels.
-     * @param v an vector containing the parsed data to generate SPK data.
+     * @param s a String array containing the data labels.
      */
     public void setDataLabels(String[] s) { dataLabels = s; }
+    
+    /** Get graphical model.
+     * @return a String containing the graphical model.
+     */
+    public String getGraphicalModel() { return graphicalModel; }
+    
+    /** Set graphical model.
+     * @param s a String containing the graphical model.
+     */
+    public void setGraphicalModel(String s) { graphicalModel = s; }
     
     // NONMEM control file records
     private Properties records = new Properties();
@@ -73,4 +83,7 @@ public class MDAObject {
     
     // Data labels
     private String[] dataLabels = null;
+    
+    // Graphical model
+    private String graphicalModel = null;
 }

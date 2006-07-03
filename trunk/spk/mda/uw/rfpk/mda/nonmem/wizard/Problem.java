@@ -95,6 +95,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
         add(jTextArea1, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
+        jTextPane1.setEditable(false);
         jTextPane1.setText("Enter the title of the problem into the following text area.  \nOnly the first 72 characters of the text are used. ");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();

@@ -27,6 +27,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import java.awt.Color;
+import java.util.Vector;
+import javax.swing.JOptionPane;
 
 /**
  * This class defines a step to create the $DES record.
@@ -38,7 +45,13 @@ public class Des extends javax.swing.JPanel implements WizardStep {
     private JComponent panel = this;
     private JWizardPane wizardPane = null;
     private boolean isValid = false;
+    private boolean isHighlighted = false;
     private MDAIterator iterator = null;
+    private DefaultHighlighter highlighter = new DefaultHighlighter();
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter1 =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(255,255,0));
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter2 =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(255,0,0));
     
     /** Creates new form Des.
      * @param iter a MDAIterator object to initialize the field iterator.     
@@ -194,10 +207,10 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                     String value = jTextArea1.getText();
                     if(value.equals(""))
                     {
-                       String initCode = "";
+                        String initCode = "";
                         for(int i = 0; i < iterator.getNComp(); i++)
-                        initCode += "DADT(" + (i + 1) + ")\n";
-                        jTextArea1.setText(initCode);
+                            initCode += "DADT(" + (i + 1) + ")\n";
+                        jTextArea1.setText(initCode.trim());
                     }
                 }
             }
@@ -211,12 +224,80 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String desCode = jTextArea1.getText().replaceAll("\r", "").toUpperCase();
+            String desCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            while(desCode.indexOf("\n\n") != -1)
+                desCode = desCode.replaceAll("\n\n", "\n");
+            String title = getStepTitle();
             if(!desCode.equals(""))
             {
                 String record = "$DES " + "\n" + desCode;
                 object.getRecords().setProperty("Des", record);
                 object.getSource().des = record.substring(5) + "\n";
+                // Eliminate comments
+                String code = Utility.eliminateComments(record); 
+                // Check NONMEM compatibility
+                Vector names = Utility.checkMathFunction(code, title);
+                // Check parenthesis mismatch
+                Vector lines = Utility.checkParenthesis(code, title);
+                // Check expression left hand side
+                Vector errors = Utility.checkLeftExpression(code, title);
+                // Highlight the incompatible function names and mismatched parenthesis lines
+                if(isHighlighted)
+                {                
+                    highlighter.removeAllHighlights();
+                    isHighlighted = false;
+                }
+                if(names.size() > 0 || lines.size() > 0 || errors.size() > 0)
+                {
+                    jTextArea1.setHighlighter(highlighter);
+                    Element paragraph = jTextArea1.getDocument().getDefaultRootElement();          
+                    String[] text = jTextArea1.getText().split("\n");
+                    try
+                    {
+                        for(int i = 0; i < text.length; i++)
+                        {
+                            for(int j = 0; j < names.size(); j++)
+                            {
+                                int comment = text[i].indexOf(";");
+                                if(comment != 0)
+                                {
+                                    String line = text[i];
+                                    if(comment > 0)
+                                        line = text[i].substring(0, comment);
+                                    int pos = 0;
+                                    int offset = paragraph.getElement(i).getStartOffset();
+                                    String name = (String)names.get(j);
+                                    while ((pos = text[i].indexOf(name, pos)) >= 0) 
+                                    {                
+                                        highlighter.addHighlight(pos + offset, pos + offset + name.length(), highlight_painter1);
+                                        pos += name.length();
+                                        isHighlighted = true;
+                                    }
+                                }
+                            }
+                        }
+                        for(int i = 0; i < lines.size(); i++)
+                        {
+                            int n = ((Integer)lines.get(i)).intValue(); 
+                            highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                                     paragraph.getElement(n).getEndOffset() - 1,
+                                                     highlight_painter2); 
+                            isHighlighted = true;                    
+                        }
+                        for(int i = 0; i < errors.size(); i++)
+                        {
+                            int n = ((Integer)errors.get(i)).intValue(); 
+                            highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                                     paragraph.getElement(n).getEndOffset() - 1,
+                                                     highlight_painter2); 
+                            isHighlighted = true;                    
+                        }
+                    }
+                    catch(BadLocationException e) 
+                    {
+                        JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+                    }                    
+                }
             }
 	}
 

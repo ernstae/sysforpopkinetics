@@ -100,7 +100,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel1.setText("Enter the data file name (including the full path) or browse.");
+        jLabel1.setText("Enter data file name (including full path) or browse.");
         jLabel1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -139,7 +139,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         add(jLabel2, gridBagConstraints);
 
         jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel3.setText("Click \"Read File\" button to load data from the file.");
+        jLabel3.setText("Click \"Read File\" button to load data file.");
         jLabel3.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -148,7 +148,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 0);
         add(jLabel3, gridBagConstraints);
 
-        jRadioButton1.setText("Use the data file already loaded from the parent job.");
+        jRadioButton1.setText("Use data file previously loaded from parent job.");
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.setEnabled(false);
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -166,7 +166,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton1, gridBagConstraints);
 
         jRadioButton2.setSelected(true);
-        jRadioButton2.setText("Load in a data file from the local file system");
+        jRadioButton2.setText("Load in data file from local file system");
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -182,7 +182,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(6, 8, 0, 0);
         add(jRadioButton2, gridBagConstraints);
 
-        jRadioButton3.setText("Load in a dataset from the My Datasets");
+        jRadioButton3.setText("Load in dataset from My Datasets");
         buttonGroup1.add(jRadioButton3);
         jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -198,7 +198,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(6, 8, 0, 0);
         add(jRadioButton3, gridBagConstraints);
 
-        jRadioButton4.setText("Load in a dataset from the Dataset Library");
+        jRadioButton4.setText("Load in dataset from Dataset Library");
         buttonGroup1.add(jRadioButton4);
         jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -215,7 +215,6 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         add(jRadioButton4, gridBagConstraints);
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel4.setText("Enter file name for the dataset.  You may save the file locally.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -225,7 +224,6 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         add(jLabel4, gridBagConstraints);
 
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel5.setText("Enter file name for the dataset.  You may save the file locally.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
@@ -283,7 +281,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         add(jButton5, gridBagConstraints);
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel6.setText("This is the data file name.  You may save the file locally.");
+        jLabel6.setText("Data file name:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -391,7 +389,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         iterator.setIsDataXML(false);
         filename = iterator.getDatasetName(1);
         jTextField3.setText(filename);
-        jLabel2.setText("There are " + nDataCol + " columns in the data file.");
+        jLabel2.setText("There are " + nDataCol + " columns in data file.");
         selectedRadioButton = 2;
         isValid = true;
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -491,6 +489,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         String path = jTextField1.getText().trim();
         Vector data = new Vector();
         String[] labels = Utility.parseDataFile(path, data, iterator.getIsInd());
+        if(labels == null) return;
         int nDataCol = labels.length;
         iterator.setIsNewData(true);
         if(nDataCol <= 0)

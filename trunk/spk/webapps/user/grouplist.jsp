@@ -36,7 +36,7 @@ author: Jiaji Du
 
 <html>
   <head>
-    <title>All User List</title>
+    <title>User Group List</title>
   </head>
   <body bgcolor="white">
 
@@ -44,8 +44,8 @@ author: Jiaji Du
     <c:set var="noOfRows" value="${initParam.maxNum}" />
 
     <%-- Get users --%>
-    <sql:query var="userList"
-      sql="SELECT * FROM user ORDER BY surname" 
+    <sql:query var="groupList"
+      sql="SELECT * FROM team ORDER BY team_id" 
       startRow="${param.start}" maxRows="${noOfRows}"
     />
     <table align=left border=0 width=602>
@@ -67,51 +67,19 @@ author: Jiaji Du
 	    <h3>All User List</h3>
 	    <p> 
           <c:choose>
-            <c:when test="${userList.rowCount == 0}">
-              No one seems to use it anymore ...
+            <c:when test="${groupList.rowCount == 0}">
+              No one seems to be in a group anymore ...
             </c:when>
             <c:otherwise>
-              The following users are found:
+              The following groups are found:
             <p>
             <table border="1">
-              <th>Usr ID</th>
-              <th>Group ID</th>
-              <th>User Name</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Company</th>
-              <th>Country</th>
-              <th>State</th>
-              <th>Email</th>
-              <th>Tester</th>
-              <th>Developer</th>
-              <c:forEach items="${userList.rows}" var="row">
+              <th>Group ID</th>  
+              <th>Group Name</th>
+              <c:forEach items="${groupList.rows}" var="row">
               <tr>
-                <td><a href=updateuser.jsp?userId=${fn:escapeXml(row.user_id)}>${fn:escapeXml(row.user_id)}</a></td>
-                <td>${fn:escapeXml(row.team_id)}</td>
-                <td>${fn:escapeXml(row.username)}</td>
-                <td>${fn:escapeXml(row.first_name)}</td>
-                <td>${fn:escapeXml(row.surname)}</td>
-                <td>${fn:escapeXml(row.company)}</td>
-                <td>${fn:escapeXml(row.country)}</td>
-                <td>${fn:escapeXml(row.state)}</td>
-                <td>${fn:escapeXml(row.email)}</td>
-                <c:choose>
-                  <c:when test="${row.test == 1}">
-                    <td>Yes</td>
-                  </c:when>
-                  <c:otherwise>
-                    <td>No</td>
-                  </c:otherwise>
-                </c:choose>
-                <c:choose>
-                  <c:when test="${row.dev == 1}">
-                    <td>Yes</td>
-                  </c:when>
-                  <c:otherwise>
-                    <td>No</td>
-                  </c:otherwise>
-                </c:choose>
+                <td><a href=groupinfo.jsp?groupId=${fn:escapeXml(row.team_id)}&groupName=${fn:escapeXml(row.team_name)}>${fn:escapeXml(row.team_id)}</a></td>
+                <td>${fn:escapeXml(row.team_name)}</td>
               </tr>
               </c:forEach>
             </table>
@@ -120,7 +88,7 @@ author: Jiaji Du
           <p>
           <c:choose>
             <c:when test="${param.start > 0}">
-              <a href="userlistupdate.jsp?start=${param.start - noOfRows}">
+              <a href="userlistenter.jsp?start=${param.start - noOfRows}">
                 Previous Page</a>
             </c:when>
             <c:otherwise>
@@ -129,7 +97,7 @@ author: Jiaji Du
           </c:choose>
           <c:choose>
             <c:when test="${userList.limitedByMaxRows}">
-              <a href="userlistupdate.jsp?start=${param.start + noOfRows}">
+              <a href="userlistenter.jsp?start=${param.start + noOfRows}">
                 Next Page</a>
             </c:when>
           <c:otherwise>

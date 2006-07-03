@@ -60,13 +60,12 @@ public class GetLastVersion extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long userId = Long.parseLong(user.getUserId());
         
         // Database connection
         Connection con = null;
-        Statement userStmt = null;
         Statement archiveStmt = null;
         
         // Prepare output message
@@ -97,7 +96,7 @@ public class GetLastVersion extends HttpServlet
             {                        
  	        long id = Long.parseLong(messageIn[1]);
                 String type = messageIn[2];
-
+                
                 // Connect to the database
                 ServletContext context = getServletContext();
                 con = Spkdb.connect(context.getInitParameter("database_name"),
@@ -105,12 +104,6 @@ public class GetLastVersion extends HttpServlet
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));                
 
-                // Get user id
-                ResultSet userRS = Spkdb.getUser(con, username);
-                userStmt = userRS.getStatement();
-                userRS.next();
-                long userId = userRS.getLong("user_id");                
-                
                 // Get model or data archive
                 ResultSet archiveRS = null;
                 if(type.equals("model"))
@@ -120,8 +113,8 @@ public class GetLastVersion extends HttpServlet
                 archiveStmt = archiveRS.getStatement();
                 archiveRS.next();
                 
-                // Check if the job belongs to the user
-                if(archiveRS.getLong("user_id") == userId)
+                // Check if the archive belongs to the user
+                if((archiveRS.getLong("user_id") == userId))
                 {                
       	            Blob blobArchive = archiveRS.getBlob("archive");
 	            long length = blobArchive.length(); 
@@ -160,7 +153,6 @@ public class GetLastVersion extends HttpServlet
         {
             try
             {
-                if(userStmt != null) userStmt.close();
                 if(archiveStmt != null) archiveStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }

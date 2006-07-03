@@ -85,7 +85,7 @@
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="Enter initial estimates and/or bounds for the fixed effects means.  &#xa;If FIXED is selected, only the initial estimate is required.  If you use &#xa;exponential expression, be aware that your control file may be &#xa;uncompatible with NONMEM."/>
+        <Property name="text" type="java.lang.String" value="Enter initial estimates and bounds (except that FIXED is selected) &#xa;- To get default bounds, press ENTER after entering initial estimate&#xa;- Bounds influence stopping criteria (INF bounds not recommended)&#xa;- Note: exponential expression may not be NONMEM compatible"/>
         <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Constraints>

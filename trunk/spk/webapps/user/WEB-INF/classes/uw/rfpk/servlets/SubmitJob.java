@@ -63,9 +63,9 @@ public class SubmitJob extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)  
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get the user ID of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long userId = Long.parseLong(user.getUserId());
    
         // Database connection
         Connection con = null;
@@ -78,7 +78,7 @@ public class SubmitJob extends HttpServlet
         String messages = "";
 
         // Get the input stream for reading data from the client
-        ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
+        ObjectInputStream in = new ObjectInputStream(req.getInputStream());
         
         // Set the content type we are sending
         resp.setContentType("application/octet-stream");
@@ -95,34 +95,34 @@ public class SubmitJob extends HttpServlet
         try
         {
             // Read the data from the client 
-            String[] messageIn = (String[])in.readObject();            
+            String[] messageIn = (String[])in.readObject();
             String secret = messageIn[0];
-            if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
-            {              
+            if(secret.equals((String)req.getSession().getAttribute("SECRET")))
+            {
  	        String source = messageIn[1];
  	        String dataset = messageIn[2];
  	        String modelArchive = messageIn[3];
- 	        String jobAbstract = messageIn[4];               
+ 	        String jobAbstract = messageIn[4];
                 String modelDescription = messageIn[5];
                 String modelLog = messageIn[6]; 
                 String modelName = messageIn[7];
-                String modelVersion = messageIn[8];                
+                String modelVersion = messageIn[8];
                 long modelId = Long.parseLong(messageIn[9]);
                 String isNewModel = messageIn[10];
                 String isNewModelVersion = messageIn[11];
                 String datasetDescription = messageIn[12];
-                String datasetLog = messageIn[13]; 
-                String datasetName = messageIn[14];                
-                String datasetVersion = messageIn[15]; 
+                String datasetLog = messageIn[13];
+                String datasetName = messageIn[14];
+                String datasetVersion = messageIn[15];
                 long datasetId = Long.parseLong(messageIn[16]);
                 String isNewDataset = messageIn[17];
                 String isNewDatasetVersion = messageIn[18];
-                String jobMethodCode = messageIn[19];                
+                String jobMethodCode = messageIn[19];
                 long jobParent = Long.parseLong(messageIn[20]);
                 String isWarmStart = messageIn[21];
                 String author = messageIn[22];
                 String isMailNotice = messageIn[23];
-                String perlDir = getServletContext().getInitParameter("perlDir");               
+                String perlDir = getServletContext().getInitParameter("perlDir");
                 if(modelLog != null && modelLog.equals("")) modelLog = "None";
                 if(datasetLog != null && datasetLog.equals("")) datasetLog = "None";
                                 
@@ -132,13 +132,7 @@ public class SubmitJob extends HttpServlet
                                     context.getInitParameter("database_host"),
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
-     
-                // Get user id
-                ResultSet userRS = Spkdb.getUser(con, username);
-                userStmt = userRS.getStatement();
-                userRS.next();
-                long userId = userRS.getLong("user_id");  
-
+ 
                 // Get model archive information
                 if(isNewModel.equals("true"))
                 {
@@ -151,37 +145,46 @@ public class SubmitJob extends HttpServlet
                                              userId,
                                              modelName,
                                              modelDescription,
-                                             Archive.newArchive(modelArchive, perlDir, "/tmp/", 
+                                             Archive.newArchive(modelArchive, perlDir, "/tmp/",
                                                                 modelLog, author, secret));
 //                                             arch.toString("\n"));
                     messages += "A new model, " + modelName +
                                 ", has been added to the database.\n";
-                    modelVersion = "1.1";                    
+                    modelVersion = "1.1";
                 }
                 else
-                {                            
-                    if(isNewModelVersion.equals("true"))   
-                    {                                           
+                {
+                    if(isNewModelVersion.equals("true"))
+                    {
                         ResultSet modelRS = Spkdb.getModel(con, modelId);
                         modelStmt = modelRS.getStatement();
-                        modelRS.next();                         
-                        Blob blobArchive = modelRS.getBlob("archive");                        
-                        long length = blobArchive.length();                         
-                        String strAr = new String(blobArchive.getBytes(1L, (int)length));                        
-//                        Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));                       
-//                        arch.addRevision(modelArchive.split("\n"), modelLog);                        
+                        modelRS.next();
+                        Blob blobArchive = modelRS.getBlob("archive");
+                        long length = blobArchive.length();
+                        String strAr = new String(blobArchive.getBytes(1L, (int)length));
+//                        Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
+//                        arch.addRevision(modelArchive.split("\n"), modelLog);
 //                        arch.findNode(arch.getRevisionVersion()).setAuthor(author);
-                        String archive = Archive.addRevision(strAr, modelArchive, perlDir, 
+                        String archive = Archive.addRevision(strAr, modelArchive, perlDir,
                                                              "/tmp/", modelLog, author, secret);
-                        Spkdb.updateModel(con, 
+                        Spkdb.updateModel(con,
                                           modelId, 
                                           new String[]{"archive", "abstract"},
-                                          new String[]{archive, modelDescription});                                                              
-//                                          new String[]{arch.toString("\n"), modelDescription});                                           
+                                          new String[]{archive, modelDescription});
+//                                          new String[]{arch.toString("\n"), modelDescription});
                         messages += "The model, " + modelName +
-                                    ", in the database has been updated.\n";                   
+                                    ", in the database has been updated.\n";
                         modelVersion = "1." + Archive.getNumRevision(archive);
-                    }              
+                    }
+                    else
+                    {
+                        Spkdb.updateModel(con, 
+                                          modelId, 
+                                          new String[]{"abstract"},
+                                          new String[]{modelDescription});
+                        messages += "The model, " + modelName +
+                                    ", in the database has been updated.\n";
+                    }
                 }
 
                 // Get data archive information
@@ -192,15 +195,15 @@ public class SubmitJob extends HttpServlet
 //                    node.setAuthor(author);
 //                    node.setLog(datasetLog);
                     which = "dataset";
-                    datasetId = Spkdb.newDataset(con, 
-                                                 userId, 
-                                                 datasetName, 
+                    datasetId = Spkdb.newDataset(con,
+                                                 userId,
+                                                 datasetName,
                                                  datasetDescription,
                                                  Archive.newArchive(dataset, perlDir, "/tmp/", 
-                                                                    datasetLog, author, secret));                    
+                                                                    datasetLog, author, secret));
 //                                                 arch.toString("\n"));
                     messages += "A new dataset, " + datasetName +
-                                ", has been added to the database.\n";  
+                                ", has been added to the database.\n";
                     datasetVersion = "1.1";
                 }
                 else
@@ -212,7 +215,7 @@ public class SubmitJob extends HttpServlet
                         datasetRS.next();
                         Blob blobArchive = datasetRS.getBlob("archive");
                         long length = blobArchive.length();
-                        String strAr = new String(blobArchive.getBytes(1L, (int)length));                        
+                        String strAr = new String(blobArchive.getBytes(1L, (int)length));
 //                        Archive arch = new Archive("", new ByteArrayInputStream(strAr.getBytes()));
 //                        arch.addRevision(dataset.split("\n"), datasetLog);
 //                        arch.findNode(arch.getRevisionVersion()).setAuthor(author);
@@ -222,11 +225,20 @@ public class SubmitJob extends HttpServlet
                                             datasetId, 
                                             new String[]{"archive", "abstract"},
                                             new String[]{archive, datasetDescription});
-//                                            new String[]{arch.toString("\n"), datasetDescription});  
+//                                            new String[]{arch.toString("\n"), datasetDescription});
                         messages += "The dataset, " + datasetName +
-                                    ", in the database has been updated.\n";                      
+                                    ", in the database has been updated.\n";
 //                        datasetVersion = String.valueOf(arch.getRevisionVersion());
                         datasetVersion = "1." + Archive.getNumRevision(archive);
+                    }
+                    else
+                    {
+                        Spkdb.updateDataset(con, 
+                                            datasetId, 
+                                            new String[]{"abstract"},
+                                            new String[]{datasetDescription});
+                        messages += "The dataset, " + datasetName +
+                                    ", in the database has been updated.\n";
                     }
                 }            
 
@@ -242,8 +254,7 @@ public class SubmitJob extends HttpServlet
                                               modelVersion, 
                                               source,
                                               jobMethodCode,
-                                              author,
-                                              jobParent,                                 
+                                              jobParent,
                                               isWarmStart.equals("true"),
                                               isMailNotice.equals("true"));
                     
@@ -260,7 +271,7 @@ public class SubmitJob extends HttpServlet
                         writer.close();
                         socket.close();
                         messages += "A new job, " + jobAbstract +
-                                    ",\n has been added to the database and the compiler queue.";                    
+                                    ",\n has been added to the database and the compiler queue.";
                     }
                     else
                     {
@@ -271,7 +282,7 @@ public class SubmitJob extends HttpServlet
             else
             {
                 // Write the outgoing messages
-                messageOut = "Authentication error.";               
+                messageOut = "Authentication error.";
             } 
         }
         catch(SQLException e)
@@ -289,16 +300,16 @@ public class SubmitJob extends HttpServlet
         }        
         catch(SpkdbException e)
         {
-            messageOut = e.getMessage();         
+            messageOut = e.getMessage();
         } 
         catch(InterruptedException e)
         {
-            messageOut = e.getMessage();         
+            messageOut = e.getMessage();
         }
         catch(FileNotFoundException e)
         {
             messageOut = e.getMessage();
-        }                
+        }
         catch(ClassNotFoundException e)
         {
             messageOut = e.getMessage();
@@ -316,9 +327,9 @@ public class SubmitJob extends HttpServlet
         }
         
         // Write the data to our internal buffer
-        out.writeObject(messageOut);  
+        out.writeObject(messageOut);
         if(messageOut.equals(""))
-            out.writeObject(messages);        
+            out.writeObject(messages);
       
         // Flush the contents of the output stream to the byte array
         out.flush();

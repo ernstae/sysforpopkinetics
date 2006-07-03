@@ -24,6 +24,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import java.util.Vector;
 import java.util.regex.*;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.io.*;
 import javax.jnlp.*;
@@ -101,7 +102,7 @@ public class Utility {
         {
             n = matcher.group(1);
             regExp = "\\bTHETA\\s*\\(?" + n + "?[\\s|\\)|+|-|*|/|\n|$]";
-            text = text.replaceAll(regExp, "THETA(" + n + ")+ETA(" + n + ")");
+            text = text.replaceAll(regExp, "(THETA(" + n + ")+ETA(" + n + "))");
         }
         return text;
     }
@@ -364,10 +365,10 @@ public class Utility {
      */    
     public static boolean isPosIntNumber(String s)
     {
-        int i;
+        long i;
         try
         {
-            i = Integer.parseInt(s);   
+            i = Long.parseLong(s);   
         }
         catch(NumberFormatException e)
         {
@@ -857,7 +858,7 @@ public class Utility {
         return names;
     }
     
-    /** check if parenthesis are mismatched.
+    /** check if parentheses are mismatched.
      * @param text the program to be checked.
      * @param step the step title.
      * @return a Vector containing the line numbers of the lines with mismatched parenthesis.
@@ -894,6 +895,42 @@ public class Utility {
             }
         }
         return mismatches;
+    }
+    
+    /** check if any improper parentheses appear on the left hand side of an expression.
+     * @param text the program to be checked.
+     * @param step the step title.
+     * @return a Vector containing the line numbers of the lines with improper parenthesis.
+     */
+    public static Vector checkLeftExpression(String text, String step)
+    {
+        if(step.equals("Model Equations") || step.equals("Model Parameters"))
+            text = text.replaceAll("\\bP\\(\\d+\\)", "");
+        if(step.equals("Differential Equation Structure"))
+            text = text.replaceAll("\\bDADT\\(\\d+\\)", "");
+        String[] lines = text.split("\n");
+        Vector errors = new Vector();
+        String regExp = "\\b\\w+\\(\\d+\\)\\s*=";
+        Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+        int k;
+        for(int i = 0; i < lines.length; i++)
+        {
+            k = lines[i].indexOf("=");
+            if(k != -1)
+            {
+                String left = lines[i].substring(0, k + 1);
+                if(pattern.matcher(left).find())               
+                {
+                    errors.add(new Integer(i));
+                    JOptionPane.showMessageDialog(null, "The array element on the left hand side of\nline " + 
+                                                  (i + 1) + " in step '" + step + "' is invalid." + 
+                                                  "\nPlease click the 'Back' button and correct it.", 
+                                                  "Input Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+        return errors;
     }
     
     /** Generate a dataset by replacing DV by simulated data from parent job's report.
@@ -961,6 +998,8 @@ public class Utility {
     private static String initTheta(String original, String[] replacement)
     {
         String thetas = "";
+        while(original.indexOf("\n\n") != -1)
+            original = original.replaceAll("\n\n", "\n");
         String[] theta = original.split("\n");
         for(int i = 0; i < theta.length; i++)
         {
@@ -981,14 +1020,14 @@ public class Utility {
             int dimension = replacement.length;
             if(original.startsWith("BLOCK"))
             {
-                cov = "BLOCK(" + dimension + ") ";
+                cov = "BLOCK(" + dimension + ")";
                 for(int i = 0; i < dimension; i++)
                     for(int j = 1; j < i + 2; j++)
                         cov += " " + replacement[i][j];
             }
             else
             {
-                cov = "DIAGONAL(" + dimension + ") ";
+                cov = "DIAGONAL(" + dimension + ")";
                 for(int i = 0; i < dimension; i++)
                     cov += " " + replacement[i][i + 1];
             }
@@ -1011,14 +1050,95 @@ public class Utility {
         return rowList;
     }
     
+    /** Get selected data items from a data block using comma as the delimiter.
+     * @param dataLine a block of data with the data labels in the first row.
+     * @param selectedLabels data labels of selected data items.
+     * @return the selected data items.
+     */ 
+    public static String[][] getSelectedDataItems(String dataLine, String[] selectedLabels)
+    {
+        String[] rows = dataLine.trim().split("\n");
+        int nRows = rows.length - 1;
+        String[] allLabels = rows[0].split(",");
+        int nColumns = allLabels.length;
+        ArrayList dataItems = new ArrayList(nColumns);
+        for(int i = 0; i < nColumns; i++)
+            dataItems.add(allLabels[i]);
+        int nItems = selectedLabels.length;
+        String[][] data = new String[nRows][nItems];
+        String[] row;
+        for(int i = 0; i < nRows; i++)
+        {
+            row = rows[i + 1].split(",");
+            for(int j = 0; j < nItems; j++)
+                data[i][j] = row[dataItems.indexOf(selectedLabels[j])];
+        }
+        return data;
+    }
+    
     private static int nOmega = 0;
     private static int nSigma = 0;
+    
+    /** Diagonalize covariance matrix omega in sourece.
+     * @param source original source XML.
+     * @return modified source XML
+     */
+    public static String diagonalizeOmegaSource(String source)
+    {
+        int index1 = source.indexOf("<omega");
+        int index2 = source.indexOf("</omega>");
+        String front = source.substring(0, index1);
+        String omega = source.substring(index1, index2);
+        String back = source.substring(index2);
+        omega = omega.replaceFirst("block", "diagonal");
+        String[] rows = omega.split("\n");
+        omega = rows[0] + "\n               <in>\n";
+        int j = 2;
+        for(int i = 2; i < rows.length - 1; i += j++)
+            omega += "                  " + rows[i] + "\n";
+        omega += "               </in>\n            ";
+        return front + omega + back;   
+    }
+    
+    /** Diagonalize covariance matrix omega in model.
+     * @param model original model.
+     * @return modified model
+     */
+    public static String diagonalizeOmegaModel(String model)
+    {
+        int index1 = model.indexOf("$OMEGA");
+        int index2 = model.indexOf("\n", index1);
+        String front = model.substring(0, index1);
+        String omega = model.substring(index1, index2);
+        String back = model.substring(index2);
+        omega = omega.replaceFirst("BLOCK", "DIAGONAL");
+        String[] tokens = omega.split(" ");
+        omega = "$OMEGA " + tokens[1];
+        int j = 2;
+        for(int i = 2; i < tokens.length; i += j++)
+            omega += " " + tokens[i];
+        return front + omega + back;   
+    }
     
     /** Test column major to row major converting function.
      * @param args argument not used.
      */    
     public static void main(String[] args)
-    {              
+    {
+        String model = "FRONT\n$OMEGA BLOCK(4) 1 2 3 4 5 6 7 8 9 10\nBACK";
+        System.out.println(diagonalizeOmegaModel(model));
+        
+        String source = "front\n<omega struct=\"block\">\n<in>\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n</in>\n</omega>\nback";
+        System.out.println(diagonalizeOmegaSource(source));
+        
+//        String dataLine = "A,B,C,D\n11,12,13,14\n21,22,23,24\n31,32,33,34\n";
+//        String[] selectedLabels = {"B", "A"};
+//        String[][] data = getSelectedDataItems(dataLine,  selectedLabels);
+//        for(int i = 0; i < data.length; i++)
+//            System.out.println(data[i][0] + " " + data[i][1]);
+        
+//        String text = " IF(akhj(7)) a2(1) =";
+//        checkLeftExpression(text, "");
 //        String[] cov = {"block", "4", "no", "11", 
 //                                            "0", "22", 
 //                                            "0", "0", "33",
@@ -1027,17 +1147,17 @@ public class Utility {
 //        for(int i = 0; i < dia.length; i++)
 //            System.out.println(dia[i]);
         
-        String[] cov = {"", "4", "", "11", 
-                                     "21", "22", 
-                                     "31", "32", "33",
-                                     "41", "0", "43", "44"};
-        int bandwidth = bandWidth(cov);
-        System.out.println(bandwidth);
-        bandedMatrix(cov, bandwidth);
-        System.out.println(cov[3]);
-        System.out.println(cov[4] + " " + cov[5]);
-        System.out.println(cov[6] + " " + cov[7] + " " + cov[8]);
-        System.out.println(cov[9] + " " + cov[10] + " " + cov[11] + " " + cov[12]);
+//        String[] cov = {"", "4", "", "11", 
+//                                     "21", "22", 
+//                                     "31", "32", "33",
+//                                     "41", "0", "43", "44"};
+//        int bandwidth = bandWidth(cov);
+//        System.out.println(bandwidth);
+//        bandedMatrix(cov, bandwidth);
+//        System.out.println(cov[3]);
+//        System.out.println(cov[4] + " " + cov[5]);
+//        System.out.println(cov[6] + " " + cov[7] + " " + cov[8]);
+//        System.out.println(cov[9] + " " + cov[10] + " " + cov[11] + " " + cov[12]);
         
 //        String text = "a<omega ><in>\n<value fixed=\"no\">1</value>\n<value fixed=\"no\">2</value>\n<value fixed=\"no\">3</value></in></omega>b";
 //        System.out.println(getOmegaValues(text));

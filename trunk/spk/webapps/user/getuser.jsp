@@ -71,7 +71,8 @@ author: Jiaji Du
   <c:set target="${validUser}" property="state" value="${dbValues.state}" />
   <c:set target="${validUser}" property="email" value="${dbValues.email}" />
   <c:set target="${validUser}" property="tester" value="${dbValues.test}" />
-  <c:set target="${validUser}" property="developer" value="${dbValues.dev}" />  
+  <c:set target="${validUser}" property="developer" value="${dbValues.dev}" />
+  <c:set target="${validUser}" property="teamId" value="${dbValues.team_id}" />
 </jsp:useBean>
  
 <c:choose>

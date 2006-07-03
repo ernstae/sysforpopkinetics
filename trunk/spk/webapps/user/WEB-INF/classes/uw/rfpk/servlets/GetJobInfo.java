@@ -29,12 +29,10 @@ import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
 
 /** This servlet sends back job information including model, dataset, method and parent.
- * The servlet receives a String array containing three String objects from the client.
+ * The servlet receives a String array containing thwo String objects from the client.
  * The first String object is the secret code to identify the client.  The second String 
- * is the job_id.  The third String object is a flag that specified if this call is from 
- * a library patron.  The servlet first checks if this job belongs to the user using database 
- * API method, getUser, to get the user_id and using database API method, getJob, to get 
- * user_id, then comparing them.  If they are the same, the servlet calls database 
+ * is the job_id. The servlet first checks if the job belongs to the user in the group or 
+ * to the library, then calls database 
  * API method, getJob, to get abstract, state_code, end_code, model_id, model_version, dataset_id, dataset_version,
  * method_code and parent. Then, the model_id is passed in the database API method getModel
  * to get model_name and model_abstract; and the dataset_id is passed in the database API method getDataset to 
@@ -60,9 +58,9 @@ public class GetJobInfo extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long groupId = Long.parseLong(user.getTeamId());
         
         // Database connection
         Connection con = null;
@@ -95,35 +93,32 @@ public class GetJobInfo extends HttpServlet
             String[] messageIn = (String[])in.readObject();
             String secret = messageIn[0];
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))               
-            {           
-                long jobId = Long.parseLong(messageIn[1]);
-                if(messageIn[2].equals("true"))
-                    username = "librarian";
-                
+            {                     
                 // Connect to the database
                 ServletContext context = getServletContext();
                 con = Spkdb.connect(context.getInitParameter("database_name"),
                                     context.getInitParameter("database_host"),
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password")); 
-                
-                // Get user id
-                ResultSet userRS = Spkdb.getUser(con, username);
-                userStmt = userRS.getStatement();
-                userRS.next();
-                long userId = userRS.getLong("user_id");
-                
+         
                 // Get job for the job_id
-                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                ResultSet jobRS = Spkdb.getJob(con, Long.parseLong(messageIn[1]));
                 jobStmt = jobRS.getStatement();
                 jobRS.next();
-
-                 // Check if the job belongs to the user
-                if(jobRS.getLong("user_id") == userId)
+                
+                // Get job's owner
+                long userId = jobRS.getLong("user_id");
+                ResultSet userRS = Spkdb.getUserById(con, userId);
+                userStmt = userRS.getStatement();
+                userRS.next();
+                
+                // Check if the job belongs to the user in the group or to the library
+                if((groupId != 0 && userRS.getLong("team_id") == groupId) || 
+                   (groupId == 0 && Long.parseLong(user.getUserId()) == userId) || 
+                   userRS.getString("username").equals("librarian"))
                 {            
                     // Get job information
                     String jobAbstract = jobRS.getString("abstract");
-                    String jobOwner = jobRS.getString("owner");
                     long parent = jobRS.getLong("parent");
                     String methodCode = jobRS.getString("method_code");
                     String endCode = "";
@@ -147,7 +142,6 @@ public class GetJobInfo extends HttpServlet
              
                     // Put returning objects into the Properties
                     jobInfo.setProperty("jobAbstract", jobAbstract);
-                    jobInfo.setProperty("jobOwner", jobOwner);
                     jobInfo.setProperty("modelId", String.valueOf(modelId));
                     jobInfo.setProperty("modelName", modelName);
                     jobInfo.setProperty("modelAbstract", modelAbstract);
@@ -160,6 +154,7 @@ public class GetJobInfo extends HttpServlet
                     jobInfo.setProperty("methodCode", methodCode);
                     jobInfo.setProperty("stateCode", stateCode);
                     jobInfo.setProperty("endCode", endCode);
+                    jobInfo.setProperty("username", userRS.getString("username"));
                 }
                 else
                 {

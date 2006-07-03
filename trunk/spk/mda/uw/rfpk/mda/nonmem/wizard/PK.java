@@ -182,13 +182,12 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 {
                     text = text.substring(4, text.length() - 1);
                     
-                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
-                       iterator.getReload().getProperty("METHOD") != null &&
-                       iterator.initTwoStage.contains("pk"))
-                    {
-                        text = Utility.addEtaToTheta(text);
-                        iterator.initTwoStage.remove("pk");
-                    }
+//                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
+//                       iterator.initTwoStage.contains("pk"))
+//                    {
+//                        text = Utility.addEtaToTheta(text);
+//                        iterator.initTwoStage.remove("pk");
+//                    }
                                        
                     iterator.getReload().remove("PK");
                     jTextArea1.setText(text);
@@ -230,7 +229,9 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();        
-            String record = jTextArea1.getText().replaceAll("\r", "").toUpperCase();
+            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            while(record.indexOf("\n\n") != -1)
+                record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
             if(!record.equals(""))
             {
@@ -259,14 +260,16 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
-                Vector lines = Utility.checkParenthesis(record, title);
+                Vector lines = Utility.checkParenthesis(code, title);
+                // Check expression left hand side
+                Vector errors = Utility.checkLeftExpression(code, title);
                 // Highlight the incompatible function names and mismatched parenthesis lines
                 if(isHighlighted)
                 {                
                     highlighter.removeAllHighlights();
                     isHighlighted = false;
                 }
-                if(names.size() > 0 || lines.size() > 0)
+                if(names.size() > 0 || lines.size() > 0 || errors.size() > 0)
                 {
                     jTextArea1.setHighlighter(highlighter);
                     Element paragraph = jTextArea1.getDocument().getDefaultRootElement();          
@@ -298,6 +301,14 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                         for(int i = 0; i < lines.size(); i++)
                         {
                             int n = ((Integer)lines.get(i)).intValue(); 
+                            highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                                     paragraph.getElement(n).getEndOffset() - 1,
+                                                     highlight_painter2); 
+                            isHighlighted = true;                    
+                        }
+                        for(int i = 0; i < errors.size(); i++)
+                        {
+                            int n = ((Integer)errors.get(i)).intValue(); 
                             highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
                                                      paragraph.getElement(n).getEndOffset() - 1,
                                                      highlight_painter2); 

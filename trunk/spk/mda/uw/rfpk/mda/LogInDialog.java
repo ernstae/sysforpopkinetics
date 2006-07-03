@@ -284,7 +284,7 @@ public class LogInDialog extends javax.swing.JDialog {
             // Initialize argument for MDA
             if(sessionCodes != null)
             {
-                args = new String[7];
+                args = new String[8];
                 args[0] = host;
                 args[1] = port;
                 args[2] = sessionCodes[0];
@@ -292,6 +292,7 @@ public class LogInDialog extends javax.swing.JDialog {
                 args[4] = "1";
                 args[5] = "1";
                 args[6] = jTextField1.getText();
+                args[7] = sessionCodes[2];
             }
         } 
         catch (Exception e) 

@@ -31,18 +31,19 @@ import java.util.Vector;
 import uw.rfpk.beans.UserInfo; 
 import uw.rfpk.rcs.Archive;
 
-/** This servlet sends back information about a list of models belonging to the user.
+/** This servlet sends back information about a list of models belonging to a specified user.
  * The servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of models to provide status for.  The third String object is
- * the least model_id previously returned.  The fourth String object indicates if it is to 
- * get the model list of the model library.  The servlet calls database API method userModels
+ * the least model_id previously returned.  The fourth String object is the specified username.
+ * The servlet first checks if the specified user is in the same group of the session user 
+ * or the specified user is the librarian, then calls database API method userModels
  * and RCS API method getNUmRevision and getRevisionDate to get model status 
  * that includes id, name, number of revisions, last revision date and abstract
  * of the models.  The servlet puts these data into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
- * message if there is an error or an empty String if there is not any error.  The second 
- * object is the returning data String[][] object.
+ * message if there is an error or a String containing the total number of models found 
+ * following "count=" otherwise.  The second object is the returning data String[][] object.
  *
  * @author Jiaji Du
  */
@@ -59,9 +60,9 @@ public class UserModels extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long groupId = Long.parseLong(user.getTeamId());
         
         // Database connection
         Connection con = null;
@@ -70,6 +71,7 @@ public class UserModels extends HttpServlet
         
         // Prepare output message
         String messageOut = "";
+        String count = null;
         String[][] userModels = null;
         
         // Get the input stream for reading data from the client
@@ -98,9 +100,10 @@ public class UserModels extends HttpServlet
             {                        
  	        int maxNum = Integer.parseInt(messageIn[1]); 
                 long leftOff = Long.parseLong(messageIn[2]);
-                if(messageIn[3].equals("true"))
-                    username = "librarian";
-
+                String username = messageIn[3];
+                if(groupId == 0 && !username.equals("librarian"))
+                    username = user.getUserName();
+                
                 // Connect to the database
                 ServletContext context = getServletContext();
                 con = Spkdb.connect(context.getInitParameter("database_name"),
@@ -108,50 +111,66 @@ public class UserModels extends HttpServlet
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
                 
-                // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
                 userStmt = userRS.getStatement();
                 userRS.next();
-                long userId = userRS.getLong("user_id");
- 
-                // Get user models
-                ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);
-                userModelsStmt = userModelsRS.getStatement();
-
-                // Fill in the List
-                while(userModelsRS.next())
-                {                  
-                    // Get model id
-                    long modelId = userModelsRS.getLong("model_id"); 
-                    
-                    // Get model archive
-	            Blob blobArchive = userModelsRS.getBlob("archive");
-	            long length = blobArchive.length(); 
-	            String modelArchive = new String(blobArchive.getBytes(1L, (int)length));                    
-//                    Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
-                    
-                    // Fill in the list 
-                    String[] model = new String[5];
-                    model[0] = String.valueOf(modelId); 
-                    model[1] = userModelsRS.getString("name");
-                    model[2] = String.valueOf(Archive.getNumRevision(modelArchive));
-                    model[3] = Archive.getRevisionDate(modelArchive);
-//                    model[2] = String.valueOf(archive.getRevisionVersion().last());                    
-//                    model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
-                    model[4] = userModelsRS.getString("abstract");
-                    modelList.add(model);
-                }
-
-                // Put the list in the String[][]
-                int nModel = modelList.size(); 
-                if(nModel > 0)
+                if(userRS.getLong("team_id") == groupId || username.equals("librarian"))
                 {
-                    userModels = new String[nModel][5]; 
-                    for(int i = 0; i < nModel; i++)
-                        userModels[i] = (String[])modelList.get(i);                     
+                    // Get user id
+                    long userId = userRS.getLong("user_id");
+                    
+                    // Get user models
+                    ResultSet userModelsRS = Spkdb.userModels(con, userId, maxNum, leftOff);
+                    userModelsStmt = userModelsRS.getStatement();
+
+                    // Fill in the List
+                    userModelsRS.last();
+                    count = "count= " + String.valueOf(userModelsRS.getRow());
+                    
+//                    while(userModelsRS.next())
+                    for(int i = 0; i < maxNum; i++)
+                    {                  
+                        // Get model id
+                        long modelId = userModelsRS.getLong("model_id"); 
+                    
+                        // Get model archive
+	                Blob blobArchive = userModelsRS.getBlob("archive");
+	                long length = blobArchive.length(); 
+	                String modelArchive = new String(blobArchive.getBytes(1L, (int)length));                    
+//                        Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
+                    
+                        // Fill in the list 
+                        String[] model = new String[5];
+                        model[0] = String.valueOf(modelId); 
+                        model[1] = userModelsRS.getString("name");
+                        model[2] = String.valueOf(Archive.getNumRevision(modelArchive));
+                        model[3] = Archive.getRevisionDate(modelArchive);
+//                        model[2] = String.valueOf(archive.getRevisionVersion().last());                    
+//                        model[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                        model[4] = userModelsRS.getString("abstract");
+                        modelList.add(model);
+                        if(!userModelsRS.previous()) break;
+                    }
+
+                    // Put the list in the String[][]
+                    int nModel = modelList.size(); 
+                    if(nModel > 0)
+                    {
+                        userModels = new String[nModel][5]; 
+                        for(int i = 0; i < nModel; i++)
+                            userModels[i] = (String[])modelList.get(i);                     
+                    }
+                    else
+                    {
+                        // Write the outgoing messages
+                        messageOut = "No model was found in the database";
+                    }
                 }
                 else
-                    messageOut = "No model was found in the database";
+                {
+                    // Write the outgoing messages
+                    messageOut = "Authorization error.";
+                }
             }
             else
             {
@@ -183,9 +202,15 @@ public class UserModels extends HttpServlet
         }
         
         // Write the data to our internal buffer
-        out.writeObject(messageOut);
-        if(messageOut.equals(""))
+        if(!messageOut.equals(""))
+        {
+            out.writeObject(messageOut);
+        }
+        else
+        {
+            out.writeObject(count);
             out.writeObject(userModels);
+        }
 
         // Flush the contents of the output stream to the byte array
         out.flush();

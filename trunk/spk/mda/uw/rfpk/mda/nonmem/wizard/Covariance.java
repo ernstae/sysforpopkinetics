@@ -82,7 +82,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("You can use one of the formulations to calculate the statistics\nof the parameter estimates.   Select one or use the default.  \nThe last two formulations apply only to individual analysis.\n");
+        jTextPane1.setText("Select method\nNote: the H and HSH options apply only to individual analysis.\n");
         jTextPane1.setFocusable(false);
         jTextPane1.setMaximumSize(new java.awt.Dimension(360, 51));
         jTextPane1.setMinimumSize(new java.awt.Dimension(360, 51));
@@ -96,13 +96,13 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 
         jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
         jTextPane2.setEditable(false);
-        jTextPane2.setText("The statistics option you have selected in NONMEM syntax");
+        jTextPane2.setText("Selection expressed in NONMEM syntax");
         jTextPane2.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
-        gridBagConstraints.insets = new java.awt.Insets(16, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(16, 12, 0, 12);
         add(jTextPane2, gridBagConstraints);
 
         jRadioButton1.setText("R -- The Hessian Matrix");
@@ -177,8 +177,8 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(0, 18, 14, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 18, 14, 12);
         add(jRadioButton5, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -248,7 +248,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
   	}
 
 	public String getStepTitle(){
-	    return "Estimate Statistics";
+	    return "Estimator Covariance Method Selection";
 	}
 
 	public void showingStep(JWizardPane wizard){

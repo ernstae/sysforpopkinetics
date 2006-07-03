@@ -119,10 +119,23 @@ public class Archive {
         }
         for(int i = n; i > 0; i--)
         {
-            index = archive.indexOf("@\n\n\n1." + i + "\nlog\n@", index) + 13;
+            index = archive.indexOf("@\n\n\n1." + i + "\nlog\n@", index);
+            index = archive.indexOf("\nlog\n@", index) + 6; 
             versionList[i - 1][3] = archive.substring(index, archive.indexOf("\n@", index));
         }
         return versionList;
+    }
+    
+    /** Get version log.
+     * @param archive archive text.
+     * @param version version specified.
+     * @return version log
+     */
+    public static String getVersionLog(String archive, String version)
+    {
+        int index = archive.indexOf("@\n\n\n" + version + "\nlog\n@");
+        index = archive.indexOf("\nlog\n@", index) + 6;
+        return archive.substring(index, archive.indexOf("\n@", index));
     }
     
     private static String checkIn(String archive, String text, String perlDir, String workingDir,
@@ -304,6 +317,8 @@ public class Archive {
                 log = versionList[j][3];
                 ok(log.equals("log message " + (j + 1)), ++i,"getVersionList test version " + (j + 1)); 
             }
+            log = getVersionLog(archive, "1.3");
+            ok(log.equals("log message 3"), ++i, "getVersionLog test");
         }
         catch(IOException e){JOptionPane.showMessageDialog(null, e);}
         catch(InterruptedException e){JOptionPane.showMessageDialog(null, e);}

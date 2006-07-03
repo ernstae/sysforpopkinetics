@@ -56,13 +56,17 @@ public class Output {
     /** The model version. */
     public String modelVersion = null;
     /** The model abstract. */
-    public String modelAbstract = null;    
+    public String modelAbstract = null;
+    /** The model version log. */
+    public String modelVersionLog = null;
     /** The data name. */
     public String dataName = null;
     /** The data version. */
     public String dataVersion = null;
     /** The data abstract. */
-    public String dataAbstract = null;    
+    public String dataAbstract = null;
+    /** The data version log. */
+    public String dataVersionLog = null;
     /** The data lables map. */    
     public Properties dataLabelMap = null;
     /** The error message. (message, file_name, line_number)s */

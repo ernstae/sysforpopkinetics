@@ -852,7 +852,22 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 record += " NEQUILIBRIUM=" + n2;
             String n3 = jTextField3.getText().trim();
             if(!n3.equals(""))
+            {
+                if(!n3.equals("0"))
+                {
+                    if(JOptionPane.showConfirmDialog(null, 
+                        "You have set a non-zero NPARAMETERS, which means that\n" +
+                        "the variables nP(1), P(2), ..., P(NPARAMETERS) will be used\n" + 
+                        "in the model expressions.  Do you really intend to do this?\n" +
+                        "If you click the No button, NPARAMETERS will be reset to 0.",
+                        "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != 0)
+                    {
+                         n3 = "0";
+                         jTextField3.setText(n3);
+                    }
+                }
                 record += " NPARAMETERS=" + n3 + " ";
+            }
             
             // Find default dose and default observation
             boolean hasIt = false;

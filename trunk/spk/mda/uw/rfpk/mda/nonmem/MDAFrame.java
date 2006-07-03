@@ -23,7 +23,7 @@ import javax.help.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.undo.*;
-import javax.swing.text.*;  
+import javax.swing.text.*;
 import javax.print.*;
 import javax.print.attribute.*;
 import java.awt.*;
@@ -31,10 +31,12 @@ import java.awt.event.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.FileChannel;
-import java.net.URL; 
+import java.net.URL;
+import java.util.Calendar;
 import java.util.Vector;
 import java.util.Properties;
 import java.util.HashMap;
+import java.util.GregorianCalendar;
 import java.awt.print.*;
 import java.awt.font.*;
 import org.netbeans.ui.wizard.*;
@@ -42,6 +44,8 @@ import uw.rfpk.mda.nonmem.wizard.*;
 import uw.rfpk.mda.nonmem.display.*;
 import javax.swing.table.*;  
 import java.text.DecimalFormat;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * This class creates a window for the model design agent.,  There are eleven buttons, 
@@ -78,13 +82,14 @@ public class MDAFrame extends JFrame
 	}   
 
         setTitle(title);                              
-        initComponents();        
+        initComponents();
+        textArea.getDocument().addDocumentListener(new MyDocumentListener());
         cutMenu.addActionListener(new DefaultEditorKit.CutAction());  
         copyMenu.addActionListener(new DefaultEditorKit.CopyAction());  
         pasteMenu.addActionListener(new DefaultEditorKit.PasteAction()); 
         
         // Check server connection and get method table
-        if(args.length != 7)
+        if(args.length != 8)
             isOnline = false;
         else
         {
@@ -99,7 +104,7 @@ public class MDAFrame extends JFrame
             catch(Exception e)
 	    {
                 isOnline = false;
-            }  
+            }
         }
 
         if(isOnline)
@@ -108,7 +113,24 @@ public class MDAFrame extends JFrame
             isTester = args[4].equals("1") ? true : false;
             isDeveloper = args[5].equals("1") ? true : false;
             setTitle("Model Design Agent for " + args[6]);
-            username = args[6];
+            myName = args[6];
+            username = myName;
+            groupID = args[7];
+            if(!args[7].equals("0"))
+            {
+                Vector group = server.getGoupUsers();
+                groupLabel.setEnabled(true);
+                groupComboBox.setEnabled(true);
+                for(int i = 0; i < group.size(); i++)
+                    groupComboBox.addItem(group.get(i));
+                groupComboBox.setSelectedItem(myName);
+                isInit = false;
+            }
+            else
+            {
+                groupLabel.setEnabled(false);
+                groupComboBox.setEnabled(false);
+            }
         }
         else
 	{
@@ -127,7 +149,7 @@ public class MDAFrame extends JFrame
             public void actionPerformed(ActionEvent evt) 
             {
                 timer.stop();
-                showArchiveList(true);
+                showArchiveList(true, false);
             }
         };
         timer = new Timer(30000, taskPerformer);
@@ -181,6 +203,9 @@ public class MDAFrame extends JFrame
         jTextField3 = new javax.swing.JTextField();
         jScrollPane8 = new javax.swing.JScrollPane();
         jTextArea8 = new javax.swing.JTextArea();
+        jLabel27 = new javax.swing.JLabel();
+        jScrollPane12 = new javax.swing.JScrollPane();
+        jTextArea6 = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jRadioButton4 = new javax.swing.JRadioButton();
         jRadioButton5 = new javax.swing.JRadioButton();
@@ -192,6 +217,9 @@ public class MDAFrame extends JFrame
         jTextField6 = new javax.swing.JTextField();
         jScrollPane9 = new javax.swing.JScrollPane();
         jTextArea9 = new javax.swing.JTextArea();
+        jLabel28 = new javax.swing.JLabel();
+        jScrollPane13 = new javax.swing.JScrollPane();
+        jTextArea7 = new javax.swing.JTextArea();
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jRadioButton7 = new javax.swing.JRadioButton();
@@ -215,11 +243,38 @@ public class MDAFrame extends JFrame
         jButton3 = new javax.swing.JButton();
         reportDialog = new javax.swing.JDialog();
         jPanel4 = new javax.swing.JPanel();
+        findJobButton = new javax.swing.JButton();
         previousButton = new javax.swing.JButton();
         nextButton = new javax.swing.JButton();
+        jPanel17 = new javax.swing.JPanel();
+        jLabel26 = new javax.swing.JLabel();
+        versionRadioButton = new javax.swing.JRadioButton();
+        jobRadioButton = new javax.swing.JRadioButton();
+        groupLabel = new javax.swing.JLabel();
+        groupComboBox = new javax.swing.JComboBox();
+        countLabel = new javax.swing.JLabel();
+        countTextField = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        findJobDialog = new javax.swing.JDialog();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        keyWordTextField = new javax.swing.JTextField();
+        jPanel14 = new javax.swing.JPanel();
+        findJobOKButton = new javax.swing.JButton();
+        findJobCancelButton = new javax.swing.JButton();
+        jPanel15 = new javax.swing.JPanel();
+        jLabel22 = new javax.swing.JLabel();
+        mComboBox = new javax.swing.JComboBox();
+        jLabel23 = new javax.swing.JLabel();
+        dComboBox = new javax.swing.JComboBox();
+        jLabel24 = new javax.swing.JLabel();
+        yComboBox = new javax.swing.JComboBox();
+        jPanel16 = new javax.swing.JPanel();
+        jLabel19 = new javax.swing.JLabel();
+        jobIDTextField = new javax.swing.JTextField();
+        jLabel25 = new javax.swing.JLabel();
         versionDialog = new javax.swing.JDialog();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -274,7 +329,7 @@ public class MDAFrame extends JFrame
         indIDDialog = new javax.swing.JDialog();
         jScrollPane11 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
-        jList1 = new javax.swing.JList();
+        buttonGroup4 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -373,20 +428,28 @@ public class MDAFrame extends JFrame
         summaryMenu = new javax.swing.JMenuItem();
         traceMenu = new javax.swing.JMenuItem();
         indIDMenu = new javax.swing.JMenuItem();
-        jMenu1 = new javax.swing.JMenu();
+        jMenu4 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
-        dataMenu = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JMenuItem();
+        jMenuItem11 = new javax.swing.JMenuItem();
+        jMenuItem12 = new javax.swing.JMenuItem();
+        jMenuItem13 = new javax.swing.JMenuItem();
         FirstMenu = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
-        useMDAMenu = new javax.swing.JMenuItem();
-        useRMenu = new javax.swing.JMenuItem();
+        jMenuItem9 = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
+        jMenuItem8 = new javax.swing.JMenuItem();
+        dataMenu = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        useMDAMenu = new javax.swing.JMenuItem();
+        useRMenu = new javax.swing.JMenuItem();
 
         archiveDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -424,9 +487,9 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(12, 15, 12, 37);
         archiveDialog.getContentPane().add(cancelButton, gridBagConstraints);
 
-        jTabbedPane1.setMaximumSize(new java.awt.Dimension(290, 270));
-        jTabbedPane1.setMinimumSize(new java.awt.Dimension(290, 270));
-        jTabbedPane1.setPreferredSize(new java.awt.Dimension(290, 270));
+        jTabbedPane1.setMaximumSize(new java.awt.Dimension(290, 300));
+        jTabbedPane1.setMinimumSize(new java.awt.Dimension(290, 300));
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(290, 300));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jPanel2.setMaximumSize(new java.awt.Dimension(290, 250));
@@ -460,7 +523,6 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         jPanel2.add(jRadioButton2, gridBagConstraints);
 
         jRadioButton3.setFont(new java.awt.Font("Default", 0, 12));
@@ -488,7 +550,7 @@ public class MDAFrame extends JFrame
         jPanel2.add(jLabel1, gridBagConstraints);
 
         jLabel2.setFont(new java.awt.Font("Default", 0, 12));
-        jLabel2.setText("short description (<= 100characters)");
+        jLabel2.setText("model description (<= 100characters)");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -538,6 +600,26 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         jPanel2.add(jScrollPane8, gridBagConstraints);
 
+        jLabel27.setFont(new java.awt.Font("Default", 0, 12));
+        jLabel27.setText("version log");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jLabel27, gridBagConstraints);
+
+        jTextArea6.setLineWrap(true);
+        jTextArea6.setRows(2);
+        jScrollPane12.setViewportView(jTextArea6);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
+        jPanel2.add(jScrollPane12, gridBagConstraints);
+
         jTabbedPane1.addTab("Model", jPanel2);
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
@@ -573,7 +655,6 @@ public class MDAFrame extends JFrame
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         jPanel3.add(jRadioButton5, gridBagConstraints);
 
         jRadioButton6.setFont(new java.awt.Font("Default", 0, 12));
@@ -601,7 +682,7 @@ public class MDAFrame extends JFrame
         jPanel3.add(jLabel4, gridBagConstraints);
 
         jLabel5.setFont(new java.awt.Font("Default", 0, 12));
-        jLabel5.setText("short description (<=100 characters )");
+        jLabel5.setText("dataset description (<=100 characters )");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -640,6 +721,7 @@ public class MDAFrame extends JFrame
         jScrollPane9.setMinimumSize(new java.awt.Dimension(260, 48));
         jScrollPane9.setPreferredSize(new java.awt.Dimension(260, 48));
         jTextArea9.setLineWrap(true);
+        jTextArea9.setRows(3);
         jTextArea9.setBorder(null);
         jScrollPane9.setViewportView(jTextArea9);
 
@@ -650,6 +732,25 @@ public class MDAFrame extends JFrame
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
         jPanel3.add(jScrollPane9, gridBagConstraints);
 
+        jLabel28.setFont(new java.awt.Font("Default", 0, 12));
+        jLabel28.setText("version log");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel3.add(jLabel28, gridBagConstraints);
+
+        jTextArea7.setLineWrap(true);
+        jTextArea7.setRows(2);
+        jScrollPane13.setViewportView(jTextArea7);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 0);
+        jPanel3.add(jScrollPane13, gridBagConstraints);
+
         jTabbedPane1.addTab("Dataset", jPanel3);
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
@@ -659,7 +760,7 @@ public class MDAFrame extends JFrame
         jPanel5.setMinimumSize(new java.awt.Dimension(280, 250));
         jPanel5.setPreferredSize(new java.awt.Dimension(280, 250));
         jLabel7.setFont(new java.awt.Font("Default", 0, 12));
-        jLabel7.setText("short description (<=100 characters)     ");
+        jLabel7.setText("job abstract (<=100 characters)     ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
@@ -831,6 +932,25 @@ public class MDAFrame extends JFrame
             }
         });
 
+        jPanel4.setLayout(new java.awt.GridBagLayout());
+
+        findJobButton.setText("Search Jobs");
+        findJobButton.setMaximumSize(new java.awt.Dimension(127, 26));
+        findJobButton.setMinimumSize(new java.awt.Dimension(127, 26));
+        findJobButton.setPreferredSize(new java.awt.Dimension(127, 26));
+        findJobButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findJobButtonActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 100);
+        jPanel4.add(findJobButton, gridBagConstraints);
+
         previousButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/ui/wizard/plaf/basic/icons/back.gif")));
         previousButton.setText("Previous Page");
         previousButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
@@ -843,7 +963,10 @@ public class MDAFrame extends JFrame
             }
         });
 
-        jPanel4.add(previousButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        jPanel4.add(previousButton, gridBagConstraints);
 
         nextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/ui/wizard/plaf/basic/icons/next.gif")));
         nextButton.setText("Next Page");
@@ -857,7 +980,72 @@ public class MDAFrame extends JFrame
             }
         });
 
-        jPanel4.add(nextButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 0;
+        jPanel4.add(nextButton, gridBagConstraints);
+
+        jPanel17.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 0));
+
+        jLabel26.setText("List");
+        jLabel26.setFocusable(false);
+        jPanel17.add(jLabel26);
+
+        versionRadioButton.setSelected(true);
+        versionRadioButton.setText("Versions");
+        buttonGroup4.add(versionRadioButton);
+        jPanel17.add(versionRadioButton);
+
+        jobRadioButton.setText("Jobs");
+        buttonGroup4.add(jobRadioButton);
+        jPanel17.add(jobRadioButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 50);
+        jPanel4.add(jPanel17, gridBagConstraints);
+
+        groupLabel.setFont(new java.awt.Font("Dialog", 0, 12));
+        groupLabel.setText("Group member  ");
+        groupLabel.setFocusable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        jPanel4.add(groupLabel, gridBagConstraints);
+
+        groupComboBox.setMaximumSize(new java.awt.Dimension(160, 22));
+        groupComboBox.setMinimumSize(new java.awt.Dimension(160, 22));
+        groupComboBox.setPreferredSize(new java.awt.Dimension(160, 22));
+        groupComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                groupComboBoxActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 50);
+        jPanel4.add(groupComboBox, gridBagConstraints);
+
+        countLabel.setFont(new java.awt.Font("Dialog", 0, 12));
+        countLabel.setText("Total found  ");
+        countLabel.setFocusable(false);
+        jPanel4.add(countLabel, new java.awt.GridBagConstraints());
+
+        countTextField.setEditable(false);
+        countTextField.setFont(new java.awt.Font("Dialog", 1, 12));
+        countTextField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        countTextField.setFocusable(false);
+        countTextField.setMaximumSize(new java.awt.Dimension(60, 19));
+        countTextField.setMinimumSize(new java.awt.Dimension(60, 19));
+        countTextField.setPreferredSize(new java.awt.Dimension(60, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 50);
+        jPanel4.add(countTextField, gridBagConstraints);
 
         reportDialog.getContentPane().add(jPanel4, java.awt.BorderLayout.SOUTH);
 
@@ -884,6 +1072,110 @@ public class MDAFrame extends JFrame
         jScrollPane3.setViewportView(jTable1);
 
         reportDialog.getContentPane().add(jScrollPane3, java.awt.BorderLayout.CENTER);
+
+        findJobDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        findJobDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        findJobDialog.setTitle("Job Search Dialog");
+        findJobDialog.setLocationRelativeTo(reportDialog);
+        jLabel20.setText("Search only jobs submitted on or before");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 13);
+        findJobDialog.getContentPane().add(jLabel20, gridBagConstraints);
+
+        jLabel21.setText("Search for strings either in Model Name, in");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 12, 2, 12);
+        findJobDialog.getContentPane().add(jLabel21, gridBagConstraints);
+
+        keyWordTextField.setPreferredSize(new java.awt.Dimension(264, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 0, 12);
+        findJobDialog.getContentPane().add(keyWordTextField, gridBagConstraints);
+
+        findJobOKButton.setText("OK");
+        findJobOKButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        findJobOKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findJobOKButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel14.add(findJobOKButton);
+
+        findJobCancelButton.setText("Cancel");
+        findJobCancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findJobCancelButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel14.add(findJobCancelButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 10, 12);
+        findJobDialog.getContentPane().add(jPanel14, gridBagConstraints);
+
+        jLabel22.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel22.setText("Month");
+        jPanel15.add(jLabel22);
+
+        mComboBox.setMaximumRowCount(12);
+        mComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        jPanel15.add(mComboBox);
+
+        jLabel23.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel23.setText("Day");
+        jLabel23.setToolTipText("");
+        jPanel15.add(jLabel23);
+
+        dComboBox.setMaximumRowCount(12);
+        dComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
+        jPanel15.add(dComboBox);
+
+        jLabel24.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel24.setText("Year");
+        jPanel15.add(jLabel24);
+
+        yComboBox.setMaximumRowCount(12);
+        jPanel15.add(yComboBox);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        findJobDialog.getContentPane().add(jPanel15, gridBagConstraints);
+
+        jLabel19.setText("Maximum Job ID number");
+        jPanel16.add(jLabel19);
+
+        jobIDTextField.setPreferredSize(new java.awt.Dimension(100, 19));
+        jPanel16.add(jobIDTextField);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 9, 0, 9);
+        findJobDialog.getContentPane().add(jPanel16, gridBagConstraints);
+
+        jLabel25.setText("Dataset Name or in Job Abstract");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        findJobDialog.getContentPane().add(jLabel25, gridBagConstraints);
 
         versionDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         versionDialog.setTitle("");
@@ -1860,29 +2152,152 @@ public class MDAFrame extends JFrame
 
         jMenuBar1.add(jMenu9);
 
-        jMenu1.setText("Plot");
-        jMenu2.setText("Report Data");
-        dataMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        dataMenu.setMnemonic('d');
-        dataMenu.setText("Entire Report");
-        dataMenu.addActionListener(new java.awt.event.ActionListener() {
+        jMenu4.setText("Table");
+        jMenu2.setText("Default Table");
+        jMenuItem10.setText("ID TIME DV PRED (Free format)");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dataMenuActionPerformed(evt);
+                jMenuItem10ActionPerformed(evt);
             }
         });
 
-        jMenu2.add(dataMenu);
+        jMenu2.add(jMenuItem10);
 
-        FirstMenu.setText("First Only");
+        jMenuItem11.setText("ID TIME DV PRED (Exp. format)");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
+
+        jMenu2.add(jMenuItem11);
+
+        jMenuItem12.setText("ID TIME DV IPRED (Free format)");
+        jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem12ActionPerformed(evt);
+            }
+        });
+
+        jMenu2.add(jMenuItem12);
+
+        jMenuItem13.setText("ID TIME DV IPRED (Exp. format)");
+        jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem13ActionPerformed(evt);
+            }
+        });
+
+        jMenu2.add(jMenuItem13);
+
+        jMenu4.add(jMenu2);
+
+        FirstMenu.setText("First Row Only");
         FirstMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FirstMenuActionPerformed(evt);
             }
         });
 
-        jMenu2.add(FirstMenu);
+        jMenu4.add(FirstMenu);
 
-        jMenu1.add(jMenu2);
+        jMenuItem9.setText("Selected Dataset");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
+
+        jMenu4.add(jMenuItem9);
+
+        jMenuBar1.add(jMenu4);
+
+        jMenu1.setText("Plot");
+        jMenu3.setText("Default Plots");
+        jMenuItem1.setText("PRED vs DV");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem1);
+
+        jMenuItem2.setText("PRED vs DV by ID");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem2);
+
+        jMenuItem5.setText("DV PRED vs TIME");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem5);
+
+        jMenuItem6.setText("DV PRED vs TIME by ID");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem6);
+
+        jMenuItem3.setText("IPRED vs DV");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem3);
+
+        jMenuItem4.setText("IPRED vs DV by ID");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem4);
+
+        jMenuItem7.setText("DV IPRED vs TIME");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem7);
+
+        jMenuItem8.setText("DV IPRED vs TIME by ID");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+
+        jMenu3.add(jMenuItem8);
+
+        jMenu1.add(jMenu3);
+
+        dataMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        dataMenu.setMnemonic('d');
+        dataMenu.setText("Entire Report Data");
+        dataMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu1.add(dataMenu);
 
         jMenu1.add(jSeparator1);
 
@@ -1908,27 +2323,6 @@ public class MDAFrame extends JFrame
 
         jMenu1.add(useRMenu);
 
-        jMenu3.setText("Default Plots");
-        jMenuItem1.setText("Item");
-        jMenu3.add(jMenuItem1);
-
-        jMenuItem2.setText("Item");
-        jMenu3.add(jMenuItem2);
-
-        jMenuItem3.setText("Item");
-        jMenu3.add(jMenuItem3);
-
-        jMenuItem4.setText("Item");
-        jMenu3.add(jMenuItem4);
-
-        jMenuItem5.setText("Item");
-        jMenu3.add(jMenuItem5);
-
-        jMenuItem6.setText("Item");
-        jMenu3.add(jMenuItem6);
-
-        jMenu1.add(jMenu3);
-
         jMenuBar1.add(jMenu1);
 
         jInternalFrame1.setJMenuBar(jMenuBar1);
@@ -1949,13 +2343,171 @@ public class MDAFrame extends JFrame
         pack();
     }//GEN-END:initComponents
 
+    private class MyDocumentListener implements DocumentListener {
+        public void insertUpdate(DocumentEvent e) {isChanged = true;}
+        public void removeUpdate(DocumentEvent e) {isChanged = true;}
+        public void changedUpdate(DocumentEvent e) {isChanged = true;}
+    }
+    
+    private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
+        String[] labels = {"ID", "TIME", "DV", "PRED"};
+        uw.rfpk.mda.Tabler.defaultTable(this, output.dataItems, output.dataAll, output.indIDs, labels, true);
+    }//GEN-LAST:event_jMenuItem13ActionPerformed
+
+    private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
+        String[] labels = {"ID", "TIME", "DV", "PRED"};
+        uw.rfpk.mda.Tabler.defaultTable(this, output.dataItems, output.dataAll, output.indIDs, labels, false);
+    }//GEN-LAST:event_jMenuItem12ActionPerformed
+
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        String[] labels = {"ID", "TIME", "DV", "PRED"};
+        uw.rfpk.mda.Tabler.defaultTable(this, output.dataItems, output.dataAll, output.indIDs, labels, true);
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        String[] labels = {"ID", "TIME", "DV", "PRED"};
+        uw.rfpk.mda.Tabler.defaultTable(this, output.dataItems, output.dataAll, output.indIDs, labels, false);
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+        {
+            new uw.rfpk.mda.Tabler(this, output.dataItems, output.dataAll, output.indIDs);
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupComboBoxActionPerformed
+        if(isInit) return;
+        username = (String)groupComboBox.getSelectedItem();
+        startID = null;
+        startTime = null;
+        keyWords = null;
+        indexList = 0;
+        lists = new Vector();
+        showArchiveList(false, true);
+    }//GEN-LAST:event_groupComboBoxActionPerformed
+
+    private void findJobCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findJobCancelButtonActionPerformed
+        findJobDialog.setVisible(false);
+    }//GEN-LAST:event_findJobCancelButtonActionPerformed
+
+    private void findJobOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findJobOKButtonActionPerformed
+        startID = jobIDTextField.getText();
+        if(!startID.equals("") && !Utility.isPosIntNumber(startID))
+        {
+            JOptionPane.showMessageDialog(null, "Job ID must be a positive integer",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+            startID = null;
+            return;
+        }
+        if(startID.equals("")) startID = null;
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.set(Integer.parseInt((String)yComboBox.getSelectedItem()),
+                     Integer.parseInt((String)mComboBox.getSelectedItem()) - 1,
+                     Integer.parseInt((String)dComboBox.getSelectedItem()));
+        startTime = String.valueOf(calendar.getTimeInMillis() / 1000);
+        keyWords = keyWordTextField.getText().trim().replaceAll(",", " ");
+        if(keyWords.equals("")) keyWords = null;
+        findJobDialog.setVisible(false);
+        indexList = 0;
+        lists = new Vector();
+        showArchiveList(false, true);
+    }//GEN-LAST:event_findJobOKButtonActionPerformed
+
+    private void findJobButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findJobButtonActionPerformed
+        reportDialog.setVisible(false);
+        timer.stop();
+        jobIDTextField.setText("");
+        GregorianCalendar calendar = new GregorianCalendar();
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DATE);
+        int year = calendar.get(Calendar.YEAR);
+        String[] years = new String[year - 2003];
+        for(int i = 0; i < years.length; i++)
+            years[i] = String.valueOf(year - i);
+        mComboBox.setSelectedIndex(month);
+        dComboBox.setSelectedIndex(day - 1);
+        yComboBox.setModel(new javax.swing.DefaultComboBoxModel(years));
+        keyWordTextField.setText("");
+        findJobDialog.setSize(310, 252);
+        findJobDialog.setVisible(true);
+    }//GEN-LAST:event_findJobButtonActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotDVPREDvsTIME(output.dataItems, output.dataAll, output.indIDs, "IPRED", true);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotDVPREDvsTIME(output.dataItems, output.dataAll, output.indIDs, "IPRED", false);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotDVPREDvsTIME(output.dataItems, output.dataAll, output.indIDs, "PRED", true);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotDVPREDvsTIME(output.dataItems, output.dataAll, output.indIDs, "PRED", false);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotPREDvsDV(output.dataItems, output.dataAll, output.indIDs, "IPRED", true);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotPREDvsDV(output.dataItems, output.dataAll, output.indIDs, "IPRED", false);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotPREDvsDV(output.dataItems, output.dataAll, output.indIDs, "PRED", true);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        if(output != null && output.dataItems != null && output.dataAll != null && output.indIDs != null)
+            DefaultPlot.plotPREDvsDV(output.dataItems, output.dataAll, output.indIDs, "PRED", false);
+        else
+            JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     private void FirstMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FirstMenuActionPerformed
         if(dataFirst != null)
         {
             textArea.setText(dataFirst);
             textArea.setCaretPosition(0);
-            String title = "Report Data(First row only): Job-" + jobInfo.id;
+            String title = "Report Data(First row only): Job-" + output.jobId;
             jInternalFrame1.setTitle(title);
+            isChanged = false;
         }
         else
             JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
@@ -1992,8 +2544,9 @@ public class MDAFrame extends JFrame
         {
             textArea.setText(dataBlock);
             textArea.setCaretPosition(0);
-            String title = "Report Data: Job-" + jobInfo.id;
+            String title = "Report Data: Job-" + output.jobId;
             jInternalFrame1.setTitle(title);
+            isChanged = false;
         }
         else
             JOptionPane.showMessageDialog(null, "Report data were not found.", "Input Error",
@@ -2074,6 +2627,8 @@ public class MDAFrame extends JFrame
                 jRadioButton1.setSelected(true);
             if(modelRadioButtonState == 3)
                 jRadioButton3.setSelected(true);
+            versionRadioButton.setSelected(true);
+            modelID = null;
         }
         if(listType.equals("data"))
         {
@@ -2081,7 +2636,20 @@ public class MDAFrame extends JFrame
                 jRadioButton4.setSelected(true);
             if(datasetRadioButtonState == 3)
                 jRadioButton6.setSelected(true);
+            versionRadioButton.setSelected(true);
+            datasetID = null;
         }
+        if(listType.equals("job"))
+        {
+            startID = null;
+            startTime = null;
+            keyWords = null;
+        }
+        username = myName;
+        isInit = true;
+        groupComboBox.setSelectedItem(myName);
+        isInit = false;
+        reportDialog.setFocusableWindowState(true);
     }//GEN-LAST:event_reportDialogWindowClosing
 
     private void scatterPlotMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scatterPlotMenuActionPerformed
@@ -2181,7 +2749,8 @@ public class MDAFrame extends JFrame
             textArea.setText(output.trace);
             textArea.setCaretPosition(0);
             jInternalFrame1.setTitle("Optimization Trace: Job-" + jobInfo.id);   
-            file = null;            
+            file = null;
+            isChanged = false;
         }
         else
             JOptionPane.showMessageDialog(null, "The optimization trace is not available.", 
@@ -2195,6 +2764,7 @@ public class MDAFrame extends JFrame
         isLeft = false;
         isWizard = false;
         isLibrary = true;
+        username = "librarian";
         dataArchive();
     }//GEN-LAST:event_dataLibRButtonActionPerformed
 
@@ -2203,18 +2773,22 @@ public class MDAFrame extends JFrame
         isLeft = true;
         isWizard = false;        
         isLibrary = true;
+        username = "librarian";
         dataArchive();
     }//GEN-LAST:event_dataLibLButtonActionPerformed
 
     private void JobExamplesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JobExamplesButtonActionPerformed
+        username = "librarian";
         listType = "job";
         isLibrary = true;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(false);        
+        showArchiveList(false, true);        
     }//GEN-LAST:event_JobExamplesButtonActionPerformed
 
     private void DatasetLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DatasetLibraryButtonActionPerformed
+        username = "librarian";
+        jobRadioButton.setEnabled(true);
         isDiff = false;
         isWizard = false;        
         isLibrary = true;
@@ -2236,6 +2810,7 @@ public class MDAFrame extends JFrame
         isLeft = false;
         isWizard = false;        
         isLibrary = true;
+        username = "librarian";
         modelArchive();        
     }//GEN-LAST:event_modelLibRButtonActionPerformed
 
@@ -2244,10 +2819,13 @@ public class MDAFrame extends JFrame
         isLeft = true;
         isWizard = false;        
         isLibrary = true;
+        username = "librarian";
         modelArchive();     
     }//GEN-LAST:event_modelLibLButtonActionPerformed
 
     private void ModelLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModelLibraryButtonActionPerformed
+        username = "librarian";
+        jobRadioButton.setEnabled(true);
         isDiff = false;
         isWizard = false;        
         isLibrary = true;
@@ -2580,6 +3158,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_localRButtonActionPerformed
 
     private void dataRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataRButtonActionPerformed
+        versionRadioButton.setSelected(true);
+        jobRadioButton.setEnabled(false);
         isDiff = true;
         isLeft = false;
         isWizard = false;
@@ -2588,6 +3168,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_dataRButtonActionPerformed
 
     private void modelRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelRButtonActionPerformed
+        versionRadioButton.setSelected(true);
+        jobRadioButton.setEnabled(false);
         isDiff = true;
         isLeft = false;
         isWizard = false;        
@@ -2608,6 +3190,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_localLButtonActionPerformed
 
     private void dataLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLButtonActionPerformed
+        versionRadioButton.setSelected(true);
+        jobRadioButton.setEnabled(false);
         isDiff = true;
         isLeft = true;
         isWizard = false;
@@ -2616,6 +3200,8 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_dataLButtonActionPerformed
 
     private void modelLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelLButtonActionPerformed
+        versionRadioButton.setSelected(true);
+        jobRadioButton.setEnabled(false);
         isDiff = true;
         isLeft = true;
         isWizard = false;        
@@ -2692,6 +3278,8 @@ public class MDAFrame extends JFrame
             jTextField1.setText(recentModel.name);
             jTextArea8.setText(recentModel.description);
             jTextField3.setText(recentModel.version);
+            jTextArea6.setText(recentModel.log);
+            jTextArea6.setEditable(false);
             modelArchive.id = recentModel.id;
             return;
         }
@@ -2700,8 +3288,10 @@ public class MDAFrame extends JFrame
         isLibrary = false;
         showVersions = true;
         indexList = 0;
-        lists = new Vector();       
-        showArchiveList(false);
+        lists = new Vector();
+        username = myName;
+        jobRadioButton.setEnabled(false);
+        showArchiveList(false, true);
     }//GEN-LAST:event_jRadioButton3ActionPerformed
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
@@ -2718,6 +3308,8 @@ public class MDAFrame extends JFrame
             jTextArea8.setText(recentModel.description);
             jTextField3.setText(String.valueOf(Integer.parseInt(server.getLastVersion(recentModel.id, "model")) + 1));
             modelArchive.id = recentModel.id;
+            jTextArea6.setText("");
+            jTextArea6.setEditable(true);
             modelRadioButtonState = 2;
         }
         else if(option == 1)
@@ -2727,8 +3319,10 @@ public class MDAFrame extends JFrame
             isLibrary = false;
             showVersions = false;
             indexList = 0;
-            lists = new Vector();            
-            showArchiveList(false);      
+            lists = new Vector();
+            username = myName;
+            jobRadioButton.setEnabled(false);
+            showArchiveList(false, true);      
         }
         else
         {
@@ -2744,19 +3338,21 @@ public class MDAFrame extends JFrame
         jTextField1.setText("");
         jTextArea8.setText("");
         jTextField3.setText("1");
+        jTextArea6.setText("");
+        jTextArea6.setEditable(true);
         modelRadioButtonState = 1;
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         ++indexList;
-        showArchiveList(false);
+        showArchiveList(false, false);
         if(indexList != 0)
             previousButton.setEnabled(true);
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
         --indexList;
-        showArchiveList(false); 
+        showArchiveList(false, false); 
         if(indexList == 0)
             previousButton.setEnabled(false);
         nextButton.setEnabled(true);
@@ -2767,14 +3363,15 @@ public class MDAFrame extends JFrame
             return;
         int index = jTable2.getSelectedRow();
         String version = (String)jTable2.getModel().getValueAt(index,  0);
+        String log = (String)jTable2.getModel().getValueAt(index,  3);
         String title = archiveName + "." + version;
         String archive = server.getArchive(version);
         if(archive == null)
             return;        
         if(getArchive)
         {
-            if(!isDiff && !isWizard)
-                saveFile();            
+//            if(!isDiff && !isWizard)
+//                saveFile();            
             if(listType.equals("model"))
             {
                 if(archive != null)
@@ -2798,18 +3395,20 @@ public class MDAFrame extends JFrame
                     }
                     else
                     {
-                        if(!isLibrary)
+                        if(!isLibrary && username.equals(myName))
                         {
                             recentModel.id = archiveId;
                             recentModel.name = archiveName;
                             recentModel.text = archive;
                             recentModel.version = version;
                             recentModel.description = archiveDescription;
+                            recentModel.log = log;
                         }
                         jInternalFrame1.setTitle(title);
                         textArea.setText(archive);
                         textArea.setCaretPosition(0);                        
                         file = null;
+                        isChanged = false;
                     }
                 }
             }
@@ -2838,7 +3437,7 @@ public class MDAFrame extends JFrame
                                 jTextArea4.setText(textR);
                                 jTextArea4.setCaretPosition(0);
                             }
-                        }                            
+                        }
                     }
                     else
                     {
@@ -2860,7 +3459,6 @@ public class MDAFrame extends JFrame
                         }
                         else
                         {
-
                             String text = XMLReader.parseDataXML(archive,true);
                             if(text != null)
                             {
@@ -2868,15 +3466,17 @@ public class MDAFrame extends JFrame
                                 textArea.setCaretPosition(0);
                                 jInternalFrame1.setTitle(title);
                                 file = null;
+                                isChanged = false;
                             }
                         }
-                        if(!isLibrary)
+                        if(!isLibrary && username.equals(myName))
                         {
                             recentDataset.id = archiveId;
                             recentDataset.name = archiveName;
                             recentDataset.text = archive;                    
                             recentDataset.version = version;
                             recentDataset.description = archiveDescription;
+                            recentDataset.log = log;
                         }
                     }
                 }
@@ -2895,8 +3495,10 @@ public class MDAFrame extends JFrame
                 if(model.equals(archive))
                 {
                     jTextField1.setText(modelArchive.name);
-                    jTextArea8.setText(modelArchive.description);                    
+                    jTextArea8.setText(modelArchive.description);
                     jTextField3.setText(version);
+                    jTextArea6.setText(log);
+                    jTextArea6.setEditable(true);
                     modelRadioButtonState = 3;
                 }
                 else
@@ -2921,6 +3523,8 @@ public class MDAFrame extends JFrame
                     jTextField4.setText(dataArchive.name);
                     jTextArea9.setText(dataArchive.description);                    
                     jTextField6.setText(version);
+                    jTextArea7.setText(log);
+                    jTextArea7.setEditable(true);
                     datasetRadioButtonState = 3;
                 }
                 else
@@ -2938,6 +3542,11 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void DataArchiveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DataArchiveButtonActionPerformed
+        username = myName;
+        isInit = true;
+        groupComboBox.setSelectedItem(myName);
+        versionRadioButton.setSelected(true);
+        isInit = false;
         isDiff = false;
         isWizard = false;
         isLibrary = false; 
@@ -2961,11 +3570,20 @@ public class MDAFrame extends JFrame
         showVersions = true;
         getArchive = true;
         indexList = 0;
-        lists = new Vector(); 
-        showArchiveList(false);        
+        lists = new Vector();
+        isInit = true;
+        versionRadioButton.setSelected(true);
+        groupComboBox.setSelectedItem(myName);
+        isInit = false;
+        showArchiveList(false, true);        
     }
     
     private void ModelArchiveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModelArchiveButtonActionPerformed
+        username = myName;
+        isInit = true;
+        groupComboBox.setSelectedItem(myName);
+        versionRadioButton.setSelected(true);
+        isInit = false;
         isDiff = false;
         isWizard = false;        
         isLibrary = false;
@@ -2979,7 +3597,11 @@ public class MDAFrame extends JFrame
         getArchive = true;
         indexList = 0; 
         lists = new Vector();
-        showArchiveList(false);
+        isInit = true;
+        versionRadioButton.setSelected(true);
+        groupComboBox.setSelectedItem(myName);
+        isInit = false;
+        showArchiveList(false, true);
     }
     
     private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
@@ -2987,6 +3609,8 @@ public class MDAFrame extends JFrame
         jTextField4.setText("");
         jTextArea9.setText(""); 
         jTextField6.setText("1");
+        jTextArea7.setText("");
+        jTextArea7.setEditable(true);
         datasetRadioButtonState = 1;
     }//GEN-LAST:event_jRadioButton4ActionPerformed
 
@@ -3002,6 +3626,8 @@ public class MDAFrame extends JFrame
             jTextField4.setText(recentDataset.name);
             jTextArea9.setText(recentDataset.description);
             jTextField6.setText(recentDataset.version);
+            jTextArea7.setText(recentDataset.log);
+            jTextArea7.setEditable(false);
             dataArchive.id = recentDataset.id;
             return;   
         }
@@ -3010,7 +3636,9 @@ public class MDAFrame extends JFrame
         showVersions = true;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(false);
+        username = myName;
+        jobRadioButton.setEnabled(false);
+        showArchiveList(false, true);
     }//GEN-LAST:event_jRadioButton6ActionPerformed
 
     private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
@@ -3027,6 +3655,8 @@ public class MDAFrame extends JFrame
             jTextArea9.setText(recentDataset.description);
             jTextField6.setText(String.valueOf(Integer.parseInt(server.getLastVersion(recentDataset.id, "data")) + 1));
             dataArchive.id = recentDataset.id;
+            jTextArea7.setText("");
+            jTextArea7.setEditable(true);
             datasetRadioButtonState = 2;            
         }
         else if(option == 1)
@@ -3036,8 +3666,10 @@ public class MDAFrame extends JFrame
             isLibrary = false;
             showVersions = false;
             indexList = 0;
-            lists = new Vector();          
-            showArchiveList(false);           
+            lists = new Vector();
+            username = myName;
+            jobRadioButton.setEnabled(false);
+            showArchiveList(false, true);           
         }
         else
         {
@@ -3045,7 +3677,7 @@ public class MDAFrame extends JFrame
                 jRadioButton4.setSelected(true);
             if(datasetRadioButtonState == 3)
                 jRadioButton6.setSelected(true);            
-        }        
+        }
     }//GEN-LAST:event_jRadioButton5ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -3053,20 +3685,36 @@ public class MDAFrame extends JFrame
         if(index == -1)
             return; 
         long id = Long.parseLong(((String[][])lists.get(indexList))[index][0]);
-        if(listType.equals("job"))
+        if(listType.equals("job") || modelID != null || datasetID != null)
         {
-            jobInfo = new JobInfo(this, id, isLibrary, false);
             timer.stop();
-            reportDialog.dispose();        
+            startID = null;
+            startTime = null;
+            keyWords = null;
+            jobInfo = new JobInfo(this, id, isLibrary, false);
+            reportDialog.setVisible(false);
             return;
         }
         else if(getArchive)
         {
-            archiveName = ((String[][])lists.get(indexList))[index][1];
-            archiveId = id;
-            archiveDescription = ((String[][])lists.get(indexList))[index][4];
-            versionDialog.setTitle(archiveName); 
-            showVersionList(id);
+            if(jobRadioButton.isSelected())
+            {
+                if(listType.equals("model")) modelID = String.valueOf(id);
+                if(listType.equals("data")) datasetID = String.valueOf(id);
+                indexList = 0;
+                lists = new Vector();
+                showArchiveList(false, true);
+            }
+            else
+            {
+                modelID = null;
+                datasetID = null;
+                archiveName = ((String[][])lists.get(indexList))[index][1];
+                archiveId = id;
+                archiveDescription = ((String[][])lists.get(indexList))[index][4];
+                versionDialog.setTitle(archiveName);
+                showVersionList(id);
+            }
         }
         else 
         {
@@ -3082,7 +3730,7 @@ public class MDAFrame extends JFrame
                 }
                 else
                 {
-                    String[][] modelVersions = server.getVersions(id, listType, isLibrary); 
+                    String[][] modelVersions = server.getVersions(id, listType); 
                     if(modelVersions != null)
                     {
                         jTextField1.setText(modelArchive.name);
@@ -3090,6 +3738,8 @@ public class MDAFrame extends JFrame
                         jTextField3.setText(String.valueOf(modelVersions.length + 1));
                     }
                     modelRadioButtonState = 2;
+                    jTextArea6.setText("");
+                    jTextArea6.setEditable(true);
                     reportDialog.dispose();
                 }
             }
@@ -3105,13 +3755,15 @@ public class MDAFrame extends JFrame
                 }
                 else
                 {
-                    String[][] datasetVersions = server.getVersions(id, listType, isLibrary);
+                    String[][] datasetVersions = server.getVersions(id, listType);
                     if(datasetVersions != null)
                     {
                         jTextField4.setText(dataArchive.name); 
                         jTextArea9.setText(dataArchive.description);                        
                         jTextField6.setText(String.valueOf(datasetVersions.length + 1));
                     }
+                    jTextArea7.setText("");
+                    jTextArea7.setEditable(true);
                     datasetRadioButtonState = 2;    
                     reportDialog.dispose();  
                 }
@@ -3128,6 +3780,7 @@ public class MDAFrame extends JFrame
             textArea.setCaretPosition(0);
             jInternalFrame1.setTitle("Summary Report: Job-" + jobInfo.id);
             file = null;
+            isChanged = false;
         }
     }//GEN-LAST:event_summaryMenuActionPerformed
     
@@ -3144,11 +3797,18 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_ReadOutputButtonActionPerformed
 
     private void GetReportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetReportButtonActionPerformed
+        username = myName;
+        isInit = true;
+        getArchive = true; 
+        groupComboBox.setSelectedItem(myName);
+        versionRadioButton.setSelected(true);
+        isInit = false;
         listType = "job";
         isLibrary = false;
+        isDiff = false;
         indexList = 0;
         lists = new Vector();
-        showArchiveList(false);
+        showArchiveList(false, true);
     }//GEN-LAST:event_GetReportButtonActionPerformed
 
     private void SubmitJobButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubmitJobButtonActionPerformed
@@ -3184,7 +3844,7 @@ public class MDAFrame extends JFrame
         jobMethodClass = "";        
 
         // Get report
-        String[] reports = server.getOutput(jobId, isLibrary).getProperty("report").split("<spkreport");
+        String[] reports = server.getOutput(jobId).getProperty("report").split("<spkreport");
         
         // Use the last report
         if(reports.length > 2)
@@ -3202,11 +3862,25 @@ public class MDAFrame extends JFrame
         text = Likelihood.changeInput(text, report, jobId, isLibrary);
         textArea.setText(text);
         textArea.setCaretPosition(0);
+        isChanged = false;
         jobMethodClass = "le";
 
         submitJob(text);        
     }
         
+   /** submit a non-likelihood evaluation job.
+    * @param text SPK input.
+    */
+    protected void populationJob(String text)
+    {
+        textArea.setText(text);
+        textArea.setCaretPosition(0);
+        isChanged = false;
+        jobMethodClass = "ts";
+
+        submitJob(text);                
+    }
+    
     private void submitJob(String text)
     {
         // Find $PROBLEM
@@ -3316,8 +3990,21 @@ public class MDAFrame extends JFrame
                 dataArchive.id = jobInfo.datasetId;                               
             }            
         }
+        else if(jobMethodClass == "ts")
+        {
+            jRadioButton1.doClick();
+            jTabbedPane1.add("Model", jPanel2);
+            jRadioButton6.setSelected(true);
+            datasetRadioButtonState = 3;
+            jTextField4.setText(jobInfo.datasetName);
+            jTextArea9.setText(jobInfo.datasetAbstract);
+            jTextField6.setText(jobInfo.datasetVersion);
+            dataArchive.id = jobInfo.datasetId;
+        }
         else
         {
+            if(recentModel.description != null) jTextArea8.setText(recentModel.description);
+            if(recentDataset.description != null) jTextArea9.setText(recentDataset.description);
             if(recentModel.name != null && recentModel.text.trim().equals(model.trim()))
                 jRadioButton3.doClick();
             else
@@ -3372,12 +4059,20 @@ public class MDAFrame extends JFrame
         else if(jobMethodCode.equals("ml"))
         {
             jRadioButton7.setEnabled(false);
-            jRadioButton8.setSelected(true);
+            
+            if(Likelihood.findNEta(text) == 1)
+            {
+                jRadioButton9.setSelected(true);
+                jRadioButton11.setEnabled(false);
+            }
+            else
+            {
+                jRadioButton11.setSelected(true);
+            }
         }
-        jTextArea10.setText(problem); 
+        if(jobId != 0) jTextArea10.setText(jobInfo.jobAbstract); 
         jCheckBox1.setSelected(false);
-        
-        archiveDialog.setSize(300, 350);
+        archiveDialog.setSize(300, 380);
         archiveDialog.setVisible(true);    
     }
     
@@ -3711,6 +4406,7 @@ public class MDAFrame extends JFrame
         textArea.setText("");
         jInternalFrame1.setTitle("");
         file = null;
+        isChanged = false;
     }//GEN-LAST:event_closeMenuActionPerformed
 
     private void openMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuActionPerformed
@@ -3723,6 +4419,7 @@ public class MDAFrame extends JFrame
             textArea.setText(titleAndText[1]);
             textArea.setCaretPosition(0);
             jInternalFrame1.setTitle(file.getName());
+            isChanged = false;
         }
     }//GEN-LAST:event_openMenuActionPerformed
 
@@ -3796,17 +4493,10 @@ public class MDAFrame extends JFrame
 
         // Collect version logs
         if((modelArchive.isNewArchive || modelArchive.isNewVersion))
-        {
-            modelArchive.log = JOptionPane.showInputDialog("Enter log for the new version of the model (<=100 characters).  ");
-            if(modelArchive.log == null)
-                modelArchive.log = "";
-        }
+            modelArchive.log = jTextArea6.getText();
+
         if((dataArchive.isNewArchive || dataArchive.isNewVersion))
-        {
-            dataArchive.log = JOptionPane.showInputDialog("Enter log for the new version of the dataset (<=100 characters).");
-            if(dataArchive.log == null)
-                dataArchive.log = "";
-        }
+            dataArchive.log = jTextArea7.getText();           
         
         // Remove number of objective function evaluations
         int indexMC = source.indexOf("<monte_carlo ");
@@ -3982,6 +4672,7 @@ public class MDAFrame extends JFrame
             textArea.setText(writer.getDocument()); 
             textArea.setCaretPosition(0);        
             jInternalFrame1.setTitle("SPK input");
+            isChanged = false;
         }
         WriteInputButton.setEnabled(true);
     }
@@ -4095,10 +4786,10 @@ public class MDAFrame extends JFrame
             }
             else
             {
-                if(!output.methodCode.equals("ml"))
-                JOptionPane.showMessageDialog(null, "The data for user specified tables are unavailable", 
-                                              "Data Not Found Error",               
-                                              JOptionPane.ERROR_MESSAGE);                
+                if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
+                    JOptionPane.showMessageDialog(null, "The data for user specified tables are unavailable", 
+                                                  "Data Not Found Error",               
+                                                  JOptionPane.ERROR_MESSAGE);                
             }
         }
 
@@ -4152,9 +4843,9 @@ public class MDAFrame extends JFrame
 //        saveFile();
         textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable));
         textArea.setCaretPosition(0);
-        if(jobInfo != null)
-            jInternalFrame1.setTitle("Summary Report: Job-" + jobInfo.id);
+        jInternalFrame1.setTitle("Summary Report: Job-" + output.jobId);
         file = null;
+        isChanged = false;
     }
     
     // This method returns spaces
@@ -4195,60 +4886,66 @@ public class MDAFrame extends JFrame
             String pathName = "untitled";
             if(file != null)
                 pathName = file.getPath();
-            if(JOptionPane.showConfirmDialog(null, 
-                                             "Do you want to save the file " + pathName + "?",   
+            if(isChanged)
+                if(JOptionPane.showConfirmDialog(null, 
+                                             "Do you want to save the file " + pathName + "?",
                                              "Question Dialog",
                                              JOptionPane.YES_NO_OPTION,
                                              JOptionPane.QUESTION_MESSAGE) == 0)
-            {
-                if(pathName.equals("untitled")) 
                 {
-                    int result = files.showSaveDialog(null);
-                    if(result == files.APPROVE_OPTION)
+                    if(pathName.equals("untitled"))
                     {
-                        file = files.getSelectedFile();
+                        int result = files.showSaveDialog(null);
+                        if(result == files.APPROVE_OPTION)
+                        {
+                            file = files.getSelectedFile();
+                            saveOperation(textArea.getText(), file);
+                        }
+                    }
+                    else
+                    {
+                        file = new File(pathName);
                         saveOperation(textArea.getText(), file);
                     }
-                }
-                else
-                {
-                    file = new File(pathName);
-                    saveOperation(textArea.getText(), file);
-                }
-            }  
+                }  
         }
     }
     
     // Display a list of jobs or models or versions that belongs to the user
-    private void showArchiveList(boolean isRepeatCall)
+    private void showArchiveList(boolean isRepeatCall, boolean isCountChange)
     {
         String[] header = null;
         String title = "";
         String[][] archiveList = null;
         String name = isLibrary ? "library" : username;
-        switch(listType.charAt(0))
-        {            
-            case 'j':
-            {
-                timer.start();
-                title = "Job List - " + name; 
-                header = new String[]{"Job ID", "Submission Time", "Status Code", "Model.Version", "Dataset.Version", "Job Description"};
-                break;
-            }
-            case 'm':
-            {
-                title = "Model List - " + name; 
-                header = new String[]{"Model ID", "Model Name", "No. of Versions", "Last Revised Time", "Description"};
-                break;
-            }
-            case 'd':
-            {
-                title = "Dataset List - " + name;
-                header = new String[]{"Dataset ID", "Dataset Name", "No. of Versions", "Last Revised Time", "Description"};
-                break;
-            }            
-            default: return;
+                    
+        if(listType.equals("job") || modelID != null || datasetID != null)
+        {
+            timer.start();
+            title = "Job List - " + name; 
+            header = new String[]{"Job ID", "Submission Time", "Status Code", "Model.Version", "Dataset.Version", "Job Abstract"};
+            jPanel17.setVisible(false);
+            findJobButton.setVisible(true);
+            findJobButton.setEnabled(true);
         }
+        else if(listType.equals("model"))
+        {
+            title = "Model List - " + name; 
+            header = new String[]{"Model ID", "Model Name", "No. of Versions", "Last Revised Time", "Description"};
+            findJobButton.setVisible(false);
+            jPanel17.setVisible(true);
+            versionRadioButton.setEnabled(true);
+        }
+        else if(listType.equals("data"))
+        {
+            title = "Dataset List - " + name;
+            header = new String[]{"Dataset ID", "Dataset Name", "No. of Versions", "Last Revised Time", "Description"};
+            findJobButton.setVisible(false);
+            jPanel17.setVisible(true);
+            versionRadioButton.setEnabled(true);
+        }
+        else
+            return;
         
         if(!isRepeatCall && indexList < lists.size())
         {
@@ -4262,34 +4959,35 @@ public class MDAFrame extends JFrame
             if(indexList != 0)
                 leftOff = Long.parseLong(((String[][])lists.get(indexList - 1))[maxNum - 1][0]);
 
-            switch(listType.charAt(0))
-            {            
-                case 'j':
-                {
-                    archiveList = server.getUserJobs(maxNum + 1, leftOff, isLibrary);
-                    break;
-                }
-                case 'm':
-                {
-                    archiveList = server.getUserModels(maxNum + 1, leftOff, isLibrary);
-                    break;
-                }
-                case 'd':
-                {
-                    archiveList = server.getUserDatasets(maxNum + 1, leftOff, isLibrary); 
-                    break;
-                }
-                default: return;             
-            }
+            if(listType.equals("job") || modelID != null || datasetID != null)        
+                archiveList = server.getUserJobs(maxNum + 1, leftOff, username, startID, 
+                                                 startTime, keyWords, modelID, datasetID);                   
+            else if(listType.equals("model"))
+                archiveList = server.getUserModels(maxNum + 1, leftOff, username);
+            else if(listType.equals("data"))      
+                archiveList = server.getUserDatasets(maxNum + 1, leftOff, username);
+            else
+                return;
+            
+            versionRadioButton.setEnabled(true);
+            jobRadioButton.setEnabled(true);
             
             if(archiveList == null)
             {
-                JOptionPane.showMessageDialog(null, "No " + listType + " was returned from the server.",
-                                                  "Server Information",
-                                                  JOptionPane.INFORMATION_MESSAGE);
-                if(listType.equals("job"))
-                    timer.stop();
-                return;
+                if(listType.equals("job") || modelID != null || datasetID != null)
+                {
+                    archiveList = new String[1][6];
+                    for(int i = 0; i < 6; i++) archiveList[0][i] = "";
+                }
+                else
+                {
+                    archiveList = new String[1][5];
+                    for(int i = 0; i < 5; i++) archiveList[0][i] = "";
+                    versionRadioButton.setEnabled(false);
+                    jobRadioButton.setEnabled(false);
+                }
+                timer.stop();
+                startID = startTime = keyWords = modelID = datasetID = null;
             }
 
             // Add the list to the collection or use the list to update the collection
@@ -4315,14 +5013,14 @@ public class MDAFrame extends JFrame
         DisplayTableModel reportModel = new DisplayTableModel(archiveList, header);
         jTable1.setModel(reportModel);
         TableColumnModel columnModel = jTable1.getColumnModel();
-        if(listType.equals("job"))
+        if(listType.equals("job") || modelID != null || datasetID != null)
         {
             columnModel.getColumn(0).setPreferredWidth(100);
             columnModel.getColumn(1).setPreferredWidth(200);
             columnModel.getColumn(2).setPreferredWidth(120);
             columnModel.getColumn(3).setPreferredWidth(150);
             columnModel.getColumn(4).setPreferredWidth(150);
-            columnModel.getColumn(0).setCellRenderer(new CellRenderer()); 
+            columnModel.getColumn(0).setCellRenderer(new CellRenderer());          
         }
         else
         {
@@ -4335,6 +5033,11 @@ public class MDAFrame extends JFrame
         }
 
         columnModel.getColumn(header.length - 1).setPreferredWidth(300);
+        groupLabel.setEnabled(!groupID.equals("0") && !isLibrary && getArchive && !isDiff);
+        groupComboBox.setEnabled(!groupID.equals("0") && !isLibrary && getArchive && !isDiff);
+        if(jobRadioButton.isSelected()) groupComboBox.setEnabled(false);
+        
+        if(isCountChange) countTextField.setText(Network.count);
         int length = archiveList.length;
         if(length > maxNum)
             length--;        
@@ -4348,7 +5051,7 @@ public class MDAFrame extends JFrame
     private void showVersionList(long id)
     {
         String[] header = {"Revision", "Author", "Revised Time", "Log Message"};
-        String[][] versionList = server.getVersions(id, listType, isLibrary);             
+        String[][] versionList = server.getVersions(id, listType);             
         if(versionList != null)
         {
             jTable2.setModel(new DefaultTableModel(versionList, header));
@@ -4433,13 +5136,14 @@ public class MDAFrame extends JFrame
      */    
     public void setEditorText(String text)
     {
-        textArea.setText(text);   
+        textArea.setText(text);
+        isChanged = false;
     }
     
     /** Set editor's caret position.
      * @param position an int, the position for the caret.
      */    
-    protected void setEditorCaretPosition(int position)
+    public void setEditorCaretPosition(int position)
     {
         textArea.setCaretPosition(position);
     }
@@ -4447,7 +5151,7 @@ public class MDAFrame extends JFrame
     /** Set editor title.
      * @param title a string for the editor title.
      */    
-    protected void setEditorTitle(String title)
+    public void setEditorTitle(String title)
     {
         jInternalFrame1.setTitle(title);   
     }
@@ -4480,13 +5184,17 @@ public class MDAFrame extends JFrame
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
     private javax.swing.JButton cancelButton;
     private javax.swing.JMenuItem closeMenu;
     private javax.swing.JButton compareButton;
     private javax.swing.JMenuItem copyMenu;
     private javax.swing.JMenuItem correlationMenu;
+    private javax.swing.JLabel countLabel;
+    private javax.swing.JTextField countTextField;
     private javax.swing.JMenuItem covarianceMenu;
     private javax.swing.JMenuItem cutMenu;
+    private javax.swing.JComboBox dComboBox;
     private javax.swing.JButton dataLButton;
     private javax.swing.JButton dataLibLButton;
     private javax.swing.JButton dataLibRButton;
@@ -4498,7 +5206,13 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem errorMenu;
     private javax.swing.JDialog errorMessageDialog;
     private javax.swing.JMenuItem exitMenu;
+    private javax.swing.JButton findJobButton;
+    private javax.swing.JButton findJobCancelButton;
+    private javax.swing.JDialog findJobDialog;
+    private javax.swing.JButton findJobOKButton;
     private javax.swing.JMenuItem findMenu;
+    private javax.swing.JComboBox groupComboBox;
+    private javax.swing.JLabel groupLabel;
     private javax.swing.JButton helpButton;
     private javax.swing.JDialog indIDDialog;
     private javax.swing.JMenuItem indIDMenu;
@@ -4520,7 +5234,17 @@ public class MDAFrame extends JFrame
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -4528,25 +5252,36 @@ public class MDAFrame extends JFrame
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList jList1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu9;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem11;
+    private javax.swing.JMenuItem jMenuItem12;
+    private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -4570,6 +5305,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
+    private javax.swing.JScrollPane jScrollPane12;
+    private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -4594,6 +5331,8 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextArea jTextArea5;
+    private javax.swing.JTextArea jTextArea6;
+    private javax.swing.JTextArea jTextArea7;
     private javax.swing.JTextArea jTextArea8;
     private javax.swing.JTextArea jTextArea9;
     private javax.swing.JTextField jTextField1;
@@ -4607,8 +5346,12 @@ public class MDAFrame extends JFrame
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
+    private javax.swing.JTextField jobIDTextField;
+    private javax.swing.JRadioButton jobRadioButton;
+    private javax.swing.JTextField keyWordTextField;
     private javax.swing.JButton localLButton;
     private javax.swing.JButton localRButton;
+    private javax.swing.JComboBox mComboBox;
     private javax.swing.JButton modelLButton;
     private javax.swing.JButton modelLibLButton;
     private javax.swing.JButton modelLibRButton;
@@ -4642,11 +5385,16 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenuItem useMDAMenu;
     private javax.swing.JMenuItem useRMenu;
     private javax.swing.JDialog versionDialog;
+    private javax.swing.JRadioButton versionRadioButton;
     private javax.swing.JMenuItem warningMenu;
     private javax.swing.JDialog warningMessageDialog;
+    private javax.swing.JComboBox yComboBox;
     // End of variables declaration//GEN-END:variables
 
-    /** The username. */
+    /** The username of the MDA. */
+    protected String myName = null;
+    
+    /** The username of the group member. */
     protected String username = null;
     
     /** The HelpBroker. */
@@ -4703,8 +5451,8 @@ public class MDAFrame extends JFrame
     // MDA object
     private MDAObject object = new MDAObject();
     
-    // Spk output
-    private Output output = null;
+    /** SPK output */
+    protected Output output = null;
     
     // TableShow object
     private TableShow tableShow = null;
@@ -4725,7 +5473,7 @@ public class MDAFrame extends JFrame
     private boolean getArchive = true; 
     
     // Is diff
-    private boolean isDiff = true;
+    private boolean isDiff = false;
     
     // Is diff
     private boolean isWizard = true;
@@ -4801,4 +5549,28 @@ public class MDAFrame extends JFrame
     
     // First row only data block
     private String dataFirst = null;
+    
+    // Start ID
+    private String startID = null;
+    
+    // Start time
+    private String startTime = null;
+    
+    // Key words
+    private String keyWords = null;
+    
+    // Model ID to find job
+    private String modelID = null;
+    
+    // Dataset ID to find job
+    private String datasetID = null;
+    
+    // Group ID of the user
+    private String groupID = null;
+    
+    // Is initializing
+    private boolean isInit = true;
+    
+    // Is text changed
+    private boolean isChanged = false;
 }

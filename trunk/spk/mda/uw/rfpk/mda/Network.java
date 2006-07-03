@@ -103,12 +103,22 @@ public class Network
         {
             // Read the data from the server
             String message = (String)in.readObject();
-            if(message.equals("")) 
+            if(message.equals("") || message.startsWith("count="))
+            {
                 messagesIn = in.readObject();
+                if(!message.equals(""))
+                    count = message.substring(6);
+            }
+            else if(message.equals("Illegal operation on empty result set"))
+            {
+                count = "0";
+            }
             else
+            {
                 JOptionPane.showMessageDialog(null, message,  
                                               "Message from the server",
-                                              JOptionPane.ERROR_MESSAGE);                
+                                              JOptionPane.ERROR_MESSAGE);
+            }
         }
         catch(ClassNotFoundException e)
         {
@@ -125,4 +135,7 @@ public class Network
 
     // URL connection
     private URLConnection con = null;
+    
+    /** Number of records returned */
+    public static String count = "-1";
 }

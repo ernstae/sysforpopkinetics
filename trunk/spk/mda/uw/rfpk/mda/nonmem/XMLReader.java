@@ -124,6 +124,7 @@ public class XMLReader
             output.modelName = model.getAttribute("name");
             output.modelVersion = model.getAttribute("version");
             output.modelAbstract = model.getAttribute("abstract");
+            output.modelVersionLog = model.getAttribute("log");
         }
         NodeList dataList = spkjob.getElementsByTagName("data");
         if(dataList.getLength() > 0)
@@ -132,6 +133,7 @@ public class XMLReader
             output.dataName = data.getAttribute("name");
             output.dataVersion = data.getAttribute("version");
             output.dataAbstract = data.getAttribute("abstract");
+            output.dataVersionLog = data.getAttribute("log");
         }
     }
     
@@ -959,6 +961,11 @@ public class XMLReader
         // Get data label list
         NodeList labelList = presentation_data.getElementsByTagName("label");
         int nLabels = labelList.getLength();
+        if(nLabels == 0)
+        {
+            parsePresentationData(presentation_data.getFirstChild().getNodeValue(), nColumns, nRows);
+            return;
+        }
         if(nColumns == 0 || nRows == 0 || nLabels != nColumns)
             return;
         if(nColumns > 0)
@@ -1000,6 +1007,62 @@ public class XMLReader
         }
     }
    
+    private void parsePresentationData(String data, int nColumns, int nRows)
+    {
+        if(data == null || nColumns <= 0 || nRows <= 0)
+        {
+            JOptionPane.showMessageDialog(null, "An error was found in presentation data",
+                                          "Presentation Data Error", JOptionPane.ERROR_MESSAGE);
+            output.dataAll = null;
+            return;
+        }
+        String[] rows = data.trim().split("\n");
+        if(rows.length != nRows + 1)
+        {
+            JOptionPane.showMessageDialog(null, "An error was found in presentation data",
+                                          "Presentation Data Error", JOptionPane.ERROR_MESSAGE);
+            output.dataAll = null;
+            return;
+        }
+        String[] elements;
+        try
+        {
+            elements = rows[0].split(",");
+            if(elements.length != nColumns)
+            {
+                JOptionPane.showMessageDialog(null, "An error was found in presentation data",
+                                              "Presentation Data Error", JOptionPane.ERROR_MESSAGE);
+                output.dataAll = null;
+                return;
+            }
+            output.dataItems = new ArrayList(nColumns);             
+            for(int j = 0; j < nColumns; j++)
+                output.dataItems.add(j, elements[j]);
+            output.indIDs = new String[nRows];
+            output.dataAll = new double[nRows][nColumns];
+            for(int i = 0; i < nRows; i++)
+            {
+                elements = rows[i + 1].split(",");
+                if(elements.length != nColumns)
+                {
+                    JOptionPane.showMessageDialog(null, "An error was found in presentation data",
+                                                  "Presentation Data Error", JOptionPane.ERROR_MESSAGE);
+                    output.dataAll = null;
+                    return;
+                }
+                output.indIDs[i] = elements[0];
+                for(int j = 0; j < nColumns; j++)
+                    output.dataAll[i][j] = Double.parseDouble(elements[j]);
+            }
+        }
+        catch(NumberFormatException e)
+        {
+            JOptionPane.showMessageDialog(null, "An error was found in presentation data",
+                                          "Number Format Error", JOptionPane.ERROR_MESSAGE);
+            output.dataAll = null;
+        }
+    }
+    
     /** Convert the data XML back to the original.
      * @param dataXML data XML as a String object.
      * @param true for adding labels, false for otherwise.
@@ -1273,7 +1336,7 @@ public class XMLReader
     }
     
     /** Get required data from presentation_data.
-     * @param data an XML document containing presentation_data element of report.
+     * @param data an XML document containing presentation_data element of a report.
      * @param dataLabels a String array containing the labels of the data to get.
      * @return a two-dimensional String array containing the requested data.
      */
@@ -1285,9 +1348,6 @@ public class XMLReader
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             docDataAll = builder.parse(new InputSource(new ByteArrayInputStream(data.getBytes())));
-//            DOMParser parser = new DOMParser();
-//            parser.parse(new InputSource(new ByteArrayInputStream(data.getBytes()))); 
-//            docDataAll = parser.getDocument();
         }
         catch(ParserConfigurationException e)
         {
@@ -1305,20 +1365,25 @@ public class XMLReader
             return null;
         }        
         Element presentation_data = docDataAll.getDocumentElement();
-        int nDataItem = dataLabels.length;
-        int nColumns = Integer.parseInt(presentation_data.getAttribute("columns"));
-        int nRows = Integer.parseInt(presentation_data.getAttribute("rows"));
-        ArrayList dataItems = new ArrayList(nColumns);
-        String[][] dataAll = new String[nRows][nDataItem];
         
         // Get data label list
         NodeList labelList = presentation_data.getElementsByTagName("label");
         int nLabels = labelList.getLength();
+        
+        if(nLabels == 0) return Utility.getSelectedDataItems(data, dataLabels);
+        
+        int nDataItem = dataLabels.length;
+        int nColumns = Integer.parseInt(presentation_data.getAttribute("columns"));
+        int nRows = Integer.parseInt(presentation_data.getAttribute("rows"));
+        ArrayList dataItems = null;
+        String[][] dataAll = null;
+        
         if(nColumns == 0 || nRows == 0 || nLabels != nColumns)
             return null;
         if(nColumns > 0)
         {
-            dataItems = new ArrayList(nColumns);             
+            dataItems = new ArrayList(nColumns);
+            dataAll = new String[nRows][nDataItem];
             for(int i = 0; i < nColumns; i++)
             {
                 Element label = (Element)labelList.item(i);

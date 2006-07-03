@@ -88,7 +88,7 @@ public class VectorShow extends javax.swing.JFrame {
 
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         jScrollPane1.setFont(new java.awt.Font("Dialog", 0, 14));
-        jTable1.setFont(new java.awt.Font("Dialog", 0, 14));
+        jTable1.setFont(new java.awt.Font("Monospaced", 0, 12));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null}
@@ -105,6 +105,7 @@ public class VectorShow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.setCellSelectionEnabled(true);
         jTable1.setRowHeight(20);
         jScrollPane1.setViewportView(jTable1);
 

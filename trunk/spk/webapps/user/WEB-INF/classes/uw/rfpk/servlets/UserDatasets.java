@@ -31,18 +31,19 @@ import java.util.Vector;
 import uw.rfpk.beans.UserInfo;
 import uw.rfpk.rcs.Archive;
 
-/** This servlet sends back information about a list of datasets belonging to the user.
- * The servlet receives a String array containing three String objects from the client.
+/** This servlet sends back information about a list of datasets belonging to a specified user.
+ * The servlet receives a String array containing four String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the maximum number of dataset to provide status for.  The third String object is
- * the least dataset_id previously returned.  The fourth String object indicates if it is to 
- * get the dataset list of the dataset library.  The servlet calls database API method 
+ * the least dataset_id previously returned.  The fourth String object is the specified username.
+ * The servlet first checks if the specified user is in the same group of the session user 
+ * or the specified user is the librarian, then calls database API method 
  * userDatasets and RCS API method getNUmRevision and getRevisionDate to get dataset status 
  * that includes id, name, number of revisions, last revision date and 
  * abstract of the datasets.  The servlet puts these data into a String[][] object.
  * The servlet sends back two objects.  The first object is a String containing the error 
- * message if there is an error or an empty String if there is not any error.  The second 
- * object is the returning data String[][] object.
+ * message if there is an error or a String containing the total number of datasets found 
+ * following "count=" otherwise.  he second object is the returning data String[][] object.
  *
  * @author Jiaji Du
  */
@@ -59,9 +60,9 @@ public class UserDatasets extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long groupId = Long.parseLong(user.getTeamId());
         
         // Database connection
         Connection con = null;
@@ -70,6 +71,7 @@ public class UserDatasets extends HttpServlet
         
         // Prepare output message
         String messageOut = "";
+        String count = null;
         String[][] userDatasets = null;
         
         // Get the input stream for reading data from the client
@@ -98,8 +100,9 @@ public class UserDatasets extends HttpServlet
             {                        
  	        int maxNum = Integer.parseInt(messageIn[1]); 
                 long leftOff = Long.parseLong(messageIn[2]);
-                if(messageIn[3].equals("true"))
-                    username = "librarian";
+                String username = messageIn[3];
+                if(groupId == 0 && !username.equals("librarian"))
+                    username = user.getUserName();               
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -108,50 +111,66 @@ public class UserDatasets extends HttpServlet
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));                 
  
-                // Get user id
                 ResultSet userRS = Spkdb.getUser(con, username);
                 userStmt = userRS.getStatement();
                 userRS.next();
-                long userId = userRS.getLong("user_id");
+                if(userRS.getLong("team_id") == groupId || username.equals("librarian"))
+                {                    
+                    // Get user id
+                    long userId = userRS.getLong("user_id");
  
-                // Get user datasetss
-                ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff); 
-                userDatasetsStmt = userDatasetsRS.getStatement();
+                    // Get user datasetss
+                    ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff); 
+                    userDatasetsStmt = userDatasetsRS.getStatement();
 
-                // Fill in the List
-                while(userDatasetsRS.next())
-                {                  
-                    // Get dataset id
-                    long datasetId = userDatasetsRS.getLong("dataset_id"); 
+                    // Fill in the List
+                    userDatasetsRS.last();
+                    count = "count= " + String.valueOf(userDatasetsRS.getRow());
                     
-                    // Get dataset archive
-       	            Blob blobArchive = userDatasetsRS.getBlob("archive");
-	            long length = blobArchive.length(); 
-	            String datasetArchive = new String(blobArchive.getBytes(1L, (int)length));                    
-//                    Archive archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
+//                    while(userDatasetsRS.next())
+                    for(int i = 0; i < maxNum; i++)
+                    {                  
+                        // Get dataset id
+                        long datasetId = userDatasetsRS.getLong("dataset_id"); 
                     
-                    // Fill in the list 
-                    String[] dataset = new String[5];
-                    dataset[0] = String.valueOf(datasetId); 
-                    dataset[1] = userDatasetsRS.getString("name");
-                    dataset[2] = String.valueOf(Archive.getNumRevision(datasetArchive));
-                    dataset[3] = Archive.getRevisionDate(datasetArchive);
-//                    dataset[2] = String.valueOf(archive.getRevisionVersion().last());
-//                    dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
-                    dataset[4] = userDatasetsRS.getString("abstract");
-                    datasetList.add(dataset);
-                }
+                        // Get dataset archive
+       	                Blob blobArchive = userDatasetsRS.getBlob("archive");
+	                long length = blobArchive.length(); 
+	                String datasetArchive = new String(blobArchive.getBytes(1L, (int)length));                    
+//                        Archive archive = new Archive("", new ByteArrayInputStream(datasetArchive.getBytes()));
+                    
+                        // Fill in the list 
+                        String[] dataset = new String[5];
+                        dataset[0] = String.valueOf(datasetId); 
+                        dataset[1] = userDatasetsRS.getString("name");
+                        dataset[2] = String.valueOf(Archive.getNumRevision(datasetArchive));
+                        dataset[3] = Archive.getRevisionDate(datasetArchive);
+//                        dataset[2] = String.valueOf(archive.getRevisionVersion().last());
+//                        dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
+                        dataset[4] = userDatasetsRS.getString("abstract");
+                        datasetList.add(dataset);
+                        if(!userDatasetsRS.previous()) break;
+                    }
          
-                // Put the list in the String[][]
-                int nDataset = datasetList.size(); 
-                if(nDataset > 0)
-                {
-                    userDatasets = new String[nDataset][5];
-                    for(int i = 0; i < nDataset; i++)
-                        userDatasets[i] = (String[])datasetList.get(i);
+                    // Put the list in the String[][]
+                    int nDataset = datasetList.size(); 
+                    if(nDataset > 0)
+                    {
+                        userDatasets = new String[nDataset][5];
+                        for(int i = 0; i < nDataset; i++)
+                            userDatasets[i] = (String[])datasetList.get(i);
+                    }
+                    else
+                    {
+                        // Write the outgoing messages
+                        messageOut = "No dataset was found in the database";
+                    }
                 }
                 else
-                    messageOut = "No dataset was found in the database";
+                {
+                    // Write the outgoing messages
+                    messageOut = "Authorization error.";
+                }                   
             }
             else
             {
@@ -183,9 +202,15 @@ public class UserDatasets extends HttpServlet
         }
         
         // Write the data to our internal buffer
-        out.writeObject(messageOut);
-        if(messageOut.equals(""))
+        if(!messageOut.equals(""))
+        {
+            out.writeObject(messageOut);
+        }
+        else
+        {
+            out.writeObject(count);
             out.writeObject(userDatasets);
+        }
 
         // Flush the contents of the output stream to the byte array
         out.flush();

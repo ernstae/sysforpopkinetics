@@ -78,8 +78,11 @@ public class Likelihood {
         return source + data + model;
     }
 
-    // Convert individual model to population model
-    private static String convertToPopulationAnalysis(String source)
+    /** Convert an individual model to a population model if it is a two-stage analysis.
+     * @param source a source XML representation of an individual model.
+     * @return the modified source XML representation of a population model.
+     */
+    protected static String convertToPopulationAnalysis(String source)
     {
         int index1 = source.indexOf("<pop_analysis ");
         int index2 = source.indexOf(">", index1);
@@ -117,8 +120,12 @@ public class Likelihood {
         return source;
     }
     
-    // Replace initial values of parameters in the souce by those in the report 
-    private static String replaceSourceParameters(String source, String report)
+    /** Replace initial values of parameters in the souce by those in the report.
+     * @param source a source XML representation of an population model.
+     * @param report the report XML of the same job with the source.
+     * @return the modified source XML representation of a population model.
+     */
+    protected static String replaceSourceParameters(String source, String report)
     {
         // Replace theta values of souce by those of report 
         int beginIndex = source.indexOf("<in>", source.indexOf("<theta ")) + 5;
@@ -152,15 +159,12 @@ public class Likelihood {
         sigma = sigma.replaceAll("</sigma>", "</in>\n</sigma>");
         return front + omega + "\n" + sigma + "            " + back;
     }
-    
-    /** Insert <monte_carlo> element for using likelihood evaluation methods.
-     * @param source the source XML without <monte_carlo> element.
-     * @param jobMethodCode the job method code.
-     * @return the source XML with <monte_carlo> element inserted.
+    /** Find number of random effects.
+     * @param String source the source XML without <monte_carlo> element.
+     * @return number of random effects
      */
-    public static String insertLeElement(String source, String jobMethodCode)
+    protected static int findNEta(String source)
     {
-        // Find number of random effects
         int nEta = 0;
         String text = new String(source);
         while(text.indexOf("<omega ") != -1)
@@ -170,12 +174,37 @@ public class Likelihood {
             nEta += Integer.parseInt(text.substring(beginIndex, endIndex));
             text = text.substring(endIndex);
         }
+        return nEta;
+    }
+    
+    /** Insert <monte_carlo> element for using likelihood evaluation methods.
+     * @param source the source XML without <monte_carlo> element.
+     * @param jobMethodCode the job method code.
+     * @return the source XML with <monte_carlo> element inserted.
+     */
+    public static String insertLeElement(String source, String jobMethodCode)
+    {
+        // Find number of random effects
+        int nEta = findNEta(source);
+        long nEval = 0;
         String nEvaluation = "";
         if(jobMethodCode.equals("gr"))
         {
+            if(nEta == 1)
+                nEval = 25;
+            else if(nEta == 2)
+                nEval = 20;
+            else if(nEta == 3)
+                nEval = 18;
+            else if(nEta == 4)
+                nEval = 18;
+            else if(nEta >= 5)
+                nEval = 15;
+            
             for(int i = 0; i < nEta; i++)
             {
-                String nGrid = JOptionPane.showInputDialog(null, "Enter number of grid points for random effects." + (i + 1), "10");
+                String nGrid = JOptionPane.showInputDialog(null, "Enter number of grid points for random effects." + 
+                                                           (i + 1), String.valueOf(nEval));
                 if(nGrid == null || !Utility.isPosIntNumber(nGrid.trim()))
                 {
                     JOptionPane.showMessageDialog(null, "The number of grid points is missing",  
@@ -190,7 +219,18 @@ public class Likelihood {
         else if(jobMethodCode.equals("ml") || jobMethodCode.equals("mi") ||
                 jobMethodCode.equals("ad") || jobMethodCode.equals("vl"))
         {
-            nEvaluation = JOptionPane.showInputDialog(null, "Enter number of individual objective evaluations.", "1000");
+            if(nEta == 1)
+                nEval = 30;
+            else if(nEta == 2)
+                nEval = 400;
+            else if(nEta == 3)
+                nEval = 2000;
+            else if(nEta == 4)
+                nEval = 15000;
+            else if(nEta >= 5)
+                nEval = (long)Math.pow(10, nEta);
+            nEvaluation = JOptionPane.showInputDialog(null, "Enter number of individual objective evaluations.",
+                                                      String.valueOf(nEval));
             if(nEvaluation == null || !Utility.isPosIntNumber(nEvaluation.trim()))
             {
                 JOptionPane.showMessageDialog(null, "The number of individual objective evaluations is missing",  

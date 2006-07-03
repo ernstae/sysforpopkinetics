@@ -27,14 +27,15 @@ import java.nio.*;
 import java.sql.*;
 import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
+import uw.rfpk.rcs.Archive;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /** This servlet sends back the job's output including source, report, job, model and dataset.
- * The servlet receives a String array containing three String objects from the client.
+ * The servlet receives a String array containing thwo String objects from the client.
  * The first String object is the secret code to identify the client.  The second String 
- * is the job_id.  The third String object is a flag that specified if this call is from 
- * a library patron.  The servlet first checks if the job_id belongs to the user using database 
- * API method, getUser, to get the user_id and using database API method, getJob, to get 
- * user_id, then comparing them.  If they are the same, the servlet calls database 
+ * is the job_id.  The servlet first checks if the job belongs to the user in the group or to 
+ * the library, then calls database 
  * API method, getJob, to get SPK output data that includes source, report, start_time, 
  * event_time, model_name, model_version, model_abstract, dataset_name, dataset_version, 
  * dataset_abstract, job_abstract, parent and method_code.  The servlet puts these data into 
@@ -59,9 +60,9 @@ public class GetOutput extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user name of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        String username = user.getUserName();
+        long groupId = Long.parseLong(user.getTeamId());
         
         // Database connection
         Connection con = null;
@@ -94,10 +95,8 @@ public class GetOutput extends HttpServlet
             String[] messageIn = (String[])in.readObject();
             String secret = messageIn[0];  
             if(secret.equals((String)req.getSession().getAttribute("SECRET")))               
-            {           
+            {
                 long jobId = Long.parseLong(messageIn[1]);
-                if(messageIn[2].equals("true"))
-                    username = "librarian";
                 
                 // Connect to the database
                 ServletContext context = getServletContext();
@@ -105,21 +104,23 @@ public class GetOutput extends HttpServlet
                                     context.getInitParameter("database_host"),
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
-                 
-                // Get user id
-                ResultSet userRS = Spkdb.getUser(con, username);
-                userStmt = userRS.getStatement();
-                userRS.next();
-                long userId = userRS.getLong("user_id");
-                                               
+                
                 // Get job for the job_id
                 ResultSet jobRS = Spkdb.getJob(con, jobId);
                 jobStmt = jobRS.getStatement();
                 jobRS.next();
+                
+                // Get job's owner
+                long userId = jobRS.getLong("user_id");
+                ResultSet userRS = Spkdb.getUserById(con, userId);
+                userStmt = userRS.getStatement();
+                userRS.next();
 
-                 // Check if the job belongs to the user
-                if(jobRS.getLong("user_id") == userId)
-                {             
+                // Check if the job belongs to the user in the group or to the library
+                if((groupId != 0 && userRS.getLong("team_id") == groupId) || 
+                   (groupId == 0 && Long.parseLong(user.getUserId()) == userId) || 
+                   userRS.getString("username").equals("librarian"))
+                {
                     // Get job information 
                     long modelId = jobRS.getLong("model_id");
                     long datasetId = jobRS.getLong("dataset_id"); 
@@ -136,8 +137,10 @@ public class GetOutput extends HttpServlet
 	            Blob blobReport = jobRS.getBlob("report");
                     if(blobReport != null)
                     {
-                        long length = blobReport.length();
-	                String report = new String(blobReport.getBytes(1L, (int)length));
+                        long length = blobReport.length();                       
+//	                String report = new String(blobReport.getBytes(1L, (int)length));
+                        String report = untar(blobReport.getBytes(1L, (int)length), 
+                                              context.getInitParameter("database_name"), jobId); 
 	                Blob blobSource = jobRS.getBlob("xml_source");
 	                length = blobSource.length(); 
 	                String source = new String(blobSource.getBytes(1L, (int)length));
@@ -147,7 +150,11 @@ public class GetOutput extends HttpServlet
                         modelStmt = modelRS.getStatement();
                         modelRS.next();
                         String modelName = modelRS.getString("name");
-                        String modelAbstract = modelRS.getString("abstract"); 
+                        String modelAbstract = modelRS.getString("abstract");
+                        Blob blobModel = modelRS.getBlob("archive");
+                        length = blobModel.length();
+                        String archive = new String(blobModel.getBytes(1L, (int)length));
+                        String modelVersionLog = Archive.getVersionLog(archive, modelVersion);
                          
                         // Get dataset information
                         ResultSet datasetRS = Spkdb.getDataset(con, datasetId);
@@ -155,7 +162,11 @@ public class GetOutput extends HttpServlet
                         datasetRS.next();
                         String datasetName = datasetRS.getString("name");
                         String datasetAbstract = datasetRS.getString("abstract");           
-                       
+                        Blob blobDataset = datasetRS.getBlob("archive");
+                        length = blobDataset.length();
+                        archive = new String(blobDataset.getBytes(1L, (int)length));
+                        String datasetVersionLog = Archive.getVersionLog(archive, datasetVersion);
+                        
                         // Put returning objects into the Properties
                         spkOutput.setProperty("source", source);
                         spkOutput.setProperty("report", report);
@@ -164,9 +175,11 @@ public class GetOutput extends HttpServlet
                         spkOutput.setProperty("modelName", modelName);
                         spkOutput.setProperty("modelVersion", modelVersion.substring(2));
                         spkOutput.setProperty("modelAbstract", modelAbstract);
+                        spkOutput.setProperty("modelVersionLog", modelVersionLog);
                         spkOutput.setProperty("datasetName", datasetName);
                         spkOutput.setProperty("datasetVersion", datasetVersion.substring(2));
                         spkOutput.setProperty("datasetAbstract", datasetAbstract);
+                        spkOutput.setProperty("datasetVersionLog", datasetVersionLog);
                         spkOutput.setProperty("jobAbstract", jobAbstract);
                         spkOutput.setProperty("parent", String.valueOf(parent));
                         spkOutput.setProperty("methodCode", methodCode);
@@ -212,12 +225,12 @@ public class GetOutput extends HttpServlet
             }
             catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
-        
+
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))
             out.writeObject(spkOutput);
-        
+
         // Flush the contents of the output stream to the byte array
         out.flush();
         
@@ -233,6 +246,80 @@ public class GetOutput extends HttpServlet
         // Wrap up
         servletOut.write(buf);
         servletOut.close();
+    }
+    
+    private String untar(byte[] bytes, String environment, long jobId)
+    {
+        String workingDir = "/tmp/" + environment + jobId; 
+        File directory = new File(workingDir);
+        directory.mkdir();
+        File file1 = new File(workingDir + "/result.tar.gz");
+        File file2 = new File(workingDir + "/result.xml");
+        saveFile(bytes, file1);
+        String text = null;
+        Process process = null;
+        String[] command = {"/bin/tar", "xzf", "result.tar.gz"};
+        try 
+        {
+            process = Runtime.getRuntime().exec(command, null, directory);
+            process.waitFor();
+            text = openFile(file2); 
+        }
+        catch(IOException e)
+        {
+        }
+        catch(InterruptedException e)
+        {
+        }
+        finally
+        {
+            if(process != null) process.destroy();
+            if(file1.exists()) file1.delete();
+            if(file2.exists()) file2.delete();
+            if(directory.exists()) directory.delete();
+        }
+        return text;
+    }
+    
+    private static void saveFile(byte[] bytes, File file)
+    {
+        FileOutputStream out = null;
+        try
+        {
+            out = new FileOutputStream(file);
+        }
+        catch(FileNotFoundException e){}         
+        ByteBuffer buffer = ByteBuffer.allocate(bytes.length);       
+        FileChannel channel = out.getChannel();         
+        buffer.put(bytes);     
+        buffer.flip();         
+        try
+        {
+            channel.write(buffer);             
+            out.close();
+        }
+        catch(IOException e )
+        {
+        }
+    }
+    
+    private static String openFile(File file)
+    {
+        String text = null;
+        try
+	{
+            StringBuffer buffer = new StringBuffer();
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            String line;
+            while((line = in.readLine()) != null)
+                buffer.append(line).append("\n");
+            in.close();
+            text = buffer.toString();
+        }
+        catch(IOException e)
+	{
+        }
+        return text;
     }
 }
 

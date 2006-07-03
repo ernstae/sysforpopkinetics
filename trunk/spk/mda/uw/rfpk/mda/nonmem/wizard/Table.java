@@ -95,7 +95,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         jTextPane1 = new javax.swing.JTextPane();
-        jTextPane2 = new javax.swing.JTextPane();
         changeButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
@@ -108,6 +107,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
+        jLabel2 = new javax.swing.JLabel();
 
         jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -341,9 +341,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(16, 16, 7, 16);
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 7, 16);
         add(upButton, gridBagConstraints);
 
         downButton.setText("Down");
@@ -356,9 +356,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 16, 53, 16);
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 31, 16);
         add(downButton, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
@@ -371,22 +371,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 2, 12);
         add(jTextPane1, gridBagConstraints);
-
-        jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane2.setEditable(false);
-        jTextPane2.setText("List of the  \nTable options \nyou have \nselected in \nNONMEM \nsyntax");
-        jTextPane2.setFocusable(false);
-        jTextPane2.setMaximumSize(new java.awt.Dimension(90, 90));
-        jTextPane2.setMinimumSize(new java.awt.Dimension(90, 90));
-        jTextPane2.setPreferredSize(new java.awt.Dimension(90, 90));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 29, 0);
-        add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
         changeButton.setEnabled(false);
@@ -430,7 +414,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 6;
+        gridBagConstraints.gridheight = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         add(jSeparator2, gridBagConstraints);
 
@@ -447,14 +431,14 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         jScrollPane1.setViewportView(jList1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipady = 74;
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 6, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(16, 0, 12, 16);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("File Name");
@@ -524,6 +508,16 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(7, 13, 7, 0);
         add(jRadioButton3, gridBagConstraints);
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel2.setText("List of tables you have selected in NONMEM syntax");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.insets = new java.awt.Insets(8, 16, 0, 16);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jLabel2, gridBagConstraints);
 
     }//GEN-END:initComponents
 
@@ -865,6 +859,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JList jList1;
@@ -881,7 +876,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
     private javax.swing.JTextPane jTextPane4;
     private javax.swing.JTextPane jTextPane5;

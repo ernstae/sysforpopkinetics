@@ -111,7 +111,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         jTextPane1 = new javax.swing.JTextPane();
-        jTextPane2 = new javax.swing.JTextPane();
         changeButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
@@ -126,6 +125,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
         jCheckBox3 = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
 
         jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -417,9 +417,9 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(16, 16, 7, 16);
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 7, 16);
         add(upButton, gridBagConstraints);
 
         downButton.setText("Down");
@@ -432,9 +432,9 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 16, 56, 16);
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 35, 16);
         add(downButton, gridBagConstraints);
 
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
@@ -447,19 +447,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 12);
         add(jTextPane1, gridBagConstraints);
-
-        jTextPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextPane2.setEditable(false);
-        jTextPane2.setText("List of the  \nplotting \noptions\nyou have \nselected in \nNONMEM syntax");
-        jTextPane2.setFocusable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 17, 6);
-        add(jTextPane2, gridBagConstraints);
 
         changeButton.setText("Change");
         changeButton.setEnabled(false);
@@ -503,7 +490,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 6;
+        gridBagConstraints.gridheight = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
         add(jSeparator2, gridBagConstraints);
@@ -521,14 +508,14 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         jScrollPane1.setViewportView(jList1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 4;
         gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 88;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 74;
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 6, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(16, 0, 12, 16);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("Plot Data From");
@@ -626,6 +613,16 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(7, 13, 7, 16);
         add(jCheckBox3, gridBagConstraints);
+
+        jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel5.setText("List of plots you have selected in MNONMEM syntax");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(8, 16, 0, 16);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jLabel5, gridBagConstraints);
 
     }//GEN-END:initComponents
 
@@ -1048,6 +1045,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton jRadioButton3;
@@ -1065,7 +1063,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
     private javax.swing.JTextPane jTextPane4;
     private javax.swing.JTextPane jTextPane5;

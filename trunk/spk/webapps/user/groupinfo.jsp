@@ -34,20 +34,16 @@ author: Jiaji Du
   </jsp:forward>
 </c:if>
 
+    <%-- Get group users --%>
+    <sql:query var="group">
+      SELECT * FROM user WHERE team_id ="${param.groupId}"
+    </sql:query>
+
 <html>
   <head>
-    <title>All User List</title>
+    <title>User Account Information</title>
   </head>
   <body bgcolor="white">
-
-    <%-- Set number of rows to process --%>
-    <c:set var="noOfRows" value="${initParam.maxNum}" />
-
-    <%-- Get users --%>
-    <sql:query var="userList"
-      sql="SELECT * FROM user ORDER BY surname" 
-      startRow="${param.start}" maxRows="${noOfRows}"
-    />
     <table align=left border=0 width=602>
       <tbody> 
 	<tr>    
@@ -64,80 +60,75 @@ author: Jiaji Du
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>All User List</h3>
+	    <h3>Group Information</h3>
 	    <p> 
           <c:choose>
-            <c:when test="${userList.rowCount == 0}">
-              No one seems to use it anymore ...
+            <c:when test="${group.rowCount == 0}">
+              No user seems to be in this group ...
+            <p>             
+              <form action="updategroup.jsp" method="post">
+                Group ID: ${fn:escapeXml(param.groupId)}<br>
+                Group Name:<input type="text" name="groupName" value="${fn:escapeXml(param.groupName)}">
+                <input type="submit" value="Update"><br>
+                <font color="red">${fn:escapeXml(groupNameError)}</font><br>
+                <input type="hidden" name="groupId" value="${fn:escapeXml(param.groupId)}">
+              </form>
+            <p>
             </c:when>
             <c:otherwise>
-              The following users are found:
+              The following group information are found:
+            <p>             
+              <form action="updategroup.jsp" method="post">
+                Group ID: ${fn:escapeXml(param.groupId)}<br>
+                Group Name:<input type="text" name="groupName" value="${fn:escapeXml(param.groupName)}">
+                <input type="submit" value="Update"><br>
+                <font color="red">${fn:escapeXml(groupNameError)}</font><br>
+                <input type="hidden" name="groupId" value="${fn:escapeXml(param.groupId)}">
+              </form>
             <p>
             <table border="1">
-              <th>Usr ID</th>
-              <th>Group ID</th>
-              <th>User Name</th>
+              <th>User ID</th>
+              <th>Username</th>
               <th>First Name</th>
               <th>Last Name</th>
               <th>Company</th>
-              <th>Country</th>
               <th>State</th>
+              <th>Country</th>
               <th>Email</th>
-              <th>Tester</th>
-              <th>Developer</th>
-              <c:forEach items="${userList.rows}" var="row">
-              <tr>
-                <td><a href=updateuser.jsp?userId=${fn:escapeXml(row.user_id)}>${fn:escapeXml(row.user_id)}</a></td>
-                <td>${fn:escapeXml(row.team_id)}</td>
-                <td>${fn:escapeXml(row.username)}</td>
-                <td>${fn:escapeXml(row.first_name)}</td>
-                <td>${fn:escapeXml(row.surname)}</td>
-                <td>${fn:escapeXml(row.company)}</td>
-                <td>${fn:escapeXml(row.country)}</td>
-                <td>${fn:escapeXml(row.state)}</td>
-                <td>${fn:escapeXml(row.email)}</td>
-                <c:choose>
-                  <c:when test="${row.test == 1}">
-                    <td>Yes</td>
-                  </c:when>
-                  <c:otherwise>
-                    <td>No</td>
-                  </c:otherwise>
-                </c:choose>
-                <c:choose>
-                  <c:when test="${row.dev == 1}">
-                    <td>Yes</td>
-                  </c:when>
-                  <c:otherwise>
-                    <td>No</td>
-                  </c:otherwise>
-                </c:choose>
-              </tr>
+              <th>Tester?</th>
+              <th>Developer?</th>
+              <c:forEach items="${group.rows}" var="row">
+                <tr>
+                  <td><a href=getuser.jsp?userName=${fn:escapeXml(row.username)}&password=${fn:escapeXml(row.password)}>${fn:escapeXml(row.user_id)}</a></td>
+                  <td>${fn:escapeXml(row.username)}</td>
+                  <td>${fn:escapeXml(row.first_name)}</td>
+                  <td>${fn:escapeXml(row.surname)}</td>
+                  <td>${fn:escapeXml(row.company)}</td>
+                  <td>${fn:escapeXml(row.state)}</td>
+                  <td>${fn:escapeXml(row.country)}</td>
+                  <td>${fn:escapeXml(row.email)}</td>
+                  <c:choose>
+                    <c:when test="${row.test == '1'}">
+                      <td>Yes</td>
+                    </c:when>
+                    <c:otherwise>
+                      <td>No</td>
+                    </c:otherwise>
+                  </c:choose>
+                  <c:choose>
+                    <c:when test="${row.dev == '1'}">
+                      <td>Yes</td>
+                    </c:when>
+                    <c:otherwise>
+                      <td>No</td>
+                    </c:otherwise>
+                  </c:choose>
+                </tr>
               </c:forEach>
             </table>
             </c:otherwise>
           </c:choose>
-          <p>
-          <c:choose>
-            <c:when test="${param.start > 0}">
-              <a href="userlistupdate.jsp?start=${param.start - noOfRows}">
-                Previous Page</a>
-            </c:when>
-            <c:otherwise>
-                Previous Page
-          </c:otherwise>
-          </c:choose>
-          <c:choose>
-            <c:when test="${userList.limitedByMaxRows}">
-              <a href="userlistupdate.jsp?start=${param.start + noOfRows}">
-                Next Page</a>
-            </c:when>
-          <c:otherwise>
-            Next Page
-          </c:otherwise>
-          </c:choose>
-	    </p>
-	    <p> 
+            <p>
                When you are done, please <a href="logout.jsp">log out</a>.
 	    </p>
 	  </td>
