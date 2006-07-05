@@ -64,7 +64,6 @@ my $log_file = "$log_file_dir/deployment_log";
 my $rotate_conf = "rotate.conf";
 
 my $scp_command = "/usr/bin/scp";
-my $cp_command = "/bin/cp";
 my $logrotate_command = "/usr/sbin/logrotate";
 
 my $tmp_dir = "/tmp/deploy_candidate-$$";
@@ -124,18 +123,14 @@ foreach my $s ("aspkserver", "cspkserver") {
         &make_directory($ddir);
     }
     else {
-        $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
+       $ddir = $s eq "aspkserver" ? "localhost:/usr/local" : "$s:/usr/local";
     }
     foreach my $f (<$sdir/*>) {
-        if ( $test ) {
-           @args = ($cp_command, "-Rfv", "$f", $ddir);
-        else {
-	   @args = ($scp_command, "-r", "-v", "$f", $ddir);
-        }
+	@args = ($scp_command, "-rv", "$f", $ddir);
         system(@args);
         my $exit_status = $? >> 8;
 	if ($exit_status != 0) {
-	    die "'scp -r $sdir/$f $ddir' failed: $!\n";
+	    die "'scp -r $f $ddir' failed: $!\n";
 	}
     }
 }
@@ -171,17 +166,13 @@ foreach my $s ("aspkserver", "cspkserver") {
 
 foreach my $s ("aspkserver", "cspkserver") {
     my $sdir = "$tmp_dir/$s";
-    $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
+    $ddir = $s eq "aspkserver" ? "localhost:/usr/local" : "$s:/usr/local";
     foreach my $f (<$sdir/*>) {
-        if ( $test ) {
-            @args = ($cp_command, "-Rfv", "$f", "$ddir");
-        } else {
-            @args = ($scp_command, "-r", "$f", $ddir);
-        }
+        @args = ($scp_command, "-rv", "$f", $ddir);
         system(@args);
         my $exit_status = $? >> 8;
 	if ($exit_status != 0) {
-	    die "'scp -r $sdir/$f $ddir' failed\n";
+	    die "'scp -r $f $ddir' failed\n";
 	}
     }
 }
