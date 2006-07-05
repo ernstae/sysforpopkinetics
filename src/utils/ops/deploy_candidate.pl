@@ -113,6 +113,7 @@ chomp $name;
 chdir $name;
 
 my $ddir = '';
+my @args = ("");
 
 foreach my $s ("aspkserver", "cspkserver") {
     my $sdir = "$candidate_dir/$name/$s";
@@ -126,10 +127,10 @@ foreach my $s ("aspkserver", "cspkserver") {
         $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
     }
     foreach my $f (<$sdir/*>) {
-        if ( $ddir !~ /\:/ ) {
-           my @args = ($cp_command, "-Rfv", "$f", $ddir);
+        if ( $test ) {
+           @args = ($cp_command, "-Rfv", "$f", $ddir);
         else {
-	my @args = ($scp_command, "-r", "-v", "$f", $ddir);
+	   @args = ($scp_command, "-r", "-v", "$f", $ddir);
         }
         system(@args);
         my $exit_status = $? >> 8;
@@ -165,15 +166,17 @@ foreach my $s ("aspkserver", "cspkserver") {
     }
 }
 
+#clear out arguments
+@args = ("");
 
 foreach my $s ("aspkserver", "cspkserver") {
     my $sdir = "$tmp_dir/$s";
     $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
     foreach my $f (<$sdir/*>) {
         if ( $test ) {
-            my @args = ($cp_command, "-Rfv", "$f", "$ddir");
+            @args = ($cp_command, "-Rfv", "$f", "$ddir");
         } else {
-            my @args = ($scp_command, "-r", "$f", $ddir);
+            @args = ($scp_command, "-r", "$f", $ddir);
         }
         system(@args);
         my $exit_status = $? >> 8;
