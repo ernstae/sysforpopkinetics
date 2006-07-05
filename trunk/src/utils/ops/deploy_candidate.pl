@@ -79,6 +79,14 @@ defined $opt{'help'} == 0
 
 $test = 0 if defined $opt{'prod'};
 
+# check for RHEL 4 bug in OpenSSH
+my $rhel_problem = 0;
+my $rhel_ssh = `/bin/rpm -q openssh`;
+chomp($rhel_ssh);
+if ( $rhel_ssh =~ /RHEL4/ig ) {
+  $rhel_problem = 1;
+}
+
 print("Deploying into ");
 if( $test ) {
   print("test");
@@ -123,10 +131,16 @@ foreach my $s ("aspkserver", "cspkserver") {
         &make_directory($ddir);
     }
     else {
-       $ddir = $s eq "aspkserver" ? "localhost:/usr/local" : "$s:/usr/local";
+       $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
     }
+
+    # fix for RHEL 4 scp problem
+    if ( ($ddir !~ /\:/ig) && $rhel_problem == 1) {
+        $ddir = "localhost:" . $ddir;
+    }
+
     foreach my $f (<$sdir/*>) {
-	@args = ($scp_command, "-rv", "$f", $ddir);
+	@args = ($scp_command, "-r", "$f", $ddir);
         system(@args);
         my $exit_status = $? >> 8;
 	if ($exit_status != 0) {
@@ -166,9 +180,15 @@ foreach my $s ("aspkserver", "cspkserver") {
 
 foreach my $s ("aspkserver", "cspkserver") {
     my $sdir = "$tmp_dir/$s";
-    $ddir = $s eq "aspkserver" ? "localhost:/usr/local" : "$s:/usr/local";
+    $ddir = $s eq "aspkserver" ? "/usr/local" : "$s:/usr/local";
+
+    # fix for RHEL 4 scp problem
+    if ( ($ddir !~ /\:/ig) && $rhel_problem == 1) {
+        $ddir = "localhost:" . $ddir;
+    }
+
     foreach my $f (<$sdir/*>) {
-        @args = ($scp_command, "-rv", "$f", $ddir);
+        @args = ($scp_command, "-r", "$f", $ddir);
         system(@args);
         my $exit_status = $? >> 8;
 	if ($exit_status != 0) {
@@ -176,6 +196,7 @@ foreach my $s ("aspkserver", "cspkserver") {
 	}
     }
 }
+
 #$sdir = "$tmp_dir/webserver/usr/local/tomcat/instance/prodssl/webapps";
 #$ddir =  "webserver/usr/local/tomcat/instance/prodssl/webapps";
 #@args = ($scp_command, "-r", "$sdir/user.war", "$ddir/user.war");
