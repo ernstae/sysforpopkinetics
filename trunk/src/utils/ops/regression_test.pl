@@ -173,12 +173,15 @@ for ('cerr', 'srun') {
             # Without a break, it was hard to determine the id#
             # because 'diff' output starts with line #.
 	    print "\n\tjob $job_id: ";
-	    @args = ("diff", "-bB");
-	    for my $regexp (@$ignore) {
-		push @args, ("--ignore-matching-lines", "\"$regexp\"");
-	    }
+
+	    @args = ("/usr/local/bin/NearEqual");
+#	    @args = ("diff", "-bB");
+#	    for my $regexp (@$ignore) {
+#		push @args, ("--ignore-matching-lines", "\"$regexp\"");
+#	    }
 	    push @args, "$base_dir/$_/spkcmptest-job-$job_id/compilation_error.xml";
 	    push @args, "/tmp/spkcmptest-job-$job_id/compilation_error.xml";
+	    push @args, "1e-3","1e-4";
 	    if (system(@args) == 0) {
 		print "\t\t\t\t\t\t\tOK";
 	    }
@@ -197,12 +200,15 @@ for ('cerr', 'srun') {
             # Without a break, it was hard to determine the id#
             # because 'diff' output starts with line #.
 	    print "\n\tjob $job_id: ";
-	    @args = ("ssh", $cluster, "diff", "-bB");
-	    for my $regexp (@$ignore) {
-		push @args, ("--ignore-matching-lines", "\"$regexp\"");
-	    }
+
+	    @args = ("/usr/local/bin/NearEqual");
+#	    @args = ("ssh", $cluster, "diff", "-bB");
+#	    for my $regexp (@$ignore) {
+#		push @args, ("--ignore-matching-lines", "\"$regexp\"");
+#	    }
 	    push @args, "$base_dir/$_/spkruntest-job-$job_id/result.xml";
 	    push @args, "/tmp/spkruntest-job-$job_id/result.xml";
+	    push @args, "1e-3", "1e-4";
 	    system(@args);
 	    if (system(@args) == 0) {
 		print "\t\t\t\t\t\t\tOK";
