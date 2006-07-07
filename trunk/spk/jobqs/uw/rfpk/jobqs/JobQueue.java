@@ -635,7 +635,7 @@ class ThreadedHandler extends Thread
                             out.println("N/A");
                         }
                     }
-                    else if(message[0].equals("list"))
+                    else if(message[0].equals("list") && message.length == 2)
                     {
                         if(message[1].equals("q2c"))
                         {
