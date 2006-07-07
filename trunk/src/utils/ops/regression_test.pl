@@ -173,8 +173,8 @@ for ('cerr', 'srun') {
             # Without a break, it was hard to determine the id#
             # because 'diff' output starts with line #.
 	    print "\n\tjob $job_id: ";
-
-	    @args = ("/usr/local/bin/NearEqual");
+	    @args = ("/usr/local/bin/regression_near_equals.sh");
+#	    @args = ("/usr/local/bin/NearEqual");
 #	    @args = ("diff", "-bB");
 #	    for my $regexp (@$ignore) {
 #		push @args, ("--ignore-matching-lines", "\"$regexp\"");
@@ -200,8 +200,8 @@ for ('cerr', 'srun') {
             # Without a break, it was hard to determine the id#
             # because 'diff' output starts with line #.
 	    print "\n\tjob $job_id: ";
-
-	    @args = ("/usr/local/bin/NearEqual");
+	    @args = ("/usr/local/bin/regression_near_equals.sh");
+#	    @args = ("/usr/local/bin/NearEqual");
 #	    @args = ("ssh", $cluster, "diff", "-bB");
 #	    for my $regexp (@$ignore) {
 #		push @args, ("--ignore-matching-lines", "\"$regexp\"");
