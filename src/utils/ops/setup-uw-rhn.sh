@@ -145,7 +145,8 @@ for user in $VALID_STAFF_USERS;
   do
   if id $user
       then
-      "User $user exists... continuing"
+      echo "User $user exists... continuing..."
+      echo ""
   else
       useradd -c "User $user" -g staff -p ${DEFAULT_PASSWORD}_$user $user
   fi
