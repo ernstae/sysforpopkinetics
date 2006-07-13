@@ -21,6 +21,12 @@ do
   cp $prog /usr/local/bin
 done
 
+for prog in *.sh
+do
+  chmod +x $prog
+  cp $prog /usr/local/bin
+done
+
 chmod +x regression_test
 cp regression_test /usr/local/bin
 
