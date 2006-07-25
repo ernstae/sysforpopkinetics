@@ -10,32 +10,36 @@ CPPFLAGS = \
 	-I..
 
 INCLUDES = \
+	../adapt.h \
+	../AdaptIntegral.h \
+	../f2c.h \
+	../GridIntegral.h \
+	../Gsl2SpkError.h \
+	../MapBay.h \
+	../MapMonte.h \
+	../MontePopObj.h \
 	AnalyticIntegral.h \
-	GridIntegral.h \
-	MapBay.h \
-	MapMonte.h \
-	MontePars.h \
-	LinearModel.h \
-	Gsl2SpkError.h \
-	ExpModel.h
+	MontePars.h 
 
 OBJECTS = \
 	pow_ii.o \
 	adapt.o \
-	AnalyticIntegral.o \
-	GridIntegral.o \
+	\
 	AdaptIntegral.o \
-	MapMonte.o \
+	GridIntegral.o \
+	Gsl2SpkError.o \
 	MapBay.o \
+	MapMonte.o \
 	MontePopObj.o \
-	MapBayTest.o \
+	\
+	AnalyticIntegral.o \
+	ExpModelTest.o \
 	GridIntegralTest.o \
+	MapBayTest.o \
 	MapMonteTest.o \
 	MontePopObjTest.o \
 	NearEqual.o \
-	Gsl2SpkError.o \
-	ExpModelTest.o \
-	RunTest.o
+	RunTest.o 
 
 
 # Rule for compiling C++ soruce files
@@ -47,4 +51,4 @@ OBJECTS = \
 	gcc $(CPPFLAGS) $< -o $@
 
 RunTest: $(OBJECTS) $(INCLUDES)
-	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkpred -lQN01Box -lCppAD -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c -o RunTest
+	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkpred -lQN01Box -lgsl -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c -o RunTest

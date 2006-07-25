@@ -3,6 +3,7 @@ noinst_PROGRAMS      = testall
 # Set Linker flags
 AM_LDFLAGS           = -lxerces-c \
                        -lcppunit \
+			-ldl \
 		       $(top_builddir)/spkcompiler/libcommon.a \
 		       $(top_builddir)/spkcompiler/nonmem/libnonmem.a
 

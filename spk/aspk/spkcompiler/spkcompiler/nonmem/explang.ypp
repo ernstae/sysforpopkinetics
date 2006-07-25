@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cassert>
 #include "../SymbolTable.h"
 #include "../SpkCompilerException.h"
 

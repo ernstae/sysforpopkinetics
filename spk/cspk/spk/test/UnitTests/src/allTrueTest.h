@@ -42,11 +42,11 @@ public:
     void setUp();
     void tearDown();
     void dimAcceptanceTest();
-    void allTrueTest::trueInMiddle();
-    void allTrueTest::trueAtTop();
-    void allTrueTest::trueAtEnd();
-    void allTrueTest::allTrues();
-    void allTrueTest::allFalses();
+    void trueInMiddle();
+    void trueAtTop();
+    void trueAtEnd();
+    void allTrues();
+    void allFalses();
 };
 
 #endif

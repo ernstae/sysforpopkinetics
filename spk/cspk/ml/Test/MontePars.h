@@ -1,6 +1,6 @@
 //==============================================================================
 // 
-// Population Fit of slope and intercept.
+// Linear Model: FO 100
 // 
 // The namespace MontePars exports the values needed by monteDriver.cpp.
 // 
@@ -14,7 +14,7 @@
 
 namespace MontePars{
    enum METHOD { adapt, grid, plain, miser, monte, vegas };
-   const enum METHOD method = vegas;
+   const enum METHOD method = plain;
    const int nEval = 1;
    const int c_numberEval[ nEval ] = { 1000 };
    const SPK_VA::valarray<int> numberEval( c_numberEval, nEval );

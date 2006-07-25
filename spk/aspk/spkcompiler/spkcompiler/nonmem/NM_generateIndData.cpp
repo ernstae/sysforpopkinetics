@@ -3,6 +3,7 @@
  * Define NonmemTranslator::generateIndData().
  */
 #include <fstream>
+#include <cassert>
 
 #include "NonmemTranslator.h"
 #include "SpkCompilerException.h"

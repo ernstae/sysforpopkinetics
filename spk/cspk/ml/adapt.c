@@ -33,7 +33,7 @@ static integer c__200 = 200;
     static integer j, k;
     static doublereal one, two, half;
     extern /* Subroutine */ int bsrl_(integer *, doublereal *, doublereal *, 
-	    U_fp, integer *, integer *, doublereal *, doublereal *, 
+	    D_fp, integer *, integer *, doublereal *, doublereal *, 
 	    doublereal *, integer *, integer *);
     static doublereal zero, width[20];
     static integer index1, index2, divflg;
@@ -182,7 +182,7 @@ static integer c__200 = 200;
     sbrgns = rgnstr;
 /*<    >*/
 L40:
-    bsrl_(ndim, center, width, (U_fp)functn, &maxcls, &rulcls, &errmin, &
+    bsrl_(ndim, center, width, (D_fp)functn, &maxcls, &rulcls, &errmin, &
 	    rgnerr, &rgnval, &divaxo, &divaxn);
 /*<       FINEST=FINEST+RGNVAL >*/
     *finest += rgnval;

@@ -10,8 +10,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	-I$(top_builddir)/spk \
 	-I$(INST_BASE)/include/spktest \
-	-I/$(INST_BASE)/cppunit/include \
-	-I/$(INST_BASE)/include/spktest/CppAD
+	-I/$(INST_BASE)/cppunit/include 
 
 # Set C++ compiler flags
 if SPK_RELEASE 
@@ -26,20 +25,19 @@ endif
 # Set linker flags
 AM_LDFLAGS  = \
 	-L/usr/local/lib \
+	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
-	-L$(INST_BASE)/lib/spktest/CppAD \
 	$(top_builddir)/spk/libspk.a \
 	-lQN01Box \
-	-lCppAD \
 	-llapack \
-	-lg2c \
-	-latlas_lapack \
+	-llapack_atlas \
 	-lcblas \
 	-latlas \
 	-lpthread \
-	-lm \
 	-lcppunit \
-	-lxerces-c
+	-lxerces-c \
+	-lm \
+	-ldl
 
 testall_SOURCES = \
 	$(top_builddir)/config.h \

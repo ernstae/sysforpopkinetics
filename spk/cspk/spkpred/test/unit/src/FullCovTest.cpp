@@ -1309,9 +1309,10 @@ void FullCovTest::fixedTwoByTwoCovTest()
 
   // Set the number of rows in the covariance matrix.
   const int nRow = 2;
+  const int nPar = 3;
 
   // Set all ek=lements as fixed
-  valarray<bool> parFixed( nRow );
+  valarray<bool> parFixed( nPar );
   parFixed = true;
 
   // Set the number of rows in the derivative of the covariance matrix.
@@ -1320,9 +1321,8 @@ void FullCovTest::fixedTwoByTwoCovTest()
   // Construct the covariance matrix.
   FullCov omega( nRow, parFixed );
 
-  // Get the number of parameters.
-  int nPar = omega.getNPar();
-  assert( nPar == 3 );
+  // check the number of parameters.
+  assert( nPar == omega.getNPar() );
 
   // Initialize the current value for the parameters.
   valarray<double> par( nPar );

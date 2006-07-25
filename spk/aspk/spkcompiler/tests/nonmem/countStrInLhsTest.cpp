@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cassert>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestCaller.h>

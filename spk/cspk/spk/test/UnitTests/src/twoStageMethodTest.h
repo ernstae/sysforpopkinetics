@@ -52,7 +52,7 @@ private:
   void railExampleGTSTest();
 
   // Helper functions.
-  void twoStageMethodTest::doTheTest(
+  void doTheTest(
     double              epsilon,
     const DoubleMatrix& dvecBLow,
     const DoubleMatrix& dvecBUp,
