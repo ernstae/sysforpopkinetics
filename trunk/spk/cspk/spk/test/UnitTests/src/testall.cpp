@@ -230,7 +230,10 @@ int main( int argc, const char * argv[] )
   if( argc == 1 )
     {
       // push all existing unit test classes into the list
+# if 0
+Brad: 2006-05-09: It appears to me this should have never been here.
       tests_to_be_executed.resize( master_list_of_tests.size() );
+# endif
       map<string, CppUnit::Test*>::const_iterator p = master_list_of_tests.begin();
       for( p; p != master_list_of_tests.end(); p++ )
 	tests_to_be_executed.push_back( p->second );

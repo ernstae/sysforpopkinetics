@@ -22,16 +22,16 @@ endif
 
 AM_LDFLAGS  = \
 	-L/usr/local/lib \
+	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
 	$(top_builddir)/spkpred/libspkpred.a \
-	-lCppAD \
 	-lspk \
 	-lQN01Box \
 	-llapack \
-	-lg2c \
-	-latlas_lapack \
+	-llapack_atlas \
 	-lcblas \
 	-latlas \
+	-ldl \
 	-lpthread \
 	-lm \
 	-lcppunit \

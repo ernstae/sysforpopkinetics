@@ -1,7 +1,7 @@
 noinst_PROGRAMS      = testall
 
 # Linker flags
-AM_LDFLAGS           = -lxerces-c -lcppunit ../../spkcompiler/libcommon.a
+AM_LDFLAGS           = -ldl -lxerces-c -lcppunit ../../spkcompiler/libcommon.a 
 
 # Dependencies
 testall_DEPENDENCIES = $(top_builddir)/spkcompiler/libcommon.a 

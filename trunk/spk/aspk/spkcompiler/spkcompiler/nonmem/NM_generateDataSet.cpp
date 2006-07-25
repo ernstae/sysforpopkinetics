@@ -200,7 +200,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   void replaceCEtaRes ( const SPK_VA::valarray<double>& cEtaResAllIn );"  << endl;
   oDataSet_h << "   void replaceCWEtaRes( const SPK_VA::valarray<double>& cWEtaResAllIn );" << endl;
   oDataSet_h << endl;
-  oDataSet_h << "   friend std::ostream& operator<< <spk_ValueType>( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
+  //  oDataSet_h << "   friend std::ostream& operator<< <spk_ValueType>( std::ostream& o, const DataSet<spk_ValueType>& A );" << endl;
   oDataSet_h << endl;
  
   //----------------------------------------
@@ -212,11 +212,17 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << endl;
 
   //----------------------------------------
+  // Converted to public due to access by non-friends 06/22/2006 ernst@u
+  //----------------------------------------
+  oDataSet_h << "public:" << endl;
+  oDataSet_h << "   SPK_VA::valarray<int> NRecords;  // # of records for each individual." << endl;  
+
+  //----------------------------------------
   // Private member declarations.
   //----------------------------------------
   oDataSet_h << "private:" << endl;
   oDataSet_h << "   SPK_VA::valarray<double> measurements; // a long vector containg all measurements" << endl;
-  oDataSet_h << "   SPK_VA::valarray<int> NRecords;  // # of records for each individual." << endl;
+  //  oDataSet_h << "   SPK_VA::valarray<int> NRecords;  // # of records for each individual." << endl;
   oDataSet_h << "   SPK_VA::valarray<int> NObservs; // # of measurements for each individual." << endl;
   oDataSet_h << "   const int popSize;" << endl;
   oDataSet_h << endl;

@@ -1,3 +1,9 @@
+# ! /bin/bash
+if [ -e htm ]
+then
+	rm -r -f htm
+fi
+mkdir htm
 cd htm
 rm *.xml
 rm *.htm

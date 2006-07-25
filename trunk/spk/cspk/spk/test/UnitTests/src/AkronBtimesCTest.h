@@ -46,8 +46,8 @@ class AkronBtimesCTest : public CppUnit::TestFixture
     std::vector<int> _rows;
     std::vector<int> _cols;
     const DoubleMatrix kron( const DoubleMatrix &dmatA, const DoubleMatrix &dmatB );
-    const SPK_VA::valarray<double> AkronBtimesCTest::kron( const SPK_VA::valarray<double> &A, int iACols,
-                                                           const SPK_VA::valarray<double> &B, int iBCols );
+    const SPK_VA::valarray<double> kron( const SPK_VA::valarray<double> &A, int iACols,
+                                         const SPK_VA::valarray<double> &B, int iBCols );
 
 public: 
     static CppUnit::Test* suite();

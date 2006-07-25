@@ -66,7 +66,7 @@ class PopPredModel : public SpkModel
   //------------------------------------------------------------
 
 public:
-PopPredModel::PopPredModel(
+PopPredModel(
     PredBase< CppAD::AD<double> >&   predEvaluatorIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
@@ -80,7 +80,7 @@ PopPredModel::PopPredModel(
     covStruct                        sigmaStructIn,
     const SPK_VA::valarray<double>&  sigmaMinRepIn );
 
-PopPredModel::PopPredModel(
+PopPredModel(
     PredBase< CppAD::AD<double> >&          predEvaluatorIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
@@ -96,7 +96,7 @@ PopPredModel::PopPredModel(
     const SPK_VA::valarray<double>&  sigmaMinRepIn,
     const SPK_VA::valarray<bool>&    sigmaMinRepFixedIn );
 
-PopPredModel::PopPredModel(
+PopPredModel(
     PredBase< CppAD::AD<double> >&          predEvaluatorIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,

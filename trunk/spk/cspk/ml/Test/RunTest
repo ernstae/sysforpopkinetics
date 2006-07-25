@@ -1,0 +1,46 @@
+#! /bin/bash
+list_method="plain grid miser"
+list_job[1]="273"
+list_job[2]="275"
+list_job[3]="274"
+list_neval[1]="1000"
+list_neval[2]="10"
+list_neval[3]="1000"
+index=0
+for method in $list_method
+do
+	let index++
+	job=${list_job[$index]}
+	neval=${list_neval[$index]}
+	#
+	mv MontePars.h MontePars.$$
+	sed < MontePars.$$ > MontePars.h  \
+		-e "s/method *= *[a-z]*/method = $method/" \
+		-e "s/\[ *nEval *\] *= *{ *[0-9]* *}/[ nEval ] = { $neval }/"
+	make OneTest
+	echo "./OneTest | sed  -n '/^ *[0-9.e+-]* *\$/p'  > OneTest.$$" 
+	./OneTest | sed  -n '/^ *[0-9.e+-]* *$/p'  > OneTest.$$ 
+	sed -n '/^ *[0-9.e+-]* *$/p'  < result-$job.xml > result.$$ 
+	# echo "diff OneTest.$$ result.$$"
+	# diff OneTest.$$ result.$$
+	if ./NearEqual OneTest.$$ result.$$ 1e-3 1e-3
+	then
+		list_msg[$index]="Ok"
+	else
+		list_msg[$index]="Error"
+		echo "$diff_out"
+	fi
+	if mv MontePars.$$ MontePars.h
+	then
+		touch MontePars.$$
+		rm MontePars.[0-9]* 
+	fi
+	rm OneTest.[0-9]* result.[0-9]*
+done
+index=0
+for method in $list_method
+do
+	let index++
+	msg=${list_msg[$index]}
+	echo "Test of $method: $msg"
+done

@@ -57,19 +57,18 @@ namespace{
 
   char SPKLIB[]     = "spk";
   char SPKPREDLIB[] = "spkpred";
-  char CPPADLIB[]   = "CppAD";
   char SPKOPTLIB[]  = "QN01Box";
-  char ATLASLIB[]   = "atlas_lapack";
+  char ATLASLIB[]   = "lapack_atlas";
   char CBLASLIB[]   = "cblas";
   char CLAPACKLIB[] = "atlas";
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
-  char LDPATH[]     = "-Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
+  char LDPATH[]     = "-Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -L/usr/lib/atlas";
 #ifndef SPK_RELEASE
-  char CPPFLAG[]    = "-g -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD";
+  char CPPFLAG[]    = "-g -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD -I/usr/local/include";
 #else
-  char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD";
+  char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD -I/usr/local/include";
 #endif
   char LDFLAG[514];
 
@@ -341,8 +340,8 @@ void ind_simTest::setUp()
   snprintf( fPredDriver,           MAXCHARS, "%s_PredDriver",           fPrefix );
   snprintf( fPredDriver_cpp,       MAXCHARS, "%s_PredDriver.cpp",       fPrefix );
 
-  snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, CPPADLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
 
   // ID doesn't have an alias
   label_alias[strID]   = NULL;

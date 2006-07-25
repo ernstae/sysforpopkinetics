@@ -66,7 +66,7 @@ class IndPredModel : public SpkModel
   //------------------------------------------------------------
 
 public:
-IndPredModel::IndPredModel(
+IndPredModel(
     PredBase< CppAD::AD<double> >&   predEvaluatorIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
@@ -76,7 +76,7 @@ IndPredModel::IndPredModel(
     covStruct                        omegaStructIn,
     const SPK_VA::valarray<double>&  omegaMinRepIn );
 
-IndPredModel::IndPredModel(
+IndPredModel(
     PredBase< CppAD::AD<double> >&       predEvaluatorIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
@@ -87,7 +87,7 @@ IndPredModel::IndPredModel(
     const SPK_VA::valarray<double>&  omegaMinRepIn,
     const SPK_VA::valarray<bool>&    omegaMinRepFixedIn );
 
-IndPredModel::IndPredModel(
+IndPredModel(
     PredBase< CppAD::AD<double> >&       predEvaluatorIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,

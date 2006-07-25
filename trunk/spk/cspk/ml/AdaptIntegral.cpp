@@ -6,6 +6,8 @@ $spell
 	valarray
 	const
 	Feval
+	maxpts
+	ndim
 $$
 
 $section A.C. Gen'z Adaptive Multidimensional Integration$$
@@ -56,7 +58,7 @@ with respect to.
 
 $head maxpts$$
 The value $italic maxpts$$ is
-the maximum number of of funciton evaluations to use.
+the maximum number of function evaluations to use.
 This must be at least as big as
 $latex \[
 	2^ndim + 2 ndim^2 + 6 ndim + 1

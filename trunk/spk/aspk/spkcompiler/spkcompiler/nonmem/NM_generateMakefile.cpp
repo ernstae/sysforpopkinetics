@@ -47,7 +47,7 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << endl;                                   
 
   oMakefile << "# C++ compiler flags to build a release version." << endl;
-  oMakefile << "#CXX_FLAGS = -O3 -Dspk_release -DNDEBUG";
+  oMakefile << "#CXX_FLAGS = -O3 -Dspk_release -DNDEBUG ";
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to build a debug version." << endl;
@@ -65,8 +65,8 @@ void NonmemTranslator::generateMakefile() const
   }
   oMakefile << endl;                                        
 
-  oMakefile << "LIBS      = -lspkpred -lspk -lQN01Box -lCppAD";
-  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -llapack -lg2c -latlas_lapack -lcblas -latlas -lpthread -lm -lxerces-c" << endl;
+  oMakefile << "LIBS      = -lspkpred -lspk -lQN01Box ";
+  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -llapack -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c" << endl;
   oMakefile << endl;
 
   oMakefile << "COMMON_INCLUDE = \\" << endl;
@@ -87,6 +87,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR)/CppAD ";
+      oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "$(LIBS)" << endl;
@@ -98,6 +99,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
+      oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "$(LIBS)" << endl;
@@ -138,9 +140,11 @@ void NonmemTranslator::generateMakefile() const
 
       oMakefile << "prod : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
-      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* . " << endl;
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.cpp ." << endl;
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.h   ." << endl;
       oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR)/CppAD ";
@@ -154,6 +158,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
       oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
