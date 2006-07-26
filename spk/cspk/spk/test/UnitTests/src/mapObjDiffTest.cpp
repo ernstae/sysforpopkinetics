@@ -409,6 +409,6 @@ void mapObjDiffTest::testMapObjDiff()
     {
         CPPUNIT_ASSERT_DOUBLES_EQUAL(exactMapObj_b_bOut.data()[i], mapObj_b_bOut.data()[i], 
                 ( pow(pdBStep[i], 2.0 ) / ( 2.0*((4.0*3.0*2.0/pow(pdB[0],5.0) * (3.0*2.0/pow(pdB[0],4.0))))) )
-                + (DBL_EPSILON*10.0/pdBStep[i]) );
+                + (DBL_EPSILON*100.0/pdBStep[i]) );
     }
 }
