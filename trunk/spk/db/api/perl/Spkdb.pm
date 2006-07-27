@@ -1196,7 +1196,7 @@ sub end_job() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select * from end where end_code='$end_code';";
+    my $sql = "select * from job where end_code='$end_code';";
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
 	$err = $PREPARE_FAILED;
