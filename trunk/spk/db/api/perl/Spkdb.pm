@@ -1196,7 +1196,7 @@ sub end_job() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select * from job where end_code='$end_code';";
+    my $sql = "select end_code from end where end_code='$end_code';";
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
 	$err = $PREPARE_FAILED;
@@ -1205,7 +1205,7 @@ sub end_job() {
     }
     unless ($sth->execute()) {
 	$err = $EXECUTE_FAILED;
-        $errstr = "failed to execute '$sql'";
+        $errstr = "failed to execute '$sql' $!";
 	return 0;
     }
     unless ($sth->fetchrow_array) {
