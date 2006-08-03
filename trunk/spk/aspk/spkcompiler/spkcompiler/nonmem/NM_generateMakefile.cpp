@@ -47,11 +47,13 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << endl;                                   
 
   oMakefile << "# C++ compiler flags to build a release version." << endl;
-  oMakefile << "#CXX_FLAGS = -O3 -Dspk_release -DNDEBUG ";
+  oMakefile << "#CXX_FLAGS_PROD = -O3 -Dspk_release -DNDEBUG " << endl;
+  oMakefile << "CXX_FLAGS_PROD = -O -Dspk_release" << endl;
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to build a debug version." << endl;
-  oMakefile << "CXX_FLAGS = -g" << endl;
+  oMakefile << "CXX_FLAGS = " << endl;
+  oMakefile << "CXX_FLAGS_TEST = -g" << endl;
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to turn on profiling" << endl;
@@ -82,7 +84,7 @@ void NonmemTranslator::generateMakefile() const
   if( !myIsMonte )
     {
       oMakefile << "prod : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS) fitDriver.cpp -o driver ";
+      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) fitDriver.cpp -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
@@ -94,7 +96,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << endl;
       
       oMakefile << "test : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS) fitDriver.cpp -o driver ";
+      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) fitDriver.cpp -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
@@ -140,9 +142,8 @@ void NonmemTranslator::generateMakefile() const
 
       oMakefile << "prod : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
-      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.cpp ." << endl;
-      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/*.h   ." << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
@@ -156,7 +157,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "test : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
+      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
