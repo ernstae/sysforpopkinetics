@@ -219,6 +219,24 @@ sub death {
     # Log the reason for termination
     syslog($level, $msg);
 
+    # send an e-mail indicating failure
+    # added by:  andrew 05/19/2006
+    if ( ! ($mode =~ "test") ) {
+	my $mail_from = 'rfpk@spk.washington.edu';
+	my $mail_subject = "spkcmpd shut down: $mode";
+	my $mail_body = "$msg\n\n$level\n\n$mode";
+	
+	use MIME::Lite;
+	$msg = MIME::Lite->new(
+			       From     => $mail_from,
+			       To	 => $alert,
+			       Subject  => $mail_subject,
+			       Data     => $mail_body
+			       );
+	$msg->send; # send via default
+    }
+
+
     # Close the connection to the database
     if ($database_open) {
 	&disconnect($dbh)
