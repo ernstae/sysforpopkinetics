@@ -695,6 +695,10 @@ namespace // [Begin: unnamed namespace]
     //----------------------------------------------------------
 
   public:
+    // *********************************************************
+    // Function: Hessian is not available
+    const char* Hessian(double *HCur)
+    {	return "not available"; }
     //**********************************************************
     // 
     // Function: function
