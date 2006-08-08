@@ -2,11 +2,11 @@
 
 use strict;
 
-use Test::Simple tests => 63;  # number of ok() tests
+use Test::Simple tests => 65;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
-    'de_q2c', 'set_state_code', 'de_q2ac', 'de_q2ar', 'get_job_ids',
+    'de_q2c', 'set_state_code', 'de_q2ac', 'de_q2ar', 'get_q2c_job', 'get_q2r_job', 'get_job_ids',
     'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
@@ -124,8 +124,9 @@ sleep(1);
 $row = &de_q2c($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1
              && $row->{"xml_source"},       "de_q2c, second job");
+$row = &get_q2c_job($dbh, $job_id);
+ok($row && $row->{"xml_source"} eq "source",       "get_q2c_job");
 my $jobId;
-
 &set_state_code($dbh, $job_id, "q2ac");
 sleep(1);
 &set_state_code($dbh, $job_id + 1, "q2ac");
@@ -166,7 +167,8 @@ $row = &de_q2r($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1, "de_q2r");
 $row = &de_q2r($dbh);
 ok($row && $row->{"job_id"} == $job_id, "de_q2r");
-
+$row = &get_q2r_job($dbh, $job_id + 1);
+ok($row && $row->{"cpp_source"} eq "1st compiled",       "get_q2r_job");
 $row_array = &Spkdb::get_run_jobs($dbh);
 $j_id = $job_id;
 $flag = 1;
@@ -288,7 +290,7 @@ my @jobs = &get_job_ids($dbh, "acmp");
 ok(@jobs && $jobs[0] == 1 && $jobs[1] == 2, "get_job_ids");
 
 $row_array = &job_history($dbh, 2);
-ok (@$row_array == 11, "job_history");
+ok (@$row_array == 12, "job_history");
 
 ok(!defined &disconnect($dbh), "disconnect");			 
 
