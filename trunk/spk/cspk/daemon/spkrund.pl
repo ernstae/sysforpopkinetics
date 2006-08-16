@@ -171,6 +171,9 @@ If the signal number is SIGABRT, this indicates that the software
 itself discovered some internal inconsistency and terminated by
 raising an "assertion".  In this case, end_code is also set to "serr".
 
+If the signal number is SIGKILL, this indicates that the job is set to
+abort.
+
 If the job terminated with any signal other than SIGTERM or SIGABRT, a
 hardware error is assumed, and the end_code is set to "herr". Of
 course, many hardware errors are really caused by software, such as
@@ -210,7 +213,7 @@ use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'get_q2r_job', 'set_state_code', 'end_job',
-	  'job_history', 'email_for_job', 'get_mail_notice');
+	  'job_history', 'email_for_job', 'get_mail_notice', 'job_status');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 use Sys::Hostname;
 use IO::Socket;
@@ -251,7 +254,6 @@ my $filename_data = "data.xml";
 my $filename_driver = "driver";
 my $filename_job_id = "job_id";
 my %jobid_pid = ();
-my %pid_abort = ();
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
@@ -294,24 +296,24 @@ sub death {
 
     # send an e-mail indicating failure
     # added by:  andrew 05/19/2006
-    if ( ! ($mode =~ "test") ) {
-	my $mail_from = 'rfpk@spk.washington.edu';
-	my $mail_subject = "spkrund shut down: $mode";
-	my $mail_body = "$msg\n\n$level\n\n$mode";
-	
-	use MIME::Lite;
-	$msg = MIME::Lite->new(
-			       From     => $mail_from,
-			       To	 => $alert,
-			       Subject  => $mail_subject,
-			       Data     => $mail_body
-			       );
-	$msg->send; # send via default
+    my $mail_from = 'rfpk@spk.washington.edu';
+    my $mail_subject = "spkrund shut down: $mode";
+    my $mail_body = "$msg\n\n$level\n\n$mode";
+
+    if ($mode =~ m/prod/i) {
+        use MIME::Lite;
+        $msg = MIME::Lite->new(
+            From     => $mail_from,
+	    To	 => $alert,
+            Subject  => $mail_subject,
+	    Data     => $mail_body
+        );
+        $msg->send; # send via default
     }
 
     # close the connection to the database
     if ($database_open) {
-	&disconnect($dbh)
+	&disconnect($dbh);
     }
 
     # Close the connection to the job-queue server
@@ -575,11 +577,6 @@ sub reaper {
 
     # Assume success, then look for errors
     $end_code = "srun"; 
-    if(exists $pid_abort{$child_pid}) {
-        $end_code = "abrt";
-        $submit_to_bugzilla = 0;
-        delete($pid_abort{$child_pid});
-    }
 
     # $submit_to_bugzilla must be re-initialized every time
     # this routine is called because it is taking now AND operation.
@@ -690,8 +687,13 @@ sub reaper {
         $submit_to_bugzilla &= 1;
     }
     elsif ($child_signal_number == SIGTERM) {
-	$end_code = "abrt";
+	$end_code = "serr";
 	$err_msg .= "killed by operator; ";
+        $submit_to_bugzilla &= 0;
+    }
+    elsif ($child_signal_number == SIGKILL) {
+	$end_code = "abrt";
+	$err_msg .= "aborted by user; ";
         $submit_to_bugzilla &= 0;
     }
     elsif ($child_signal_number == SIGSEGV) {
@@ -895,7 +897,7 @@ sub stop {
 
     # Close the connection to the database
     if ($database_open) {
-	&disconnect($dbh)
+	&disconnect($dbh);
     }
 
     # Close the connection to the job-queue server
@@ -1027,6 +1029,7 @@ unless(defined $answer && $answer eq "done") {
 use POSIX ":sys_wait_h";
 my $child_pid;
 my $jobid;
+my $time = 0;
 syslog('info', "processing new computational runs");
 
 while(1) {
@@ -1065,10 +1068,7 @@ while(1) {
             if (&set_state_code($dbh, $jobid, "arun") == 1) {
                 if (exists $jobid_pid{$jobid}) {
                     my $cpid = $jobid_pid{$jobid};
-                    $pid_abort{$cpid} = $cpid;
-                    $SIG{'TERM'} = 'IGNORE';
-	            kill('TERM', $cpid);
-                    $SIG{'TERM'} = \&stop;
+                    kill('KILL', $cpid);
                 }
                 else {
                     abort_job($jobid);
@@ -1095,4 +1095,9 @@ while(1) {
     # sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE
               # or else this daemon will burn all your CPU cycles!
+    $time++;
+    if ($time == 3600) {
+        &job_status($dbh, 1);
+        $time = 0;
+    }
 };
