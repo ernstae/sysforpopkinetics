@@ -117,6 +117,9 @@ descendents. It waits for all sub-processes (which are
 instances of the spkcompiler) to terminate.  It closes the database
 and the system log, then dies.
 
+If the signal number is SIGKILL, this indicates that the job is set to
+abort.
+
 NOTE: Life-Cycle of the Working Directory Name
 
   1. A working directory must be created before each SPK compile is 
@@ -156,7 +159,7 @@ use File::Path;
 use POSIX qw(:signal_h);
 use Proc::Daemon;
 use Spkdb('connect', 'disconnect', 'get_q2c_job', 'set_state_code', 'en_q2r',
-          'end_job', 'get_dataset', 'email_for_job');
+          'end_job', 'get_dataset', 'email_for_job', 'job_status');
 use Sys::Syslog('openlog', 'syslog', 'closelog');
 use IO::Socket;
 
@@ -550,9 +553,14 @@ sub reaper {
 	    $err_msg .= "compiler bug asserted; ";
             $submit_to_bugzilla &= 1;
 	}
-	elsif ($child_signal_number == SIGTERM) {
-	    $end_code = "abrt";
+        elsif ($child_signal_number == SIGTERM) {
+	    $end_code = "serr";
 	    $err_msg .= "killed by operator; ";
+            $submit_to_bugzilla &= 0;
+        }
+	elsif ($child_signal_number == SIGKILL) {
+	    $end_code = "abrt";
+	    $err_msg .= "aborted by user; ";
             $submit_to_bugzilla &= 0;
 	}
 	elsif ($child_signal_number == SIGSEGV) {
@@ -828,7 +836,7 @@ use POSIX ":sys_wait_h";
 
 my $child_pid;
 my $jobid;
-
+my $time = 0;
 syslog('info', "compiling jobs from the queue");
 
 while(1) {
@@ -860,9 +868,7 @@ while(1) {
             if (&set_state_code($dbh, $jobid, "acmp") == 1) {
                 if (exists $jobid_pid{$jobid}) {
                     my $cpid = $jobid_pid{$jobid};
-                    $SIG{'TERM'} = 'IGNORE';
-	            kill('TERM', $cpid);
-                    $SIG{'TERM'} = \&stop;
+                    kill('KILL', $cpid);
                 }
                 else {
                     abort_job($jobid);
@@ -889,4 +895,9 @@ while(1) {
     # Sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE 
               # or else this daemon will burn all your CPU cycles!
+    $time++;
+    if ($time == 3600) {
+        &job_status($dbh, 1);
+        $time = 0;
+    }
 };
