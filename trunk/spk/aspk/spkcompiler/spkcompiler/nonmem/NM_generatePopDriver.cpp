@@ -744,12 +744,8 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                               &cResTrancatedOut, "        << endl;
   oPopDriver << "                               &cResWtdTrancatedOut, "     << endl;
   oPopDriver << "                               &cParResOut, "              << endl;
-  oPopDriver << "                               &cParResWtdOut );"          << endl;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Finish L Type Residuals - Mitch]
-  //  oPopDriver << "                               &cParResWtdOut,"            << endl;
-  //  oPopDriver << "                                calcFoModelMinimizer );"   << endl;
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  oPopDriver << "                               &cParResWtdOut,"            << endl;
+  oPopDriver << "                                calcFoModelMinimizer );"   << endl;
   oPopDriver << "                  dataForDisposal.expand( cPredTrancatedOut,   cPredOut );"   << endl;
   oPopDriver << "                  dataForDisposal.expand( cResTrancatedOut,    cResOut );"    << endl;
   oPopDriver << "                  dataForDisposal.expand( cResWtdTrancatedOut, cResWtdOut );" << endl;
