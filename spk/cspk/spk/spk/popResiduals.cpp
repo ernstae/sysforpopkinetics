@@ -81,7 +81,8 @@ $syntax/void popResiduals( SpkModel&                        /model/,
                    SPK_VA::valarray<double>*        /pPopResOut/,
                    SPK_VA::valarray<double>*        /pPopResWtdOut/,
                    SPK_VA::valarray<double>*        /pPopIndParResOut/,
-                   SPK_VA::valarray<double>*        /pPopIndParResWtdOut/ )
+                   SPK_VA::valarray<double>*        /pPopIndParResWtdOut/, 
+                   bool                             /calcFoModelMinimizer/ = false )
 /$$
 $tend
 
@@ -113,8 +114,8 @@ and weighted residuals $math%resWtd_i%$$ for the $th i$$
 individual are calculated as follows:
 $math%
 
-    pred   =  f (alp, b )  -  d  f (alp, b )  b   ,
-        i      i       i       b  i       i    i 
+    pred   =  f (alp, b )  -  d  f (alp, b )  bCheck   ,
+        i      i       i       b  i       i         i 
 
 %$$
 $math%
@@ -133,6 +134,33 @@ $math%
 %$$
 where the term multiplying the residuals is the matrix square 
 root of the inverse of the approximate covariance.
+$pre
+
+$$
+The variable $math%bCheck_i%$$ is the minimizer of the Map Bayesian
+objective $math%MapObj(b)%$$ using the first order (FO) model and is
+calculated as
+$$math%
+
+                  -                                                           -  -1
+                 |                T             -1                             |
+    bCheck   =   |  d  f (alp, b )   R (alp, b )    d  f (alp, b )  +  D(alp)  |
+          i      |   b  i       i     i       i      b  i       i              |
+                  -                                                           -
+
+                                     T             -1
+                     * d  f (alp, b )   R (alp, b )    [ y  -  f (alp, b ) ]  .
+                        b  i      i      i       i        i     i       i
+
+%$$
+If the flag $italic calcFoModelMinimizer$$ is set equal to false (the
+default behavior), then the value for $math%bCheck_i%$$ will not be
+calculated and instead
+$math%
+
+    bCheck   =  b   .
+          i      i
+%$$.
 $pre
 
 $$
@@ -340,6 +368,17 @@ Otherwise, this function will not attempt to change the
 contents of the $code SPK_VA::valarray<double>$$ object 
 pointed to by $italic pPopIndParResWtdOut$$. 
 
+$syntax/
+
+/calcFoModelMinimizer/ 
+/$$
+If $italic calcFoModelMinimizer$$ is equal to true, then the residuals
+will be calculated using $math%bCheck_i%$$, which is the minimizer of
+the Map Bayesian objective $math%MapObj(b)%$$ using the first order
+(FO) model.
+Otherwise, $math%bCheck_i%$$ will be set equal to the input value for $math%b_i%$$.
+The default value for this argument is false.
+
 $end
 */
 
@@ -350,6 +389,7 @@ $end
 // SPK library header files.
 #include "add.h"
 #include "intToOrdinalString.h"
+#include "inverse.h"
 #include "multiply.h"
 #include "popResiduals.h"
 #include "SpkException.h"
@@ -380,7 +420,8 @@ void popResiduals( SpkModel&                model,
                    valarray<double>*        pPopResOut,
                    valarray<double>*        pPopResWtdOut,
                    valarray<double>*        pPopIndParResOut,
-                   valarray<double>*        pPopIndParResWtdOut )
+                   valarray<double>*        pPopIndParResWtdOut,
+                   bool                     calcFoModelMinimizer )
 {
   //----------------------------------------------------------------
   // Preliminaries.
@@ -529,7 +570,7 @@ void popResiduals( SpkModel&                model,
 
   // If this function is going to return the weighted residuals,
   // initialize the temporary arrays to hold them.  Otherwise, set the
-  // temporary pointer to zero so that they will not be calculated.
+  // temporary pointer to zero so that they will not be fcalculated.
   valarray<double> popResWtdTemp;
   valarray<double>* pPopResWtdTemp = &popResWtdTemp;
   valarray<double> resWtd_i;
@@ -590,9 +631,11 @@ void popResiduals( SpkModel&                model,
   // Set the current population parameter.
   model.setPopPar( popPar );
 
+  valarray<double> b_i     ( nB );
+  valarray<double> bCheck_i( nB );
+
   // For the first order objectives, the individual parameters 
   // are all set equal to zero.
-  valarray<double> b_i( nB );
   if ( objective == FIRST_ORDER || objective == NAIVE_FIRST_ORDER  )
   {
     b_i = 0.0;
@@ -603,7 +646,7 @@ void popResiduals( SpkModel&                model,
   //     D(alp)  .
   //
   valarray<double> D( nB * nB );
-  if ( pPopResWtdOut || pPopIndParResWtdOut )
+  if ( pPopResWtdOut || pPopIndParResWtdOut || calcFoModelMinimizer )
   {
     model.indParVariance( D );
   }
@@ -615,12 +658,17 @@ void popResiduals( SpkModel&                model,
   valarray<double> f_i;
   valarray<double> f_i_b;
   valarray<double> f_i_bTranspose;
+  valarray<double> f_i_bTransposeTimesR_iInverse;
   valarray<double> R_i;
+  valarray<double> R_iInverse;
   valarray<double> VTilde_i;
   valarray<double> pred_i;
   valarray<double> temp1;
   valarray<double> temp2;
   valarray<double> temp3;
+  valarray<double> temp4;
+  valarray<double> temp5;
+  valarray<double> temp6;
 
   int nY_iTotal = 0;
   int nY_i;
@@ -640,6 +688,10 @@ void popResiduals( SpkModel&                model,
   
       // Get the number of data values for this individual.
       nY_i = nMeasurementsAll[i];
+  
+      // Get this invidividual's data vector.
+      y_i.resize( nY_i );
+      y_i = measurementsAll[ slice( nY_iTotal, nY_i, 1 ) ];
   
       // Get this individual's parameter if the objective is not 
       // one of the first order objectives.
@@ -679,19 +731,76 @@ void popResiduals( SpkModel&                model,
   
   
       //------------------------------------------------------------
+      // Calculate the FO minimizer of the Map Bayesian objective.
+      //------------------------------------------------------------
+
+      // If necessary, calculate the minimizer of the Map Bayesian
+      // objective MapObj(b) using the first order (FO) model.
+      if ( calcFoModelMinimizer )
+      {
+        // Calculate
+        //                   -                                                           -  -1
+        //                  |                T             -1                             |
+        //     bCheck   =   |  d  f (alp, b )   R (alp, b )    d  f (alp, b )  +  D(alp)  |
+        //           i      |   b  i       i     i       i      b  i       i              |
+        //                   -                                                           -
+        //
+        //                                      T             -1
+        //                      * d  f (alp, b )   R (alp, b )    [ y  -  f (alp, b ) ]  .
+        //                         b  i      i      i       i        i     i       i
+        //
+        if ( notAllZeroF_i_b )
+        {
+          assert( f_i_b.size() == nY_i * nB );
+          assert( D.size()     == nB   * nB );
+    
+          f_i_bTranspose               .resize( nB   * nY_i );
+          R_iInverse                   .resize( nY_i * nY_i );
+          f_i_bTransposeTimesR_iInverse.resize( nB   * nY_i );
+          temp1                        .resize( nB   * nB );
+          temp2                        .resize( nB   * nB );
+          temp3                        .resize( nB   * nB );
+          temp4                        .resize( nB   * nB );
+          temp5                        .resize( nY_i * 1 );
+          temp6                        .resize( nB   * 1 );
+    
+          f_i_bTranspose                = transpose( f_i_b, nB );
+          R_iInverse                    = inverse( R_i, nY_i );
+          f_i_bTransposeTimesR_iInverse = multiply( f_i_bTranspose, nY_i, R_iInverse, nY_i );
+
+          temp1 = multiply( f_i_bTransposeTimesR_iInverse, nY_i, f_i_b, nB );
+          temp2 = temp1 + D;
+    
+          // Make sure that this term is symmetric before taking its
+          // inverse.
+          symmetrize( temp2, nB, temp3 );
+	  temp4 = inverse( temp3, nB );
+
+          temp5 = y_i - f_i;
+          temp6 = multiply( f_i_bTransposeTimesR_iInverse, nY_i, temp5, 1 );
+          bCheck_i = multiply( temp4, nB, temp6, 1 );
+        }
+        else
+        {
+          bCheck_i = 0;
+        }
+      }
+      else
+      {
+        // Set the value for bCheck_i.
+        bCheck_i = b_i;
+      }
+
+  
+      //------------------------------------------------------------
       // Calculate the predicted values for this individual's data.
       //------------------------------------------------------------
   
       pred_i.resize( nY_i );
       temp1 .resize( nY_i );
   
-      // Calculate the predicted value for this individual's data,
-      //
-      //     pred   =  f (alp, b )  -  d  f (alp, b )  b   .
-      //         i      i       i       b  i       i    i 
-      //
-      // Note that this is the expected value for the first order
-      // approximation for the model, i.e.,
+      // Note that the expected value for the first order
+      // approximation for the model is given by
       //
       //     E  [ f (alp, b ) ]  ~  f (alp, b )  -  d  f (alp, b )  b   .
       //      b    i       i         i       i       b  i       i    i
@@ -702,7 +811,16 @@ void popResiduals( SpkModel&                model,
       // Raton, Florida.  When b_i equals zero as in the first order 
       // objective, this approximation is equivalent to Eq. (6.4) and is
       // based on the discussion on pp. 152-4 from the same book.
-      temp1 = multiply( f_i_b, nB, b_i, 1 );
+      //
+      // Calculate the predicted value for this individual's data,
+      //
+      //     pred   =  f (alp, b )  -  d  f (alp, b )  bCheck   .
+      //         i      i       i       b  i       i         i 
+      //
+      // The variable bCheck_i has been added to this formula to make
+      // this function more flexible.
+      //
+      temp1 = multiply( f_i_b, nB, bCheck_i, 1 );
       pred_i = f_i - temp1;
   
   
@@ -753,10 +871,6 @@ void popResiduals( SpkModel&                model,
       //------------------------------------------------------------
       // Calculate their residuals and/or weighted residuals.
       //------------------------------------------------------------
-  
-      // Get this invidividual's data vector.
-      y_i.resize( nY_i );
-      y_i = measurementsAll[ slice( nY_iTotal, nY_i, 1 ) ];
   
       // Prepare this individual's residuals, if necessary.
       if ( pPopResOut )
