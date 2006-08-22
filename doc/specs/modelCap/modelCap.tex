@@ -338,32 +338,32 @@ POSTHOC was requested or not).
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f \right]^{\mbox{(MB)}}$
+  $\mbox{E} \left[ f \right]^{\mbox{(I)}}$
     & $f(\hat{b})$
     & Predicted value for an individual's data.
     & IPRED
-    & Same \\
+    & Not available in NONMEM. \\
   \hline
-  $r^{\mbox{(MB)}}$
+  $r^{\mbox{(I)}}$
     & $y - f(\hat{b})$
     & Residuals for an individual.
     & IRES
-    & Same \\
+    & Not available in NONMEM. \\
   \hline
-  $w^{\mbox{(MB)}}$
+  $w^{\mbox{(I)}}$
     & $\left\{ R(\hat{b}) \right\}^{-1/2}
         [ y - f(\hat{b}) ] $
     & Weighted residuals for an individual.
     & IWRES
-    & Same \\
+    & Not available in NONMEM. \\
   \hline
-  $\rho^{\mbox{(MB)}}$
+  $\rho^{\mbox{(I)}}$
     & $-\hat{b}$
     & Individual parameter residuals.
     & IETARES
     & Not available in NONMEM. \\
   \hline
-  $z^{\mbox{(MB)}}$
+  $z^{\mbox{(I)}}$
     & $\left\{ D \right\}^{-1/2} ( - \hat{b} )$
     & Weighted individual parameter residuals.
     & IWETARES
@@ -378,10 +378,9 @@ POSTHOC was requested or not).
 \subsubsection{Population Level Residuals Background}
 %-----------------------------------------------------------------
 
-SPK's mixed effects model for the $j^{\mbox{th}}$ value of the 
-$i^{\mbox{th}}$ individual's data is
+SPK's mixed effects model for the $i^{\mbox{th}}$ individual's data is
   \begin{equation}
-    y_{i(j)} = f_{i(j)}(\alpha, b_i) + e_{i(j)} ,
+    y_{i} = f_{i}(\alpha, b_i) + e_{i} ,
   \end{equation}
 where
   \begin{equation}
@@ -398,22 +397,20 @@ For a complete description of the models used at the population
 level by SPK and NONMEM, see Appendix \ref{App:PopLevelModels}.
 
 Different estimation methods arise from various approximations to
-the maximum likelihood objective function. Let $\tilde{f}_{i(j)}(\alpha, b)$
-be a particular Taylor series approximation for $f_{i(j)}(\alpha, b)$.
+the maximum likelihood objective function. Let $\tilde{f}_{i}(\alpha, b)$
+be a particular Taylor series approximation for $f_{i}(\alpha, b)$.
 Let us now define classes of outputs to be calculated in the population case
 for individual $i$:
 \begin{itemize}
-  \item NONMEM-compatible outputs (no prefix), or
+  \item NONMEM-compatible outputs (no prefix), which are always calculated at zero random effects and for the true model, or
 	\begin{equation}
 	\label{noprefix}
-	f_i(\alpha, 0) + \partial_b f_i(\alpha, 0)\hat{b}_i
+	f_i(\alpha, 0)
 	\end{equation}
-where the value of $\hat{b}_i$ depends on the particular approximation
-(see tables below for details).
   \item population outputs (prefix P), or 
 	\begin{equation}\label{P}\tilde{f}_i(\alpha, 0)\end{equation}
-  \item conditioned outputs (prefix C), or 
-	\begin{equation}\label{C}\tilde{f}_i(\alpha, \check{b}_i)\end{equation}
+  \item linearized outputs (prefix L), or 
+	\begin{equation}\label{L}\tilde{f}_i(\alpha, \check{b}_i)\end{equation}
   \item individual outputs (prefix I), or 
 	\begin{equation}\label{I}f_i(\alpha, \hat{b}_i)\end{equation}
 \end{itemize}
@@ -456,8 +453,9 @@ in Sections (6.2) and (6.3) of Davidian and Giltinan\footnote{
 
 To be specific, SPK makes Taylor series approximations to (linearizes)
 the nonlinear function $f_i(\alpha,b)$
-about the value $b^{\ast}_i$ (note that the value or $b^{\ast}_i$ will
-depend on the specific approximation method, see below for details),
+about the value $b^{\ast}_i$. Note that the value or $b^{\ast}_i$ 
+(either 0 or $\hat{b}_i$) will
+depend on the specific approximation method, see below for details,
   \begin{eqnarray}
     \tilde{f}_i(\alpha, b_i) & = &  f_i(\alpha, b^{\ast}_i)
       + \partial_b f_i(\alpha, b^{\ast}_i) ( b_i - b^{\ast}_i ) , \\
@@ -513,15 +511,12 @@ objective function, i.e.
 \begin{equation} \label{FO} \tilde{f}_i(\alpha, b) = f_i(\alpha, 0)+
 \partial_b f_i(\alpha, 0)b \end{equation}
 
+\newpage 
+
 The following table lists the residual related population outputs, their
 values as calculated by SPK, and their values as calculated by NONMEM.
 Eq.~\ref{P} applied to Eq.~\ref{FO} provides the PPRED entry in the table
-below. The rest of the entries follow similarly. Note that the entries
-without prefix are, in this case, equal to those with the prefix P and 
-are obtained through Eq.~\ref{noprefix} by setting $\hat{b}_i=0$.
-In this table, the NONMEM values are calculated using 
-the First Order (FO) Method in the \$ESTIMATION command without 
-the POSTHOC option.
+below. The rest of the entries follow similarly.
 
 \begin{center}
 \begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
@@ -534,19 +529,19 @@ the POSTHOC option.
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f_i \right]^{\mbox{(FO)}}$
+  $\mbox{E} \left[ f_i \right]^{\mbox{(P)}}$
     & $f_i(\alpha, 0)$
     & Approximate predicted value for an individual's data.
-    & PPRED and PRED
+    & PPRED
     & PRED \\
   \hline
-  $r^{\mbox{(FO)}}_i$
+  $r^{\mbox{(P)}}_i$
     & $y_i - f_i(\alpha, 0)$
     & Approximate residuals for an individual.
-    & PRES and RES
+    & PRES
     & RES \\
   \hline
-  $w^{\mbox{(FO)}}_i$
+  $w^{\mbox{(P)}}_i$
     & $\begin{array}{l}
         \left\{ \partial_b f_i(\alpha, 0) \;
           D(\alpha) \; \partial_b f_i(\alpha, 0)^T
@@ -555,38 +550,115 @@ the POSTHOC option.
         \ast [ y_i - f_i(\alpha, 0) ]
       \end{array} $
     & Approximate weighted residuals for an individual.
-    & PWRES and WRES
+    & PWRES
     & WRES \\
   \hline
-  $\rho^{\mbox{(FO)}}_i$
+  $\rho^{\mbox{(P)}}_i$
     & $0$
     & Individual parameter residuals for an individual.
-    & PETARES and ETARES
+    & PETARES
     & Not available in NONMEM. \\
   \hline
-  $z^{\mbox{(FO)}}_i$
+  $z^{\mbox{(P)}}_i$
     & $0$
     & Weighted individual parameter residuals for an individual.
-    & PWETARES and WETARES
+    & PWETARES
     & Not available in NONMEM. \\
   \hline
   \hline
 \end{tabular}
 \end{center}
 
-The following table lists the residual related conditioned outputs, their
+\newpage
+
+The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM for the 
+case variables without P, I or L prefix. These quantities are supposed to be
+compatible with NONMEM outputs. In this case, the NONMEM values are the same as
+above.
+
+\begin{center}
+\begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
+\hline
+\hline
+  {\bf Quantity}
+    & {\bf SPK Value}
+    & {\bf Description}
+    & {\bf Name}
+    & {\bf NONMEM Value} \\
+  \hline
+  \hline
+  $\mbox{E} \left[ f_i \right]$
+    & $f_i(\alpha, 0)$
+    & Approximate predicted value for an individual's data.
+    & PRED
+    & PRED \\
+  \hline
+  $r_i$
+    & $y_i - f_i(\alpha, 0)$
+    & Approximate residuals for an individual.
+    & RES
+    & RES \\
+  \hline
+  $w_i$
+    & $\begin{array}{l}
+        \left\{ \partial_b f_i(\alpha, 0) \;
+          D(\alpha) \; \partial_b f_i(\alpha, 0)^T
+          + R_i(\alpha, 0) \right\}^{-1/2} \\
+        \mbox{\hspace{0.5in}}
+        \ast [ y_i - f_i(\alpha, 0) ]
+      \end{array} $
+    & Approximate weighted residuals for an individual.
+    & WRES
+    & WRES \\
+  \hline
+  $\rho_i$
+    & $0$
+    & Individual parameter residuals for an individual.
+    & ETARES
+    & Not available in NONMEM. \\
+  \hline
+  $z_i$
+    & $0$
+    & Weighted individual parameter residuals for an individual.
+    & WETARES
+    & Not available in NONMEM. \\
+  \hline
+  \hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+The following table lists the residual related linearized outputs, their
 values as calculated by SPK, and their values as calculated by NONMEM.
 In this case, the NONMEM values are not available. 
-Eq.~\ref{C} applied to Eq.~\ref{FO} provides the CPRED entry in the table
+Eq.~\ref{L} applied to Eq.~\ref{FO} provides the LPRED entry in the table
 below. The rest of the entries follow similarly.
 Note that the estimate of the individual random
 effects $\check{b_i}$ is done for each individual and is the estimate
 that arises from the linearization of the model around zero (not from
 POSTHOC). In other words, it is the maximum likelihood estimate of the
 random effects conditional on the model $f(\alpha,b)$ being linear and
-conditional on $\alpha$. It 
-can be obtained via the solution to a linear programming problem by
-direct matrix inversion. The linear model is shown below as part of 
+conditional on $\alpha$ values. It 
+can be obtained via the solution to a linear least squares problem. 
+The formula for the linear least squares problem is:
+  \begin{equation}
+   \check{b_i} = arg min_{b_i} \left[ \left( y_i - f_i(\alpha, 0) -
+	\partial_b f_i(\alpha, 0) b_i \right)^T R_i^{-1}(\alpha, 0)
+	\left( y_i - f_i(\alpha, 0) -
+	\partial_b f_i(\alpha, 0) b_i \right) + b_i^TD(\alpha)b_i \right]
+  \end{equation}
+The minimizer of this objective function is
+  \begin{equation}
+   \check{b_i} = \left[ \partial_b f_i(\alpha, 0)^T R_i^{-1}(\alpha, 0) \partial_b f_i(\alpha, 0) + D \right]^{-1}
+        \partial_b f_i(\alpha, 0)^T R_i^{-1}(\alpha, 0)
+        \left( y_i - f_i(\alpha, 0) \right)  ,
+  \end{equation}
+which can be determined by setting the derivative of the 
+objective equal to zero.
+
+The linear model is shown below as part of 
 the definition of $r^{\mbox{(FO)}}_i$.
 
 \begin{center}
@@ -600,50 +672,52 @@ the definition of $r^{\mbox{(FO)}}_i$.
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f_i \right]^{\mbox{(FO)}}$
+  $\mbox{E} \left[ f_i \right]^{\mbox{(L)}}$
     & $f_i(\alpha, 0)+ \partial_b f_i(\alpha, 0) \check{b_i}$
     & Approximate predicted value for an individual's data.
-    & CPRED 
+    & LPRED 
     & Not available in NONMEM. \\
   \hline
-  $r^{\mbox{(FO)}}_i$
+  $r^{\mbox{(L)}}_i$
     & $y_i - f_i(\alpha, 0)- \partial_b f_i(\alpha, 0) \check{b_i}$
     & Approximate residuals for an individual.
-    & CRES
+    & LRES
     & Not available in NONMEM. \\
   \hline
-  $w^{\mbox{(FO)}}_i$
+  $w^{\mbox{(L)}}_i$
     & $\begin{array}{l}
         \left\{ R_i(\alpha, 0) \right\}^{-1/2} \\
         \mbox{\hspace{0.5in}}
         \ast [ y_i - f_i(\alpha, 0)- \partial_b f_i(\alpha, 0) \check{b_i} ]
       \end{array} $
     & Approximate weighted residuals for an individual.
-    & CWRES 
+    & LWRES 
     & Not available in NONMEM. \\
   \hline
-  $\rho^{\mbox{(FO)}}_i$
+  $\rho^{\mbox{(L)}}_i$
     & $-\check{b_i}$
     & Individual parameter residuals for an individual.
-    & CETARES
+    & LETARES
     & Not available in NONMEM. \\
   \hline
-  $z^{\mbox{(FO)}}_i$
+  $z^{\mbox{(L)}}_i$
     & $\left\{ D(\alpha) \right\}^{-1/2} ( - \check{b_i} )$
     & Weighted individual parameter residuals for an individual.
-    & CWETARES
+    & LWETARES
     & Not available in NONMEM. \\
   \hline
   \hline
 \end{tabular}
 \end{center}
 
+\newpage
+
 The following table lists the residual related individual outputs, their
 values as calculated by SPK, and their values as calculated by NONMEM.
 In this case, the NONMEM values would be calculated using 
 the First Order (FO) Method in the \$ESTIMATION command with 
 the POSTHOC option. 
-Eq.~\ref{I} applied to Eq.~\ref{FO} provides the CPRED entry in the table
+Eq.~\ref{I} applied to Eq.~\ref{FO} provides the IPRED entry in the table
 below. The rest of the entries follow similarly.
 Note that the estimate of the individual random
 effects $\hat{b_i}$ is obtained for each individual and is the MAP Bayesian 
@@ -660,33 +734,33 @@ estimate.
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f_i \right]^{\mbox{(MB)}}$
+  $\mbox{E} \left[ f_i \right]^{\mbox{(I)}}$
     & $f_i(\alpha,\hat{b})$
     & Predicted value for an individual's data.
     & IPRED
-    & Same \\
+    & Not available in NONMEM. \\
   \hline
-  $r_i^{\mbox{(MB)}}$
+  $r_i^{\mbox{(I)}}$
     & $y_i - f_i(\alpha,\hat{b})$
     & Residuals for an individual.
     & IRES
-    & Same \\
+    & Not available in NONMEM. \\
   \hline
-  $w_i^{\mbox{(MB)}}$
+  $w_i^{\mbox{(I)}}$
     & $\left\{ R_i(\alpha,\hat{b}) \right\}^{-1/2}
         [ y_i - f_i(\alpha,\hat{b}) ] $
     & Weighted residuals for an individual.
     & IWRES
-    & Same \\
+    & Not available in NONMEM. \\
   \hline
-  $\rho_i^{\mbox{(MB)}}$
+  $\rho_i^{\mbox{(I)}}$
     & $-\hat{b_i}$
     & Individual parameter residuals.
     & IETARES
     & Not available in NONMEM. \\
   \hline
-  $z_i^{\mbox{(MB)}}$
-    & $\left\{ D \right\}^{-1/2} ( - \hat{b_i} )$
+  $z_i^{\mbox{(I)}}$
+    & $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
     & Weighted individual parameter residuals.
     & IWETARES
     & Not available in NONMEM. \\
@@ -695,6 +769,7 @@ estimate.
 \end{tabular}
 \end{center}
 
+\newpage
 
 %-----------------------------------------------------------------
 \subsubsection{Conditional Methods Population Residuals}
@@ -703,9 +778,8 @@ estimate.
 The conditional estimation methods in SPK use either the Expected Hessian
 objective function, which is equivalent to NONMEM'S First Order
 Conditional Estimation (FOCE) method, or the Laplace
-objective, which is equivalent to NONMEM's Laplace method. For both 
-methods, the linear approximation to the nonlinear model function is
-Conditional estimation methods perform Taylor series approximation of the
+objective, which is equivalent to NONMEM's Laplace method. Both
+conditional estimation methods perform Taylor series approximation of the
 model function $f(\alpha,b)$ by setting $b^{\ast}_i = \hat{b}_i$ 
 for all of the individuals. 
 
@@ -733,19 +807,19 @@ one of NONMEM's conditional estimation that are available in the
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f_i \right]^{\mbox{(Cond)}}$
+  $\mbox{E} \left[ f_i \right]^{\mbox{(P)}}$
     & $f_i(\alpha, \hat{b}_i) - \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$
     & Approximate predicted value for an individual's data.
     & PPRED 
-    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+    & Not available in NONMEM.\\
   \hline
-  $r^{\mbox{(Cond)}}_i$
+  $r^{\mbox{(P)}}_i$
     & $y_i - f_i(\alpha, \hat{b}_i) + \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$
     & Approximate residuals for an individual.
     & PRES 
-    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+    & Not available in NONMEM.\\
   \hline
-  $w^{\mbox{(Cond)}}_i$
+  $w^{\mbox{(P)}}_i$
     & $\begin{array}{l}
         \left\{ \partial_b f_i(\alpha, \hat{b}_i) \;
           D(\alpha) \; \partial_b f_i(\alpha, \hat{b}_i)^T
@@ -756,15 +830,15 @@ one of NONMEM's conditional estimation that are available in the
       \end{array} $
     & Approximate weighted residuals for an individual.
     & PWRES 
-    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+    & Not available in NONMEM.\\
   \hline
-  $\rho^{\mbox{(Cond)}}_i$
+  $\rho^{\mbox{(P)}}_i$
     & $-\hat{b_i}$
     & Individual parameter residuals for an individual.
     & PETARES
     & Not available in NONMEM. \\
   \hline
-  $z^{\mbox{(Cond)}}_i$
+  $z^{\mbox{(P)}}_i$
     & $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
     & Weighted individual parameter residuals for an individual.
     & PWETARES
@@ -774,14 +848,14 @@ one of NONMEM's conditional estimation that are available in the
 \end{tabular}
 \end{center}
 
+\newpage
+
 The following table lists the residual related quantities, their
 values as calculated by SPK, and their values as calculated by NONMEM for the 
-case variables without P, I or C prefix. These quantities are supposed to be
-compatible with NONMEM outputs.
-Eq.~\ref{noprefix} with $\hat{b}_i$ calculated by the Expected Hessian
-method provides the PRED entry in the table
-below. The rest of the entries follow similarly.
-In this case, the NONMEM values are the same.
+case variables without P, I or L prefix. These quantities are supposed to be
+compatible with NONMEM outputs. In this case, the NONMEM values are the same.
+Note that in the case of the First Order method in SPK, PPRED and PRED coincide,
+but this is not true for the Expected Hessian.
 
 \begin{center}
 \begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
@@ -794,38 +868,37 @@ In this case, the NONMEM values are the same.
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f_i \right]^{\mbox{(Cond)}}$
-    & $f_i(\alpha, 0) - \partial_b f_i(\alpha, 0) \; \hat{b}_i$
+  $\mbox{E} \left[ f_i \right]$
+    & $f_i(\alpha, 0)$
     & Approximate predicted value for an individual's data.
     & PRED 
     & Same.\\
   \hline
-  $r^{\mbox{(Cond)}}_i$
-    & $y_i - f_i(\alpha, 0) + \partial_b f_i(\alpha, 0) \; \hat{b}_i$
+  $r_i$
+    & $y_i - f_i(\alpha, 0) $
     & Approximate residuals for an individual.
     & RES 
     & Same.\\
   \hline
-  $w^{\mbox{(Cond)}}_i$
+  $w_i$
     & $\begin{array}{l}
         \left\{ \partial_b f_i(\alpha, 0) \;
           D(\alpha) \; \partial_b f_i(\alpha, 0)^T
           + R_i(\alpha, 0) \right\}^{-1/2} \\
         \mbox{\hspace{0.5in}}
-        \ast [ y_i - f_i(\alpha, 0) 
-           + \partial_b f_i(\alpha, 0) \; \hat{b}_i ]
+        \ast [ y_i - f_i(\alpha, 0) ]
       \end{array} $
     & Approximate weighted residuals for an individual.
     & WRES 
     & Same.\\
   \hline
-  $\rho^{\mbox{(Cond)}}_i$
+  $\rho_i$
     & 0
     & Individual parameter residuals for an individual.
     & ETARES
     & Not available in NONMEM. \\
   \hline
-  $z^{\mbox{(Cond)}}_i$
+  $z_i$
     & 0
     & Weighted individual parameter residuals for an individual.
     & WETARES
@@ -835,8 +908,12 @@ In this case, the NONMEM values are the same.
 \end{tabular}
 \end{center}
 
-Eq.~\ref{C} applied to Eq.~\ref{FOCE} provides the CPRED entry in the table
-below. The rest of the entries follow similarly.
+\newpage
+
+When Eq.~\ref{L} applied to Eq.~\ref{FOCE}, the optimal value for $\check{b}_i$
+actually coincides with $\hat{b}_i$ due to the properties of Gauss-Newton
+optimization. Thus, in the Expected Hessian, $\check{b}_i
+=\hat{b}_i$ and so the linerarized quantities are equal to the individual quantities.
 
 \begin{center}
 \begin{tabular}{|p{0.75in}|p{3.25in}|p{1.1in}|p{0.85in}|p{1.0in}|}
@@ -849,44 +926,44 @@ below. The rest of the entries follow similarly.
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f_i \right]^{\mbox{(Cond)}}$
-    & $f_i(\alpha, \hat{b}_i) - \partial_b f_i(\alpha, \hat{b}_i)(\check{b}_i- \hat{b}_i)$
+  $\mbox{E} \left[ f_i \right]^{\mbox{(L)}}$
+    & $f_i(\alpha, \hat{b}_i)$
     & Approximate predicted value for an individual's data.
-    & CPRED 
-    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+    & LPRED 
+    & Not available in NONMEM.\\
   \hline
-  $r^{\mbox{(Cond)}}_i$
-    & $y_i - f_i(\alpha, \hat{b}_i) + \partial_b f_i(\alpha, \hat{b}_i)(\check{b}_i- \hat{b}_i)$
+  $r^{\mbox{(L)}}_i$
+    & $y_i - f_i(\alpha, \hat{b}_i)$
     & Approximate residuals for an individual.
-    & CRES 
-    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+    & LRES 
+    & Not available in NONMEM.\\
   \hline
-  $w^{\mbox{(Cond)}}_i$
+  $w^{\mbox{(L)}}_i$
     & $\begin{array}{l}
-        \left\{ R_i(\alpha, \hat{b}_i) \right\}^{-1/2} \\
-        \mbox{\hspace{0.5in}}
-        \ast [ y_i - f_i(\alpha, \hat{b}_i) 
-           + \partial_b f_i(\alpha, \hat{b}_i) (\check{b}_i- \hat{b}_i) ]
+        \left\{ R_i(\alpha, \hat{b}_i) \right\}^{-1/2}
+        [ y_i - f_i(\alpha, \hat{b}_i)]
       \end{array} $
     & Approximate weighted residuals for an individual.
-    & CWRES 
-    & Same as FO values, i.e., $b^{\ast}_i = 0$ for all individuals\\
+    & LWRES 
+    & Not available in NONMEM.\\
   \hline
-  $\rho^{\mbox{(Cond)}}_i$
-    & $-\check{b_i}$
+  $\rho^{\mbox{(L)}}_i$
+    & $-\hat{b_i}$
     & Individual parameter residuals for an individual.
-    & CETARES
+    & LETARES
     & Not available in NONMEM. \\
   \hline
-  $z^{\mbox{(Cond)}}_i$
-    & $\left\{ D(\alpha) \right\}^{-1/2} ( - \check{b_i} )$
+  $z^{\mbox{(L)}}_i$
+    & $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
     & Weighted individual parameter residuals for an individual.
-    & CWETARES
+    & LWETARES
     & Not available in NONMEM. \\
   \hline
   \hline
 \end{tabular}
 \end{center}
+
+\newpage
 
 Eq.~\ref{I} applied to Eq.~\ref{FOCE} provides the IPRED entry in the table
 below. The rest of the entries follow similarly.
@@ -902,19 +979,19 @@ below. The rest of the entries follow similarly.
     & {\bf NONMEM Value} \\
   \hline
   \hline
-  $\mbox{E} \left[ f_i \right]^{\mbox{(MB)}}$
+  $\mbox{E} \left[ f_i \right]^{\mbox{(I)}}$
     & $f_i(\alpha, \hat{b}_i)$
     & Approximate predicted value for an individual's data.
     & IPRED 
-    & Same\\
+    & Not available in NONMEM.\\
   \hline
-  $r^{\mbox{(MB)}}_i$
+  $r^{\mbox{(I)}}_i$
     & $y_i - f_i(\alpha, \hat{b}_i)$
     & Approximate residuals for an individual.
     & IRES 
-    & Same\\
+    & Not available in NONMEM.\\
   \hline
-  $w^{\mbox{(MB)}}_i$
+  $w^{\mbox{(I)}}_i$
     & $\begin{array}{l}
         \left\{ R_i(\alpha, \hat{b}_i) \right\}^{-1/2} \\
         \mbox{\hspace{0.5in}}
@@ -922,15 +999,15 @@ below. The rest of the entries follow similarly.
       \end{array} $
     & Approximate weighted residuals for an individual.
     & IWRES 
-    & Same\\
+    & Not available in NONMEM.\\
   \hline
-  $\rho^{\mbox{(Cond)}}_i$
+  $\rho^{\mbox{(I)}}_i$
     & $-\hat{b_i}$
     & Individual parameter residuals for an individual.
     & IETARES
     & Not available in NONMEM. \\
   \hline
-  $z^{\mbox{(Cond)}}_i$
+  $z^{\mbox{(I)}}_i$
     & $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
     & Weighted individual parameter residuals for an individual.
     & IWETARES
