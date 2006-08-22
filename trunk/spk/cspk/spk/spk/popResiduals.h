@@ -47,6 +47,7 @@ void popResiduals( SpkModel&                        model,
                    SPK_VA::valarray<double>*        pPopResOut,
                    SPK_VA::valarray<double>*        pPopResWtdOut,
                    SPK_VA::valarray<double>*        pPopIndParResOut,
-                   SPK_VA::valarray<double>*        pPopIndParResWtdOut );
+                   SPK_VA::valarray<double>*        pPopIndParResWtdOut,
+                   bool                             calcFoModelMinimizer = false );
 
 #endif

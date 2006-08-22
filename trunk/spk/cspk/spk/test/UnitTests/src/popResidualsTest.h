@@ -51,7 +51,8 @@ private:
   void expectedHessianTest();
   void modifiedLaplaceTest();
 
-  void threeDataValuesPerIndTest( enum Objective whichObjective );
+  void threeDataValuesPerIndTest           ( enum Objective whichObjective );
+  void threeDataValuesPerInd_usesBCheckTest( enum Objective whichObjective );
 };
 
 #endif

@@ -264,6 +264,7 @@ Test* popResidualsTest::suite()
 void popResidualsTest::firstOrderTest()
 {
   threeDataValuesPerIndTest( FIRST_ORDER );
+  threeDataValuesPerInd_usesBCheckTest( FIRST_ORDER );
 }
 
 
@@ -276,6 +277,7 @@ void popResidualsTest::firstOrderTest()
 void popResidualsTest::expectedHessianTest()
 {
   threeDataValuesPerIndTest( EXPECTED_HESSIAN );
+  threeDataValuesPerInd_usesBCheckTest( EXPECTED_HESSIAN );
 }
 
 
@@ -288,6 +290,7 @@ void popResidualsTest::expectedHessianTest()
 void popResidualsTest::modifiedLaplaceTest()
 {
   threeDataValuesPerIndTest( MODIFIED_LAPLACE );
+  threeDataValuesPerInd_usesBCheckTest( MODIFIED_LAPLACE );
 }
 
 
@@ -717,6 +720,442 @@ void popResidualsTest::threeDataValuesPerIndTest( enum Objective whichObjective 
   //     cov = D
   //     
   //     bWtd = sqrtm( inverse( cov ) ) * ( 0.0 * ones( nB, 1 ) - b )
+  //
+  //~~~~~~~~~~~~~~~<End Octave Code>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+}
+
+
+/*************************************************************************
+ *
+ * Function: threeDataValuesPerInd_usesBCheckTest
+ *
+ *
+ * This test checks the case where each individual in the population
+ * has three data values and the value for bCheck_i is used to
+ * calculate the residuals.
+ *
+ *************************************************************************/
+
+void popResidualsTest::threeDataValuesPerInd_usesBCheckTest( enum Objective whichObjective )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  // Number of individuals.
+  const int nInd = 4;
+
+  // Number of measurements per individual.
+  const int nY_i = 3;
+
+  // Number of measurements in total.
+  const int nY = nInd * nY_i;
+
+  const int nAlp = 2;
+
+  const int nB = 4;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  ThreeDataValuesPerIndModel model( nAlp, nB, nY_i );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population parameters.
+  //------------------------------------------------------------
+
+  valarray<double> alp( nAlp );
+
+  alp[ 0 ] = 10.0;
+  alp[ 1 ] = 25.0;
+  
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters.
+  //------------------------------------------------------------
+
+  valarray<double> bAll( 1., nB * nInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  valarray<double> Y( nY );
+
+  // Number of measurements for each individual. 
+  valarray<int> N( nY_i, nInd );
+
+  int i;
+  int j;
+
+  // Set the data values equal to the model for mean f( alp, b_i )
+  // plus a small residual value.
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( j = 0; j < nY_i; j++ )
+    {
+      Y[i * nY_i + j] = exp( bAll[0] ) + pow( -1.0, j ) * ( j + 1 ) * 0.01;
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population residuals.
+  //------------------------------------------------------------
+
+  valarray<double> popPredOut  ( nY );
+  valarray<double> popResOut   ( nY );
+  valarray<double> popResWtdOut( nY );
+
+  valarray<double> popIndParResOut   ( nB * nInd );
+  valarray<double> popIndParResWtdOut( nB * nInd );
+
+
+  //------------------------------------------------------------
+  // Calculate the population residuals.
+  //------------------------------------------------------------
+
+  // Set this so that the residuals will be calculated using bCheck_i,
+  // which is the minimizer of the Map Bayesian objective MapObj(b)
+  // using the first order (FO) model.
+  bool calcFoModelMinimizer = true;
+
+  try
+  {
+    popResiduals(
+      model, 
+      whichObjective,
+      N,
+      Y,
+      alp,
+      bAll,            
+      &popPredOut,
+      &popResOut,
+      &popResWtdOut,
+      &popIndParResOut,
+      &popIndParResWtdOut,
+      calcFoModelMinimizer );
+  }
+  catch( const SpkException& e )
+  {
+    cerr << e << endl;
+    CPPUNIT_ASSERT_MESSAGE( "popResiduals failed!", false );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE( "popResiduals failed for unknown reasons!", false);
+  }
+
+  // [Remove]==============================================
+  /*
+  cout << endl;
+  cout << endl;
+  cout << "=======================" << endl;
+  cout << "objective = " << whichObjective << endl;
+  cout << "popPredOut = " << endl;
+  printInMatrix( popPredOut, 1 );
+  cout << "popResOut = " << endl;
+  printInMatrix( popResOut, 1 );
+  cout << "popResWtdOut = " << endl;
+  printInMatrix( popResWtdOut, 1 );
+  cout << "popIndParResOut = " << endl;
+  printInMatrix( popIndParResOut, 1 );
+  cout << "popIndParResWtdOut = " << endl;
+  printInMatrix( popIndParResWtdOut, 1 );
+  cout << "-----------------------" << endl;
+  */
+  // [Remove]==============================================
+
+
+  //------------------------------------------------------------
+  // Compare the calculated and known values.
+  //------------------------------------------------------------
+
+  // The predicted values are calculated as follows:
+  //
+  //     pred   =  f (alp, b )  -  d  f (alp, b )  bCheck   .
+  //         i      i       i       b  i       i         i 
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    if ( whichObjective == FIRST_ORDER || whichObjective == NAIVE_FIRST_ORDER  )
+    {
+      // For the first order objectives the individual parameters 
+      // are all set equal to zero, i.e.,
+      //
+      //     pred   =  f (alp, 0 )  -  d  f (alp, 0 )  bCheck   .
+      //         i      i               b  i                 i 
+      //
+      // The known values that appear here were calculated using the
+      // Octave code that appears at the end of this function.
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.607592903253869, popPredOut[i * nY_i + 0], fabs( popPredOut[i * nY_i + 0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.607592903253869, popPredOut[i * nY_i + 1], fabs( popPredOut[i * nY_i + 1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.607592903253869, popPredOut[i * nY_i + 2], fabs( popPredOut[i * nY_i + 2] ) ) );
+    }
+    else
+    {
+      // For the Laplace and Expected Hessian objectives the
+      // individual parameters are not set equal to zero.
+      //
+      // The known values that appear here were calculated using the
+      // Octave code that appears at the end of this function.
+      CPPUNIT_ASSERT( isDblEpsEqual( 2.71531787757746, popPredOut[i * nY_i + 0], fabs( popPredOut[i * nY_i + 0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 2.71531787757746, popPredOut[i * nY_i + 1], fabs( popPredOut[i * nY_i + 1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 2.71531787757746, popPredOut[i * nY_i + 2], fabs( popPredOut[i * nY_i + 2] ) ) );
+    }
+  }
+      
+  // The residuals are calculated as follows:
+  //
+  //     res   =  y   -  pred   .
+  //        i      i         i
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( j = 0; j < nY_i; j++ )
+    {
+      CPPUNIT_ASSERT( isDblEpsEqual( Y[i * nY_i + j] - popPredOut[i * nY_i + j],
+        popResOut[i * nY_i + j], fabs( popResOut[i * nY_i + j] ) ) );
+    }
+  }
+      
+  // The weighted residuals are calculated as follows:
+  //
+  //                  -1/2
+  //     wres   =  cov      *  res   .
+  //         i        i           i
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    if ( whichObjective == FIRST_ORDER || whichObjective == NAIVE_FIRST_ORDER  )
+    {
+      // For the first order objectives the individual parameters 
+      // are all set equal to zero, i.e.,
+      //
+      //     cov   =  R (alp, 0 )
+      //        i      i
+      //                                                 T
+      //        +  d  f (alp, 0 )  D(alp)  d  f (alp, 0 )   .
+      //            b  i                    b  i
+      // 
+      // The known values that appear here were calculated using the
+      // Octave code that appears at the end of this function.
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.560582693928111, popResWtdOut[i * nY_i + 0], fabs( popResWtdOut[i * nY_i + 0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.551095860947606, popResWtdOut[i * nY_i + 1], fabs( popResWtdOut[i * nY_i + 1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.566907249248448, popResWtdOut[i * nY_i + 2], fabs( popResWtdOut[i * nY_i + 2] ) ) );
+    }
+    else
+    {
+      // For the Laplace and Expected Hessian objectives the
+      // individual parameters are not set equal to zero, i.e.,
+      //
+      //     cov   =  R (alp, b )
+      //        i      i       i
+      //                                                 T
+      //        +  d  f (alp, b )  D(alp)  d  f (alp, b )   .
+      //            b  i       i            b  i       i
+      // 
+      // The known values that appear here were calculated using the
+      // Octave code that appears at the end of this function.
+      CPPUNIT_ASSERT( isDblEpsEqual(  0.00189204034565286, popResWtdOut[i * nY_i + 0], fabs( popResWtdOut[i * nY_i + 0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.00386201472059646, popResWtdOut[i * nY_i + 1], fabs( popResWtdOut[i * nY_i + 1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual(  0.00572807705648576, popResWtdOut[i * nY_i + 2], fabs( popResWtdOut[i * nY_i + 2] ) ) );
+    }
+  }
+      
+  // The individual parameter residuals are calculated as follows:
+  //
+  //     bRes   =  - b   .
+  //         i        i
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    if ( whichObjective == FIRST_ORDER || whichObjective == NAIVE_FIRST_ORDER  )
+    {
+      // For the first order objectives the individual parameters 
+      // are all set equal to zero, i.e.,
+      //
+      //     bRes      =  0  .
+      //         i(j)
+      //
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[0], fabs( popIndParResOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[1], fabs( popIndParResOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[2], fabs( popIndParResOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResOut[3], fabs( popIndParResOut[3] ) ) );
+    }
+    else
+    {
+      // For the Laplace and Expected Hessian objectives the
+      // individual parameters are not set equal to zero, i.e.,
+      //
+      //     bRes      =  - 1  .
+      //         i(j)
+      //
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[0], fabs( popIndParResOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[1], fabs( popIndParResOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[2], fabs( popIndParResOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -1, popIndParResOut[3], fabs( popIndParResOut[3] ) ) );
+    }
+  }
+      
+  // The weighted individual parameter residualss are calculated as follows:
+  //
+  //                          -1/2
+  //     bResWtd   =  D(alpha)      *  ( - b  )   .
+  //            i                           i
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    if ( whichObjective == FIRST_ORDER || whichObjective == NAIVE_FIRST_ORDER  )
+    {
+      // For the first order objectives the individual parameters 
+      // are all set equal to zero, i.e.,
+      //
+      //     bResWtd      =  0  .
+      //            i(j)
+      //
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[0], fabs( popIndParResWtdOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[1], fabs( popIndParResWtdOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[2], fabs( popIndParResWtdOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( 0.0, popIndParResWtdOut[3], fabs( popIndParResWtdOut[3] ) ) );
+    }
+    else
+    {
+      // For the Laplace and Expected Hessian objectives the
+      // individual parameters are not set equal to zero.
+      //
+      // The known values that appear here were calculated using the
+      // Octave code that appears at the end of this function.
+      // 
+      // Note that the scales have been increased slightly for these
+      // comparisons.
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.87351003662302229, popIndParResWtdOut[0],  10.0 * fabs( popIndParResWtdOut[0] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.17854871318119675, popIndParResWtdOut[1],  10.0 * fabs( popIndParResWtdOut[1] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.05911120680695928, popIndParResWtdOut[2],  10.0 * fabs( popIndParResWtdOut[2] ) ) );
+      CPPUNIT_ASSERT( isDblEpsEqual( -0.00178338758982985, popIndParResWtdOut[3], 100.0 * fabs( popIndParResWtdOut[3] ) ) );
+    }
+  }
+      
+  // The known values were calculated using the following Octave code.
+  //
+  //~~~~~~~~~~~~~~~<Begin Octave Code>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //
+  //    #--------------------------------------------------------------------
+  //    #
+  //    # Preliminaries.
+  //    #
+  //    #--------------------------------------------------------------------
+  //    
+  //    format long
+  //    
+  //    
+  //    #--------------------------------------------------------------------
+  //    #
+  //    # Common quantities.
+  //    #
+  //    #--------------------------------------------------------------------
+  //    
+  //    nY = 3
+  //    nB = 4
+  //    
+  //    a = 10.0
+  //    
+  //    bOrig = ones( nB, 1 )
+  //          
+  //    y = [ exp( bOrig(1) ) + 0.01;
+  //          exp( bOrig(1) ) - 0.02;
+  //          exp( bOrig(1) ) + 0.03 ]
+  //    
+  //    # Create an arbitrary Cholesky factor that will be used to 
+  //    # ensure that D will be positive definite.
+  //    DChol = [ 1.2,    0.0,    0.0,   0.0;
+  //              2.2,    3.5,    0.0,   0.0;
+  //              4.2,    5.5,    6.7,   0.0;
+  //              7.2,    8.5,    9.7,  10.0 ]
+  //    
+  //    D = DChol * DChol'
+  //    
+  //    
+  //    #--------------------------------------------------------------------
+  //    #
+  //    # First order (FO) values.
+  //    #
+  //    # Note: this is just a copy of the Laplace or Expected Hessian (FOCE)
+  //    # calculation with b equal to zero.
+  //    #
+  //    #--------------------------------------------------------------------
+  //    
+  //    #--------------------------------------------------------------------
+  //    # Calculate the predicted values, residuals, and weighted residuals.
+  //    #--------------------------------------------------------------------
+  //    
+  //    b = 0.0 * ones( nB, 1 )
+  //    
+  //    f = exp( b(1) ) * ones( nY, 1 )
+  //    
+  //    f_b = [ f, 0.0 * ones( nB - 1, nB - 1 ) ]
+  //    
+  //    R = a * exp( b(1) ) * eye( nY )
+  //    
+  //    bCheck = inverse( f_b' * inverse( R ) * f_b + D ) * f_b' * inverse( R ) * ( y - f )
+  //          
+  //    pred = f - f_b * bCheck
+  //    
+  //    cov = R + f_b * D * f_b'
+  //    
+  //    resWtd = sqrtm( inverse( cov ) ) * ( y - pred )
+  //    
+  //    
+  //    #--------------------------------------------------------------------
+  //    # Calculate the weighted individual parameters.
+  //    #--------------------------------------------------------------------
+  //    
+  //    cov = D
+  //    
+  //    bWtd = sqrtm( inverse( cov ) ) * ( 0.0 * ones( nB, 1 ) - b )
+  //    
+  //    
+  //    #--------------------------------------------------------------------
+  //    #
+  //    # Laplace or Expected Hessian (FOCE) values.
+  //    #
+  //    # Note: this is just a copy of the FO calculation with nonzero b.
+  //    #
+  //    #--------------------------------------------------------------------
+  //    
+  //    #--------------------------------------------------------------------
+  //    # Calculate the predicted values, residuals, and weighted residuals.
+  //    #--------------------------------------------------------------------
+  //    
+  //    b = bOrig
+  //    
+  //    f = exp( b(1) ) * ones( nY, 1 )
+  //    
+  //    f_b = [ f, 0.0 * ones( nB - 1, nB - 1 ) ]
+  //    
+  //    R = a * exp( b(1) ) * eye( nY )
+  //    
+  //    bCheck = inverse( f_b' * inverse( R ) * f_b + D ) * f_b' * inverse( R ) * ( y - f )
+  //          
+  //    pred = f - f_b * bCheck
+  //    
+  //    cov = R + f_b * D * f_b'
+  //    
+  //    resWtd = sqrtm( inverse( cov ) ) * ( y - pred )
+  //    
+  //    
+  //    #--------------------------------------------------------------------
+  //    # Calculate the weighted individual parameters.
+  //    #--------------------------------------------------------------------
+  //    
+  //    cov = D
+  //    
+  //    bWtd = sqrtm( inverse( cov ) ) * ( 0.0 * ones( nB, 1 ) - b )
   //
   //~~~~~~~~~~~~~~~<End Octave Code>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
