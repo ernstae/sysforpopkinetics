@@ -897,12 +897,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            // these residuals all equal to zero." << endl;
   oPopDriver << "            iParResOut    = 0.0;" << endl;
   oPopDriver << "            iParResWtdOut = 0.0;" << endl;
+  oPopDriver << "            dataForDisposal.replaceIPred   ( iPredOut );" << endl;
+  oPopDriver << "            dataForDisposal.replaceIRes    ( iResOut );" << endl;
+  oPopDriver << "            dataForDisposal.replaceIWRes   ( iResWtdOut );" << endl;
+  oPopDriver << "            dataForDisposal.replaceIEtaRes ( iParResOut );" << endl;
+  oPopDriver << "            dataForDisposal.replaceIWEtaRes( iParResWtdOut );" << endl;
   oPopDriver << endl;
-  oPopDriver << "            dataForDisposal.replacePred   ( iPredOut );" << endl;
-  oPopDriver << "            dataForDisposal.replaceRes    ( iResOut );" << endl;
-  oPopDriver << "            dataForDisposal.replaceWRes   ( iResWtdOut );" << endl;
-  oPopDriver << "            dataForDisposal.replaceEtaRes ( iParResOut );" << endl;
-  oPopDriver << "            dataForDisposal.replaceWEtaRes( iParResWtdOut );" << endl;
   oPopDriver << "         }" << endl;
   oPopDriver << endl;
  
