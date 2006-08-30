@@ -41,6 +41,7 @@ $begin mapObj$$
 $escape #$$
 
 $spell
+    pdvec
     throwExcepIfMaxIter
     const
   Model model

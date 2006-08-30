@@ -44,6 +44,8 @@
 $begin popResiduals$$
 
 $spell
+  bool
+  Fo
   Enumerator
   Model model
   valarray
@@ -140,7 +142,7 @@ $$
 The variable $math%bCheck_i%$$ is the minimizer of the Map Bayesian
 objective $math%MapObj(b)%$$ using the first order (FO) model and is
 calculated as
-$$math%
+$math%
 
                   -                                                           -  -1
                  |                T             -1                             |
