@@ -1,19 +1,5 @@
 # !/bin/bash
 #
-# job number for this test
-JOB=1401
-#
-echo $JOB > JOB
-for file in DataSet.h IndData.h MontePars.h NonmemPars.h Pred.h
-do
-	echo "scp whitechuck:/tmp/spkcmptest-job-$JOB/$file ."
-	scp whitechuck:/tmp/spkcmptest-job-$JOB/$file .
-done
-echo "change 'enum METHOD { analytic,' to 'enum METHOD { adapt,'"
-mv MontePars.h MontePars.tmp
-sed  < MontePars.tmp > MontePars.h \
-	-e "s/enum *METHOD *{ *analytic,/enum METHOD { adapt,/" 
-#
 for file in \
 	AdaptIntegral.cpp \
 	GridIntegral.cpp \
