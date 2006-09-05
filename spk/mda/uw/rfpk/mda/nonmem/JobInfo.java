@@ -70,6 +70,7 @@ public class JobInfo extends javax.swing.JFrame {
         String[] row = (String[])frame.methodTable.get(methodCode);
         if(row == null)
             row = new String[]{"Not Available", ""};
+        String me = row[0];
         jTextField5.setText(row[0]);
         jTextField6.setText(String.valueOf(jobId));
         jTextField7.setText(jobOwner);
@@ -104,7 +105,6 @@ public class JobInfo extends javax.swing.JFrame {
         jButton10.setEnabled(ok);
         jTextArea4.setEnabled(ok);
         jTextField9.setText(jobAbstract);
-        jTextField9.setEditable(isJobOwner);
         jTextField9.setCaretPosition(0);
         jButton11.setEnabled(isJobOwner);
         
@@ -112,6 +112,7 @@ public class JobInfo extends javax.swing.JFrame {
                              methodCode.equals("eh") || methodCode.equals("la")));
         jButton14.setEnabled(ok);
         jTextArea8.setEnabled(ok);
+//        jButton8.setEnabled(false);
         setTitle("Job Information - " + jobOwner);
         setVisible(true);
     }
@@ -476,12 +477,6 @@ public class JobInfo extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                exitForm(evt);
-            }
-        });
-
         jTextArea1.setBackground(new java.awt.Color(204, 204, 204));
         jTextArea1.setEditable(false);
         jTextArea1.setFont(new java.awt.Font("Dialog", 1, 12));
@@ -490,8 +485,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 6, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 6, 12);
         getContentPane().add(jTextArea1, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -499,8 +494,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
         getContentPane().add(jLabel1, gridBagConstraints);
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -508,24 +503,24 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 0, 12);
         getContentPane().add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Model");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 2, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 2, 12);
         getContentPane().add(jLabel3, gridBagConstraints);
 
         jLabel4.setText("Dataset");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 7, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 7, 12);
         getContentPane().add(jLabel4, gridBagConstraints);
 
         jTextField1.setEditable(false);
@@ -585,13 +580,14 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 12, 0, 12);
         getContentPane().add(jSeparator1, gridBagConstraints);
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 3));
 
         jButton1.setText("Model");
+        jButton1.setToolTipText("Model used by job");
         jButton1.setMaximumSize(new java.awt.Dimension(82, 25));
         jButton1.setMinimumSize(new java.awt.Dimension(82, 25));
         jButton1.setPreferredSize(new java.awt.Dimension(82, 25));
@@ -604,6 +600,7 @@ public class JobInfo extends javax.swing.JFrame {
         jPanel1.add(jButton1);
 
         jButton2.setText("Dataset");
+        jButton2.setToolTipText("Dataset used by  job");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -612,7 +609,9 @@ public class JobInfo extends javax.swing.JFrame {
 
         jPanel1.add(jButton2);
 
-        jButton3.setText("Input");
+        jButton3.setText("XML In");
+        jButton3.setToolTipText("Job input in XML format");
+        jButton3.setMargin(new java.awt.Insets(2, 1, 2, 1));
         jButton3.setMaximumSize(new java.awt.Dimension(82, 25));
         jButton3.setMinimumSize(new java.awt.Dimension(82, 25));
         jButton3.setPreferredSize(new java.awt.Dimension(82, 25));
@@ -624,7 +623,9 @@ public class JobInfo extends javax.swing.JFrame {
 
         jPanel1.add(jButton3);
 
-        jButton4.setText("Output");
+        jButton4.setText("XML Out");
+        jButton4.setToolTipText("Job output in XML format");
+        jButton4.setMargin(new java.awt.Insets(2, 1, 2, 1));
         jButton4.setMaximumSize(new java.awt.Dimension(82, 25));
         jButton4.setMinimumSize(new java.awt.Dimension(82, 25));
         jButton4.setPreferredSize(new java.awt.Dimension(82, 25));
@@ -641,13 +642,14 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 12, 0, 12);
         getContentPane().add(jPanel1, gridBagConstraints);
 
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 3));
 
         jButton5.setText("Job History");
+        jButton5.setToolTipText("Job processing history");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -657,6 +659,7 @@ public class JobInfo extends javax.swing.JFrame {
         jPanel5.add(jButton5);
 
         jButton6.setText("Job Parent");
+        jButton6.setToolTipText("Parent job of this job");
         jButton6.setMaximumSize(new java.awt.Dimension(104, 25));
         jButton6.setMinimumSize(new java.awt.Dimension(104, 25));
         jButton6.setPreferredSize(new java.awt.Dimension(104, 25));
@@ -668,7 +671,9 @@ public class JobInfo extends javax.swing.JFrame {
 
         jPanel5.add(jButton6);
 
-        jButton12.setText("Job Report");
+        jButton12.setText("Job Results");
+        jButton12.setToolTipText("All job results and summary report");
+        jButton12.setMargin(new java.awt.Insets(2, 1, 2, 1));
         jButton12.setMaximumSize(new java.awt.Dimension(104, 25));
         jButton12.setMinimumSize(new java.awt.Dimension(104, 25));
         jButton12.setPreferredSize(new java.awt.Dimension(104, 25));
@@ -693,8 +698,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jSeparator2, gridBagConstraints);
 
         jTextArea3.setBackground(new java.awt.Color(204, 204, 204));
@@ -704,8 +709,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 8, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 8, 2);
         getContentPane().add(jTextArea3, gridBagConstraints);
 
         jTextField5.setEditable(false);
@@ -713,16 +718,16 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 4, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 4, 0);
         getContentPane().add(jTextField5, gridBagConstraints);
 
         jLabel6.setText("Method");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(10, 12, 4, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 4, 12);
         getContentPane().add(jLabel6, gridBagConstraints);
 
         jCheckBox3.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -732,8 +737,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 0, 12);
         getContentPane().add(jCheckBox3, gridBagConstraints);
 
         jTextField6.setEditable(false);
@@ -744,8 +749,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 0, 12);
         getContentPane().add(jTextField6, gridBagConstraints);
 
         jTextArea5.setBackground(new java.awt.Color(204, 204, 204));
@@ -755,8 +760,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 2);
         getContentPane().add(jTextArea5, gridBagConstraints);
 
         jTextArea6.setBackground(new java.awt.Color(204, 204, 204));
@@ -767,8 +772,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 9, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 9, 0);
         getContentPane().add(jTextArea6, gridBagConstraints);
 
         jButton7.setText("Warm Start");
@@ -785,8 +790,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 15;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 5, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 5, 12);
         getContentPane().add(jButton7, gridBagConstraints);
 
         jTextArea8.setBackground(new java.awt.Color(204, 204, 204));
@@ -795,11 +800,12 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 8, 2);
         getContentPane().add(jTextArea8, gridBagConstraints);
 
-        jButton8.setText("Abort  Job");
+        jButton8.setText("Abort Job");
+        jButton8.setToolTipText("");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
@@ -836,8 +842,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 17;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 11, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 11, 0);
         getContentPane().add(jTextArea4, gridBagConstraints);
 
         jButton10.setText("Population");
@@ -881,11 +887,12 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         getContentPane().add(jTextField9, gridBagConstraints);
 
-        jButton11.setText("Change It");
+        jButton11.setText("Change it");
+        jButton11.setToolTipText("");
         jButton11.setPreferredSize(new java.awt.Dimension(98, 25));
         jButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -935,8 +942,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(6, 14, 0, 14);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 14, 0, 14);
         getContentPane().add(jLabel15, gridBagConstraints);
 
         jLabel16.setText("View Current Job:");
@@ -944,8 +951,8 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 12);
         getContentPane().add(jLabel16, gridBagConstraints);
 
         pack();
@@ -1513,10 +1520,6 @@ public class JobInfo extends javax.swing.JFrame {
 
     
     /** Exit the Application */
-    private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
-//        System.exit(0);
-    }//GEN-LAST:event_exitForm
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton OKButton;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -1598,7 +1601,7 @@ public class JobInfo extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     
     /** Job ID. */
-    protected long id = 0;
+    protected long id = 0L;
     
     // Job source
     private String source;

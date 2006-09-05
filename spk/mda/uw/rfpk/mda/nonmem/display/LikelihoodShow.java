@@ -85,8 +85,10 @@ public class LikelihoodShow extends javax.swing.JDialog {
                     maxY = Math.max(maxY, dataY[k][i][j]);
                     minY = Math.min(minY, dataY[k][i][j]);
                 }
-//        for(int i = 0; i < dataX.length; i++)
-//            model.addElement("Likelihood versus alpha-" + (i + 1));
+        double[] range = Plotter.optDivisions(6, minY, maxY);
+        minY = range[0];
+        maxY = range[1];
+        nVDivi = (int)(range[2] + 0.1);
         name = new String[]{"evaluated at parameter estimate", "evaluated at two bias positions", "parabolic curve fitted likelihood", "estimated standard error bound"};
         symbol = new int[]{0, 1, 10, 12, 12, 11, 11, 11};
         color = new Color[]{Color.red, Color.blue, Color.black, Color.black, Color.black,
@@ -163,7 +165,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
                                           0, 0,
                                           null, null, null,
                                           "Top",
-                                          5, 5, 6, 6, 4, 4, 4, 4,                                          
+                                          5, nVDivi, 6, 6, 4, 4, 4, 4,                                          
                                           0, 0, maxY, minY,
                                           new Font("SansSerif", Font.BOLD, 14),
                                           new Font("SansSerif", Font.BOLD, 12),
@@ -283,6 +285,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
     private DefaultListModel model = new DefaultListModel();
     private double[][][] dataX, dataY;
     private double minY, maxY;
+    private int nVDivi;
     private String[] name;
     private int[] symbol;
     private Color[] color;

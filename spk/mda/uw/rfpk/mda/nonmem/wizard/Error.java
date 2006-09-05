@@ -211,7 +211,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 // Find number of EPSs for population analysis or Etas for individual analysis                    
                 if(!iterator.getIsInd() && !iterator.getIsTwoStage())
                 {
-                    String pkCode = object.getRecords().getProperty("PK");
+                    String pkCode = Utility.eliminateComments(object.getRecords().getProperty("PK"));
                     if(pkCode != null)
                         iterator.setNEta(Utility.find(pkCode + errorCode, "ETA"));
                     else
@@ -229,11 +229,13 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
                 String record = "$ERROR " + "\n" + errorCode;
-                object.getRecords().setProperty("Error", record);
-                object.getSource().error = record.substring(7) + "\n";
+                object.getRecords().setProperty("Error", record);     
                 
                 // Eliminate comments
                 String code = Utility.eliminateComments(record); 
+                
+                object.getSource().error = code.trim().substring(7) + "\n";
+                
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -318,7 +320,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
 	}
         
         public String getHelpID() {
-            return "Error";
+            return "Prepare_Input_Residual_Unknown_Variability_Model";
         }
         
     }

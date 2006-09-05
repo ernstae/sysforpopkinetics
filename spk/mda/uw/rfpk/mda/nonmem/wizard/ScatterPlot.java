@@ -50,12 +50,10 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     private String xLine = " NOABS0";
     private String yLine = " NOORD0";
     private String slopeLine = "";
-    private String which = "ESTIMATION";
     private Vector dimList = new Vector();
-    private static int nPlotEst = 0;
-    private static int nPlotSim = 0;
-    private static final int maxNPlot = 20;  
-    private int nPlotAllowed = 20;
+    private int nPlot = 0;
+    private final int maxNPlot = 20;  
+    private final int nPlotAllowed = 20;
 
     /** Creates new form ScatterPlot.
      * @param iter A MDAIterator object to initialize the field iterator.
@@ -63,15 +61,8 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
     public ScatterPlot(MDAIterator iter) { 
         initComponents();
         iterator = iter;
-        nPlotEst = 0;
-        nPlotSim = 0;
     }
-    
-    /** Set which output, table or scatterplot, is required.
-     * @param s a String object to initialize field which.
-     */    
-    public void setWhich(String s) { which = s; }
- 
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -514,8 +505,8 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipady = 74;
-        gridBagConstraints.insets = new java.awt.Insets(5, 16, 6, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 16, 6, 16);
         add(jScrollPane1, gridBagConstraints);
 
         jLabel1.setText("Plot Data From");
@@ -620,8 +611,8 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.insets = new java.awt.Insets(8, 16, 0, 16);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 16, 0, 16);
         add(jLabel5, gridBagConstraints);
 
     }//GEN-END:initComponents
@@ -1091,7 +1082,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
   	}
 
 	public String getStepTitle(){
-	    return "Plot Output - Following " + which + " Step";
+	    return "Plot Output";
 	}
 
 	public void showingStep(JWizardPane wizard){
@@ -1136,7 +1127,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             jComboBox1.addItem("RES");
             jComboBox1.addItem("WRES");
  
-            if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
+            if(!iterator.getIsInd() && iterator.getIsMethod1OrPosthoc())
             {
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");
@@ -1179,67 +1170,32 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             if(iterator.getIsReload())
             {
                 String text = null;
-                if(which.equals("ESTIMATION"))
+                text = iterator.getReload().getProperty("SCATTERPLOT");
+                if(text != null)
                 {
-                    text = iterator.getReload().getProperty("SCATTERPLOTEST");
-                    if(text != null)
+                    iterator.getReload().remove("SCATTERPLOT");
+                    model.removeAllElements();
+                    String[] values = text.trim().split(",");
+                    for(int i = 0; i < values.length; i++)
                     {
-                        iterator.getReload().remove("SCATTERPLOTEST");
-                        model.removeAllElements();
-                        String[] values = text.trim().split(",");
-                        for(int i = 0; i < values.length; i++)
+                        text = values[i].substring(12).trim();
+                        String element = checkItem("$SCATTERPLOT " + text, i);
+                        if(element != null)
                         {
-                            text = values[i].substring(12).trim();
-                            String element = checkItem("$SCATTERPLOT " + text, i);
-                            if(element != null)
-                            {
-                                model.addElement(element);
-                                index++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for(int i = 0; i < model.size(); i++)
-                        {
-                            String element = checkItem((String)model.get(i), i);
-                            if(element != null)
-                                model.set(++index, element);
-                            else
-                                model.remove(i--);
+                            model.addElement(element);
+                            index++;
                         }
                     }
                 }
                 else
                 {
-                    text = iterator.getReload().getProperty("SCATTERPLOTSIM");
-                    if(text != null)
+                    for(int i = 0; i < model.size(); i++)
                     {
-                        iterator.getReload().remove("SCATTERPLOTSIM");
-                        model.removeAllElements();
-                        dimList.removeAllElements();
-                        String[] values = text.trim().split(",");
-                        for(int i = 0; i < values.length; i++)
-                        {
-                            text = values[i].substring(12).trim();
-                            String element = checkItem("$SCATTERPLOT " + text, i);
-                            if(element != null)
-                            {
-                                model.addElement(element);
-                                index++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for(int i = 0; i < model.size(); i++)
-                        {
-                            String element = checkItem((String)model.get(i), i);
-                            if(element != null)
-                                model.set(++index, element);
-                            else
-                                model.remove(i--);
-                        }
+                        String element = checkItem((String)model.get(i), i);
+                        if(element != null)
+                            model.set(++index, element);
+                        else
+                            model.remove(i--);
                     }
                 }
             }                 
@@ -1254,26 +1210,21 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                         model.remove(i--);
                 }
             }
-
-            // Check the number of plots
+          
+                        // Check the number of plots
             dimList.removeAllElements();
             int nFamily = 0;
-            if(which.equals("ESTIMATION")) 
-                nPlotEst = 0;
-            else
-                nPlotSim = 0;
+            nPlot = 0;
+            
             for(int i = 0; i < model.size(); i++)
             {
                 nFamily = getNPlots(((String)model.get(i)).substring(13).trim());
                 dimList.add(new Integer(nFamily));
-                if(which.equals("ESTIMATION"))
-                    nPlotEst += nFamily;
-                else
-                    nPlotSim += nFamily;
+                nPlot += nFamily;
             }
             
             isValid = index >= 0 ? true : false;                   
-            if(nPlotSim + nPlotEst == maxNPlot)
+            if(nPlot == maxNPlot)
             {
                 JOptionPane.showMessageDialog(null, "The number of plots has reached\n" +
                                               "its limit, " + maxNPlot + ".",    
@@ -1282,7 +1233,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
              addButton.setEnabled(false);   
              isValid = true;
             }
-            if(nPlotSim + nPlotEst > maxNPlot)
+            if(nPlot > maxNPlot)
             {
                 JOptionPane.showMessageDialog(null, "The number of plots has exceeded\n" +
                                               "its limit, " + maxNPlot + ".",    
@@ -1368,22 +1319,10 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             MDAObject object = (MDAObject)wizard.getCustomizedObject(); 
             // Create and save record
             String record = (String)model.get(0);
-            int nPlot = getNPlots(record.substring(13));
             for(int i = 1; i < size; i++)
-            {
                 record = record + "\n" + model.get(i);
-                nPlot += getNPlots(((String)model.get(i)).substring(13));
-            }
-            if(which.equals("ESTIMATION"))
-            {
-                nPlotEst = nPlot;
-                object.getRecords().setProperty("ScatterPlotEst", record); 
-            }
-            if(which.equals("SIMULATION"))
-            {
-                nPlotSim = nPlot;
-                object.getRecords().setProperty("ScatterPlotSim", record);
-            }
+            
+            object.getRecords().setProperty("ScatterPlot", record);
             
             String[][][] splots = new String[size][4][];
             for(int i = 0; i < size; i++)
@@ -1456,10 +1395,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                 }
             }
                                 
-            if(which.equals("ESTIMATION"))
-                object.getSource().splotEst = splots; 
-            if(which.equals("SIMULATION")) 
-                object.getSource().splotSim = splots;  
+            object.getSource().splot = splots;  
 	}
 
 	public boolean isValid(){

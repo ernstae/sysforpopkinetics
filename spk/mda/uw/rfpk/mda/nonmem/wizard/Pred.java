@@ -222,7 +222,10 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 object.getRecords().setProperty("Pred", "$PRED " + "\n" + record);
                 object.getSource().pred = "\n" + record + "\n";
                 // Eliminate comments
-                String code = Utility.eliminateComments(record); 
+                String code = Utility.eliminateComments(record);
+                
+                object.getSource().pred = "\n" + code.trim() + "\n";
+                
                 // Find number of THETAs
                 iterator.setNTheta(Utility.find(code, "THETA"));
                 if(iterator.getNTheta() == 0)

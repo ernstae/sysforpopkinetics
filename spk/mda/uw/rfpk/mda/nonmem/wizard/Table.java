@@ -43,11 +43,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     private JWizardPane wizardPane = null;
     private boolean isValid = false;
     private String table = "";
-    private String which = "ESTIMATION";
     private int index = -1;
-    private static int nTableEst = 0;
-    private static int nTableSim = 0;
-    private static final int maxNTable = 10;
+    private int nTable = 0;
+    private final int maxNTable = 10;
                                 
     /** Creates new form Table.
      * @param iter a MDAIterator object to initialize the field iterator.
@@ -56,11 +54,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         initComponents();
         iterator = iter; 
     }
-    
-    /** Set which output, table or scatterplot, is required.
-     * @param s a String object to initialize field which.
-     */  
-    public void setWhich(String s) { which = s; }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -824,10 +817,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         isValid = true;
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
         int nTable = 0;
-        if(which.equals("ESTIMATION"))
-            nTable = nTableSim;
-        if(which.equals("SIMULATION"))
-            nTable = nTableEst;
         if(model.getSize() + nTable == maxNTable)
             addButton.setEnabled(false);
         deleteButton.setEnabled(true);
@@ -905,7 +894,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
   	}
 
 	public String getStepTitle(){
-	    return "Table Output - Following " + which + " Step"; 
+	    return "Table Output"; 
 	}
 
 	public void showingStep(JWizardPane wizard){
@@ -932,7 +921,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             jComboBox1.addItem("PRED");
             jComboBox1.addItem("RES");
             jComboBox1.addItem("WRES"); 
-            if(!iterator.getIsInd() && which.equals("ESTIMATION") && iterator.getIsMethod1OrPosthoc())
+            if(!iterator.getIsInd() && iterator.getIsMethod1OrPosthoc())
             {
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");
@@ -945,7 +934,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 jComboBox1.addItem("ORGDV");
             String record = null;
             if(!iterator.getIsPred())
-                record = object.getRecords().getProperty("PK");
+                record = object.getRecords().getProperty("PK") + "\nY=";
             else
                 record = object.getRecords().getProperty("Pred");
             String[] p = Utility.eliminateComments(record).split("\n");
@@ -967,40 +956,20 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             if(iterator.getIsReload())
             {
                 String text = null;
-                if(which.equals("ESTIMATION"))
+                text = iterator.getReload().getProperty("TABLE");
+                if(text != null)
                 {
-                    text = iterator.getReload().getProperty("TABLEEST");
-                    if(text != null)
-                    {
-                        iterator.getReload().remove("TABLEEST");
-                        model.removeAllElements();
-                        String[] values = text.split(",");
-                        nTableEst = values.length;
-                        for(int i = 0; i < nTableEst; i++)
-                            model.addElement(checkItem("$TABLE " + values[i].substring(6).trim(), i));
-                        index = nTableEst - 1;
-                    }
-                    else
-                        for(int i = 0; i < model.size(); i++)
-                            model.set(i, checkItem((String)model.get(i), i));                    
+                    iterator.getReload().remove("TABLE");
+                    model.removeAllElements();
+                    String[] values = text.split(",");
+                    nTable = values.length;
+                    for(int i = 0; i < nTable; i++)
+                        model.addElement(checkItem("$TABLE " + values[i].substring(6).trim(), i));
+                    index = nTable - 1;
                 }
                 else
-                {
-                    text = iterator.getReload().getProperty("TABLESIM");
-                    if(text != null)
-                    {
-                        iterator.getReload().remove("TABLESIM");
-                        model.removeAllElements();
-                        String[] values = text.split(",");
-                        nTableSim = values.length;
-                        for(int i = 0; i < values.length; i++)
-                            model.addElement(checkItem("$TABLE " + values[i].substring(6).trim(), i));
-                        index = values.length - 1;
-                    }
-                    else
-                        for(int i = 0; i < model.size(); i++)
-                            model.set(i, checkItem((String)model.get(i), i));                    
-                }
+                    for(int i = 0; i < model.size(); i++)
+                        model.set(i, checkItem((String)model.get(i), i));                    
             }
             else
                 for(int i = 0; i < model.size(); i++)
@@ -1008,7 +977,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                       
             // Check the number of tables
             isValid = index >= 0 ? true : false;            
-            if(nTableEst + nTableSim == maxNTable)
+            if(nTable == maxNTable)
             {
                 JOptionPane.showMessageDialog(null, "The number of tables has reached\n" +
                                               "its limit, " + maxNTable + ".",   
@@ -1017,7 +986,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 isValid = true;
                 addButton.setEnabled(false); 
             }
-            if(nTableEst + nTableSim > maxNTable)
+            if(nTable > maxNTable)
             {
                 JOptionPane.showMessageDialog(null, "The number of tables has exceeded\n" +
                                               "its limit, " + maxNTable + ".",   
@@ -1081,17 +1050,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             String record = ((String)model.get(0)).replaceAll("\r", "");
             for(int i = 1; i < size; i++)
                 record = record + "\n" + model.get(i);            
-            if(which.equals("ESTIMATION"))
-            {
-                nTableEst = size;
-                object.getRecords().setProperty("TableEst", record); 
-            }
-            if(which.equals("SIMULATION")) 
-            {
-                nTableSim = size;
-                object.getRecords().setProperty("TableSim", record);
-            }
-            
+            nTable = size;
+            object.getRecords().setProperty("Table", record); 
+           
             String[][][] tables = new String[size][4][];
             for(int i = 0; i < size; i++)
             {
@@ -1202,10 +1163,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                     }
                 }
             }
-            if(which.equals("ESTIMATION"))
-                object.getSource().tableEst = tables; 
-            if(which.equals("SIMULATION")) 
-                object.getSource().tableSim = tables;  
+            object.getSource().table = tables; 
 	}
 
         private boolean hasElement(String[] list, String element)

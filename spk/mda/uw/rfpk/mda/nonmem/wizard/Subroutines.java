@@ -37,7 +37,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     private JComponent panel = this;
     private MDAIterator iterator = null;
     private MDAObject object = null;
-    private boolean isValid = false;
+    private boolean isValid = true;
     private int advan = 0;
     private boolean isInit = false;
     private JWizardPane wizardPane = null;
@@ -286,6 +286,10 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	public void showingStep(JWizardPane wizard){
             object = (MDAObject)wizard.getCustomizedObject();
             wizardPane = wizard;
+            isValid = !(iterator.isGraphic && object.getSource().model == null);
+            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
+            jLabel3.setEnabled(iterator.isGraphic);
+            jButton1.setEnabled(iterator.isGraphic);
             int advanCurrent = iterator.getAdvan();
             String text = null;
             
@@ -444,7 +448,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	}
         
         public String getHelpID() {
-            return "Subroutines";
+            return "Prepare_Input_Model_Numerics_from_the_Model_Library";
         }
         
     }

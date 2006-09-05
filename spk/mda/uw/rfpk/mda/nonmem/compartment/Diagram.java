@@ -28,6 +28,7 @@ import java.awt.geom.Point2D;
 import java.awt.Cursor;
 import java.awt.BasicStroke;
 import java.util.Vector;
+import java.util.Enumeration;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -40,16 +41,16 @@ import javax.swing.DefaultListModel;
  */
 public class Diagram extends javax.swing.JPanel {
     
-    /** Creates new form Diagram
-     * @param frame DesignTool object.
+    /** Creates new form Diagram.
+     * @param tool DesignTool object.
      */
-    public Diagram(DesignTool frame) {
+    public Diagram(DesignTool tool) {
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.EtchedBorder());
         initComponents();
         area = new Dimension(0, 0);
-        this.frame = frame;
-        model = new Model(frame.models);
+        this.tool = tool;
+        model = new Model(tool);
     }
     
     /** This method is called from within the constructor to
@@ -61,7 +62,6 @@ public class Diagram extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
-        renameMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem = new javax.swing.JMenuItem();
         attributeMenuItem = new javax.swing.JMenuItem();
         compDialog = new javax.swing.JDialog();
@@ -82,8 +82,12 @@ public class Diagram extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
         compEqTextArea = new javax.swing.JTextArea();
+        compNameTextField = new javax.swing.JTextField();
+        jCheckBox5 = new javax.swing.JCheckBox();
         delayDialog = new javax.swing.JDialog();
+        jPanel3 = new javax.swing.JPanel();
         delayNameLabel = new javax.swing.JLabel();
+        delayNameTextField = new javax.swing.JTextField();
         delayModelTextField = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
         jLabel31 = new javax.swing.JLabel();
@@ -94,7 +98,7 @@ public class Diagram extends javax.swing.JPanel {
         jScrollPane4 = new javax.swing.JScrollPane();
         fractionList = new javax.swing.JList();
         nDelayCompsComboBox = new javax.swing.JComboBox();
-        delayModelRadioButton = new javax.swing.JRadioButton();
+        delayMixedRadioButton = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
         delayTimeRadioButton = new javax.swing.JRadioButton();
         delayTimeTextField = new javax.swing.JTextField();
@@ -111,7 +115,7 @@ public class Diagram extends javax.swing.JPanel {
         fluxHelpButton = new javax.swing.JButton();
         fluxValueTextField = new javax.swing.JTextField();
         fluxFixedRadioButton = new javax.swing.JRadioButton();
-        fluxMixedRadioButton = new javax.swing.JRadioButton();
+        fluxModelRadioButton = new javax.swing.JRadioButton();
         fluxRedefinedRadioButton = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -149,23 +153,10 @@ public class Diagram extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jButton8 = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
-        sampleDialog = new javax.swing.JDialog();
-        sampleNameLabel = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        errorModelTextField = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
-        sampleEqTextArea = new javax.swing.JTextArea();
-        jPanel3 = new javax.swing.JPanel();
-        sampleOKButton = new javax.swing.JButton();
-        sampleCancelButton = new javax.swing.JButton();
-        sampleHelpButton = new javax.swing.JButton();
-        jRadioButton5 = new javax.swing.JRadioButton();
-        dataLabelComboBox = new javax.swing.JComboBox();
         forceDialog = new javax.swing.JDialog();
         compLabel = new javax.swing.JLabel();
         turnOffRadioButton = new javax.swing.JRadioButton();
@@ -179,13 +170,6 @@ public class Diagram extends javax.swing.JPanel {
         jScrollPane7 = new javax.swing.JScrollPane();
         forceEqTextArea = new javax.swing.JTextArea();
         dataNameComboBox = new javax.swing.JComboBox();
-        splitInputDialog = new javax.swing.JDialog();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTextArea5 = new javax.swing.JTextArea();
-        jPanel10 = new javax.swing.JPanel();
-        jButton12 = new javax.swing.JButton();
-        jButton13 = new javax.swing.JButton();
-        jButton14 = new javax.swing.JButton();
         paramDialog = new javax.swing.JDialog();
         paramNameLabel = new javax.swing.JLabel();
         paramFixedRadioButton = new javax.swing.JRadioButton();
@@ -211,15 +195,6 @@ public class Diagram extends javax.swing.JPanel {
         buttonGroup5 = new javax.swing.ButtonGroup();
         buttonGroup6 = new javax.swing.ButtonGroup();
 
-        renameMenuItem.setText("Rename");
-        renameMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                renameMenuItemActionPerformed(evt);
-            }
-        });
-
-        jPopupMenu1.add(renameMenuItem);
-
         deleteMenuItem.setText("Delete");
         deleteMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -243,10 +218,8 @@ public class Diagram extends javax.swing.JPanel {
         compDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         compDialog.setTitle("Compatment Attributes");
         compDialog.setModal(true);
-        compDialog.setResizable(false);
-        compNameLabel.setText("Name:  ");
+        compNameLabel.setText("Compartment name");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 8, 12);
         compDialog.getContentPane().add(compNameLabel, gridBagConstraints);
@@ -276,7 +249,7 @@ public class Diagram extends javax.swing.JPanel {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         compDialog.getContentPane().add(jPanel1, gridBagConstraints);
@@ -307,7 +280,7 @@ public class Diagram extends javax.swing.JPanel {
         jLabel2.setText("Select optional compartment specific parameters:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 12, 2, 12);
@@ -346,11 +319,6 @@ public class Diagram extends javax.swing.JPanel {
         compDialog.getContentPane().add(jCheckBox4, gridBagConstraints);
 
         paramList.setBackground(new java.awt.Color(235, 235, 235));
-        paramList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Scaling (Sn)", "Bioavailability (Fn)", "Infusion Rate (Rn)", "Infusion Duration (Dn)", "Absorption Lag (ALAGn)" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         paramList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         paramList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -360,7 +328,7 @@ public class Diagram extends javax.swing.JPanel {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
@@ -380,7 +348,7 @@ public class Diagram extends javax.swing.JPanel {
         jLabel12.setText("Define equations:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 12, 2, 12);
@@ -390,23 +358,43 @@ public class Diagram extends javax.swing.JPanel {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 50;
+        gridBagConstraints.ipady = 60;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         compDialog.getContentPane().add(jScrollPane6, gridBagConstraints);
 
+        compNameTextField.setPreferredSize(new java.awt.Dimension(100, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 0, 8, 12);
+        compDialog.getContentPane().add(compNameTextField, gridBagConstraints);
+
+        jCheckBox5.setText("NODOSE");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
+        compDialog.getContentPane().add(jCheckBox5, gridBagConstraints);
+
         delayDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        delayNameLabel.setText("Name:");
+        jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+
+        delayNameLabel.setText("Delay name  ");
+        jPanel3.add(delayNameLabel);
+
+        delayNameTextField.setPreferredSize(new java.awt.Dimension(100, 19));
+        jPanel3.add(delayNameTextField);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 8, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        delayDialog.getContentPane().add(delayNameLabel, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 3, 0);
+        delayDialog.getContentPane().add(jPanel3, gridBagConstraints);
 
-        delayModelTextField.setBackground(new java.awt.Color(255, 255, 255));
         delayModelTextField.setEditable(false);
         delayModelTextField.setPreferredSize(new java.awt.Dimension(100, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -414,8 +402,8 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(1, 0, 0, 12);
         delayDialog.getContentPane().add(delayModelTextField, gridBagConstraints);
 
         jLabel28.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -424,8 +412,8 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 2, 19);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 2, 19);
         delayDialog.getContentPane().add(jLabel28, gridBagConstraints);
 
         jLabel31.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -434,8 +422,8 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(8, 12, 2, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 12, 2, 12);
         delayDialog.getContentPane().add(jLabel31, gridBagConstraints);
 
         jButton2.setText("OK");
@@ -468,6 +456,7 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 12, 12);
         delayDialog.getContentPane().add(jPanel9, gridBagConstraints);
 
+        jScrollPane4.setPreferredSize(new java.awt.Dimension(259, 120));
         fractionList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         fractionList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -489,15 +478,15 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         delayDialog.getContentPane().add(nDelayCompsComboBox, gridBagConstraints);
 
-        delayModelRadioButton.setText("Specify a mixed effect model for the delay");
-        buttonGroup6.add(delayModelRadioButton);
-        delayModelRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        delayMixedRadioButton.setText("Specify a mixed effect model for the delay");
+        buttonGroup6.add(delayMixedRadioButton);
+        delayMixedRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                delayModelRadioButtonActionPerformed(evt);
+                delayMixedRadioButtonActionPerformed(evt);
             }
         });
 
@@ -505,9 +494,9 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(2, 9, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        delayDialog.getContentPane().add(delayModelRadioButton, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(2, 9, 0, 12);
+        delayDialog.getContentPane().add(delayMixedRadioButton, gridBagConstraints);
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel4.setText("TLAG1=");
@@ -515,8 +504,8 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 0);
         delayDialog.getContentPane().add(jLabel4, gridBagConstraints);
 
         delayTimeRadioButton.setSelected(true);
@@ -526,16 +515,16 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 9, 0, 0);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 9, 0, 0);
         delayDialog.getContentPane().add(delayTimeRadioButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         delayDialog.getContentPane().add(delayTimeTextField, gridBagConstraints);
 
         jLabel8.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -544,14 +533,14 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 0, 12);
         delayDialog.getContentPane().add(jLabel8, gridBagConstraints);
 
         fluxDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         fluxDialog.setTitle("Transfer Attributes");
-        fluxNameLabel.setText("Name:");
+        fluxNameLabel.setText("Name");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -559,7 +548,7 @@ public class Diagram extends javax.swing.JPanel {
         fluxDialog.getContentPane().add(fluxNameLabel, gridBagConstraints);
 
         jLabel34.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel34.setText("Enter variables to model (separated by space):");
+        jLabel34.setText("List any new  variables below (separated by space):");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
@@ -638,11 +627,11 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 9, 0, 0);
         fluxDialog.getContentPane().add(fluxFixedRadioButton, gridBagConstraints);
 
-        fluxMixedRadioButton.setText("Use mixed effect mode (e.g. THETA(1)+ETA(1))");
-        buttonGroup4.add(fluxMixedRadioButton);
-        fluxMixedRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        fluxModelRadioButton.setText("Use mixed effect model (e.g. THETA(1)+ETA(1))");
+        buttonGroup4.add(fluxModelRadioButton);
+        fluxModelRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fluxMixedRadioButtonActionPerformed(evt);
+                fluxModelRadioButtonActionPerformed(evt);
             }
         });
 
@@ -652,7 +641,7 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 9, 0, 0);
-        fluxDialog.getContentPane().add(fluxMixedRadioButton, gridBagConstraints);
+        fluxDialog.getContentPane().add(fluxModelRadioButton, gridBagConstraints);
 
         fluxRedefinedRadioButton.setText("Redefine transfer coefficient as: (e.g. CL/V)");
         buttonGroup4.add(fluxRedefinedRadioButton);
@@ -864,20 +853,6 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 12);
         inputDialog.getContentPane().add(jScrollPane2, gridBagConstraints);
 
-        jButton8.setText("Split Input");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        inputDialog.getContentPane().add(jButton8, gridBagConstraints);
-
         jButton9.setText("OK");
         jButton9.setPreferredSize(new java.awt.Dimension(75, 25));
         jPanel8.add(jButton9);
@@ -890,117 +865,11 @@ public class Diagram extends javax.swing.JPanel {
         jPanel8.add(jButton11);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(12, 11, 12, 12);
         inputDialog.getContentPane().add(jPanel8, gridBagConstraints);
-
-        sampleDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
-
-        sampleDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        sampleDialog.setTitle("Sample Attributes");
-        sampleDialog.setModal(true);
-        sampleDialog.setResizable(false);
-        sampleNameLabel.setText("Name");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 6, 12);
-        sampleDialog.getContentPane().add(sampleNameLabel, gridBagConstraints);
-
-        jLabel18.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel18.setText("Associate it with the data name:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 2, 4);
-        sampleDialog.getContentPane().add(jLabel18, gridBagConstraints);
-
-        errorModelTextField.setBackground(new java.awt.Color(255, 255, 255));
-        errorModelTextField.setEditable(false);
-        errorModelTextField.setPreferredSize(new java.awt.Dimension(100, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 16, 2, 12);
-        sampleDialog.getContentPane().add(errorModelTextField, gridBagConstraints);
-
-        jLabel19.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel19.setText("Equations:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 2, 0);
-        sampleDialog.getContentPane().add(jLabel19, gridBagConstraints);
-
-        sampleEqTextArea.setPreferredSize(new java.awt.Dimension(260, 100));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(3, 12, 0, 12);
-        sampleDialog.getContentPane().add(sampleEqTextArea, gridBagConstraints);
-
-        sampleOKButton.setText("OK");
-        sampleOKButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        sampleOKButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sampleOKButtonActionPerformed(evt);
-            }
-        });
-
-        jPanel3.add(sampleOKButton);
-
-        sampleCancelButton.setText("Cancel");
-        sampleCancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sampleCancelButtonActionPerformed(evt);
-            }
-        });
-
-        jPanel3.add(sampleCancelButton);
-
-        sampleHelpButton.setText("Help");
-        sampleHelpButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        jPanel3.add(sampleHelpButton);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
-        sampleDialog.getContentPane().add(jPanel3, gridBagConstraints);
-
-        jRadioButton5.setText("Set residual unknown variability model");
-        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton5ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
-        sampleDialog.getContentPane().add(jRadioButton5, gridBagConstraints);
-
-        dataLabelComboBox.setPreferredSize(new java.awt.Dimension(80, 21));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
-        sampleDialog.getContentPane().add(dataLabelComboBox, gridBagConstraints);
 
         forceDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -1034,6 +903,7 @@ public class Diagram extends javax.swing.JPanel {
         forceDialog.getContentPane().add(turnOffRadioButton, gridBagConstraints);
 
         associateDataRadioButton.setText("Associate with date name:");
+        buttonGroup1.add(associateDataRadioButton);
         associateDataRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 associateDataRadioButtonActionPerformed(evt);
@@ -1115,34 +985,22 @@ public class Diagram extends javax.swing.JPanel {
         forceDialog.getContentPane().add(jScrollPane7, gridBagConstraints);
 
         dataNameComboBox.setPreferredSize(new java.awt.Dimension(80, 21));
+        dataNameComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataNameComboBoxActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         forceDialog.getContentPane().add(dataNameComboBox, gridBagConstraints);
 
-        splitInputDialog.setTitle("Split Input");
-        splitInputDialog.setLocationRelativeTo(this);
-        jScrollPane5.setViewportView(jTextArea5);
-
-        splitInputDialog.getContentPane().add(jScrollPane5, java.awt.BorderLayout.CENTER);
-
-        jButton12.setText("OK");
-        jButton12.setPreferredSize(new java.awt.Dimension(75, 25));
-        jPanel10.add(jButton12);
-
-        jButton13.setText("Cancel");
-        jPanel10.add(jButton13);
-
-        jButton14.setText("Help");
-        jButton14.setPreferredSize(new java.awt.Dimension(75, 25));
-        jPanel10.add(jButton14);
-
-        splitInputDialog.getContentPane().add(jPanel10, java.awt.BorderLayout.SOUTH);
-
         paramDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
         paramDialog.setTitle("Parameter Dialog");
+        paramDialog.setLocationRelativeTo(compDialog);
         paramDialog.setModal(true);
         paramNameLabel.setText("Name:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1239,7 +1097,7 @@ public class Diagram extends javax.swing.JPanel {
         paramDialog.getContentPane().add(jPanel5, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel9.setText("Enter variables to model (separated by space):");
+        jLabel9.setText("List any new variables below (separated by space):");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
@@ -1313,21 +1171,27 @@ public class Diagram extends javax.swing.JPanel {
 
     }//GEN-END:initComponents
 
+    private void dataNameComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataNameComboBoxActionPerformed
+        forceEqTextArea.setText((String)dataNameComboBox.getSelectedItem());
+    }//GEN-LAST:event_dataNameComboBoxActionPerformed
+
     private void fractionListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fractionListMouseClicked
         Element.Delay delay = (Element.Delay)model.selectedElement;
         String fraction = JOptionPane.showInputDialog(fractionList, "Enter fraction.");
         int index = fractionList.getSelectedIndex();
-        listModel.setElementAt("Compartment " + ((Element.Compartment)delay.compartments.get(index)).number + 
+        fractListModel.setElementAt("Compartment " + ((Element.Compartment)delay.compartments.get(index)).number + 
                                ": " + fraction, index);
     }//GEN-LAST:event_fractionListMouseClicked
 
-    private void delayModelRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delayModelRadioButtonActionPerformed
+    private void delayMixedRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delayMixedRadioButtonActionPerformed
         Element.Delay delay = (Element.Delay)model.selectedElement;
-        String[] model = new String[1];
+        String[] model = new String[2];
         model[0] = delayTimeTextField.getText();
-        ModelDialog modelDialog = new ModelDialog(new JFrame(), model, delay.name);
+        model[1] = Model.equations;
+        new MixedModelDialog(new JFrame(), model, delay.name, tool.object.getDataLabels());
         delayModelTextField.setText(model[0]);
-    }//GEN-LAST:event_delayModelRadioButtonActionPerformed
+        Model.equations = model[1];
+    }//GEN-LAST:event_delayMixedRadioButtonActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         delayDialog.setVisible(false);
@@ -1335,6 +1199,7 @@ public class Diagram extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         Element.Delay delay = (Element.Delay)model.selectedElement;
+        delay.name = delayNameTextField.getText();
         if(delayTimeRadioButton.isSelected())
             if(Utility.isPosIntNumber(delayTimeTextField.getText()))
                 delay.delayTime = delayTimeTextField.getText();
@@ -1345,56 +1210,45 @@ public class Diagram extends javax.swing.JPanel {
                 return;
             }
         else
-            delay.delayModel = delayModelTextField.getText();
+            delay.delayTime = delayModelTextField.getText();
         delay.nDelayComps = nDelayCompsComboBox.getSelectedIndex() + 2;
-        for(int i = 0; i < listModel.size(); i++)
-            delay.fractions.setElementAt(((String)listModel.get(i)).split(": ")[1], i);
+        for(int i = 0; i < fractListModel.size(); i++)
+            delay.fractions.setElementAt(((String)fractListModel.get(i)).split(": ")[1], i);
+        tool.setRecords();
         delayDialog.setVisible(false);
+        repaint();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void sampleCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleCancelButtonActionPerformed
-        sampleDialog.setVisible(false);
-    }//GEN-LAST:event_sampleCancelButtonActionPerformed
-
-    private void sampleOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleOKButtonActionPerformed
-        Element.Sample sample = (Element.Sample)model.selectedElement;
-        sample.associatedDataName = (String)dataLabelComboBox.getSelectedItem();
-        sample.errorModel = errorModelTextField.getText();
-        sample.equations = sampleEqTextArea.getText();
-        sampleDialog.setVisible(false);
-        if(frame.isModelApplied)
-            frame.clickFinishButton();
-        repaint();
-    }//GEN-LAST:event_sampleOKButtonActionPerformed
-
-    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
-        Element.Sample sample = (Element.Sample)model.selectedElement;
-        String[] model = new String[1];
-        model[0] = errorModelTextField.getText();
-        ErrorDialog errorDialog = new ErrorDialog(new JFrame(), model, sample.name);
-        errorModelTextField.setText(model[0]);
-    }//GEN-LAST:event_jRadioButton5ActionPerformed
-
-    private void fluxMixedRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fluxMixedRadioButtonActionPerformed
-        Element.Flux flux = (Element.Flux)model.selectedElement;
-        String[] model = new String[1];
-        model[0] = fluxModelTextField.getText();
-        ModelDialog modelDialog = new ModelDialog(new JFrame(), model, flux.name);
-        fluxModelTextField.setText(model[0]);
-    }//GEN-LAST:event_fluxMixedRadioButtonActionPerformed
+    private void fluxModelRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fluxModelRadioButtonActionPerformed
+        if(!tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage())
+        {
+            Element.Flux flux = (Element.Flux)model.selectedElement;
+            String[] model = new String[2];
+            model[0] = fluxModelTextField.getText();
+            model[1] = Model.equations;
+            new MixedModelDialog(new JFrame(), model, flux.name, tool.object.getDataLabels());
+            fluxModelTextField.setText(model[0]);
+            Model.equations = model[1];
+        }
+        else
+            if(fluxModelTextField.getText().trim().length() == 0)
+                fluxModelTextField.setText("THETA()");
+    }//GEN-LAST:event_fluxModelRadioButtonActionPerformed
 
     private void paramMixedRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paramMixedRadioButtonActionPerformed
         Element.Compartment comp = (Element.Compartment)model.selectedElement;
         String param = "";
-        if(paramList.getSelectedIndex() == 0) param = "Sn";
-        if(paramList.getSelectedIndex() == 1) param = "Fn";
-        if(paramList.getSelectedIndex() == 2) param = "Rn";
-        if(paramList.getSelectedIndex() == 3) param = "Dn";
-        if(paramList.getSelectedIndex() == 4) param = "ALAGn";
-        String[] model = new String[1];
+        if(paramList.getSelectedIndex() == 0) param = "S" + comp.number;
+        if(paramList.getSelectedIndex() == 1) param = "F" + comp.number;
+        if(paramList.getSelectedIndex() == 2) param = "R" + comp.number;
+        if(paramList.getSelectedIndex() == 3) param = "D" + comp.number;
+        if(paramList.getSelectedIndex() == 4) param = "ALAG" + comp.number;
+        String[] model = new String[2];
         model[0] = paramModelTextField.getText();
-        ModelDialog modelDialog = new ModelDialog(new JFrame(), model, param);
+        model[1] = Model.equations;
+        new MixedModelDialog(new JFrame(), model, param, tool.object.getDataLabels());
         paramModelTextField.setText(model[0]);
+        Model.equations = model[1];
     }//GEN-LAST:event_paramMixedRadioButtonActionPerformed
 
     private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
@@ -1404,61 +1258,96 @@ public class Diagram extends javax.swing.JPanel {
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         Element.Compartment comp = (Element.Compartment)model.selectedElement;
         String param = "";
-        if(paramList.getSelectedIndex() == 0) param = "Sn";
-        if(paramList.getSelectedIndex() == 1) param = "Fn";
-        if(paramList.getSelectedIndex() == 2) param = "Rn";
-        if(paramList.getSelectedIndex() == 3) param = "Dn";
-        if(paramList.getSelectedIndex() == 4) param = "ALAGn";
-        String[] newList = paramVariableTextField.getText().trim().split(" ");
-        if(!updateVariableList(newList, comp.variables))
-            return;
-        if(paramFixedRadioButton.isSelected())
-            comp.parameters.setProperty(param, "1" + paramValueTextField.getText());           
+        int n = comp.number;
+        int i = paramList.getSelectedIndex();
+        updateVariableList(paramVariableTextField.getText());
+        String value;
+        if(paramFixedRadioButton.isSelected()) 
+            value = paramValueTextField.getText();
         else if(paramMixedRadioButton.isSelected())
-            comp.parameters.setProperty(param, "2" + paramModelTextField.getText());          
+            value = paramModelTextField.getText();          
         else if(paramRedefinedRadioButton.isSelected())
-            comp.parameters.setProperty(param, "3" + paramEqTextArea.getText());
+            value = paramEqTextArea.getText();
         else
         {
             JOptionPane.showMessageDialog(null, "Parameter option was not selected.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        frame.variableDialog.setVariableList();
-        if(frame.isModelApplied)
-            frame.clickFinishButton();
+        if(i == 0)
+        {
+            param = "S" + n;
+            paramListModel.setElementAt("Scaling: " + param + "=" + value, i);
+        }
+        if(i == 1)
+        {
+            param = "F" + n;
+            paramListModel.setElementAt("Bioavailability: " + param + "=" + value, i);
+        }
+        if(i == 2)
+        {
+            param = "R" + n;
+            paramListModel.setElementAt("Infusion Rate: " + param + "=" + value, i);
+        }
+        if(i == 3)
+        {
+            param = "D" + n;
+            paramListModel.setElementAt("Infusion Duration: " + param + "=" + value, i);
+        }
+        if(i == 4)
+        {
+            param = "ALAG" + n;
+            paramListModel.setElementAt("Absorption Lag: " + param + "=" + value, i);
+        }
+        comp.parameters.setProperty(param, value);        
+        tool.variableDialog.setVariableList();
+        tool.setRecords();
         paramDialog.setVisible(false);
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void paramListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_paramListMouseClicked
         Element.Compartment comp = (Element.Compartment)model.selectedElement;
+        paramMixedRadioButton.setEnabled(!tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage());
         String param = "";
-        if(paramList.getSelectedIndex() == 0) param = "Sn";
-        if(paramList.getSelectedIndex() == 1) param = "Fn";
-        if(paramList.getSelectedIndex() == 2) param = "Rn";
-        if(paramList.getSelectedIndex() == 3) param = "Dn";
-        if(paramList.getSelectedIndex() == 4) param = "ALAGn";
+        if(paramList.getSelectedIndex() == 0) param = "S" + comp.number;
+        if(paramList.getSelectedIndex() == 1) param = "F" + comp.number;
+        if(paramList.getSelectedIndex() == 2) param = "R" + comp.number;
+        if(paramList.getSelectedIndex() == 3) param = "D" + comp.number;
+        if(paramList.getSelectedIndex() == 4) param = "ALAG" + comp.number;
         paramNameLabel.setText("Name: " + param);
         paramNameLabel1.setText(param + "=");
         paramNameLabel2.setText(param + "=");
         if(comp.parameters.containsKey(param))
         {
-            if(comp.parameters.getProperty(param).startsWith("1"))
+            String value = comp.parameters.getProperty(param);
+            int type = getModelType(value);
+            if(type == 1)
             {
                 paramFixedRadioButton.doClick();
-                paramValueTextField.setText(comp.parameters.getProperty(param).substring(1));
+                paramValueTextField.setText(value);
+                paramModelTextField.setText("");
+                paramEqTextArea.setText("");
             }
-            if(comp.parameters.getProperty(param).startsWith("2"))
+            if(type == 2)
             {
                 paramMixedRadioButton.setSelected(true);
-                paramModelTextField.setText(comp.parameters.getProperty(param).substring(1));
+                paramValueTextField.setText("");
+                paramModelTextField.setText(value);
+                paramEqTextArea.setText("");
             }
-            if(comp.parameters.getProperty(param).startsWith("3"))
+            if(type == 3)
             {
                 paramRedefinedRadioButton.doClick();
-                paramEqTextArea.setText(comp.parameters.getProperty(param).substring(1));
+                paramValueTextField.setText("");
+                paramModelTextField.setText("");
+                paramEqTextArea.setText(value);
             }
         }
+        Enumeration keys = Model.variables.keys();
+        String variables = "";
+        while(keys.hasMoreElements())
+            variables += (String)keys.nextElement() + " ";
+        paramVariableTextField.setText(variables.trim());
         paramDialog.setSize(350, 350);
         paramDialog.setVisible(true);
     }//GEN-LAST:event_paramListMouseClicked
@@ -1468,70 +1357,23 @@ public class Diagram extends javax.swing.JPanel {
         dataNameComboBox.setEnabled(true);
     }//GEN-LAST:event_associateDataRadioButtonActionPerformed
 
-    private boolean updateVariableList(String[] newList, String[] oldList)
-    {
-        // Find removed variables and remove them from Model.variables
-        Vector changedList = removedItem(oldList, newList);
-        for(int i = 0; i < changedList.size(); i++)
-            Model.variables.remove((String)changedList.get(i));
-        
-        // Find added variables
-        changedList = removedItem(newList, oldList);
-        for(int i = 0; i < changedList.size(); i++)
-        {
-            if(!Model.variables.containsKey((String)changedList.get(i)))
-            {
-                String item = (String)changedList.get(i);
-                Model.variables.setProperty(item, "");
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "The variable '" +  (String)changedList.get(i) + 
-                                              "' has already been defined in another place.",
-                                              "Input Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-        }
-        return true;
-    }
-    
     private void fluxOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fluxOKButtonActionPerformed
         Element.Flux flux = (Element.Flux)model.selectedElement;
-        String[] newList = fluxVariableTextField.getText().trim().split(" ");
-        if(!updateVariableList(newList, flux.variables))
-            return;
+        updateVariableList(fluxVariableTextField.getText());
         if(fluxRedefinedRadioButton.isSelected())
-        {
-            flux.flowRate = null;
-            flux.mixedEffect = null;
-            flux.equations = "\n" + flux.name + "=" + fluxEqTextArea.getText();
-        }
-        else if(fluxMixedRadioButton.isSelected())
-        {
-            flux.flowRate = null;
-            flux.mixedEffect = fluxModelTextField.getText();
-            flux.equations = null;
-        }
+            flux.flowRate = fluxEqTextArea.getText();
+        else if(fluxModelRadioButton.isSelected())
+            flux.flowRate = fluxModelTextField.getText();
         else
-        {
             flux.flowRate = fluxValueTextField.getText();
-            flux.mixedEffect = null;
-            flux.equations = null;
-        }
-        frame.variableDialog.setVariableList();
-        if(frame.isModelApplied)
-            frame.clickFinishButton();
+        tool.variableDialog.setVariableList();
+        tool.setRecords();
         fluxDialog.setVisible(false);
     }//GEN-LAST:event_fluxOKButtonActionPerformed
 
     private void fluxCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fluxCancelButtonActionPerformed
         fluxDialog.setVisible(false);
     }//GEN-LAST:event_fluxCancelButtonActionPerformed
-
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        splitInputDialog.setSize(320, 300);
-        splitInputDialog.setVisible(true);
-    }//GEN-LAST:event_jButton8ActionPerformed
 
     private void ffCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ffCancelButtonActionPerformed
         forceDialog.setVisible(false);
@@ -1552,16 +1394,21 @@ public class Diagram extends javax.swing.JPanel {
     }//GEN-LAST:event_forceEqRadioButtonActionPerformed
 
     private void turnOffRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_turnOffRadioButtonActionPerformed
+        forceEqTextArea.setText("");
         forceEqTextArea.setEnabled(false);
         dataNameComboBox.setEnabled(false);
     }//GEN-LAST:event_turnOffRadioButtonActionPerformed
 
     private void forceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forceButtonActionPerformed
-        String[] dataLabels = frame.object.getDataLabels();
+        String[] dataLabels = tool.object.getDataLabels();
+        Element.Compartment comp = (Element.Compartment)model.selectedElement;
         for(int i = 0; i < dataLabels.length; i++)
-            dataNameComboBox.addItem(dataLabels[i]);
-        compLabel.setText("Name:  " + model.selectedElement.name);
-        forceNameLabel.setText("FF" + model.selectedElement.number + "=");
+            if(!Utility.isStdItem(dataLabels[i]) && !dataLabels[i].equals("ID"))
+                dataNameComboBox.addItem(dataLabels[i]);
+        compLabel.setText("Name:  " + comp.name);
+        forceNameLabel.setText("FF" + comp.number + "=");
+        forceEqTextArea.setText(comp.force);
+        forceEqRadioButton.setSelected(true);
         isForcingFunctionOK = false;
         forceDialog.setSize(310, 255);
         forceDialog.setVisible(true);
@@ -1569,19 +1416,21 @@ public class Diagram extends javax.swing.JPanel {
 
     private void compOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compOKButtonActionPerformed
         Element.Compartment comp = (Element.Compartment)model.selectedElement;
+        comp.name = compNameTextField.getText();
         comp.attributes.clear();
         if(jCheckBox1.isSelected()) comp.attributes.add(jCheckBox1.getText());
         if(jCheckBox2.isSelected()) comp.attributes.add(jCheckBox2.getText());
         if(jCheckBox3.isSelected()) comp.attributes.add(jCheckBox3.getText());
         if(jCheckBox4.isSelected()) comp.attributes.add(jCheckBox4.getText());
+        if(jCheckBox5.isSelected()) comp.attributes.add(jCheckBox5.getText());
         if(isForcingFunctionOK)
         {
             if(turnOffRadioButton.isSelected())
                 comp.force = null;
             else if(associateDataRadioButton.isSelected())
-                comp.force = forceNameLabel.getText() + (String)dataNameComboBox.getSelectedItem();
+                comp.force = (String)dataNameComboBox.getSelectedItem();
             else if(forceEqRadioButton.isSelected())
-                comp.force = forceNameLabel.getText() + forceEqTextArea.getText();
+                comp.force = forceEqTextArea.getText();
             else
             {
                 JOptionPane.showMessageDialog(null, "Forcing function option was not selected.",
@@ -1589,12 +1438,10 @@ public class Diagram extends javax.swing.JPanel {
                 return;
             }
         }
-        comp.equations = compEqTextArea.getText();
-        
-            
-        if(frame.isModelApplied)
-            frame.clickFinishButton();;
+        Model.equations = compEqTextArea.getText();
+        tool.setRecords();
         compDialog.setVisible(false);
+        repaint();
     }//GEN-LAST:event_compOKButtonActionPerformed
 
     private void attributeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attributeMenuItemActionPerformed
@@ -1602,75 +1449,132 @@ public class Diagram extends javax.swing.JPanel {
         if(model.selectedElement instanceof Element.Compartment)
         {
             Element.Compartment comp = (Element.Compartment)model.selectedElement;
-            compNameLabel.setText("Name:  " + comp.name);
-            if(comp.attributes.indexOf("INITIALOFF") != -1) jCheckBox1.setSelected(true);
-            if(comp.attributes.indexOf("NOOFF") != -1) jCheckBox2.setSelected(true);
-            if(comp.attributes.indexOf("DEFDOSE") != -1) jCheckBox3.setSelected(true);
-            if(comp.attributes.indexOf("DEFOBSERVATION") != -1) jCheckBox4.setSelected(true);
-            if(comp.nInputs == 0) 
+            compNameTextField.setText(comp.name);
+            jCheckBox1.setSelected(comp.attributes.indexOf("INITIALOFF") != -1);
+            jCheckBox2.setSelected(comp.attributes.indexOf("NOOFF") != -1);
+            jCheckBox3.setSelected(comp.attributes.indexOf("DEFDOSE") != -1);
+            jCheckBox4.setSelected(comp.attributes.indexOf("DEFOBSERVATION") != -1);
+            jCheckBox5.setSelected(comp.attributes.indexOf("NODOSE") != -1);
+            jCheckBox3.setEnabled(false);
+            jCheckBox4.setEnabled(false);
+            for(int i = 0; i < tool.models.size(); i++)
             {
-                jCheckBox3.setSelected(false);
-                jCheckBox3.setEnabled(false);
+                Vector inputs = ((Model)tool.models.get(i)).inputs;               
+                for(int j = 0; j < inputs.size(); j++)
+                {
+                    Vector compartments = ((Element.Input)inputs.get(j)).compartments;
+                    if((Element.Compartment)compartments.get(0) == comp)
+                    {
+                        jCheckBox3.setEnabled(true);
+                        break;
+                    }
+                }
+                Vector samples = ((Model)tool.models.get(i)).samples;
+                for(int j = 0; j < samples.size(); j++)
+                {
+                    Vector compartments = ((Element.Sample)samples.get(j)).compartments;
+                    if((Element.Compartment)compartments.get(0) == comp)
+                    {
+                        jCheckBox4.setEnabled(true);
+                        break;
+                    }
+                }
             }
+            compEqTextArea.setText(Model.equations);
+            final int n = comp.number;
+            paramListModel.clear();
+            if(comp.parameters.containsKey("S" + n))
+                paramListModel.addElement("Scaling: S" + n + "=" + comp.parameters.getProperty("S" + n));
             else
-                jCheckBox3.setEnabled(true);
-            if(comp.nSamples == 0) 
-            {
-                jCheckBox4.setSelected(false);
-                jCheckBox4.setEnabled(false);
-            }
+                paramListModel.addElement("Scaling: S" + n);
+            if(comp.parameters.containsKey("F" + n))
+                paramListModel.addElement("Bioavailability: F" + n + "=" + comp.parameters.getProperty("F" + n));
             else
-                jCheckBox4.setEnabled(true);
-            if(comp.equations != null) compEqTextArea.setText(comp.equations);
-            compDialog.setSize(332, 400);
+                paramListModel.addElement("Bioavailability: F" + n);
+            if(comp.parameters.containsKey("R" + n))
+                paramListModel.addElement("Infusion Rate: R" + n + "=" + comp.parameters.getProperty("R" + n));
+            else
+                paramListModel.addElement("Infusion Rate: R" + n);
+            if(comp.parameters.containsKey("D" + n))
+                paramListModel.addElement("Infusion Duration: D" + n + "=" + comp.parameters.getProperty("D" + n));
+            else
+                paramListModel.addElement("Infusion Duration: D" + n);
+            if(comp.parameters.containsKey("ALAG" + n))
+                paramListModel.addElement("Absorption Lag: ALAG" + n + "=" + comp.parameters.getProperty("ALAG" + n));
+            else
+                paramListModel.addElement("Absorption Lag: ALAG" + n);
+            paramList.setModel(paramListModel);
+            compDialog.setSize(332, 460);
             compDialog.setLocation(x + 200, y + 100);
             compDialog.setVisible(true);
         }
         if(model.selectedElement instanceof Element.Delay)
         {
             Element.Delay delay = (Element.Delay)model.selectedElement;
+            delayMixedRadioButton.setEnabled(!tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage());
             for(int i = 2; i <= 50; i++)
                 nDelayCompsComboBox.addItem(String.valueOf(i));
-            delayNameLabel.setText("Name: " + delay.name);
+            delayNameTextField.setText(delay.name);
             nDelayCompsComboBox.setSelectedIndex(delay.nDelayComps - 2);
-            if(delay.delayModel != null)
-            {
-                delayModelTextField.setText(delay.delayModel);
-                delayModelRadioButton.setSelected(true);
-            }
-            if(delay.delayTime != null)
+            int type = getModelType(delay.delayTime);
+            if(type == 1)
             {
                 delayTimeTextField.setText(delay.delayTime);
+                delayModelTextField.setText("");
                 delayTimeRadioButton.setSelected(true);
             }
-            fractionList.setModel(listModel);
-            listModel.clear();
+            else if(type == 2)
+            {
+                delayTimeTextField.setText("");
+                delayModelTextField.setText(delay.delayTime);
+                delayMixedRadioButton.setSelected(true);
+            }
+            else {}
+            fractionList.setModel(fractListModel);
+            fractListModel.clear();
             for(int i = 0; i < delay.fractions.size(); i++)
             {
                 int number = ((Element.Compartment)delay.compartments.get(i)).number;
-                listModel.addElement("Compartment " + number + ": " + (String)delay.fractions.get(i));
+                fractListModel.addElement("Compartment " + number + ": " + (String)delay.fractions.get(i));
             }
             delayDialog.setSize(356, 390);
             delayDialog.setLocation(x + 200, y + 100);
             delayDialog.setVisible(true);
         }
-        if(model.selectedElement instanceof Element.Flux && 
-           ((Element.Flux)model.selectedElement).element1 != null)
+        if(model.selectedElement instanceof Element.Flux)
         {
             Element.Flux flux = (Element.Flux)model.selectedElement;
-            fluxNameLabel.setText("Name:  " + flux.name);
-            fluxValueTextField.setText("");
-            fluxEqTextArea.setText("");
-            fluxModelTextField.setText("");
-            if(flux.flowRate != null)
+            if(!tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage())
+                fluxModelRadioButton.setText("Use mixed effect model (e.g. THETA(1)+ETA(1))");
+            else
+                fluxModelRadioButton.setText("Use model: (THETA must be included)");
+            fluxNameLabel.setText("Name:  " + flux.name);           
+            int type = getModelType(flux.flowRate);
+            if(type == 1)
+            {
                 fluxValueTextField.setText(flux.flowRate);
-            if(flux.equations != null)
-                fluxEqTextArea.setText(flux.equations);
-            if(flux.mixedEffect != null)
-                fluxModelTextField.setText(flux.mixedEffect);
+                fluxModelTextField.setText("");
+                fluxEqTextArea.setText("");
+                fluxFixedRadioButton.setSelected(true);
+            }
+            if(type == 2)
+            {
+                fluxValueTextField.setText("");
+                fluxModelTextField.setText(flux.flowRate);
+                fluxEqTextArea.setText("");
+                fluxModelRadioButton.setSelected(true);
+            }
+            if(type == 3)
+            {
+                fluxValueTextField.setText("");
+                fluxModelTextField.setText("");
+                fluxEqTextArea.setText(flux.flowRate);
+                fluxRedefinedRadioButton.setSelected(true);
+            }
             String variables = "";
-            for(int i = 0; i < flux.variables.length; i++)
-                variables += flux.variables[i] + " ";
+            Enumeration keys = Model.variables.keys();
+            while(keys.hasMoreElements())
+                variables += (String)keys.nextElement() + " ";
             fluxVariableTextField.setText(variables.trim());
             jLabel3.setText(model.selectedElement.name + "=");
             jLabel5.setText(model.selectedElement.name + "=");
@@ -1680,51 +1584,36 @@ public class Diagram extends javax.swing.JPanel {
         }
         if(model.selectedElement instanceof Element.Input)
         {
-            inputDialog.setSize(500, 400);
-            inputDialog.setLocation(x + 200, y + 100);
-            inputDialog.setVisible(true);
+            if(model.selectedElement == null) return;
+            String name = JOptionPane.showInputDialog(null, "Enter new name.", model.selectedElement.name);
+            if(name != null && !name.trim().equals(""))
+            {
+                model.selectedElement.name = name;
+                tool.saveModel();
+                repaint();
+            }
         }
         if(model.selectedElement instanceof Element.Sample)
         {
             Element.Sample sample = (Element.Sample)model.selectedElement;
-            String[] dataLabels = frame.object.getDataLabels();
-            for(int i = 0; i < dataLabels.length; i++)
-                dataLabelComboBox.addItem(dataLabels[i]);
-            if(sample.associatedDataName != null)
-                dataLabelComboBox.setSelectedItem(sample.associatedDataName);
-            String text = sample.name + " =";
-            for(int i = 0; i < sample.compartments.size(); i++)
-            {
-                if(i != 0) text += " + ";
-                else text += " ";
-                text += " " + ((Element)sample.compartments.get(i)).name;
-            }
-            sampleNameLabel.setText("Name: " + sample.name);
-            errorModelTextField.setText(sample.errorModel);
-            sampleEqTextArea.setText(text);
-            sampleDialog.setSize(320, 320);
-            sampleDialog.setLocation(x + 200, y + 100);
-            sampleDialog.setVisible(true);
-        }
-    }//GEN-LAST:event_attributeMenuItemActionPerformed
-
-    private void renameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameMenuItemActionPerformed
-        if(model.selectedElement == null) return;
-        String name = JOptionPane.showInputDialog(null, "Enter new name.", model.selectedElement.name);
-        if(name != null && !name.trim().equals(""))
-        {
-            model.selectedElement.name = name;
-            if(frame.isModelApplied)
-                frame.clickFinishButton();
+            String[] model = new String[3];
+            model[0] = sample.errorModel;
+            model[1] = Model.equations;
+            model[2] = sample.name;
+            ErrorModelDialog errorDialog = new ErrorModelDialog(new JFrame(), model,
+                                           !tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage());
+            sample.errorModel = model[0];
+            Model.equations = model[1];
+            sample.name = model[2];
+            tool.saveModel();
             repaint();
         }
-    }//GEN-LAST:event_renameMenuItemActionPerformed
+    }//GEN-LAST:event_attributeMenuItemActionPerformed
 
     private void deleteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItemActionPerformed
         if(model.selectedElement == null) return;
         model.remove(model.selectedElement);
-        if(frame.isModelApplied)
-            frame.clickFinishButton();
+        tool.saveModel();
         repaint();
     }//GEN-LAST:event_deleteMenuItemActionPerformed
 
@@ -1732,7 +1621,7 @@ public class Diagram extends javax.swing.JPanel {
         if(tempElement != null && (evt.getModifiers() & evt.BUTTON1_MASK) != 0 && start != null)
         {            
             last = evt.getPoint();
-            last.setLocation(last.getX() / frame.scale, last.getY() / frame.scale);           
+            last.setLocation(last.getX() / tool.scale, last.getY() / tool.scale);           
             tempElement.xCenter += (last.getX() - start.getX());
             tempElement.yCenter += (last.getY() - start.getY());
             start = last;
@@ -1741,24 +1630,20 @@ public class Diagram extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseDragged
 
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
-        if(!frame.pickedElement.equals("")) return;
+        if(!tool.pickedElement.equals("")) return;
         start = evt.getPoint();
-        start.setLocation(start.getX() / frame.scale, start.getY() / frame.scale);        
+        start.setLocation(start.getX() / tool.scale, start.getY() / tool.scale);        
         x = (int)start.getX();
         y = (int)start.getY();
 
         if(evt.isPopupTrigger() && model.selectedElement != null)
         {
             jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY());
-            if(model.selectedElement instanceof Element.Flux &&
-               ((Element.Flux)model.selectedElement).element1 instanceof Element.Delay)
+            if((model.selectedElement instanceof Element.Flux &&
+               ((Element.Flux)model.selectedElement).element1 instanceof Element.Delay))
                 attributeMenuItem.setEnabled(false);
             else
                 attributeMenuItem.setEnabled(true);
-            if(model.selectedElement instanceof Element.Flux)
-                renameMenuItem.setEnabled(false);
-            else
-                renameMenuItem.setEnabled(true);
         }
         if((evt.getModifiers() & evt.BUTTON1_MASK) != 0)
             gc2D.setXORMode(Color.white);
@@ -1819,6 +1704,7 @@ public class Diagram extends javax.swing.JPanel {
             model.selectedElement.xCenter = tempElement.xCenter;
             model.selectedElement.yCenter = tempElement.yCenter;
             tempElement = null;
+            tool.saveModel();
             repaint();
         }
         if (evt.isPopupTrigger()) 
@@ -1863,55 +1749,48 @@ public class Diagram extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseReleased
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        x = (int)(evt.getX() / frame.scale);
-        y = (int)(evt.getY() / frame.scale);
-        if(frame.pickedElement.equals("compartment"))
+        if(!isDrawable)
+        {
+            tool.pickedElement = "";
+            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            repaint();
+            return;
+        }
+        x = (int)(evt.getX() / tool.scale);
+        y = (int)(evt.getY() / tool.scale);
+        if(tool.pickedElement.equals("compartment"))
         {
             Element.Compartment compartment = new Element.Compartment(x, y, model);
-            Model.elements.add(compartment);                
-            frame.enableClearButton();
-            frame.enableAddButton();
-            frame.pickedElement = "";
+            Model.elements.add(compartment);
+            tool.pickedElement = "";
+            tool.setRecords();
             repaint();
         }
-        else if(frame.pickedElement.equals("delay"))
+        else if(tool.pickedElement.equals("delay"))
         {
-            if(model.nElement == 9)
-            {
-                JOptionPane.showMessageDialog(null, "The total number of Compartments and Delays must be <= 9.",
-                                              "Input Error", JOptionPane.ERROR_MESSAGE);
-                frame.pickedElement = "";
-                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                return;
-            }
             Element.Delay delay = new Element.Delay(x, y, model);
-            model.elements.add(delay);                
-            frame.enableClearButton();
-            frame.enableAddButton();            
-            frame.pickedElement = "";
+            Model.elements.add(delay);                
+            tool.pickedElement = "";
+            tool.setRecords();
             repaint();
         }
-        else if(frame.pickedElement.equals("flux"))
-        {
-            
-            
-/*            
+        else if(tool.pickedElement.equals("flux"))
+        {     
             if(startElement == null)
             {
                 startElement = getSelectedElement();
                 if(startElement == null)
                 {
-                    frame.pickedElement = "";
+                    tool.pickedElement = "";
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
                 return;   
             }
-*/
-            
-            if(startElement == null && !isBackgroundClicked)
-            {
-                startElement = getSelectedElement();
-                if(startElement == null)
+/*
+            if(startElement == null && !isBackgroundClicked)  // This code block is for the feature of
+            {                                                 // constant input.  To resume it, replace  
+                startElement = getSelectedElement();          // it with the above if block and recover
+                if(startElement == null)                      // the class field isBackgroundClicked.
                     isBackgroundClicked = true;
                 return;   
             }
@@ -1919,12 +1798,13 @@ public class Diagram extends javax.swing.JPanel {
             {
                 endElement = getSelectedElement();
                 isBackgroundClicked = false;
-                frame.pickedElement = "";
+                tool.pickedElement = "";
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 if(endElement != null)
-                    addFlux();
+                    addFlux();                                               
                 return;   
             }
+ **/
             else
             {
                 endElement = getSelectedElement();
@@ -1935,7 +1815,7 @@ public class Diagram extends javax.swing.JPanel {
                         JOptionPane.showMessageDialog(null, "A flux from a Delay to another Delay is not allowed.",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                         startElement = null;
-                        frame.pickedElement = "";
+                        tool.pickedElement = "";
                         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                         return;
                     }
@@ -1943,7 +1823,7 @@ public class Diagram extends javax.swing.JPanel {
                     {
                         addFlux();
                         startElement = null;
-                        frame.pickedElement = "";
+                        tool.pickedElement = "";
                         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                         return;
                     }
@@ -1952,58 +1832,77 @@ public class Diagram extends javax.swing.JPanel {
                 {
                     startElement = null;
                     endElement = null;
-                    frame.pickedElement = "";
+                    tool.pickedElement = "";
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     return;                    
                 }
             }
             if(startElement != null && endElement != startElement)
+            {
                 addFlux();
-            frame.pickedElement = "";
+                startElement = null;
+            }
+            tool.pickedElement = "";
+            tool.setRecords();
         }
-        else if(frame.pickedElement.equals("input"))
+        else if(tool.pickedElement.equals("input"))
         {
             Element element = getSelectedElement();
             if(element instanceof Element.Compartment)
             {
-                inputElement.add(element);
+//                inputElement.add(element);         // This is the original code.
+                if(inputElement.size() == 0)         // This is temporarily to limit each input to
+                    inputElement.add(element);       // connect to only one compartment.
+                else                                 // If one compartment has already been clicked
+                {                                    // clean everyting up and then return.
+                    tool.pickedElement = "";
+                    inputElement = new Vector();
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
                 return;
             }
             else
             {
                 // Limit one input on each compartment
-/*                if(inputElement.size() == 1)
+                if(inputElement.size() == 1)
                 {
                     for(int i = 0; i < model.inputs.size(); i++)
                     {
                         Vector compartments = ((Element.Input)model.inputs.get(i)).compartments;
                         if(compartments.size() == 1 && compartments.get(0) == inputElement.get(0))
                         {
-                            frame.pickedElement = "";
+                            tool.pickedElement = "";
                             inputElement = new Vector();
                             setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                             return;
                         }
                     }
-                }*/
+                }
                 if(inputElement.size() > 0)
                 {
                     Element.Input input = new Element.Input(inputElement, x, y, model);
                     inputElement = new Vector();
                     model.inputs.add(input);
-                    for(int i = 0; i < input.compartments.size(); i++)
-                        ((Element.Compartment)input.compartments.get(i)).nInputs++;
+                    tool.saveModel();
                     repaint();
                 }
             }
-            frame.pickedElement = "";
+            tool.pickedElement = "";
         }
-        else if(frame.pickedElement.equals("sample"))
+        else if(tool.pickedElement.equals("sample"))
         {
             Element element = getSelectedElement();
             if(element instanceof Element.Compartment)
             {
-                inputElement.add(element);
+//                inputElement.add(element);         // This is the original code.
+                if(inputElement.size() == 0)         // This is temporarily to limit each sample to
+                    inputElement.add(element);       // connect to only one compartment.
+                else                                 // If a compartment has already been clicked
+                {                                    // clean everyting up and then return.
+                    tool.pickedElement = "";
+                    inputElement = new Vector();
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }                
                 return;
             }
             else
@@ -2016,7 +1915,7 @@ public class Diagram extends javax.swing.JPanel {
                         Vector compartments = ((Element.Sample)model.samples.get(i)).compartments;
                         if(compartments.size() == 1 && compartments.get(0) == inputElement.get(0))
                         {
-                            frame.pickedElement = "";
+                            tool.pickedElement = "";
                             inputElement = new Vector();
                             setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                             return;
@@ -2028,15 +1927,13 @@ public class Diagram extends javax.swing.JPanel {
                     Element.Sample sample = new Element.Sample(inputElement, x, y, model);
                     inputElement = new Vector();
                     model.samples.add(sample);
-                    for(int i = 0; i < sample.compartments.size(); i++)
-                        ((Element.Compartment)sample.compartments.get(i)).nSamples++;
+                    tool.saveModel();
                     repaint();
                 }                              
             }
-            frame.pickedElement = "";
+            tool.pickedElement = "";
+            tool.setRecords();
         }
-        if(frame.isModelApplied)
-            frame.clickFinishButton();
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_formMouseClicked
     
@@ -2066,7 +1963,7 @@ public class Diagram extends javax.swing.JPanel {
         if(!isExist)
         {
             Element.Flux flux = new Element.Flux(startElement, endElement, model);
-            model.fluxes.add(flux);               
+            Model.fluxes.add(flux);               
             startElement = null;
             endElement = null;
             repaint();
@@ -2088,17 +1985,17 @@ public class Diagram extends javax.swing.JPanel {
     private javax.swing.JButton compHelpButton;
     private javax.swing.JLabel compLabel;
     private javax.swing.JLabel compNameLabel;
+    private javax.swing.JTextField compNameTextField;
     private javax.swing.JButton compOKButton;
-    private javax.swing.JComboBox dataLabelComboBox;
     private javax.swing.JComboBox dataNameComboBox;
     private javax.swing.JDialog delayDialog;
-    private javax.swing.JRadioButton delayModelRadioButton;
+    private javax.swing.JRadioButton delayMixedRadioButton;
     private javax.swing.JTextField delayModelTextField;
     private javax.swing.JLabel delayNameLabel;
+    private javax.swing.JTextField delayNameTextField;
     private javax.swing.JRadioButton delayTimeRadioButton;
     private javax.swing.JTextField delayTimeTextField;
     private javax.swing.JMenuItem deleteMenuItem;
-    private javax.swing.JTextField errorModelTextField;
     private javax.swing.JButton ffCancelButton;
     private javax.swing.JButton ffHelpButton;
     private javax.swing.JButton ffOKButton;
@@ -2107,7 +2004,7 @@ public class Diagram extends javax.swing.JPanel {
     private javax.swing.JTextArea fluxEqTextArea;
     private javax.swing.JRadioButton fluxFixedRadioButton;
     private javax.swing.JButton fluxHelpButton;
-    private javax.swing.JRadioButton fluxMixedRadioButton;
+    private javax.swing.JRadioButton fluxModelRadioButton;
     private javax.swing.JTextField fluxModelTextField;
     private javax.swing.JLabel fluxNameLabel;
     private javax.swing.JButton fluxOKButton;
@@ -2124,9 +2021,6 @@ public class Diagram extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton16;
     private javax.swing.JButton jButton17;
@@ -2136,18 +2030,16 @@ public class Diagram extends javax.swing.JPanel {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
@@ -2168,7 +2060,6 @@ public class Diagram extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -2183,17 +2074,14 @@ public class Diagram extends javax.swing.JPanel {
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea5;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
@@ -2215,14 +2103,6 @@ public class Diagram extends javax.swing.JPanel {
     private javax.swing.JRadioButton paramRedefinedRadioButton;
     private javax.swing.JTextField paramValueTextField;
     private javax.swing.JTextField paramVariableTextField;
-    private javax.swing.JMenuItem renameMenuItem;
-    private javax.swing.JButton sampleCancelButton;
-    private javax.swing.JDialog sampleDialog;
-    private javax.swing.JTextArea sampleEqTextArea;
-    private javax.swing.JButton sampleHelpButton;
-    private javax.swing.JLabel sampleNameLabel;
-    private javax.swing.JButton sampleOKButton;
-    private javax.swing.JDialog splitInputDialog;
     private javax.swing.JRadioButton turnOffRadioButton;
     // End of variables declaration//GEN-END:variables
     /** Paint the diagram.
@@ -2232,29 +2112,45 @@ public class Diagram extends javax.swing.JPanel {
     {
         super.paintComponent(gc);
         gc2D = ((Graphics2D)gc);
+        if(!isDrawable)
+            return;
         gc2D.setBackground(Color.white);
         gc2D.setFont(new Font("SansSerif", Font.BOLD, 10));
         gc2D.setStroke(new BasicStroke(2.0f));
         gc2D.setPaintMode();
-        gc2D.scale(frame.scale, frame.scale);
-        model.draw(gc2D);
+        gc2D.scale(tool.scale, tool.scale);
+        model.draw(gc2D, 0, 0);
         if(tempElement != null) tempElement.drawBoundary(gc2D);
     }
-
-    private Vector removedItem(String[] oldList, String[] newList)
-    {
-        Vector removed = new Vector();
-        String text = "";
-        for(int i = 0; i < newList.length; i++)
-            text += " " + newList[i];
-        for(int i = 0; i < oldList.length; i++)
-            if(text.indexOf(oldList[i]) == -1)
-                removed.add(oldList[i]);
-        return removed;
-    }
    
-    
-    private DesignTool frame;
+    private int getModelType(String text)
+    {
+        if(text.length() == 0) return 1;
+        int type = 1;
+        if(!Utility.isFloatNumber(text))
+            if(text.indexOf("THETA(") != -1)
+                type = 2;
+            else type = 3;    
+        return type;
+    }
+ 
+    private void updateVariableList(String newList)
+    {
+        Enumeration keys = Model.variables.keys();
+        while(keys.hasMoreElements())
+        {
+            String key = (String)keys.nextElement();
+            newList = " " + newList.trim() + " ";
+            if(newList.indexOf(" " + key + " ") == -1)
+                Model.variables.remove(key);                
+        }
+        String[] variables = newList.trim().split(" ");
+        for(int i = 0; i < variables.length; i++)
+            if(!variables[i].equals("") && !Model.variables.containsKey(variables[i]))
+                Model.variables.setProperty(variables[i], "");
+    }
+       
+    private DesignTool tool;
     private Graphics2D gc2D;
     private Point2D start, last;
     private int x,y;
@@ -2268,8 +2164,11 @@ public class Diagram extends javax.swing.JPanel {
     /** Temporary element */
     protected Element tempElement;
     private boolean isMouseDragged = false;
-    private boolean isBackgroundClicked = false;
+//    private boolean isBackgroundClicked = false;
     private boolean isForcingFunctionOK = false;
     private Vector inputElement = new Vector();
-    private DefaultListModel listModel = new DefaultListModel();
+    private DefaultListModel fractListModel = new DefaultListModel();
+    private DefaultListModel paramListModel = new DefaultListModel();
+    /** Is drawablw */
+    protected boolean isDrawable = true;
 }

@@ -576,7 +576,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             }
                 
         // Enter the element
-        input[index] = element;
+        if(index > -1) input[index] = element;
         
         // Repaint the table
         jTable1.repaint();  

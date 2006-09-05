@@ -19,10 +19,15 @@ distribution.
 package uw.rfpk.mda.nonmem.compartment;
 
 import java.util.*;
+import java.awt.Color;
+import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import uw.rfpk.mda.nonmem.wizard.MDAObject;
 import uw.rfpk.mda.nonmem.wizard.MDAIterator;
 import uw.rfpk.mda.nonmem.Utility;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.BadLocationException;
 
 /** This class generates MODEL, PK, DES and ERROR codes.
  *
@@ -30,14 +35,12 @@ import uw.rfpk.mda.nonmem.Utility;
  */
 public class Record {
     
-    /** Creates a new instance of Record 
-     * @param models all models.
-     * @param subjectModel subject and model correspondance.
+    /** Creates a new instance of Record.
+     * @param tool the DesignTool object.
      */
-    public Record(Vector models, Properties subjectModel)
+    public Record(DesignTool tool)
     {
-        this.models = models;
-        this.subjectModel = subjectModel;
+        this.tool = tool;
     }
     
     /** Generate MODEL code.
@@ -48,29 +51,46 @@ public class Record {
         StringBuffer sb = new StringBuffer();
         int size = Model.elements.size();
         int nCompartments = 0;
+        ArrayList delays = new ArrayList();
         for(int i = 0; i < size; i++)
         {
             Element element = (Element)Model.elements.get(i);
             if(element instanceof Element.Compartment)
             {
                 Element.Compartment compartment = (Element.Compartment)element;
-                sb.append("COMP=(" + compartment.name);
+                String name = compartment.name;
+                if(compartment.name.indexOf(" ") != -1)
+                    name = "\"" + name + "\"";
+                sb.append("COMP=(" + name);
                 for(int j = 0; j < compartment.attributes.size(); j++)               
-                    sb.append(" " + (String)compartment.attributes.get(j));               
-                if(compartment.nInputs == 0) sb.append(" NODOSE");
-                sb.append(")");
-                if(i < size - 1)
-                    sb.append("\n");
+                    sb.append(" " + (String)compartment.attributes.get(j));
+                sb.append(")   ;" + compartment.xCenter + "," + compartment.yCenter + "\n");
                 nCompartments++;
             }
+            else
+            {
+                Element.Delay delay = (Element.Delay)element;
+                delays.add(delay);                
+                sb.append("COMP=(" + delay.name + ")   ;" + delay.xCenter + "," + delay.yCenter + "\n");
+                nCompartments += delay.nDelayComps;
+            }
+        }
+        for(int i = 0; i < delays.size(); i++)
+        {
+            Element.Delay delay = (Element.Delay)delays.get(i);
+            for(int j = 1; j < delay.nDelayComps; j++)
+                sb.append("COMP=(" + delay.name + ")\n");
         }
         if(nCompartments == 0)
         {
             modelText = "";
             return "";
         }
-        sb.insert(0, "NCOMPARTMENTS=" + nCompartments + " NEQUILIBRIUM=0 NPARAMETERS=0\n");
-        modelText = sb.toString();
+        String numbers = "NCOMPARTMENTS=" + nCompartments;
+        int nParam = Utility.find(pkText, "P");
+        if(nParam != 0) numbers += " NPARAMETERS=" + nParam;
+        sb.insert(0, numbers + "\n");
+        modelText = sb.toString().trim();
         return modelText;
     }
     
@@ -80,39 +100,8 @@ public class Record {
     protected String getPK()
     {
         StringBuffer sb = new StringBuffer();
-        int size = Model.elements.size();
-        for(int i = 0; i < size; i++)
-        {
-            Element element = (Element)Model.elements.get(i);
-            if(element instanceof Element.Compartment)
-            {
-                Element.Compartment comp = (Element.Compartment)element;
-                if(!comp.equations.equals(""))
-                    sb.append("\n" + comp.equations);
-                if(comp.force != null)
-                    sb.append("\n" + comp.force);
-                Enumeration keys = comp.parameters.keys();
-                String param;
-                while(keys.hasMoreElements())
-                {
-                    param = (String)keys.nextElement();
-                    String value = comp.parameters.getProperty(param);
-                    sb.append("\n" + param + "=" + comp.parameters.getProperty(param).substring(1));
-                }
-            }
-            else
-            {
-                Element.Delay delay = (Element.Delay)element;
-                if(delay.compartments.size() > 0)
-                {
-                    if(delay.delayTime != null)
-                        sb.append("\nTLAG" + delay.number + "=" + delay.delayTime);
-                    else
-                        sb.append("\nTLAG" + delay.number + "=" + delay.delayModel);
-                    sb.append("\nK" + delay.number + "=" + delay.nDelayComps + "/TLAG" + delay.number);
-                }
-            }
-        }
+
+        // append user defined variables
         List keySet = new Vector(Model.variables.keySet());
         Iterator keyIter = keySet.iterator();
         String key, value;
@@ -123,20 +112,44 @@ public class Record {
             if(value != null)
                 sb.append("\n" + key + "=" + value);
         }
+        
+        // Append user defined equations              
+        if(!Model.equations.equals(""))
+            sb.append("\n" + Model.equations);
+        
+        // Append compartments and delays
+        int size = Model.elements.size();
+        for(int i = 0; i < size; i++)
+        {
+            Element element = (Element)Model.elements.get(i);
+            if(element instanceof Element.Compartment)
+            {
+                Element.Compartment comp = (Element.Compartment)element;
+                if(!comp.force.equals(""))
+                    sb.append("\nFF" + comp.number + "=" + comp.force);
+                Enumeration keys = comp.parameters.keys();
+                String param;
+                while(keys.hasMoreElements())
+                {
+                    param = (String)keys.nextElement();
+                    sb.append("\n" + param + "=" + comp.parameters.getProperty(param));
+                }
+            }
+            else
+            {
+                Element.Delay delay = (Element.Delay)element;
+                if(delay.compartments.size() > 0 && !delay.delayTime.equals(""))
+                    sb.append("\nTLAG" + delay.number + "=" + delay.delayTime);
+            }
+        }
+                
+        // Append fluxes
         size = Model.fluxes.size();
         for(int i = 0; i < size; i++)
         {
             Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
-            if(flux.element1 instanceof Element.Compartment)
-            {
-                sb.append("\n" + flux.name + "=");           
-                if(flux.flowRate != null)
-                    sb.append(flux.flowRate);
-                else if(flux.equations != null)
-                    sb.append(flux.equations);
-                else
-                    sb.append(flux.mixedEffect);
-            }
+            if(flux.element1 == null || flux.element1 instanceof Element.Compartment)
+                sb.append("\n" + flux.name + "=" + flux.flowRate);
         }
         pkText = sb.toString().trim();
         return pkText;
@@ -177,16 +190,16 @@ public class Record {
                     Element.Flux flux = (Element.Flux)Model.fluxes.get(j);
                     if(flux.element1 == element)
                     {
-                        if(((Element.Compartment)flux.element1).force != null)
+                        if(!((Element.Compartment)flux.element1).force.equals(""))
                             eqn += "-" + flux.name + "*FF" + compartment.number;
                         else
                             eqn += "-" + flux.name + "*A(" + compartment.number + ")";
                     }
-                    if(flux.element2 == element)
+                    if(flux.element2 == element && flux.element1 != null)
                     {
                         if(flux.element1 instanceof Element.Compartment)
                         {
-                            if(((Element.Compartment)flux.element1).force != null)
+                            if(!((Element.Compartment)flux.element1).force.equals(""))
                                 eqn += "+" + flux.name + "*FF" + flux.element1.number;
                             else
                                 eqn += "+" + flux.name + "*A(" + flux.element1.number + ")";
@@ -196,8 +209,8 @@ public class Record {
                             Element.Delay delay = (Element.Delay)flux.element1;
                             int index = delay.compartments.indexOf(element);
                             String fraction = (String)delay.fractions.get(index);
-                            
-                            eqn += "+K" + delay.number + "*" + fraction + "*A(" + 
+                            String k = delay.nDelayComps + "/TLAG" + delay.number;
+                            eqn += "+" + k + "*" + fraction + "*A(" + 
                                    delayNumber.getProperty(String.valueOf(delay.number)) + ")";
                         }
                     }
@@ -213,30 +226,32 @@ public class Record {
                 for(int j = 0; j < Model.fluxes.size(); j++)
                 {
                     Element.Flux flux = (Element.Flux)Model.fluxes.get(j);
-                    if(flux.element2 == element)
+                    if(flux.element2 == element && flux.element1 != null)
                     {
                         if(flux.element1 instanceof Element.Compartment && 
-                           ((Element.Compartment)flux.element1).force != null)
+                           !((Element.Compartment)flux.element1).force.equals(""))
                             eqn += "+" + flux.name + "*FF" + flux.element1.number;
                         else
                             eqn += "+" + flux.name + "*A(" + flux.element1.number + ")";
                     }
                 }
-                String k = "K" + delay.number;
-                eqn += "-" + k + "*A(" + (size + 1) + ")   ; " + delay.name;
+                String k = delay.nDelayComps + "/TLAG" + delay.number;
+                eqn += "-" + k + "*A(" + delay.number + ")   ;" + delay.name;
                 if(!eqn.endsWith("="))
                 {
 //                    sb.append(eqn);
                     eqns[delay.number - 1] = eqn;
                     int nIndex = pIndex + delay.nDelayComps;
+                    int l;
                     for(int j = pIndex + 1; j < nIndex; j++)
                     {
-                        if(j > pIndex + 1) pIndex = j - 1;
-                        eqn = "\nDADT(" + j + ")=" + k + "*(A(" + pIndex + ")-A(" + j + "))   ; " + delay.name;
+                        if(j == pIndex + 1) l = delay.number;
+                        else l = j - 1;                       
+                        eqn = "\nDADT(" + j + ")=" + k + "*(A(" + l + ")-A(" + j + "))   ;" + delay.name;
 //                        sb.append(eqn);
                         eqns[j - 1] = eqn;
                     }                   
-                    pIndex = nIndex;
+                    pIndex = nIndex - 1;
                 }
             }
         }
@@ -254,64 +269,147 @@ public class Record {
     protected String getError()
     {
         StringBuffer sb = new StringBuffer();
+        Vector models = tool.models;
+        String space = "";
         for(int i = 0; i < models.size(); i++)
         {
-            Vector samples = ((Model)models.get(i)).samples;           
+            Vector samples = ((Model)models.get(i)).samples;
+            if(models.size() > 1 && samples.size() > 0)
+            {
+                ArrayList list = getKeyIntervals(tool.subjectModel, String.valueOf(((Model)models.get(i)).id));
+                String condition = "IF(";
+                String[] interval;
+                space = "  ";
+                for(int j = 0; j < list.size(); j++)
+                {
+                    interval = (String[])list.get(j);
+                    if(interval[0].equals(interval[1]))
+                        condition += "ID .EQ. " + interval[0];
+                    else
+                        if(list.size() == 1) condition += "ID .GE. " + interval[0] + " AND .LE. " + interval[1];
+                        else condition += "(ID .GE. " + interval[0] + " AND .LE. " + interval[1] + ")";
+                    if(j == list.size() - 1)
+                        condition += ") THEN";
+                    else
+                        condition += " OR ";
+                }
+                sb.append(condition + "\n");
+            }                       
             for(int j = 0; j < samples.size(); j++)
             {
                 Element.Sample sample = (Element.Sample)samples.get(j);
-                String key = sample.name;
-                if(sample.compartments.size() == 1)
+                String str = space;
+                // Assume each sample is taken from only one compartment.
+                if(samples.size() == 1)
+                    str += sample.errorModel;
+                else
                 {
-                    if(samples.size() == 1)
-                    {
-                        sb.append(sample.errorModel);
-                    }
-                    else
-                    {
-                        Element.Compartment cmp = (Element.Compartment)sample.compartments.get(0);
-                        sb.append("IF(CMP .EQ. " + String.valueOf(cmp.number) + ") THEN\n" +
-                                  sample.errorModel + "\nEND IF");
-                    }
+                    Element.Compartment comp = (Element.Compartment)sample.compartments.get(0);
+                    str += "IF(CMP .EQ. " + comp.number + ") THEN\n  " + space + sample.errorModel + 
+                           "\n" + space + "END IF";
                 }
+                sb.append(str);
+            }
+            if(models.size() > 1 && samples.size() > 0) sb.append("\nEND IF");
+        }
+        errorText = sb.toString().replaceAll("END IF  IF", "ELSE IF").replaceAll("END IFIF", "ELSE IF");
+        sb = new StringBuffer();
+        for(int i = 0; i < models.size(); i++)
+        {
+            Model model = (Model)models.get(i);
+            Vector samples = model.samples;
+            Vector inputs = model.inputs;
+            sb.append("\n;" + model.name);
+            for(int j = 0; j < inputs.size(); j++)
+            {
+                Element.Input input = (Element.Input)inputs.get(j);
+                sb.append(";" + input.name + ":" + input.xCenter + "," + input.yCenter + 
+                          "(" + ((Element)input.compartments.get(0)).number + ")");
+            }
+            for(int j = 0; j < samples.size(); j++)
+            {
+                Element sample = (Element)samples.get(j);
+                sb.append(";" + sample.name + ":" + sample.xCenter + "," + sample.yCenter);
             }
         }
-        return sb.toString().trim().replaceAll("END IFIF", "ELSE IF");
+        errorText += sb.toString();
+        return errorText;
     }
 
-    
+    /** Set model specification to MDAObject object.
+     * @param object MDAObject object.
+     * @return true if successful, false otherwise.
+     */
     protected boolean setModel(MDAObject object)
     {
+        // Check completeness
         if(modelText.equals(""))
         {
             JOptionPane.showMessageDialog(null, "Model specification is missing.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        for(int i = 0; i < tool.models.size(); i++)
+        {
+            Model model = (Model)tool.models.get(i);
+            if(model.inputs.size() == 0)
+            {
+                JOptionPane.showMessageDialog(null, "The model for " + model.name + " has not a dose.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            if(model.samples.size() == 0)
+            {
+                JOptionPane.showMessageDialog(null, "The model for " + model.name + " has no observation.",
+                                          "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        // Set source
         String[] modelLines = modelText.split("\n");
         String[] ns = modelLines[0].split(" ");
-        String n1 = ns[0].split("=")[1];
-        String n2 = ns[1].split("=")[1];
-        String n3 = ns[2].split("=")[1];
-        int size = Integer.parseInt(n1);
+        String n1 = null;
+        String n2 = "0";
+        String n3 = null;
+        for(int i = 0; i < ns.length; i++)
+        {
+            if(ns[i].startsWith("NCOMPARTMENTS"))
+                n1 = ns[i].substring(14);
+            if(ns[i].startsWith("NEQUILIBRIUM"))
+                n2 = ns[i].substring(13);
+            if(ns[i].startsWith("NPARAMETERS"))
+                n3 = ns[i].substring(12);
+        }
+        int size = Integer.parseInt(n1);         
         String[][] compartments = new String[size + 1][];
-        compartments[0] = new String[3]; 
+        compartments[0] = new String[3];
         compartments[0][0] = n1;
         compartments[0][1] = n2;
         compartments[0][2] = n3;
         for(int i = 1; i <= size; i++)
         {
-            String compartment = modelLines[i];
-            int end = compartment.length() -1;
-            if(compartment.indexOf(" ") != -1)
-                end = compartment.indexOf(" ");
-            String name = compartment.substring(6, end);              
-            compartments[i] = new String[8];
-            if(name.startsWith("\"") || name.startsWith("'"))
+            String name = "";
+            int end = -1;
+            String compartment = modelLines[i].substring(6);
+            if(compartment.startsWith("\""))
             {
-                name = name.substring(1, name.length() - 1);                    
+                end = compartment.indexOf("\"", 1);
+                name = compartment.substring(1, end++);
             }
-            compartments[i][0] = name;
+            else if(compartment.startsWith("'"))
+            {
+                end = compartment.indexOf("'", 1);
+                name = compartment.substring(1, end++);
+            }
+            else
+            {
+                end = compartment.indexOf(" ");
+                if(end == -1) end = compartment.indexOf(")");
+                name = compartment.substring(0, end);
+            }
+            compartment = compartment.substring(end);          
+            compartments[i] = new String[8];                
+            compartments[i][0] = name; 
             if(compartment.indexOf(" INITIALOFF") != -1)
                 compartments[i][1] = "yes";
             else
@@ -341,28 +439,49 @@ public class Record {
             else
                 compartments[i][7] = "no";
         }
+        
+        // Set source and record
         object.getSource().model = compartments;
         object.getRecords().setProperty("Model", "$MODEL " + modelText);
+        
         return true;
     }
-    
+     
+    /** Set model parameters definition to MDAObject object.
+     * @param object MDAObject object.
+     * @param iterator MDAIterator object.
+     * @return true if successful, false otherwise.
+     */   
     protected boolean setPK(MDAObject object, MDAIterator iterator)
     {
+        // Check completeness
         if(pkText.equals(""))
         {
             JOptionPane.showMessageDialog(null, "Model parameters are not defined.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        object.getRecords().setProperty("PK", "$PK " + "\n" + pkText);
-        object.getSource().pk = "\n" + pkText + "\n";
+        String[] rows = pkText.split("\n");
+        String[] sizes;
+        for(int i = 0; i < rows.length; i++)
+        {
+            sizes = rows[i].trim().split("=");
+            if(sizes.length != 2)
+            {
+                JOptionPane.showMessageDialog(null, "Value of " + sizes[0] + " is missing.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        
         // Eliminate comments
-        String code = Utility.eliminateComments(pkText); 
+        String code = Utility.eliminateComments(pkText);        
+       
         // Find number of THETAs and number of ETAS
         int nTheta = Utility.find(code, "THETA");
         if(!iterator.getIsInd() && !iterator.getIsTwoStage())
         {
-            if(iterator.getNTheta() == 0)
+            if(nTheta == 0)
             {
                 JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -380,66 +499,264 @@ public class Record {
         }
         else
         {
-            if(iterator.getNTheta() == 0)
+            if(nTheta == 0)
+            {
                 JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
+                return false;
+            }
+            iterator.setNTheta(nTheta);
         }
-        // Check NONMEM compatibility
-        Vector names = Utility.checkMathFunction(code, "Model Parameters");
-        // Check parenthesis mismatch
-        Vector lines = Utility.checkParenthesis(code, "Model Parameters");
-        // Check expression left hand side
-        Vector errors = Utility.checkLeftExpression(code, "Model Parameters");
+        
+        // Set source and record
+        object.getRecords().setProperty("PK", "$PK \n" + pkText);
+        object.getSource().pk = "\n" + pkText + "\n"; 
+        
         return true;
     }
-        
+
+    /** Set differential equation structure to MDAObject object.
+     * @param object MDAObject object.
+     * @return true if successful, false otherwise.
+     */
     protected boolean setDes(MDAObject object)
     {
+        // Check completeness
         if(desText.equals(""))
         {
             JOptionPane.showMessageDialog(null, "Diifferential equation structure is missing.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        String record = "$DES " + "\n" + desText;
-        object.getRecords().setProperty("Des", record);
-        object.getSource().des = record.substring(5) + "\n";
-        // Eliminate comments
-        String code = Utility.eliminateComments(record); 
-        // Check NONMEM compatibility
-        Vector names = Utility.checkMathFunction(code, "Differential Equation Structure");
-        // Check parenthesis mismatch
-        Vector lines = Utility.checkParenthesis(code, "Differential Equation Structure");
-        // Check expression left hand side
-        Vector errors = Utility.checkLeftExpression(code, "Differential Equation Structure");
+        String[] rows = desText.split("\n");
+        String[] sizes;
+        for(int i = 0; i < rows.length; i++)
+        {
+            if(rows[i].indexOf("=") == -1)
+            {
+                JOptionPane.showMessageDialog(null, "Compartment " + (i + 1) + " is isolated.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        
+        // Set source and record
+        object.getRecords().setProperty("Des", "$DES \n" + desText);
+        object.getSource().des = "\n" + Utility.eliminateComments(desText) + "\n";
+        
         return true;
     }
     
-    protected boolean setError(MDAObject object)
+    /** Set residual unknown variability model to MDAObject object.
+     * @param object MDAObject object.
+     * @param iterator MDAIterator object.
+     * @return true if successful, false otherwise.
+     */    
+    protected boolean setError(MDAObject object, MDAIterator iterator)
     {
+        // Check completeness
         if(errorText.equals(""))
         {
             JOptionPane.showMessageDialog(null, "Residual unknwn variability model is missing.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        String record = "$ERROR " + "\n" + errorText;
-        object.getRecords().setProperty("Error", record);
-        object.getSource().error = record.substring(7) + "\n";
-                
+        for(int i = 0; i < tool.models.size(); i++)
+        {
+            Model model = (Model)tool.models.get(i);
+            for(int j = 0; j < model.samples.size(); j++)
+            {
+                Element.Sample sample = (Element.Sample)model.samples.get(j);
+                if(sample.errorModel.trim().length() == 0)
+                {
+                    JOptionPane.showMessageDialog(null, "The RUV for " + sample.name + " is missing.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+        }
+                     
         // Eliminate comments
-        String code = Utility.eliminateComments(record); 
-        // Check NONMEM compatibility
-        Vector names = Utility.checkMathFunction(code, "Residual Unknown Variability Model");
-        // Check parenthesis mismatch
-        Vector lines = Utility.checkParenthesis(code, "Residual Unknown Variability Model");
-        // Check expression left hand side
-        Vector errors = Utility.checkLeftExpression(code, "Residual Unknown Variability Model");
+        String code = Utility.eliminateComments(errorText).trim();
+
+        // Find number of EPSs for population analysis or Etas for individual analysis
+        int nEta = 0;
+        int nEps = 0;
+        if(!iterator.getIsInd() && !iterator.getIsTwoStage())
+        {
+            String pkCode = Utility.eliminateComments(pkText);
+            if(pkCode != null)
+                nEta = Utility.find(pkCode + code, "ETA");
+            else
+                nEta = Utility.find(code, "ETA");
+            nEps = Utility.find(code, "EPS");
+            if(nEps == 0)
+            {
+                JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        else
+        {
+            nEta = Utility.find(code, "ETA");
+            if(nEta == 0)
+            {
+                JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        iterator.setNEta(nEta);
+        if(!iterator.getIsInd() && !iterator.getIsTwoStage())
+            iterator.setNEps(nEps);
+        
+        // Set source and record
+        object.getRecords().setProperty("Error", "$ERROR \n" + errorText);
+        object.getSource().error = "\n" + code + "\n";
+
         return true;
     }
     
-    private Vector models;
-    private Properties subjectModel;
-    private String modelText, pkText, desText, errorText;
+    /** Check the code and highlight the found parts.
+     * @param step
+     * @param textArea
+     */
+    protected void checkCode(String step, JTextArea textArea)
+    {
+        // Get text
+        String code = textArea.getText();
+        
+        // Check NONMEM compatibility
+        Vector names = Utility.checkMathFunction(code, step);
+        // Check parenthesis mismatch
+        Vector lines = Utility.checkParenthesis(code, step);
+        // Check expression left hand side
+        Vector errors = Utility.checkLeftExpression(code, step);
+        
+        // Highlight the incompatible function names and mismatched parenthesis lines
+        if(isHighlighted3)
+        {                
+            highlighter3.removeAllHighlights();
+            isHighlighted3 = false;
+        }
+        if(names.size() > 0 || lines.size() > 0 || errors.size() > 0)
+        {
+            textArea.setHighlighter(highlighter3);
+            javax.swing.text.Element paragraph = textArea.getDocument().getDefaultRootElement();          
+            String[] text = textArea.getText().split("\n");
+            try
+            {
+                for(int i = 0; i < text.length; i++)
+                {
+                    for(int j = 0; j < names.size(); j++)
+                    {
+                        int comment = text[i].indexOf(";");
+                        if(comment != 0)
+                        {
+                            String line = text[i];
+                            if(comment > 0)
+                                line = text[i].substring(0, comment);
+                            int pos = 0;
+                            int offset = paragraph.getElement(i).getStartOffset();
+                            String name = (String)names.get(j);
+                            while ((pos = text[i].indexOf(name, pos)) >= 0) 
+                            {                
+                                highlighter3.addHighlight(pos + offset, pos + offset + name.length(), highlight_painter1);
+                                pos += name.length();
+                                isHighlighted3 = true;
+                            }
+                        }
+                    }
+                }
+                for(int i = 0; i < lines.size(); i++)
+                {
+                    int n = ((Integer)lines.get(i)).intValue(); 
+                    highlighter3.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                              paragraph.getElement(n).getEndOffset() - 1,
+                                              highlight_painter2); 
+                    isHighlighted3 = true;                    
+                }
+                for(int i = 0; i < errors.size(); i++)
+                {
+                    int n = ((Integer)errors.get(i)).intValue(); 
+                    highlighter3.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                              paragraph.getElement(n).getEndOffset() - 1,
+                                              highlight_painter2); 
+                    isHighlighted3 = true;                    
+                }
+            }
+            catch(BadLocationException e) 
+            {
+                JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
+            }                    
+        }
+    }
+    
+    private ArrayList getKeyIntervals(Properties property, String value)
+    {
+        String key;
+        ArrayList ids = new ArrayList();
+        Enumeration keys = property.keys();
+        while(keys.hasMoreElements())
+        {
+            key = (String)keys.nextElement();
+            if(property.getProperty(key).equals(value)) ids.add(key);
+        }
+        if(ids.size() == 0) return null;
+        Collections.sort(ids, new Comparer());
+        String ID = (String)ids.get(0);
+        ArrayList list = new ArrayList();
+        String[] interval = new String[2];
+        interval[0] = ID;
+        int id = Integer.parseInt(ID);
+        int next;
+        for(int i = 1; i < ids.size(); i++)
+        {
+            next = Integer.parseInt((String)ids.get(i));
+            if(next != id + 1)
+            {
+                interval[1] = String.valueOf(id);
+                list.add(interval);
+                interval = new String[2];
+                interval[0] = String.valueOf(next);
+            }
+            id = next;
+        }
+        interval[1] = String.valueOf(id);
+        list.add(interval);
+        return list;
+    }
+    
+    private class Comparer implements Comparator 
+    {
+         public int compare(Object obj1, Object obj2)
+         {
+             int i1 = Integer.parseInt((String)obj1);
+             int i2 = Integer.parseInt((String)obj2);
+             return i1 - i2;
+         }
+    } 
+
+    /** Clear all records */
+    protected void clearAll()
+    {
+        modelText = pkText = desText = errorText = "";
+    }
+    
+    private DesignTool tool;
+    private String modelText = "";
+    private String pkText = "";
+    private String desText = "";
+    private String errorText = "";
+    private boolean isHighlighted1 = false;
+    private boolean isHighlighted2 = false;
+    private boolean isHighlighted3 = false;
+    private DefaultHighlighter highlighter1 = new DefaultHighlighter();
+    private DefaultHighlighter highlighter2 = new DefaultHighlighter();
+    private DefaultHighlighter highlighter3 = new DefaultHighlighter();
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter1 =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(255,255,0));
+    private DefaultHighlighter.DefaultHighlightPainter highlight_painter2 =
+            new DefaultHighlighter.DefaultHighlightPainter(new Color(255,0,0));
 }
