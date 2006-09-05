@@ -34,22 +34,29 @@ public abstract class Element implements Cloneable
 {
     /** Draw the element.
      * @param gc2D Graphics2D
+     * @param x0 left margin
+     * @param y0 top margin
      */
-    public abstract void draw(Graphics2D gc2D);
+    public abstract void draw(Graphics2D gc2D, int x0, int y0);
+    
     /** Detect if (x, y) is within the element boundary.
      * @param x x-coordinate of the point.
      * @param y y-coordinate of the point.
      * @return true if the point is within the element boundary, false otherwise.
      */
     public abstract boolean contains(int x, int y);
+    
     /** Draw the element's boundary.
-     * @param gc2D Graphics2D
+     * @param gc2D Graphics2D  
      */
     public abstract void drawBoundary(Graphics2D gc2D);
+    
     /** Draw element name.
      * @param gc2D Graphics2D
+     * @param x0 left margin
+     * @param y0 top margin
      */
-    public abstract void drawName(Graphics2D gc2D);
+    public abstract void drawName(Graphics2D gc2D, int x0, int y0);
     
     /** Clone element.
      * @return Object.
@@ -113,18 +120,20 @@ public abstract class Element implements Cloneable
         }
         
         /** Draw compartment.
-         * @param gc2D Graphics2D.
+         * @param gc2D Graphics2D
+         * @param x0 left margin
+         * @param y0 top margin      
          */     
-        public void draw(Graphics2D gc2D)
+        public void draw(Graphics2D gc2D, int x0, int y0)
         {        
             gc2D.setColor(Color.black);
-            gc2D.drawOval(xCenter - 25, yCenter -25, 50, 50);
+            gc2D.drawOval(xCenter + x0 - 25, yCenter + y0 -25, 50, 50);
             if(this == model.selectedElement)
             {
                 gc2D.setColor(Color.yellow);
-                gc2D.fillOval(xCenter - 24, yCenter -24, 48, 48);
+                gc2D.fillOval(xCenter + x0 - 24, yCenter + y0 -24, 48, 48);
             }
-            drawName(gc2D);
+            drawName(gc2D, x0, y0);
         }
         
         /** Detect if (x,y) is within the element boundary.
@@ -151,37 +160,33 @@ public abstract class Element implements Cloneable
         }
         
         /** Draw name of compartment.
-         * @param gc2D Graphics2D.
+         * @param gc2D Graphics2D
+         * @param x0 left margin
+         * @param y0 top margin
          */
-        public void drawName(Graphics2D gc2D) 
+        public void drawName(Graphics2D gc2D, int x0, int y0) 
         {
             gc2D.setColor(Color.black);
             Graphics gc = (Graphics)gc2D;
             if(DesignTool.showName)
             {
                 int labelWidth = gc.getFontMetrics().stringWidth(name)/2;
-                gc2D.drawString(name, xCenter - labelWidth, yCenter + 5);
+                gc2D.drawString(name, xCenter + x0 - labelWidth, yCenter + y0 + 5);
             }
             else
             {
                 String label = String.valueOf(number);
                 int labelWidth = gc.getFontMetrics().stringWidth(label)/2;
-                gc2D.drawString(label, xCenter - labelWidth, yCenter + 5);
+                gc2D.drawString(label, xCenter + x0 - labelWidth, yCenter + y0 + 5);
             }   
         }
-        
-        /** Number of inputs on this compartment */
-        protected int nInputs = 0;
-        /** Number of samples on this compartment */
-        protected int nSamples = 0;
+
         /** Attributes */
         protected Vector attributes = new Vector();
         /** Compartment force */
-        protected String force = null;
+        protected String force = "";
         /** Parameters */
         protected Properties parameters = new Properties();
-        /** Variables */
-        protected String[] variables = {""};
     }
     
     /** This class defines delay. */
@@ -202,27 +207,29 @@ public abstract class Element implements Cloneable
         }
         
         /** Draw delay.
-         * @param gc2D Graphics2D.
+         * @param gc2D Graphics2D
+         * @param x0 left margin
+         * @param y0 top margin
          */        
-        public void draw(Graphics2D gc2D) 
+        public void draw(Graphics2D gc2D, int x0, int y0) 
         {            
-            gc2D.translate(xCenter, yCenter);
+            gc2D.translate(xCenter + x0, yCenter + y0);
             if(this == model.selectedElement)
             {
                 gc2D.setColor(Color.yellow);
-                gc2D.fillRect(-21, -16, 44, 32);
+                gc2D.fillRect(-22, -16, 44, 32);
             }
             gc2D.setColor(Color.black);
             gc2D.drawRect(-23, -17, 46, 34);
             gc2D.drawLine(-23, 0, -16, 0);
             gc2D.drawOval(-16, -4, 8, 8); 
             gc2D.drawLine(-8, 0, -4, 0);
-            gc2D.drawOval(-4, -4, 8, 8); 
-            gc2D.drawLine(4, 0, 8, 0);
-            gc2D.drawOval(8, -4, 8, 8); 
+            gc2D.drawOval(-4, 0 - 4, 8, 8); 
+            gc2D.drawLine(+4, 0, 8, 0);
+            gc2D.drawOval(8, 0 - 4, 8, 8); 
             gc2D.drawLine(16, 0, 23, 0);
-            gc2D.translate(-xCenter, -yCenter);
-            drawName(gc2D);
+            gc2D.translate(-xCenter - x0, -yCenter - y0);
+            drawName(gc2D, x0, y0);
         }
         
         /** Detect if (x,y) is within the element boundary.
@@ -250,28 +257,28 @@ public abstract class Element implements Cloneable
         
         /** Draw name of delay.
          * @param gc2D Graphics2D.
+         * @param x0 left margin
+         * @param y0 top margin
          */
-        public void drawName(Graphics2D gc2D)
+        public void drawName(Graphics2D gc2D, int x0, int y0)
         {
             gc2D.setColor(Color.black);
             Graphics gc = (Graphics)gc2D;
             if(DesignTool.showName)
             {
                 int labelWidth = gc.getFontMetrics().stringWidth(name)/2;
-                gc2D.drawString(name, xCenter - labelWidth, yCenter - 7);
+                gc2D.drawString(name, xCenter + x0 - labelWidth, yCenter + y0 - 7);
             }
             else
             {
                 String label = String.valueOf(number);
                 int labelWidth = gc.getFontMetrics().stringWidth(label)/2;
-                gc2D.drawString(label, xCenter - labelWidth, yCenter - 7);
+                gc2D.drawString(label, xCenter + x0 - labelWidth, yCenter + y0 - 7);
             }
         }
-        
+       
         /** Delay time. */
-        protected String delayTime = null;
-        /** Delay model. */
-        protected String delayModel = null;
+        protected String delayTime = "";
         /** Number of compartments to simulate the delay. */
         protected int nDelayComps = 2;
         /** Ending compartments from the delay */
@@ -296,33 +303,61 @@ public abstract class Element implements Cloneable
             number = newNumber(Model.fluxes);
             if(element1 != null && element2 != null)
             {
-                if(element1 instanceof Element.Compartment) 
-                    name = "K" + element1.number + element2.number;
+                if(element1 instanceof Element.Compartment)
+                {
+                    if(element1.number < 10 && element2.number < 10)
+                        name = "K" + element1.number + element2.number;
+                    else
+                        name = "K" + element1.number + "T" + element2.number;
+                }
                 if(element1 instanceof Element.Delay)
                 {
-                    name = "D" + element1.number + element2.number;
+                    if(element1.number < 10 && element2.number < 10)
+                        name = "D" + element1.number + element2.number;
+                    else
+                        name = "D" + element1.number + "T" + element2.number;
                     ((Element.Delay)element1).compartments.add(element2);
                     ((Element.Delay)element1).fractions.add("?");
                 }
             }
             else if(element2 == null)
             {
-                if(element1 instanceof Element.Compartment) name = "K" + element1.number + "0";
-                if(element1 instanceof Element.Delay) name = "D" + element1.number + "0";
+                if(element1 instanceof Element.Compartment)
+                {
+                    if(element1.number < 10)
+                        name = "K" + element1.number + "0";
+                    else
+                        name = "K" + element1.number + "T0";
+                }
+                if(element1 instanceof Element.Delay)
+                {
+                    if(element1.number < 10)
+                        name = "D" + element1.number + "0";
+                    else
+                        name = "D" + element1.number + "T0";
+                }
             }
             else
+            {
                 name = "U(" + element2.number + ")";
+//                if(element2.number < 10)
+//                    name = "K" + "0" + element2.number;
+//                else
+//                    name = "K" + "0T" + element2.number;
+            }
         }
         
         /** Draw flux.
          * @param gc2D Graphics2D.
+         * @param x0 left margin
+         * @param y0 top margin
          */
-        public void draw(Graphics2D gc2D) 
+        public void draw(Graphics2D gc2D, int x0, int y0) 
         {
-            int x1 = element1 != null? element1.xCenter : 0;
-            int y1 = element1 != null? element1.yCenter : 0;
-            int x2 = element2 != null? element2.xCenter : 0;
-            int y2 = element2 != null? element2.yCenter : 0;
+            int x1 = element1 != null? element1.xCenter + x0 : 0;
+            int y1 = element1 != null? element1.yCenter + y0 : 0;
+            int x2 = element2 != null? element2.xCenter + x0 : 0;
+            int y2 = element2 != null? element2.yCenter + y0 : 0;
             if(element1 == null)
             {
                 xStart = x2 - 87;
@@ -337,7 +372,7 @@ public abstract class Element implements Cloneable
                 }
                 gc2D.setColor(Color.black);
                 drawArrow(gc2D, x2 - 70, y2 - 70, 0, 0, 71, 0.7854);
-                drawName(gc2D);               
+                drawName(gc2D, x0, y0);               
                 sin = 0.7071;
                 cos = 0.7071;
                 return;
@@ -361,7 +396,7 @@ public abstract class Element implements Cloneable
                     drawArrow(gc2D, x1, y1, 0, 25, 100, 1.5708);
                 if(element1 instanceof Element.Delay)
                     drawArrow(gc2D, x1, y1, 0, 18, 100, 1.5708);
-                drawName(gc2D);               
+                drawName(gc2D, x0, y0);               
                 sin = 1;
                 cos = 0;
                 return;
@@ -416,7 +451,7 @@ public abstract class Element implements Cloneable
             }
             gc2D.setColor(Color.black);
             drawArrow(gc2D, x1, y1, shift, start, (int)distance - end, angle);
-            drawName(gc2D);
+            drawName(gc2D, x0, y0);
         }
         
         private void drawArrow(Graphics2D gc2D, int x, int y, int a, int start, int end, double angle)
@@ -454,41 +489,69 @@ public abstract class Element implements Cloneable
 
         }
         
-         /** Draw name of flux.
+        /** Draw name of flux.
          * @param gc2D Graphics2D.
+         * @param x0 left margin
+         * @param y0 top margin
          */       
-        public void drawName(Graphics2D gc2D)
+        public void drawName(Graphics2D gc2D, int x0, int y0)
         {
             if(element1 != null && element2 != null)
             {
-                if(element1 instanceof Element.Compartment) 
-                    name = "K" + element1.number + element2.number;
+                if(element1 instanceof Element.Compartment)
+                {
+                    if(element1.number < 10 && element2.number < 10)
+                        name = "K" + element1.number + element2.number;
+                    else
+                        name = "K" + element1.number + "T" + element2.number;
+                }
                 if(element1 instanceof Element.Delay)
                 {
-                    name = "D" + element1.number + element2.number;
+                    if(element1.number < 10 && element2.number < 10)
+                        name = "D" + element1.number + element2.number;
+                    else
+                        name = "D" + element1.number + "T" + element2.number;
                 }
             }
             else if(element2 == null)
             {
-                if(element1 instanceof Element.Compartment) name = "K" + element1.number + "0";
-                if(element1 instanceof Element.Delay) name = "D" + element1.number + "0";
+                if(element1 instanceof Element.Compartment)
+                {
+                    if(element1.number < 10)
+                        name = "K" + element1.number + "0";
+                    else
+                        name = "K" + element1.number + "T0";
+                }
+                if(element1 instanceof Element.Delay)
+                {
+                    if(element1.number < 10)
+                        name = "D" + element1.number + "0";
+                    else
+                        name = "D" + element1.number + "T0";                   
+                }
             }
             else
+            {
                 name = "U(" + element2.number + ")";
+//                if(element2.number < 10)
+//                    name = "K" + "0" + element2.number;
+//                else
+//                    name = "K" + "0T" + element2.number;
+            }
             Graphics gc = (Graphics)gc2D;
             int labelWidth = gc.getFontMetrics().stringWidth(name);
             gc2D.setColor(Color.white);
             if(element1 == null)
             {                
-                gc2D.fillRect(element2.xCenter - 47 - labelWidth / 2, element2.yCenter - 55, labelWidth, 12);
+                gc2D.fillRect(element2.xCenter + x0 - 47 - labelWidth / 2, element2.yCenter + y0 - 55, labelWidth, 12);
                 gc2D.setColor(Color.black);
-                gc2D.drawString(name, element2.xCenter - 47 - labelWidth / 2, element2.yCenter - 45);                 
+                gc2D.drawString(name, element2.xCenter + x0 - 47 - labelWidth / 2, element2.yCenter + y0 - 45);                 
             }
             else if(element2 == null)
             {                
-                gc2D.fillRect(element1.xCenter - labelWidth / 2, element1.yCenter + 50, labelWidth, 12);
+                gc2D.fillRect(element1.xCenter + x0 - labelWidth / 2, element1.yCenter + y0 + 50, labelWidth, 12);
                 gc2D.setColor(Color.black);
-                gc2D.drawString(name, element1.xCenter - labelWidth / 2, element1.yCenter + 60);                 
+                gc2D.drawString(name, element1.xCenter + x0 - labelWidth / 2, element1.yCenter + y0 + 60);                 
             }
             else
             {
@@ -520,12 +583,8 @@ public abstract class Element implements Cloneable
         private int xStart, yStart, xEnd, yEnd;
         private double cos, sin, tan;
         private static final int shift = 10;
-        /** variables */
-        protected String[] variables = {""};
         /** Flow rate */
-        protected String flowRate = null;      
-        /** Mixed Effect */
-        protected String mixedEffect = null;
+        protected String flowRate = "";
     }
     
     /** This class defines input. */
@@ -555,16 +614,18 @@ public abstract class Element implements Cloneable
             if(!Model.isClone)
             {
                 number = newNumber(model.inputs);
-                name = "ex" + number;
+                name = "Dose" + number;
             }
         }
         
         /** Draw input.
          * @param gc2D Graphics2D.
+         * @param x0 left margin
+         * @param y0 top margin
          */
-        public void draw(Graphics2D gc2D) 
+        public void draw(Graphics2D gc2D, int x0, int y0) 
         {
-            gc2D.translate(xCenter - 14, yCenter - 14);
+            gc2D.translate(xCenter + x0 - 14, yCenter + y0 - 14);
             if(this == model.selectedElement)
             {
                 gc2D.setColor(Color.yellow);
@@ -582,8 +643,8 @@ public abstract class Element implements Cloneable
             gc2D.drawLine(21, 7, 21, 8);
             gc2D.drawLine(22, 6, 28, 0);
             gc2D.fillPolygon(new int[]{11, 19, 22, 14}, new int[]{14, 6, 9, 17}, 4);
-            gc2D.translate(-xCenter + 14, -yCenter + 14);
-            gc2D.translate(xCenter, yCenter);
+            gc2D.translate(-xCenter - x0 + 14, -yCenter -y0 + 14);
+            gc2D.translate(xCenter + x0, yCenter + y0);
             gc2D.setStroke(new BasicStroke(1.0f));
             for(int i = 0; i < compartments.size(); i++)
             {
@@ -594,8 +655,8 @@ public abstract class Element implements Cloneable
                 gc2D.drawLine((int)(x*8/d), (int)(y*8/d), (int)(x - x*26/d), (int)(y - y*26/d));
             }
             gc2D.setStroke(new BasicStroke(2.0f));
-            gc2D.translate(-xCenter, -yCenter);            
-            drawName(gc2D);
+            gc2D.translate(-xCenter -x0, -yCenter - y0);            
+            drawName(gc2D, x0, y0);
         }
         
         /** Detect if (x,y) is within the element boundary.
@@ -636,17 +697,19 @@ public abstract class Element implements Cloneable
         
         /** Draw name of input.
          * @param gc2D Graphics2D.
+         * @param x0 left margin
+         * @param y0 top margin
          */
-        public void drawName(Graphics2D gc2D)
+        public void drawName(Graphics2D gc2D, int x0, int y0)
         {
             gc2D.setColor(Color.BLUE);
-            gc2D.translate(xCenter - 14, yCenter - 14);
+            gc2D.translate(xCenter + x0 - 14, yCenter + y0 - 14);
             Graphics gc = (Graphics)gc2D;
             int nameWidth = gc.getFontMetrics().stringWidth(name)/2;
             gc2D.drawString(name, -nameWidth, 40);
-            gc2D.translate(-xCenter + 14, -yCenter + 14);            
+            gc2D.translate(-xCenter - x0 + 14, -yCenter - y0 + 14);            
         }
-        
+
         /** Compartments that the input applies to */
         protected Vector compartments = new Vector();
     }
@@ -664,21 +727,32 @@ public abstract class Element implements Cloneable
         {
             super.model = model;
             this.compartments = compartments;
+            if(compartments.size() == 1)
+            {
+                Element.Compartment compartment = (Element.Compartment)compartments.get(0);
+                super.xCenter = compartment.xCenter + 40;
+                super.yCenter = compartment.yCenter - 40;
+            }
+            else
+            {
+                super.xCenter = xCenter;
+                super.yCenter = yCenter;
+            }
             if(!Model.isClone)
             {
                 number = newNumber(model.samples);
-                name = "O" + number;
+                name = "Obs" + number;
             }
-            this.xCenter = xCenter;
-            this.yCenter = yCenter;        
         }
         
         /** Draw sample.
          * @param gc2D Graphics2D.
+         * @param x0 left margin
+         * @param y0 top margin
          */
-        public void draw(Graphics2D gc2D) 
+        public void draw(Graphics2D gc2D, int x0, int y0) 
         {
-            gc2D.translate(xCenter, yCenter);
+            gc2D.translate(xCenter + x0, yCenter + y0);
             if(this == model.selectedElement)
             {
                 gc2D.setColor(Color.yellow);
@@ -692,12 +766,10 @@ public abstract class Element implements Cloneable
                 int y = compartment.yCenter - yCenter;
                 double d = Math.sqrt(x*x + y*y);
                 gc2D.drawLine((int)(x*4/d), (int)(y*4/d), (int)(x - x*26/d), (int)(y - y*26/d));
-                gc2D.drawOval(-4, -4, 8, 8);
-                if(associatedDataName != null)
-                    gc2D.fillOval(-4, -4, 8, 8);
+                gc2D.drawOval(- 4, - 4, 8, 8);
             }
-            gc2D.translate(-xCenter, -yCenter);
-            drawName(gc2D);
+            gc2D.translate(-xCenter - x0, -yCenter - y0);
+            drawName(gc2D, x0, y0);
         }
         
         /** Detect if (x,y) is within the element boundary.
@@ -725,21 +797,21 @@ public abstract class Element implements Cloneable
         
         /** Draw name of sample.
          * @param gc2D Graphics2D.
+         * @param x0 left margin
+         * @param y0 top margin
          */
-        public void drawName(Graphics2D gc2D)
+        public void drawName(Graphics2D gc2D, int x0, int y0)
         {
-            gc2D.translate(xCenter, yCenter);
+            gc2D.translate(xCenter + x0, yCenter + y0);
             gc2D.setColor(Color.red);
             Graphics gc = (Graphics)gc2D;
             int nameWidth = gc.getFontMetrics().stringWidth(name)/2;
             gc2D.drawString(name, - nameWidth, - 10);
-            gc2D.translate(-xCenter, -yCenter);
+            gc2D.translate(-xCenter -x0, -yCenter - y0);
         }
-        
+
         /** Compartments that the sample applies to */
         protected Vector compartments = new Vector();
-        /** Associated data name */
-        protected String associatedDataName = null;
         /** Error model */
         protected String errorModel = "";
     }
@@ -758,7 +830,4 @@ public abstract class Element implements Cloneable
     
     /** Element name */
     protected String name;
-
-    /** Element equation */
-    protected String equations = "";
 }

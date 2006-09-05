@@ -28,7 +28,7 @@ public class Source {
     public Source() {
     }
     
-    /** The analysis type: population, two-stage, or individual. */
+    /** The analysis type: population, two-stage, individual, identifiability or nonparametric. */
     public String analysis = null;            
     /** The problem heading. */
     public String problem = null;         
@@ -64,14 +64,12 @@ public class Source {
     public String covariance = null;
     /** The options for Simulation: seed number, subproblems */
     public String[] simulation = null;
-    /** The specification of Table for Estimation: ((file, header), (list1), (appearance orders), (sorting orders))s. */
-    public String[][][] tableEst = null;
-    /** The specification of Scatterplot for Estimation: ((from, to, unit, X0, Y0), (list1), (list2), (list3))s. */
-    public String[][][] splotEst = null;  
-    /** The specification of Table for Simulation: ((file, header), (list1), (appearance orders), (sorting orders))s. */
-    public String[][][] tableSim = null; 
-    /** The specification of Scatterplot for Simulation: ((from, to, unit, Y0, X0), (list1), (list2), (list3))s. */
-    public String[][][] splotSim = null;
+    /** The specification of Table: ((file, header), (list1), (appearance orders), (sorting orders))s. */
+    public String[][][] table = null;
+    /** The specification of Scatterplot: ((from, to, unit, X0, Y0), (list1), (list2), (list3))s. */
+    public String[][][] splot = null;  
     /** The covariance matrix for Theta: elment1, element2, ... */
     public String[] covTheta = null;
+    /** The seed for identifiability analysis */
+    public String seed = null;
 }

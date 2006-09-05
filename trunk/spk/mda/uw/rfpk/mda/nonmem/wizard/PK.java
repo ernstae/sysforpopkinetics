@@ -236,9 +236,12 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             if(!record.equals(""))
             {
                 object.getRecords().setProperty("PK", "$PK " + "\n" + record);
-                object.getSource().pk = "\n" + record + "\n";
+                
                 // Eliminate comments
                 String code = Utility.eliminateComments(record); 
+                
+                object.getSource().pk = "\n" + code.trim() + "\n";
+                
                 // Find number of THETAs and number of ETAS
                 iterator.setNTheta(Utility.find(code, "THETA"));
                 if(!iterator.getIsInd() && !iterator.getIsTwoStage())
@@ -400,7 +403,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                             pk = "CL=\nV2=\nQ=\nV3=\nKA=\nK=CL/V2\nK23=Q/V2\nK32=Q/V3";
                             break;
                         case 5:
-                            pk = "AOB=\nALPHA=\nBETA=\nKA=\nK32= (AOB*BETA+ALPHA)/(AOB+1)\nK= ALPHA*BETA/K32\nK12= ALPHA+BETA-K32-K";
+                            pk = "AOB=\nALPHA=\nBETA=\nKA=\nK32= (AOB*BETA+ALPHA)/(AOB+1)\nK= ALPHA*BETA/K32\nK23= ALPHA+BETA-K32-K";
                     }
                     break;
                 case 10: 

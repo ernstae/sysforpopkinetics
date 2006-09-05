@@ -442,7 +442,26 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         int beginIndex = selectedValue.indexOf("(") + 1;
         int endIndex = selectedValue.indexOf(")");
         selectedValue = selectedValue.substring(beginIndex, endIndex);
-        jTextField4.setText(selectedValue.split(" ")[0]);        
+        String name = "";
+        int end = -1;
+        if(selectedValue.startsWith("\""))
+        {
+            end = selectedValue.indexOf("\"", 1);
+            name = selectedValue.substring(0, ++end);
+        }
+        else if(selectedValue.startsWith("'"))
+        {
+            end = selectedValue.indexOf("'", 1);
+            name = selectedValue.substring(0, ++end);
+        }
+        else
+        {
+            end = selectedValue.indexOf(" ");
+            if(end == -1) end = selectedValue.indexOf(")");
+            name = selectedValue.substring(0, end);
+        }
+        selectedValue = selectedValue.substring(++end);
+        jTextField4.setText(name);
         int spaceIndex = selectedValue.indexOf(" ");
         if(spaceIndex != -1)
         {            
@@ -630,6 +649,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
     private void clear()
     {
         jTextField4.setText("");
+        attributes = "";
         jCheckBox1.setSelected(false);
         jCheckBox2.setSelected(false);
         jCheckBox3.setSelected(false);
@@ -704,7 +724,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
-            wizardPane = wizard;
+            wizardPane = wizard;           
             if(iterator.getIsReload())
             {
                 String text = iterator.getReload().getProperty("MODEL");
@@ -716,7 +736,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                     if(text.indexOf("NCOMPARTMENTS=") != -1 || text.indexOf("NEQUILIBRIUM=") != -1 ||
                        text.indexOf("NPARAMETERS=") != -1)
                     {
-                        String numbers = text.substring(6, text.indexOf("\n"));
+                        String numbers = text.substring(6, text.indexOf("\n")).concat(" ");
                         beginIndex = numbers.indexOf("NCOMPARTMENTS=");
                         if(beginIndex != -1)
                         {
@@ -927,16 +947,27 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 compartments[0][2] = null;
             for(int i = 1; i <= size; i++)
             {
-                String compartment = (String)model.get(i - 1);
-                int end = compartment.length() -1;
-                if(compartment.indexOf(" ") != -1)
-                    end = compartment.indexOf(" ");
-                String name = compartment.substring(6, end);              
-                compartments[i] = new String[8];
-                if(name.startsWith("\"") || name.startsWith("'"))
+                String name = "";
+                int end = -1;
+                String compartment = ((String)model.get(i - 1)).substring(6);
+                if(compartment.startsWith("\""))
                 {
-                    name = name.substring(1, name.length() - 1);                    
+                    end = compartment.indexOf("\"", 1);
+                    name = compartment.substring(1, end++);
                 }
+                else if(compartment.startsWith("'"))
+                {
+                    end = compartment.indexOf("'", 1);
+                    name = compartment.substring(1, end++);
+                }
+                else
+                {
+                    end = compartment.indexOf(" ");
+                    if(end == -1) end = compartment.indexOf(")");
+                    name = compartment.substring(0, end);
+                }
+                compartment = compartment.substring(end);          
+                compartments[i] = new String[8];                
                 compartments[i][0] = name; 
                 if(compartment.indexOf(" INITIALOFF") != -1)
                     compartments[i][1] = "yes";
@@ -989,7 +1020,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 	}
         
         public String getHelpID() {
-            return "Model";
+            return "Prepare_Input_Model_Parameters";
         }
         
         private void initModel()

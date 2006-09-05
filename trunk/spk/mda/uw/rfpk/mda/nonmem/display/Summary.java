@@ -243,14 +243,17 @@ public class Summary {
         String objective = output.objective != null ? output.objective : NA;
         String likelihood = output.likelihood != null ? output.likelihood[0][1] : NA;
         String objStdErr = output.likelihood_std != null ? output.likelihood_std[0][1] : NA;
+        String nEvaluation = output.nEvaluation != null ? output.nEvaluation : NA;
         String objectiveItem = null;
         String objStdErrItem = "";
+        String nEvaluationItem = "";
         if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
             objectiveItem = "\n\nMinimum Value of Objective Function: " + objective;
         else
         {
             objectiveItem = "\n\nEstimate for Likelihood Function: " + likelihood;
-            objStdErrItem = "\n\nStandard Error in Likelihood Function: " + objStdErr;
+            objStdErrItem = "\nStandard Error in Likelihood Function: " + objStdErr;
+            nEvaluationItem = "\nNumber of Evaluations: " + nEvaluation;
         }
         String errorMessage = "";
         if(output.error != null)
@@ -302,7 +305,7 @@ public class Summary {
                          "\nDataset Version Log: " + dataVersionLog +
                          "\n\nError Messages: " + errorMessage +
                          "\n\nWarning Messages: " + warningMessage +
-                         objectiveItem + objStdErrItem +
+                         objectiveItem + objStdErrItem + nEvaluationItem +
                          "\n\nParameter Estimation Result: ";
         if(output.theta == null)
             summary += NA;

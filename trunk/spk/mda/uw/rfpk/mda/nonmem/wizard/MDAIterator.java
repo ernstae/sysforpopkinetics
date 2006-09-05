@@ -45,11 +45,11 @@ public class MDAIterator implements StepIterator{
     private boolean isPred = false;
     private boolean isCov = false;
     private boolean isEstimation = true;
-    private boolean isSimulation = false; 
-    private boolean isEstTable = false;
-    private boolean isEstPlot = false;
-    private boolean isSimTable = false;
-    private boolean isSimPlot = false;
+    private boolean isSimulation = false;
+    /** Is table output requested */
+    protected boolean isTable = false;
+    /** Is plot output requested */
+    protected boolean isPlot = false;
     private boolean isMethod1OrPosthoc = false;
     private boolean isNewData = true;
     private boolean isTester = false;
@@ -78,10 +78,8 @@ public class MDAIterator implements StepIterator{
     private Covariance covariance = new Covariance(this);
     private Estimation estimation = new Estimation(this);
     private Simulation simulation = new Simulation(this);
-    private Table tableEst = new Table(this); 
-    private ScatterPlot scatterPlotEst = new ScatterPlot(this); 
-    private Table tableSim = new Table(this); 
-    private ScatterPlot scatterPlotSim = new ScatterPlot(this); 
+    private Table table = new Table(this); 
+    private ScatterPlot scatterPlot = new ScatterPlot(this); 
     private Confirmation confirmation = new Confirmation(this);
     private int current = -1;
     private boolean isBack = false;
@@ -97,22 +95,25 @@ public class MDAIterator implements StepIterator{
     private boolean isLast = false;
     
     /** ADVAN number */
-    protected int adn = 0;
+    public int adn = 0;
     
     /** TRANS number*/
-    protected int trn = 0;
+    public int trn = 0;
     
     /** MDA Frame */
     protected MDAFrame frame = null;
     
     /** Initialization for ADVAN set */
-    protected HashSet initAdvan = new HashSet();
-
-    /** Initialization for two-stage set */
-//    protected HashSet initTwoStage = new HashSet();
-    
+    public HashSet initAdvan = new HashSet();
+  
     /** Is graphic */
     protected boolean isGraphic = false;
+    
+    /** Is identifiability */
+    protected boolean isIdentify = false;
+    
+    /** Is nonparametric model */
+    protected boolean isNonparam = false;
     
     /** Constructor to create a MDAIterator object.
      * @param server the web server associated with the MDA.
@@ -191,26 +192,6 @@ public class MDAIterator implements StepIterator{
      */    
     public void setIsSimulation(boolean b) { isSimulation = b; } 
     
-    /** Set if the estimation step requires table output.
-     * @param b a boolean, true for requiring table output, false for otherwise.
-     */    
-    public void setIsEstTable(boolean b) { isEstTable = b; }
-    
-    /** Set if the estimation step requires scatterplot output.
-     * @param b a boolean, true for requiring scatterplot output, false for otherwise.
-     */    
-    public void setIsEstPlot(boolean b) { isEstPlot = b; } 
-    
-    /** Set if the simulation step requires table output.
-     * @param b a boolean, true for requiring table output, false for otherwise.
-     */     
-    public void setIsSimTable(boolean b) { isSimTable = b; }
-    
-    /** Set if the simulation step requires scatterplot output.
-     * @param b a boolean, true for requiring scatterplot output, false for otherwise.
-     */    
-    public void setIsSimPlot(boolean b) { isSimPlot = b; } 
-
      /** Set if the estimation method = 1 or posthoc is specified.
      * @param b a boolean, true for estimation method = 1 or posthoc is specified, false for otherwise.
      */    
@@ -429,41 +410,14 @@ public class MDAIterator implements StepIterator{
             }
             if(!isGraphic) steps.add(error); 
         }
-        steps.add(theta);
-        steps.add(omega);
-        if(!isInd && !isTwoStage)
-            steps.add(sigma);
-
-        if(isSimulation)
-        {
-            steps.add(simulation);
-            if(isSimTable)
-            {
-                tableSim.setWhich("SIMULATION");
-                steps.add(tableSim);
-            }
-            if(isSimPlot)
-            {
-                scatterPlotSim.setWhich("SIMULATION");
-                steps.add(scatterPlotSim);
-            }
-        }
-        if(isEstimation)
-        {
-            steps.add(estimation);
-            if(isCov)
-                steps.add(covariance);
-            if(isEstTable)
-            {
-                tableEst.setWhich("ESTIMATION");
-                steps.add(tableEst);            
-            }
-            if(isEstPlot)
-            {
-                scatterPlotEst.setWhich("ESTIMATION");
-                steps.add(scatterPlotEst); 
-            }            
-        }        
+        if(!isIdentify) steps.add(theta);
+        if(!isIdentify) steps.add(omega);
+        if(!isInd && !isTwoStage) steps.add(sigma);
+        if(isSimulation) steps.add(simulation);
+        if(isEstimation) steps.add(estimation);
+        if(isCov) steps.add(covariance);
+        if(isTable) steps.add(table);            
+        if(isPlot) steps.add(scatterPlot);     
         steps.add(confirmation);
     }
 
@@ -616,33 +570,19 @@ public class MDAIterator implements StepIterator{
             if(covTheta != null)
                 reload.setProperty("COVTHETA", covTheta);
         }
-        int state = 0;
         for(int i = 0; i < nTokens; i++)
         {
-            String previousValue = null;
             String value = records.nextToken();
             String key = value.split("\n")[0].trim().split(" ")[0];
-            if((key.equals("TABLE") || key.equals("SCATTERPLOT")) && state == 1)
-                key += "SIM";
-            if((key.equals("TABLE") || key.equals("SCATTERPLOT")) && state == 2)
-                key += "EST";
-            if(key.equals("TABLESIM"))
-                value = getAllValues("TABLESIM", value);
-            if(key.equals("TABLEEST"))
-                value = getAllValues("TABLEEST", value);
-            if(key.equals("SCATTERPLOTSIM"))
-                value = getAllValues("SCATTERPLOTSIM", value);
-            if(key.equals("SCATTERPLOTEST"))
-                value = getAllValues("SCATTERPLOTEST", value);          
+            if(key.equals("TABLE"))
+                value = getAllValues("TABLE", value);
+            if(key.equals("SCATTERPLOT"))
+                value = getAllValues("SCATTERPLOT", value);        
             if(key.equals("OMEGA"))
                 value = getAllValues("OMEGA", value);
             if(key.equals("SIGMA"))
                 value = getAllValues("SIGMA", value);           
             reload.setProperty(key, value);
-            if(key.equals("SIMULATION"))
-                state = 1;
-            if(key.equals("ESTIMATION"))
-                state = 2;
         }
         isReload = true;
     }

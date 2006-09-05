@@ -409,40 +409,28 @@ public class XMLWriter
     // This function generates output section of the SPK input file  
     private void setPresentation(Element parent)
     {
-        if(source.tableEst != null || source.splotEst != null ||
-           source.tableSim != null || source.splotSim != null)
+        if(source.table != null || source.splot != null)
         {
             Element presentation = docSource.createElement("presentation");
             parent.appendChild(presentation); 
-            if(source.tableEst != null)
-                setTable(presentation, true);
-            if(source.tableSim != null)
-                setTable(presentation, false);
-            if(source.splotEst != null)
-                setScatterplot(presentation, true);
-            if(source.splotSim != null)
-                setScatterplot(presentation, false);
+            if(source.table != null)
+                setTable(presentation);
+            if(source.splot != null)
+                setScatterplot(presentation);
 	}
     }
             
     // Generate table
-    private void setTable(Element parent, boolean isEstimation)
+    private void setTable(Element parent)
     {
         String[][][] controlTable = null;
-        if(isEstimation)
-            controlTable = source.tableEst;
-        else
-            controlTable = source.tableSim;
+        controlTable = source.table;
         if(controlTable != null)
         {
             for(int i = 0; i < controlTable.length; i++)
             {
                 String[][] tableI = controlTable[i];
                 Element table = docSource.createElement("table");
-                if(isEstimation)
-                    table.setAttribute("process", "estimation");
-                else
-                    table.setAttribute("process", "simulation");
                 if(tableI[0][0] != null)
                     table.setAttribute("save_as", replaceCharacter(tableI[0][0]));
                 table.setAttribute("header", tableI[0][1]); 
@@ -461,23 +449,16 @@ public class XMLWriter
     }
     
     // Generate scatterplot
-    private void setScatterplot(Element parent, boolean isEstimation)
+    private void setScatterplot(Element parent)
     {
         String[][][] controlSplot = null;
-        if(isEstimation)
-            controlSplot = source.splotEst;
-        else
-            controlSplot = source.splotSim;        
+        controlSplot = source.splot;
         if(controlSplot != null)
 	{
             for(int i = 0; i < controlSplot.length; i++)
 	    {
                 String[][] scatter = controlSplot[i];
                 Element scatterplot = docSource.createElement("scatterplot");
-                if(isEstimation)
-                    scatterplot.setAttribute("process", "estimation");
-                else
-                    scatterplot.setAttribute("process", "simulation");
                 if(scatter[0][2] != null)
                     scatterplot.setAttribute("unit_slope", scatter[0][2]);
                 if(scatter[0][3] != null)

@@ -102,9 +102,9 @@ public class Confirmation extends javax.swing.JPanel implements WizardStep {
 	    String control = "";
             String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes",    
                               "Aesinitial", "Model", "PK", "Theta", "Omega", "Des", 
-                              "Error", "Sigma", "Simulation", "TableSim", "ScatterPlotSim",
-                              "Estimation", "Covariance", "TableEst", "ScatterPlotEst"};               
-            for(int i = 0; i < 21; i++)
+                              "Error", "Sigma", "Simulation",
+                              "Estimation", "Covariance", "Table", "ScatterPlot"};               
+            for(int i = 0; i < 19; i++)
             {
                 if(!records.getProperty(names[i]).equals("")) 
                     control = control + records.getProperty(names[i]) + "\n"; 

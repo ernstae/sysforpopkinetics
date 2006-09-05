@@ -165,7 +165,7 @@ public class MDAFrame extends JFrame
         try
         {
             ClassLoader cl = MDAFrame.class.getClassLoader();
-            String hsName = "helpfile.hs";
+            String hsName = "spkhelp.hs";
             URL hsURL = HelpSet.findHelpSet(cl, hsName);
             hs = new HelpSet(null, hsURL);
         }
@@ -769,7 +769,6 @@ public class MDAFrame extends JFrame
         jPanel5.add(jLabel7, gridBagConstraints);
 
         jRadioButton7.setFont(new java.awt.Font("Default", 0, 12));
-        jRadioButton7.setSelected(true);
         jRadioButton7.setText("Use the method specified in input file");
         buttonGroup3.add(jRadioButton7);
         jRadioButton7.addActionListener(new java.awt.event.ActionListener() {
@@ -2342,7 +2341,6 @@ public class MDAFrame extends JFrame
 
         pack();
     }//GEN-END:initComponents
-
     private class MyDocumentListener implements DocumentListener {
         public void insertUpdate(DocumentEvent e) {isChanged = true;}
         public void removeUpdate(DocumentEvent e) {isChanged = true;}
@@ -2605,14 +2603,14 @@ public class MDAFrame extends JFrame
         if(listType.equals("model"))
         {
             if(modelRadioButtonState == 1)
-                jRadioButton1.setSelected(true);
+                jRadioButton1.doClick();
             if(modelRadioButtonState == 3)
                 jRadioButton3.setSelected(true);
         }
         if(listType.equals("data"))
         {
             if(datasetRadioButtonState == 1)
-                jRadioButton4.setSelected(true);
+                jRadioButton4.doClick();
             if(datasetRadioButtonState == 3)
                 jRadioButton6.setSelected(true);
         }
@@ -2710,14 +2708,14 @@ public class MDAFrame extends JFrame
         if(operatingSystem.startsWith("Linux") || operatingSystem.startsWith("Unix"))
             c = new String[]{"xterm", "-e", "R"};
         else if(operatingSystem.startsWith("Windows"))
-            c = new String[]{"Rgui"};                               
+            c = new String[]{"Rgui"};
         try
         {
             Process process = Runtime.getRuntime().exec(c);
         }
         catch(IOException e)
         {
-            JOptionPane.showMessageDialog(null, e, "IOException", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "MDA could not start R.\n See instructions on SPK Login web page.", "IOException", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_useRMenuActionPerformed
 
@@ -3327,7 +3325,7 @@ public class MDAFrame extends JFrame
         else
         {
             if(modelRadioButtonState == 1)
-                jRadioButton1.setSelected(true);
+                jRadioButton1.doClick();
             if(modelRadioButtonState == 3)
                 jRadioButton3.setSelected(true);            
         }
@@ -3449,8 +3447,8 @@ public class MDAFrame extends JFrame
                                                               "\nIt is required for the population analysis.",
                                                               "Input Error", JOptionPane.ERROR_MESSAGE);
                                 iterator.setIsNewData(false);
-                                versionDialog.dispose();
-                                reportDialog.dispose();
+                                versionDialog.setVisible(false);
+                                reportDialog.setVisible(false);
                                 return;
                             }                            
                             iterator.setDataXML(archive, 1);
@@ -3506,7 +3504,7 @@ public class MDAFrame extends JFrame
                     JOptionPane.showMessageDialog(null, "The version of the model you selected" + 
                                                   " is different from the model in the input file.", 
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
-                    return;
+//                    return;   // Windows frozen
                 }
             }
             if(listType.equals("data"))
@@ -3529,16 +3527,15 @@ public class MDAFrame extends JFrame
                 }
                 else
                 {
-
                     JOptionPane.showMessageDialog(null, "The version of the dataset you selected" + 
                                                   " is different from the dataset in the input file.", 
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
-                    return;
+//                    return;   // Windows frozen
                 }                
             }
         }
-        versionDialog.dispose();
-        reportDialog.dispose();
+        versionDialog.setVisible(false);
+        reportDialog.setVisible(false);
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void DataArchiveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DataArchiveButtonActionPerformed
@@ -3674,7 +3671,7 @@ public class MDAFrame extends JFrame
         else
         {
             if(datasetRadioButtonState == 1)
-                jRadioButton4.setSelected(true);
+                jRadioButton4.doClick();
             if(datasetRadioButtonState == 3)
                 jRadioButton6.setSelected(true);            
         }
@@ -3740,7 +3737,7 @@ public class MDAFrame extends JFrame
                     modelRadioButtonState = 2;
                     jTextArea6.setText("");
                     jTextArea6.setEditable(true);
-                    reportDialog.dispose();
+                    reportDialog.setVisible(false);
                 }
             }
             if(listType.equals("data"))
@@ -3765,7 +3762,7 @@ public class MDAFrame extends JFrame
                     jTextArea7.setText("");
                     jTextArea7.setEditable(true);
                     datasetRadioButtonState = 2;    
-                    reportDialog.dispose();  
+                    reportDialog.setVisible(false);  
                 }
             }
         }
@@ -3882,21 +3879,12 @@ public class MDAFrame extends JFrame
     }
     
     private void submitJob(String text)
-    {
-        // Find $PROBLEM
-        int beginIndex = text.indexOf("\n$PROBLEM") + 9; 
-        int endIndex = text.indexOf("\n", beginIndex);
-        String problem = text.substring(beginIndex, endIndex).trim();
-        
-        // Find $DATA
-        beginIndex = text.indexOf("\n$DATA") + 6; 
-        endIndex = text.indexOf("\n", beginIndex);
-        String data = text.substring(beginIndex, endIndex).trim();
-        
+    {     
         // Find method
         jobMethodCode = "fo";
         if(!jobMethodClass.equals("le"))
         {
+            int beginIndex, endIndex;
             if(text.indexOf("<ind_analysis") != -1)
             {
                 beginIndex = text.indexOf("<ind_analysis ");
@@ -4063,11 +4051,13 @@ public class MDAFrame extends JFrame
             if(Likelihood.findNEta(text) == 1)
             {
                 jRadioButton9.setSelected(true);
+                jobMethodCode = "vl";
                 jRadioButton11.setEnabled(false);
             }
             else
             {
                 jRadioButton11.setSelected(true);
+                jobMethodCode = "ad";
             }
         }
         if(jobId != 0) jTextArea10.setText(jobInfo.jobAbstract); 
@@ -4635,10 +4625,10 @@ public class MDAFrame extends JFrame
         Properties records = object.getRecords();
         String[] names = {"Problem", "Data", "Input", "Pred", "Subroutines", "Aes", 
                           "Aesinitial", "Model", "PK", "Theta", "Omega", "Des", 
-                          "Error", "Sigma", "Simulation", "TableSim", "ScatterPlotSim",
-                          "Estimation", "Covariance", "TableEst", "ScatterPlotEst"};        
+                          "Error", "Sigma", "Simulation", "Table", "ScatterPlot",
+                          "Estimation", "Covariance", "Table", "ScatterPlot"};        
         control = "";
-        for(int i = 0; i < 21; i++)
+        for(int i = 0; i < 19; i++)
         {
             if(!records.getProperty(names[i]).equals("")) 
                 control = control + records.getProperty(names[i]) + "\n";
@@ -4917,7 +4907,7 @@ public class MDAFrame extends JFrame
         String[] header = null;
         String title = "";
         String[][] archiveList = null;
-        String name = isLibrary ? "library" : username;
+        String name = isLibrary ? "librarian" : username;
                     
         if(listType.equals("job") || modelID != null || datasetID != null)
         {
@@ -4960,12 +4950,12 @@ public class MDAFrame extends JFrame
                 leftOff = Long.parseLong(((String[][])lists.get(indexList - 1))[maxNum - 1][0]);
 
             if(listType.equals("job") || modelID != null || datasetID != null)        
-                archiveList = server.getUserJobs(maxNum + 1, leftOff, username, startID, 
-                                                 startTime, keyWords, modelID, datasetID);                   
+                archiveList = server.getUserJobs(maxNum + 1, leftOff, name, startID,
+                                                 startTime, keyWords, modelID, datasetID);             
             else if(listType.equals("model"))
-                archiveList = server.getUserModels(maxNum + 1, leftOff, username);
+                archiveList = server.getUserModels(maxNum + 1, leftOff, name);
             else if(listType.equals("data"))      
-                archiveList = server.getUserDatasets(maxNum + 1, leftOff, username);
+                archiveList = server.getUserDatasets(maxNum + 1, leftOff, name);
             else
                 return;
             
@@ -5068,12 +5058,12 @@ public class MDAFrame extends JFrame
                 return;
             versionDialog.setTitle(title);
             versionDialog.setLocation(200, 200);
-            versionDialog.setSize(800, 16 * versionList.length + 46); 
-            versionDialog.show();
+            versionDialog.setSize(800, 16 * versionList.length + 56); 
+            versionDialog.setVisible(true);
         }
     }    
 
-    private class DisplayTableModel extends AbstractTableModel 
+    private class DisplayTableModel extends AbstractTableModel
     {
         public DisplayTableModel(String[][] data, String[] header)
         {

@@ -32,11 +32,12 @@ import java.awt.Dimension;
 public class Model implements Cloneable
 {    
     /** Creates a new instance of Model. 
-     * @param models all the models.
+     * @param tool the DesignTool object.
      */
-    public Model(Vector models) 
+    public Model(DesignTool tool) 
     {
-        this.models = models;
+        this.models = tool.models;
+        this.tool = tool;
     }
     
     /** Clone a model.
@@ -56,7 +57,6 @@ public class Model implements Cloneable
 
         model.inputs = new Vector();
         model.samples = new Vector();
-        model.appliedSubjects = new Vector();
         if(isCopyToDiagram)
         {
             for(int i = 0; i < elements.size(); i++)
@@ -79,6 +79,8 @@ public class Model implements Cloneable
             Element.Input newInput = new Element.Input(compartments, oldInput.xCenter, oldInput.yCenter, model);
             newInput.number = oldInput.number;
             newInput.name = oldInput.name;
+            newInput.xCenter = oldInput.xCenter;
+            newInput.yCenter = oldInput.yCenter;
             model.inputs.add(newInput);
         }
         for(int i = 0; i < samples.size(); i++)
@@ -94,8 +96,9 @@ public class Model implements Cloneable
             Element.Sample newSample = new Element.Sample(compartments, oldSample.xCenter, oldSample.yCenter, model);
             newSample.number = oldSample.number;
             newSample.name = oldSample.name;
+            newSample.xCenter = oldSample.xCenter;
+            newSample.yCenter = oldSample.yCenter;
             newSample.errorModel = oldSample.errorModel;
-            newSample.associatedDataName = oldSample.associatedDataName;
             model.samples.add(newSample);
         }
         isClone = false;
@@ -105,17 +108,19 @@ public class Model implements Cloneable
     
     /** Draw model.
      * @param gc2D Graphics2D.
+     * @param x left margin.
+     * @param y top margin.
      */
-    protected void draw(Graphics2D gc2D)
+    protected void draw(Graphics2D gc2D, int x, int y)
     {
         for(int i = 0; i < elements.size(); i++)
-            ((Element)elements.get(i)).draw(gc2D);
+            ((Element)elements.get(i)).draw(gc2D, x, y);
         for(int i = 0; i < fluxes.size(); i++)
-            ((Element)fluxes.get(i)).draw(gc2D);
+            ((Element)fluxes.get(i)).draw(gc2D, x, y);
         for(int i = 0; i < inputs.size(); i++)
-            ((Element)inputs.get(i)).draw(gc2D);
+            ((Element)inputs.get(i)).draw(gc2D, x, y);
         for(int i = 0; i < samples.size(); i++)
-            ((Element)samples.get(i)).draw(gc2D);        
+            ((Element)samples.get(i)).draw(gc2D, x, y);        
     }
     
     /** Remove all elements of the model. */
@@ -125,12 +130,8 @@ public class Model implements Cloneable
         fluxes.removeAllElements();
         inputs.removeAllElements();
         samples.removeAllElements();
-        appliedSubjects.removeAllElements();
-        nElement = 0;
-        nSample = 0;
         isSelected = false;
         selectedElement = null;
-        variables.clear();
     }
     
     /** Remove an element.
@@ -222,14 +223,45 @@ public class Model implements Cloneable
         }
         if(element instanceof Element.Input)
         {
-            Vector comps = ((Element.Input)element).compartments;
-            for(int i = 0; i < comps.size(); i++)
-                ((Element.Compartment)comps.get(i)).nInputs--;
             inputs.remove(element);
+            Element.Compartment comp = (Element.Compartment)((Element.Input)element).compartments.get(0);
+            boolean isDose = false;
+            for(int i = 0; i < models.size(); i++)
+            {
+                if((Model)models.get(i) == tool.selectedModel) continue;
+                Vector inpts = ((Model)models.get(i)).inputs;
+                for(int j = 0; j < inpts.size(); j++)
+                {
+                    Vector compartments = ((Element.Input)inpts.get(j)).compartments;
+                    if((Element.Compartment)compartments.get(0) == comp)
+                    {
+                        isDose = true;
+                        break;
+                    }
+                }
+            }
+            if(!isDose) comp.attributes.remove("DEFDOSE");
         }
         if(element instanceof Element.Sample)
-        {         
+        {
             samples.remove(element);
+            Element.Compartment comp = (Element.Compartment)((Element.Sample)element).compartments.get(0);
+            boolean isObsv = false;
+            for(int i = 0; i < models.size(); i++)
+            {
+                if((Model)models.get(i) == tool.selectedModel) continue;
+                Vector smpls = ((Model)models.get(i)).samples;               
+                for(int j = 0; j < smpls.size(); j++)
+                {
+                    Vector compartments = ((Element.Sample)smpls.get(j)).compartments;
+                    if((Element.Compartment)compartments.get(0) == comp)
+                    {
+                        isObsv = true;
+                        break;
+                    }
+                }
+            }
+            if(!isObsv) comp.attributes.remove("DEFOBSERVATION");
         }
         element = null;
     }
@@ -250,19 +282,18 @@ public class Model implements Cloneable
     protected boolean isSelected = false;
     /** Selected element */
     protected Element selectedElement = null;
-    /** Number of elements */
-    protected static int nElement = 0;
     /** Number of inputs */
     protected int nInput = 0;
     /** Number of samples */
     protected int nSample = 0;
-    /** Subjects that the model applies to */
-    protected Vector appliedSubjects = new Vector();
     /** Is clone */
     protected static boolean isClone;
     /** Is copy to the diagram */
     protected boolean isCopyToDiagram;
-    /** Mixed effects variables of the model */
+    /** Mixed effects variables of all models */
     protected static Properties variables = new Properties();
+    /** Equation of all models */
+    protected static String equations = "";
     private Vector models;
+    private DesignTool tool;
 }

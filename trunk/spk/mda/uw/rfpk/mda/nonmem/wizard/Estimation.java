@@ -752,6 +752,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jCheckBox3ActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+        if(jRadioButton2.isSelected()) jCheckBox2.setSelected(true);   // Keep it alway on for foce
         if (jCheckBox2.isSelected()) interaction = "INTERACTION ";
         else interaction = "";
         setRecord();
@@ -790,6 +791,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jButton2.setEnabled(false);
         posthoc = "";
         map = "";
+        jCheckBox2.doClick();   // automatically turn it on
         setRecord();
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
@@ -1236,7 +1238,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 	}
         
         public String getHelpID() {
-            return "Prepare_Input_Method_Selection";
+            return "Prepare_Input_Estimation_Method_Selection";
         }        
     }
     

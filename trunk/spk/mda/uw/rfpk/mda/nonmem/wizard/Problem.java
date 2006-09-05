@@ -228,7 +228,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 	}
         
         public String getHelpID() {
-            return "Prepare_Input__Problem_Identifier";
+            return "Prepare_Input_Problem_Identifier";
         }
         
     }

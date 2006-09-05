@@ -232,9 +232,12 @@ public class Des extends javax.swing.JPanel implements WizardStep {
             {
                 String record = "$DES " + "\n" + desCode;
                 object.getRecords().setProperty("Des", record);
-                object.getSource().des = record.substring(5) + "\n";
+                
                 // Eliminate comments
-                String code = Utility.eliminateComments(record); 
+                String code = Utility.eliminateComments(record);
+                
+                object.getSource().des = code.trim().substring(5) + "\n";
+                
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -319,7 +322,7 @@ public class Des extends javax.swing.JPanel implements WizardStep {
 	}
         
         public String getHelpID() {
-            return "Des";
+            return "Prepare_Input_Differential_Equation_Structure";
         }
         
         private String initDes()
@@ -348,7 +351,7 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                     des = "DADT(1)=-VM*A(1)/(KM+A(1))";
                     break;
                 case 11:
-                    des = "DADT(1)=-(K+K12+K13)*A(1)+K21*A(2)+K31A(3)\nDADT(2)= K12*A(1)-K21*A(2)\nDADT(3)= K13*A(1)-K31*A(3)";
+                    des = "DADT(1)=-(K+K12+K13)*A(1)+K21*A(2)+K31*A(3)\nDADT(2)= K12*A(1)-K21*A(2)\nDADT(3)= K13*A(1)-K31*A(3)";
                     break;
                 case 12:
                     des = "DADT(1)=-KA*A(1)\nDADT(2)= KA*A(1)-(K+K23+K24)*A(2)+K32*A(3)+K42*A(4)\nDADT(3)= K23*A(2)-K32*A(3)\nDADT(4)= K24*A(2)-K42*A(4)";

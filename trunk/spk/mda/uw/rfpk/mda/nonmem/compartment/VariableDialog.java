@@ -36,9 +36,9 @@ public class VariableDialog extends javax.swing.JDialog {
     public VariableDialog(DesignTool parent) {
         super(parent, false);
         initComponents();
-        frame = parent;
+        tool = parent;
         setVariableList();
-        setSize(300, 300);
+        setSize(350, 350);
     }
     
     /** Set variable list */
@@ -48,15 +48,15 @@ public class VariableDialog extends javax.swing.JDialog {
         List keySet = new Vector(variables.keySet());
         Iterator keyIter = keySet.iterator();
         String key, value;
-        listModel1.removeAllElements();
+        listModel.removeAllElements();
         while(keyIter.hasNext())
         {
             key = (String)keyIter.next();
             value = variables.getProperty(key);
             if(value != null)
-                listModel1.addElement(key + "=" + value);
+                listModel.addElement(key + "=" + value);
         }
-        jList1.setModel(listModel1);
+        jList1.setModel(listModel);
     }
     
     /** This method is called from within the constructor to
@@ -67,15 +67,16 @@ public class VariableDialog extends javax.swing.JDialog {
     private void initComponents() {//GEN-BEGIN:initComponents
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Variable List");
+        setTitle("User defined mixed effect variables");
         setLocationRelativeTo(this);
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -83,6 +84,10 @@ public class VariableDialog extends javax.swing.JDialog {
                 closeDialog(evt);
             }
         });
+
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel1.setText("Select one to model");
+        getContentPane().add(jLabel1, java.awt.BorderLayout.NORTH);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(259, 200));
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -94,40 +99,64 @@ public class VariableDialog extends javax.swing.JDialog {
 
         jScrollPane1.setViewportView(jList1);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        getContentPane().add(jScrollPane1, gridBagConstraints);
+        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel1.setText("Select one to modify");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        getContentPane().add(jLabel1, gridBagConstraints);
+        jButton1.setText("OK");
+        jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        jLabel6.setText("User defined mixed effects variables");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        getContentPane().add(jLabel6, gridBagConstraints);
+        jPanel1.add(jButton1);
+
+        jButton2.setText("Cancel");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jButton2);
+
+        jButton3.setText("Help");
+        jButton3.setPreferredSize(new java.awt.Dimension(75, 25));
+        jPanel1.add(jButton3);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
         pack();
     }//GEN-END:initComponents
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Model.variables.clear();
+        String[] item;
+        for(int i = 0; i < listModel.size(); i++)
+        {
+            item = ((String)listModel.get(i)).split("=");
+            if(item.length == 2)
+                Model.variables.setProperty(item[0], item[1]);
+        }
+        Model.equations = equations;
+        setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
         index = jList1.getSelectedIndex();
         String selectedItem = (String)jList1.getSelectedValue();
-        variable = selectedItem.substring(0, selectedItem.indexOf("=")).trim();
-        modelExpression = selectedItem.substring(selectedItem.indexOf("=") + 1).trim();
-        String[] model = new String[1];
+        String variable = selectedItem.substring(0, selectedItem.indexOf("=")).trim();
+        String modelExpression = selectedItem.substring(selectedItem.indexOf("=") + 1).trim();
+        String[] model = new String[2];
         model[0] = modelExpression;
-        ModelDialog modelDialog = new ModelDialog(new JFrame(), model, variable);
+        model[1] = Model.equations;
+        MixedModelDialog modelDialog = new MixedModelDialog(new JFrame(), model, variable, tool.object.getDataLabels());
         modelExpression = model[0];
+        equations = model[1];
         if(modelExpression.equals(""))
         {
             JOptionPane.showMessageDialog(null, "The variable's mixed effect model has not been defined.",
@@ -135,24 +164,11 @@ public class VariableDialog extends javax.swing.JDialog {
             return;
         }
         Model.variables.setProperty(variable, modelExpression);
-        listModel1.setElementAt(variable + "=" + modelExpression, index);
+        listModel.setElementAt(variable + "=" + modelExpression, index);
         setVariableList();
-        if(frame.isModelApplied)
-            frame.clickFinishButton();
+        tool.setRecords();
     }//GEN-LAST:event_jList1MouseClicked
-    
-    private static String getKey(Properties property, String value)
-    {
-        String key;
-        Enumeration keys = property.keys();
-        while(keys.hasMoreElements())
-        {
-            key = (String)keys.nextElement();
-            if(property.getProperty(key).equals(value)) return key;
-        }
-        return null;
-    }
-    
+
     /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         setVisible(false);
@@ -168,14 +184,17 @@ public class VariableDialog extends javax.swing.JDialog {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JList jList1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-    protected static DefaultListModel listModel1 = new DefaultListModel();
-    private String variable, modelExpression;
+    private DefaultListModel listModel = new DefaultListModel();
+    private String equations = "";
     private int index = -1;
-    private DesignTool frame;
+    private DesignTool tool;
 }

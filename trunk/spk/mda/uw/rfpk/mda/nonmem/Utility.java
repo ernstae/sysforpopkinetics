@@ -847,7 +847,7 @@ public class Utility {
         Vector names = new Vector();                   
         for(int i = 0; i < functions.length; i++)
         {
-            if(text.indexOf(functions[i]) != -1)
+            if(Pattern.compile("\\b" + functions[i] + "\\b", Pattern.UNIX_LINES).matcher(text).find())
             {
                 names.add(functions[i]);
                 JOptionPane.showMessageDialog(null, "If you use '" + functions[i] + "' as a math function call" +
@@ -897,7 +897,7 @@ public class Utility {
         return mismatches;
     }
     
-    /** check if any improper parentheses appear on the left hand side of an expression.
+    /** Check if any improper parentheses appear on the left hand side of an expression.
      * @param text the program to be checked.
      * @param step the step title.
      * @return a Vector containing the line numbers of the lines with improper parenthesis.
@@ -923,8 +923,7 @@ public class Utility {
                 {
                     errors.add(new Integer(i));
                     JOptionPane.showMessageDialog(null, "The array element on the left hand side of\nline " + 
-                                                  (i + 1) + " in step '" + step + "' is invalid." + 
-                                                  "\nPlease click the 'Back' button and correct it.", 
+                                                  (i + 1) + " in '" + step + "' is invalid.", 
                                                   "Input Error",
                                                   JOptionPane.ERROR_MESSAGE);
                 }

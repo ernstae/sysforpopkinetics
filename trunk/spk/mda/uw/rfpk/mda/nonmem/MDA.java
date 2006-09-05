@@ -76,9 +76,9 @@ public class MDA
         Toolkit theKit = window.getToolkit();           // Get the window toolkit
         Dimension wndSize = theKit.getScreenSize();     // Get screen size
 
-        // Set the position to screen center & size to 3/4 screen size
+        // Set the position to screen center & height to 3/4 screen height & aspect ratio 0.8
         window.setBounds(wndSize.width/8, wndSize.height/8,        // Position
-                         3*wndSize.width/4, 3*wndSize.height/4);   // Size
+                         3*wndSize.height*5/16, 3*wndSize.height/4);   // Size
         window.setVisible(true);                        // Display the window
     }
 }
