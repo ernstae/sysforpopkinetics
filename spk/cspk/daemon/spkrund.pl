@@ -227,7 +227,6 @@ my $mode     = shift;
 my $shost    = shift;
 my $sport    = shift;
 
-my $mailserver = "localhost:25";
 my $hostname = hostname();
 my $from = 'rfpksoft\@u.washington.edu';
 my $alert = 'jjdu@u.washington.edu,ernst@u.washington.edu';
@@ -301,12 +300,11 @@ sub death {
     my $mail_body = "$msg\n\n$level\n\n$mode";
 
     if ($mode =~ m/prod/i) {
-        use MIME::Lite;
         $msg = MIME::Lite->new(
             From     => $mail_from,
-	    To	 => $alert,
+            To       => $alert,
             Subject  => $mail_subject,
-	    Data     => $mail_body
+            Data     => $mail_body
         );
         $msg->send; # send via default
     }
@@ -846,14 +844,13 @@ sub sendmail {
     }
     my $subject = "SPK job finished - Job ID: $job_id";
     my $message = "This message was sent by the SPK service provider.\n$status";
-    my $socket = IO::Socket::INET->new($mailserver);
-    print $socket "HELO $hostname\r\n";
-    print $socket "MAIL FROM: <$from>\r\n";
-    print $socket "RCPT TO: <$to>\r\n";
-    print $socket "DATA\r\n";
-    print $socket "To: $to\nSubject: $subject\n$message\r\n";
-    print $socket ".\r\n";
-    close($socket);
+    my $msg = MIME::Lite->new(
+               From     => $from,
+               To       => $to,
+               Subject  => $subject,
+               Data     => $message
+              );
+    $msg->send; # send via default
 }
 sub start {
     # open the system log and record that we have started
