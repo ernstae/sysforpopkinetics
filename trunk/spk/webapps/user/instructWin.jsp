@@ -24,7 +24,7 @@ author: Jiaji Du
 <%@page contentType="text/html"%>
 <html>
 <head>
-   <title>Instructions for Installing JRE</title>
+   <title>Instructions for Installing JRE on Windows</title>
     <link href=stylesheet.css type="text/css" rel=stylesheet>
 </head>
 <body>
@@ -44,7 +44,7 @@ author: Jiaji Du
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>Instructions for Installing JRE</h3>
+	    <h3>Instructions for Installing JRE on Windows</h3>
 	    <p> 
               1.  To use the MDA, you need the Java Runtime Environment (JRE) from Sun Microsystems. 
                   To download and install the JRE, access the following website:<br>
@@ -61,7 +61,7 @@ author: Jiaji Du
               5.  Under the "Windows Platform" choose "Windows Installation...",  
                   choose "Run" when prompted by the File Download window, and choose "Run" when prompted by the Security Warning window.
             </p><p>
-              6.  The InstallShield Wizard should start. Click "Finish" when the installation is complete.
+              6.  The InstallShield Wizard should start. Accept license aggreement, and choose "typical setup type". Click "Finish" when the installation is complete.  On setup, we recommend that you do not accept the MDA desktop icon.  Currently the MDA will not load from the icon.
             </p><p>
               7.  FOR MOZILLA OR NETSCAPE USERS: If you use Mozilla or Netscape as your
                   web browser, you must set the helper application to be Java Web Start.<br>

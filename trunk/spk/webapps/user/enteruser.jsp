@@ -118,7 +118,7 @@ author: Jiaji Du
                 <tr>
                   <td>Group ID:</td>
                   <td><input type="text" name="teamId"
-                    value="${fn:escapeXml(param.team_id)}">
+                    value="${fn:escapeXml(param.teamId)}">
                   </td>
                   <td><font color="red">${fn:escapeXml(teamIdError)}</font></td>
                 </tr>

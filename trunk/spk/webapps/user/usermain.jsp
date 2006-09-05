@@ -100,7 +100,6 @@ author: Jiaji Du
                 </c:choose>
               </c:when>
               <c:otherwise>
-                <a href="chpassword.jsp">Change my password</a><br>
                 <a href="getmda.jsp">Get my Model Design Agent</a><br>
                 <a href="userjobs.jsp">View my job status</a><br>
                 <a href="usermodels.jsp?start=0&counter=0">View my model archive</a><br>
@@ -109,6 +108,7 @@ author: Jiaji Du
                 <a href="modellibrary.jsp?start=0&counter=0">View model library</a><br>
                 <a href="datasetlibrary.jsp?start=0&counter=0">View dataset library</a><br>
                 <a href="userinfo.jsp">View my account information</a><br>
+                <a href="chpassword.jsp">Change my password</a><br>
                 <% String url = getServletContext().getInitParameter("bugzillaURL");
                    String bugzilla = "<a href=" + url + ">Go to SPK bug report page</a>"; %>
                 <%=bugzilla%><br>

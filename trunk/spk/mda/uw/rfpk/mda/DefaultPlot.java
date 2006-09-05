@@ -154,6 +154,8 @@ public class DefaultPlot extends javax.swing.JDialog {
         maxX = rangeX[1];
         minY = rangeY[0];
         maxY = rangeY[1];
+        nHDivi = (int)(rangeX[2] + 0.1);
+        nVDivi = (int)(rangeY[2] + 0.1);
         uLine = true;
         xLine = false;
         yLine = false;
@@ -204,6 +206,8 @@ public class DefaultPlot extends javax.swing.JDialog {
         maxX = rangeX[1];
         minY = rangeY[0];
         maxY = rangeY[1];
+        nHDivi = (int)(rangeX[2] + 0.1);
+        nVDivi = (int)(rangeY[2] + 0.1);
         xLine = false;
         yLine = false;
         uLine = false;
@@ -253,7 +257,7 @@ public class DefaultPlot extends javax.swing.JDialog {
             }
             id = indIDs[i];
         }
-        points.add(new Integer(count));
+        points.add(new Integer(++count));
         indPoints = new int[points.size()];
         for(int i = 0; i < points.size(); i++)
             indPoints[i] = ((Integer)points.get(i)).intValue();
@@ -270,7 +274,7 @@ public class DefaultPlot extends javax.swing.JDialog {
         Plotter plotter = new Plotter(dataX, dataY, title, titleX, titleY, name, symbol, color,
                                       xLine, yLine, uLine, false, false, true, true, 0, 0,
                                       null, null, addedLineColor, "Inside",
-                                      5, 5, 6,  6, 4, 4, 4, 4, maxX, minX, maxY, minY,
+                                      nHDivi, nVDivi, 6, 6, 4, 4, 4, 4, maxX, minX, maxY, minY,
                                       titleFont, labelFont, legendFont, numberFont, 0, 0, 0, 0,
                                       true, true, false, false, false, 0, false, null, 2, 2, 
                                       frame, indPoints);
@@ -300,6 +304,7 @@ public class DefaultPlot extends javax.swing.JDialog {
     private static double maxX, minX, maxY, minY;
     private static String[] name, indIDNames;
     private static int[] symbol, indPoints;
+    private static int nHDivi, nVDivi;
     private static Color[] color;
     private static String titleAll, titleX, titleY;
     private static final Font titleFont = new Font("SansSerif", Font.BOLD, 14);
