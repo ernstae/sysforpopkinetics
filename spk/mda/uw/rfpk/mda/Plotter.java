@@ -296,7 +296,7 @@ public class Plotter extends JPanel
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jDialog1 = new javax.swing.JDialog();
+        scaleDialog = new javax.swing.JDialog();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jSlider1 = new javax.swing.JSlider();
@@ -327,26 +327,26 @@ public class Plotter extends JPanel
 
         jPopupMenu1.add(jMenuItem2);
 
-        jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
+        scaleDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jDialog1.setTitle("Print Settings");
-        jDialog1.setLocationRelativeTo(jPanel1);
-        jDialog1.setModal(true);
+        scaleDialog.setTitle("Print Settings");
+        scaleDialog.setLocationRelativeTo(jPanel1);
+        scaleDialog.setModal(true);
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel1.setText("Select scaling factor for printing.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.insets = new java.awt.Insets(11, 12, 9, 11);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jDialog1.getContentPane().add(jLabel1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(11, 12, 9, 11);
+        scaleDialog.getContentPane().add(jLabel1, gridBagConstraints);
 
         jLabel3.setText("Right");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 4);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        jDialog1.getContentPane().add(jLabel3, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 4);
+        scaleDialog.getContentPane().add(jLabel3, gridBagConstraints);
 
         jSlider1.setPreferredSize(new java.awt.Dimension(180, 16));
         jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -360,12 +360,9 @@ public class Plotter extends JPanel
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(4, 12, 8, 12);
-        jDialog1.getContentPane().add(jSlider1, gridBagConstraints);
+        scaleDialog.getContentPane().add(jSlider1, gridBagConstraints);
 
         jButton1.setText("Preview");
-        jButton1.setMaximumSize(new java.awt.Dimension(82, 25));
-        jButton1.setMinimumSize(new java.awt.Dimension(82, 25));
-        jButton1.setPreferredSize(new java.awt.Dimension(82, 25));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -391,24 +388,24 @@ public class Plotter extends JPanel
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
-        jDialog1.getContentPane().add(jPanel1, gridBagConstraints);
+        scaleDialog.getContentPane().add(jPanel1, gridBagConstraints);
 
         jLabel4.setText("1.0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jDialog1.getContentPane().add(jLabel4, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        scaleDialog.getContentPane().add(jLabel4, gridBagConstraints);
 
         jLabel5.setText("Down");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 13, 0, 4);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        jDialog1.getContentPane().add(jLabel5, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 13, 0, 4);
+        scaleDialog.getContentPane().add(jLabel5, gridBagConstraints);
 
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextField1.setText("0.0");
@@ -417,7 +414,7 @@ public class Plotter extends JPanel
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jDialog1.getContentPane().add(jTextField1, gridBagConstraints);
+        scaleDialog.getContentPane().add(jTextField1, gridBagConstraints);
 
         jTextField2.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextField2.setText("0.0");
@@ -425,9 +422,9 @@ public class Plotter extends JPanel
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jDialog1.getContentPane().add(jTextField2, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
+        scaleDialog.getContentPane().add(jTextField2, gridBagConstraints);
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel2.setText("Enter offsets in inches.");
@@ -435,9 +432,9 @@ public class Plotter extends JPanel
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jDialog1.getContentPane().add(jLabel2, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
+        scaleDialog.getContentPane().add(jLabel2, gridBagConstraints);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -477,7 +474,6 @@ public class Plotter extends JPanel
         try
         {
             printer.print(g2d, format, 0);
-            File file = new File("/home/jiaji/newimage.bmp");
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Save Image File");
             fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter());
@@ -487,7 +483,7 @@ public class Plotter extends JPanel
             if(result == fileChooser.APPROVE_OPTION)
 	    {
                 FileFilter filter = fileChooser.getFileFilter();
-                file = fileChooser.getSelectedFile();
+                File file = fileChooser.getSelectedFile();
                 String pathname = file.getPath();
                 String type = filter.getDescription();
                 if(pathname.indexOf(".") == -1)
@@ -527,7 +523,7 @@ public class Plotter extends JPanel
         String type;
     }
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        jDialog1.setVisible(false);
+        scaleDialog.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -548,7 +544,7 @@ public class Plotter extends JPanel
         if(!preview.isCancelled)
         {
             // Close print setting dialog.
-            jDialog1.dispose();
+            scaleDialog.dispose();
             
             // Set what to print.
             printerJob.setPrintable(new Printer());            
@@ -604,8 +600,8 @@ public class Plotter extends JPanel
         // Show print setting dialog if pageFormat != null.
         if(pageFormat != null)
         {
-            jDialog1.setSize(227, 205);
-            jDialog1.setVisible(true);
+            scaleDialog.setSize(227, 205);
+            scaleDialog.setVisible(true);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -634,6 +630,27 @@ public class Plotter extends JPanel
         gc2D = ((Graphics2D)gc);
         gc2D.setPaintMode();
    
+        // Determine the data ranges
+        double[] range;
+        if(maxX ==0 && minX == 0)
+        {
+            range = getDefaultRange(dataX, isLogX);
+            minX = range[0];
+            maxX = range[1];
+            nHDivi = (int)(range[2] + 0.1);
+        }
+        if(!isHistogram && maxY == 0 && minY == 0)
+        {
+            range = getDefaultRange(dataY, isLogY);
+            minY = range[0];
+            maxY = range[1];
+            nVDivi = (int)(range[2] + 0.1);
+        }
+        range = null;
+        
+        double spanX = maxX - minX;
+        double spanY = maxY - minY; 
+        
 	// Determine size of our display
         Dimension d = getSize();
         int width = 0;
@@ -704,25 +721,6 @@ public class Plotter extends JPanel
 	// Draw axes
 	gc2D.drawRect(leftInset, top, width, height); 
         
-        // Determine the data ranges
-        double[] range = new double[2];
-        if(maxX ==0 && minX == 0)
-        {
-            range = getDefaultRange(dataX, isLogX);
-            minX = range[0];
-            maxX = range[1];
-        }
-        if(!isHistogram && maxY == 0 && minY == 0)
-        {
-            range = getDefaultRange(dataY, isLogY);
-            minY = range[0];
-            maxY = range[1];
-        }
-        range = null;
-        
-        double spanX = maxX - minX;        
-        double spanY = maxY - minY;
-        
         // Draw grid lines
         if((hGrid && nVDivi != 1) || (vGrid && nHDivi != 1));
         {
@@ -768,7 +766,7 @@ public class Plotter extends JPanel
             int spacingX = width/(nTickX + 1)/nHDivi;
             for(int i = 1; i < (nTickX + 1)*nHDivi; i++)
             {
-                if(i % nHDivi == 0) continue;
+                if(i % (nTickX + 1) == 0) continue;
                 gc2D.drawLine(leftInset + i * spacingX,     top, 
                               leftInset + i * spacingX,     top + tickLengthX);
                 gc2D.drawLine(leftInset + i * spacingX,     top + height - tickLengthX, 
@@ -780,7 +778,7 @@ public class Plotter extends JPanel
             int spacingY = height/(nTickY + 1)/nVDivi;
             for(int i = 1; i < (nTickY + 1)*nVDivi; i++)
             {
-                if(i % nVDivi == 0) continue;                
+                if(i % (nTickY + 1) == 0) continue;                
                 gc2D.drawLine(leftInset,                       top + i * spacingY, 
                               leftInset + tickLengthY,         top + i * spacingY);
                 gc2D.drawLine(leftInset + width - tickLengthY, top + i * spacingY, 
@@ -1013,7 +1011,7 @@ public class Plotter extends JPanel
         }
         
         if(isLogX)
-        {   
+        {
             double log10 = Math.log(10);
             for(int i = 0; i < nCurve; i++)
                 for(int j = 0; j < dataX[i].length; j++)
@@ -1023,7 +1021,7 @@ public class Plotter extends JPanel
             isLogX = false;
         }
         if(isLogY)
-        {    
+        {
             double log10 = Math.log(10);
             for(int i = 0; i < nCurve; i++)
                 for(int j = 0; j < dataY[i].length; j++)
@@ -1306,7 +1304,7 @@ public class Plotter extends JPanel
                 int spacingX = width/(nTickX + 1)/nHDivi;
                 for(int i = 1; i < (nTickX + 1)*nHDivi; i++)
                 {
-                    if(i % nHDivi == 0) continue;
+                    if(i % (nTickX + 1) == 0) continue;
                     gc2D.drawLine(left + i * spacingX,     top, 
                                   left + i * spacingX,     top + tickLengthX);
                     gc2D.drawLine(left + i * spacingX,     top + height - tickLengthX, 
@@ -1318,7 +1316,7 @@ public class Plotter extends JPanel
                 int spacingY = height/(nTickY + 1)/nVDivi;
                 for(int i = 1; i < (nTickY + 1)*nVDivi; i++)
                 {
-                if(i % nVDivi == 0) continue;
+                    if(i % (nTickY + 1) == 0) continue;
                     gc2D.drawLine(left,                       top + i * spacingY,
                                   left + tickLengthY,         top + i * spacingY);
                     gc2D.drawLine(left + width - tickLengthY, top + i * spacingY,
@@ -1691,8 +1689,10 @@ public class Plotter extends JPanel
                 break;
             case 10:
                 gc2D.setStroke(new BasicStroke(2.0f));
-                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
-                else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
+                if(indPoints != null)
+                    drawIndLines(gc2D, newX[i], newY[i]);
+                else
+                    gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());
                 break;
             case 11:
@@ -1747,6 +1747,18 @@ public class Plotter extends JPanel
                 max = Math.max(max, data[i][j]);
                 min = Math.min(min, data[i][j]);
             }
+        double[] range;
+        if(!isLog)
+        {
+            range = optDivisions(6, min, max);
+        }
+        else
+        {
+            range = optDivisions(6, Math.log(min) / Math.log(10), Math.log(max) / Math.log(10));
+            range[0] = Math.pow(10, range[0]);
+            range[1] = Math.pow(10, range[1]);
+        }
+/*        
         double[] range = new double[2];
         if(max == min)
         {
@@ -1766,9 +1778,98 @@ public class Plotter extends JPanel
                 range[1] = Math.pow(10, 0.05 * (21 * Math.log(max) - Math.log(min)) / Math.log(10));
             }
         }
+*/
         return range;
     }
 
+    // Calculate divisions for auto-scale with a being either 1, 2, or 5.
+    private static double[] calcDivisions(int maxSteps, double min, double max, int a)
+    {
+        double diff = max - min;
+        double adjMax, adjMin;
+        int numSteps;
+        if(diff == 0)
+        {
+            if(max > 0)
+            {
+                adjMax = Math.pow(10, Math.ceil(Math.log(max) / Math.log(10)));
+                adjMin = 0;
+                numSteps = 5;
+            }
+            else if(max < 0)
+            {
+                adjMin = -Math.pow(10, Math.ceil(Math.log(-max) / Math.log(10)));
+                adjMax = 0;
+                numSteps = 5;
+            }
+            else
+            {
+                adjMin = min - 1;
+                adjMax = max + 1;
+                numSteps = 2;
+            }
+        }
+        else
+        {
+            double ld = Math.floor(Math.log(diff) / Math.log(10));
+            if(min > 0 && min < Math.pow(10, ld))
+                min = 0;
+            double stepSize = Math.pow(10, ld) / a;
+            adjMax = Math.ceil(max / stepSize) * stepSize;
+            adjMin = Math.floor(min / stepSize) * stepSize;
+            double adjDiff = adjMax - adjMin;
+            numSteps = (int)(adjDiff / stepSize + .1);
+            while(numSteps > maxSteps)
+            {
+                stepSize = Math.pow(10, ++ld) / a;
+                numSteps = (int)(adjDiff / stepSize + .1);
+            }
+            adjMin = Math.floor(min / stepSize) * stepSize;
+            adjMax = Math.ceil(max / stepSize) * stepSize;
+        }
+        double[] list = {adjMin, adjMax, numSteps};
+        
+        return list;
+    }
+    
+    /** Find the best aoto-sacale among divisors 1, 2 and 5.
+     * @param maxSteps Maximum number of steps allowed.
+     * @param min Mimimum value.
+     * @param max maximum value.
+     * @return A double array containing adjasted min, adjasted max and number of divisions.
+     */
+    public static double[] optDivisions(int maxSteps, double min, double max)
+    {
+        double[] list1 = calcDivisions(maxSteps, min, max, 1);
+        double[] list2 = calcDivisions(maxSteps, min, max, 2);
+        double[] list3 = calcDivisions(maxSteps, min, max, 5);
+        int i = 1;
+        if((list2[1] - list2[0] < list1[1] - list1[0]) ||
+           (list2[1] - list2[0] == list1[1] - list1[0] && list2[2] > list1[2]))
+        {
+            i = 2;
+        }
+        if(i == 1)
+        {
+            if((list3[1] - list3[0] < list1[1] - list1[0]) ||
+               (list3[1] - list3[0] == list1[1] - list1[0] && list3[2] > list1[2]))
+            {
+                i = 3;
+            }
+        }
+        if(i == 2)
+        {
+            if((list3[1] - list3[0] < list2[1] - list2[0]) ||
+               (list3[1] - list3[0] == list2[1] - list2[0] && list3[2] > list2[2]))
+            {
+                i = 3;
+            }
+        }
+        if(i == 1) return list1;
+        if(i == 2) return list2;
+        return list3;
+    }
+    
     // Calculate regression parameters: intersect, slope, stdDeviation, corrCoefficient.
     private void regressionParameters(double[] x, double[] y)
     {   
@@ -1950,7 +2051,6 @@ public class Plotter extends JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1963,6 +2063,7 @@ public class Plotter extends JPanel
     private javax.swing.JSlider jSlider1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JDialog scaleDialog;
     // End of variables declaration//GEN-END:variables
     
 }

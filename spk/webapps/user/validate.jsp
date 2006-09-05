@@ -99,7 +99,7 @@ author: Jiaji Du
     value="Email address missing" />
   <c:set var="isValid" value="false" />
 </c:if>
-<c:if test="${empty param.team_id}">
+<c:if test="${empty param.teamId}">
   <c:set var="teamIdError" scope="request"
     value="Group ID missing" />
   <c:set var="isValid" value="false" />

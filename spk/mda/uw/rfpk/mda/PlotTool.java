@@ -1988,7 +1988,7 @@ public class PlotTool extends JFrame {
                 }
                 id = indIDs[i];
             }
-            points.add(new Integer(count));
+            points.add(new Integer(++count));
             indPoints = new int[points.size()];
             for(int i = 0; i < points.size(); i++)
                 indPoints[i] = ((Integer)points.get(i)).intValue();
@@ -2186,9 +2186,11 @@ public class PlotTool extends JFrame {
                 double[] range = Plotter.getDefaultRange(dataX, isLogX);
                 selectedMinX = minX = range[0];
                 selectedMaxX = maxX = range[1];
+                nHDivi = (int)(range[2] + 0.1);
                 range = Plotter.getDefaultRange(dataY, isLogY);
                 selectedMinY = minY = range[0];
                 selectedMaxY = maxY = range[1];
+                nVDivi = (int)(range[2] + 0.1);
             }
             else
             {

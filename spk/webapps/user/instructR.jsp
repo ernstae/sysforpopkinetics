@@ -24,7 +24,7 @@ author: Jiaji Du
 <%@page contentType="text/html"%>
 <html>
 <head>
-   <title>Instructions for Installing JRE on Linux</title>
+   <title>Instructions for Installing R</title>
     <link href=stylesheet.css type="text/css" rel=stylesheet>
 </head>
 <body>
@@ -44,38 +44,23 @@ author: Jiaji Du
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>Instructions for Installing JRE on Linux</h3>
-	    <p> 
-              1.  To use the MDA, you need the Java Runtime Environment (JRE) from Sun Microsystems. 
-                  To download and install the JRE, access the following website:<br>
-                  <a href="http://java.sun.com/j2se/1.4.2/download.html" target="_blank">http://java.sun.com/j2se/1.4.2/download.html</a>.
+	    <h3>Instructions for Linking SPK to R for display and analysis</h3>
+	    <p><font color="red"> 
+              Note:  The functionality for display and analysis of SPK output using R is currently under construction.
+            </font></p><p>
+              If R is not already installed on your computer, you can download it <a href="http://www.r-project.org/">here</a>.
             </p><p>
-              2.  Scroll down to "Download J2SE JRE" and click the link.
+              For this option to work, you must manually set the environment variable "Path" to the bin subdirectory of the R installation directory.  If you are using Windows and have installed R in "C:\Program Files", you will need to set the Path to "C:\Program Files\R\rw2010\bin" (where 2010 represents the installed version 2.1.0 of R).  To do this:<br>
+- Open the Control Panel.<br>
+- Open the System component.<br>
+- Select the Advanced tab.<br>
+- Click the "Environment Variables" button.<br>
+- In the System Variables window, scroll down and select "Path" and click "Edit."<br>
+- Add "C:\Program Files\R\rw2010\bin" to the Variable Value (use semicolon to separate from other Path definitions).
+- Click OK to close each window.
             </p><p>
-              3.  Accept the License Agreement (by scrolling down and clicking on
-                  "Accept").
-            </p><p>
-              4.  You should see "Java(TM) 2 Runtime Environment, Standard
-                  Edition", and then the version number.
-            </p><p>
-              5.  Under the "Linux Platform" choose the RPM version.  When the downloading 
-                  is complete, bring up a terminal window and enter:<br>
-                  chmod a+x j2re-1_4_2_08-linux-i586-rpm.bin<br>
-                  ./j2re-1_4_2_08-linux-i586-rpm.bin<br>
-                  Then, becoming root, enter:<br>
-                  rpm -iv j2re-1_4_2_08-linux-i586.rpm<br>
-                  Delete the bin and rpm file if you want to save disk space.
-            </p><p>
-              6.  FOR MOZILLA OR NETSCAPE USERS: If you use Mozilla or Netscape as your
-                  web browser, you must set the helper application to be Java Web Start.<br>
-                  Select Edit->Preferences->Navigator->Helper Applications->New Type.
-                  Enter FileExtension as "jnlp"<br>
-                  Enter MIME type as "Application/x-java-jnlp-file"<br>
-                  Enter Handled by Application as<br>
-                  "/usr/java/j2re1.4.2_08/javaws/javaws", then click the "OK" buttons.
-            </p><p>
-                  Note that the JRE version number may be different in the future.
-	    </p>
+The display and analysis capabilities in R can now be accessed via the MDA Plot menu.              
+            </p>
 	  </td>
 	</tr>
       </tbody>

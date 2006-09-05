@@ -48,8 +48,8 @@ author: Jiaji Du
     <%-- Add a new user account --%>
     <sql:update>
       INSERT INTO user 
-        (username, password, first_name, surname, company, state, country, email, test, dev)
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (username, password, first_name, surname, company, state, country, email, team_id, test, dev)
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       <sql:param value="${param.userName}" />
       <sql:param value="${digest.password}" />
       <sql:param value="${param.firstName}" />
@@ -58,6 +58,7 @@ author: Jiaji Du
       <sql:param value="${param.state}" />
       <sql:param value="${param.country}" />
       <sql:param value="${param.email}" />
+      <sql:param value="${param.teamId}" />
       <sql:param value="${test}" />
       <sql:param value="${dev}" />
     </sql:update>
@@ -74,6 +75,7 @@ author: Jiaji Du
                 state = ?,
                 country = ?,
                 email = ?,
+                team_id = ?,
                 test = ?,
                 dev = ? 
             WHERE username = ?
@@ -83,6 +85,7 @@ author: Jiaji Du
           <sql:param value="${param.state}" />
           <sql:param value="${param.country}" />
           <sql:param value="${param.email}" />
+          <sql:param value="${param.teamId}" />
           <sql:param value="${test}" />
           <sql:param value="${dev}" />
           <sql:param value="${param.userName}" />
@@ -98,6 +101,7 @@ author: Jiaji Du
                 state = ?,
                 country = ?,
                 email = ?,
+                team_id = ?,
                 test = ?,
                 dev = ? 
             WHERE username = ?
@@ -108,6 +112,7 @@ author: Jiaji Du
           <sql:param value="${param.state}" />
           <sql:param value="${param.country}" />
           <sql:param value="${param.email}" />
+          <sql:param value="${param.teamId}" />
           <sql:param value="${test}" />
           <sql:param value="${dev}" />
           <sql:param value="${param.userName}" />

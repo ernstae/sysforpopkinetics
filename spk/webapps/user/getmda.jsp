@@ -154,48 +154,27 @@ author: Jiaji Du
 	  <td colspan=1 vAlign=top>
             <h3>Model Design Agent Download</h3>
             <p>
-               The Model Design Agent (MDA) is the user link to SPK modeling capabilities.
-               To accommodate as many users as possible, the MDA has various user interface types.
-               Please select one to download.  When the MDA is downloading, you should see a
-               window that says "Java Loading..." and then "Model Design Agent RFPK
-               UW". The MDA will automatically check for the latest version. Answer
-               "Yes" if you are asked another security question. Windows user can choose to have
-               a link to the MDA on their desktop.<br>
-
+               The Model Design Agent (MDA) is the user interface to create and submit jobs and view and plot results in SPK.  The MDA download checks automatically for the latest version.  While downloading, you will see a Java Web Start window and "Model Design Agent, RFPK UW".  Answer "Yes" to related security questions if they appear.
+            </p><p>
+               To download and use the MDA, it is necessary to install the Java Runtime Environment (JRE) on your computer.  Instructions for download and installation of the JRE are provided below (select by operating system):<br>
+               <a href="instructWin.jsp">Windows JRE</a>,
+               <a href="instructLin.jsp">Linux JRE</a>,
+               <a href="instructMac.jsp">MAC JRE</a>.
+            </p><p>
+               Instructions for linking to R for display and analysis of SPK output can be found <a href="instructR.jsp">here</a>.
+            </p>
             <form action="servlet/uw.rfpk.servlets.GetJnlp" method="post">
               <input type="hidden" name="host" value=<%=host%>>
               <input type="hidden" name="port" value=<%=port%>>
               <input type="hidden" name="secret" value=<%=session.getAttribute("SECRET")%>>
               <input type="hidden" name="jnlp_dir" value=<%=jnlp_dir%>>
               <input type="hidden" name="type" value="nonmem">
-              Model Design Agent - NONMEM Compatible<input type="Submit" value="Download"><br>
+              Model Design Agent  <input type="Submit" value="Download"><br>
             </form>
-            <form action="servlet/uw.rfpk.servlets.GetJnlp" method="post">
-              <c:choose>
-                <c:when test="${pageContext.request.serverPort==8443}">
-                  <input type="hidden" name="host" value=<%=host%>>
-                  <input type="hidden" name="port" value=<%=port%>>
-                  <input type="hidden" name="secret" value=<%=session.getAttribute("SECRET")%>>
-                  <input type="hidden" name="jnlp_dir" value=<%=jnlp_dir%>>
-                  <input type="hidden" name="type" value="saamii">
-                  Model Design Agent - SAAMII Compatible<input type="Submit" value="Download"><br>
-                </c:when>
-                <c:otherwise>
-                  Model Design Agent - SAAM II Compatible - COMING SOON!
-                </c:otherwise>
-              </c:choose>
-            </form>
-               <br>If you receive a error message please re-open your web browser and try again.<br>
-            </p><p>
-               Note:  FOR WINDOWS USERS: If the MDA fails to install:<br>
-               Open Java Web Start<br>
-               Go to File -> Preferences<br>
-               Go to the Advanced tab<br>
-               Change the Applications Folder to<br>
-               C:\Documents and Settings\username\.javaws\cache<br>
-               where "username" is your Windows user name<br>
-               Try to download the MDA again.
-            </p><p>
+            <p>
+               Note for MAC users:  While our development team has not tested MAC installation of the MDA, our users have reported that it is completely functional.
+            </p>
+            <p>
                When you are done, please <a href="logout.jsp">log out</a>.
             </p>
        	  </td>

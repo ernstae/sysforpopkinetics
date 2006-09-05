@@ -23,8 +23,6 @@ author: Jiaji Du
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.io.*" %>
-<%@ page import="java.net.*" %>
-<%@ page import="java.util.*" %>
 
 <%-- Verify that the user is logged in --%>
 <c:if test="${validUser == null || validUser.userName != 'useradmin'}">
@@ -37,43 +35,39 @@ author: Jiaji Du
 <c:set var="notice" scope="application" value="${param.alert}" />
 <c:if test="${notice != '1'}">
 <%
+    File file = null;
+    BufferedReader reader = null;
+    Process process = null;
     try
     {
         String pathName = getServletContext().getInitParameter("jnlp_directory") + 
                           "notifyusers.txt";
         String spkEmail = getServletContext().getInitParameter("emailAddress");
-        String emailServer = getServletContext().getInitParameter("emailServer");
-        Vector emailList = new Vector();
-        File file = new File(pathName);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String perlDir = getServletContext().getInitParameter("perlDir");
+        String emailList = "";
+        file = new File(pathName);
+        reader = new BufferedReader(new FileReader(file));
         String line, email;
         if((line = reader.readLine()) != null)
         {
             String userEmail = line.trim();
             if(!userEmail.equals(""))
-                emailList.add(userEmail);
+            {
+                if(!emailList.equals("")) emailList += ",";
+                emailList += userEmail;
+            }
         }
-        reader.close();
-        for(int i = 0; i < emailList.size(); i++)
-        {
-            email = (String)emailList.get(i);
-            Socket s = new Socket(emailServer, 25);
-            PrintWriter o = new PrintWriter(s.getOutputStream());
-            String hostName = InetAddress.getLocalHost().getHostName();
-            o.print("HELO " + hostName + "\r\n");o.flush();
-            o.print("MAIL FROM: <" + spkEmail + ">\r\n");o.flush();
-            o.print("RCPT TO: <" + email + ">\r\n");o.flush();
-            o.print("DATA\r\n");o.flush();
-            o.print("To: " + email + "\nSubject: SPK service is now available.\n" +
-                    "This message was sent by the SPK service provider.\r\n");o.flush();
-            o.print(".\r\n");o.flush();
-            s.close();
-        }
-        file.delete();
-        emailList = null;
+        String subject = "SPK service is now available.";
+        String message = subject + "\n\nThis message was sent by the SPK service provider.";
+        String[] command = {"perl", perlDir + "email.pl", spkEmail, emailList, subject, message};
+        process = Runtime.getRuntime().exec(command);
+        process.waitFor();
     }
-    catch(IOException e)
+    finally
     {
+        reader.close();
+        file.delete();
+        process.destroy();
     }
 %>
 </c:if>

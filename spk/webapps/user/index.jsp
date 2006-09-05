@@ -59,7 +59,7 @@ author: Jiaji Du
             </font>
             </c:when>
             <c:otherwise>
-	      <h3>Welcome.  Please Log In</h3>
+	      <h3>Welcome.  Account Members, Please Log In</h3>
             </c:otherwise>
           </c:choose>
             <p>
@@ -67,37 +67,6 @@ author: Jiaji Du
               ${fn:escapeXml(param.errorMsg)}
             </font>
             </p>
-            <p><font size=3>
-                Please follow these instructions before you attempt to use SPK:<br>
-                 - You need to have Java Runtime Environment (JRE) on your computer. 
-                Instructions for downloading and installing JRE are provided 
-                <a href="instructWin.jsp">here</a> for Windows users 
-                and <a href="instructLin.jsp">here</a> for Linux users.<br>
-                 - If you would like to use R for SPK output display and post-processing analysis, you
-                may download and install R from <a href="http://www.r-project.org/">here</a>.
-                Please note that for this option to work you have to manually set the environment variable PATH
-                to the bin subdirectory of the
-                R installation directory.  For example, if you are using Windows and you have
-                installed R in C:\Program Files, you should set PATH to 
-                "C:\Program Files\R\rw2001\bin",
-                where 2001 represents the installed version (in this case 2.0.1) of R. This can be accomplished by
-                accessing the Control Panel, opening the System component, selecting the
-                Advanced tab and selecting "Environment Variables".
-            </p>
-	    <p>
-              <c:choose>
-                <c:when test="${notice != '1'}">
-                  Please log into MySPK, the "members only" section of SPK. When you are done, 
-                  please <a href="logout.jsp">log out</a>.  If you are a first time user, 
-                  view this <a href="WebHelp/gettingstartedspk.htm" target="_blank">Getting Started</a> 
-                  example first.
-                </c:when>
-                <c:otherwise>
-                  <font color="blue">User account administrator log in:</font>
-                </c:otherwise>
-              </c:choose>
-            </p>
-
             <form action="checkuser.jsp" method="post">
               <input type="hidden" name="origURL" value="${fn:escapeXml(param.origURL)}">                  
               <table border="0" cellspacing = "5">
@@ -115,18 +84,22 @@ author: Jiaji Du
                 </tr>
               </table>
             </form>
-
-            <h4>About Membership</H2>
+	    <p>
+              <c:choose>
+                <c:when test="${notice != '1'}">
+                  First time users may want to view this <a href="WebHelp/spkstart.htm" target="_blank">Getting Started</a> example.<br><br>
+                  When you are done, please <a href="logout.jsp">log out</a>.
+                </c:when>
+                <c:otherwise>
+                  <font color="blue">User account administrator log in only.</font>
+                </c:otherwise>
+              </c:choose>
+            <br></p>
+            <h3>Obtaining an Account</h3>
             <p>
-                MySPK provides the ability to create PK models using the interactive
+                MySPK provides the ability to create population kinetic models using the interactive
                 Model Design Agent, to compile these models into highly efficient
-                machine code, and to run them on a computational cluster.  Because
-                the resources of the system (and of the cluster, in particular) are
-                limited, membership is by invitation only. 
-                RFPK is looking for qualified researchers who would be willing to   
-                participate in the ongoing development of SPK by joining our
-                selected group of users.  If you think that you would be a good
-                candidate for membership, please contact 
+                machine code, and to run them on a computational cluster (according to our <a href="RFPK_SPK_TERMS_OF_SERVICE.html" target="_blank">Terms of Service</a>). To obtain an account, please contact 
                 <a href="mailto:vicini@u.washington.edu">Dr. Paolo Vicini</A>, 
                 the RFPK Principal Investigator.  </font>            
 	  </td>
