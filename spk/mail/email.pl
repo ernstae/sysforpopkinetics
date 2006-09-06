@@ -30,4 +30,5 @@ my $msg = MIME::Lite->new(
            Subject  => $subject,
 	   Data     => $message
            );
+MIME::Lite->send('smtp','localhost',Debug=>0);
 $msg->send; # send via default
