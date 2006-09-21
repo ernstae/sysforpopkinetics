@@ -9,6 +9,12 @@
  <articleinfo>
     <revhistory>
       <revision>
+	<revnumber>1.1</revnumber>
+	<date>September 21, 2006</date>
+	<authorinitials>ernst</authorinitials>
+	<revremark>Revised instructions for Fedora Core 5.</revremark>
+      </revision>
+      <revision>
 	<revnumber>1.0</revnumber>
 	<date>January 29, 2004</date>
 	<authorinitials>afw</authorinitials>
@@ -43,10 +49,48 @@
     </para>
   </sect1>
   <sect1>
-    <title>Installing MySQL</title>
+    <title>Installing MySQL on Fedora Core</title>
+    <para>
+      The following installation instructions are specific to
+      RFPK and Fedora Core 5, which is installed by default on 
+      all of the developers' machines.
+    </para>
+    <sect2>
+    <title>Installing the Database Software</title>
+    <para>
+ 	The preferred way to install software on a Fedora system is with packages
+ 	assembled for installation using the <emphasis>RPM</emphasis> package format, which 
+	can be identified by the <filename>.rpm</filename> filename suffix.  These files
+ 	are distributed on Fedora's network of update servers, and can be installed using the
+	<emphasis>yum</emphasis> package management tool.  <emphasis>Yum</emphasis> is similar
+	to the <emphasis>up2date</emphasis> tool on a RHEL system.
+    </para>
+    <para>
+	In a terminal window:
+	<screen>
+yum install mysql-server mysql-devel perl-DBI perl-DBD-MySQL
+	</screen>
+    </para>
+    <para>
+	After the set of commands listed above have been executed, MySQL will have
+	been installed on your machine, and the MySQL server should be started.  You can
+	start MySQL by executing the following command:
+<screen>
+/etc/init.d/mysqld start
+/sbin/chkconfig --level 345 mysqld on
+</screen>
+    </para>
+    <para>
+	The second command <emphasis>chkconfig</emphasis> is used to tell the operating system
+	to start the MySQL server when the computer is started in runlevel 3, 4 or 5.
+    </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Installing MySQL in Production (RHEL)</title>
     <para>
       The following installation instructions are specific to 
-      RPFK and RedHat Enterprise Linux version 3 (RHEL).
+      RPFK and RedHat Enterprise Linux version 4 (RHEL).
     </para>
     <sect2>
       <title>Installing the Database Software</title>
@@ -80,6 +124,9 @@ rm -rf mysql-db.tar mysql-db
 	each time that you boot your machine.
       </para>
     </sect2>
+</sect1>
+<sect1>
+<title>Post-installation Configuration</title>
     <sect2>
       <title>Adding the Root User</title>
       <para>
@@ -146,7 +193,7 @@ quit;
 	To access any relational database from perl, the perl-DBI
 	module must be installed.  For access to
 	a MySQL database, the perl-DBD-MySQL module must be added.  The
-	following procedure will install both of these modules on your machine.
+	following procedure will install both of these modules on your machine (use only for Red Hat Enterprise Linux RHEL).
 	<screen>
 cd /tmp
 scp whitechuck:/opt/download/mysql-perl.tar .
@@ -157,6 +204,14 @@ rpm -Uhv *
 exit
 cd /tmp
 rm -rf mysql-perl.tar mysql-perl
+	</screen>
+      </para>
+      <para>
+	If you are using Fedora Core, the Perl::DBI and Perl::DBD:MySQL modules were installed earlier in this document.
+	If your system does not have the Perl::DBI or Perl::DBD:MySQL modules installed, they can be installed by 
+	using the following command:
+	<screen>
+yum install perl-DBI perl-DBD-MySQL
 	</screen>
       </para>
     </sect2>
