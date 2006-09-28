@@ -235,7 +235,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             String title = getStepTitle();
             if(!record.equals(""))
             {
-                object.getRecords().setProperty("PK", "$PK " + "\n" + record);
+                object.getRecords().setProperty("PK", "$PK \n" + record);
                 
                 // Eliminate comments
                 String code = Utility.eliminateComments(record); 
@@ -260,6 +260,11 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                         JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
+                
+                object.getSource().nTheta = String.valueOf(iterator.getNTheta());               
+                
+                // Check ENDIF syntax
+                Utility.checkENDIF(code, title);
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -344,7 +349,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
 	}
         
         public String getHelpID() {
-            return "PK";
+            return "Prepare_Input_Model_Parameters";
         }
         
         private String initPK()

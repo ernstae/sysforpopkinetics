@@ -699,7 +699,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
     private void jPopupMenu2PopupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jPopupMenu2PopupMenuCanceled
         iterator.initAdvan.clear();
-        jRadioButton3.setSelected(true);
+        jRadioButton3.doClick();
         jRadioButton4.setText("Model library and ODEs");
     }//GEN-LAST:event_jPopupMenu2PopupMenuCanceled
 
@@ -709,7 +709,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
     private void jPopupMenu1PopupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jPopupMenu1PopupMenuCanceled
         iterator.initAdvan.clear();
-        jRadioButton3.setSelected(true);
+        jRadioButton3.doClick();
         jRadioButton4.setText("Model library and ODEs");
     }//GEN-LAST:event_jPopupMenu1PopupMenuCanceled
 
@@ -1135,7 +1135,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             iterator.isNonparam = jCheckBox6.isSelected();
             iterator.setIsCov(jRadioButton5.isSelected());
             iterator.setIsPred(jRadioButton3.isSelected());
-            iterator.setIsInd(jRadioButton1.isSelected());
+            iterator.setIsInd(jRadioButton1.isSelected() || jCheckBox5.isSelected());
             iterator.setIsTwoStage(jRadioButton6.isSelected());
             
             if(jRadioButton1.isSelected())
@@ -1166,6 +1166,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
                 ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "individual";
             if(jRadioButton6.isSelected())
                 ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "two-stage";
+            if(jCheckBox5.isSelected())
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "identifiability";
             iterator.isGraphic = graphicalEditor.isSelected();
             if(graphicalEditor.isSelected()) iterator.setAdvan(6);
 	}

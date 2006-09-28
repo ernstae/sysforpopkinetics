@@ -100,7 +100,11 @@ public class Record {
     protected String getPK()
     {
         StringBuffer sb = new StringBuffer();
-
+        
+        // Append user defined equations
+        if(!Model.equations.equals(""))
+            sb.append("\n" + Model.equations);
+        
         // append user defined variables
         List keySet = new Vector(Model.variables.keySet());
         Iterator keyIter = keySet.iterator();
@@ -112,13 +116,18 @@ public class Record {
             if(value != null)
                 sb.append("\n" + key + "=" + value);
         }
-        
-        // Append user defined equations              
-        if(!Model.equations.equals(""))
-            sb.append("\n" + Model.equations);
+                
+        // Append fluxes
+        int size = Model.fluxes.size();
+        for(int i = 0; i < size; i++)
+        {
+            Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
+            if(flux.element1 == null || flux.element1 instanceof Element.Compartment)
+                sb.append("\n" + flux.name + "=" + flux.flowRate);
+        }
         
         // Append compartments and delays
-        int size = Model.elements.size();
+        size = Model.elements.size();
         for(int i = 0; i < size; i++)
         {
             Element element = (Element)Model.elements.get(i);
@@ -142,15 +151,7 @@ public class Record {
                     sb.append("\nTLAG" + delay.number + "=" + delay.delayTime);
             }
         }
-                
-        // Append fluxes
-        size = Model.fluxes.size();
-        for(int i = 0; i < size; i++)
-        {
-            Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
-            if(flux.element1 == null || flux.element1 instanceof Element.Compartment)
-                sb.append("\n" + flux.name + "=" + flux.flowRate);
-        }
+
         pkText = sb.toString().trim();
         return pkText;
     }
@@ -306,13 +307,14 @@ public class Record {
                 {
                     Element.Compartment comp = (Element.Compartment)sample.compartments.get(0);
                     str += "IF(CMP .EQ. " + comp.number + ") THEN\n  " + space + sample.errorModel + 
-                           "\n" + space + "END IF";
+                           "\n" + space + "ENDIF";
                 }
                 sb.append(str);
             }
-            if(models.size() > 1 && samples.size() > 0) sb.append("\nEND IF");
+            if(models.size() > 1 && samples.size() > 0) sb.append("\nENDIF");
         }
-        errorText = sb.toString().replaceAll("END IF  IF", "ELSE IF").replaceAll("END IFIF", "ELSE IF");
+        errorText = sb.toString().replaceAll("ENDIF  IF", "ENDIF\n  IF").replaceAll("ENDIFIF", "ENDIF\nIF");
+//        errorText = sb.toString().replaceAll("END IF  IF", "ELSE IF").replaceAll("END IFIF", "ELSE IF");
         sb = new StringBuffer();
         for(int i = 0; i < models.size(); i++)
         {
@@ -333,6 +335,8 @@ public class Record {
             }
         }
         errorText += sb.toString();
+        if(Model.errorEqns.length() != 0)
+            errorText = Model.errorEqns + "\n" + errorText;
         return errorText;
     }
 
@@ -510,7 +514,8 @@ public class Record {
         
         // Set source and record
         object.getRecords().setProperty("PK", "$PK \n" + pkText);
-        object.getSource().pk = "\n" + pkText + "\n"; 
+        object.getSource().pk = "\n" + pkText + "\n";
+        object.getSource().nTheta = String.valueOf(iterator.getNTheta());   
         
         return true;
     }
@@ -614,15 +619,17 @@ public class Record {
         // Set source and record
         object.getRecords().setProperty("Error", "$ERROR \n" + errorText);
         object.getSource().error = "\n" + code + "\n";
+        object.getSource().nEta = String.valueOf(iterator.getNEta());
 
         return true;
     }
     
     /** Check the code and highlight the found parts.
-     * @param step
-     * @param textArea
+     * @param step Step title.
+     * @param textArea TextArea.
+     * @param highlighterNumber Highlighter number, either 1, 2, or 3.
      */
-    protected void checkCode(String step, JTextArea textArea)
+    protected void checkCode(String step, JTextArea textArea, int highlighterNumber)
     {
         // Get text
         String code = textArea.getText();
@@ -635,14 +642,33 @@ public class Record {
         Vector errors = Utility.checkLeftExpression(code, step);
         
         // Highlight the incompatible function names and mismatched parenthesis lines
-        if(isHighlighted3)
-        {                
-            highlighter3.removeAllHighlights();
-            isHighlighted3 = false;
-        }
         if(names.size() > 0 || lines.size() > 0 || errors.size() > 0)
         {
-            textArea.setHighlighter(highlighter3);
+            DefaultHighlighter highlighter;
+            boolean isHighlighted;
+            if(highlighterNumber == 1)
+            {
+                highlighter = highlighter1;
+                isHighlighted = isHighlighted1;
+            }
+            else if(highlighterNumber == 2)
+            {
+                highlighter = highlighter2;
+                isHighlighted = isHighlighted2;
+            }
+            else if(highlighterNumber == 3)
+            {
+                highlighter = highlighter3;
+                isHighlighted = isHighlighted3;
+            }
+            else
+                return;
+            if(isHighlighted)
+            {                
+                 highlighter.removeAllHighlights();
+                 isHighlighted = false;
+            }
+            textArea.setHighlighter(highlighter);
             javax.swing.text.Element paragraph = textArea.getDocument().getDefaultRootElement();          
             String[] text = textArea.getText().split("\n");
             try
@@ -662,9 +688,9 @@ public class Record {
                             String name = (String)names.get(j);
                             while ((pos = text[i].indexOf(name, pos)) >= 0) 
                             {                
-                                highlighter3.addHighlight(pos + offset, pos + offset + name.length(), highlight_painter1);
+                                highlighter.addHighlight(pos + offset, pos + offset + name.length(), highlight_painter1);
                                 pos += name.length();
-                                isHighlighted3 = true;
+                                isHighlighted = true;
                             }
                         }
                     }
@@ -672,18 +698,18 @@ public class Record {
                 for(int i = 0; i < lines.size(); i++)
                 {
                     int n = ((Integer)lines.get(i)).intValue(); 
-                    highlighter3.addHighlight(paragraph.getElement(n).getStartOffset(),
-                                              paragraph.getElement(n).getEndOffset() - 1,
-                                              highlight_painter2); 
-                    isHighlighted3 = true;                    
+                    highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                             paragraph.getElement(n).getEndOffset() - 1,
+                                             highlight_painter2); 
+                    isHighlighted = true;                    
                 }
                 for(int i = 0; i < errors.size(); i++)
                 {
                     int n = ((Integer)errors.get(i)).intValue(); 
-                    highlighter3.addHighlight(paragraph.getElement(n).getStartOffset(),
-                                              paragraph.getElement(n).getEndOffset() - 1,
-                                              highlight_painter2); 
-                    isHighlighted3 = true;                    
+                    highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
+                                             paragraph.getElement(n).getEndOffset() - 1,
+                                             highlight_painter2); 
+                    isHighlighted = true;                    
                 }
             }
             catch(BadLocationException e) 

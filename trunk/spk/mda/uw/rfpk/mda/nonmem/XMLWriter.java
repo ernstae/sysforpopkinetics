@@ -80,7 +80,7 @@ public class XMLWriter
             analysis = docSource.createElement("pop_analysis"); 
         else
             analysis = docSource.createElement("ind_analysis"); 
-        if(source.estimation != null)
+        if(source.estimation != null && !source.analysis.equals("identifiability"))
         {
             analysis.setAttribute("is_estimation", "yes");
             analysis.setAttribute("sig_digits", source.estimation[1]);
@@ -98,13 +98,33 @@ public class XMLWriter
         {
             analysis.setAttribute("is_estimation", "no");
         }
+        if(source.analysis.equals("identifiability"))
+            analysis.setAttribute("is_identifiability", "yes");
         if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
             analysis.setAttribute("pop_size", String.valueOf(data.size()));
         constraint.appendChild(analysis); 
         setDescription(analysis);
+        if(source.analysis.equals("identifiability"))
+        {
+            Element simulation = docSource.createElement("simulation");
+            simulation.setAttribute("seed", source.seed);
+            analysis.appendChild(simulation);
+        }
         setInput(analysis);
-        setTheta(analysis);
-        setOmega(analysis);
+        if(source.analysis.equals("identifiability"))
+        {
+            Element theta = docSource.createElement("theta");
+            theta.setAttribute("length", source.nTheta);
+            analysis.appendChild(theta);
+            Element omega = docSource.createElement("omega");
+            omega.setAttribute("length", source.nEta);
+            analysis.appendChild(omega);
+        }
+        else
+        {
+            setTheta(analysis);
+            setOmega(analysis);
+        }
         if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
         {
             setSigma(analysis);
@@ -344,11 +364,16 @@ public class XMLWriter
         Element model = docSource.createElement("model");
         if(source.subroutines != null)
         {
-            model.setAttribute("advan", source.subroutines[0].substring(5));
-            if(source.subroutines[1] != null)
-                model.setAttribute("tolerance", source.subroutines[1]);
-            if(source.subroutines[2] != null)
-                model.setAttribute("trans", source.subroutines[2]);
+            if(!source.analysis.equals("identifiability"))
+            {
+                model.setAttribute("advan", source.subroutines[0].substring(5));
+                if(source.subroutines[1] != null)
+                    model.setAttribute("tolerance", source.subroutines[1]);
+                if(source.subroutines[2] != null)
+                    model.setAttribute("trans", source.subroutines[2]);
+            }
+            else
+                model.setAttribute("advan", "6");
         }
         if(source.model != null)
         {

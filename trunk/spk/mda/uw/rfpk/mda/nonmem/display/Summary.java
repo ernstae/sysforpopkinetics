@@ -255,6 +255,8 @@ public class Summary {
             objStdErrItem = "\nStandard Error in Likelihood Function: " + objStdErr;
             nEvaluationItem = "\nNumber of Evaluations: " + nEvaluation;
         }
+        String identifyStatus = output.identifyStatus != null ? output.identifyStatus : NA;
+        String identifySolutions = output.identifySolutions != null ? output.identifySolutions : NA;
         String errorMessage = "";
         if(output.error != null)
         {
@@ -306,6 +308,8 @@ public class Summary {
                          "\n\nError Messages: " + errorMessage +
                          "\n\nWarning Messages: " + warningMessage +
                          objectiveItem + objStdErrItem + nEvaluationItem +
+                         "\n\nIdentifiability Status: " + identifyStatus +
+                         "\nIdentifiability Number of Solutions: " + identifySolutions +
                          "\n\nParameter Estimation Result: ";
         if(output.theta == null)
             summary += NA;

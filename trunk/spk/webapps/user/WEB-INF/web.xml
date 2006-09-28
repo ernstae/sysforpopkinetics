@@ -92,7 +92,7 @@
 
     <context-param>
         <param-name>bugzillaURL</param-name>
-        <param-value>http://192.168.1.101:8081/index.cgi</param-value>
+        <param-value>http://192.168.2.2:8081/index.cgi</param-value>
         <description>The URL of the Bugzilla main page</description>
     </context-param>
 

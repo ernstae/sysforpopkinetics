@@ -18,6 +18,7 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.compartment;
 
+import uw.rfpk.mda.nonmem.MDAFrame;
 import uw.rfpk.mda.nonmem.wizard.MDAObject;
 import uw.rfpk.mda.nonmem.wizard.MDAIterator;
 import uw.rfpk.mda.nonmem.wizard.Subroutines;
@@ -58,7 +59,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.print.attribute.*;
 import javax.imageio.ImageIO;
-
+import javax.help.*;
+import java.net.URL;
 
 /** This class defines graphical model editor window.
  *
@@ -82,6 +84,8 @@ public class DesignTool extends javax.swing.JFrame {
         this.iterator = iterator;
         this.panel = panel;
         initComponents();
+        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.helpBroker));
+        CSH.setHelpIDString(helpButton, "Prepare_Input_Model_Parameters");
         jTextField1.setText("0");
         jTextField2.setText(String.valueOf(subjects.length));
         compButton.add(new ButtonPanel("Compartment"));
@@ -725,6 +729,12 @@ public class DesignTool extends javax.swing.JFrame {
         helpButton.setText("Help");
         helpButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         helpButton.setPreferredSize(new java.awt.Dimension(60, 25));
+        helpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpButtonActionPerformed(evt);
+            }
+        });
+
         jPanel6.add(helpButton);
 
         jPanel5.add(jPanel6);
@@ -768,6 +778,10 @@ public class DesignTool extends javax.swing.JFrame {
 
         pack();
     }//GEN-END:initComponents
+
+    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
+        
+    }//GEN-LAST:event_helpButtonActionPerformed
 
     private void subjectDialogWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_subjectDialogWindowClosing
         subjectDialog.toFront();
@@ -899,13 +913,19 @@ public class DesignTool extends javax.swing.JFrame {
         ok = ok && record.setError(object, iterator);
         if(ok)
         {
-            iterator.getReload().remove("MODEL");
-            iterator.getReload().remove("PK");
-            iterator.getReload().remove("DES");
-            iterator.getReload().remove("ERROR");
-            iterator.initAdvan.remove("model");
-            iterator.initAdvan.remove("pk");
-            iterator.initAdvan.remove("des");
+            if(iterator.getReload() != null)
+            {
+                iterator.getReload().remove("MODEL");
+                iterator.getReload().remove("PK");
+                iterator.getReload().remove("DES");
+                iterator.getReload().remove("ERROR");
+            }
+            if(iterator.initAdvan != null)
+            {
+                iterator.initAdvan.remove("model");
+                iterator.initAdvan.remove("pk");
+                iterator.initAdvan.remove("des");
+            }
             ((Subroutines)panel).setValid();
             setVisible(false);
         }
@@ -927,9 +947,16 @@ public class DesignTool extends javax.swing.JFrame {
         for(int i = 0; i < models.size(); i++)
             if(!subjectModel.contains(String.valueOf(((Model)models.get(i)).id)))
             {
-                JOptionPane.showMessageDialog(null, ((Model)models.get(i)).name + " has no member.",
-                                              "Input Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                if(JOptionPane.showConfirmDialog(null, ((Model)models.get(i)).name + " has no member.\n" +
+                                                 "Do you want to delete " + ((Model)models.get(i)).name + "?",   
+                                                 "Question Dialog",
+                                                 JOptionPane.YES_NO_OPTION,
+                                                 JOptionPane.QUESTION_MESSAGE) == 0)
+                {
+                    deleteModel();
+                }
+                else
+                    return;
             }
         subjectDialog.setVisible(false);
         setRecords();
@@ -946,9 +973,9 @@ public class DesignTool extends javax.swing.JFrame {
         desTextArea.setCaretPosition(0);
         errorTextArea.setText(record.getError());
         errorTextArea.setCaretPosition(0);
-        record.checkCode("Model Parameters", pkTextArea);
-        record.checkCode("Differential Equation Structure", desTextArea);
-        record.checkCode("Residual Unknown Variability Model", errorTextArea);
+        record.checkCode("Model Parameters", pkTextArea, 1);
+        record.checkCode("Differential Equation Structure", desTextArea, 2);
+        record.checkCode("Residual Unknown Variability Model", errorTextArea, 3);
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -967,13 +994,7 @@ public class DesignTool extends javax.swing.JFrame {
             clearButton.doClick();
             return;
         }
-        diagram.isDrawable = false;
-        diagram.repaint();
-        models.remove(selectedModel);
-        selectedModel = null;
-        if(index > 0) index--;
-        resetStatusBar();
-        jTextField1.setText(String.valueOf(models.size()));
+        deleteModel();
         if(models.size() > 0)
         {
             applyButton.doClick();
@@ -987,6 +1008,17 @@ public class DesignTool extends javax.swing.JFrame {
         setRecords();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void deleteModel()
+    {
+        diagram.isDrawable = false;
+        diagram.repaint();
+        models.remove(selectedModel);
+        selectedModel = null;
+        if(index > 0) index--;
+        resetStatusBar();
+        jTextField1.setText(String.valueOf(models.size()));
+    }
+    
     private void rightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightButtonActionPerformed
         index++;
         resetStatusBar();
@@ -1014,7 +1046,7 @@ public class DesignTool extends javax.swing.JFrame {
         resetStatusBar();
         applyButton.setEnabled(true);
         if(!isInit) 
-            applyButton.doClick();
+            applyButton.doClick();      
         jTextField1.setText(String.valueOf(models.size()));
     }//GEN-LAST:event_addButtonActionPerformed
 
@@ -1052,6 +1084,7 @@ public class DesignTool extends javax.swing.JFrame {
         list.removeAllElements();
         Model.variables.clear();
         Model.equations = "";
+        Model.errorEqns = "";
         models.removeAllElements();
         modelId = 0;
         resetStatusBar();
@@ -1290,7 +1323,7 @@ public class DesignTool extends javax.swing.JFrame {
             return PAGE_EXISTS;
         }
     }
-    
+
     /** Exit the Application */
     private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
         setVisible(false);

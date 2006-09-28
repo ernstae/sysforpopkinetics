@@ -234,14 +234,15 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
     private void setRecord()
     {
         String record = "$SUBROUTINES ADVAN" + String.valueOf(advan);
-        if(advan == 6 || advan == 8 || advan == 9 || advan == 10)
-        {
-            record = record + " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();
-        }
         if(advan <= 4 || advan >= 10)
         {
-            record = record + " " + ((String)jComboBox2.getSelectedItem()).trim();
+            record += " " + ((String)jComboBox2.getSelectedItem()).trim();
         } 
+        if(advan == 6 || advan == 8 || advan == 9 || advan == 10)
+        {
+            if(!iterator.isIdentify)
+                record += " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();
+        }
         jTextArea1.setText(record);
     }
     
@@ -310,6 +311,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
             }
 
             // Initialize the GUI according to the advan and the reload for subroutines
+            jTextPane1.setEnabled(true);
             if(advan == 6 || advan == 8 || advan == 9 || advan == 10)
             {
                 jTextPane1.setText("You have selected to use SUBROUTINE ADVAN" + String.valueOf(advan) +
@@ -390,25 +392,17 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
             }
             
             // Set text to the text area
-            if(jLabel1.isEnabled())
-            {
-                if(jLabel2.isEnabled())
-                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan) + 
-                           " " + ((String)jComboBox2.getSelectedItem()).trim() + 
-                           " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();
-                else
-                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan) + " " +
-                           " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();                    
-            }
-            else
-            {
-                if(jLabel2.isEnabled())
-                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan) + 
-                           " " + ((String)jComboBox2.getSelectedItem()).trim();
-                else
-                    text = "$SUBROUTINES ADVAN" + String.valueOf(advan);                    
-            }
+            text = "$SUBROUTINES ADVAN" + String.valueOf(advan);
+            if(jLabel2.isEnabled())
+                text += " " + ((String)jComboBox2.getSelectedItem()).trim();
+            if(jLabel1.isEnabled() && !iterator.isIdentify)
+                text += " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();                    
             jTextArea1.setText(text);
+            if(iterator.isIdentify)
+            {
+                jLabel1.setEnabled(false);
+                jTextPane1.setEnabled(false);
+            }
 	}
 
 	public void hidingStep(JWizardPane wizard){

@@ -851,11 +851,26 @@ public class Utility {
             {
                 names.add(functions[i]);
                 JOptionPane.showMessageDialog(null, "If you use '" + functions[i] + "' as a math function call" +
-                                              " in the '" + step + "' your control file may be incompatible with NONMEM.",
+                                              " in " + step + " your control file may be incompatible with NONMEM.",
                                               "Warning Message", JOptionPane.WARNING_MESSAGE);
             }
         }
         return names;
+    }
+
+    /** Check if math functions used in the step are compatible with NONMEM.
+     * @param text the program to be checked.
+     * @param step the step title.
+     * @return a Vector containing the names of the functions not supported by NONMEM in the text. 
+     */
+    public static void checkENDIF(String text, String step)
+    {                 
+        if(Pattern.compile("\\bEND IF\\b", Pattern.UNIX_LINES).matcher(text).find())
+        {
+            JOptionPane.showMessageDialog(null, "A syntax error 'END IF' was found in " + step + "." +
+                                          " The correct syntax is 'ENDIF'. Please correct it.",
+                                          "Error Message", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     /** check if parentheses are mismatched.
@@ -1119,16 +1134,34 @@ public class Utility {
         return front + omega + back;   
     }
     
-    /** Test column major to row major converting function.
+    /** Check characters in a string.
+     * @param str string to be checked.
+     * @return true if the ASCII code of every character is in the range of 32 and 126,
+     *         otherwise false.
+     */
+    public static boolean checkCharacter(String str) 
+    {
+        char[] ch = str.toCharArray();
+        for (int i = 0; i < ch.length; i++) 
+        {
+	    if (ch[i] < 32 || ch[i] > 126)
+		return false;
+        }
+        return true;
+    }
+    
+    /** Test methods.
      * @param args argument not used.
      */    
     public static void main(String[] args)
     {
-        String model = "FRONT\n$OMEGA BLOCK(4) 1 2 3 4 5 6 7 8 9 10\nBACK";
-        System.out.println(diagonalizeOmegaModel(model));
+        System.out.println(checkCharacter("aB1*%$ø)>/"));
+//        checkENDIF("END IF", "STEP");
+//        String model = "FRONT\n$OMEGA BLOCK(4) 1 2 3 4 5 6 7 8 9 10\nBACK";
+//        System.out.println(diagonalizeOmegaModel(model));
         
-        String source = "front\n<omega struct=\"block\">\n<in>\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n</in>\n</omega>\nback";
-        System.out.println(diagonalizeOmegaSource(source));
+//        String source = "front\n<omega struct=\"block\">\n<in>\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n</in>\n</omega>\nback";
+//        System.out.println(diagonalizeOmegaSource(source));
         
 //        String dataLine = "A,B,C,D\n11,12,13,14\n21,22,23,24\n31,32,33,34\n";
 //        String[] selectedLabels = {"B", "A"};

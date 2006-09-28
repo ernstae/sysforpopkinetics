@@ -427,6 +427,7 @@ public class MDAFrame extends JFrame
         scatterPlotMenu = new javax.swing.JMenuItem();
         summaryMenu = new javax.swing.JMenuItem();
         traceMenu = new javax.swing.JMenuItem();
+        idenTraceMenu = new javax.swing.JMenuItem();
         indIDMenu = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -1852,7 +1853,7 @@ public class MDAFrame extends JFrame
 
         jMenu6.add(openMenu);
 
-        closeMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        closeMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.CTRL_MASK));
         closeMenu.setMnemonic('c');
         closeMenu.setText("Close");
         closeMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -2138,6 +2139,17 @@ public class MDAFrame extends JFrame
 
         jMenu9.add(traceMenu);
 
+        idenTraceMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        idenTraceMenu.setMnemonic('d');
+        idenTraceMenu.setText("Identifiability Trace");
+        idenTraceMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                idenTraceMenuActionPerformed(evt);
+            }
+        });
+
+        jMenu9.add(idenTraceMenu);
+
         indIDMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
         indIDMenu.setMnemonic('i');
         indIDMenu.setText("Individual IDs");
@@ -2341,6 +2353,24 @@ public class MDAFrame extends JFrame
 
         pack();
     }//GEN-END:initComponents
+
+    private void idenTraceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idenTraceMenuActionPerformed
+        if(output.methodCode.equals("id") && output != null && output.trace != null)
+        {
+            textArea.setText(output.trace);
+            textArea.setCaretPosition(0);
+            if(jobInfo != null)
+                jInternalFrame1.setTitle("Identifiability Trace: Job-" + jobInfo.id);
+            else
+                jInternalFrame1.setTitle("Identifiability Trace");
+            file = null;
+            isChanged = false;
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The identifiability trace is not available.",
+                                          "Message Not Found Error",
+                                          JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_idenTraceMenuActionPerformed
     private class MyDocumentListener implements DocumentListener {
         public void insertUpdate(DocumentEvent e) {isChanged = true;}
         public void removeUpdate(DocumentEvent e) {isChanged = true;}
@@ -2741,20 +2771,18 @@ public class MDAFrame extends JFrame
     }//GEN-LAST:event_jRadioButton7ActionPerformed
 
     private void traceMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_traceMenuActionPerformed
-        if(output != null && output.trace != null)
+        if(!output.methodCode.equals("id") && output != null && output.trace != null)
         {
-//            saveFile();
             textArea.setText(output.trace);
             textArea.setCaretPosition(0);
-            jInternalFrame1.setTitle("Optimization Trace: Job-" + jobInfo.id);   
+            jInternalFrame1.setTitle("Optimization Trace: Job-" + jobInfo.id);
             file = null;
             isChanged = false;
         }
         else
-            JOptionPane.showMessageDialog(null, "The optimization trace is not available.", 
-                                          "Message Not Found Error",               
+            JOptionPane.showMessageDialog(null, "The optimization trace is not available.",
+                                          "Message Not Found Error",
                                           JOptionPane.ERROR_MESSAGE);
-        
     }//GEN-LAST:event_traceMenuActionPerformed
 
     private void dataLibRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataLibRButtonActionPerformed
@@ -3890,6 +3918,8 @@ public class MDAFrame extends JFrame
                 beginIndex = text.indexOf("<ind_analysis ");
                 if(text.indexOf("is_estimation=\"yes\"", beginIndex) != -1)
                     jobMethodCode = "ia";
+                else if(text.indexOf("is_identifiability=\"yes\"") != -1)
+                    jobMethodCode = "id";
                 else if(text.indexOf("<simulation ") != -1)
                     jobMethodCode = "so";
                 else
@@ -3921,7 +3951,7 @@ public class MDAFrame extends JFrame
                     if(!method.equals("")) jobMethodCode = method;
                 }
                 else if(analysis.indexOf("is_estimation=\"no\"") != -1 && text.indexOf("<simulation ") != -1)
-                    jobMethodCode = "so";
+                    jobMethodCode = "so";   
                 else
                 {
                     JOptionPane.showMessageDialog(null, "Neither estimation nor simulation is included in this job." +
@@ -4633,6 +4663,7 @@ public class MDAFrame extends JFrame
             if(!records.getProperty(names[i]).equals("")) 
                 control = control + records.getProperty(names[i]) + "\n";
         }
+/**        
         if(JOptionPane.showConfirmDialog(null, 
                                          "Do you want to save the NONMEM control file?",   
                                          "Question Dialog",
@@ -4649,7 +4680,10 @@ public class MDAFrame extends JFrame
         }
         file = null;
         files.setSelectedFile(new File(""));
- 
+*/
+        // Propote user to enter seed for identifiability analysis
+        
+        
         // Write SPK input file in XML format
         if(object.getSource() == null || object.getData() == null || control == null)
         {
@@ -4658,6 +4692,19 @@ public class MDAFrame extends JFrame
         }
         else
         {
+            if(object.getSource().analysis.equals("identifiability"))
+            {
+                String seed = JOptionPane.showInputDialog(null, "Enter seed for simulating THETA values.");
+                if(seed != null)
+                {
+                    object.getSource().seed = seed;
+                }
+                else
+                {
+                    WriteInputButton.setEnabled(true);
+                    return;
+                }
+            }
             XMLWriter writer = new XMLWriter(control, object);
             textArea.setText(writer.getDocument()); 
             textArea.setCaretPosition(0);        
@@ -5204,6 +5251,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JComboBox groupComboBox;
     private javax.swing.JLabel groupLabel;
     private javax.swing.JButton helpButton;
+    private javax.swing.JMenuItem idenTraceMenu;
     private javax.swing.JDialog indIDDialog;
     private javax.swing.JMenuItem indIDMenu;
     private javax.swing.JMenuItem invCovarianceMenu;
@@ -5388,7 +5436,7 @@ public class MDAFrame extends JFrame
     protected String username = null;
     
     /** The HelpBroker. */
-    protected HelpBroker helpBroker = null;
+    public static HelpBroker helpBroker = null;
     
     /** The method table for the database. */
     protected HashMap methodTable = null;

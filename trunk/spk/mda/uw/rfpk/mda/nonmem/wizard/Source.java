@@ -72,4 +72,8 @@ public class Source {
     public String[] covTheta = null;
     /** The seed for identifiability analysis */
     public String seed = null;
+    /** The number of theta for identifiability analysis */
+    public String nTheta = null;
+    /** The number of eta for identifiability analysis */
+    public String nEta = null;
 }

@@ -21,6 +21,8 @@ package uw.rfpk.mda.nonmem.compartment;
 import java.awt.Dimension;
 import java.util.regex.*;
 import javax.swing.JOptionPane;
+import javax.help.*;
+import uw.rfpk.mda.nonmem.MDAFrame;
 
 /** This class defines error model dialog.
  *
@@ -39,6 +41,8 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         this.modelExpression = modelExpression;
         this.isPopulation = isPopulation;
         initComponents();
+        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.helpBroker));
+        CSH.setHelpIDString(helpButton, "Prepare_Input_Residual_Unknown_Variability_Model");
         if(!isPopulation)
             jTextArea1.setText("Select a residual unknown variability (RUV) model:\n  - F denotes the model function vector\n  - DV denotes the observed data vector\n  - Y, a random variable, represents the predcted observation\n  - Model must contain RUV parameter ETA\n  - Enter appropriate number in () following ETA (e.g. ETA(1))");
         if(isPopulation)
@@ -94,7 +98,7 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        helpButton = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jLabel12 = new javax.swing.JLabel();
@@ -115,8 +119,8 @@ public class ErrorModelDialog extends javax.swing.JDialog {
 
         nameLabel.setText("Observation Name");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         getContentPane().add(nameLabel, gridBagConstraints);
 
         jTextArea1.setBackground(new java.awt.Color(204, 204, 204));
@@ -298,9 +302,9 @@ public class ErrorModelDialog extends javax.swing.JDialog {
 
         jPanel1.add(jButton2);
 
-        jButton3.setText("Help");
-        jButton3.setPreferredSize(new java.awt.Dimension(75, 25));
-        jPanel1.add(jButton3);
+        helpButton.setText("Help");
+        helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        jPanel1.add(helpButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -469,7 +473,7 @@ public class ErrorModelDialog extends javax.swing.JDialog {
     public static void main(String args[]) {
         String[] model = {"expression", "equations", "name"};
         String[] dataLabels = {"ID", "TIME", "DV", "AMT"};
-        new ErrorModelDialog(new javax.swing.JFrame(), model, false);
+        new ErrorModelDialog(new DesignTool(), model, false);
         System.out.println(model[0]);
         System.out.println(model[1]);
     }
@@ -480,9 +484,9 @@ public class ErrorModelDialog extends javax.swing.JDialog {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextArea eqnTextArea;
     private javax.swing.JRadioButton exponentialRadioButton;
+    private javax.swing.JButton helpButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
