@@ -139,6 +139,8 @@ public class VariableDialog extends javax.swing.JDialog {
         for(int i = 0; i < listModel.size(); i++)
         {
             item = ((String)listModel.get(i)).split("=");
+            if(item.length == 1)
+                Model.variables.setProperty(item[0], "");
             if(item.length == 2)
                 Model.variables.setProperty(item[0], item[1]);
         }
@@ -154,7 +156,7 @@ public class VariableDialog extends javax.swing.JDialog {
         String[] model = new String[2];
         model[0] = modelExpression;
         model[1] = Model.equations;
-        MixedModelDialog modelDialog = new MixedModelDialog(new JFrame(), model, variable, tool.object.getDataLabels());
+        MixedModelDialog modelDialog = new MixedModelDialog(null, model, variable, tool.object.getDataLabels());
         modelExpression = model[0];
         equations = model[1];
         if(modelExpression.equals(""))

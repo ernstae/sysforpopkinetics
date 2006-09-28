@@ -123,4 +123,8 @@ public class Output {
     public String[][][] scatterplot = null;
     /** The flag meaning successful */
     public boolean ok = true;
+    /** Identifiability status */
+    public String identifyStatus = null;
+    /** Identifiability number of solutions */
+    public String identifySolutions = null;
 }

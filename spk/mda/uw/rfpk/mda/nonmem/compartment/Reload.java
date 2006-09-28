@@ -55,6 +55,7 @@ public class Reload {
         Model.elements.clear();
         Model.fluxes.clear();
         Model.equations = "";
+        Model.errorEqns = "";
         Model.variables.clear();
         String text = null;
         if(tool.iterator.getAdvan() == 6 && tool.iterator.initAdvan.contains("model"))
@@ -63,17 +64,17 @@ public class Reload {
             setAdvan();
             return;
         }
-        if(tool.iterator.getIsReload())
+        if(tool.iterator.getIsReload() && isGraphicalModel())
         {
             text = tool.iterator.getReload().getProperty("DES");
             if(text != null)
             {
                 parseDes(text.trim().substring(5));
-                text = tool.iterator.getReload().getProperty("MODEL").trim();
+                text = tool.iterator.getReload().getProperty("MODEL");
                 parseModel(text.trim().substring(6));
-                text = tool.iterator.getReload().getProperty("PK").trim();
+                text = tool.iterator.getReload().getProperty("PK");
                 parsePK(text.trim().substring(4));
-                text = tool.iterator.getReload().getProperty("ERROR").trim();
+                text = tool.iterator.getReload().getProperty("ERROR");
                 parseError(text.trim().substring(7));
                 addModels();
                 return;
@@ -256,7 +257,9 @@ public class Reload {
         int index1 = errorText.indexOf("IF(ID ");
         if(index1 != -1)
         {
-            int index2 = errorText.indexOf("\nELSE IF(ID ");
+            if(index1 != 0) Model.errorEqns = errorText.substring(0, index1).trim();
+            int index2 = errorText.indexOf("\nENDIF\nIF(ID ");
+//            int index2 = errorText.indexOf("\nELSE IF(ID ");
             int index3;  
             int i = 1;
             String code;
@@ -284,14 +287,22 @@ public class Reload {
                 parseCmp(code);
             
                 index1 = index2;
-                index2 = errorText.indexOf("\nELSE IF(ID ", index1 + 5);
-                if(index2 == -1) index2 = errorText.indexOf("\nEND IF", index1 + 5);
+                index2 = errorText.indexOf("\nENIF\nIF(ID ", index1 + 5);
+//                index2 = errorText.indexOf("\nELSE IF(ID ", index1 + 5);
+                if(index2 == -1) index2 = errorText.indexOf("\nENDIF", index1 + 5);
                 i++;
             }
             tool.subjectModel = subjectModel;
         }
         else
         {
+            int indexY = errorText.indexOf("Y=");
+            if(indexY == -1) return;
+            if(indexY != 0)
+            {
+                Model.errorEqns = errorText.substring(0, indexY).trim();
+                errorText = errorText.substring(indexY);
+            }
             parseCmp(errorText);
         }
         
@@ -328,7 +339,7 @@ public class Reload {
             if(code.indexOf("\n;") != -1)
             code = code.substring(0, code.indexOf("\n;"));
             String[] lines = code.split("\n");
-            comps = new String[lines.length/2];
+            comps = new String[lines.length/3];
             int k = 0;
             for(int j = 0; j < lines.length - 1; j++)
             {
@@ -338,6 +349,7 @@ public class Reload {
                 n = lines[j].substring(lines[j].indexOf(".EQ.") + 5, lines[j].indexOf(")"));
                 model = lines[++j].trim();
                 comps[k++] = n + ":" + model;
+                j++;
             }
         }
         else
@@ -423,7 +435,9 @@ public class Reload {
     // Test parseError
     private void testParseError()
     {
-        String errorText = "IF(ID .EQ. 1 OR (ID .GE. 3 AND .LE. 10)) THEN\n" +
+        String errorText = "Error Equation = 1\n" +
+                           "Error Equation = 2\n" +
+                           "IF(ID .EQ. 1 OR (ID .GE. 3 AND .LE. 10)) THEN\n" +
                            "  IF(CMP .EQ. 1) THEN\n" +
                            "    Y=F+EPS(1)\n" +
                            "  ELSE IF(CMP .EQ. 2) THEN\n" +
@@ -838,6 +852,17 @@ public class Reload {
         model.samples.add(sample);
         tool.saveModel();
         tool.diagram.repaint();
+    }
+    
+    // Find if reload graphical model
+    private boolean isGraphicalModel()
+    {
+        if(tool.iterator.getReload() != null && tool.iterator.getReload().getProperty("MODEL") != null)
+        {
+            String text = tool.iterator.getReload().getProperty("MODEL").substring(6);
+            return text.split("\n")[1].matches("COMP=[(].+[)]\\s+;\\d+,\\d+");
+        }
+        return false;
     }
     
     private DesignTool tool;          // DesignTool object for connection

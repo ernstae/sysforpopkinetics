@@ -22,6 +22,8 @@ import uw.rfpk.mda.nonmem.Utility;
 import java.awt.Dimension;
 import java.util.regex.*;
 import javax.swing.JOptionPane;
+import javax.help.*;
+import uw.rfpk.mda.nonmem.MDAFrame;
 
 /** This class defines mixed effects model dialog.
  *
@@ -47,6 +49,8 @@ public class MixedModelDialog extends javax.swing.JDialog {
         for(int i = 0; i < dataLabels.length; i++)
             if(!Utility.isStdItem(dataLabels[i]) && !dataLabels[i].equals("ID"))
                 dataNameComboBox.addItem(dataLabels[i]);
+        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.helpBroker));
+        CSH.setHelpIDString(helpButton, "Prepare_Input_Model_Parameters");
         Dimension wndSize = getToolkit().getScreenSize();
         setLocation(wndSize.width/2, wndSize.height/3);
         setSize(410, 550);
@@ -85,7 +89,7 @@ public class MixedModelDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        helpButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         dataNameComboBox = new javax.swing.JComboBox();
         jLabel15 = new javax.swing.JLabel();
@@ -231,8 +235,8 @@ public class MixedModelDialog extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         getContentPane().add(jLabel8, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Dialog", 0, 12));
@@ -264,8 +268,8 @@ public class MixedModelDialog extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         getContentPane().add(jLabel12, gridBagConstraints);
 
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/compartment/lognormal.jpg")));
@@ -314,9 +318,9 @@ public class MixedModelDialog extends javax.swing.JDialog {
 
         jPanel1.add(jButton2);
 
-        jButton3.setText("Help");
-        jButton3.setPreferredSize(new java.awt.Dimension(75, 25));
-        jPanel1.add(jButton3);
+        helpButton.setText("Help");
+        helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        jPanel1.add(helpButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -439,7 +443,7 @@ public class MixedModelDialog extends javax.swing.JDialog {
     public static void main(String args[]) {
         String[] model = {"expression", "equations"};
         String[] dataLabels = {"ID", "TIME", "DV", "AMT"};
-        new MixedModelDialog(new javax.swing.JFrame(), model, "name", dataLabels);
+        new MixedModelDialog(new DesignTool(), model, "name", dataLabels);
         System.out.println(model[0]);
         System.out.println(model[1]);
     }
@@ -451,9 +455,9 @@ public class MixedModelDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox dataNameComboBox;
     private javax.swing.JTextArea eqnTextArea;
     private javax.swing.JRadioButton exponentialRadioButton;
+    private javax.swing.JButton helpButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

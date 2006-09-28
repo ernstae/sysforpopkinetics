@@ -148,14 +148,7 @@ public class DefaultPlot extends javax.swing.JDialog {
         symbol = new int[]{0};
         color = new Color[]{Color.black};
         titleAll = titleY + " VS " + titleX;
-        double[] rangeX = Plotter.getDefaultRange(dataXAll, false);
-        double[] rangeY = Plotter.getDefaultRange(dataYAll, false);
-        minX = rangeX[0];
-        maxX = rangeX[1];
-        minY = rangeY[0];
-        maxY = rangeY[1];
-        nHDivi = (int)(rangeX[2] + 0.1);
-        nVDivi = (int)(rangeY[2] + 0.1);
+        setPlotRange(dataXAll, dataYAll, true);
         uLine = true;
         xLine = false;
         yLine = false;
@@ -200,14 +193,7 @@ public class DefaultPlot extends javax.swing.JDialog {
         symbol = new int[]{10, 0};
         color = new Color[]{Color.black, Color.black};
         titleAll = titleY + " Versus " + titleX;
-        double[] rangeX = Plotter.getDefaultRange(dataXAll, false);
-        double[] rangeY = Plotter.getDefaultRange(dataYAll, false);
-        minX = rangeX[0];
-        maxX = rangeX[1];
-        minY = rangeY[0];
-        maxY = rangeY[1];
-        nHDivi = (int)(rangeX[2] + 0.1);
-        nVDivi = (int)(rangeY[2] + 0.1);
+        setPlotRange(dataXAll, dataYAll, false);
         xLine = false;
         yLine = false;
         uLine = false;
@@ -215,6 +201,47 @@ public class DefaultPlot extends javax.swing.JDialog {
             plot(dataXAll, dataYAll, titleAll, 0, 0, true, indIDs);
         else
             plotIndividual(indIDs);
+    }
+    
+    private static void setPlotRange(double[][] dataXAll, double[][] dataYAll, boolean isEqual)
+    {
+        if(isEqual)
+        {
+            double[] boundsX = findBounds(dataXAll);
+            double[] boundsY = findBounds(dataYAll);
+            double min = Math.min(boundsX[0], boundsY[0]);
+            double max = Math.max(boundsX[1], boundsY[1]);
+            double[] range = Plotter.optDivisions(6, min, max);
+            minX = minY = range[0];
+            maxX = maxY = range[1];
+            nHDivi = nVDivi = (int)(range[2] + 0.1);
+        }
+        else
+        {
+            
+            double[] rangeX = Plotter.getDefaultRange(dataXAll, false);
+            double[] rangeY = Plotter.getDefaultRange(dataYAll, false);
+            minX = rangeX[0];
+            maxX = rangeX[1];
+            minY = rangeY[0];
+            maxY = rangeY[1];
+            nHDivi = (int)(rangeX[2] + 0.1);
+            nVDivi = (int)(rangeY[2] + 0.1);
+        }
+    }
+    
+    private static double[] findBounds(double[][] data)
+    {
+        double min = data[0][0];
+        double max = min;
+        for(int i = 0; i < data.length; i++)
+            for(int j = 0; j < data[i].length; j++)
+            {
+                max = Math.max(max, data[i][j]);
+                min = Math.min(min, data[i][j]);
+            }
+        double[] bounds = {min, max};
+        return bounds;
     }
     
     private static void plotIndividual(String[] indIDs)

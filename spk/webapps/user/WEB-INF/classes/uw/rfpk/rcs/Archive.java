@@ -190,7 +190,7 @@ public class Archive {
         File file = null;
         File archiveFile = new File(workingDir + filename + ",v");
         saveFile(archive, archiveFile);
-        String[] command = {"perl", perlDir + "/rcsco.pl", version, lock, workingDir, filename};        
+        String[] command = {"perl", perlDir + "/rcsco.pl", version, lock, workingDir, filename};
         try 
         {
             process = Runtime.getRuntime().exec(command);

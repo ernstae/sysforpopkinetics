@@ -153,7 +153,7 @@ public class GetJobArchive extends HttpServlet
                         messageOut = "The archive is empty."; 
                  
                     // Put data into the properties object
-                    archive.setProperty("name", rs.getString("name")); 
+                    archive.setProperty("name", rs.getString("name"));
                     archive.setProperty("version", version.substring(2));
                     archive.setProperty("text", text);
                     archive.setProperty("log", Archive.getVersionList(ar)[Integer.parseInt(version.substring(2)) - 1][3]);

@@ -135,10 +135,9 @@ public class UserModels extends HttpServlet
                     
                         // Get model archive
 	                Blob blobArchive = userModelsRS.getBlob("archive");
-	                long length = blobArchive.length(); 
-	                String modelArchive = new String(blobArchive.getBytes(1L, (int)length));                    
+	                long length = blobArchive.length();
+	                String modelArchive = new String(blobArchive.getBytes(1L, (int)length));
 //                        Archive archive = new Archive("", new ByteArrayInputStream(modelArchive.getBytes()));
-                    
                         // Fill in the list 
                         String[] model = new String[5];
                         model[0] = String.valueOf(modelId); 

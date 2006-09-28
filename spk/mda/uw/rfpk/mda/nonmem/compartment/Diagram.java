@@ -33,7 +33,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import uw.rfpk.mda.nonmem.Utility;
+import uw.rfpk.mda.nonmem.MDAFrame;
 import javax.swing.DefaultListModel;
+import javax.help.*;
 
 /** This class defines diagram of the compartment model.
  *
@@ -48,6 +50,8 @@ public class Diagram extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.EtchedBorder());
         initComponents();
+        compHelpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.helpBroker));
+        CSH.setHelpIDString(compHelpButton, "Prepare_Input_Residual_Unknown_Variability_Model");
         area = new Dimension(0, 0);
         this.tool = tool;
         model = new Model(tool);
@@ -365,6 +369,8 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         compDialog.getContentPane().add(jScrollPane6, gridBagConstraints);
 
+        compNameTextField.setMaximumSize(new java.awt.Dimension(100, 19));
+        compNameTextField.setMinimumSize(new java.awt.Dimension(100, 19));
         compNameTextField.setPreferredSize(new java.awt.Dimension(100, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -381,6 +387,7 @@ public class Diagram extends javax.swing.JPanel {
 
         delayDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        delayDialog.setTitle("Delay Attributes");
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
 
         delayNameLabel.setText("Delay name  ");
@@ -902,7 +909,7 @@ public class Diagram extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         forceDialog.getContentPane().add(turnOffRadioButton, gridBagConstraints);
 
-        associateDataRadioButton.setText("Associate with date name:");
+        associateDataRadioButton.setText("Associate with data name:");
         buttonGroup1.add(associateDataRadioButton);
         associateDataRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1188,7 +1195,7 @@ public class Diagram extends javax.swing.JPanel {
         String[] model = new String[2];
         model[0] = delayTimeTextField.getText();
         model[1] = Model.equations;
-        new MixedModelDialog(new JFrame(), model, delay.name, tool.object.getDataLabels());
+        new MixedModelDialog(null, model, delay.name, tool.object.getDataLabels());
         delayModelTextField.setText(model[0]);
         Model.equations = model[1];
     }//GEN-LAST:event_delayMixedRadioButtonActionPerformed
@@ -1226,7 +1233,7 @@ public class Diagram extends javax.swing.JPanel {
             String[] model = new String[2];
             model[0] = fluxModelTextField.getText();
             model[1] = Model.equations;
-            new MixedModelDialog(new JFrame(), model, flux.name, tool.object.getDataLabels());
+            new MixedModelDialog(null, model, flux.name, tool.object.getDataLabels());
             fluxModelTextField.setText(model[0]);
             Model.equations = model[1];
         }
@@ -1246,7 +1253,7 @@ public class Diagram extends javax.swing.JPanel {
         String[] model = new String[2];
         model[0] = paramModelTextField.getText();
         model[1] = Model.equations;
-        new MixedModelDialog(new JFrame(), model, param, tool.object.getDataLabels());
+        new MixedModelDialog(null, model, param, tool.object.getDataLabels());
         paramModelTextField.setText(model[0]);
         Model.equations = model[1];
     }//GEN-LAST:event_paramMixedRadioButtonActionPerformed
@@ -1317,6 +1324,9 @@ public class Diagram extends javax.swing.JPanel {
         paramNameLabel.setText("Name: " + param);
         paramNameLabel1.setText(param + "=");
         paramNameLabel2.setText(param + "=");
+        paramValueTextField.setText("");
+        paramModelTextField.setText("");
+        paramEqTextArea.setText("");
         if(comp.parameters.containsKey(param))
         {
             String value = comp.parameters.getProperty(param);
@@ -1325,21 +1335,15 @@ public class Diagram extends javax.swing.JPanel {
             {
                 paramFixedRadioButton.doClick();
                 paramValueTextField.setText(value);
-                paramModelTextField.setText("");
-                paramEqTextArea.setText("");
             }
             if(type == 2)
             {
                 paramMixedRadioButton.setSelected(true);
-                paramValueTextField.setText("");
                 paramModelTextField.setText(value);
-                paramEqTextArea.setText("");
             }
             if(type == 3)
             {
                 paramRedefinedRadioButton.doClick();
-                paramValueTextField.setText("");
-                paramModelTextField.setText("");
                 paramEqTextArea.setText(value);
             }
         }
@@ -1504,7 +1508,7 @@ public class Diagram extends javax.swing.JPanel {
             else
                 paramListModel.addElement("Absorption Lag: ALAG" + n);
             paramList.setModel(paramListModel);
-            compDialog.setSize(332, 460);
+            compDialog.setSize(332, 470);
             compDialog.setLocation(x + 200, y + 100);
             compDialog.setVisible(true);
         }
@@ -1598,12 +1602,12 @@ public class Diagram extends javax.swing.JPanel {
             Element.Sample sample = (Element.Sample)model.selectedElement;
             String[] model = new String[3];
             model[0] = sample.errorModel;
-            model[1] = Model.equations;
+            model[1] = Model.errorEqns;
             model[2] = sample.name;
-            ErrorModelDialog errorDialog = new ErrorModelDialog(new JFrame(), model,
+            ErrorModelDialog errorDialog = new ErrorModelDialog(null, model,
                                            !tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage());
             sample.errorModel = model[0];
-            Model.equations = model[1];
+            Model.errorEqns = model[1];
             sample.name = model[2];
             tool.saveModel();
             repaint();

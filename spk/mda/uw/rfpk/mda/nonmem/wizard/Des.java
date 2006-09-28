@@ -224,20 +224,21 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String desCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
-            while(desCode.indexOf("\n\n") != -1)
-                desCode = desCode.replaceAll("\n\n", "\n");
+            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            while(record.indexOf("\n\n") != -1)
+                record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
-            if(!desCode.equals(""))
+            if(!record.equals(""))
             {
-                String record = "$DES " + "\n" + desCode;
-                object.getRecords().setProperty("Des", record);
+                object.getRecords().setProperty("Des", "$DES \n" + record);
                 
                 // Eliminate comments
                 String code = Utility.eliminateComments(record);
                 
-                object.getSource().des = code.trim().substring(5) + "\n";
+                object.getSource().des = "\n" + code.trim() + "\n";
                 
+                // Check ENDIF syntax
+                Utility.checkENDIF(code, title);
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch

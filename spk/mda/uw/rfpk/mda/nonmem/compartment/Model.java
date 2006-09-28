@@ -292,8 +292,10 @@ public class Model implements Cloneable
     protected boolean isCopyToDiagram;
     /** Mixed effects variables of all models */
     protected static Properties variables = new Properties();
-    /** Equation of all models */
+    /** Equations of all models */
     protected static String equations = "";
+    /** Error block equations of all models */
+    protected static String errorEqns = "";
     private Vector models;
     private DesignTool tool;
 }

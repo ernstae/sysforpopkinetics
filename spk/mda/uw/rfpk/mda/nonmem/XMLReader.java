@@ -391,7 +391,20 @@ public class XMLReader
                     }
                 }
             }
-        }        
+        }
+        
+        // Get identifiability result
+        NodeList ident_resultList = spkreport.getElementsByTagName("identifiability_result");
+        if(ident_resultList.getLength() > 0)
+        {
+            Element ident_result = (Element)ident_resultList.item(0);
+            output.computingTimes = new String[1];
+            output.computingTimes[0] = ident_result.getAttribute("elapsedtime");
+            NodeList statusList = ident_result.getElementsByTagName("ident_status");
+            output.identifyStatus = statusList.item(0).getFirstChild().getNodeValue();
+            NodeList solutionList = ident_result.getElementsByTagName("ident_number_of_solutions");
+            output.identifySolutions = solutionList.item(0).getFirstChild().getNodeValue();
+        }
         
         // Get individual analysis result
         NodeList ind_analysis_resultList = spkreport.getElementsByTagName("ind_analysis_result");

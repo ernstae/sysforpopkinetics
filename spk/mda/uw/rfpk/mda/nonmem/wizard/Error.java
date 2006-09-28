@@ -163,7 +163,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 String text = iterator.getReload().getProperty("ERROR");
                 if(text != null)
                 {
-                    text = text.substring(7, text.length() - 1);
+                    text = text.substring(7);
                     
 //                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() &&
 //                       iterator.initTwoStage.contains("error"))
@@ -200,42 +200,41 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String errorCode = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
-            while(errorCode.indexOf("\n\n") != -1)
-                errorCode = errorCode.replaceAll("\n\n", "\n");
+            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            while(record.indexOf("\n\n") != -1)
+                record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
-            if(!errorCode.equals(""))
+            if(!record.equals(""))
             {
                 // Eliminate comments
-                errorCode = Utility.eliminateComments(errorCode); 
+                String code = Utility.eliminateComments(record); 
                 // Find number of EPSs for population analysis or Etas for individual analysis                    
                 if(!iterator.getIsInd() && !iterator.getIsTwoStage())
                 {
                     String pkCode = Utility.eliminateComments(object.getRecords().getProperty("PK"));
                     if(pkCode != null)
-                        iterator.setNEta(Utility.find(pkCode + errorCode, "ETA"));
+                        iterator.setNEta(Utility.find(pkCode + code, "ETA"));
                     else
-                        iterator.setNEta(Utility.find(errorCode, "ETA"));
-                    iterator.setNEps(Utility.find(errorCode, "EPS"));
+                        iterator.setNEta(Utility.find(code, "ETA"));
+                    iterator.setNEps(Utility.find(code, "EPS"));
                     if(iterator.getNEps() == 0)
                         JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else
                 {
-                    iterator.setNEta(Utility.find(errorCode, "ETA"));
+                    iterator.setNEta(Utility.find(code, "ETA"));
                     if(iterator.getNEta() == 0)
                         JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
-                String record = "$ERROR " + "\n" + errorCode;
-                object.getRecords().setProperty("Error", record);     
+                object.getRecords().setProperty("Error", "$ERROR \n" + record);     
                 
-                // Eliminate comments
-                String code = Utility.eliminateComments(record); 
+                object.getSource().error = "\n" + code + "\n";
+                object.getSource().nEta = String.valueOf(iterator.getNEta());
                 
-                object.getSource().error = code.trim().substring(7) + "\n";
-                
+                // Check ENDIF syntax
+                Utility.checkENDIF(code, title);
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -279,7 +278,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                         }
                         for(int i = 0; i < lines.size(); i++)
                         {
-                            int n = ((Integer)lines.get(i)).intValue(); 
+                            int n = ((Integer)lines.get(i)).intValue();
                             highlighter.addHighlight(paragraph.getElement(n).getStartOffset(),
                                                      paragraph.getElement(n).getEndOffset() - 1,
                                                      highlight_painter2); 

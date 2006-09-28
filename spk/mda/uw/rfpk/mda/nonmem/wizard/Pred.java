@@ -219,8 +219,8 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
             if(!record.equals(""))
             {
 
-                object.getRecords().setProperty("Pred", "$PRED " + "\n" + record);
-                object.getSource().pred = "\n" + record + "\n";
+                object.getRecords().setProperty("Pred", "$PRED \n" + record);
+
                 // Eliminate comments
                 String code = Utility.eliminateComments(record);
                 
@@ -249,6 +249,8 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                     JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
 
+                // Check ENDIF syntax
+                Utility.checkENDIF(code, title);
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
