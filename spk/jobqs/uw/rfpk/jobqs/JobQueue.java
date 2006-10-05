@@ -232,12 +232,7 @@ public class JobQueue
         Thread monitor = new Monitor(jobState);
         monitor.setDaemon(true);
         monitor.start();
-        
-        // Start database connection keeper
-        Thread dbConnect = new DBConnect();
-        dbConnect.setDaemon(true);
-        dbConnect.start();
-        
+
         // Start server
         try
         {
@@ -765,7 +760,7 @@ class Monitor extends Thread
      */
     public void run()
     {
-        long now;
+        int time = 0;
         while(true)
         {
             try
@@ -778,6 +773,19 @@ class Monitor extends Thread
             }
             synchronized(jobState)
             {
+                time++;
+                if(time == 360)
+                {
+                    time = 0; 
+                    try
+                    {
+                        jobState.queryDB();
+                    }
+                    catch(SQLException e)
+                    {
+                        JobQueue.stop("DBConnect query", e.getMessage());
+                    }
+                }
                 if(!jobState.cmpd)
                 {
                     Enumeration keys = jobState.jobList.keys();
@@ -834,49 +842,4 @@ class Monitor extends Thread
         }
     }
     private JobState jobState;
-}
-
-/** This class defines a thread to querry the database every hour.
- * @author  jiaji Du
- */
-class DBConnect extends Thread
-{
-    /** This is the run method of the thread. It queeries the database every hour.
-     */
-    public void run()
-    {
-        Statement stmt = null;
-        String sql = "select job_id from job where job_id = 1";
-	try
-        {           
-            while(true)
-            {
-                try
-                {
-                    sleep(3600000);
-                    stmt = JobQueue.conn.createStatement();
-                    stmt.executeQuery(sql);
-                }
-                catch(InterruptedException e)
-                {
-                    JobQueue.stop("DBConnect", e.getMessage());
-                }
-            }
-        }
-        catch(SQLException e)
-        {
-            JobQueue.stop("DBConnect query", e.getMessage());
-        }
-        finally
-        {
-            try
-            {             
-                if(stmt != null) stmt.close();
-            }
-            catch(SQLException e)
-            {
-                JobQueue.stop("DBConnect statement closing", e.getMessage());
-            }
-        }
-    }
 }
