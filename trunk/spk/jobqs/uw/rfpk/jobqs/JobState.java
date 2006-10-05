@@ -103,6 +103,18 @@ public class JobState {
         stmt.close();
     }
     
+    /** Query database to maintain connection.
+     * @throws SQLException a SQL exception.
+     */
+    protected void queryDB()
+        throws SQLException
+    {
+        Statement stmt = JobQueue.conn.createStatement();
+        String sql = "select job_id from job where job_id = 1";
+        stmt.executeQuery(sql);
+        stmt.close();
+    }
+    
     /** Compiler queue */
     protected Vector cmpQueue = new Vector();
    
