@@ -161,6 +161,7 @@ while (@row = $sth->fetchrow_array) {
     print FD "drop table $row[0];\n";
 }
 close FD;
+$sth->finish();
 $dbh->disconnect;
 
 system "cat $tmp_name                 | mysql --force -h$dbhost -p$dbpass -u$dbuser > /dev/null 2>&1";
