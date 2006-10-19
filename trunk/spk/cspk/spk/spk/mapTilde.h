@@ -35,7 +35,7 @@
 #include "Optimizer.h"
 
 void mapTilde(
-    SpkModel &model,
+    SpkModel<double> &model,
     const DoubleMatrix &dvecY,
     Optimizer& optimizer,
     const DoubleMatrix &dvecBinitial, 

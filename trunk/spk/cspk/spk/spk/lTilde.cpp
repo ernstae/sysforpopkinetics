@@ -83,7 +83,7 @@
   $bold Prototype:$$    $cend  
   $syntax/void lTilde(
   bool                 /isMultiProcessed/,
-  SpkModel             &/model/,
+  SpkModel<double>     &/model/,
   enum Objective       /whichObjective/,
   const   DoubleMatrix &/y_forAll/,
   const   DoubleMatrix &/num_data_forEach/,
@@ -343,7 +343,7 @@
   #include "lTilde.h"
   #include "Objective.h"
 
-  class UserModel : public SpkModel
+  class UserModel : public SpkModel<double>
   {
   DoubleMatrix _alp, _b;
   int _i;
@@ -610,7 +610,7 @@
 
 static DoubleMatrix getElements( const DoubleMatrix &original, int offset, int howMany );
 static DoubleMatrix & operator+=(DoubleMatrix &A, const DoubleMatrix &B);
-static const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackage& inpack);
+static const IndOutputDataPackage indAnalysis(SpkModel<double> &model, const IndInputDataPackage& inpack);
 
 // Counts the population level iterations
 static int cntPopItrs = 0;
@@ -640,7 +640,7 @@ static DoubleMatrix dmatLambdaTilde_alp(__FILE__);
 // difficult.  It would be better if one version called the other version.
 
 void lTilde(
-	    SpkModel     &model,
+	    SpkModel<double>           &model,
 	    enum Objective whichObjective,
 	    const         DoubleMatrix &dvecY_forAll,  // all individuals' data
 	    const         DoubleMatrix &dvecNumsOfDataforEachSubject,
@@ -951,7 +951,7 @@ extern time_t SESSION_ID;
 void lTilde(
 	    bool          isMultiProcessed,
 	    const File    &sharedDiskSpace,
-	    SpkModel      &model,
+	    SpkModel<double>           &model,
 	    enum Objective  whichObjective,
 	    const         DoubleMatrix &dvecY_forAll,  // all individuals' data
 	    const         DoubleMatrix &dvecNumsOfDataforEachSubject,
@@ -1443,7 +1443,7 @@ static DoubleMatrix dmatHessianTilde_alp_i(__FILE__);
 static DoubleMatrix dmatHessianTilde_b_i(__FILE__);
 static DoubleMatrix drowLambda_alp_i(__FILE__);
 
-const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackage& inpack)
+const IndOutputDataPackage indAnalysis(SpkModel<double> &model, const IndInputDataPackage& inpack)
 {
   using namespace std;
 

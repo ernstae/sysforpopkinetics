@@ -36,17 +36,17 @@
 #include "SpkModel.h"
 #include "DoubleMatrix.h"
 
-double             lambda(SpkModel& model,
+double             lambda(SpkModel<double>& model,
                           const DoubleMatrix &y,
                           const DoubleMatrix &alp,
                           const DoubleMatrix &b,
                           bool  withD=true);
-const DoubleMatrix lambda_alp(SpkModel& model,
+const DoubleMatrix lambda_alp(SpkModel<double>& model,
                           const DoubleMatrix &y,
                           const DoubleMatrix &alp,
                           const DoubleMatrix &b,
                           bool  withD=true);
-const DoubleMatrix lambda_b(SpkModel& model,
+const DoubleMatrix lambda_b(SpkModel<double>& model,
                           const DoubleMatrix &y,
                           const DoubleMatrix &alp,
                           const DoubleMatrix &b,
@@ -55,12 +55,12 @@ const DoubleMatrix lambda_b(SpkModel& model,
 class Lambda : public std::binary_function<DoubleMatrix, DoubleMatrix, double>
 {
     private:
-        SpkModel *model;
+        SpkModel<double> *model;
         const DoubleMatrix y;
         const bool includeD;
 
     public:
-        Lambda(SpkModel *m, const DoubleMatrix& yi, bool withD)
+        Lambda(SpkModel<double> *m, const DoubleMatrix& yi, bool withD)
             : model(m), y(yi), includeD(withD)
         {}
         ~Lambda() throw() 
@@ -78,7 +78,7 @@ class Lambda : public std::binary_function<DoubleMatrix, DoubleMatrix, double>
 class LambdaValarray : public std::binary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 {
     private:
-        SpkModel *model;
+        SpkModel<double> *model;
         const SPK_VA::valarray<double> y;
         const bool includeD;
         mutable DoubleMatrix dvecY;
@@ -86,7 +86,7 @@ class LambdaValarray : public std::binary_function< SPK_VA::valarray<double>, SP
         mutable DoubleMatrix dvecAlp;
 
     public:
-        LambdaValarray(SpkModel *m, const SPK_VA::valarray<double>& yi, bool withD)
+        LambdaValarray(SpkModel<double> *m, const SPK_VA::valarray<double>& yi, bool withD)
             : model(m), y(yi), includeD(withD)
         {
         }
@@ -109,12 +109,12 @@ class LambdaValarray : public std::binary_function< SPK_VA::valarray<double>, SP
 class Lambda_alp : public std::binary_function<DoubleMatrix, DoubleMatrix, DoubleMatrix>
 {
     private:
-        SpkModel *model;
+        SpkModel<double> *model;
         const DoubleMatrix y;
         const bool includeD;
 
     public:
-        Lambda_alp(SpkModel *m, const DoubleMatrix& yi, bool withD)
+        Lambda_alp(SpkModel<double> *m, const DoubleMatrix& yi, bool withD)
             : model(m), y(yi), includeD(withD)
         {}
         ~Lambda_alp() throw() {}
@@ -130,12 +130,12 @@ class Lambda_alp : public std::binary_function<DoubleMatrix, DoubleMatrix, Doubl
 class Lambda_b : public std::binary_function<DoubleMatrix, DoubleMatrix, DoubleMatrix>
 {
     private:
-        SpkModel *model;
+        SpkModel<double> *model;
         const DoubleMatrix y;
         const bool includeD;
 
     public:
-        Lambda_b(SpkModel *m, const DoubleMatrix& yi, bool withD)
+        Lambda_b(SpkModel<double> *m, const DoubleMatrix& yi, bool withD)
             : model(m), y(yi), includeD(withD)
         {}
         ~Lambda_b() throw() {}

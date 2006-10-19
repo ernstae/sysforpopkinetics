@@ -78,7 +78,7 @@ $index individual, estimate bHat$$
 $table
 $bold Prototype:$$ $cend
 $syntax/void estimateB(
-    SpkModel & /model/,
+    SpkModel<double> & /model/,
     bool   /isBlsq/,
     Optimizer& /optimizer/,
     const  DoubleMatrix & /y/,
@@ -345,7 +345,7 @@ $codep
     //   class UserModel declaration
     //========================================================================
 
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         valarray<double> _a, _b;
         int _i, _nA, _nB, _nY;
@@ -619,7 +619,7 @@ static DoubleMatrix dmatDInv(__FILE__);
  * Function definition
  *------------------------------------------------------------------------*/
 void estimateB(
-    SpkModel &model,
+    SpkModel<double> &model,
     bool   isBlsq,
     Optimizer& optimizer,
     const  DoubleMatrix &dvecY,

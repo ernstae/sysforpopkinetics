@@ -66,7 +66,7 @@ $cindex central difference \of \the derivative \of map Bayesian objective functi
 $table
 $bold Prototype:$$   $cend  
 $syntax/void mapObjDiff(
-          SpkModel           & /model/,
+          SpkModel<double>   & /model/,
           const DoubleMatrix & /dvecY/,
           const DoubleMatrix & /dvecBStep/,
           const DoubleMatrix & /dvecB/,
@@ -222,7 +222,7 @@ $codep
 
     using namespace std;
 
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         valarray<double> _b;
     public:
@@ -298,7 +298,7 @@ $codep
     void main()
     {
 
-        SpkModel model;
+        SpkModel<double> model;
         int n = 2;
         int m = n;
         DoubleMatrix b(n,1);
@@ -384,7 +384,7 @@ static DoubleMatrix mapObj_b_bOutTemp(__FILE__);
  * Function definition
  *------------------------------------------------------------------------*/
 void mapObjDiff(
-                SpkModel &model,
+                SpkModel<double>   &model,
                 const DoubleMatrix &dvecY,
                 const DoubleMatrix &dvecBStep,
                 const DoubleMatrix &dvecB,

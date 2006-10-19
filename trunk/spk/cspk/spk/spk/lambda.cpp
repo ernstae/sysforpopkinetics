@@ -69,7 +69,7 @@ $index lambda, individual joint #negative log-likelihood$$
 $table
 $bold Prototype:$$   $cend  
 $syntax/double lambda( 
-    SpkModel &/model/,
+    SpkModel<double> &/model/,
     const DoubleMatrix &/y/,
     const DoubleMatrix &/alp/,
     const DoubleMatrix &/b/,
@@ -232,7 +232,7 @@ $codep
     static DoubleMatrix funR_alp(const DoubleMatrix &dmatR, const DoubleMatrix &alp, const DoubleMatrix &b );
     static DoubleMatrix funR_b(  const DoubleMatrix &dmatR, const DoubleMatrix &alp, const DoubleMatrix &b );
 
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         DoubleMatrix _a, _b;
         int _i;
@@ -525,7 +525,7 @@ static bool hasPosDet( const DoubleMatrix& dmatA );
 
 static const double logTwoPi = log( 2.0 * PI );
 
-double lambda( SpkModel &model, 
+double lambda( SpkModel<double> &model, 
             const DoubleMatrix &dvecY, 
             const DoubleMatrix &dvecAlp, 
             const DoubleMatrix &dvecB,
@@ -617,7 +617,7 @@ $index lambda, derivative of individual joint #negative log-likelihood$$
 $table
 $bold Prototype:$$   $cend  
 $syntax/const DoubleMatrix lambda_alp( 
-    SpkModel &/model/,
+    SpkModel<double> &/model/,
     const DoubleMatrix &/y/,
     const DoubleMatrix &/alp/,
     const DoubleMatrix &/b/,
@@ -779,7 +779,7 @@ $codep
     static DoubleMatrix funR_alp(const DoubleMatrix &dmatR, const DoubleMatrix &alp, const DoubleMatrix &b );
     static DoubleMatrix funR_b(  const DoubleMatrix &dmatR, const DoubleMatrix &alp, const DoubleMatrix &b );
 
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         DoubleMatrix _a, _b;
         int _i;
@@ -1046,7 +1046,7 @@ $end
 // classes, then the body of this function should be rewritten in 
 // a similar fashion as the body of the lambda function above.
 
-const DoubleMatrix lambda_alp(SpkModel &model, 
+const DoubleMatrix lambda_alp(SpkModel<double> &model, 
             const DoubleMatrix &dvecY, 
             const DoubleMatrix &dvecAlp, 
             const DoubleMatrix &dvecB,
@@ -1183,7 +1183,7 @@ $cindex individual joint #negative log-likelihood$$
 $table
 $bold Prototype:$$   $cend  
 $syntax/const DoubleMatrix lambda_b( 
-    SpkModel &/model/,
+    SpkModel<double> &/model/,
     const DoubleMatrix &/y/,
     const DoubleMatrix &/alp/,
     const DoubleMatrix &/b/,
@@ -1348,7 +1348,7 @@ $codep
     static DoubleMatrix funR_alp(const DoubleMatrix &dmatR, const DoubleMatrix &alp, const DoubleMatrix &b );
     static DoubleMatrix funR_b(  const DoubleMatrix &dmatR, const DoubleMatrix &alp, const DoubleMatrix &b );
 
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         DoubleMatrix _a, _b;
         int _i;
@@ -1616,7 +1616,7 @@ $end
 // classes, then the body of this function should be rewritten in 
 // a similar fashion as the body of the lambda function above.
 
-const DoubleMatrix lambda_b( SpkModel &model, 
+const DoubleMatrix lambda_b( SpkModel<double> &model, 
             const DoubleMatrix &dvecY, 
             const DoubleMatrix &dvecAlp, 
             const DoubleMatrix &dvecB,
@@ -1810,7 +1810,7 @@ $codep
     #include "allZero.h"
     #include "SpkValarray.h"
 
-    class LambdaCentdiffTestModel : public SpkModel
+    class LambdaCentdiffTestModel : public SpkModel<double>
     {
         DoubleMatrix _a, _b;
         int _i;

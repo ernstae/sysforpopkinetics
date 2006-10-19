@@ -38,7 +38,7 @@
 #include "DoubleMatrix.h"
 #include "Optimizer.h"
 
-void firstOrderOpt( SpkModel&               model,
+void firstOrderOpt( SpkModel<double>&       model,
                     const DoubleMatrix&     dvecN,
                     const DoubleMatrix&     dvecY,
                     Optimizer&              popOptimizer,

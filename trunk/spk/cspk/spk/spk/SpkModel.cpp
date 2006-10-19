@@ -1,4 +1,4 @@
-/*
+ /*
 %************************************************************************
 %                                                                       *
 %  From:   Resource Facility for Population Kinetics                    *
@@ -30,6 +30,9 @@
  *************************************************************************/
 #include <cmath>
 
+// CppAD header files.
+#include <CppAD/CppAD.h>
+
 #include "SpkValarray.h"
 #include "SpkModel.h"
 #include "inverse.h"
@@ -38,8 +41,17 @@
 #include "allZero.h"
 #include "FullDataCovariance.h"
 #include "FullIndParCovariance.h"
+#include "doubleToScalarArray.h"
+#include "scalarToDoubleArray.h"
 
 using SPK_VA::valarray;
+
+/*------------------------------------------------------------------------
+ * Local function declarations
+ *------------------------------------------------------------------------*/
+
+namespace // [Begin: unnamed namespace]
+{
 
 static DoubleMatrix minusAkronBtimesC( 
   const DoubleMatrix &A, const DoubleMatrix &B, const DoubleMatrix &C );
@@ -49,6 +61,9 @@ static void minusAkronBtimesC(
 static int _nIndPar = -1;
 static int _nPopPar = -1;
 static int _nY      = -1;
+
+} // [End: unnamed namespace]
+
 
 //*************************************************************************
 //
@@ -63,7 +78,7 @@ static int _nY      = -1;
 /*
 $begin SpkModel_default_constructor$$
 $spell
-	Model model 
+    Model  model 
     Spk
 $$
 
@@ -73,7 +88,7 @@ $index User-provided Model, Default Constructor$$
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/protected SpkModel::SpkModel()/$$
+$syntax/protected: template<class Scalar> SpkModel<Scalar>::SpkModel()/$$
 $tend
 
 $fend 15$$
@@ -98,7 +113,8 @@ See $xref/SpkModel/Example/Example/$$
 $end
 */
 
-SpkModel::SpkModel()
+template<class Scalar>
+SpkModel<Scalar>::SpkModel()
 : pDataCovariance(NULL), pIndParCovariance(NULL)
 {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,8 +125,14 @@ SpkModel::SpkModel()
   pDataCovariance   = new FullDataCovariance;
   pIndParCovariance = new FullIndParCovariance;
 
-  pDataCovariance  ->setModel( this );
-  pIndParCovariance->setModel( this );
+  // This pointer to a double version of an SpkModel won't change the
+  // type of the this pointer for this class if is intantianted with a
+  // double Scalar and these covariance classes shouldn't be used when
+  // Scalar is of type CppAD::AD<double>.
+  SpkModel<double>* pDoubleSpkModel = dynamic_cast< SpkModel<double>* >( this );
+
+  pDataCovariance  ->setModel( pDoubleSpkModel );
+  pIndParCovariance->setModel( pDoubleSpkModel );
   //
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
@@ -120,7 +142,7 @@ SpkModel::SpkModel()
 /*
 $begin SpkModel_copy_constructor$$
 $spell
-	Model model 
+    Model model 
     const
     copyable
     Spk
@@ -132,7 +154,7 @@ $index User-provided Model, Copy Constructor$$
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/protected SpkModel::SpkModel( const SpkModel &/right/ )/$$
+$syntax/protected: template<class Scalar> SpkModel<Scalar>::SpkModel( const SpkModel &/right/ )/$$
 $tend
 
 $fend 15$$
@@ -166,7 +188,8 @@ The SpkModel to be copied.
 
 $end
 */
-SpkModel::SpkModel( const SpkModel &right )
+template<class Scalar>
+SpkModel<Scalar>::SpkModel( const SpkModel &right )
 : pDataCovariance(NULL), pIndParCovariance(NULL)
 {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,8 +206,14 @@ SpkModel::SpkModel( const SpkModel &right )
   pDataCovariance   = new FullDataCovariance();
   pIndParCovariance = new FullIndParCovariance();
 
-  pDataCovariance  ->setModel( this );
-  pIndParCovariance->setModel( this );
+  // This pointer to a double version of an SpkModel won't change the
+  // type of the this pointer for this class if is intantianted with a
+  // double Scalar and these covariance classes shouldn't be used when
+  // Scalar is of type CppAD::AD<double>.
+  SpkModel<double>* pDoubleSpkModel = dynamic_cast< SpkModel<double>* >( this );
+
+  pDataCovariance  ->setModel( pDoubleSpkModel );
+  pIndParCovariance->setModel( pDoubleSpkModel );
   //
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
@@ -195,7 +224,7 @@ SpkModel::SpkModel( const SpkModel &right )
 /*
 $begin SpkModel_assignment_operator$$
 $spell
-	Model model 
+    Model model 
     assignable
     const
     Spk
@@ -207,7 +236,7 @@ $index User-provided Model, Assignment Operator$$
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/protected SpkModel::SpkModel& operator=( const SpkModel &/right/ )/$$
+$syntax/protected: template<class Scalar> SpkModel<Scalar>::SpkModel& operator=( const SpkModel &/right/ )/$$
 $tend
 
 $fend 15$$
@@ -241,7 +270,8 @@ The SpkModel to be copied.
 
 $end
 */
-SpkModel& SpkModel::operator=(const SpkModel &right)
+template<class Scalar>
+SpkModel<Scalar>& SpkModel<Scalar>::operator=(const SpkModel &right)
 {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // [Revisit - Backward Compatable SpkModel Code - Mitch]
@@ -270,8 +300,14 @@ SpkModel& SpkModel::operator=(const SpkModel &right)
   pDataCovariance   = new FullDataCovariance();
   pIndParCovariance = new FullIndParCovariance();
 
-  pDataCovariance  ->setModel( this );
-  pIndParCovariance->setModel( this );
+  // This pointer to a double version of an SpkModel won't change the
+  // type of the this pointer for this class if is intantianted with a
+  // double Scalar and these covariance classes shouldn't be used when
+  // Scalar is of type CppAD::AD<double>.
+  SpkModel<double>* pDoubleSpkModel = dynamic_cast< SpkModel<double>* >( this );
+
+  pDataCovariance  ->setModel( pDoubleSpkModel );
+  pIndParCovariance->setModel( pDoubleSpkModel );
   //
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
@@ -284,7 +320,7 @@ SpkModel& SpkModel::operator=(const SpkModel &right)
 /*
 $begin SpkModel_default_destructor$$
 $spell
-	Model model 
+    Model model 
     Spk
 $$
 
@@ -294,7 +330,7 @@ $index User-provided Model, Default Destructor$$
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/public virtual SpkModel::~SpkModel()/$$
+$syntax/public: template<class Scalar> virtual SpkModel<Scalar>::~SpkModel()/$$
 $tend
 
 $fend 15$$
@@ -311,7 +347,8 @@ The default destructor.
 
 $end
 */
-SpkModel::~SpkModel()
+template<class Scalar>
+SpkModel<Scalar>::~SpkModel()
 {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // [Revisit - Backward Compatable SpkModel Code - Mitch]
@@ -340,7 +377,7 @@ SpkModel::~SpkModel()
 /*
 $begin SpkModel_selectIndividual$$
 $spell
-	Model model 
+    Model model 
     int
     void
     covariances
@@ -364,9 +401,9 @@ $index User-provided Model, select an individual in a population$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doSelectIndividual( int /i/ )/$$ $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doSelectIndividual( int /i/ )/$$ $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::selectIndividual( int /i/ )/$$ $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::selectIndividual( int /i/ )/$$ $rend
 $tend
 
 $fend 20$$
@@ -421,7 +458,8 @@ See $xref/SpkModel/Example/Example/$$
 $end
 */
 
-void SpkModel::doSelectIndividual(int base0)
+template<class Scalar>
+void SpkModel<Scalar>::doSelectIndividual(int base0)
 {
  throw SpkException(
      SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR,
@@ -429,10 +467,11 @@ void SpkModel::doSelectIndividual(int base0)
      __LINE__, __FILE__);
 }
 
-void SpkModel::selectIndividual(int base0)
+template<class Scalar>
+void SpkModel<Scalar>::selectIndividual(int base0)
 {
   try{
-	doSelectIndividual(base0);
+    doSelectIndividual(base0);
   }
   catch( SpkException& e )
   {
@@ -499,14 +538,14 @@ void SpkModel::selectIndividual(int base0)
 
 /*************************************************************************
  *
- * Virtual function: private: doSetPopPar( const SPK_VA::valarray<double>& )
- * and corresponding public interface: setPopPar( const SPK_VA::valarray<double>& )
+ * Virtual function: private: doSetPopPar( const SPK_VA::valarray<Scalar>& )
+ * and corresponding public interface: setPopPar( const SPK_VA::valarray<Scalar>& )
  *
  *************************************************************************/
 /*
 $begin SpkModel_setPopPar$$
 $spell
-	Model model 
+    Model model 
     int
     void
     covariances
@@ -530,9 +569,9 @@ $index User-provided Model, set population parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doSetPopPar( const SPK_VA::valarray<double>& /popPar/ )/$$ $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doSetPopPar( const SPK_VA::valarray<Scalar>& /popPar/ )/$$ $rend
 $bold Public Interface:$$   $rend  
-$syntax/public: void SpkModel::setPopPar( const SPK_VA::valarray<double>& /popPar/ )/$$ $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::setPopPar( const SPK_VA::valarray<Scalar>& /popPar/ )/$$ $rend
 $tend
 
 $fend 20$$
@@ -549,7 +588,7 @@ Required for population analysis.
 $pre
 
 $$
-$syntax/doSetPopPar( SPK_VA::valarray<double> /popPar/ )/$$ sets $italic popPar$$ as the current
+$syntax/doSetPopPar( SPK_VA::valarray<Scalar> /popPar/ )/$$ sets $italic popPar$$ as the current
 population parameter value and guarantees that subsequent attempts for evaluating the mathematical models
 expressed by SpkModel virtual member functions are evaluated at the point.  
 $pre
@@ -580,7 +619,8 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-void SpkModel::doSetPopPar( const valarray<double>& popPar )
+template<class Scalar>
+void SpkModel<Scalar>::doSetPopPar( const valarray<Scalar>& popPar )
 {
   throw SpkException(
      SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR, 
@@ -588,7 +628,8 @@ void SpkModel::doSetPopPar( const valarray<double>& popPar )
      __LINE__, __FILE__);
 }
 
-void SpkModel::setPopPar( const valarray<double> &popPar )
+template<class Scalar>
+void SpkModel<Scalar>::setPopPar( const valarray<Scalar> &popPar )
 {
     _nPopPar = popPar.size();
     assert( _nPopPar > 0 );
@@ -624,10 +665,14 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
         );
     }
 
-    DoubleMatrix popParDM(popPar, 1);
+    // Create a double version of the parameter.
+    valarray<double> popParDouble( _nPopPar );
+    scalarToDoubleArray( popPar, popParDouble );
+
+    DoubleMatrix popParDM(popParDouble, 1);
 
     try{
-      pDataCovariance  ->setCovPopPar(popPar);
+      pDataCovariance  ->setCovPopPar(popParDouble);
     }
     catch( SpkException& e )
     {
@@ -658,7 +703,7 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
         );
     }        
     try{
-      pIndParCovariance->setCovPopPar(popPar);  // Give D(a) the value.
+      pIndParCovariance->setCovPopPar(popParDouble);  // Give D(a) the value.
     }
     catch( SpkException& e )
     {
@@ -693,14 +738,14 @@ void SpkModel::setPopPar( const valarray<double> &popPar )
 }
 /*************************************************************************
  *
- * Virtual function: private: doSetIndPar( const SPK_VA::valarray<double>& )
- * and corresponding public interface: setIndPar( const SPK_VA::valarray<double>& )
+ * Virtual function: private: doSetIndPar( const SPK_VA::valarray<Scalar>& )
+ * and corresponding public interface: setIndPar( const SPK_VA::valarray<Scalar>& )
  *
  *************************************************************************/
 /*
 $begin SpkModel_setIndPar$$
 $spell
-	Model model 
+    Model model 
     int
     void
     covariances
@@ -724,9 +769,9 @@ $index User-provided Model, set individual parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doSetIndPar( const SPK_VA::valarray<double>&  /indPar/ ) = 0/$$ $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doSetIndPar( const SPK_VA::valarray<Scalar>&  /indPar/ ) = 0/$$ $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::setIndPar( const SPK_VA::valarray<double>&  /indPar/ )/$$ $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::setIndPar( const SPK_VA::valarray<Scalar>&  /indPar/ )/$$ $rend
 $tend
 
 $fend 20$$
@@ -743,7 +788,7 @@ Required for both population analysis and individual analysis.
 $pre
 
 $$
-$syntax/SpkModel::doSetIndPar( const SPK_VA::valarray<double>&  /indPar/ )/$$ sets $italic indPar$$ as the current
+$syntax/SpkModel<Scalar>::doSetIndPar( const SPK_VA::valarray<Scalar>&  /indPar/ )/$$ sets $italic indPar$$ as the current
 individual parameter value and guarantees that subsequent attempts for evaluating the mathematical models
 expressed by SpkModel virtual member functions are evaluated at the point.  
 $pre
@@ -775,7 +820,8 @@ See $xref/SpkModel/Example/Example/$$
 $end
 */
 
-void SpkModel::setIndPar(const valarray<double> &indPar)
+template<class Scalar>
+void SpkModel<Scalar>::setIndPar(const valarray<Scalar> &indPar)
 {
     _nIndPar = indPar.size();
     assert( _nIndPar > 0 );
@@ -812,9 +858,13 @@ void SpkModel::setIndPar(const valarray<double> &indPar)
         );
     }
 
-    DoubleMatrix indParDM(indPar, 1);
+    // Create a double version of the parameter.
+    valarray<double> indParDouble( _nIndPar );
+    scalarToDoubleArray( indPar, indParDouble );
+
+    DoubleMatrix indParDM(indParDouble, 1);
     try{
-      pDataCovariance->setCovIndPar(indPar);    // Give doDataVariance(a, bi) the value.
+      pDataCovariance->setCovIndPar(indParDouble);    // Give doDataVariance(a, bi) the value.
     }
     catch( SpkException& e )
     {
@@ -847,8 +897,8 @@ void SpkModel::setIndPar(const valarray<double> &indPar)
 }
 /*************************************************************************
  *
- * Virtual function: doDataMean( SPK_VA::valarray<double>& )
- * and corresponding public interface: dataMean( SPK_VA::valarray<double>& )
+ * Virtual function: doDataMean( SPK_VA::valarray<Scalar>& )
+ * and corresponding public interface: dataMean( SPK_VA::valarray<Scalar>& )
  *
  *************************************************************************/
 
@@ -858,7 +908,7 @@ void SpkModel::setIndPar(const valarray<double> &indPar)
 /*
 $begin SpkModel_dataMean$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    fi 
@@ -873,15 +923,15 @@ $$
 
 $section Model for the Mean of Individual's Data$$
 
-$index SpkModel, doDataMean( SPK_VA::valarray<double> & )$$
-$index SpkModel, dataMean( SPK_VA::valarray<double> & )$$
+$index SpkModel, doDataMean( SPK_VA::valarray<Scalar> & )$$
+$index SpkModel, dataMean( SPK_VA::valarray<Scalar> & )$$
 $index User-provided Model, mean of data$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doDataMean( SPK_VA::valarray<double>& /ret/ ) const = 0/$$  $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doDataMean( SPK_VA::valarray<Scalar>& /ret/ ) const = 0/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::dataMean( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::dataMean( SPK_VA::valarray<Scalar>& /ret/ ) const/$$  $rend
 $tend
 
 $table
@@ -905,7 +955,7 @@ Required for both population and individual analysis.
 $pre
 
 $$
-$code SpkModel::doDataMean()$$ calculates the mean of a particular individual's
+$code SpkModel<Scalar>::doDataMean()$$ calculates the mean of a particular individual's
 data for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
 a currently set individual parameter (see $xref/SpkModel_setIndPar//setIndPar/$$) 
 and a population parameter
@@ -952,7 +1002,8 @@ See $xref/SpkModel/Example/Example/$$
 $end
 */
 
-void SpkModel::dataMean( valarray<double> & ret ) const 
+template<class Scalar>
+void SpkModel<Scalar>::dataMean( valarray<Scalar> & ret ) const 
 { 
   try{
     doDataMean(ret);
@@ -999,7 +1050,7 @@ void SpkModel::dataMean( valarray<double> & ret ) const
 /*
 $begin SpkModel_dataMean_indPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    fi 
@@ -1020,9 +1071,9 @@ $index User-provided Model, derivative of the mean of data with respect to indiv
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doDataMean_indPar( SPK_VA::valarray<double>& /ret/ ) const = 0/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doDataMean_indPar( SPK_VA::valarray<double>& /ret/ ) const = 0/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::dataMean_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::dataMean_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -1046,7 +1097,7 @@ Required for both population and individual analysis.
 $pre
 
 $$
-$code SpkModel::doDataMean_indPar()$$ calculates the derivative of the mean of a particular individual's
+$code SpkModel<Scalar>::doDataMean_indPar()$$ calculates the derivative of the mean of a particular individual's
 data with respect to the individual parameter,
 for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
 a currently set individual parameter (see $xref/SpkModel_setIndPar//setIndPar/$$) 
@@ -1103,7 +1154,8 @@ See $xref/SpkModel/Example/Example/$$
 $end
 */
 
-bool SpkModel::dataMean_indPar( valarray<double>& ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::dataMean_indPar( valarray<double>& ret ) const 
 { 
   try{
     return doDataMean_indPar(ret);
@@ -1150,7 +1202,7 @@ bool SpkModel::dataMean_indPar( valarray<double>& ret ) const
 /*
 $begin SpkModel_dataMean_popPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    fi 
@@ -1170,9 +1222,9 @@ $index User-provided Model, derivative of the mean of data with respect to popul
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doDataMean_popPar( SPK_VA::valarray<double> & /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doDataMean_popPar( SPK_VA::valarray<double> & /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::dataMean_popPar( SPK_VA::valarray<double> & /ret/ ) const/$$  $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::dataMean_popPar( SPK_VA::valarray<double> & /ret/ ) const/$$  $rend
 $tend
 
 $table
@@ -1196,7 +1248,7 @@ Required for population analysis.
 $pre
 
 $$
-$code SpkModel::doDataMean_popPar()$$ calculates the derivative of the mean of a particular individual's
+$code SpkModel<Scalar>::doDataMean_popPar()$$ calculates the derivative of the mean of a particular individual's
 data with respect to the population parameter,
 for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
 a currently set individual parameter (see $xref/SpkModel_setIndPar//setIndPar/$$) 
@@ -1252,7 +1304,8 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-bool SpkModel::doDataMean_popPar( valarray<double>& retVA ) const
+template<class Scalar>
+bool SpkModel<Scalar>::doDataMean_popPar( valarray<double>& retVA ) const
 {
    throw SpkException(
        SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR, 
@@ -1261,7 +1314,8 @@ bool SpkModel::doDataMean_popPar( valarray<double>& retVA ) const
        __FILE__
      );
 }
-bool SpkModel::dataMean_popPar( valarray<double>& ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::dataMean_popPar( valarray<double>& ret ) const 
 { 
   try{
     return doDataMean_popPar(ret);
@@ -1308,7 +1362,7 @@ bool SpkModel::dataMean_popPar( valarray<double>& ret ) const
 /*
 $begin SpkModel_dataVariance$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    th
@@ -1322,15 +1376,15 @@ $spell
 $$
 $section Model for the Variance of Individual's Data$$
 
-$index SpkModel, doDataVariance( SPK_VA::valarray<double>& )$$
-$index SpkModel, dataVariance( SPK_VA::valarray<double>& )$$
+$index SpkModel, doDataVariance( SPK_VA::valarrayScalar& )$$
+$index SpkModel, dataVariance( SPK_VA::valarrayScalar& )$$
 $index User-provided Model, variance of data$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doDataVariance( SPK_VA::valarray<double>& /ret/ ) const = 0/$$  $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doDataVariance( SPK_VA::valarrayScalar& /ret/ ) const = 0/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::dataVariance( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::dataVariance( SPK_VA::valarrayScalar& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -1354,7 +1408,7 @@ Required for both population and individual analysis.
 $pre
 
 $$
-$code SpkModel::doDataVariance()$$ calculates the variance of a particular individual's
+$code SpkModel<Scalar>::doDataVariance()$$ calculates the variance of a particular individual's
 data for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
 a currently set individual parameter (see $xref/SpkModel_setIndPar//setIndPar/$$) 
 and population parameter
@@ -1402,7 +1456,8 @@ See $xref/SpkModel/Example/Example/$$
 $end
 */
 
-void SpkModel::dataVariance( valarray<double>& ret ) const 
+template<class Scalar>
+void SpkModel<Scalar>::dataVariance( valarray<Scalar> & ret ) const 
 { 
   try{
     doDataVariance(ret);
@@ -1449,7 +1504,7 @@ void SpkModel::dataVariance( valarray<double>& ret ) const
 /*
 $begin SpkModel_dataVariance_indPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    fi 
@@ -1471,9 +1526,9 @@ with respect to individual parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doDataVariance_indPar( SPK_VA::valarray<double>& /ret/ ) const = 0/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doDataVariance_indPar( SPK_VA::valarray<double>& /ret/ ) const = 0/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::dataVariance_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::dataVariance_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -1497,7 +1552,7 @@ Required for both population and individual analysis.
 $pre
 
 $$
-$code SpkModel::doDataVariance_indPar()$$ calculates the derivative of the variance of a particular individual's
+$code SpkModel<Scalar>::doDataVariance_indPar()$$ calculates the derivative of the variance of a particular individual's
 data with respect to the individual parameter,
 for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
 a currently set individual parameter (see $xref/SpkModel_setIndPar//setIndPar/$$) 
@@ -1554,7 +1609,8 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-bool SpkModel::dataVariance_indPar( valarray<double>& ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::dataVariance_indPar( valarray<double>& ret ) const 
 { 
   try{
     return doDataVariance_indPar(ret);
@@ -1600,7 +1656,7 @@ bool SpkModel::dataVariance_indPar( valarray<double>& ret ) const
 /*
 $begin SpkModel_dataVariance_popPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    fi 
@@ -1622,9 +1678,9 @@ with respect to population parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doDataVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doDataVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::dataVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::dataVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -1648,7 +1704,7 @@ Required for population analysis.
 $pre
 
 $$
-$code SpkModel::doDataVariance_popPar()$$ calculates the derivative of the variance of a particular individual's
+$code SpkModel<Scalar>::doDataVariance_popPar()$$ calculates the derivative of the variance of a particular individual's
 data with respect to the population parameter,
 for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
 a currently set individual parameter (see $xref/SpkModel_setIndPar//setIndPar/$$) 
@@ -1705,7 +1761,8 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-bool SpkModel::doDataVariance_popPar( valarray<double>& retVA ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::doDataVariance_popPar( valarray<double>& retVA ) const 
 {
    throw SpkException(
        SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR, 
@@ -1713,7 +1770,8 @@ bool SpkModel::doDataVariance_popPar( valarray<double>& retVA ) const
        __LINE__, __FILE__
      );
 }
-bool SpkModel::dataVariance_popPar( valarray<double> & ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::dataVariance_popPar( valarray<double> & ret ) const 
 { 
   try{
       return doDataVariance_popPar(ret);
@@ -1760,7 +1818,7 @@ bool SpkModel::dataVariance_popPar( valarray<double> & ret ) const
 /*
 $begin SpkModel_dataVarianceInv$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    th
@@ -1775,15 +1833,15 @@ $$
 
 $section Model for the Inverse of Variance of Individual's Data$$
 
-$index SpkModel, doDataVarianceInv( SPK_VA::valarray<double>& )$$
-$index SpkModel, dataVarianceInv( SPK_VA::valarray<double>& )$$
+$index SpkModel, doDataVarianceInv( SPK_VA::valarray<Scalar>& )$$
+$index SpkModel, dataVarianceInv( SPK_VA::valarray<Scalar>& )$$
 $index User-provided Model, inverse of variance of data$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doDataVarianceInv( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doDataVarianceInv( SPK_VA::valarray<Scalar>& /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::dataVarianceInv( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::dataVarianceInv( SPK_VA::valarray<Scalar>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -1809,7 +1867,7 @@ by $xref/SpkModel_dataVariance//dataVariance()/$$.
 $pre
 
 $$
-$code SpkModel::doDataVarianceInv()$$ calculates the inverse of the variance of a particular individual's
+$code SpkModel<Scalar>::doDataVarianceInv()$$ calculates the inverse of the variance of a particular individual's
 data for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
 a currently set individual parameter (see $xref/SpkModel_setIndPar//setIndPar/$$) 
 and population parameter
@@ -1856,14 +1914,42 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-void SpkModel::doDataVarianceInv( valarray<double> & ret ) const
+template<class Scalar>
+void SpkModel<Scalar>::doDataVarianceInv( valarray<Scalar> & ret ) const
 {
-  dataVariance(ret);
-  _nY = static_cast<int>( sqrt( static_cast<double>( ret.size() ) ) );
-  assert( ret.size() == _nY * _nY );
-  ret = inverse(ret, _nY);
+  valarray<Scalar> Ri;
+  dataVariance( Ri );
+
+  _nY = static_cast<int>( sqrt( static_cast<double>( Ri.size() ) ) );
+  assert( Ri.size() == _nY * _nY );
+
+  int j;
+
+  // Create an identity matrix.
+  valarray<Scalar> identity( _nY * _nY );
+  identity = Scalar( 0 );
+  for ( j = 0; j < _nY; j++ )
+  {
+    identity[j + j * _nY] = 1;
+  }
+
+  ret.resize( _nY * _nY );
+
+  // Calculate the inverse by solving the equation
+  //
+  //     R  *  X  =  I  ,
+  //
+  // where I is the identity matrix and
+  //
+  //            -1
+  //     X  =  R    .
+  //
+  int signdet;
+  Scalar logdet;
+  signdet = CppAD::LuSolve( _nY, _nY, Ri, identity, ret, logdet );
 }
-void SpkModel::dataVarianceInv( valarray<double>& ret ) const 
+template<class Scalar>
+void SpkModel<Scalar>::dataVarianceInv( valarray<Scalar>& ret ) const 
 { 
   try{
     doDataVarianceInv(ret);
@@ -1909,7 +1995,7 @@ void SpkModel::dataVarianceInv( valarray<double>& ret ) const
 /*
 $begin SPkModel_dataVarianceInv_indPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    fi 
@@ -1931,9 +2017,9 @@ $index User-provided Model, derivative of the inverse of the variance of data wi
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doDataVarianceInv_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doDataVarianceInv_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::dataVarianceInv_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::dataVarianceInv_indPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -1958,7 +2044,7 @@ is provided.
 $pre
 
 $$
-$code SpkModel::doDataVarianceInv_indPar()$$ calculates the derivative of the inverse of the 
+$code SpkModel<Scalar>::doDataVarianceInv_indPar()$$ calculates the derivative of the inverse of the 
 variance of a particular individual's
 data with respect to the individual parameter,
 for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
@@ -2017,12 +2103,19 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-bool SpkModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
+template<class Scalar>
+bool SpkModel<Scalar>::doDataVarianceInv_indPar( valarray<double>& ret ) const
 {
-    valarray<double> RiInv;
-    dataVarianceInv(RiInv);
-    _nY = static_cast<int>( sqrt( static_cast<double>( RiInv.size() ) ) );
+    valarray<Scalar> RiScalar;
+    dataVariance(RiScalar);
+    _nY = static_cast<int>( sqrt( static_cast<double>( RiScalar.size() ) ) );
+    assert( RiScalar.size() == _nY * _nY );
+    
+    valarray<double> RiInv( RiScalar.size() );
+    scalarToDoubleArray( RiScalar, RiInv );
+    RiInv = inverse(RiInv, _nY);
     assert( RiInv.size() == _nY * _nY );
+
     DoubleMatrix dmatRiInv( RiInv, _nY );
 
     valarray<double> Ri_b;
@@ -2033,7 +2126,8 @@ bool SpkModel::doDataVarianceInv_indPar( valarray<double>& ret ) const
     return !allZero(ret);
 }
 
-bool SpkModel::dataVarianceInv_indPar( valarray<double> & ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::dataVarianceInv_indPar( valarray<double> & ret ) const 
 { 
   try{
     return doDataVarianceInv_indPar(ret);
@@ -2079,7 +2173,7 @@ bool SpkModel::dataVarianceInv_indPar( valarray<double> & ret ) const
 /*
 $begin SpkModel_dataVarianceInv_popPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny 
    fi 
@@ -2102,9 +2196,9 @@ the variance of data with respect to population parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doDataVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doDataVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::dataVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::dataVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -2129,7 +2223,7 @@ is provided.
 $pre
 
 $$
-$code SpkModel::doDataVarianceInv_popPar()$$ calculates the derivative of the 
+$code SpkModel<Scalar>::doDataVarianceInv_popPar()$$ calculates the derivative of the 
 inverse of the variance of a particular individual's
 data with respect to the population parameter,
 for a currently selected individual (see $xref/SpkModel_selectIndividual//selectIndividual/$$) at
@@ -2188,11 +2282,17 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-bool SpkModel::doDataVarianceInv_popPar( valarray<double>& ret ) const
+template<class Scalar>
+bool SpkModel<Scalar>::doDataVarianceInv_popPar( valarray<double>& ret ) const
 {
-    valarray<double> RiInv;
-    dataVarianceInv(RiInv);
-    _nY = static_cast<int>( sqrt( static_cast<double>( RiInv.size() ) ) );
+    valarray<Scalar> RiScalar;
+    dataVariance(RiScalar);
+    _nY = static_cast<int>( sqrt( static_cast<double>( RiScalar.size() ) ) );
+    assert( RiScalar.size() == _nY * _nY );
+    
+    valarray<double> RiInv( RiScalar.size() );
+    scalarToDoubleArray( RiScalar, RiInv );
+    RiInv = inverse(RiInv, _nY);
     assert( RiInv.size() == _nY * _nY );
 
     DoubleMatrix dmatRiInv( RiInv, _nY );
@@ -2206,7 +2306,8 @@ bool SpkModel::doDataVarianceInv_popPar( valarray<double>& ret ) const
 }
 
 
-bool SpkModel::dataVarianceInv_popPar( valarray<double>& ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::dataVarianceInv_popPar( valarray<double>& ret ) const 
 { 
   try{
     return doDataVarianceInv_popPar(ret);
@@ -2254,7 +2355,7 @@ bool SpkModel::dataVarianceInv_popPar( valarray<double>& ret ) const
 /*
 $begin SpkModel_indParVariance$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny  
    th
@@ -2270,15 +2371,15 @@ $$
 
 $section Model for the Variance of Individual Parameter$$
 
-$index SpkModel, doIndParVariance( SPK_VA::valarray<double>& )$$
-$index SpkModel, indParVariance( SPK_VA::valarray<double>& )$$
+$index SpkModel, doIndParVariance( SPK_VA::valarray<Scalar>& )$$
+$index SpkModel, indParVariance( SPK_VA::valarray<Scalar>& )$$
 $index User-provided Model, variance of individual parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doIndParVariance( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doIndParVariance( SPK_VA::valarray<Scalar>& /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::indParVariance( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::indParVariance( SPK_VA::valarray<Scalar>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -2300,7 +2401,7 @@ Required for population analysis.  Optional for individual analysis.
 $pre
 
 $$
-$code SpkModel::doIndParVariance()$$ calculates the variance of
+$code SpkModel<Scalar>::doIndParVariance()$$ calculates the variance of
 individual parameter at a currently set population parameter
 (see $xref/SpkModel_setPopPar//setPopPar/$$).  
 $pre
@@ -2346,7 +2447,8 @@ See $xref/SpkModel/Example/Example/$$
 $end
 */
 
-void SpkModel::doIndParVariance( valarray<double>& retVA ) const
+template<class Scalar>
+void SpkModel<Scalar>::doIndParVariance( valarray<Scalar>& retVA ) const
 {
    throw SpkException(
        SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR,
@@ -2356,7 +2458,8 @@ void SpkModel::doIndParVariance( valarray<double>& retVA ) const
 }
 
 
-void SpkModel::indParVariance( valarray<double>& ret ) const 
+template<class Scalar>
+void SpkModel<Scalar>::indParVariance( valarray<Scalar>& ret ) const 
 { 
   try{
     doIndParVariance(ret);
@@ -2404,7 +2507,7 @@ void SpkModel::indParVariance( valarray<double>& ret ) const
 /*
 $begin SpkModel_indParVariance_popPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny  
    th
@@ -2426,9 +2529,9 @@ with respect to population parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doIndParVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doIndParVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::indParVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::indParVariance_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -2450,7 +2553,7 @@ Required for population analysis.  Optional for individual analysis.
 $pre
 
 $$
-$code SpkModel::doIndParVariance_popPar()$$ calculates the derivative of the variance of 
+$code SpkModel<Scalar>::doIndParVariance_popPar()$$ calculates the derivative of the variance of 
 individual parameter with respect to the population parameter at
 a currently set population parameter
 (see $xref/SpkModel_setPopPar//setPopPar/$$).  
@@ -2505,7 +2608,8 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-bool SpkModel::doIndParVariance_popPar( valarray<double>& retVA ) const
+template<class Scalar>
+bool SpkModel<Scalar>::doIndParVariance_popPar( valarray<double>& retVA ) const
 {
    throw SpkException(
        SpkError::SPK_MODEL_NOT_IMPLEMENTED_ERR, 
@@ -2515,7 +2619,8 @@ bool SpkModel::doIndParVariance_popPar( valarray<double>& retVA ) const
 }
 
 
-bool SpkModel::indParVariance_popPar( valarray<double>& ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::indParVariance_popPar( valarray<double>& ret ) const 
 { 
   try{
     return doIndParVariance_popPar(ret);
@@ -2562,7 +2667,7 @@ bool SpkModel::indParVariance_popPar( valarray<double>& ret ) const
 /*
 $begin SpkModel_indParVarianceInv$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny  
    th
@@ -2578,15 +2683,15 @@ $$
 
 $section Model for the Inverse of Variance of Individual Parameter$$
 
-$index SpkModel, doIndParVarianceInv( SPK_VA::valarray<double> & )$$
-$index SpkModel, indParVarianceInv( SPK_VA::valarray<double> & )$$
+$index SpkModel, doIndParVarianceInv( SPK_VA::valarray<Scalar> & )$$
+$index SpkModel, indParVarianceInv( SPK_VA::valarray<Scalar> & )$$
 $index User-provided Model, inverse of variance of individual parameter$$
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual void SpkModel::doIndParVarianceInv( SPK_VA::valarray<double> & /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual void SpkModel<Scalar>::doIndParVarianceInv( SPK_VA::valarray<Scalar> & /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: void SpkModel::indParVarianceInv( SPK_VA::valarray<double> & /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::indParVarianceInv( SPK_VA::valarray<Scalar> & /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -2609,7 +2714,7 @@ A default implementation is provided.
 $pre
 
 $$
-$code SpkModel::doIndParVarianceInv()$$ calculates the inverse of the variance of
+$code SpkModel<Scalar>::doIndParVarianceInv()$$ calculates the inverse of the variance of
 individual parameter at a currently set population parameter
 (see $xref/SpkModel_setPopPar//setPopPar/$$).  
 $pre
@@ -2654,13 +2759,43 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-void SpkModel::doIndParVarianceInv( valarray<double>& ret ) const
+template<class Scalar>
+void SpkModel<Scalar>::doIndParVarianceInv( valarray<Scalar>& ret ) const
 {
-  indParVariance(ret);
-  ret = inverse(ret, _nIndPar);
+  valarray<Scalar> D;
+  indParVariance( D );
+
+  _nIndPar = static_cast<int>( sqrt( static_cast<double>( D.size() ) ) );
+  assert( D.size() == _nIndPar * _nIndPar );
+
+  int j;
+
+  // Create an identity matrix.
+  valarray<Scalar> identity( _nIndPar * _nIndPar );
+  identity = Scalar( 0 );
+  for ( j = 0; j < _nIndPar; j++ )
+  {
+    identity[j + j * _nIndPar] = 1;
+  }
+
+  ret.resize( _nIndPar * _nIndPar );
+
+  // Calculate the inverse by solving the equation
+  //
+  //     D  *  X  =  I  ,
+  //
+  // where I is the identity matrix and
+  //
+  //            -1
+  //     X  =  D    .
+  //
+  int signdet;
+  Scalar logdet;
+  signdet = CppAD::LuSolve( _nIndPar, _nIndPar, D, identity, ret, logdet );
 }
 
-void SpkModel::indParVarianceInv( valarray<double>& ret ) const 
+template<class Scalar>
+void SpkModel<Scalar>::indParVarianceInv( valarray<Scalar>& ret ) const 
 { 
   try{
     doIndParVarianceInv(ret);
@@ -2707,7 +2842,7 @@ void SpkModel::indParVarianceInv( valarray<double>& ret ) const
 /*
 $begin SpkModel_indParVarianceInv_popPar$$
 $spell
-	Model model
+    Model model
    SPK_VA
    Ny  
    th
@@ -2728,9 +2863,9 @@ $index User-provided Model, derivative of inverse of variance of individual para
 
 $table
 $bold Virtual Private Interface:$$   $rend  
-$syntax/private: virtual bool SpkModel::doIndParVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
+$syntax/private: template<class Scalar> virtual bool SpkModel<Scalar>::doIndParVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$  $rend
 $bold Public Interface:$$ $rend
-$syntax/public: bool SpkModel::indParVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
+$syntax/public: template<class Scalar> bool SpkModel<Scalar>::indParVarianceInv_popPar( SPK_VA::valarray<double>& /ret/ ) const/$$       $rend
 $tend
 
 $table
@@ -2800,22 +2935,31 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-bool SpkModel::doIndParVarianceInv_popPar( valarray<double>& ret ) const
+template<class Scalar>
+bool SpkModel<Scalar>::doIndParVarianceInv_popPar( valarray<double>& ret ) const
 {
-  valarray<double> Dinv;
-  doIndParVarianceInv(Dinv);
-  DoubleMatrix dmatDinv( Dinv, _nIndPar );
+  valarray<Scalar> DScalar;
+  indParVariance(DScalar);
+  assert( DScalar.size() == _nIndPar * _nIndPar );
+  
+  valarray<double> DInv( DScalar.size() );
+  scalarToDoubleArray( DScalar, DInv );
+  DInv = inverse(DInv, _nIndPar);
+  assert( DInv.size() == _nIndPar * _nIndPar );
+
+  DoubleMatrix dmatDInv( DInv, _nIndPar );
 
   valarray<double> D_a;
   doIndParVariance_popPar(D_a);
   DoubleMatrix dmatD_a( D_a, _nPopPar );
 
-  ret = minusAkronBtimesC( dmatDinv, dmatDinv, dmatD_a ).toValarray();
+  ret = minusAkronBtimesC( dmatDInv, dmatDInv, dmatD_a ).toValarray();
   return !allZero(ret);
 }
 
 
-bool SpkModel::indParVarianceInv_popPar( valarray<double>& ret ) const 
+template<class Scalar>
+bool SpkModel<Scalar>::indParVarianceInv_popPar( valarray<double>& ret ) const 
 { 
   try{
     return doIndParVarianceInv_popPar(ret);
@@ -2857,6 +3001,9 @@ bool SpkModel::indParVarianceInv_popPar( valarray<double>& ret ) const
 //
 //*************************************************************************
 
+namespace // [Begin: unnamed namespace]
+{
+
 static DoubleMatrix minusAkronBtimesC( const DoubleMatrix &A, const DoubleMatrix &B, const DoubleMatrix &C )
 {
     return mulByScalar(AkronBtimesC( A, B, C ), -1.);
@@ -2866,6 +3013,8 @@ static void minusAkronBtimesC( const DoubleMatrix &A, const DoubleMatrix &B, con
 {
     ret = mulByScalar(AkronBtimesC( A, B, C ), -1.);
 }
+
+} // [End: unnamed namespace]
 
 
 /*************************************************************************
@@ -2880,7 +3029,7 @@ static void minusAkronBtimesC( const DoubleMatrix &A, const DoubleMatrix &B, con
 /*
 $begin SpkModel_dataCovariance$$
 $spell
-	Model model
+    Model model
   SPK_VA
   Covariance
   const
@@ -2897,7 +3046,7 @@ $index User-provided Model, data covariance$$
 
 $table
 $bold Public Interface:$$   $rend 
-$syntax/public: const Covariance& SpkModel::getDataCovariance() const/$$  $rend
+$syntax/public: template<class Scalar> const Covariance& SpkModel<Scalar>::getDataCovariance() const/$$  $rend
 $tend
 
 $table
@@ -2941,7 +3090,9 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-const Covariance& SpkModel::getDataCovariance()   const 
+
+template<class Scalar>
+const Covariance& SpkModel<Scalar>::getDataCovariance()   const 
 { 
   return *pDataCovariance; 
 }
@@ -2959,7 +3110,7 @@ const Covariance& SpkModel::getDataCovariance()   const
 /*
 $begin SpkModel_indParCovariance$$
 $spell
-	Model model
+    Model model
   SPK_VA
   Covariance
   ind
@@ -2977,7 +3128,7 @@ $index User-provided Model, individual parameter covariance$$
 
 $table
 $bold Public Interface:$$   $rend  
-$syntax/public: const Covariance& SpkModel::getIndParCovariance() const/$$  $rend
+$syntax/public: template<class Scalar> const Covariance& SpkModel<Scalar>::getIndParCovariance() const/$$  $rend
 $tend
 
 $table
@@ -3021,7 +3172,9 @@ See $xref/SpkModel/Example/Example/$$
 
 $end
 */
-const Covariance& SpkModel::getIndParCovariance() const 
+
+template<class Scalar>
+const Covariance& SpkModel<Scalar>::getIndParCovariance() const 
 { 
   return *pIndParCovariance; 
 }
@@ -3029,7 +3182,7 @@ const Covariance& SpkModel::getIndParCovariance() const
 
 /*************************************************************************
  *
- * Function: void SpkModel::invalidateIndParCovarianceCache()
+ * Function: void SpkModel<Scalar>::invalidateIndParCovarianceCache()
  *
  *************************************************************************/
 
@@ -3039,7 +3192,7 @@ const Covariance& SpkModel::getIndParCovariance() const
 /*
 $begin SpkModel_invalidateIndParCovarianceCache$$
 $spell
-	Model model
+    Model model
   SPK_VA
   Covariance
   ind
@@ -3057,7 +3210,7 @@ $index User-provided Model, individual parameter covariance cache$$
 
 $table
 $bold Public Interface:$$   $rend  
-$syntax/public: void SpkModel::invalidateIndParCovarianceCache()/$$  $rend
+$syntax/public: template<class Scalar> void SpkModel<Scalar>::invalidateIndParCovarianceCache()/$$  $rend
 $tend
 
 $table
@@ -3078,8 +3231,117 @@ Invalidates the cached values for the covariance of the individual parameters.
 $end
 */
 
-void SpkModel::invalidateIndParCovarianceCache()
+template<class Scalar>
+void SpkModel<Scalar>::invalidateIndParCovarianceCache()
 { 
   pIndParCovariance->setCacheStatusInvalid(); 
 }
+
+
+/*------------------------------------------------------------------------
+ * Template function instantiations.
+ *------------------------------------------------------------------------*/
+
+// Declare double versions of these functions.
+template void SpkModel<double>::selectIndividual(int base0);
+template void SpkModel<double>::setPopPar(const valarray<double> &popPar);
+template void SpkModel<double>::setIndPar(const valarray<double> &indPar);
+
+template void SpkModel<double>::dataMean( valarray<double>& ret ) const;
+template bool SpkModel<double>::dataMean_indPar( valarray<double>& ret ) const;
+template bool SpkModel<double>::dataMean_popPar( valarray<double>& ret ) const;
+
+template void SpkModel<double>::dataVariance( valarray<double>& ret ) const;
+template bool SpkModel<double>::dataVariance_indPar( valarray<double>& ret ) const;
+template bool SpkModel<double>::dataVariance_popPar( valarray<double>& ret ) const;
+
+template void SpkModel<double>::dataVarianceInv( valarray<double>& ret ) const;
+template bool SpkModel<double>::dataVarianceInv_indPar( valarray<double>& ret ) const;
+template bool SpkModel<double>::dataVarianceInv_popPar( valarray<double>& ret ) const;
+
+template void SpkModel<double>::indParVariance( valarray<double>& ret ) const;
+template bool SpkModel<double>::indParVariance_popPar( valarray<double>& ret ) const;
+
+template void SpkModel<double>::indParVarianceInv( valarray<double>& ret ) const;
+template bool SpkModel<double>::indParVarianceInv_popPar( valarray<double>& ret ) const;
+
+template void SpkModel<double>::doSelectIndividual ( int base0 );
+template void SpkModel<double>::doSetPopPar( const valarray<double>& inVA );
+
+template bool SpkModel<double>::doDataMean_popPar( valarray<double>& ret ) const;
+
+template bool SpkModel<double>::doDataVariance_popPar( valarray<double>& ret ) const;
+
+template void SpkModel<double>::doDataVarianceInv( valarray<double>& ret ) const;
+template bool SpkModel<double>::doDataVarianceInv_indPar( valarray<double>& ret ) const;
+template bool SpkModel<double>::doDataVarianceInv_popPar( valarray<double>& ret ) const;
+
+template void SpkModel<double>::doIndParVariance( valarray<double>& ret ) const;
+template bool SpkModel<double>::doIndParVariance_popPar( valarray<double>& ret ) const;
+template void SpkModel<double>::doIndParVarianceInv( valarray<double>& ret ) const;
+template bool SpkModel<double>::doIndParVarianceInv_popPar( valarray<double>& ret ) const;
+
+template SpkModel<double>::SpkModel();
+template SpkModel<double>::SpkModel( const SpkModel &right );
+template SpkModel<double>& SpkModel<double>::operator=(const SpkModel &right);
+
+template SpkModel<double>::~SpkModel();
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// [Revisit - Backward Compatable SpkModel Code - Mitch]
+// This code is temporary and should be deleted once all of 
+// the old SpkModel remnants are gone.
+//
+template const Covariance& SpkModel<double>::getDataCovariance()   const;
+template const Covariance& SpkModel<double>::getIndParCovariance() const;
+
+template void SpkModel<double>::invalidateIndParCovarianceCache();
+//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+// Declare  CppAD::AD<double>  versions of these functions.
+template void SpkModel< CppAD::AD<double> >::selectIndividual(int base0);
+template void SpkModel< CppAD::AD<double> >::setPopPar(const valarray< CppAD::AD<double> > &popPar);
+template void SpkModel< CppAD::AD<double> >::setIndPar(const valarray< CppAD::AD<double> > &indPar);
+
+template void SpkModel< CppAD::AD<double> >::dataMean( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::dataMean_indPar( valarray<double>& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::dataMean_popPar( valarray<double>& ret ) const;
+
+template void SpkModel< CppAD::AD<double> >::dataVariance( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::dataVariance_indPar( valarray<double>& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::dataVariance_popPar( valarray<double>& ret ) const;
+
+template void SpkModel< CppAD::AD<double> >::dataVarianceInv( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::dataVarianceInv_indPar( valarray<double>& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::dataVarianceInv_popPar( valarray<double>& ret ) const;
+
+template void SpkModel< CppAD::AD<double> >::indParVariance( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::indParVariance_popPar( valarray<double>& ret ) const;
+
+template void SpkModel< CppAD::AD<double> >::indParVarianceInv( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::indParVarianceInv_popPar( valarray<double>& ret ) const;
+
+template void SpkModel< CppAD::AD<double> >::doSelectIndividual ( int base0 );
+template void SpkModel< CppAD::AD<double> >::doSetPopPar( const valarray< CppAD::AD<double> >& inVA );
+
+template bool SpkModel< CppAD::AD<double> >::doDataMean_popPar( valarray<double>& ret ) const;
+
+template bool SpkModel< CppAD::AD<double> >::doDataVariance_popPar( valarray<double>& ret ) const;
+
+template void SpkModel< CppAD::AD<double> >::doDataVarianceInv( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::doDataVarianceInv_indPar( valarray<double>& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::doDataVarianceInv_popPar( valarray<double>& ret ) const;
+
+template void SpkModel< CppAD::AD<double> >::doIndParVariance( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::doIndParVariance_popPar( valarray<double>& ret ) const;
+template void SpkModel< CppAD::AD<double> >::doIndParVarianceInv( valarray< CppAD::AD<double> >& ret ) const;
+template bool SpkModel< CppAD::AD<double> >::doIndParVarianceInv_popPar( valarray<double>& ret ) const;
+
+template SpkModel< CppAD::AD<double> >::SpkModel();
+template SpkModel< CppAD::AD<double> >::SpkModel( const SpkModel &right );
+template SpkModel< CppAD::AD<double> >& SpkModel< CppAD::AD<double> >::operator=(const SpkModel &right);
+
+template SpkModel< CppAD::AD<double> >::~SpkModel();
 

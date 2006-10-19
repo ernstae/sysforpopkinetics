@@ -24,24 +24,18 @@
  * Class: FullDataCovariance
  *
  *
- * Objects of this class are full covariance matrices that are used 
- * to perform mathematical operations with the individual data 
- * covariances Ri(alp, b) and that contain pointers to the SpkModel 
- * that contain them.
+ * Objects of this class are full covariance matrices that are used to
+ * perform mathematical operations with the individual data
+ * covariances Ri(alp, b) and that contain pointers to the
+ * SpkModel that contains them.
  *
  *************************************************************************/
 #ifndef FULLDATACOV_H
 #define FULLDATACOV_H
 
 #include "SpkValarray.h"
+#include "SpkModel.h"
 #include "FullCovariance.h"
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// [Revisit - Backward Compatable SpkModel Code - Mitch]
-// This class is temporary and should be deleted once all of 
-// the old SpkModel remnants are gone.
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class SpkModel;
 
 class FullDataCovariance : public FullCovariance 
 {
@@ -91,9 +85,9 @@ private:
   //------------------------------------------------------------
 
 public:
-  SpkModel* pModel;
+  SpkModel<double>* pModel;
 
-  void setModel( SpkModel* pModelIn );
+  void setModel( SpkModel<double>* pModelIn );
 };
 
 #endif

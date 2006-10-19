@@ -152,3 +152,5 @@ bool isUnnormNumber( const ValueType& value )
 template bool isUnnormNumber<double>( const double& value );
 
 template bool isUnnormNumber< CppAD::AD<double> >( const CppAD::AD<double> & value );
+
+template bool isUnnormNumber< CppAD::AD< CppAD::AD<double> > >( const CppAD::AD< CppAD::AD<double> > & value );

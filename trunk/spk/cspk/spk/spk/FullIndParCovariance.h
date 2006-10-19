@@ -24,24 +24,18 @@
  * Class: FullIndParCovariance
  *
  *
- * Objects of this class are full covariance matrices that are used 
- * to perform mathematical operations with the random population
+ * Objects of this class are full covariance matrices that are used to
+ * perform mathematical operations with the random population
  * parameter covariance D(alp) and that contain pointers to the
- * SpkModel that contain them.
+ * SpkModel that contains them.
  *
  *************************************************************************/
 #ifndef FULLINDPARCOV_H
 #define FULLINDPARCOV_H
 
 #include "SpkValarray.h"
+#include "SpkModel.h"
 #include "FullCovariance.h"
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// [Revisit - Backward Compatable SpkModel Code - Mitch]
-// This class is temporary and should be deleted once all of 
-// the old SpkModel remnants are gone.
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class SpkModel;
 
 class FullIndParCovariance : public FullCovariance 
 {
@@ -91,9 +85,9 @@ private:
   //------------------------------------------------------------
 
 public:
-  SpkModel* pModel;
+  SpkModel<double>* pModel;
 
-  void setModel( SpkModel* pModelIn );
+  void setModel( SpkModel<double>* pModelIn );
 
 };
 

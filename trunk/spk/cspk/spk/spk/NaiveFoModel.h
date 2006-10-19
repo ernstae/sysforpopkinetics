@@ -28,16 +28,16 @@
 #include "SpkModel.h"
 #include "DoubleMatrix.h"
 
-class NaiveFoModel : public SpkModel
+class NaiveFoModel : public SpkModel<double>
 {
 private:
-    SpkModel* _pmodel;
+    SpkModel<double>* _pmodel;
     SPK_VA::valarray<double> _alp, _b, _bStep, _bZero;
 
 	int _nA, _nB;
 
 public:
-	NaiveFoModel( SpkModel* pmodel, 
+	NaiveFoModel( SpkModel<double>* pmodel, 
       const SPK_VA::valarray<double>& bStep
       );
 	~NaiveFoModel();
@@ -64,11 +64,11 @@ private:
     class NaiveFoModelFunction 
       : public std::binary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 	{
-	  SpkModel* pModel;
+	  SpkModel<double>* pModel;
       mutable SPK_VA::valarray<double> ret;
 
 	public:
-	  NaiveFoModelFunction( SpkModel* p );
+	  NaiveFoModelFunction( SpkModel<double>* p );
       NaiveFoModelFunction( const NaiveFoModelFunction& right );
 	  ~NaiveFoModelFunction();
 	  const SPK_VA::valarray<double> operator()
@@ -88,11 +88,11 @@ private:
     class NaiveFoModelDeriv_popPar 
       : public std::binary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 	{
-	  SpkModel* pModel;
+	  SpkModel<double>* pModel;
       mutable SPK_VA::valarray<double> ret;
 
 	public:
-	  NaiveFoModelDeriv_popPar( SpkModel* p );
+	  NaiveFoModelDeriv_popPar( SpkModel<double>* p );
       NaiveFoModelDeriv_popPar( const NaiveFoModelDeriv_popPar& right );
 	  ~NaiveFoModelDeriv_popPar();
 	  const SPK_VA::valarray<double> operator()

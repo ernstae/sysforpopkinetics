@@ -63,7 +63,7 @@ $cindex \Computing Residuals \for \an Individual$$
 
 $table
 $bold Prototype:$$ $cend
-$syntax/void indResiduals( SpkModel&                        /model/,
+$syntax/void indResiduals( SpkModel<double>&        /model/,
                    const SPK_VA::valarray<double>&  /measurements/,
                    const SPK_VA::valarray<double>&  /indPar/,
                    SPK_VA::valarray<double>*        /pIndPredOut/,
@@ -284,7 +284,7 @@ using namespace std;
  * Function definition
  *------------------------------------------------------------------------*/
 
-void indResiduals( SpkModel&                model,
+void indResiduals( SpkModel<double>&        model,
                    const valarray<double>&  measurements,
                    const valarray<double>&  indPar,
                    valarray<double>*        pIndPredOut,

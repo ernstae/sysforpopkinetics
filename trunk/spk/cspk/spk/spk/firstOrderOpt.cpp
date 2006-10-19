@@ -104,7 +104,7 @@ $index population $$
 $table
 $bold Prototype:$$ $cend
 $syntax/void firstOrderOpt(
-              SpkModel&               /model/,
+              SpkModel<double>&               /model/,
               const DoubleMatrix&     /dvecN/,
               const DoubleMatrix&     /dvecY/,
               Optimizer&              /popOptimizer/,
@@ -694,7 +694,7 @@ static DoubleMatrix funD    ( const DoubleMatrix &alp );
 static DoubleMatrix funD_alp( const DoubleMatrix &dmatD,   
                             const DoubleMatrix &alp );
 
-class PopModel : public SpkModel
+class PopModel : public SpkModel<double>
 {
     DoubleMatrix _a, _b;
     int _i;
@@ -1256,14 +1256,14 @@ namespace // [Begin: unnamed namespace]
   //
   //**********************************************************************
 
-  class IndIndexFixedModel : public SpkModel
+  class IndIndexFixedModel : public SpkModel<double>
   {
     //----------------------------------------------------------
     // Class members.
     //----------------------------------------------------------
 
   private:
-    SpkModel* pModel;
+    SpkModel<double>* pModel;
 
 
     //----------------------------------------------------------
@@ -1273,7 +1273,7 @@ namespace // [Begin: unnamed namespace]
   public:
     // This constructor sets the individual index in the model passed
     // in to a value that will not be changed.
-    IndIndexFixedModel( SpkModel* pModelIn, int iFixed )
+    IndIndexFixedModel( SpkModel<double>* pModelIn, int iFixed )
       :
       pModel ( pModelIn )
     {
@@ -1385,7 +1385,7 @@ namespace // [Begin: unnamed namespace]
  * Function definition
  *------------------------------------------------------------------------*/
 void firstOrderOpt( 
-                    SpkModel&               model,
+                    SpkModel<double>&               model,
                     const DoubleMatrix&     dvecN,
                     const DoubleMatrix&     dvecY,
                     Optimizer&              popOptimizer,

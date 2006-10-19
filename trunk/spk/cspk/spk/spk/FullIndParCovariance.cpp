@@ -117,7 +117,7 @@ FullIndParCovariance::~FullIndParCovariance()
 FullIndParCovariance::FullIndParCovariance()
 {
 }
-void FullIndParCovariance::setModel( SpkModel* pModelIn ) 
+void FullIndParCovariance::setModel( SpkModel<double>* pModelIn ) 
 { 
   pModel = pModelIn; 
 }

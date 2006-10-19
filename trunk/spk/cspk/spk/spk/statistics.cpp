@@ -655,7 +655,7 @@ void statistics( const SPK_VA::valarray<bool>  & mask,    // flags indicating el
   valarray<bool> yCI_mask ( nX * 2 );
   valarray<bool> ySE_mask ( nX );
   valarray<bool> yCV_mask ( nX );
-  valarray<bool> yCor_mask( nX * nY );
+  valarray<bool> yCor_mask( nX * nX );
   double val = NAN;
 
   for( int j=0; j<2; j++ )

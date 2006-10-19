@@ -114,3 +114,6 @@ bool isNotANumber( const ValueType& value )
 template bool isNotANumber<double>( const double& value );
 
 template bool isNotANumber< CppAD::AD<double> >( const CppAD::AD<double> & value );
+
+template bool isNotANumber< CppAD::AD< CppAD::AD<double> > >( const CppAD::AD< CppAD::AD<double> > & value );
+

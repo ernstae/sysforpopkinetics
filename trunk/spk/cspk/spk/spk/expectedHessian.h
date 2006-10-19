@@ -29,7 +29,7 @@
 #include "SpkModel.h"
 
 void expectedHessian(
-         SpkModel& model, 
+         SpkModel<double>& model, 
          const DoubleMatrix & alp,
          const DoubleMatrix & b,
          const DoubleMatrix & bStep,
@@ -40,11 +40,11 @@ void expectedHessian(
 class ExpectedHessian : public std::binary_function<DoubleMatrix, DoubleMatrix, DoubleMatrix>
 {
     private:
-        SpkModel *_model;
+        SpkModel<double> *_model;
         DoubleMatrix _bStep;
 
     public:
-        ExpectedHessian(SpkModel *m, const DoubleMatrix& bStep)
+        ExpectedHessian(SpkModel<double> *m, const DoubleMatrix& bStep)
             : _model(m),  _bStep(bStep)
         {}
         ~ExpectedHessian() throw() 
@@ -69,11 +69,11 @@ class ExpectedHessian : public std::binary_function<DoubleMatrix, DoubleMatrix, 
 class ExpectedHessianValarray : public std::binary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 {
     private:
-        SpkModel *_model;
+        SpkModel<double> *_model;
         SPK_VA::valarray<double> _bStep;
 
     public:
-        ExpectedHessianValarray(SpkModel *m, const SPK_VA::valarray<double>& bStep)
+        ExpectedHessianValarray(SpkModel<double> *m, const SPK_VA::valarray<double>& bStep)
             : _model(m),  _bStep(bStep)
         {}
         ~ExpectedHessianValarray() throw() 

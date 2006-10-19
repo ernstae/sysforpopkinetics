@@ -237,7 +237,7 @@ $syntax/enum Objective { MODIFIED_LAPLACE, EXPECTED_HESSIAN, FIRST_ORDER, NAIVE_
 enum PopCovForm { RSR, R, S }
 /$$ $rend
 $bold Prototype:$$ $cend
-$syntax/void popStatistics( SpkModel&                       /popModel/,
+$syntax/void popStatistics( SpkModel<double>&               /popModel/,
                     enum Objective                  /objective/,
                     const SPK_VA::valarray<int>&    /nMeasurementsAll/,
                     const SPK_VA::valarray<double>& /measurementsAll/,
@@ -624,7 +624,7 @@ will be replaced by NaN if $code popParMask[i]$$ is $math%false%$$.
 $end
 */
 
-void popStatistics( SpkModel&                popModel,
+void popStatistics( SpkModel<double>&        popModel,
                     enum Objective           objective,
                     const valarray<int>&     nMeasurementsAll,
                     const valarray<double>&  measurementsAll,
@@ -1823,7 +1823,7 @@ $codep
 
 using namespace std;
 
-class UserModelPopStatisticsExampleTest : public SpkModel
+class UserModelPopStatisticsExampleTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     const int _nA;

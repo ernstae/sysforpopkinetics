@@ -117,7 +117,7 @@ FullDataCovariance::~FullDataCovariance()
 FullDataCovariance::FullDataCovariance()
 {
 }
-void FullDataCovariance::setModel( SpkModel* pModelIn ) 
+void FullDataCovariance::setModel( SpkModel<double>* pModelIn ) 
 { 
   pModel = pModelIn; 
 }

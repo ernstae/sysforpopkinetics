@@ -37,7 +37,7 @@
 #include "DoubleMatrix.h"
 #include "Optimizer.h"
 
-void mapOpt(  SpkModel& model,
+void mapOpt(  SpkModel<double>& model,
               const DoubleMatrix& dvecY,
               Optimizer& optimizer,
               const DoubleMatrix& dvecBLow,

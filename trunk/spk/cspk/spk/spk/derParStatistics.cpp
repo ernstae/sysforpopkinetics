@@ -383,7 +383,7 @@ void derParStatistics(
   valarray<double> zCovTemp    ( nZ * nZ );
   valarray<double> zCovNonSymm ( nZ * nZ );
   valarray<double> z_xTimesXCov( nZ * nZ );
-  valarray<double> z_xTrans    ( nZ * nZ * nZ );
+  valarray<double> z_xTrans    ( nZ * nZ );
  
   z_xTrans = transpose( z_x, nZ );
 

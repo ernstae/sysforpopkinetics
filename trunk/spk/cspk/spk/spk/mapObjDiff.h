@@ -26,7 +26,7 @@
 #include "DoubleMatrix.h"
 
 void mapObjDiff(
-                SpkModel &model,
+                SpkModel<double>   &model,
                 const DoubleMatrix &dvecY,
                 const DoubleMatrix &dvecBStep,
                 const DoubleMatrix &dvecB,

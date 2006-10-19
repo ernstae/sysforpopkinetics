@@ -129,7 +129,7 @@ fitIndividual.h $rend
 
 $bold Prototype:$$ $cend
 $syntax/void fitIndividual(  
-                SpkModel& /indModel/,
+                SpkModel<double>& /indModel/,
                 const SPK_VA::valarray<double>& /measurements/,
                 Optimizer&                      /indOptimizer/,
                 const SPK_VA::valarray<double>& /indParLow/,
@@ -533,7 +533,7 @@ static SPK_VA::valarray<double> funR(  const SPK_VA::valarray<double> &dvecB );
 static SPK_VA::valarray<double> funR_b(const SPK_VA::valarray<double> &dmatRb, 
                                        const SPK_VA::valarray<double> &dvecB );
 
-class IndModel : public SpkModel
+class IndModel : public SpkModel<double>
 {
     SPK_VA::valarray<double> _b;
 public:
@@ -856,7 +856,7 @@ namespace // [Begin: unnamed namespace]
  *------------------------------------------------------------------------*/
 
 void fitIndividual( 
-                    SpkModel&               indModel,
+                    SpkModel<double>&       indModel,
                     const valarray<double>& measurements,
                     Optimizer&              indOptimizer,
                     const valarray<double>& indParLow,

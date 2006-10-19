@@ -115,7 +115,7 @@ namespace // [Begin: unnamed namespace]
   //
   //**********************************************************************
 
-  class DeprecatedModel : public SpkModel
+  class DeprecatedModel : public SpkModel<double>
   {
     //----------------------------------------------------------
     // Class members.
@@ -320,7 +320,7 @@ $table
 $bold Enumerator:$$ $cend
 $syntax/enum PopCovForm { RSR, R, S, HSH, H }/$$ $rend
 $bold Prototype:$$ $cend
-$syntax/void indStatistics( SpkModel&                        /model/,
+$syntax/void indStatistics( SpkModel<double>&        /model/,
                     const SPK_VA::valarray<double>&  /measurements/,
                     const SPK_VA::valarray<double>&  /indPar/,
                     const SPK_VA::valarray<bool>&    /indParMask/,
@@ -708,7 +708,7 @@ $end
  * Function definition
  *------------------------------------------------------------------------*/
 
-void indStatistics( SpkModel&                model,
+void indStatistics( SpkModel<double>&        model,
                     const valarray<double>&  measurements,
                     const valarray<double>&  indPar,
                     const valarray<bool>&    indParMask,
@@ -1122,7 +1122,7 @@ void indStatistics( SpkModel&                model,
   if ( withD )
   {
     DInvMask   .resize( nB * nB );
-    DInvReduced.resize( nB * nB );
+    DInvReduced.resize( nX * nX );
 
     for ( j = 0; j < nB; j++ )
     {
@@ -2412,7 +2412,7 @@ using namespace std;
  * Class Definition
  *------------------------------------------------------------------------*/
 /*
-class UserModelIndStatisticsExampleTest : public SpkModel
+class UserModelIndStatisticsExampleTest : public SpkModel<double>
 {
     valarray<double> _b;
 public:

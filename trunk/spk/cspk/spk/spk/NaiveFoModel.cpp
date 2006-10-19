@@ -76,7 +76,7 @@ $index NaiveFoModel$$
 
 $table
 $bold Constructors:$$   $cend  
-$syntax/NaiveFoModel::NaiveFoModel( SpkModel* /pmodel/, const SpkValarray::valarray<double>& /bStep/)/$$
+$syntax/NaiveFoModel::NaiveFoModel( SpkModel<double>* /pmodel/, const SpkValarray::valarray<double>& /bStep/)/$$
 
 $tend
 
@@ -151,7 +151,7 @@ $$
 
 $head Constructors$$
 $syntax/
-NaiveFoModel( SpkModel* /pmodel/, const SPK_VA::valarray<double>& /bStep/)
+NaiveFoModel( SpkModel<double>* /pmodel/, const SPK_VA::valarray<double>& /bStep/)
 /$$
 This constructor takes a pointer to an
 SpkModel, $italic pmodel$$, that is to be a function of
@@ -295,7 +295,7 @@ using SPK_VA::valarray;
 /*------------------------------------------------------------------------
  * NaiveFoModel Class definition
  *------------------------------------------------------------------------*/
-NaiveFoModel::NaiveFoModel( SpkModel* pmodel, 
+NaiveFoModel::NaiveFoModel( SpkModel<double>* pmodel, 
                   const valarray<double>& bStep ) 
                 : _pmodel( pmodel ), _bStep( bStep )
 
@@ -465,7 +465,7 @@ bool NaiveFoModel::doIndParVariance_popPar( valarray<double> & foD_aOut ) const
 // Section of an individual must be done outside of this class.  
 // It is assumed that these parameters are set at the time of member function call.
 //
-NaiveFoModel::NaiveFoModelFunction::NaiveFoModelFunction( SpkModel* p ) 
+NaiveFoModel::NaiveFoModelFunction::NaiveFoModelFunction( SpkModel<double>* p ) 
 : pModel( p )
 {
 }
@@ -499,7 +499,7 @@ const valarray<double> NaiveFoModel::NaiveFoModelFunction::operator()
 // It provides a unary operator( x1, x2 ) that evalutes 
 // the true derivative of f(alp,b) with respect to alp, namely f_alp(alp, b).
 //
-NaiveFoModel::NaiveFoModelDeriv_popPar::NaiveFoModelDeriv_popPar( SpkModel* p ) 
+NaiveFoModel::NaiveFoModelDeriv_popPar::NaiveFoModelDeriv_popPar( SpkModel<double>* p ) 
 : pModel( p ) 
 {
 }

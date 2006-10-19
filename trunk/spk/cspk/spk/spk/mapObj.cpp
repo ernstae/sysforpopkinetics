@@ -88,7 +88,7 @@ $index individual, objective function$$
 $table
 $bold Syntax:$$ $cend
 $syntax/void mapObj(
-    SpkModel           & /model/,
+    SpkModel<double>   & /model/,
     const DoubleMatrix & /y/,
     const DoubleMatrix & /b/,
     double             * /pMapObjOut/,
@@ -274,7 +274,7 @@ $codep
     #include "SpkValarray.h"
 
     using SPK_VA::valarray;
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         valarray<double> _b;
 
@@ -461,7 +461,7 @@ static DoubleMatrix mapObj_bOutTemp(__FILE__);
 // Response Watrous 7/19/01: This should be addressed by the Covariance 
 // objects that have been added to the user-model class.
 
-void mapObj(  SpkModel &model, 
+void mapObj(  SpkModel<double>     &model, 
               const   DoubleMatrix &dvecY,
               const   DoubleMatrix &dvecB,
               double *pMapObjOut,
@@ -778,7 +778,7 @@ $rend
 $bold Constructor: $$ 
 $cend 
 $syntax/MapObj<class /ElemType/>::MapObj( 
-  SpkModel         * /model/, 
+  SpkModel<double>   * /model/, 
   const /ElemType/   & /y/, 
   bool             & /withD/, 
   bool             & /isFO/, 
@@ -882,7 +882,7 @@ $codep
     #include "centdiff.h"
 
     using SPK_VA::valarray;
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         valarray<double> _b;
 
@@ -1067,7 +1067,7 @@ $rend
 $bold Constructor: $$ 
 $cend 
 $syntax/MapObj_b<class /ElemType/>::MapObj_b( 
-      SpkModel       * /model/, 
+      SpkModel<double> * /model/, 
       const /ElemType/ & /y/, 
       bool             /withD/, 
       bool             /isFO/, 
@@ -1170,7 +1170,7 @@ $codep
     #include "centdiff.h"
 
     using SPK_VA::valarray;
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         valarray<double> _b;
 

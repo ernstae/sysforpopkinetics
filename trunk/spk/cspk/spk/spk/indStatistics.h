@@ -42,7 +42,7 @@
 
 typedef PopCovForm IndCovForm;
 
-void indStatistics( SpkModel&                        model,
+void indStatistics( SpkModel<double>&                model,
                     const SPK_VA::valarray<double>&  measurements,
                     const SPK_VA::valarray<double>&  indPar,
                     const SPK_VA::valarray<bool>&    indParMask,

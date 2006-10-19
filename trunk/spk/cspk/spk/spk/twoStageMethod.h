@@ -39,7 +39,7 @@
 #include "Optimizer.h"
 #include "SpkModel.h"
 
-void twoStageMethod( SpkModel&            model,
+void twoStageMethod( SpkModel<double>&    model,
                      enum  Objective      method,
                      const DoubleMatrix&  dvecN,
                      const DoubleMatrix&  dvecY,

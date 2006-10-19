@@ -35,7 +35,7 @@
 #include "DoubleMatrix.h"
 
 void lambda2diff(
-        SpkModel &model,
+        SpkModel<double> &model,
         const DoubleMatrix &dvecY,
         const DoubleMatrix &dvecAlp,
         const DoubleMatrix &dvecB,

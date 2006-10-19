@@ -66,7 +66,7 @@ $cindex second #order central difference #of Lambda$$
 $table
 $bold Prototype:$$   $cend
 $syntax/void lambda2diff(
-        SpkModel & /model/,
+        SpkModel<double>   & /model/,
         const DoubleMatrix & /y/,
         const DoubleMatrix & /alp/,
         const DoubleMatrix & /b/,
@@ -192,7 +192,7 @@ $codep
     #include "SpkModel.h"
     #include "SpkValarray.h"
 
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         valarray<double> _a, _b;
         int _i;
@@ -441,7 +441,7 @@ $end
  *------------------------------------------------------------------------*/
 
 void lambda2diff(
-        SpkModel &model,
+        SpkModel<double>   &model,
         const DoubleMatrix &dvecY,
         const DoubleMatrix &dvecAlp,
         const DoubleMatrix &dvecB,
