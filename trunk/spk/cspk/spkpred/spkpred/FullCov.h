@@ -38,7 +38,7 @@
  *------------------------------------------------------------------------*/
 
 // SPK Pred library header files.
-#include "Cov.h"
+#include "FullCovBase.h"
 
 // SPK library header files.
 #include <spk/SpkValarray.h>
@@ -75,7 +75,7 @@
  *//*
  *************************************************************************/
 
-class FullCov : public Cov
+class FullCov : public FullCovBase<double>
 {
   //------------------------------------------------------------
   // Constructors and destructors.
@@ -84,42 +84,6 @@ class FullCov : public Cov
 public:
   FullCov( int nRowIn );
   FullCov( int nRowIn, const SPK_VA::valarray<bool>& minRepFixedIn );
-
-  //------------------------------------------------------------
-  // Mathematical functions.
-  //------------------------------------------------------------
-
-public:
-  void cov    ( SPK_VA::valarray<double>& covOut     ) const;
-  void cov_par( SPK_VA::valarray<double>& cov_parOut ) const;
-
-  void inv    ( SPK_VA::valarray<double>& invOut     ) const;
-  void inv_par( SPK_VA::valarray<double>& inv_parOut ) const;
-
-  void getParLimits(
-    SPK_VA::valarray<double>&  parLow,
-    SPK_VA::valarray<double>&  parUp ) const;
-
-  void calcPar( 
-    const SPK_VA::valarray<double>& covIn,
-    SPK_VA::valarray<double>&       parOut ) const;
-
-  void calcCovMinRep( 
-    const SPK_VA::valarray<double>& covIn,
-    SPK_VA::valarray<double>&       covMinRepOut ) const;
-
-  void calcCovMinRep_par( 
-    const SPK_VA::valarray<double>& cov_parIn,
-    int                             nCov_parInCol,
-    SPK_VA::valarray<double>&       covMinRep_parOut ) const;
-
-  void calcCovMinRepMask( 
-    const SPK_VA::valarray<bool>& parMaskIn,
-    SPK_VA::valarray<bool>&       covMinRepMaskOut ) const;
-
-  void expandCovMinRep( 
-    const SPK_VA::valarray<double>& covMinRepIn,
-    SPK_VA::valarray<double>&       covOut ) const;
 
 
   //------------------------------------------------------------

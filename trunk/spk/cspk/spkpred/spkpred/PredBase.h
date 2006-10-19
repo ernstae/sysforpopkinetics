@@ -104,8 +104,8 @@ public:
    *                        THETA, ETA and EPS.
    * @param depVar          (output) The vector whose (fOffset + m)-th and 
    *                        (yOffset + m)-th elements will be replaced with 
-   *                        the calculated values for <code>F<code> and 
-   *                        <code>Y<code>, respectively, if the DV data
+   *                        the calculated values for <code>F</code> and 
+   *                        <code>Y</code>, respectively, if the DV data
    *                        item for this data record is not missing.  The
    *                        number m is the position of this DV value in
    *                        the list of DV values for this individual that

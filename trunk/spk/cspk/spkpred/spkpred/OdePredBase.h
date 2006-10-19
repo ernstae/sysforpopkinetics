@@ -165,15 +165,15 @@ public:
     int p;
     for ( p = 0; p < nComp; p++ )
     {
-      compAmount       [p] = 0.0;
-      compAmount_t     [p] = 0.0;
+      compAmount       [p] = Value( 0 );
+      compAmount_t     [p] = Value( 0 );
 
-      compInfusRate    [p] = 0.0;
-      compInfusDurat   [p] = 0.0;
-      compAbsorpLagTime[p] = 0.0;
+      compInfusRate    [p] = Value( 0 );
+      compInfusDurat   [p] = Value( 0 );
+      compAbsorpLagTime[p] = Value( 0 );
 
-      compScaleParam   [p] = 1.0;
-      compBioavailFrac [p] = 1.0;
+      compScaleParam   [p] = Value( 1 );
+      compBioavailFrac [p] = Value( 1 );
 
       compInitialOff   [p] = compInitialOffIn[p];
       compNoOff        [p] = compNoOffIn     [p];
@@ -183,16 +183,16 @@ public:
     }
 
     // Set initial values for these parameters.
-    tscale  = 1.0;
-    fo = 1.0;
+    tscale  = Value( 1 );
+    fo = Value( 1 );
 
     // Set initial values for these data items.
     mdv  = 0;
     evid = 0;
     cmt  = 0;
-    amt  = 0.0;
-    rate = 0.0;
-    time = 0.0;
+    amt  = Value( 0 );
+    rate = Value( 0 );
+    time = Value( 0 );
 
     // Set an invalid initial value for this data item that will be
     // reset if it appears in the data record.
@@ -655,7 +655,7 @@ protected:
     int pOn = compIndex( comp );
 
     // Set the initial amount in this compartment equal to zero.
-    compAmount[pOn] = 0.0;
+    compAmount[pOn] = Value( 0 );
 
     // Only turn on the output compartment if it is being used.
     if ( comp == nComp && ! isOutputCompUsed )
@@ -673,7 +673,7 @@ protected:
 
     // Set the initial derivative with respect to time of the amount
     // in the compartment.
-    compAmount_t[pOn] = 0.0;
+    compAmount_t[pOn] = Value( 0 );
 
     // Set the flag to indicate the compartment is on.
     compIsOff[pOn] = false;
@@ -721,8 +721,8 @@ protected:
 
     // Zero the amount in the compartment and its derivative with
     // respect to time.
-    compAmount  [pOff] = 0.0;
-    compAmount_t[pOff] = 0.0;
+    compAmount  [pOff] = Value( 0 );
+    compAmount_t[pOff] = Value( 0 );
 
     // Set the flag to indicate the compartment is off.
     compIsOff[pOff] = true;
@@ -777,7 +777,7 @@ private:
   public:
     BreakInfo()
     :
-    time( 0.0 ), isDataRec( false ), indDataRecIndex( 0 )
+    time( Value( 0 ) ), isDataRec( false ), indDataRecIndex( 0 )
     {
     }
     BreakInfo( const Value& timeIn, bool isDataRecIn, int indDataRecIndexIn )
@@ -820,7 +820,7 @@ private:
   public:
     InfusOffInfo()
     :
-    time( 0.0 ), infusIndex( 0 )
+    time( Value( 0 ) ), infusIndex( 0 )
     {
     }
     InfusOffInfo( const Value& timeIn, int infusIndexIn )
@@ -853,7 +853,7 @@ private:
   public:
     ZeroOrderBolusOffInfo()
     :
-    time( 0.0 ), zeroOrderBolusIndex( 0 )
+    time( Value( 0 ) ), zeroOrderBolusIndex( 0 )
     {
     }
     ZeroOrderBolusOffInfo( const Value& timeIn, int zeroOrderBolusIndexIn )
@@ -1085,7 +1085,7 @@ protected:
 
         // If this is an instantaneous bolus dose, then get its
         // experiment design related information.
-        if ( amt > 0.0 && rate == 0.0 )
+        if ( amt > Value( 0 ) && rate == Value( 0 ) )
         {
           // Set the compartment.
           if ( cmt == 0 )
@@ -1133,7 +1133,7 @@ protected:
 
         // If this is a regular infusion dose, then get its experiment
         // design related information.
-        if ( amt > 0.0 && rate > 0.0 )
+        if ( amt > Value( 0 ) && rate > Value( 0 ) )
         {
           // Set the compartment.
           if ( cmt == 0 )
@@ -1192,7 +1192,7 @@ protected:
         // A zero-order bolus dose is just like a regular infusion
         // dose except that the duration and/or rate is calculated in
         // the PK block.
-        if ( amt > 0.0 && ( rate == -2.0 || rate == -1.0 ) )
+        if ( amt > Value( 0 ) && ( rate == Value( -2 ) || rate == Value( -1 ) ) )
         {
           // Set the compartment.
           if ( cmt == 0 )
@@ -1227,7 +1227,7 @@ protected:
           p = compIndex( zeroOrderBolusComp.back() );
 
           // Set the rate and duration.
-          if ( rate == -2.0 )
+          if ( rate == Value( -2 ) )
           {
             // In this case, the duration was set in the PK block.
             zeroOrderBolusDurat.push_back( compInfusDurat[p] );
@@ -1266,7 +1266,7 @@ protected:
         // This will cause a prediction evaluation to be calculated
         // there, but it won't appear in the objective function
         // calculation.
-        if ( amt > 0.0 )
+        if ( amt > Value( 0 ) )
         {
           // Set the compartment.
           if ( pcmt > 0 )
@@ -1864,7 +1864,7 @@ public:
     int p;
     for ( p = 0; p < nCompToSolve; p++ )
     {
-      bolusAmountOut[p] = 0.0;
+      bolusAmountOut[p] = Value( 0 );
     }
 
     // Find any instantaneous bolus doses for the current break point.
@@ -2070,7 +2070,7 @@ public:
       }
 
       // Set the output compartment.
-      compAmount[nComp - 1] = 0.0;
+      compAmount[nComp - 1] = Value( 0 );
     }
 
 
@@ -2174,12 +2174,12 @@ public:
     {
       if ( compIsOff[p] )
       {
-        compAmount_tOut[p] = 0.0;
+        compAmount_tOut[p] = Value( 0 );
       }
 
       // Check that the amounts in compartments that are off are equal
       // to zero.
-      assert( !compIsOff[p] || compAmount[p] == 0.0 );
+      assert( !compIsOff[p] || compAmount[p] == Value( 0 ) );
     }
 
 
@@ -2208,7 +2208,7 @@ public:
     if ( isOutputCompUsed && !compIsOff[m] )
     {
       // Zero the derivative of the output compartment. 
-      compAmount_tOut[m] = 0.0;
+      compAmount_tOut[m] = Value( 0 );
   
       for ( p = 0; p < nComp - 1; p++ )
       {
@@ -2297,7 +2297,7 @@ private:
     // Since only the relative tolerance is currently provided to this
     // class, set the absolute tolerances for integration of the
     // ordinary differential equations equal to zero.
-    std::vector<Value> tolAbs( nCompToSolve, 0.0 );
+    std::vector<Value> tolAbs( nCompToSolve, Value( 0 ) );
 
     // This message will be used if an error occurs.
     string message = "during the evaluation of the compartment amounts for \nall of the requested times for the " +
@@ -2389,7 +2389,7 @@ private:
       p = nComp - 1;
       for ( s = 0; s < nOdeSoln; s++ )
       {
-        compAmountAllOdeSoln[p + s * nComp] = 0.0;
+        compAmountAllOdeSoln[p + s * nComp] = Value( 0 );
       }
     }
 

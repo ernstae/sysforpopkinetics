@@ -42,6 +42,9 @@
 // SPK library header files.
 #include <spk/SpkValarray.h>
 
+// CppAD header files.
+#include <CppAD/CppAD.h>
+
 // Standard library header files.
 #include <cassert>
 
@@ -58,7 +61,8 @@ using SPK_VA::valarray;
  *//*
  *************************************************************************/
 
-Cov::Cov( int nRowIn, int nParIn )
+template<class Scalar>
+Cov<Scalar>::Cov( int nRowIn, int nParIn )
   :
   nRow             ( nRowIn ),
   nPar             ( nParIn ),
@@ -77,7 +81,8 @@ Cov::Cov( int nRowIn, int nParIn )
 
 //[Revisit - eliminate the need for two constructors in Cov, FullCov, DiagCov by
 //  providing default (all false) in PopPredModel and IndPredModel constructors - Dave]
-Cov::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn )
+template<class Scalar>
+Cov<Scalar>::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn )
   :
   nRow             ( nRowIn ),
   nPar             ( nParIn ),
@@ -134,7 +139,8 @@ Cov::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn )
  *//*
  *************************************************************************/
 
-void Cov::setPar( const SPK_VA::valarray<double>& parIn )
+template<class Scalar>
+void Cov<Scalar>::setPar( const SPK_VA::valarray<Scalar>& parIn )
 {
   assert( parIn.size() == nPar );
 
@@ -161,16 +167,17 @@ void Cov::setPar( const SPK_VA::valarray<double>& parIn )
  *//*
  *************************************************************************/
 
-void Cov::setCov( const SPK_VA::valarray<double>& covIn )
+template<class Scalar>
+void Cov<Scalar>::setCov( const SPK_VA::valarray<Scalar>& covIn )
 {
   assert( covIn.size() == nRow * nRow );
 
   // Get the parameters that correspond to this covariance matrix.
-  valarray<double> parTemp( nPar );
-  calcPar( covIn, parTemp );
+  valarray<Scalar> parCovIn( nPar );
+  calcPar( covIn, parCovIn );
 
   // Set the new value for the parameter if it has changed.
-  setPar( parTemp );
+  setPar( parCovIn );
 }
 
 
@@ -183,7 +190,8 @@ void Cov::setCov( const SPK_VA::valarray<double>& covIn )
  *//*
  *************************************************************************/
 
-void Cov::invalidateCache() const
+template<class Scalar>
+void Cov<Scalar>::invalidateCache() const
 {
   isCovCurrOk     = false;
   isCov_parCurrOk = false;
@@ -198,7 +206,8 @@ void Cov::invalidateCache() const
  *
  *************************************************************************/
 
-bool Cov::getUsedCachedCov() const
+template<class Scalar>
+bool Cov<Scalar>::getUsedCachedCov() const
 {
   return usedCachedCov;
 }
@@ -210,7 +219,8 @@ bool Cov::getUsedCachedCov() const
  *
  *************************************************************************/
 
-bool Cov::getUsedCachedCov_par() const
+template<class Scalar>
+bool Cov<Scalar>::getUsedCachedCov_par() const
 {
   return usedCachedCov_par;
 }
@@ -222,7 +232,8 @@ bool Cov::getUsedCachedCov_par() const
  *
  *************************************************************************/
 
-bool Cov::getUsedCachedInv() const
+template<class Scalar>
+bool Cov<Scalar>::getUsedCachedInv() const
 {
   return usedCachedInv;
 }
@@ -234,7 +245,8 @@ bool Cov::getUsedCachedInv() const
  *
  *************************************************************************/
 
-bool Cov::getUsedCachedInv_par() const
+template<class Scalar>
+bool Cov<Scalar>::getUsedCachedInv_par() const
 {
   return usedCachedInv_par;
 }
@@ -246,7 +258,8 @@ bool Cov::getUsedCachedInv_par() const
  *
  *************************************************************************/
 
-int Cov::getNRow() const
+template<class Scalar>
+int Cov<Scalar>::getNRow() const
 {
   return nRow;
 }
@@ -258,8 +271,48 @@ int Cov::getNRow() const
  *
  *************************************************************************/
 
-int Cov::getNPar() const
+template<class Scalar>
+int Cov<Scalar>::getNPar() const
 {
   return nPar;
 }
+
+
+/*------------------------------------------------------------------------
+ * Template function instantiations.
+ *------------------------------------------------------------------------*/
+
+// Declare double versions of these functions.
+template Cov<double>::Cov( int nRowIn, int nParIn );
+template Cov<double>::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn );
+
+template void Cov<double>::setPar( const SPK_VA::valarray<double>& parIn );
+template void Cov<double>::setCov( const SPK_VA::valarray<double>& covIn );
+
+template void Cov<double>::invalidateCache() const;
+
+template bool Cov<double>::getUsedCachedCov()     const;
+template bool Cov<double>::getUsedCachedCov_par() const;
+template bool Cov<double>::getUsedCachedInv()     const;
+template bool Cov<double>::getUsedCachedInv_par() const;
+
+template int Cov<double>::getNRow() const;
+template int Cov<double>::getNPar() const;
+
+// Declare CppAD::AD<double> versions of these functions.t
+template Cov< CppAD::AD<double> >::Cov( int nRowIn, int nParIn );
+template Cov< CppAD::AD<double> >::Cov( int nRowIn, int nParIn, const SPK_VA::valarray<bool>& minRepFixedIn );
+
+template void Cov< CppAD::AD<double> >::setPar( const SPK_VA::valarray< CppAD::AD<double> >& parIn );
+template void Cov< CppAD::AD<double> >::setCov( const SPK_VA::valarray< CppAD::AD<double> >& covIn );
+
+template void Cov< CppAD::AD<double> >::invalidateCache() const;
+
+template bool Cov< CppAD::AD<double> >::getUsedCachedCov()     const;
+template bool Cov< CppAD::AD<double> >::getUsedCachedCov_par() const;
+template bool Cov< CppAD::AD<double> >::getUsedCachedInv()     const;
+template bool Cov< CppAD::AD<double> >::getUsedCachedInv_par() const;
+
+template int Cov< CppAD::AD<double> >::getNRow() const;
+template int Cov< CppAD::AD<double> >::getNPar() const;
 
