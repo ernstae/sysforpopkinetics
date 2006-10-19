@@ -8,9 +8,11 @@
 #include "FullCovTest.h"
 #include "BlkDiagCovTest.h"
 #include "IndPredModelTest.h"
+#include "IndPredModelBaseTest.h"
 #include "OdeBreakTest.h"
 #include "OdePredBaseTest.h"
 #include "PopPredModelTest.h"
+#include "PopPredModelBaseTest.h"
 #include "predTwoStageMethodTest.h"
 
 using namespace std;
@@ -38,9 +40,11 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "FullCovTest" ]               = FullCovTest             ::suite();
   master_list_of_tests[ "BlkDiagCovTest" ]            = BlkDiagCovTest          ::suite();
   master_list_of_tests[ "IndPredModelTest" ]          = IndPredModelTest        ::suite();
+  master_list_of_tests[ "IndPredModelBaseTest" ]      = IndPredModelBaseTest    ::suite();
   master_list_of_tests[ "OdeBreakTest" ]              = OdeBreakTest            ::suite();
   master_list_of_tests[ "OdePredBaseTest" ]           = OdePredBaseTest         ::suite();
   master_list_of_tests[ "PopPredModelTest" ]          = PopPredModelTest        ::suite();
+  master_list_of_tests[ "PopPredModelBaseTest" ]      = PopPredModelBaseTest    ::suite();
   master_list_of_tests[ "predTwoStageMethodTest" ]    = predTwoStageMethodTest  ::suite();
 
   //

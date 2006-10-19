@@ -43,9 +43,11 @@ testall_SOURCES = \
 	FullCovTest.cpp \
 	BlkDiagCovTest.cpp \
 	IndPredModelTest.cpp \
+	IndPredModelBaseTest.cpp \
 	OdeBreakTest.cpp \
 	OdePredBaseTest.cpp \
 	PopPredModelTest.cpp \
+	PopPredModelBaseTest.cpp \
 	predTwoStageMethodTest.cpp \
 	testall.cpp \
 	compareToKnown.h \
@@ -53,9 +55,11 @@ testall_SOURCES = \
 	FullCovTest.h \
 	BlkDiagCovTest.h \
 	IndPredModelTest.h \
+	IndPredModelBaseTest.h \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \
 	PopPredModelTest.h \
+	PopPredModelBaseTest.h \
 	predTwoStageMethodTest.h \
 	$(top_builddir)/config.h
 
@@ -65,8 +69,10 @@ pkginclude_HEADERS = \
 	FullCovTest.h \
 	BlkDiagCovTest.h \
 	IndPredModelTest.h \
+	IndPredModelBaseTest.h \
 	OdeBreakTest.h \
 	OdePredBaseTest.h \
 	PopPredModelTest.h \
+	PopPredModelBaseTest.h \
 	predTwoStageMethodTest.h \
 	@top_builddir@/config.h

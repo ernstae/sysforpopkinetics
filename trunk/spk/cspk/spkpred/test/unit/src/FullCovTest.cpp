@@ -691,7 +691,7 @@ void FullCovTest::twoByTwoCovTest()
 
   // Increase the tolerance slightly for this comparison because of
   // roundoff errors in some partial derivatives that should be zero.
-  tol = 2.0e-13;
+  tol = 3.0e-13;
 
   compareToKnown( 
     omegaInv_par,
