@@ -7,7 +7,7 @@
 
 extern void MontePopObj(
 	enum MontePars::METHOD       method          ,
-	SpkModel                    &model           ,
+	SpkModel<double>            &model           ,
 	const std::valarray<int>    &N               , 
 	const std::valarray<double> &y               ,
 	const std::valarray<double> &alpha           ,

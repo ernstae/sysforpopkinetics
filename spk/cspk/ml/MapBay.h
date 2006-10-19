@@ -5,7 +5,7 @@
 # include <spk/SpkModel.h>
 
 extern void MapBaySet(
-	SpkModel                     *model     ,
+	SpkModel<double>             *model     ,
 	const std::valarray<double>  &y         ,
 	const std::valarray<double>  &alpha     , 
 	size_t                        individual,

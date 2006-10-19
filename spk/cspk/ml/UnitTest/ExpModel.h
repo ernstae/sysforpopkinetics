@@ -66,7 +66,7 @@ $end
 # include <valarray>
 # include <CppAD/CppAD.h>
 
-class ExpModel : public SpkModel {
+class ExpModel : public SpkModel<double> {
 private:
 	// constant part of private data
 	const size_t                 nInd; // number of random effects

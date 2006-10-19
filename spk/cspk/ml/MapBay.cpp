@@ -19,7 +19,7 @@ $bold Syntax$$ $cnext
 $syntax%double MapBay(double *%b%, size_t %n%, void *%p%)%$$
 $rnext $cnext
 $syntax%void MapBaySet(
-	SpkModel                     *%model%     ,
+	SpkModel<double>             *%model%     ,
 	const std::valarray<double>  &%yi%        ,
 	const std::valarray<double>  &%alpha%     , 
 	size_t                        %individual%,
@@ -114,7 +114,7 @@ namespace {
 
 	// values for this individual
 	std::valarray<double>      Y;
-	SpkModel                  *Model;
+	SpkModel<double>          *Model;
 	CppADvector<double>        DInv;
 	double                     Dlogdet;
 
@@ -125,7 +125,7 @@ namespace {
 }
 
 void MapBaySet(
-	SpkModel                     *model     ,
+	SpkModel<double>             *model     ,
 	const std::valarray<double>  &y         ,
 	const std::valarray<double>  &alpha     , 
 	size_t                        individual,

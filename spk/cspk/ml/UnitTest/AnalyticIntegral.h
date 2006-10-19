@@ -7,7 +7,7 @@
 # include <valarray>
 
 double AnalyticIntegral(
-	SpkModel                    &model           ,
+	SpkModel<double>            &model           ,
 	const std::valarray<int>    &N               , 
 	const std::valarray<double> &y               ,
 	const std::valarray<double> &alpha           ,

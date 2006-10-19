@@ -52,7 +52,7 @@ $latex \[
 $end
 */
 
-class LinearModel : public SpkModel {
+class LinearModel : public SpkModel<double> {
 private:
 	// constant part of private data
 	const size_t   m;             // number of fixed effects
