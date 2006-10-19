@@ -111,7 +111,7 @@ $cindex optimizing \the parametric population objective \functions$$
 
 $table
 $bold Prototype:$$ $cend
-$syntax/void ppkaOpt( SpkModel&       /model/,
+$syntax/void ppkaOpt( SpkModel<double>&       /model/,
               enum Objective&         /objective/,
               const DoubleMatrix&     /dvecN/,
               const DoubleMatrix&     /dvecY/,
@@ -829,7 +829,7 @@ namespace ppkaoptexample
                                 const DoubleMatrix &dvecAlp );
 }
 
-class PopModel : public SpkModel
+class PopModel : public SpkModel<double>
 {
     DoubleMatrix _a, _b;
     int _i;
@@ -1359,7 +1359,7 @@ $end
 /*------------------------------------------------------------------------
  * Function definition
  *------------------------------------------------------------------------*/
-void ppkaOpt( SpkModel&               model,
+void ppkaOpt( SpkModel<double>&       model,
               enum  Objective         objective,
               const DoubleMatrix&     dvecN,
               const DoubleMatrix&     dvecY,

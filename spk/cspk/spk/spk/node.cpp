@@ -59,7 +59,7 @@ $index parallel, node$$
 
 $table
 $bold Prototype:$$   $cend  
-$syntax/node(const char* c_sharedDirectory, SpkModel& model)/$$
+$syntax/node(const char* c_sharedDirectory, SpkModel<double>& model)/$$
 $tend
 
 $fend 20$$
@@ -165,7 +165,8 @@ $end
  *------------------------------------------------------------------------*/
 static DoubleMatrix getElements( const DoubleMatrix &original, int offset, int howMany );
 static DoubleMatrix & operator+=(DoubleMatrix &A, const DoubleMatrix &B);
-static const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackage& inpack);
+
+static const IndOutputDataPackage indAnalysis(SpkModel<double> &model, const IndInputDataPackage& inpack);
 
 //
 // Retrieve a session ID posted by Master
@@ -214,7 +215,7 @@ static DoubleMatrix dvecBin(__FILE__);
 static long curSessionID;
 
 using namespace std;
-void node(const char* c_sharedDirectory, SpkModel& model)
+void node(const char* c_sharedDirectory, SpkModel<double>& model)
 {
   File sharedDiskSpace(c_sharedDirectory, "");
 
@@ -520,7 +521,7 @@ static DoubleMatrix drowLambda_alp_i(__FILE__);
 static DoubleMatrix drowLambda_b_i(__FILE__);
 static DoubleMatrix drowLTilde_alp_i(__FILE__);
 
-const IndOutputDataPackage indAnalysis(SpkModel &model, const IndInputDataPackage& inpack)
+const IndOutputDataPackage indAnalysis(SpkModel<double> &model, const IndInputDataPackage& inpack)
 {
     using namespace std;
 

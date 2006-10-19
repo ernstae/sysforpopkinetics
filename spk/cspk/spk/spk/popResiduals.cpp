@@ -73,7 +73,7 @@ $cindex \Computing Residuals \for \All \of \the \Individuals \in \the Population
 
 $table
 $bold Prototype:$$ $cend
-$syntax/void popResiduals( SpkModel&                        /model/,
+$syntax/void popResiduals( SpkModel<double>&                /model/,
                    enum Objective                   /objective/,
                    const SPK_VA::valarray<int>&     /nMeasurementsAll/,
                    const SPK_VA::valarray<double>&  /measurementsAll/,
@@ -412,7 +412,7 @@ using namespace std;
  * Function definition
  *------------------------------------------------------------------------*/
 
-void popResiduals( SpkModel&                model,
+void popResiduals( SpkModel<double>&        model,
                    enum Objective           objective,
                    const valarray<int>&     nMeasurementsAll,
                    const valarray<double>&  measurementsAll,

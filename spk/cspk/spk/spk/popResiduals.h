@@ -37,7 +37,7 @@
 #include "SpkModel.h"
 #include "Objective.h"
 
-void popResiduals( SpkModel&                        model,
+void popResiduals( SpkModel<double>&                model,
                    enum Objective                   objective,
                    const SPK_VA::valarray<int>&     nMeasurementsAll,
                    const SPK_VA::valarray<double>&  measurementsAll,

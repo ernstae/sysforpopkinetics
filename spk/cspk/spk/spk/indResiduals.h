@@ -37,7 +37,7 @@
 #include "SpkModel.h"
 #include "Objective.h"
 
-void indResiduals( SpkModel&                        model,
+void indResiduals( SpkModel<double>&                model,
                    const SPK_VA::valarray<double>&  measurements,
                    const SPK_VA::valarray<double>&  indPar,
                    SPK_VA::valarray<double>*        pIndPredOut,

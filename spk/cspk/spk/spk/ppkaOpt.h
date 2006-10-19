@@ -40,7 +40,7 @@
 #include "Optimizer.h"
 
 /* Sigle processor mode */
-void ppkaOpt( SpkModel&               model,
+void ppkaOpt( SpkModel<double>&       model,
               enum  Objective         objective,
               const DoubleMatrix&     dvecN,
               const DoubleMatrix&     dvecY,
@@ -62,7 +62,7 @@ void ppkaOpt( SpkModel&               model,
 
 /* Parallel processor mode */
 void ppkaOpt( 
-              SpkModel&               model,
+              SpkModel<double>&       model,
               enum  Objective         objective,
               const DoubleMatrix&     dvecN,
               const DoubleMatrix&     dvecY,

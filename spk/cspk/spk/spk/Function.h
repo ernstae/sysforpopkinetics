@@ -47,14 +47,14 @@
 class ModelFunction : public std::binary_function<DoubleMatrix, DoubleMatrix, DoubleMatrix>
 {
 public:
-    typedef void (SpkModel::*model_proto)( DoubleMatrix& ) const;
+    typedef void (SpkModel<double>::*model_proto)( DoubleMatrix& ) const;
 private:
     model_proto fun;    // fun is a pointer to a SpkModel member function
-    SpkModel  *model;  // a pointer to the SpkModel object
+    SpkModel<double>  *model;  // a pointer to the SpkModel object
     mutable DoubleMatrix ret;
 public:
 
-    ModelFunction(const model_proto f, SpkModel* m);
+    ModelFunction(const model_proto f, SpkModel<double>* m);
     ~ModelFunction() throw();
     ModelFunction(const ModelFunction& right);
     const DoubleMatrix operator()(const DoubleMatrix& X1, const DoubleMatrix& X2) const;
@@ -62,14 +62,14 @@ public:
 class ModelFunctionValarray : public std::binary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 {
 public:
-    typedef void (SpkModel::*model_proto)( SPK_VA::valarray<double>& ) const;
+    typedef void (SpkModel<double>::*model_proto)( SPK_VA::valarray<double>& ) const;
 private:
     model_proto fun;    // fun is a pointer to a SpkModel member function
-    SpkModel  *model;  // a pointer to the SpkModel object
+    SpkModel<double>  *model;  // a pointer to the SpkModel object
     mutable SPK_VA::valarray<double> ret;
 public:
 
-    ModelFunctionValarray(const model_proto f, SpkModel* m);
+    ModelFunctionValarray(const model_proto f, SpkModel<double>* m);
     ~ModelFunctionValarray() throw();
     ModelFunctionValarray(const ModelFunctionValarray& right);
     const SPK_VA::valarray<double> operator()(const SPK_VA::valarray<double>& x1, const SPK_VA::valarray<double>& x2) const;
@@ -79,14 +79,14 @@ public:
 class ModelDerivative : public std::binary_function<DoubleMatrix, DoubleMatrix, DoubleMatrix>
 {
 public:
-    typedef bool (SpkModel::*model_proto)( DoubleMatrix& ) const;
+    typedef bool (SpkModel<double>::*model_proto)( DoubleMatrix& ) const;
 private:
     model_proto fun;    // fun is a pointer to a SpkModel member function
-    SpkModel  *model;  // a pointer to the SpkModel object
+    SpkModel<double>  *model;  // a pointer to the SpkModel object
     mutable DoubleMatrix ret;
 public:
 
-    ModelDerivative(const model_proto f, SpkModel* m);
+    ModelDerivative(const model_proto f, SpkModel<double>* m);
     ~ModelDerivative() throw();
     ModelDerivative(const ModelDerivative& right);
     const DoubleMatrix operator()(const DoubleMatrix& X1, const DoubleMatrix& X2) const;
@@ -94,14 +94,14 @@ public:
 class ModelDerivativeValarray : public std::binary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 {
 public:
-    typedef bool (SpkModel::*model_proto)( SPK_VA::valarray<double>& ) const;
+    typedef bool (SpkModel<double>::*model_proto)( SPK_VA::valarray<double>& ) const;
 private:
     model_proto fun;    // fun is a pointer to a SpkModel member function
-    SpkModel  *model;  // a pointer to the SpkModel object
+    SpkModel<double>  *model;  // a pointer to the SpkModel object
     mutable SPK_VA::valarray<double> ret;
 public:
 
-    ModelDerivativeValarray(const model_proto f, SpkModel* m);
+    ModelDerivativeValarray(const model_proto f, SpkModel<double>* m);
     ~ModelDerivativeValarray() throw();
     ModelDerivativeValarray(const ModelDerivativeValarray& right);
     const SPK_VA::valarray<double> operator()(const SPK_VA::valarray<double>& x1, const SPK_VA::valarray<double>& x2) const;

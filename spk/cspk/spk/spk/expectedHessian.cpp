@@ -66,7 +66,7 @@ $table
 $bold Prototype:$$   $cend  
 $syntax/
 void expectedHessian(
-         SpkModel& /model/, 
+         SpkModel<double>& /model/, 
          const DoubleMatrix & /alp/,
          const DoubleMatrix & /b/,
          const DoubleMatrix & /bStep/,
@@ -432,7 +432,7 @@ $end
  *------------------------------------------------------------------------*/
 
 static const DoubleMatrix expectedHessian_b(
-         SpkModel& model, 
+         SpkModel<double>& model, 
          const DoubleMatrix & alp,
          const DoubleMatrix & b,
          const DoubleMatrix & bStep,
@@ -442,7 +442,7 @@ static const DoubleMatrix expectedHessian_b(
          const DoubleMatrix A[]);
 
 static const DoubleMatrix expectedHessian_alp(
-         SpkModel& model, 
+         SpkModel<double>& model, 
          const DoubleMatrix & alp,
          const DoubleMatrix & b,
          const DoubleMatrix & bStep,
@@ -456,7 +456,7 @@ static const DoubleMatrix expectedHessian_alp(
  * Function definition
  *------------------------------------------------------------------------*/
 void expectedHessian(
-         SpkModel& model, 
+         SpkModel<double>& model, 
          const DoubleMatrix & dvecAlp,
          const DoubleMatrix & dvecB,
          const DoubleMatrix & dvecBStep,
@@ -502,12 +502,12 @@ void expectedHessian(
     // first, it would allow model-based R matrices to use the
     // cached values for f calculated for each value of dvecB.
 
-    ModelFunctionValarray ROb(&SpkModel::dataVariance, &model);
+    ModelFunctionValarray ROb(&SpkModel<double>::dataVariance, &model);
     DoubleMatrix R_bApprox = DoubleMatrix( centdiff<binder1st<ModelFunctionValarray> >(bind1st(ROb, alp), nY, b, bStep), nB );
     assert(R_bApprox.nr() == nY*nY);
     assert(R_bApprox.nc() == nB);
 
-    ModelFunctionValarray fOb(&SpkModel::dataMean, &model);
+    ModelFunctionValarray fOb(&SpkModel<double>::dataMean, &model);
     DoubleMatrix f_bApprox = DoubleMatrix( centdiff<binder1st<ModelFunctionValarray> >(bind1st(fOb,alp), 1, b, bStep), nB );
     assert(f_bApprox.nr() == nY);
     assert(f_bApprox.nc() == nB);
@@ -602,7 +602,7 @@ void expectedHessian(
  *************************************************************************/
 
 const DoubleMatrix expectedHessian_b(
-         SpkModel& model, 
+         SpkModel<double>& model, 
          const DoubleMatrix & dvecAlp,
          const DoubleMatrix & dvecB,
          const DoubleMatrix & dvecBStep,
@@ -652,12 +652,12 @@ const DoubleMatrix expectedHessian_b(
     // first, it would allow model-based R_b matrices to use the
     // cached values for f_b calculated for each value of dvecB.
 
-    ModelDerivativeValarray R_bOb(&SpkModel::dataVariance_indPar, &model);
+    ModelDerivativeValarray R_bOb(&SpkModel<double>::dataVariance_indPar, &model);
     DoubleMatrix R_b_bApprox = DoubleMatrix( centdiff<binder1st<ModelDerivativeValarray> >(bind1st(R_bOb, alp), nB, b, bStep), nB );
     assert(R_b_bApprox.nr() == nY*nY*nB);
     assert(R_b_bApprox.nc() == nB);
 
-    ModelDerivativeValarray f_bOb(&SpkModel::dataMean_indPar, &model);
+    ModelDerivativeValarray f_bOb(&SpkModel<double>::dataMean_indPar, &model);
     DoubleMatrix f_b_bApprox = DoubleMatrix( centdiff<binder1st<ModelDerivativeValarray> >(bind1st(f_bOb, alp), nB, b, bStep), nB );
     assert(f_b_bApprox.nr() == nY*nB);
     assert(f_b_bApprox.nc() == nB);
@@ -705,7 +705,7 @@ const DoubleMatrix expectedHessian_b(
  *
  *************************************************************************/
 const DoubleMatrix expectedHessian_alp(
-         SpkModel& model, 
+         SpkModel<double>& model, 
          const DoubleMatrix & dvecAlp,
          const DoubleMatrix & dvecB,
          const DoubleMatrix & dvecBStep,
@@ -752,12 +752,12 @@ const DoubleMatrix expectedHessian_alp(
     // first, it would allow model-based R_b matrices to use the
     // cached values for f_b calculated for each value of dvecB.
 
-    ModelDerivativeValarray R_aOb(&SpkModel::dataVariance_popPar, &model);
+    ModelDerivativeValarray R_aOb(&SpkModel<double>::dataVariance_popPar, &model);
     DoubleMatrix R_a_bApprox = DoubleMatrix( centdiff<binder1st<ModelDerivativeValarray> >(bind1st(R_aOb, alp), nA, b, bStep), nB );
     assert(R_a_bApprox.nr() == nY*nY*nA);
     assert(R_a_bApprox.nc() == nB);
 
-    ModelDerivativeValarray f_aOb(&SpkModel::dataMean_popPar, &model);
+    ModelDerivativeValarray f_aOb(&SpkModel<double>::dataMean_popPar, &model);
     DoubleMatrix f_a_bApprox = DoubleMatrix( centdiff<binder1st<ModelDerivativeValarray> >(bind1st(f_aOb, alp), nA, b, bStep), nB );
     assert(f_a_bApprox.nr() == nY*nA);
     assert(f_a_bApprox.nc() == nB);
@@ -814,7 +814,7 @@ $index function, expectedHessian$$
 $table
 $bold Constructor:$$   $cend  
 $syntax/
-ExpectedHessian(SpkModel *m, const DoubleMatrix& bStep)/$$
+ExpectedHessian(SpkModel<double> *m, const DoubleMatrix& bStep)/$$
 $tend
 
 See also $xref/expectedHessian//function definition/$$
@@ -1128,7 +1128,7 @@ $index function, expectedHessian$$
 $table
 $bold Constructor:$$   $cend  
 $syntax/
-ExpectedHessian(SpkModel *m, const valarray<double>& bStep)/$$
+ExpectedHessian(SpkModel<double> *m, const valarray<double>& bStep)/$$
 $tend
 
 See also $xref/expectedHessian//function definition/$$

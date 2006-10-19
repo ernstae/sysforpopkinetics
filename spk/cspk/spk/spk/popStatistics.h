@@ -44,7 +44,7 @@
 
 enum PopCovForm { RSR=1, R, S, HSH, H };
 
-void popStatistics( SpkModel&                       popModel,
+void popStatistics( SpkModel<double>&               popModel,
                     enum Objective                  objective,
                     const SPK_VA::valarray<int>&    nMeasurementsAll,
                     const SPK_VA::valarray<double>& measurementsAll,

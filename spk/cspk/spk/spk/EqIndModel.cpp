@@ -95,7 +95,7 @@ $cindex \Constructor$$
 $table
 $bold Prototype:$$   $cend  
 $syntax/EqIndModel::EqIndModel(
-                         SpkModel*                          /pModel/,
+                         SpkModel<double>*          /pModel/,
                          const valarray<int>&       /N/,
                          const valarray<double>&    /bStep/,
                          int                                /nA/ )
@@ -674,7 +674,7 @@ namespace // [Begin: unnamed namespace]
  * Equivalent individual model class member definition
  *------------------------------------------------------------------------*/
 
-EqIndModel::EqIndModel( SpkModel* pModel, 
+EqIndModel::EqIndModel( SpkModel<double>* pModel, 
                         const valarray<int>& N, 
                         const valarray<double>& bStep, 
                         int nA )

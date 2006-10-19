@@ -72,7 +72,7 @@ $index individual, map bayesian difference equation$$
 $table
 $bold Prototype:$$ $cend
 $syntax/void mapTilde(
-    SpkModel           & /model/,
+    SpkModel<double>   & /model/,
     const DoubleMatrix & /y/,
     Optimizer          & /optimizer/,
     const DoubleMatrix & /bIn/, 
@@ -294,7 +294,7 @@ $codep
     //------------------------------------------------------------------------
     // User-provided Model declaration & definition
     //------------------------------------------------------------------------
-    class UserModel : public SpkModel
+    class UserModel : public SpkModel<double>
     {
         valarray<double> _b;
     public:
@@ -717,7 +717,7 @@ static DoubleMatrix dvecCurMapObj_bOut(__FILE__);
 static DoubleMatrix drowNotActive(__FILE__);
 
 void mapTilde(
-    SpkModel &model,
+    SpkModel<double>   &model,
     const DoubleMatrix &dvecY,
     Optimizer& optimizer,
     const DoubleMatrix &dvecBinitial, 

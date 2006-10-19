@@ -96,7 +96,7 @@ $bold Prototype:$$   $cend
 $syntax/class ModelFunctionValarray : public std::binary_function< valarray<double>, valarray<double>, valarray<double> >/$$
 $rend
 $bold Constructor:$$ $cend
-$syntax/ModelFunctionValarray::ModelFunctionValarray(ModelFunctionValarray::* /model_proto/, SpkModel* /m/)/$$ $rend
+$syntax/ModelFunctionValarray::ModelFunctionValarray(ModelFunctionValarray::* /model_proto/, SpkModel<double>* /m/)/$$ $rend
 $tend
 
 
@@ -120,7 +120,7 @@ $syntax/
 /model_proto/
 /$$
 is a function pointer to a user-provided model you are trying to evaluate.
-For example, if you are trying to create a function object for your SpkModel::doDataMean(),
+For example, if you are trying to create a function object for your SpkModel<double>::doDataMean(),
 you specify $code dataMean$$ as $italic model_proto$$.
 $pre
 
@@ -170,7 +170,7 @@ $codep
   #include "SpkValarray.h"
   #include "SpkModel.h"
 
-  class UserPopModel : public SpkModel
+  class UserPopModel : public SpkModel<double>
   {
       valarray<double> _alp;
       valarray<double> _b;
@@ -412,9 +412,9 @@ $codep
       indPar[1] = 1.0;
 
       //
-      // Instantiate a function object for SpkModel::dataMean( valarray& )
+      // Instantiate a function object for SpkModel<double>::dataMean( valarray& )
       //
-      ModelFunctionValarray fOb( SpkModel::dataMean, &model );
+      ModelFunctionValarray fOb( SpkModel<double>::dataMean, &model );
 
       //
       // Let the function object computes and return the function value.
@@ -434,7 +434,7 @@ $codep
       }
       cout << "}" << endl;
 
-      cout << "SpkModel::dataMean() returned: { ";
+      cout << "SpkModel<double>::dataMean() returned: { ";
       for( int i=0; i<fOut.size(); i++ )
       {
           cout << fOut[i] << " ";
@@ -445,7 +445,7 @@ $$
 then it will display the following when it is run:
 $codep
       Function object returned: { 2.0 2.0 }
-      SpkModel::dataMean() returned: { 2.0 2.0 }
+      SpkModel<double>::dataMean() returned: { 2.0 2.0 }
 $$
   
 $end
@@ -466,7 +466,7 @@ $end
 
 using SPK_VA::valarray;
 
-ModelFunction::ModelFunction(const model_proto f, SpkModel* m)
+ModelFunction::ModelFunction(const model_proto f, SpkModel<double>* m)
     :    fun(f), model(m)
 {
 }
@@ -488,7 +488,7 @@ const DoubleMatrix ModelFunction::operator()(const DoubleMatrix& X1, const Doubl
   return ret;
 }
 
-ModelFunctionValarray::ModelFunctionValarray(const model_proto f, SpkModel* m)
+ModelFunctionValarray::ModelFunctionValarray(const model_proto f, SpkModel<double>* m)
     :    fun(f), model(m)
 {
 }
@@ -572,8 +572,8 @@ $bold Prototype:$$   $cend
 $syntax/class ModelDerivative : public std::binary_function<DoubleMatrix, DoubleMatrix, DoubleMatrix>/$$
 $rend
 $bold Constructor:$$ $cend
-$syntax/ModelDerivative::ModelDerivative(ModelDerivative::* /model_proto/, SpkModel* /m/)/$$ $rend
-$syntax/ModelDerivativeValarray::ModelDerivativeValarray(ModelDerivativeValarray::* /model_proto/, SpkModel* /m/)/$$ $rend
+$syntax/ModelDerivative::ModelDerivative(ModelDerivative::* /model_proto/, SpkModel<double>* /m/)/$$ $rend
+$syntax/ModelDerivativeValarray::ModelDerivativeValarray(ModelDerivativeValarray::* /model_proto/, SpkModel<double>* /m/)/$$ $rend
 $tend
 
 See also: $xref/ModelFunction//ModelFunction/$$
@@ -596,7 +596,7 @@ $syntax/
 /model_proto/
 /$$
 is a function pointer to a user-provided model you are trying to evaluate.
-For example, if you are trying to create a function object for your void SpkModel::doDataMean(DoubleMatrix&),
+For example, if you are trying to create a function object for your void SpkModel<double>::doDataMean(DoubleMatrix&),
 you specify $code dataMean$$ as $italic model_proto$$.
 $pre
 
@@ -643,7 +643,7 @@ $codep
   #include "SpkModel.h"
   #include "SpkValarray.h"
 
-  class UserPopModel : public SpkModel
+  class UserPopModel : public SpkModel<double>
   {
       valarray<double> _alp;
       valarray<double> _b;
@@ -885,9 +885,9 @@ $codep
       indPar[1] = 1.0;
 
       //
-      // Instantiate a function object for SpkModel::dataMean_indPar( valarray& )
+      // Instantiate a function object for SpkModel<double>::dataMean_indPar( valarray& )
       //
-      ModelDerivativeValarray f_bOb( SpkModel::dataMean_indPar, &model );
+      ModelDerivativeValarray f_bOb( SpkModel<double>::dataMean_indPar, &model );
 
       //
       // Let the function object computes and return the function value.
@@ -907,7 +907,7 @@ $codep
       }
       cout << "}" << endl;
 
-      cout << "SpkModel::dataMean_indPar() returned: { ";
+      cout << "SpkModel<double>::dataMean_indPar() returned: { ";
       for( int i=0; i<f_bOut.size(); i++ )
       {
           cout << f_bOut[i] << " ";
@@ -918,11 +918,11 @@ $$
 then it will display the following when it is run:
 $codep
       Function object returned: { 2.0 2.0 0.0 0.0 }
-      SpkModel::dataMean_indPar() returned: { 2.0 2.0 0.0 0.0 }
+      SpkModel<double>::dataMean_indPar() returned: { 2.0 2.0 0.0 0.0 }
 $$
 $end
 */
-ModelDerivative::ModelDerivative(const model_proto f, SpkModel* m)
+ModelDerivative::ModelDerivative(const model_proto f, SpkModel<double>* m)
     :    fun(f), model(m)
 {
 }
@@ -944,7 +944,7 @@ const DoubleMatrix ModelDerivative::operator()(const DoubleMatrix& X1, const Dou
   return ret;
 }
 
-ModelDerivativeValarray::ModelDerivativeValarray(const model_proto f, SpkModel* m)
+ModelDerivativeValarray::ModelDerivativeValarray(const model_proto f, SpkModel<double>* m)
     :    fun(f), model(m)
 {
 }

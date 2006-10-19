@@ -115,7 +115,7 @@ $cindex determining /the population mean /and covariance /of individual paramete
 $table
 $bold Prototype:$$ $cend
 $syntax/void twoStageMethod(
-              SpkModel&               /model/,
+              SpkModel<double>&       /model/,
               enum Objective          /method/,
               const DoubleMatrix&     /dvecN/,
               const DoubleMatrix&     /dvecY/,
@@ -172,10 +172,10 @@ $math%
                     nInd   ----      
                            i = 1 
 
-$$
+%$$
 and the population covariance of the individuals' estimates is
 calculated as
-$math%$$
+$math%
 
                           nInd
                           ----
@@ -184,7 +184,7 @@ $math%$$
                    nInd   ----          
                           i = 1 
 
-$$
+%$$
 For the Iterative and Global Two-Stage methods (ITS and GTS), the
 population mean and the population covariance of the individuals' 
 estimates are calculated using the algorithms described in Schumitzky
@@ -287,32 +287,32 @@ The following subsections specify how this function uses
 some of the elements of the Optimizer object that are accessed 
 directly using get functions.
 
-$subhead optInfo.epsilon$$
+$subhead popOptInfo.epsilon$$
 This real number is used to specify the convergence criteria
 for the iterative and global Two-Stage methods.
 It must be greater than $math%0.0%$$.
 
-$subhead optInfo.nMaxIter$$
+$subhead popOptInfo.nMaxIter$$
 This integer must be greater than or equal to zero.
 It specifies the maximum number of iterations for the iterative and 
 global Two-Stage methods to attempt before giving up on convergence.
 If it is equal to zero, then the initial values for the population mean
 and covariance are accepted as the final values.
 
-$subhead optInfo.traceLevel$$
+$subhead popOptInfo.traceLevel$$
 This integer scalar specifies the amount of tracing for the iterative 
 and global Two-Stage methods.
 If $math%level \ge 1%$$, trace values are directed to standard output 
 (stdout).  
 
-$subhead optInfo.nIterCompleted$$
+$subhead popOptInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
 completed for the iterative and global Two-Stage methods..
 
-$subhead optInfo.isTooManyIter$$
+$subhead popOptInfo.isTooManyIter$$
 This flag indicates whether the too-many-iteration failure has occurred.  
 
-$subhead optInfo.throwExcepIfMaxIter$$
+$subhead popOptInfo.throwExcepIfMaxIter$$
 This flag indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 If this parameter is true, then when
@@ -343,7 +343,7 @@ The following subsections specify how this function uses
 some of the elements of the Optimizer object that are accessed 
 directly using get functions.
 
-$subhead optInfo.epsilon$$
+$subhead indOptInfo.epsilon$$
 This real number is used to specify the convergence criteria
 for the optimizer.
 It must be greater than $math%0.0%$$.
@@ -369,7 +369,7 @@ Note that if $italic nMaxIter$$ is set to zero, then the $th i$$
 column of $math%bIn%$$ is accepted as the estimate for 
 $math%bHat_i%$$.
 
-$subhead optInfo.nMaxIter$$
+$subhead indOptInfo.nMaxIter$$
 This integer must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
@@ -377,7 +377,7 @@ If it is equal to zero, then the initial
 value for $math%b%$$ is accepted as the final value, and any requested output
 values are evaluated at that final value.
 
-$subhead optInfo.traceLevel$$
+$subhead indOptInfo.traceLevel$$
 This integer scalar specifies the amount of tracing.
 Larger values of $italic traceLevel$$ entail more tracing, 
 with $math%4%$$ being the highest level of tracing.
@@ -403,26 +403,26 @@ $$
 For more details on the tracing see the description of the level 
 parameter for the optimizer $xref/QuasiNewton01Box//QuasiNewton01Box/$$.
 
-$subhead optInfo.nIterCompleted$$
+$subhead indOptInfo.nIterCompleted$$
 This integer scalar holds the number of iteration that have been 
 completed in the optimizer.
 
-$subhead optInfo.isTooManyIter$$
+$subhead indOptInfo.isTooManyIter$$
 This flag indicates whether the too-many-iteration failure has occurred.  
 
-$subhead optInfo.saveStateAtEndOfOpt$$
+$subhead indOptInfo.saveStateAtEndOfOpt$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.throwExcepIfMaxIter$$
+$subhead indOptInfo.throwExcepIfMaxIter$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.isWarmStartPossible$$
+$subhead indOptInfo.isWarmStartPossible$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.isWarmStart$$
+$subhead indOptInfo.isWarmStart$$
 This flag is not used for the individual level optimization.
 
-$subhead optInfo.stateInfo$$
+$subhead indOptInfo.stateInfo$$
 This $code StateInfo$$ struct is not used for the individual 
 level optimization.
 
@@ -585,16 +585,16 @@ namespace // [Begin: unnamed namespace]
   //
   //**********************************************************************
 
-  class TwoStageModel : public SpkModel
+  class TwoStageModel : public SpkModel<double>
   {
     //----------------------------------------------------------
     // Class members.
     //----------------------------------------------------------
 
   private:
-    SpkModel*        pModel;
-    int              nIndPar;
-    valarray<double> indParVarStored;
+    SpkModel<double>* pModel;
+    int               nIndPar;
+    valarray<double>  indParVarStored;
 
 
     //----------------------------------------------------------
@@ -602,7 +602,7 @@ namespace // [Begin: unnamed namespace]
     //----------------------------------------------------------
 
   public:
-    TwoStageModel( SpkModel* pModelIn, int nIndParIn )
+    TwoStageModel( SpkModel<double>* pModelIn, int nIndParIn )
       :
       pModel         ( pModelIn ),
       nIndPar        ( nIndParIn ),
@@ -819,7 +819,7 @@ namespace // [Begin: unnamed namespace]
  * Function definition
  *------------------------------------------------------------------------*/
 
-void twoStageMethod( SpkModel&            model,
+void twoStageMethod( SpkModel<double>&    model,
                      enum  Objective      method,
                      const DoubleMatrix&  dvecN,
                      const DoubleMatrix&  dvecY,

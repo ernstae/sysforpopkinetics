@@ -50,10 +50,10 @@
  * Equivalent individual model class definition
  *------------------------------------------------------------------------*/
 
-class EqIndModel : public SpkModel
+class EqIndModel : public SpkModel<double>
 {
 private:
-	SpkModel* _pModel;
+	SpkModel<double>* _pModel;
 	SPK_VA::valarray<int> _N;
     SPK_VA::valarray<double> _bStep; // This step size is for the "b" in the conventional sense.  
                                      // It'll be used for approximating for fi_b(alp,0).
@@ -68,7 +68,7 @@ private:
     mutable bool isCachedRInvValid;
 
 public:
-	EqIndModel( SpkModel* pModel, const SPK_VA::valarray<int>& N, 
+	EqIndModel( SpkModel<double>* pModel, const SPK_VA::valarray<int>& N, 
 		        const SPK_VA::valarray<double>& xStep, int nA );
 
     ~EqIndModel(){}
@@ -84,9 +84,9 @@ protected:
 
 	class EqIndModelFunction : public std::unary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 	{
-	    SpkModel* pModel;
+	    SpkModel<double>* pModel;
 	public:
-		EqIndModelFunction( SpkModel* p ) : pModel( p )
+		EqIndModelFunction( SpkModel<double>* p ) : pModel( p )
         {}
 		~EqIndModelFunction()
         {}
@@ -103,10 +103,10 @@ protected:
 	};
 	class EqIndModelDerivative : public std::unary_function< SPK_VA::valarray<double>, SPK_VA::valarray<double> >
 	{
-	    SpkModel* pModel;
+	    SpkModel<double>* pModel;
         const int nA;
 	public:
-		EqIndModelDerivative( SpkModel* p, int nAIn ) 
+		EqIndModelDerivative( SpkModel<double>* p, int nAIn ) 
           : pModel( p ), nA( nAIn )
         {}
 		~EqIndModelDerivative()

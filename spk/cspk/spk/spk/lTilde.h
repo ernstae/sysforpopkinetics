@@ -37,7 +37,7 @@
 
 // Single process mode
 void lTilde(
-        SpkModel      &model,
+        SpkModel<double>           &model,
         enum Objective objective,
         const         DoubleMatrix &dvecY_forAll,  // all individuals' data
         const         DoubleMatrix &dvecNumsOfDataforEachSubject,
@@ -57,7 +57,7 @@ void lTilde(
 void lTilde(
         bool          isMultiple,
         const File   &sharedDiskSpace,
-        SpkModel    &model,
+        SpkModel<double>           &model,
         enum Objective objective,
         const         DoubleMatrix &dvecY_forAll,  // all individuals' data
         const         DoubleMatrix &dvecNumsOfDataforEachSubject,

@@ -143,7 +143,7 @@ fitPopulation.h $rend
 
 $bold Prototype:$$ $cend
 $syntax/void fitPopulation(
-				SpkModel&                       /popModel/,
+				SpkModel<double>&               /popModel/,
 				enum Objective                  /objective/,
 				const SPK_VA::valarray<int>&    /nMeasurementsAll/,
 				const SPK_VA::valarray<double>& /measurementsAll/,
@@ -821,7 +821,7 @@ $codep
 
 using std::string;
 
-class UserModelFitPopulationExampleTest : public SpkModel
+class UserModelFitPopulationExampleTest : public SpkModel<double>
 {
     SPK_VA::valarray<double> _a, _b;
 	const int _nA;
@@ -1268,7 +1268,7 @@ namespace // [Begin: unnamed namespace]
  *------------------------------------------------------------------------*/
 
 void fitPopulation( 
-				    SpkModel&                   model,
+				    SpkModel<double>&               model,
 					enum Objective              objective,
                     const valarray<int>&        nMeasurementsAll,
                     const valarray<double>&     measurementsAll,

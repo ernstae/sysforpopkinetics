@@ -124,7 +124,7 @@ $index population, parallel mode$$
 $table
 $bold Prototype:$$ $cend
 $syntax/void ppkaOpt(
-              SpkModel&               /model/,
+              SpkModel<double>&       /model/,
               enum Objective          /objective/,
               const DoubleMatrix&     /dvecN/,
               const DoubleMatrix&     /dvecY/,
@@ -798,7 +798,7 @@ static DoubleMatrix funD    ( const DoubleMatrix &alp );
 static DoubleMatrix funD_alp( const DoubleMatrix &dmatD,   
                             const DoubleMatrix &alp );
 
-class PopModel : public SpkModel
+class PopModel : public SpkModel<double>
 {
     DoubleMatrix _a, _b;
     int _i;
@@ -1404,7 +1404,7 @@ namespace // [Begin: unnamed namespace]
       int                  nAlpIn,
       const DoubleMatrix&  dmatBBestIn,
       const File*          pSharedDirectoryIn,
-      SpkModel*            pModelIn,
+      SpkModel<double>*    pModelIn,
       enum  Objective      objectiveIn,
       const DoubleMatrix*  pdvecNIn,
       const DoubleMatrix*  pdvecYIn,
@@ -1485,7 +1485,7 @@ namespace // [Begin: unnamed namespace]
 
     // These point to ppkaOptParallel inputs.
     const File*          pSharedDirectory;
-    SpkModel*            pModel;
+    SpkModel<double>*    pModel;
     enum  Objective      objective;
     const DoubleMatrix*  pdvecN;
     const DoubleMatrix*  pdvecY;
@@ -1815,7 +1815,7 @@ namespace ltildetrancendiff{
   typedef void (* LTILDE_PROTOTYPE)(
                   bool               isMultiple,
                   const File         &sharedDirectory,
-                  SpkModel           &model,
+                  SpkModel<double>   &model,
                   enum Objective     whichObjective,
                   const DoubleMatrix &dvecY_forAll,
                   const DoubleMatrix &dvecNumsOfDataforEachSubject,
@@ -1834,7 +1834,7 @@ namespace ltildetrancendiff{
           LTILDE_PROTOTYPE,
           bool               isMultiple,
           const File         &sharedDirectory,
-          SpkModel           &model,
+          SpkModel<double>   &model,
           enum  Objective    whichObjective,
           const DoubleMatrix &dvecY_forAll,
           const DoubleMatrix &dvecNumsOfDataforEachSubject,
@@ -1858,7 +1858,7 @@ using namespace ltildetrancendiff;
  * Function definition
  *------------------------------------------------------------------------*/
 void ppkaOpt( 
-              SpkModel&               model,
+              SpkModel<double>&       model,
               enum  Objective         objective,
               const DoubleMatrix&     dvecN,
               const DoubleMatrix&     dvecY,
@@ -2315,7 +2315,7 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
         LTILDE_PROTOTYPE pfLTilde,
         bool               isMultiple,
         const File         &sharedDirectory,
-        SpkModel           &model,
+        SpkModel<double>   &model,
         enum Objective     whichObjective,
         const DoubleMatrix &dvecY_forAll,
         const DoubleMatrix &dvecNumsOfDataforEachSubject,

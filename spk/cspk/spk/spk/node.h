@@ -24,6 +24,6 @@
 
 #include "SpkModel.h"
 
-void node(const char* c_sharedDirectory, SpkModel& model);
+void node(const char* c_sharedDirectory, SpkModel<double>& model);
 
 #endif

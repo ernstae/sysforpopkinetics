@@ -38,7 +38,7 @@
 #include "Optimizer.h"
 
 void estimateB(
-    SpkModel &model,
+    SpkModel<double> &model,
     bool   isBlsq,
     Optimizer& optimizer,
     const  DoubleMatrix &dvecY,

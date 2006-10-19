@@ -29,7 +29,7 @@
 #include "SpkModel.h"
 #include "DoubleMatrix.h"
 
-void mapObj(  SpkModel &model, 
+void mapObj(  SpkModel<double> &model, 
               const DoubleMatrix &dmatY, 
               const DoubleMatrix &dvecB, 
               double *mapObjOut,
@@ -44,7 +44,7 @@ template <class ElemType>
 class MapObj : public std::unary_function<ElemType, ElemType>
 {
     private:
-        SpkModel *model;
+        SpkModel<double> *model;
         const ElemType y;
         const ElemType *pN;
         const ElemType *pBMean;
@@ -52,7 +52,7 @@ class MapObj : public std::unary_function<ElemType, ElemType>
         const bool isFo;
 
     public:
-        MapObj( SpkModel *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL, const ElemType* pBMeanIn = NULL )
+        MapObj( SpkModel<double> *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL, const ElemType* pBMeanIn = NULL )
             : model(m), y(yi), includeD(withD), isFo(fo), pN(NforAll), pBMean(pBMeanIn)
         {
         }
@@ -76,7 +76,7 @@ template <class ElemType>
 class MapObj_b : public std::unary_function<ElemType, ElemType>
 {
     private:
-        SpkModel *model;
+        SpkModel<double> *model;
         const ElemType y;
         const bool includeD;
         const bool isFo;
@@ -84,7 +84,7 @@ class MapObj_b : public std::unary_function<ElemType, ElemType>
         const ElemType* pBMean;
 
     public:
-        MapObj_b(SpkModel *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL, const ElemType* pBMeanIn = NULL )
+        MapObj_b(SpkModel<double> *m, const ElemType& yi, bool withD, bool fo, const ElemType* NforAll = NULL, const ElemType* pBMeanIn = NULL )
             : model(m), y(yi), includeD(withD), isFo(fo), pN(NforAll), pBMean(pBMeanIn)
         {
         }

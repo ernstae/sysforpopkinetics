@@ -44,7 +44,7 @@
 #include "DirBasedParallelControls.h"
 
 void fitPopulation( 
-  SpkModel&                       popModel,
+  SpkModel<double>&                       popModel,
   enum Objective                  objective,
   const SPK_VA::valarray<int>&    nMeasurementsAll,
   const SPK_VA::valarray<double>& measurementsAll,

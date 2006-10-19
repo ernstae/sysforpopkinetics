@@ -120,7 +120,7 @@ $index individual, map bayesian optimization$$
 $table
 $bold Prototype:$$ $cend
 $syntax/void mapOpt(  
-    SpkModel           & /model/,
+    SpkModel<double>   & /model/,
     const DoubleMatrix & /dvecY/,
     Optimizer          & /optInfo/,
     const DoubleMatrix & /dvecBLow/,
@@ -571,7 +571,7 @@ static DoubleMatrix funR(  const DoubleMatrix &dvecB );
 static DoubleMatrix funR_b(const DoubleMatrix &dmatRb, 
                            const DoubleMatrix &dvecB );
 
-class IndModel : public SpkModel
+class IndModel : public SpkModel<double>
 {
     DoubleMatrix _b;
 public:
@@ -919,7 +919,7 @@ namespace // [Begin: unnamed namespace]
   public:
     MapOptObj( 
       int                  nBIn,
-      SpkModel*            pModelIn,
+      SpkModel<double>*    pModelIn,
       const DoubleMatrix*  pdvecYIn,
       const bool*          pbWithDIn,
       const bool*          pbIsFoIn,
@@ -950,7 +950,7 @@ namespace // [Begin: unnamed namespace]
     DoubleMatrix dvecBCurr;
 
     // This information is required by mapObj.
-    SpkModel*            pModel;
+    SpkModel<double>*    pModel;
     const DoubleMatrix*  pdvecY;
     const bool*          pbWithD;
     const bool*          pbIsFo;
@@ -1063,7 +1063,7 @@ namespace // [Begin: unnamed namespace]
  * Function definition
  *------------------------------------------------------------------------*/
 
-void mapOpt(  SpkModel& model,
+void mapOpt(  SpkModel<double>&   model,
               const DoubleMatrix& dvecY,
               Optimizer& optInfo,
               const DoubleMatrix& dvecBLow,

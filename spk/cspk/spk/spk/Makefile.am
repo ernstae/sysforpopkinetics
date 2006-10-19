@@ -53,6 +53,8 @@ libspk_a_SOURCES = \
 	elsq_xBlockDiag.cpp \
 	elsq_x.cpp \
 	elsq_xDiag.cpp \
+	doubleToScalar.cpp \
+	doubleToScalarArray.cpp \
 	EqIndModel.cpp \
 	estimateB.cpp \
 	expectedHessian.cpp \
@@ -121,6 +123,8 @@ libspk_a_SOURCES = \
 	replaceSubblock.cpp \
 	wres.cpp \
 	rvecInverse.cpp \
+	scalarToDouble.cpp \
+	scalarToDoubleArray.cpp \
 	simulate.cpp \
 	statistics.cpp \
 	StatusList.cpp \
@@ -167,6 +171,8 @@ libspk_a_SOURCES = \
 	elsq_x.h \
 	elsq_xBlockDiag.h \
 	elsq_xDiag.h \
+	doubleToScalar.h \
+	doubleToScalarArray.h \
 	EqIndModel.h \
 	estimateB.h \
 	expectedHessian.h \
@@ -242,6 +248,8 @@ libspk_a_SOURCES = \
 	wres.h \
 	rvec.h \
 	rvecInverse.h \
+	scalarToDouble.h \
+	scalarToDoubleArray.h \
 	simulate.h \
 	Spk.h \
 	SpkError.h \
@@ -294,6 +302,8 @@ pkginclude_HEADERS = \
 	elsq_x.h \
 	elsq_xBlockDiag.h \
 	elsq_xDiag.h \
+	doubleToScalar.h \
+	doubleToScalarArray.h \
 	EqIndModel.h \
 	estimateB.h \
 	expectedHessian.h \
@@ -369,6 +379,8 @@ pkginclude_HEADERS = \
 	wres.h \
 	rvec.h \
 	rvecInverse.h \
+	scalarToDouble.h \
+	scalarToDoubleArray.h \
 	simulate.h \
 	Spk.h \
 	SpkError.h \

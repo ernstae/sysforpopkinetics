@@ -262,7 +262,7 @@
 
   using std::string;
 
-  class PopModel : public SpkModel
+  class PopModel : public SpkModel<double>
   {
   valarray<double> _a, _b;
   int _i;
@@ -555,7 +555,7 @@ using namespace std;
 using SPK_VA::valarray;
 using SPK_VA::slice;
 
-void simulate( SpkModel &model,
+void simulate( SpkModel<double>       &model,
 	       const valarray<double> &alp,
 	       const valarray<int>    &N,
 	       const valarray<double> &bLow,
@@ -574,7 +574,7 @@ void simulate( SpkModel &model,
 	    yOut,
 	    bAllOut );
 }
-void simulate( SpkModel &model,
+void simulate( SpkModel<double>       &model,
 	       const valarray<double> &alp,
 	       const valarray<int>    &N,
 	       const valarray<double> &bLow,
@@ -868,7 +868,7 @@ void simulate( SpkModel &model,
   using SPK_VA::valarray;
   using namespace std;
 
-  class SimulateExampleIndModel : public SpkModel
+  class SimulateExampleIndModel : public SpkModel<double>
   {
     valarray<double>  _b;
     const int nB, nY;
@@ -1012,7 +1012,7 @@ void simulate( SpkModel &model,
   $end
 
 */
-void simulate( SpkModel               &indModel,
+void simulate( SpkModel<double>       &indModel,
 	       int                     n,
 	       const valarray<double> &b,
 	       valarray<double>       &yOut,
@@ -1027,7 +1027,7 @@ void simulate( SpkModel               &indModel,
 }
 
 // This version of simulate() assumes that a seed has been already set.
-void simulate( SpkModel               &indModel,
+void simulate( SpkModel<double>       &indModel,
                int                     n,
                const valarray<double> &b,
                valarray<double>       &yOut )

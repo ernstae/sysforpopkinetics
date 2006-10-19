@@ -42,7 +42,7 @@
 #include "SpkModel.h"
 
 void fitIndividual( 
-				    SpkModel&                           indModel,
+				    SpkModel<double>&                       indModel,
                     const SPK_VA::valarray<double>&     measurements,
                     Optimizer&                          indOptimizer,
                     const SPK_VA::valarray<double>&     indParLow,
