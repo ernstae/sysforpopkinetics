@@ -47,7 +47,8 @@ $childtable/
     Objective.h/   
     ppkaOpt.cpp/
     popResiduals.cpp/
-    popStatistics.cpp/$$
+    popStatistics.cpp/
+    twoStageMethod.cpp/$$
 $pre
 
 $$
