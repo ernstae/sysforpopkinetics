@@ -25,21 +25,31 @@ endif
 libspkpred_a_SOURCES = \
 	Cov.cpp \
 	DiagCov.cpp \
+	DiagCovBase.cpp \
 	FullCov.cpp \
+	FullCovBase.cpp \
 	BlkDiagCov.cpp \
+	BlkDiagCovBase.cpp \
 	IndPredModel.cpp \
+	IndPredModelBase.cpp \
 	isEqual.cpp \
 	PopPredModel.cpp \
+	PopPredModelBase.cpp \
 	predTwoStageMethod.cpp \
 	Cov.h \
 	DiagCov.h \
+	DiagCovBase.h \
 	FullCov.h \
+	FullCovBase.h \
 	BlkDiagCov.h \
+	BlkDiagCovBase.h \
 	IndPredModel.h \
+	IndPredModelBase.h \
 	isEqual.h \
 	OdeBreak.h \
 	OdePredBase.h \
 	PopPredModel.h \
+	PopPredModelBase.h \
 	PredBase.h \
 	predTwoStageMethod.h \
 	$(top_builddir)/config.h
@@ -47,13 +57,18 @@ libspkpred_a_SOURCES = \
 pkginclude_HEADERS = \
 	Cov.h \
 	DiagCov.h \
+	DiagCovBase.h \
 	FullCov.h \
+	FullCovBase.h \
 	BlkDiagCov.h \
+	BlkDiagCovBase.h \
 	IndPredModel.h \
+	IndPredModelBase.h \
 	isEqual.h \
 	OdeBreak.h \
 	OdePredBase.h \
 	PopPredModel.h \
+	PopPredModelBase.h \
 	PredBase.h \
-	predTwoStageMethod.h 
+	predTwoStageMethod.h
 

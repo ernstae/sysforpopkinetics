@@ -37,6 +37,9 @@
 // SPK library header files.
 #include <spk/SpkValarray.h>
 
+// CppAD header files.
+#include <CppAD/CppAD.h>
+
 using SPK_VA::valarray;
 
 
@@ -50,9 +53,10 @@ using SPK_VA::valarray;
  */
 /*************************************************************************/
 
+template<class Scalar>
 bool isEqual(
-  const SPK_VA::valarray<double>&  x,
-  const SPK_VA::valarray<double>&  y )
+  const SPK_VA::valarray<Scalar>&  x,
+  const SPK_VA::valarray<Scalar>&  y )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -85,4 +89,64 @@ bool isEqual(
   // If all of the elements are the same, then return true.
   return true;
 }
+
+template<>
+bool isEqual(
+  const SPK_VA::valarray< CppAD::AD<double> >&  x,
+  const SPK_VA::valarray< CppAD::AD<double> >&  y )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  int n = x.size();
+
+  // If the dimensions don't agree, then they're not equal.
+  if ( n != y.size() )
+  {
+    return false;
+  }
+
+
+  //------------------------------------------------------------
+  // Compare the elements in the two arrays.
+  //------------------------------------------------------------
+
+  int i;
+
+  // If any element is different, then return false.
+  for ( int i = 0; i < n; i++ )
+  {
+    // Note that the CppAD != operator only checks the numeric values
+    // for AD objects and not their operation sequence, and it,
+    // therefore, cannot detect the case where one variable is made an
+    // independent variable with the same value as the first variable.
+    //
+    // Use the CppAD function that determines if two AD objects are
+    // equal, and if they are variables, determines if they correspond
+    // to the same operation sequence.
+    if ( !CppAD::EqualOpSeq( x[i], y[i] ) )
+    {
+      return false;
+    }
+  }
+
+  // If all of the elements are the same, then return true.
+  return true;
+}
+
+
+/*------------------------------------------------------------------------
+ * Template function instantiations.
+ *------------------------------------------------------------------------*/
+
+// Declare double versions of these functions.
+template bool isEqual<double>(
+  const SPK_VA::valarray<double>&  x,
+  const SPK_VA::valarray<double>&  y );
+
+// Declare CppAD::AD<double> versions of these functions.
+template bool isEqual< CppAD::AD<double> >(
+  const SPK_VA::valarray< CppAD::AD<double> >&  x,
+  const SPK_VA::valarray< CppAD::AD<double> >&  y );
 

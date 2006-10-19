@@ -45,9 +45,10 @@
  * Function declaration
  *------------------------------------------------------------------------*/
 
+template<class Scalar>
 bool isEqual(
-  const SPK_VA::valarray<double>&  x,
-  const SPK_VA::valarray<double>&  y );
+  const SPK_VA::valarray<Scalar>&  x,
+  const SPK_VA::valarray<Scalar>&  y );
 
 
 #endif
