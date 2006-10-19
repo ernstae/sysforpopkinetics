@@ -51,4 +51,4 @@ OBJECTS = \
 	gcc $(CPPFLAGS) $< -o $@
 
 RunTest: $(OBJECTS) $(INCLUDES)
-	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkpred -lQN01Box -lgsl -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c -o RunTest
+	g++ $(OBJECTS) -Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -L/usr/lib/atlas -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -lspk -lspkpred -lQN01Box -lgsl -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c -o RunTest
