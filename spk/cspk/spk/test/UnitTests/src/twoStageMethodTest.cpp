@@ -95,7 +95,7 @@ namespace // [Begin: unnamed namespace]
   //
   //**********************************************************************
 
-  class RailExampleModel : public SpkModel
+  class RailExampleModel : public SpkModel<double>
   {
     valarray<double> _a, _b;
     int _i;

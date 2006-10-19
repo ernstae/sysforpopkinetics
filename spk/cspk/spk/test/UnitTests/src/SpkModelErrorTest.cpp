@@ -47,16 +47,16 @@ using SPK_VA::valarray;
 using namespace CppUnit;
 
 void allThrowModelsTests();
-void throwModelTest(SpkModel* model);
-void testModelCase( SpkModel * model, spkmodelerrortest::model_proto f, SpkError::ErrorCode code );
-void testModelCase( SpkModel * model, spkmodelerrortest::deriv_proto f, SpkError::ErrorCode code );
+void throwModelTest(SpkModel<double>* model);
+void testModelCase( SpkModel<double> * model, spkmodelerrortest::model_proto f, SpkError::ErrorCode code );
+void testModelCase( SpkModel<double> * model, spkmodelerrortest::deriv_proto f, SpkError::ErrorCode code );
 
 /************************************************************
  *
  * A Model that throw integer as an error object
  *
  ************************************************************/
-class SpkModelPartiallyImplementedModel : public SpkModel
+class SpkModelPartiallyImplementedModel : public SpkModel<double>
 {
 private:
   int _i;
@@ -67,7 +67,7 @@ public:
   ~SpkModelPartiallyImplementedModel(){}
 };
 
-class throwIntModel : public SpkModel
+class throwIntModel : public SpkModel<double>
 {
 private:
   int _i;
@@ -156,7 +156,7 @@ private:
  * A Model that throw std::exception as an error object
  *
  ************************************************************/
-class throwStdExceptionModel : public SpkModel
+class throwStdExceptionModel : public SpkModel<double>
 {
 private:
   int _i;
@@ -248,7 +248,7 @@ private:
  * A Model that throw exceptions
  *
  ************************************************************/
-class throwSpkExceptionModel : public SpkModel
+class throwSpkExceptionModel : public SpkModel<double>
 {
 private:
   int _i;
@@ -343,7 +343,7 @@ private:
  *
  ************************************************************/
 template <typename T, typename P>
-void testSetXXXCase( SpkModel * model, T f, SpkError::ErrorCode code )
+void testSetXXXCase( SpkModel<double> * model, T f, SpkError::ErrorCode code )
 {
   using namespace std;
 
@@ -386,7 +386,7 @@ void testSetXXXCase( SpkModel * model, T f, SpkError::ErrorCode code )
  *
  ************************************************************/
 
-void testModelCase( SpkModel * model, spkmodelerrortest::model_proto f, SpkError::ErrorCode code )
+void testModelCase( SpkModel<double> * model, spkmodelerrortest::model_proto f, SpkError::ErrorCode code )
 {
   using namespace std;
 
@@ -419,7 +419,7 @@ void testModelCase( SpkModel * model, spkmodelerrortest::model_proto f, SpkError
   throw stream;
 }
 
-void testModelCase( SpkModel * model, spkmodelerrortest::deriv_proto f, SpkError::ErrorCode code )
+void testModelCase( SpkModel<double> * model, spkmodelerrortest::deriv_proto f, SpkError::ErrorCode code )
 {
   using namespace std;
 
@@ -506,7 +506,7 @@ void SpkModelErrorTest::throwSpkExceptionModelCase()
  *
  ************************************************************/
 
-void throwModelTest(SpkModel *model)
+void throwModelTest(SpkModel<double> *model)
 {
     using namespace spkmodelerrortest;
 

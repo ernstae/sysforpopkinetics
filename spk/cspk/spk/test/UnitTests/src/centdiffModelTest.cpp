@@ -99,7 +99,7 @@ namespace modelCentdiffTestNamespace
 {
 
 };
-    class ModelCentdiffTestModel : public SpkModel
+    class ModelCentdiffTestModel : public SpkModel<double>
     {
         valarray<double> _a, _b;
         int _i;

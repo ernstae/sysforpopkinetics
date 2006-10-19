@@ -106,7 +106,7 @@ static bool epsEqualTest( const DoubleMatrix &dmatX,
  * Model for twoByTwoTest
  *------------------------------------------------------------------------*/
 
-class UserModelLambda2diffTwoByTwoTest : public SpkModel
+class UserModelLambda2diffTwoByTwoTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int          _i;
@@ -511,7 +511,7 @@ void lambda2diffTest::twoByTwoTest()
  * Local Class Declarations
  *------------------------------------------------------------------------*/
 
-class UserModelLambda2diffNoTruncationErrorsTest : public SpkModel
+class UserModelLambda2diffNoTruncationErrorsTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int          _i;

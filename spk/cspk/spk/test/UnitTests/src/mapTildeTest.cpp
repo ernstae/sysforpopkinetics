@@ -129,7 +129,7 @@ static void getCorrectAnswer(
  * This test implements the example problem from the mapTilde specification. 
  *
  *************************************************************************/
-class UserModelMapTildeExampleTest : public SpkModel
+class UserModelMapTildeExampleTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _i;
@@ -665,7 +665,7 @@ static void getCorrectAnswer(
  *
  *************************************************************************/
 
-class UserModelMapTildeParabolicTest : public SpkModel
+class UserModelMapTildeParabolicTest : public SpkModel<double>
 {
     valarray<double> _b;
     const int _nB;
@@ -954,7 +954,7 @@ void mapTildeTest::mapTildeParabolicTest()
  *
  *************************************************************************/
 
-class UserModelMapTildeQuadraticTest : public SpkModel
+class UserModelMapTildeQuadraticTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _i;

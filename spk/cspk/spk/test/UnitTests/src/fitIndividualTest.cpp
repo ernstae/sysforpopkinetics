@@ -127,7 +127,7 @@ namespace fitindividualzeroiterations
  * Class Definition
  *------------------------------------------------------------------------*/
 
-class UserModelFitIndividualExampleTest : public SpkModel
+class UserModelFitIndividualExampleTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _nY;
@@ -208,7 +208,7 @@ private:
     UserModelFitIndividualExampleTest() {};
 };
 
-class UserModelFitIndividualQuadraticTest : public SpkModel
+class UserModelFitIndividualQuadraticTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _nY;
@@ -265,7 +265,7 @@ private:
     UserModelFitIndividualQuadraticTest(){};
 };
 
-class UserModelFitIndividualZeroIterationsTest : public SpkModel
+class UserModelFitIndividualZeroIterationsTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _nY;
@@ -316,7 +316,7 @@ private:
     UserModelFitIndividualZeroIterationsTest(){};
 };
 
-class UserModelFitIndividualLimitsWarningsTest : public SpkModel
+class UserModelFitIndividualLimitsWarningsTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _i;

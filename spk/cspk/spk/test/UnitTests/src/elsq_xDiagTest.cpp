@@ -71,7 +71,7 @@ static bool hasPosDet( const DoubleMatrix& dmatA );
  *        User SpkModel class
  *
  *******************************************************************************/
-class UserModelElsq_xDiagTest : public SpkModel
+class UserModelElsq_xDiagTest : public SpkModel<double>
 {
     DoubleMatrix _b;
     const int _nB;
@@ -292,7 +292,7 @@ void elsq_xDiagTest::testder( double (*pElsq)(const DoubleMatrix &,
     DoubleMatrix dmatDerivExact = pElsq_xDiag(dvecZ, DoubleMatrix( h, 1 ), DoubleMatrix( Q, nZ ), DoubleMatrix( QInv, nZ ), DoubleMatrix( h_x, nX ), DoubleMatrix( Q_x, nX ) );
 
     // Compute numerical solution of the derivative of elsqDiag(x)
-    typedef Elsq<SpkModel> ELSQ_PROTO;
+    typedef Elsq< SpkModel<double> > ELSQ_PROTO;
     ELSQ_PROTO elsqOb(&model, dvecZ);
     DoubleMatrix dmatApx        = centdiff<ELSQ_PROTO>( elsqOb, dvecX, dvecStepSize );
 

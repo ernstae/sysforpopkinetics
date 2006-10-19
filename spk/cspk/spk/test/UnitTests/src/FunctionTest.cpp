@@ -59,7 +59,7 @@ static const int nIndPar = 2;
 static valarray<double> POP;
 static valarray<double> IND;
 
-class FunctionTest::PopModel : public SpkModel
+class FunctionTest::PopModel : public SpkModel<double>
 {
 private:
     valarray<double> _a, _b;

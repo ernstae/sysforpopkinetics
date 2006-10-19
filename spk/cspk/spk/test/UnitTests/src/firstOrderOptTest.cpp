@@ -105,7 +105,7 @@ Test* firstOrderOptTest::suite()
  *
  *************************************************************************/
 
-class UserModelFirstOrderOptExampleTest : public SpkModel
+class UserModelFirstOrderOptExampleTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -1118,7 +1118,7 @@ void firstOrderOptTest::firstOrderOptRestartTest()
  *
  *************************************************************************/
 
-class UserModelFirstOrderOptZeroIterationsTest : public SpkModel
+class UserModelFirstOrderOptZeroIterationsTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;

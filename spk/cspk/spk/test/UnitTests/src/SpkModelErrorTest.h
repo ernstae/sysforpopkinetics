@@ -40,10 +40,10 @@
 
 namespace spkmodelerrortest
 {
-  typedef void (SpkModel::*selectIndividual_proto)(int);
-  typedef void (SpkModel::*setXXXPar_proto)(const SPK_VA::valarray<double>&);
-  typedef void (SpkModel::*model_proto)( SPK_VA::valarray<double>& ) const;
-  typedef bool (SpkModel::*deriv_proto)( SPK_VA::valarray<double>& ) const;
+  typedef void (SpkModel<double>::*selectIndividual_proto)(int);
+  typedef void (SpkModel<double>::*setXXXPar_proto)(const SPK_VA::valarray<double>&);
+  typedef void (SpkModel<double>::*model_proto)( SPK_VA::valarray<double>& ) const;
+  typedef bool (SpkModel<double>::*deriv_proto)( SPK_VA::valarray<double>& ) const;
 }
 
 class SpkModelErrorTest : public CppUnit::TestFixture

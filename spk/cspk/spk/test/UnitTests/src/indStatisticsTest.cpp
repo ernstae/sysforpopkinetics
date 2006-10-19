@@ -110,7 +110,7 @@ Test* indStatisticsTest::suite()
  * Class Definition
  *------------------------------------------------------------------------*/
 
-class UserModelIndStatisticsExampleTest : public SpkModel
+class UserModelIndStatisticsExampleTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _nY;
@@ -389,7 +389,7 @@ void indStatisticsTest::statisticsExampleTest()
  * Class Definition
  *------------------------------------------------------------------------*/
 
-class IndMaskTestUserModel : public SpkModel
+class IndMaskTestUserModel : public SpkModel<double>
 {
   valarray<double> b;
   const int nY;  // 4
@@ -608,7 +608,7 @@ void indStatisticsTest::indMaskTest()
  * Class Definition
  *------------------------------------------------------------------------*/
 
-class ModelBasedInterfaceTestUserModel : public SpkModel
+class ModelBasedInterfaceTestUserModel : public SpkModel<double>
 {
   valarray<double> b;
   const int nY;  // 4

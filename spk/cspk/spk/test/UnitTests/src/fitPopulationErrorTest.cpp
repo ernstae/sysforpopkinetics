@@ -78,7 +78,7 @@ static int nB = 1;
  *
  *************************************************************************/
 
-class fitPopulationErrorTestModel : public SpkModel
+class fitPopulationErrorTestModel : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;

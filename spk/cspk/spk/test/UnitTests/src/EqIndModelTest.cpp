@@ -75,7 +75,7 @@ Test* EqIndModelTest::suite()
  *
  *************************************************************************/
 
-class TestModel : public SpkModel
+class TestModel : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -343,7 +343,7 @@ static const int nB   = 20;
 static const int nAlp = 20;
 static const int nInds= 100;
 
-class LargeMatrixUserModel : public SpkModel
+class LargeMatrixUserModel : public SpkModel<double>
 {
   valarray<double> _alp, _b;
   int              _nAlp, _nB;

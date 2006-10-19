@@ -94,7 +94,7 @@ Test* fitIndividualErrorTest::suite()
 }
 
 
-class fitIndividualErrorTestModel : public SpkModel
+class fitIndividualErrorTestModel : public SpkModel<double>
 {
     valarray<double> _b;
     const int _nY;

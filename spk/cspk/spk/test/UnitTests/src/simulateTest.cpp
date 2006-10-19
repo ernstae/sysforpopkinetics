@@ -67,7 +67,7 @@ static int myseed()
 //-----------------------------------------------------------------------------
 // A simple population model for testing purposes only
 //-----------------------------------------------------------------------------
-class simulateTestPopModel : public SpkModel
+class simulateTestPopModel : public SpkModel<double>
 {
   valarray<double> alp, b;
   valarray<int>   N;
@@ -140,7 +140,7 @@ protected:
 // A complex population model for testing purposes only
 //-----------------------------------------------------------------------------
 
-class simulateTestPopModelComplex : public SpkModel
+class simulateTestPopModelComplex : public SpkModel<double>
 {
   valarray<double> alp, b;
   valarray<int>    N;
@@ -242,7 +242,7 @@ protected:
 //-----------------------------------------------------------------------------
 // A simple individual model for testing purposes only
 //-----------------------------------------------------------------------------
-class simulateTestIndModel : public SpkModel
+class simulateTestIndModel : public SpkModel<double>
 {
   valarray<double>  b;
   int nY, nB;
@@ -281,7 +281,7 @@ protected:
   }
 };
 
-class SimulateExampleIndModel : public SpkModel
+class SimulateExampleIndModel : public SpkModel<double>
 {
   valarray<double>  _b;
   const int nB, nY;

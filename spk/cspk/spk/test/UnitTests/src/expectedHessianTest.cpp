@@ -57,7 +57,7 @@
 using SPK_VA::valarray;
 using namespace CppUnit;
 
-class expectedHessianTest::exampleModel : public SpkModel
+class expectedHessianTest::exampleModel : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -251,7 +251,7 @@ private:
 
 // This class is a bit more complex than exampleModel in a way
 // that D() returns a full symmetric matrix instead of diagonal.
-class expectedHessianTest::fullDModel : public SpkModel
+class expectedHessianTest::fullDModel : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -476,7 +476,7 @@ static const int NUM_ALP  = 2;
 static const int NUM_B    = 4;
 static const int IND_DATA_LEN[] = {1,2,3};
 
-class expectedHessianTest::ExpectedHessianModel : public SpkModel
+class expectedHessianTest::ExpectedHessianModel : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -1444,7 +1444,7 @@ void expectedHessianTest::testModel()
     valarray<double> Dinv_a;
     model.indParVarianceInv_popPar(Dinv_a);
 
-    ModelFunctionValarray DinvOb(&SpkModel::indParVarianceInv, &model);
+    ModelFunctionValarray DinvOb(&SpkModel<double>::indParVarianceInv, &model);
     {
         valarray<double> Dinv_aApprox = centdiff< binder2nd<ModelFunctionValarray> >(bind2nd(DinvOb,b), NUM_B, alp, alpStep);
 /*
@@ -1475,7 +1475,7 @@ std::cout << "--------------" << endl;
 
         CPPUNIT_ASSERT_EQUAL(NUM_Yi, static_cast<int>( f.size() ) );
         
-        ModelFunctionValarray fOb(&SpkModel::dataMean, &model);
+        ModelFunctionValarray fOb(&SpkModel<double>::dataMean, &model);
 
         valarray<double> f_b;
         model.dataMean_indPar(f_b);
@@ -1502,7 +1502,7 @@ std::cout << "--------------" << endl;
             }
         }
 
-        ModelFunctionValarray ROb(&SpkModel::dataVariance, &model);
+        ModelFunctionValarray ROb(&SpkModel<double>::dataVariance, &model);
 
         valarray<double> R_b;
         model.dataVariance_indPar(R_b);
@@ -1528,7 +1528,7 @@ std::cout << "--------------" << endl;
             }
         }
 
-        ModelFunctionValarray RinvOb(&SpkModel::dataVarianceInv, &model);
+        ModelFunctionValarray RinvOb(&SpkModel<double>::dataVarianceInv, &model);
 
         valarray<double> Rinv_b;
         model.dataVarianceInv_indPar( Rinv_b );

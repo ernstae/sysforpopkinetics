@@ -52,7 +52,7 @@ using namespace CppUnit;
  /**************************************************************
  *   class UserModel declaration
  **************************************************************/
-class estimateBTest::UserModel : public SpkModel
+class estimateBTest::UserModel : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
