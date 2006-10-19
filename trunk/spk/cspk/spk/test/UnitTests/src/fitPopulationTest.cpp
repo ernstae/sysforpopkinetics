@@ -169,7 +169,7 @@ static void doTheTest( bool ok,
  *
  *************************************************************************/
 
-class UserModelFitPopulationExampleTest : public SpkModel
+class UserModelFitPopulationExampleTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
 	const int _nA;
@@ -665,7 +665,7 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
  *
  *************************************************************************/
 
-class UserModelFitPopulationZeroIterationsTest : public SpkModel
+class UserModelFitPopulationZeroIterationsTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -1250,7 +1250,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
  *
  *************************************************************************/
 
-class UserModelPpkaLimitsWarningsTest : public SpkModel
+class UserModelPpkaLimitsWarningsTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;

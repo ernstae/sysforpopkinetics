@@ -29,7 +29,7 @@ using SPK_VA::valarray;
 using namespace std;
 using namespace CppUnit;
 
-class FoModelTestPop : public SpkModel
+class FoModelTestPop : public SpkModel<double>
 {
 private:
   valarray<double> _alp, _b;

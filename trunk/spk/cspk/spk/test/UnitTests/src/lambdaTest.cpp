@@ -121,7 +121,7 @@ static DoubleMatrix funExactLambda_b(
  *   class UserModel declaration
  **************************************************************/
 
-class lambdaTest::UserModelLambdaTest : public SpkModel
+class lambdaTest::UserModelLambdaTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int          _i;
@@ -407,7 +407,7 @@ void lambdaTest::setB(DoubleMatrix &b)
 
 
 void lambdaTest::test(
-    SpkModel &model, 
+    SpkModel<double> &model, 
     const DoubleMatrix &dvecY, 
     const DoubleMatrix &dvecAlp, 
     const DoubleMatrix &dvecB, 

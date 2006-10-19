@@ -245,7 +245,7 @@ namespace ElsqCentdiffTestNamespace
       return ( b > 0.0 );
     }
 
-    class ElsqCentdiffTestModel : public SpkModel
+    class ElsqCentdiffTestModel : public SpkModel<double>
     {
         valarray<double> _b;
         const int _nB;
@@ -498,7 +498,7 @@ void centdiffTest::elsqCentdiffTest()
 
 namespace mapobjCentdiffTestNamespace
 {
-    const DoubleMatrix mapObj_b(SpkModel &model, const DoubleMatrix &b, const DoubleMatrix &y )
+    const DoubleMatrix mapObj_b(SpkModel<double> &model, const DoubleMatrix &b, const DoubleMatrix &y )
     {
 
         DoubleMatrix mapObj_bOut( 1, 2 );
@@ -516,7 +516,7 @@ namespace mapobjCentdiffTestNamespace
         return retVal;
     }
 
-    class mapobjCentdiffIndModelwithD : public SpkModel
+    class mapobjCentdiffIndModelwithD : public SpkModel<double>
     {
         valarray<double> _b;
         int _i;
@@ -710,7 +710,7 @@ void centdiffTest::mapobjCentdiffTest()
 
 namespace LambdaCentdiffTestNamespace
 {
-    class LambdaCentdiffTestModel : public SpkModel
+    class LambdaCentdiffTestModel : public SpkModel<double>
     {
         valarray<double> _a, _b;
         int _i;

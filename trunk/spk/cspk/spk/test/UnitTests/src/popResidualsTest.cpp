@@ -63,7 +63,7 @@ namespace // [Begin: unnamed namespace]
   //             
   //**********************************************************************
 
-  class ThreeDataValuesPerIndModel : public SpkModel
+  class ThreeDataValuesPerIndModel : public SpkModel<double>
   {
     valarray<double> _a, _b;
     int _i;

@@ -163,7 +163,7 @@ static DoubleMatrix elsq_x_x(
     return dmatElsq_x_x;
 }
 
-static DoubleMatrix gradientMapObj(SpkModel &model, const DoubleMatrix &dvecB, const DoubleMatrix &dvecY, const DoubleMatrix &dmatD ){
+static DoubleMatrix gradientMapObj(SpkModel<double> &model, const DoubleMatrix &dvecB, const DoubleMatrix &dvecY, const DoubleMatrix &dmatD ){
 
     DoubleMatrix mapObj_bOut( 1, 2 );
     DoubleMatrix retVal;
@@ -179,7 +179,7 @@ static DoubleMatrix gradientMapObj(SpkModel &model, const DoubleMatrix &dvecB, c
     
     return retVal;
 }
-static DoubleMatrix secondDerivMapObj(SpkModel & model, const DoubleMatrix &dvecB, const DoubleMatrix &dvecY, const DoubleMatrix &dmatD)
+static DoubleMatrix secondDerivMapObj(SpkModel<double> & model, const DoubleMatrix &dvecB, const DoubleMatrix &dvecY, const DoubleMatrix &dmatD)
 {
     valarray<double> b = dvecB.toValarray();
     const int nB = b.size();
@@ -231,7 +231,7 @@ static DoubleMatrix secondDerivMapObj(SpkModel & model, const DoubleMatrix &dvec
        );
 }
 
-class UserModelMapObjDiffTest : public SpkModel
+class UserModelMapObjDiffTest : public SpkModel<double>
 {
     valarray<double> _b;
     int          _i;

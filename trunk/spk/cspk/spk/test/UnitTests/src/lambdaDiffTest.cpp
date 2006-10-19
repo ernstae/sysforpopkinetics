@@ -142,7 +142,7 @@ static const DoubleMatrix funRinv_b_b(    const DoubleMatrix &dvecAlp, const Dou
 /**************************************************************
  *   class UserModel declaration
  **************************************************************/
-class lambdaDiffTest::UserModelLambdaDiffTest : public SpkModel
+class lambdaDiffTest::UserModelLambdaDiffTest : public SpkModel<double>
 {
     DoubleMatrix _a, _b;
     int _i;
@@ -1814,7 +1814,7 @@ static const DoubleMatrix funRinv_alp_b(const DoubleMatrix& dvecAlp, const Doubl
 #include "replaceJth.h"
 #include "divByScalar.h"
 
-static const DoubleMatrix lambda_alp_alpDiff(SpkModel& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
+static const DoubleMatrix lambda_alp_alpDiff(SpkModel<double>& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
                                              const DoubleMatrix& h, bool withD)
 {
     int nAlp = alp.nr();
@@ -1850,7 +1850,7 @@ static const DoubleMatrix lambda_alp_alpDiff(SpkModel& model, const DoubleMatrix
     return ret;
 
 }
-static const DoubleMatrix lambda_alp_bDiff(SpkModel& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
+static const DoubleMatrix lambda_alp_bDiff(SpkModel<double>& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
                                              const DoubleMatrix& h, bool withD)
 {
     int nAlp = alp.nr();
@@ -1886,7 +1886,7 @@ static const DoubleMatrix lambda_alp_bDiff(SpkModel& model, const DoubleMatrix& 
     return ret;
 
 }
-static const DoubleMatrix lambda_b_alpDiff(SpkModel& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
+static const DoubleMatrix lambda_b_alpDiff(SpkModel<double>& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
                              const DoubleMatrix& h, bool withD)
 {
     int nAlp = alp.nr();
@@ -1921,7 +1921,7 @@ static const DoubleMatrix lambda_b_alpDiff(SpkModel& model, const DoubleMatrix& 
     }
     return ret;
 }
-static const DoubleMatrix lambda_b_bDiff(SpkModel& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
+static const DoubleMatrix lambda_b_bDiff(SpkModel<double>& model, const DoubleMatrix& y, const DoubleMatrix& alp, const DoubleMatrix& b, 
                                              const DoubleMatrix& h, bool withD)
 {
     int nAlp = alp.nr();
@@ -1962,7 +1962,7 @@ static const DoubleMatrix lambda_b_bDiff(SpkModel& model, const DoubleMatrix& y,
  * Exact derivatives
  *---------------------------------------------------------------------------*/
 bool lambdaDiffTest::exactDeriv_x(
-    SpkModel &model,
+    SpkModel<double> &model,
     const DoubleMatrix &dvecY,
     const DoubleMatrix &dvecAlp,
     const DoubleMatrix &dvecB,

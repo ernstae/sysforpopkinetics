@@ -75,7 +75,7 @@ static bool hasPosDet( const valarray<double>& A, int n );
  *
  *******************************************************************************/
 
-class UserModelElsq_xTest : public SpkModel
+class UserModelElsq_xTest : public SpkModel<double>
 {
     valarray<double> x;
     const int _nB;
@@ -291,7 +291,7 @@ void elsq_xTest::testder( double (*pElsq)(const DoubleMatrix &,
     DoubleMatrix dmatDerivExact = pElsq_x(dvecZ, DoubleMatrix( h, 1 ), DoubleMatrix( Q, nZ ), DoubleMatrix( QInv, nZ ), DoubleMatrix( h_x, nX ), DoubleMatrix( Q_x, nX ));
 
     // Compute numerical solution of the derivative of elsq(x)
-    typedef Elsq<SpkModel> ELSQ_PROTO;
+    typedef Elsq< SpkModel<double> > ELSQ_PROTO;
     ELSQ_PROTO elsqOb(&model, dvecZ);
     DoubleMatrix dmatApx        = centdiff<ELSQ_PROTO>( elsqOb, dvecX, dvecStepSize );
 
@@ -415,7 +415,7 @@ void elsq_xTest::testder( double (*pElsq)(const valarray<double> &,
   valarray<double> derivExact = pElsq_x(z, h, Q, QInv, h_x, Q_x );
   
   // Compute numerical solution of the derivative of elsq(x)
-  typedef Elsq<SpkModel> ELSQ_PROTO;
+  typedef Elsq< SpkModel<double> > ELSQ_PROTO;
   ELSQ_PROTO elsqOb(&model, DoubleMatrix(z, 1) );
   valarray<double> approx = centdiff<ELSQ_PROTO>( elsqOb, DoubleMatrix(x, 1), DoubleMatrix(stepSize, 1) ).toValarray();
   

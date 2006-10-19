@@ -129,7 +129,7 @@ static void doTheTest( bool ok,
  *
  *************************************************************************/
 
-class UserModelPpkaOptExampleTest : public SpkModel
+class UserModelPpkaOptExampleTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -652,7 +652,7 @@ void ppkaOptTest::ppkaOptExampleTest(enum Objective whichObjective)
  *
  *************************************************************************/
 
-class UserModelPpkaOptZeroIterationsTest : public SpkModel
+class UserModelPpkaOptZeroIterationsTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;
@@ -1167,7 +1167,7 @@ void ppkaOptTest::ppkaOptZeroIterationsTest(enum Objective whichObjective)
  *
  *************************************************************************/
 
-class UserModelPpkaOptFixedAlpTest : public SpkModel
+class UserModelPpkaOptFixedAlpTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;

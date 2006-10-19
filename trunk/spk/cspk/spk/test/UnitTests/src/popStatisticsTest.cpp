@@ -123,7 +123,7 @@ using namespace std;
  *
  *************************************************************************/
 
-class UserModelStatisticsExampleTest : public SpkModel
+class UserModelStatisticsExampleTest : public SpkModel<double>
 {
   valarray<double> _a, _b;
   const int _nA;
@@ -1099,7 +1099,7 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
 #include <spk/lTilde.h>
 #include <spk/randNormal.h>
 
-class PopStatWrapperTestModel : public SpkModel
+class PopStatWrapperTestModel : public SpkModel<double>
 {
   valarray<double> _a, _b;
   const int _nA;

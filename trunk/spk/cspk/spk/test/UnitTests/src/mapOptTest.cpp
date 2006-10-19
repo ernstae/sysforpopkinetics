@@ -114,7 +114,7 @@ using std::string;
  * Class Definition
  *------------------------------------------------------------------------*/
 
-class UserModelMapOptExampleTest : public SpkModel
+class UserModelMapOptExampleTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _i;
@@ -258,7 +258,7 @@ private:
     }
 };
 
-class UserModelMapOptQuadraticTest : public SpkModel
+class UserModelMapOptQuadraticTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _i;
@@ -435,7 +435,7 @@ private:
     }
 };
 
-class UserModelMapOptZeroIterationsTest : public SpkModel
+class UserModelMapOptZeroIterationsTest : public SpkModel<double>
 {
     valarray<double> _b;
     int _i;

@@ -68,7 +68,7 @@ Test* mapObjTest::suite()
     return suiteOfTests;
 }
 
-class UserModelMapObjTest : public SpkModel
+class UserModelMapObjTest : public SpkModel<double>
 {
     valarray<double> _b;
     int          _i;

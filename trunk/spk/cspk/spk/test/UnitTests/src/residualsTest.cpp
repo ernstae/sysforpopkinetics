@@ -42,7 +42,7 @@
 using SPK_VA::valarray;
 using namespace CppUnit;
 
-class residualsTestModel : public SpkModel
+class residualsTestModel : public SpkModel<double>
 {
   valarray<double> _a, _b;
   int _i;

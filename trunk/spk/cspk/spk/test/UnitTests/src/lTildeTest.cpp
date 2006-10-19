@@ -113,7 +113,7 @@ namespace {
  *   Thus the three objective functions actually have the same value.
  *
  *==========================================================================*/
-class DiagDLTildeTest : public SpkModel
+class DiagDLTildeTest : public SpkModel<double>
 {
     valarray<double> _alp, _b;
     int _i;
@@ -231,7 +231,7 @@ private:
         return false;
     } 
 };
-class FullDUserModelLTildeTest : public SpkModel
+class FullDUserModelLTildeTest : public SpkModel<double>
 {
     valarray<double> _a, _b;
     int _i;

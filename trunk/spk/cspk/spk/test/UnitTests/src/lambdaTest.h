@@ -48,7 +48,7 @@ class lambdaTest : public CppUnit::TestFixture
     DoubleMatrix *_y;
 
     void test(
-        SpkModel &model, 
+        SpkModel<double> &model, 
         const DoubleMatrix &dvecY, 
         const DoubleMatrix &dvecAlp, 
         const DoubleMatrix &dvecB, 

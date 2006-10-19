@@ -78,7 +78,7 @@ static bool hasPosDet( const valarray<double>& A, int n );
  *        User SpkModel class
  *
  *******************************************************************************/
-class UserModelElsqTest : public SpkModel
+class UserModelElsqTest : public SpkModel<double>
 {
     DoubleMatrix _b;
     const int _nB;
