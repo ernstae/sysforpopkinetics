@@ -51,7 +51,7 @@ public class Record {
         StringBuffer sb = new StringBuffer();
         int size = Model.elements.size();
         int nCompartments = 0;
-        ArrayList delays = new ArrayList();
+        ArrayList<Element.Delay> delays = new ArrayList<Element.Delay>();
         for(int i = 0; i < size; i++)
         {
             Element element = (Element)Model.elements.get(i);
@@ -106,7 +106,7 @@ public class Record {
             sb.append("\n" + Model.equations);
         
         // append user defined variables
-        List keySet = new Vector(Model.variables.keySet());
+        List<Object> keySet = new Vector<Object>(Model.variables.keySet());
         Iterator keyIter = keySet.iterator();
         String key, value;
         while(keyIter.hasNext())
@@ -483,7 +483,7 @@ public class Record {
        
         // Find number of THETAs and number of ETAS
         int nTheta = Utility.find(code, "THETA");
-        if(!iterator.getIsInd() && !iterator.getIsTwoStage())
+        if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
         {
             if(nTheta == 0)
             {
@@ -587,7 +587,7 @@ public class Record {
         // Find number of EPSs for population analysis or Etas for individual analysis
         int nEta = 0;
         int nEps = 0;
-        if(!iterator.getIsInd() && !iterator.getIsTwoStage())
+        if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
         {
             String pkCode = Utility.eliminateComments(pkText);
             if(pkCode != null)
@@ -613,7 +613,7 @@ public class Record {
             }
         }
         iterator.setNEta(nEta);
-        if(!iterator.getIsInd() && !iterator.getIsTwoStage())
+        if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
             iterator.setNEps(nEps);
         
         // Set source and record
@@ -722,7 +722,7 @@ public class Record {
     private ArrayList getKeyIntervals(Properties property, String value)
     {
         String key;
-        ArrayList ids = new ArrayList();
+        ArrayList<String> ids = new ArrayList<String>();
         Enumeration keys = property.keys();
         while(keys.hasMoreElements())
         {
@@ -732,7 +732,7 @@ public class Record {
         if(ids.size() == 0) return null;
         Collections.sort(ids, new Comparer());
         String ID = (String)ids.get(0);
-        ArrayList list = new ArrayList();
+        ArrayList<String[]> list = new ArrayList<String[]>();
         String[] interval = new String[2];
         interval[0] = ID;
         int id = Integer.parseInt(ID);
@@ -754,12 +754,12 @@ public class Record {
         return list;
     }
     
-    private class Comparer implements Comparator 
+    private class Comparer implements Comparator<String>
     {
-         public int compare(Object obj1, Object obj2)
+         public int compare(String str1, String str2)
          {
-             int i1 = Integer.parseInt((String)obj1);
-             int i2 = Integer.parseInt((String)obj2);
+             int i1 = Integer.parseInt(str1);
+             int i2 = Integer.parseInt(str2);
              return i1 - i2;
          }
     } 

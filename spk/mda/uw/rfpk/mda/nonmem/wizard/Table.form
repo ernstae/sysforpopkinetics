@@ -9,9 +9,6 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
         </Property>
-        <Property name="locationRelativeTo" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="jButton1"/>
-        </Property>
         <Property name="modal" type="boolean" value="true"/>
         <Property name="resizable" type="boolean" value="false"/>
       </Properties>
@@ -36,7 +33,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="rightButton">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/org/netbeans/ui/wizard/plaf/basic/icons/next.gif"/>
             </Property>
           </Properties>
@@ -51,7 +48,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="leftButton">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.openide.explorer.propertysheet.editors.IconEditor">
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/org/netbeans/ui/wizard/plaf/basic/icons/back.gif"/>
             </Property>
           </Properties>
@@ -112,7 +109,7 @@
         <Component class="javax.swing.JTextPane" name="jTextPane4">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="cc" green="cc" red="cc" type="rgb"/>
+              <Color blue="ee" green="ee" red="ee" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="List of output items"/>
           </Properties>
@@ -125,7 +122,7 @@
         <Component class="javax.swing.JTextPane" name="jTextPane5">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="cc" green="cc" red="cc" type="rgb"/>
+              <Color blue="ee" green="ee" red="ee" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="List of sorting orders"/>
           </Properties>
@@ -231,6 +228,9 @@
         </Container>
         <Component class="javax.swing.JTextArea" name="jTextArea1">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ee" green="ee" red="ee" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Note: SPK provides more output items than NONMEM does.&#xa;ETARES    - Residual for random effect parameters (ETA).*&#xa;WETARES - Weighted residual for random effect parameters.*&#xa;ORGDV    - Original data values (DV) when simulated data exists.&#xa;* For population estimation analysis only."/>
           </Properties>
           <Constraints>
@@ -243,6 +243,10 @@
     </Container>
   </NonVisualComponents>
   <AuxValues>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
     <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,96,0,0,1,-67"/>
   </AuxValues>
 
@@ -300,7 +304,7 @@
     <Component class="javax.swing.JTextPane" name="jTextPane1">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="cc" green="cc" red="cc" type="rgb"/>
+          <Color blue="ee" green="ee" red="ee" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" value="Enter the output file name and select a header format.  The data items are&#xa;listed as columns and the order of the rows may be sorted.  If No Append&#xa;is selected, data values, population prediction, residuals and weighted &#xa;residuals (i.e. DV, PRED, RES, WRES) will not be automatically in the output."/>

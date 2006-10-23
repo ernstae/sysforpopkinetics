@@ -377,7 +377,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             initialize(selectedRadioButton);
             return;
         }
-        Vector data = new Vector(); 
+        Vector<Vector> data = new Vector<Vector>(); 
         String dataXML = iterator.getDataXML(1);
         if(dataXML == null) return;
         String[] labels = Utility.parseDataXML(dataXML, data, iterator.getIsInd());
@@ -436,7 +436,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             if(selectedRadioButton == 0) iterator.setIsDataXML(true);
             return;
         }
-        Vector data = new Vector();
+        Vector<Vector> data = new Vector<Vector>();
         String dataXML = iterator.getDataXML(1);
         if(dataXML == null) return;
         String[] labels = Utility.parseDataXML(dataXML, data, iterator.getIsInd());
@@ -458,7 +458,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         // Initialize GUI components
         initialize(0);
         // Get the data object as an Vector and the number of columns in the data file
-        Vector data = new Vector();
+        Vector<Vector> data = new Vector<Vector>();
         String dataXML = iterator.getDataXML(0);
         if(dataXML == null) return;
         String[] labels = Utility.parseDataXML(dataXML, data, iterator.getIsInd());
@@ -487,7 +487,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String path = jTextField1.getText().trim();
-        Vector data = new Vector();
+        Vector<Vector> data = new Vector<Vector>();
         String[] labels = Utility.parseDataFile(path, data, iterator.getIsInd());
         if(labels == null) return;
         int nDataCol = labels.length;

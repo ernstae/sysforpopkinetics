@@ -116,7 +116,7 @@ public class Output {
     /** The data matrix: nCol(item) by nRow(sum(measurements of each individual)). */
     public double[][] dataAll = null;
     /** The data item label list. */
-    public ArrayList dataItems = null;      
+    public ArrayList<String> dataItems = null;      
     /** The table specification: ((file, header, process, nSorting), (items in appearance orders))s */
     public String[][][] table = null; 
     /** The scatterplot specification: ((from, to, X0, Y0, unit, process), (list1), (list2), (list3))s */
@@ -127,4 +127,6 @@ public class Output {
     public String identifyStatus = null;
     /** Identifiability number of solutions */
     public String identifySolutions = null;
+    /** Nonparametric result */
+    public String[][] nonparamResult = null;
 }

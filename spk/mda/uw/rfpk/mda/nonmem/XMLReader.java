@@ -983,7 +983,7 @@ public class XMLReader
             return;
         if(nColumns > 0)
         {
-            output.dataItems = new ArrayList(nColumns);             
+            output.dataItems = new ArrayList<String>(nColumns);             
             for(int i = 0; i < nColumns; i++)
             {
                 Element label = (Element)labelList.item(i);
@@ -1048,7 +1048,7 @@ public class XMLReader
                 output.dataAll = null;
                 return;
             }
-            output.dataItems = new ArrayList(nColumns);             
+            output.dataItems = new ArrayList<String>(nColumns);             
             for(int j = 0; j < nColumns; j++)
                 output.dataItems.add(j, elements[j]);
             output.indIDs = new String[nRows];
@@ -1078,7 +1078,7 @@ public class XMLReader
     
     /** Convert the data XML back to the original.
      * @param dataXML data XML as a String object.
-     * @param true for adding labels, false for otherwise.
+     * @param addLable true for adding labels, false for otherwise.
      * @return a String object containing the original data, null if failed.
      */
     public static String parseDataXML(String dataXML, boolean addLabel)
@@ -1388,14 +1388,14 @@ public class XMLReader
         int nDataItem = dataLabels.length;
         int nColumns = Integer.parseInt(presentation_data.getAttribute("columns"));
         int nRows = Integer.parseInt(presentation_data.getAttribute("rows"));
-        ArrayList dataItems = null;
+        ArrayList<String> dataItems = null;
         String[][] dataAll = null;
         
         if(nColumns == 0 || nRows == 0 || nLabels != nColumns)
             return null;
         if(nColumns > 0)
         {
-            dataItems = new ArrayList(nColumns);
+            dataItems = new ArrayList<String>(nColumns);
             dataAll = new String[nRows][nDataItem];
             for(int i = 0; i < nColumns; i++)
             {

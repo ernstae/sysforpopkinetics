@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
  */
 public class MDAIterator implements StepIterator{ 
 
-    private Vector steps = new Vector(); 
+    private Vector<Object> steps = new Vector<Object>(); 
     private int actual = 0;
     private boolean isFirst = true;
     private boolean isInd = false;
@@ -61,7 +61,7 @@ public class MDAIterator implements StepIterator{
     private int nEps = 0;
     private int nComp = 0;
     private String trans = null;
-    private Vector beginningSteps = new Vector();
+    private Vector<Object> beginningSteps = new Vector<Object>();
     private GettingStarted gettingStarted = new GettingStarted(this);
     private Continue cont = new Continue(this); 
     private Pred pred = new Pred(this); 
@@ -104,16 +104,16 @@ public class MDAIterator implements StepIterator{
     protected MDAFrame frame = null;
     
     /** Initialization for ADVAN set */
-    public HashSet initAdvan = new HashSet();
+    public HashSet<String> initAdvan = new HashSet<String>();
   
     /** Is graphic */
     protected boolean isGraphic = false;
     
     /** Is identifiability */
-    protected boolean isIdentify = false;
+    public boolean isIdentify = false;
     
     /** Is nonparametric model */
-    protected boolean isNonparam = false;
+    public boolean isNonparam = false;
     
     /** Constructor to create a MDAIterator object.
      * @param server the web server associated with the MDA.
@@ -412,7 +412,7 @@ public class MDAIterator implements StepIterator{
         }
         if(!isIdentify) steps.add(theta);
         if(!isIdentify) steps.add(omega);
-        if(!isInd && !isTwoStage) steps.add(sigma);
+        if(!isInd && !isTwoStage && !isNonparam) steps.add(sigma);
         if(isSimulation) steps.add(simulation);
         if(isEstimation) steps.add(estimation);
         if(isCov) steps.add(covariance);
@@ -522,11 +522,10 @@ public class MDAIterator implements StepIterator{
                 if(analysis.indexOf("is_estimation=\"yes\"") != -1)
                 {
                     i = analysis.indexOf(" approximation=") + 16;                    
-                    String m = analysis.substring(i, analysis.indexOf("\"", i));
-                    if(m.endsWith("two_stage"))
+                    method = analysis.substring(i, analysis.indexOf("\"", i));
+                    if(method.endsWith("two_stage"))
                     {
-                        method = m;
-                        if(m.startsWith("map")) 
+                        if(method.startsWith("map")) 
                         {
                             covTheta = Utility.getOmegaValues(text);
                             if(covTheta == null)
@@ -538,6 +537,13 @@ public class MDAIterator implements StepIterator{
                         }
                     }
                 }
+            }
+            if(text.indexOf("<ind_analysis ") != -1)
+            {
+                int i = text.indexOf("<ind_analysis ");
+                String analysis = text.substring(i, text.indexOf(">", i));
+                if(analysis.indexOf("is_identifiability=\"yes\"") != -1)
+                    method = "identifiability";
             }
             parseControl(XMLReader.getModelArchive(text.substring(indexModel)), method, covTheta);           
         }

@@ -270,7 +270,7 @@ public class LikelihoodShow extends javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        new LikelihoodShow(null, false, null).show();
+        new LikelihoodShow(null, false, null).setVisible(true);
     }
     
     

@@ -43,7 +43,6 @@ public class PlotShow extends JFrame {
      * @param dataAll a double[][] containing all pesentation data.
      * @param labelAll an Arraylist object containing the data labels.
      * @param dataLabelMap a Properties object containing the data label-alias mapping.
-     * @param type format of presentation: "dots", "line" or "both".
      */
     public PlotShow(String[][][] plotAll, double[][] dataAll, ArrayList labelAll,
                     Properties dataLabelMap)
@@ -57,7 +56,7 @@ public class PlotShow extends JFrame {
         setVisible(true);
         
         // Replace the label name by the alias if exist
-        ArrayList aliasAll = new ArrayList();
+        ArrayList<String> aliasAll = new ArrayList<String>();
         for(int i = 0; i < labelAll.size(); i++)
         {
             String alias = dataLabelMap.getProperty((String)labelAll.get(i));
@@ -86,7 +85,7 @@ public class PlotShow extends JFrame {
                 to = dataAll.length - 1;
             int length = to - from + 1;
             double[][] data = new double[length][l1 + l2 + l3];
-            ArrayList alias = new ArrayList();
+            ArrayList<String> alias = new ArrayList<String>();
             for(int j = 0; j < l3; j++)
             {
                 int index = aliasAll.indexOf(plotI[3][j]); 
@@ -110,7 +109,7 @@ public class PlotShow extends JFrame {
             }
      
             // Sort the data if splitting is required
-            ArrayList split = new ArrayList();
+            ArrayList<Portion> split = new ArrayList<Portion>();
             if(l3 != 0)
             {
                 Arrays.sort(data, new CompareRows(l3));
@@ -307,7 +306,7 @@ public class PlotShow extends JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     // Class to implements Comparator interface
-    private class CompareRows implements Comparator 
+    private class CompareRows implements Comparator<Object>
     {
         // Constructor
         public CompareRows(int nCompare)
@@ -356,7 +355,7 @@ public class PlotShow extends JFrame {
 
     private String[][][] plotAll = null;
     private double[][][] dataList = null; 
-    private ArrayList aliasList = new ArrayList();  
-    private ArrayList splitList = new ArrayList();
+    private ArrayList<ArrayList> aliasList = new ArrayList<ArrayList>();  
+    private ArrayList<ArrayList> splitList = new ArrayList<ArrayList>();
     private Properties dataLabelMap = null;
 }

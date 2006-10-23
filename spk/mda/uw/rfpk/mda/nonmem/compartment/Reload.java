@@ -102,7 +102,7 @@ public class Reload {
         {
             if(modelLines[i].indexOf(";") == -1) break;
             String name = "";
-            Vector attributes = new Vector();
+            Vector<String> attributes = new Vector<String>();
             int end = -1;
             String comp = modelLines[i].substring(6, modelLines[i].indexOf(")") + 1);
             if(comp.startsWith("\""))
@@ -253,7 +253,7 @@ public class Reload {
     private void parseError(String errorText)
     {
         subjectModel = new Properties();
-        compErrorModels = new Vector();
+        compErrorModels = new Vector<String[]>();
         int index1 = errorText.indexOf("IF(ID ");
         if(index1 != -1)
         {
@@ -370,7 +370,7 @@ public class Reload {
         isDelay = new boolean[desLines.length];
         for(int i = 0; i < isDelay.length; i++)
             isDelay[i] = false;
-        delayList = new Vector();
+        delayList = new Vector<String[]>();
         for(int i = 0; i < desLines.length; i++)
         {           
             Matcher matcher = pattern.matcher(desLines[i]);
@@ -386,7 +386,7 @@ public class Reload {
     private void addModels()
     {
         Model model = tool.diagram.model;
-        Vector inputElements = new Vector();
+        Vector<Element> inputElements;
         for(int i = 0; i < compErrorModels.size(); i++)
         {
             if(i != 0) tool.clickAddButton();
@@ -395,7 +395,7 @@ public class Reload {
             {
                 int index = Integer.parseInt(comps[j].split(":")[0]) - 1;
                 Element element = (Element)Model.elements.get(index);
-                inputElements = new Vector();
+                inputElements = new Vector<Element>();
                 inputElements.add(element);
                 int x = Integer.parseInt(sampleInfo[i][j].split(":")[1].split(",")[0]);
                 int y = Integer.parseInt(sampleInfo[i][j].split(":")[1].split(",")[1]);
@@ -409,7 +409,7 @@ public class Reload {
                 String coordinate = inputInfo[i][j].split(":")[1].split("[(]")[0];
                 int index = Integer.parseInt(inputInfo[i][j].split("[(]")[1].split("[)]")[0]) - 1;
                 Element element = (Element)Model.elements.get(index);
-                inputElements = new Vector();
+                inputElements = new Vector<Element>();
                 inputElements.add(element);
                 int x = Integer.parseInt(coordinate.split(",")[0]);
                 int y = Integer.parseInt(coordinate.split(",")[1]);
@@ -546,7 +546,7 @@ public class Reload {
                 Model.elements.add(comp1);
                 Element.Flux flux10 = new Element.Flux(comp1, null, model);
                 Model.fluxes.add(flux10);
-                Vector comps = new Vector(1);
+                Vector<Element.Compartment> comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
                 input = new Element.Input(comps, 0, 0, model);
                 sample = new Element.Sample(comps, 0, 0, model);
@@ -575,10 +575,10 @@ public class Reload {
                 Model.fluxes.add(flux12);
                 Element.Flux flux20 = new Element.Flux(comp2, null, model);
                 Model.fluxes.add(flux20);
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
                 input = new Element.Input(comps, 0, 0, model);     
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp2);
                 sample = new Element.Sample(comps, 0, 0, model);
                 switch(trn)
@@ -608,7 +608,7 @@ public class Reload {
                 Model.fluxes.add(flux10);
                 flux12 = new Element.Flux(comp1, comp2, model);
                 Model.fluxes.add(flux12);
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
                 input = new Element.Input(comps, 0, 0, model);
                 sample = new Element.Sample(comps, 0, 0, model);
@@ -666,10 +666,10 @@ public class Reload {
                 Model.fluxes.add(flux23);
                 flux12 = new Element.Flux(comp1, comp2, model);
                 Model.fluxes.add(flux12);
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
                 input = new Element.Input(comps, 0, 0, model);     
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp2);
                 sample = new Element.Sample(comps, 0, 0, model);
                 switch(trn)
@@ -712,7 +712,7 @@ public class Reload {
                 Model.elements.add(comp1);
                 flux10 = new Element.Flux(comp1, null, model);
                 Model.fluxes.add(flux10);
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
                 input = new Element.Input(comps, 0, 0, model);
                 sample = new Element.Sample(comps, 0, 0, model);
@@ -749,7 +749,7 @@ public class Reload {
                 Model.fluxes.add(flux12);
                 Element.Flux flux13 = new Element.Flux(comp1, comp3, model);
                 Model.fluxes.add(flux13);
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
                 input = new Element.Input(comps, 0, 0, model);
                 sample = new Element.Sample(comps, 0, 0, model);
@@ -811,10 +811,10 @@ public class Reload {
                 Model.fluxes.add(flux24);
                 flux23 = new Element.Flux(comp2, comp3, model);
                 Model.fluxes.add(flux23);
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
                 input = new Element.Input(comps, 0, 0, model);     
-                comps = new Vector(1);
+                comps = new Vector<Element.Compartment>(1);
                 comps.add(comp2);
                 sample = new Element.Sample(comps, 0, 0, model);
                 switch(trn)
@@ -844,7 +844,7 @@ public class Reload {
                         Model.equations = "S=ALPHA+BETA+GAMMA\nP=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA";
                 }
         }
-        if(!tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage())
+        if(!tool.iterator.getIsInd() && !tool.iterator.getIsTwoStage() && !tool.iterator.isNonparam)
             sample.errorModel = "Y=F+EPS(1)";
         else
             sample.errorModel = "Y=F+ETA(1)";
@@ -868,10 +868,10 @@ public class Reload {
     private DesignTool tool;          // DesignTool object for connection
     private int defDoseComp = 0;      // default dose number
     private int defObsComp = 0;       // default observation number
-    private Vector delayList;         // String[]s: [delay number,nDelayComps,to-comp number,to-comp fraction]s
+    private Vector<String[]> delayList;         // String[]s: [delay number,nDelayComps,to-comp number,to-comp fraction]s
     private boolean[] isDelay;        // Is the element a delay
     private Properties subjectModel;  // key: subject ID, value: model/group id 
-    private Vector compErrorModels;   // String[]s: [[comp number:error model]s for each model/group]s
+    private Vector<String[]> compErrorModels;   // String[]s: [[comp number:error model]s for each model/group]s
     private String[] modelNames;      // model/group names
     private String[][] inputInfo;     // [[dose name:x,y(comp number)]s for each model/group]s
     private String[][] sampleInfo;    // [[observation name:x,y]s for each model/group]s
