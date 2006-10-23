@@ -160,7 +160,7 @@ public class Likelihood {
         return front + omega + "\n" + sigma + "            " + back;
     }
     /** Find number of random effects.
-     * @param String source the source XML without <monte_carlo> element.
+     * @param source the source XML without <monte_carlo> element.
      * @return number of random effects
      */
     protected static int findNEta(String source)

@@ -115,7 +115,7 @@ public class Printer implements Printable{
     private String text = null;
     private boolean firstEnter = true;
     private int textHeight = 0;
-    private Vector beginIndex = new Vector();  
+    private Vector<Integer> beginIndex = new Vector<Integer>();  
     private PageFormat pageFormat;
         
     // Print font

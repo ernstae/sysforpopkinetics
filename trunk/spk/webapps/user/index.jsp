@@ -43,7 +43,7 @@ author: Jiaji Du
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
 	  <td valign=top width=112 height="0" colspan="1" rowspan="1">
-<%@ include file="quicklinks.shtml" %>  
+<%@ include file="quicklinks_1.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
@@ -72,15 +72,15 @@ author: Jiaji Du
               <table border="0" cellspacing = "5">
                 <tr>
                   <th align="right">User Name:</th>
-                  <th align="left"><input type="text" name="userName" ></td>
+                  <th align="left"><input type="text" name="userName" ></th>
                 </tr>
                 <tr>
                   <th align="right">Password:</th>
-                  <th align="left"><input type="password" name="password" ></td>
+                  <th align="left"><input type="password" name="password" ></th>
                 </tr>
                 <tr>
                   <th align="right"><input type="Submit" value="Log In"></th>
-                  <th align="left"><input type="Reset"></td>
+                  <th align="left"><input type="Reset"></th>
                 </tr>
               </table>
             </form>

@@ -23,6 +23,7 @@ author: Jiaji Du
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@ page contentType="text/html" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- Verify that the user is logged in --%>
@@ -61,18 +62,57 @@ author: Jiaji Du
               No user information was found ...
             </c:when>
             <c:otherwise>
-              The following user information are found:
+              <c:if test="${validUser.teamId != 0}"> 
+                <sql:query var="db" >
+                  SELECT team_name FROM team WHERE team_id = ?
+                  <sql:param value="${validUser.teamId}" />
+                </sql:query>
+                <c:set var="dbValue" value="${db.rows[0]}" />
+              </c:if>
+              The following user information are found as bellow.<br>You may update the Company, State, Country, Email. 
             <p>
-            <table border="1">
-              <tr><td>User ID</td><td>${fn:escapeXml(validUser.userId)}</td></tr>
-              <tr><td>Group ID</td><td>${fn:escapeXml(validUser.teamId)}</td></tr>
-              <tr><td>Username</td><td>${fn:escapeXml(validUser.userName)}</td></tr>
-              <tr><td>First Name</td><td>${fn:escapeXml(validUser.firstName)}</td></tr>
-              <tr><td>Last Name</td><td>${fn:escapeXml(validUser.lastName)}</td></tr>
-              <tr><td>Company</td><td>${fn:escapeXml(validUser.company)}</td></tr>
-              <tr><td>State</td><td>${fn:escapeXml(validUser.state)}</td></tr>
-              <tr><td>Country</td><td>${fn:escapeXml(validUser.country)}</td></tr>
-              <tr><td>Email<td>${fn:escapeXml(validUser.email)}</td></tr>
+            <form action="validateuser.jsp" method="POST">                
+            <table border="0">
+              <tr>
+                  <td>User ID</td>
+                  <td>${fn:escapeXml(validUser.userId)}</td>
+              </tr>
+              <tr>
+                  <td>Group Name:</td>
+                  <td>${fn:escapeXml(dbValue.team_name)}</td>
+              </tr>
+              <tr>
+                  <td>Username:</td>
+                  <td>${fn:escapeXml(validUser.userName)}</td>
+              </tr>
+              <tr>
+                  <td>First Name:</td>
+                  <td>${fn:escapeXml(validUser.firstName)}</td>
+              </tr>
+              <tr>
+                  <td>Last Name:</td>
+                  <td>${fn:escapeXml(validUser.lastName)}</td>
+              </tr>
+              <tr>
+                  <td>Company:</td>
+                  <td><input type="text" name="company" value="${fn:escapeXml(validUser.company)}" size="40" /></td>
+                  <td><font color="red">${fn:escapeXml(companyNameError)}</font></td>
+              </tr>
+              <tr>
+                  <td>State:</td>
+                  <td><input type="text" name="state" value="${fn:escapeXml(validUser.state)}" size="20" /></td>
+                  <td><font color="red">${fn:escapeXml(stateNameError)}</font></td>
+              </tr>
+              <tr>
+                  <td>Country:</td>
+                  <td><input type="text" name="country" value="${fn:escapeXml(validUser.country)}" size="20" /></td>
+                  <td><font color="red">${fn:escapeXml(countryNameError)}</font></td>
+              </tr>
+              <tr>
+                  <td>Email:</td>
+                  <td><input type="text" name="email" value="${fn:escapeXml(validUser.email)}" size="40" /></td>
+                  <td><font color="red">${fn:escapeXml(emailAddressError)}</font></td>
+              </tr>
               <tr><td>Tester?</td>
                 <c:choose>
                   <c:when test="${validUser.tester == '1'}">
@@ -93,6 +133,8 @@ author: Jiaji Du
                 </c:choose>
               </tr>
             </table>
+            <br><input type="submit" name="enter" value="Update" />
+            </form>
             </c:otherwise>
           </c:choose>
             <p>

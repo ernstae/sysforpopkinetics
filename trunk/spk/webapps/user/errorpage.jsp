@@ -31,7 +31,7 @@ author: Jiaji Du
 
 <html>
   <head>
-    <title>Sorry</title>
+    <title>Error Page</title>
   </head>
   <body bgcolor="white">
     We're sorry but the request could not be processed. 

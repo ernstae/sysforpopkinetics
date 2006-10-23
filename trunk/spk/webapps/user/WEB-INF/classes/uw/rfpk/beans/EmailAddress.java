@@ -19,23 +19,17 @@ distribution.
 package uw.rfpk.beans;
 
 import java.sql.*;
-import java.util.Vector;
-//import java.io.ByteArrayInputStream;
-//import org.apache.commons.jrcs.rcs.*;
-//import org.apache.commons.jrcs.util.ToString;
-//import org.apache.commons.jrcs.diff.*;
 import rfpk.spk.spkdb.*;
-import uw.rfpk.rcs.Archive;
 
 /**
- * Get user dataset list from archive.
+ * Get user email address list from archive.
  * @author Jiaji Du
  */
-public class DatasetList implements java.io.Serializable
+public class EmailAddress implements java.io.Serializable
 {
     /** Constructor with no argument.
      */     
-    public DatasetList(){}
+    public EmailAddress(){}
     
     /** Sets database host.
      * @param dbHost the name of the database host.
@@ -69,28 +63,19 @@ public class DatasetList implements java.io.Serializable
         this.dbPass = dbPass;
     }    
     
-    /** Sets username of the client.
-     * @param username the username of the client.
+    /** Gets list of user email addresses.
+     * @param userType user type: developer, tester or all user.
+     * @return the list of user email addresses separated by comma.
      */    
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }    
-    
-    /** Gets list of user datasets.
-     * @param maxNum maximum number of datasets to return.
-     * @param leftOff least datasetId previously returned (0 if first call in sequence).
-     * @return the list of user datasets.
-     */    
-    public Vector getDatasetList(int maxNum, long leftOff)
+    public String getEmailAddress(String userType)
     {
         // Prepare for the return   
-        Vector datasetList = new Vector();  
-
+        StringBuffer buf = new StringBuffer();  
+        String emailList = null;
+        
         // Database connection
         Connection con = null;
-        Statement userStmt = null;
-        Statement userDatasetsStmt = null;
+        Statement stmt = null;
         
         try
         {
@@ -98,37 +83,15 @@ public class DatasetList implements java.io.Serializable
             con = Spkdb.connect(dbName, dbHost, dbUser, dbPass); 
         
             // Get user id
-            ResultSet userRS = Spkdb.getUser(con, username);
-            userStmt = userRS.getStatement();
-            userRS.next();
-            long userId = userRS.getLong("user_id");
- 
-            // Get user datasets
-            ResultSet userDatasetsRS = Spkdb.userDatasets(con, userId, maxNum, leftOff);
-            userDatasetsStmt = userDatasetsRS.getStatement();
-            
+            ResultSet rs = Spkdb.getEmailAddress(con, userType);
+            stmt = rs.getStatement();
+
             // Fill in the List
-            while(userDatasetsRS.next())
+            while(rs.next())
             {                  
-                // Get dataset id
-                long datasetId = userDatasetsRS.getLong("dataset_id"); 
-                    
-                // Get model archive
-	        Blob blobArchive = userDatasetsRS.getBlob("archive");
-	        long length = blobArchive.length(); 
-	        String dataArchive = new String(blobArchive.getBytes(1L, (int)length));                    
-//                Archive archive = new Archive("", new ByteArrayInputStream(dataArchive.getBytes()));
-                    
                 // Fill in the list 
-                String[] dataset = new String[5];
-                dataset[0] = String.valueOf(datasetId); 
-                dataset[1] = userDatasetsRS.getString("name");
-//                dataset[2] = String.valueOf(archive.getRevisionVersion().last());
-//                dataset[3] = archive.findNode(archive.getRevisionVersion()).getDate().toString();
-                dataset[2] = String.valueOf(Archive.getNumRevision(dataArchive));
-                dataset[3] = Archive.getRevisionDate(dataArchive);
-                dataset[4] = userDatasetsRS.getString("abstract");
-                datasetList.add(dataset); 
+                buf.append(",");
+                buf.append(rs.getString("email"));             
             }
         }      
         catch(SQLException e)
@@ -141,13 +104,14 @@ public class DatasetList implements java.io.Serializable
         {
             try
             {
-                if(userStmt != null) userStmt.close();
-                if(userDatasetsStmt != null) userDatasetsStmt.close();
+                if(stmt != null) stmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
             catch(SQLException e){}
         }
-        return datasetList;
+        
+        if(buf.length() > 0) emailList = buf.substring(1);
+        return emailList;
     }
         
     private String dbHost = null;
@@ -155,5 +119,4 @@ public class DatasetList implements java.io.Serializable
     private String dbUser = null;
     private String dbPass = null;
     private String dbType = null;
-    private String username = null;
 }

@@ -1835,7 +1835,7 @@ public class PlotTool extends JFrame {
             }
             else
             {
-                startIndex = new Vector();
+                startIndex = new Vector<Integer>();
                 model.removeAllElements();
                 String id = indIDs[0];
                 model.addElement("ID = " + id);                
@@ -1890,8 +1890,8 @@ public class PlotTool extends JFrame {
     {
         for(int i = 0; i < dataX.length; i++)
         {
-            Vector tempX = new Vector();
-            Vector tempY = new Vector();
+            Vector<Double> tempX = new Vector<Double>();
+            Vector<Double> tempY = new Vector<Double>();
             for(int j = 0; j < dataY[i].length; j++)
             {
                 if(dataX[i][j] >= minX && dataX[i][j] <= maxX &&
@@ -1977,7 +1977,7 @@ public class PlotTool extends JFrame {
         {
             int count = 0;
             String id = indIDs[0];
-            Vector points = new Vector();
+            Vector<Integer> points = new Vector<Integer>();
             for(int i = 1; i < indIDs.length; i++)
             {
                 count++;
@@ -2062,8 +2062,8 @@ public class PlotTool extends JFrame {
         String y2 = (String)y2ComboBox.getSelectedItem();
         String y3 = (String)y3ComboBox.getSelectedItem();
         String y = "";
-        selection = new Vector();
-        curveName = new Vector();
+        selection = new Vector<Integer>();
+        curveName = new Vector<String>();
         rComboBox.removeAllItems();
         x0ComboBox.removeAllItems();
         y0ComboBox.removeAllItems();
@@ -2157,8 +2157,8 @@ public class PlotTool extends JFrame {
             boolean isLogY = jCheckBox8.isSelected();
             if(isLogX || isLogY)            
             {
-                Vector tempX = new Vector();
-                Vector tempY = new Vector();
+                Vector<Double> tempX = new Vector<Double>();
+                Vector<Double> tempY = new Vector<Double>();
                 for(int i = 0; i < nCurve; i++)
                 {
                     tempX.removeAllElements();
@@ -2439,9 +2439,9 @@ public class PlotTool extends JFrame {
     private Color[] colorList = new Color[]{Color.black, Color.gray, Color.red, Color.pink, 
                                             Color.orange, Color.yellow, Color.green, 
                                             Color.magenta, Color.cyan, Color.blue};    
-    private Vector selection = null;
-    private Vector curveName = null;
-    private Vector startIndex = null;
+    private Vector<Integer> selection = null;
+    private Vector<String> curveName = null;
+    private Vector<Integer> startIndex = null;
     private boolean isHighlight1 = false;
     private boolean isHighlight2 = false;
     private boolean isHighlight3 = false;

@@ -24,6 +24,7 @@ author: Jiaji Du
 <%@page contentType="text/html"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 
 <%-- Verify that the user is logged in --%>
 <c:if test="${validUser == null || validUser.userName != 'useradmin'}">
@@ -35,7 +36,7 @@ author: Jiaji Du
 
 <html>
 <head>
-   <title>Searching in User Database</title>
+   <title>Showing Email</title>
     <link href=stylesheet.css type="text/css" rel=stylesheet>
 </head>
 <body>
@@ -56,52 +57,20 @@ author: Jiaji Du
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>Search in User Database</h3>
-	    <p> 
-            Please enter information about the user you're looking for.
-            You can use partial information in all fields.
-
-            <form action="finduser.jsp" method="post">
-              <input type="hidden" name="OrigURL" value="${fn:escapeXml(param.origURL)}">
-              <table>
-                <tr>
-                  <td>User ID:</td>
-                  <td><input type="text" name="userId"></td>
-                </tr>
-                <tr>
-                  <td>User Name:</td>
-                  <td><input type="text" name="userName"></td>
-                </tr>
-                <tr>
-                  <td>First Name:</td>
-                  <td><input type="text" name="firstName"></td>
-                </tr>
-                <tr>
-                  <td>Last Name:</td>
-                  <td><input type="text" name="lastName"></td>
-                </tr>
-                <tr>
-                  <td>Company:</td>
-                  <td><input type="text" name="company"></td>
-                </tr>
-                <tr>
-                  <td>Country:</td>
-                  <td><input type="text" name="country"></td>
-                </tr>
-                <tr>
-                  <td>State:</td>
-                  <td><input type="text" name="state"></td>
-                </tr>
-                <tr>
-                  <td>Email:</td>
-                  <td><input type="text" name="email"></td>
-                </tr>
-                <tr>
-                  <th align="right"><input type="Submit" value="Submit"></th>
-                  <th align="left"><input type="Reset"></td>
-                </tr>
-              </table>
-            </form>
+	    <h3>Open Email Message</h3>
+            
+            <sql:query var="mail">
+                SELECT * FROM email WHERE email_id = ?
+                <sql:param value="${param.emailId}" />
+            </sql:query>
+            <c:set var="dbValues" value="${mail.rows[0]}" />
+            
+	    <p>
+            Sender:  ${fn:escapeXml(dbValues.sender)}<br>
+            Receiver: ${fn:escapeXml(dbValues.receiver)}<br>
+            Sent time: ${fn:escapeXml(dbValues.send_time)}<br>
+            Subject:<input type="text" name="subject" size="71" value="${fn:escapeXml(dbValues.subject)}" readonly></input><br>
+            Message:<br><textarea name="message" rows="30" cols="80" readonly>${fn:escapeXml(dbValues.message)}</textarea><br>
 	    </p>
             <p>
               When you are done, please <a href="logout.jsp">log out</a>.
@@ -110,5 +79,6 @@ author: Jiaji Du
 	</tr>
       </tbody>
     </table>
+   
   </body>
 </html>

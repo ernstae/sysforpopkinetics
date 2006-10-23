@@ -35,7 +35,7 @@ import java.nio.*;
  *
  * @author Jiaji Du
  */
-public class DiffFiles extends HttpServlet implements javax.servlet.SingleThreadModel
+public class DiffFiles extends HttpServlet
 {
     /**
      * Dispatches client requests to the protected service method.
@@ -84,54 +84,61 @@ public class DiffFiles extends HttpServlet implements javax.servlet.SingleThread
 
                 // Save passed in Strings into files
                 file1 = new File("/tmp/" + secret + "_1.diff");
-                file2 = new File("/tmp/" + secret + "_2.diff");                
-                BufferedWriter out1 = new BufferedWriter(new FileWriter(file1));
-                out1.write(text1);
-                out1.close();        
-                BufferedWriter out2 = new BufferedWriter(new FileWriter(file2));
-                out2.write(text2);
-                out2.close();
-                
-                // Start timer              
-                (new Thread(new Timer(timeLimit))).start(); 
-
-                // Create a subprocess
-                String[] c = new String[]{"diff", file1.getPath(), file2.getPath()}; 
-                process = runtime.exec(c);
-                process.waitFor();
-                if(process.exitValue() > 1)
+                file2 = new File("/tmp/" + secret + "_2.diff");
+                if(file1.exists() || file2.exists())
                 {
-                    file1.delete();
-                    file2.delete();
-                    messageOut = "Time out.  The time limit is " + timeLimit + " second(s)";
+                    messageOut = "Server is comparing the other pair of files for you.";
                 }
                 else
                 {
-                    // Get stdout and stderr of the subprocess
-                    BufferedInputStream in1 = new BufferedInputStream(process.getInputStream());
-                    BufferedInputStream er1 = new BufferedInputStream(process.getErrorStream());
-                    while(true)
-                    {
-                        int i = in1.read();
-                        if(i == -1)
-                            break;
-                        revision += (char)i;
-                    }
-                    String error = "";
-                    while(true)
-                    {
-                        int i = er1.read();
-                        if(i == -1)
-                            break;
-                        error += (char)i;
-                    }
-                    in1.close();
-                    er1.close();
-
-                    // Destroy the subprocess
-                    process.destroy(); 
+                    BufferedWriter out1 = new BufferedWriter(new FileWriter(file1));
+                    out1.write(text1);
+                    out1.close();        
+                    BufferedWriter out2 = new BufferedWriter(new FileWriter(file2));
+                    out2.write(text2);
+                    out2.close();
                 
-                    messageOut = error;
+                    // Start timer              
+                    (new Thread(new Timer(timeLimit))).start(); 
+
+                    // Create a subprocess
+                    String[] c = new String[]{"diff", file1.getPath(), file2.getPath()}; 
+                    process = runtime.exec(c);
+                    process.waitFor();
+                    if(process.exitValue() > 1)
+                    {
+                        file1.delete();
+                        file2.delete();
+                        messageOut = "Time out.  The time limit is " + timeLimit + " second(s)";
+                    }
+                    else
+                    {
+                        // Get stdout and stderr of the subprocess
+                        BufferedInputStream in1 = new BufferedInputStream(process.getInputStream());
+                        BufferedInputStream er1 = new BufferedInputStream(process.getErrorStream());
+                        while(true)
+                        {
+                            int i = in1.read();
+                            if(i == -1)
+                            break;
+                            revision += (char)i;
+                        }
+                        String error = "";
+                        while(true)
+                        {
+                            int i = er1.read();
+                            if(i == -1)
+                                break;
+                            error += (char)i;
+                        }
+                        in1.close();
+                        er1.close();
+
+                        // Destroy the subprocess
+                        process.destroy(); 
+                
+                        messageOut = error;
+                    }
                 }
             }
             else

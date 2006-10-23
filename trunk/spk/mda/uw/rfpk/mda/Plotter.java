@@ -66,8 +66,8 @@ public class Plotter extends JPanel
      * @param pLine the flag specifies if percentile line is required.
      * @param hGrid the flag specifies if horizontal grid lines are required.
      * @param vGrid the flag specifies if vertical grid lines are required.
-     * @param xLineX the X value at which the vertical line intersects the X axis.
-     * @param xLineX the Y value of which the horizontal line intersects the Y axis
+     * @param xLineX the X value of which the vertical line intersects the X axis.
+     * @param yLineY the Y value of which the horizontal line intersects the Y axis
      * @param regression the name of the selected curve for regression.
      * @param percentage the percentage of the percentiles for the regression.
      * @param addedLineColor the colors of the five added lines in a Color array. Each element represents:
@@ -111,7 +111,7 @@ public class Plotter extends JPanel
      * @param nDigitX number of digits right to the decimal point of the X numerical lable.
      * @param nDigitY number of digits right to the decimal point of the Y numerical lable.
      * @param frame window of the plot.
-     * @param indPoints[] an int array containing number of data points for each individual, 
+     * @param indPoints an int array containing number of data points for each individual, 
               null for not individualized.
      */
     public Plotter(double[][] dataX, double[][] dataY, String title, String labelX, String labelY, 
@@ -1034,8 +1034,8 @@ public class Plotter extends JPanel
         newY = new int[nCurve][];        
         for(int i = 0; i < nCurve; i++)
         {
-            Vector selectedX = new Vector(dataX[i].length);
-            Vector selectedY = new Vector(dataY[i].length);
+            Vector<Double> selectedX = new Vector<Double>(dataX[i].length);
+            Vector<Double> selectedY = new Vector<Double>(dataY[i].length);
             for(int j = 0; j < dataX[i].length; j++)
                 if(dataX[i][j] >= minX && dataX[i][j] <= maxX &&
                    dataY[i][j] >= minY && dataY[i][j] <= maxY)

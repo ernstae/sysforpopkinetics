@@ -39,6 +39,12 @@ public class MDA
      */
     public static void main(String[] args)
     {
+        if(!System.getProperty("java.version").startsWith("1.5."))
+        {
+            JOptionPane.showMessageDialog(null, "The version of Java Runtime Environmemt (JRE) on your computer is no longer supported.\n" +
+                                                "Please update the JRE version and re-download MDA.");
+            System.exit(0);
+        }
         if(args.length != 0)
         {
             // Create a lock file if there is none

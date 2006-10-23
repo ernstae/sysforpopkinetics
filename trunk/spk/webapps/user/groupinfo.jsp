@@ -41,7 +41,7 @@ author: Jiaji Du
 
 <html>
   <head>
-    <title>User Account Information</title>
+    <title>Group Information</title>
   </head>
   <body bgcolor="white">
     <table align=left border=0 width=602>
