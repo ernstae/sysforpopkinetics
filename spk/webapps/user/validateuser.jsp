@@ -26,7 +26,7 @@ author: Jiaji Du
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%-- Verify that the user is logged in --%>
-<c:if test="${validUser == null || validUser.userName != 'useradmin'}">
+<c:if test="${validUser == null}">
   <jsp:forward page="index.jsp">
     <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
     <jsp:param name="errorMsg" value="Please log in first." />
@@ -35,49 +35,6 @@ author: Jiaji Du
 
 <c:set var="isValid" value="true" />
 
-<c:set var="userNameError" scope="request" />
-<c:choose>
-  <c:when test="${empty param.userName}">
-    <c:set var="userNameError" scope="request" value="User Name missing" />
-    <c:set var="isValid" value="false" />
-  </c:when>
-  <c:otherwise>
-    <sql:query var="userDb">
-      SELECT * FROM user 
-        WHERE username = ?
-      <sql:param value="${param.userName}" />
-    </sql:query>
-    <c:choose>
-      <c:when test="${param.task == 'addnew'}">
-        <c:if test="${userDb.rowCount != 0}">
-          <c:set var="userNameError" scope="request" value="User Name already used" />
-          <c:set var="isValid" value="false" />  
-        </c:if>
-      </c:when>
-      <c:otherwise>
-        <c:if test="${userDb.rowCount == 0}">
-          <c:set var="userNameError" scope="request" value="User Name not found" />
-          <c:set var="isValid" value="false" />  
-        </c:if>
-      </c:otherwise>
-    </c:choose>
-  </c:otherwise>
-</c:choose>
-<c:if test="${param.task == 'addnew' && empty param.password}">
-  <c:set var="passwordError" scope="request"
-    value="Password missing" />
-  <c:set var="isValid" value="false" />
-</c:if>
-<c:if test="${empty param.firstName}">
-  <c:set var="firstNameError" scope="request"
-    value="First Name missing" />
-  <c:set var="isValid" value="false" />
-</c:if>
-<c:if test="${empty param.lastName}">
-  <c:set var="lastNameError" scope="request"
-    value="Last Name missing" />
-  <c:set var="isValid" value="false" />
-</c:if>
 <c:if test="${empty param.company}">
   <c:set var="companyNameError" scope="request"
     value="Company name missing" />
@@ -98,23 +55,28 @@ author: Jiaji Du
     value="Email address missing" />
   <c:set var="isValid" value="false" />
 </c:if>
-<c:if test="${empty param.teamId}">
-  <c:set var="teamIdError" scope="request"
-    value="Group ID missing" />
-  <c:set var="isValid" value="false" />
-</c:if>
+<c:set target="${validUser}" property="company" value="${param.company}" />
+<c:set target="${validUser}" property="country" value="${param.country}" />
+<c:set target="${validUser}" property="state" value="${param.state}" />
+<c:set target="${validUser}" property="email" value="${param.email}" />
 <c:choose>
   <c:when test="${isValid}">
-    <jsp:forward page="storeuser.jsp" />
+      <sql:update>
+          UPDATE user
+            SET company = ?,
+                state = ?,
+                country = ?,
+                email = ?
+                WHERE user_id = ?
+          <sql:param value="${param.company}" />
+          <sql:param value="${param.state}" />
+          <sql:param value="${param.country}" />
+          <sql:param value="${param.email}" />
+          <sql:param value="${validUser.userId}" />
+      </sql:update>
+      <c:redirect url="usermain.jsp" />
   </c:when>
   <c:otherwise>
-    <c:choose>
-      <c:when test="${param.task == 'addnew'}">
-        <jsp:forward page="enteruser.jsp?task=addnew" />
-      </c:when>
-      <c:otherwise>
-        <jsp:forward page="updateuser.jsp?userId=0" />
-      </c:otherwise>
-    </c:choose>
+    <jsp:forward page="userinfo.jsp" />
   </c:otherwise>
 </c:choose>

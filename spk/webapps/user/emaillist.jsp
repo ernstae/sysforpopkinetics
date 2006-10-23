@@ -36,26 +36,18 @@ author: Jiaji Du
 
 <html>
   <head>
-    <title>Finding Users</title>
+    <title>Email List</title>
   </head>
   <body bgcolor="white">
 
     <%-- Set number of rows to process --%>
     <c:set var="noOfRows" value="${initParam.maxNum}" />
 
-    <%-- Find the user given partial information --%>
-    <sql:query var="userList" startRow="${param.start}" maxRows="${noOfRows}">
-      SELECT * FROM user WHERE user_id LIKE ? AND username LIKE ? AND first_name LIKE ? AND surname LIKE ?  
-      AND company LIKE ? AND country LIKE ? AND state LIKE ? AND email LIKE ? ORDER BY surname
-      <sql:param value="%${param.userId}%" />
-      <sql:param value="%${param.userName}%" /> 
-      <sql:param value="%${param.firstName}%" />
-      <sql:param value="%${param.lastName}%" />
-      <sql:param value="%${param.company}%" />
-      <sql:param value="%${param.country}%" /> 
-      <sql:param value="%${param.state}%" />
-      <sql:param value="%${param.email}%" />
-    </sql:query>
+    <%-- Get users --%>
+    <sql:query var="emailList"
+      sql="SELECT email_id,send_time,receiver,subject FROM email ORDER BY email_id" 
+      startRow="${param.start}" maxRows="${noOfRows}"
+    />
     <table align=left border=0 width=602>
       <tbody> 
 	<tr>    
@@ -67,57 +59,31 @@ author: Jiaji Du
 	</tr> 
 	<tr vAlign=top> <td colSpan=3><p>&nbsp;</p></td></tr> 
 	<tr>
-	  <td vAlign=top width=150 height="0" colspan="1" rowspan="1">
+	  <td vAlign=top width=102 height="0" colspan="1" rowspan="1">
           <%@ include file="quicklinks.shtml" %>  
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>All Users Found</h3>
+	    <h3>All Email List</h3>
 	    <p> 
           <c:choose>
-            <c:when test="${userList.rowCount == 0}">
-              No one is found based on the information you entered.
+            <c:when test="${emailList.rowCount == 0}">
+              No one seems to be in email list anymore ...
             </c:when>
             <c:otherwise>
-              The following users are found:
+              The following emails are found:
             <p>
             <table border="1">
-              <th>User ID</th>
-              <th>Username</th>
-              <th>Last Name</th>
-              <th>First Name</th>
-              <th>Company</th>
-              <th>Country</th>
-              <th>State</th>
-              <th>Email</th>
-              <th>Tester</th>
-              <th>Developer</th>
-              <c:forEach items="${userList.rows}" var="row">
+              <th>Email ID</th>  
+              <th>Send time</th>
+              <th>Receiver</th>
+              <th>Subject</th>  
+              <c:forEach items="${emailList.rows}" var="row">
               <tr>
-                <td><a href=getuser.jsp?userName=${fn:escapeXml(row.username)}&password=${fn:escapeXml(row.password)}>${fn:escapeXml(row.user_id)}</a></td>
-                <td>${fn:escapeXml(row.username)}</td>
-                <td>${fn:escapeXml(row.surname)}</td>
-                <td>${fn:escapeXml(row.first_name)}</td>                
-                <td>${fn:escapeXml(row.company)}</td>
-                <td>${fn:escapeXml(row.country)}</td>
-                <td>${fn:escapeXml(row.state)}</td>
-                <td>${fn:escapeXml(row.email)}</td>
-                <c:choose>
-                  <c:when test="${row.test == 1}">
-                    <td>Yes</td>
-                  </c:when>
-                  <c:otherwise>
-                    <td>No</td>
-                  </c:otherwise>
-                </c:choose>
-                <c:choose>
-                  <c:when test="${row.dev == 1}">
-                    <td>Yes</td>
-                  </c:when>
-                  <c:otherwise>
-                    <td>No</td>
-                  </c:otherwise>
-                </c:choose>
+                <td><a href=openmail.jsp?emailId=${fn:escapeXml(row.email_id)}>${fn:escapeXml(row.email_id)}</a></td>
+                <td><a href=openmail.jsp?emailId=${fn:escapeXml(row.email_id)}>${fn:escapeXml(row.send_time)}</a></td>
+                <td><a href=openmail.jsp?emailId=${fn:escapeXml(row.email_id)}>${fn:escapeXml(row.receiver)}</a></td>
+                <td><a href=openmail.jsp?emailId=${fn:escapeXml(row.email_id)}>${fn:escapeXml(row.subject)}</a></td>
               </tr>
               </c:forEach>
             </table>
@@ -126,7 +92,7 @@ author: Jiaji Du
           <p>
           <c:choose>
             <c:when test="${param.start > 0}">
-              <a href="userlist.jsp?start=${param.start - noOfRows}">
+              <a href="emaillist.jsp?start=${param.start - noOfRows}">
                 Previous Page</a>
             </c:when>
             <c:otherwise>
@@ -134,8 +100,8 @@ author: Jiaji Du
           </c:otherwise>
           </c:choose>
           <c:choose>
-            <c:when test="${userList.limitedByMaxRows}">
-              <a href="userlist.jsp?start=${param.start + noOfRows}">
+            <c:when test="${emailList.limitedByMaxRows}">
+              <a href="emaillist.jsp?start=${param.start + noOfRows}">
                 Next Page</a>
             </c:when>
           <c:otherwise>

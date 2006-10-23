@@ -273,7 +273,7 @@ public class DefaultPlot extends javax.swing.JDialog {
     {
         int count = 0;
         String id = indIDs[0];
-        Vector points = new Vector();
+        Vector<Integer> points = new Vector<Integer>();
         for(int i = 1; i < indIDs.length; i++)
         {
             count++;

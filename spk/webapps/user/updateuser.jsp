@@ -36,7 +36,7 @@ author: Jiaji Du
 
 <html>
   <head>
-    <title>User Account</title>
+    <title>Updating User Account</title>
     <link href=stylesheet.css type="text/css" rel=stylesheet>
   </head>
   <body>

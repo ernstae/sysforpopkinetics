@@ -88,7 +88,7 @@ author: Jiaji Du
           <p>
           <c:choose>
             <c:when test="${param.start > 0}">
-              <a href="userlistenter.jsp?start=${param.start - noOfRows}">
+              <a href="grouplist.jsp?start=${param.start - noOfRows}">
                 Previous Page</a>
             </c:when>
             <c:otherwise>
@@ -96,8 +96,8 @@ author: Jiaji Du
           </c:otherwise>
           </c:choose>
           <c:choose>
-            <c:when test="${userList.limitedByMaxRows}">
-              <a href="userlistenter.jsp?start=${param.start + noOfRows}">
+            <c:when test="${groupList.limitedByMaxRows}">
+              <a href="grouplist.jsp?start=${param.start + noOfRows}">
                 Next Page</a>
             </c:when>
           <c:otherwise>

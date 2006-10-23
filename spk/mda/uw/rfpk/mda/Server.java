@@ -396,7 +396,6 @@ public class Server {
      *         The first index of the array is the model sequence in reversed order.
      *         The second index designates the fields.
      *         null if failed.
-     * @param username model owner's username.
      * @param maxNum maximum number of models to provide status for.
      * @param leftOff least modelId previously returned (0 if first call in sequence).
      * @param username model owner's username.
@@ -436,7 +435,6 @@ public class Server {
      *         The first index of the array is the dataset sequence in reversed order.
      *         The second index designates the fields.
      *         null if failed.
-     * @param username dataset owner's username.
      * @param maxNum maximum number of datasets to provide status for.
      * @param leftOff least datasetId previously returned (0 if first call in sequence).
      * @param username dataset owner's username.

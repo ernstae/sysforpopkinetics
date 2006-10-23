@@ -48,11 +48,9 @@ author: Jiaji Du
         file = new File(pathName);
         reader = new BufferedReader(new FileReader(file));
         String line, email;
-        if((line = reader.readLine()) != null)
-        {
+        while((line = reader.readLine()) != null) {
             String userEmail = line.trim();
-            if(!userEmail.equals(""))
-            {
+            if(!userEmail.equals("")) {
                 if(!emailList.equals("")) emailList += ",";
                 emailList += userEmail;
             }

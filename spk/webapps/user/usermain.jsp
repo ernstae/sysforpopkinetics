@@ -73,6 +73,7 @@ author: Jiaji Du
                 <a href="userlistupdate.jsp">Update user account</a><br>
                 <a href="searchuser.jsp">Search in user database</a><br>
                 <a href="usagelist.jsp">View SPK usage list</a><br>
+                <a href="sendmail.jsp">Send email to users</a><br>
                 <a href="grouplist.jsp">View all user groups</a><br>
                 <form action="newgroup.jsp" method="post">
                   New group:<input type="text" name="groupName" value="${fn:escapeXml(param.groupName)}">
