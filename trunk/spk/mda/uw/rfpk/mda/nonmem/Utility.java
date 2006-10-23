@@ -77,7 +77,7 @@ public class Utility {
         String regExp = "\\b" + s + "\\s*\\(?(\\d+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
         Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
         Matcher matcher = pattern.matcher(" " + input.toUpperCase());
-        Vector list = new Vector();
+        Vector<String> list = new Vector<String>();
         if(matcher.find())
         {
             list.add(matcher.group(1));
@@ -411,7 +411,7 @@ public class Utility {
      * @param isInd a boolean true for individual analysis, false for population analysis.
      * @return a String array containing the data labels.
      */        
-    public static String[] parseDataXML(String dataXML, Vector data, boolean isInd)
+    public static String[] parseDataXML(String dataXML, Vector<Vector> data, boolean isInd)
     {
         int nDataCol = -1;
         String[] labels = null;
@@ -450,7 +450,7 @@ public class Utility {
         NodeList rowList = spkdata.getElementsByTagName("row"); 
         if(rowList.getLength() > 1)
         {
-            Vector indData = new Vector();
+            Vector<String[]> indData = new Vector<String[]>();
             
             // Find the data lablel
             row = (Element)rowList.item(0);
@@ -499,7 +499,7 @@ public class Utility {
                     else
                     {
                         data.add(indData);
-                        indData = new Vector();
+                        indData = new Vector<String[]>();
                         indData.add(items);
                         firstItem = items[0];
                     }
@@ -520,9 +520,9 @@ public class Utility {
      * @return a String array containing the data labels in the comment line.
      * In case of error, null is returned.
      */        
-    public static String[] parseDataFile(String filename, Vector data, boolean isInd)
+    public static String[] parseDataFile(String filename, Vector<Vector> data, boolean isInd)
     {
-        Vector indData = new Vector();
+        Vector<String[]> indData = new Vector<String[]>();
         String[] labels = null;
         try
 	{
@@ -654,7 +654,7 @@ public class Utility {
                             data.add(indData);
 
                             // Create a new Vector indData for the new individual
-                            indData = new Vector();
+                            indData = new Vector<String[]>();
 
                             // Add the line of tokens to the new indData
                             indData.add(tokens);
@@ -844,7 +844,7 @@ public class Utility {
     {
         String[] functions = {"ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "COSH",
                               "MAX", "MIN", "MOD", "SINH", "TAN", "TANH"};
-        Vector names = new Vector();                   
+        Vector<String> names = new Vector<String>();                   
         for(int i = 0; i < functions.length; i++)
         {
             if(Pattern.compile("\\b" + functions[i] + "\\b", Pattern.UNIX_LINES).matcher(text).find())
@@ -858,10 +858,9 @@ public class Utility {
         return names;
     }
 
-    /** Check if math functions used in the step are compatible with NONMEM.
+    /** Check if END IF is contained in the text.
      * @param text the program to be checked.
      * @param step the step title.
-     * @return a Vector containing the names of the functions not supported by NONMEM in the text. 
      */
     public static void checkENDIF(String text, String step)
     {                 
@@ -881,7 +880,7 @@ public class Utility {
     public static Vector checkParenthesis(String text, String step)
     {
         String[] lines = text.split("\n");
-        Vector mismatches = new Vector();
+        Vector<Integer> mismatches = new Vector<Integer>();
         int n;
         for(int i = 0; i < lines.length; i++)
         {
@@ -924,7 +923,7 @@ public class Utility {
         if(step.equals("Differential Equation Structure"))
             text = text.replaceAll("\\bDADT\\(\\d+\\)", "");
         String[] lines = text.split("\n");
-        Vector errors = new Vector();
+        Vector<Integer> errors = new Vector<Integer>();
         String regExp = "\\b\\w+\\(\\d+\\)\\s*=";
         Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
         int k;
@@ -1075,7 +1074,7 @@ public class Utility {
         int nRows = rows.length - 1;
         String[] allLabels = rows[0].split(",");
         int nColumns = allLabels.length;
-        ArrayList dataItems = new ArrayList(nColumns);
+        ArrayList<String> dataItems = new ArrayList<String>(nColumns);
         for(int i = 0; i < nColumns; i++)
             dataItems.add(allLabels[i]);
         int nItems = selectedLabels.length;
@@ -1136,16 +1135,24 @@ public class Utility {
     
     /** Check characters in a string.
      * @param str string to be checked.
+     * @param place where the unacceptable character is found.
      * @return true if the ASCII code of every character is in the range of 32 and 126,
      *         otherwise false.
      */
-    public static boolean checkCharacter(String str) 
+    public static boolean checkCharacter(String str, String place) 
     {
         char[] ch = str.toCharArray();
+        int c;
         for (int i = 0; i < ch.length; i++) 
         {
-	    if (ch[i] < 32 || ch[i] > 126)
+            c = ch[i];
+	    if (c > 126 || c == 64)
+            {
+                JOptionPane.showMessageDialog(null, "Unacceptable character found in " + place +".",  
+                                              "Input Error",            
+                                              JOptionPane.ERROR_MESSAGE);
 		return false;
+            }
         }
         return true;
     }
@@ -1155,7 +1162,7 @@ public class Utility {
      */    
     public static void main(String[] args)
     {
-        System.out.println(checkCharacter("aB1*%$ø)>/"));
+        System.out.println(checkCharacter("øaB1*%$)>@/", "test")); //ø
 //        checkENDIF("END IF", "STEP");
 //        String model = "FRONT\n$OMEGA BLOCK(4) 1 2 3 4 5 6 7 8 9 10\nBACK";
 //        System.out.println(diagonalizeOmegaModel(model));

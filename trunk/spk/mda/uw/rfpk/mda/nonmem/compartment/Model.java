@@ -55,8 +55,8 @@ public class Model implements Cloneable
             return null;
         }
 
-        model.inputs = new Vector();
-        model.samples = new Vector();
+        model.inputs = new Vector<Element.Input>();
+        model.samples = new Vector<Element.Sample>();
         if(isCopyToDiagram)
         {
             for(int i = 0; i < elements.size(); i++)
@@ -69,7 +69,7 @@ public class Model implements Cloneable
         for(int i = 0; i < inputs.size(); i++)
         {
             Element.Input oldInput = (Element.Input)inputs.get(i);
-            Vector compartments = new Vector();
+            Vector<Element.Compartment> compartments = new Vector<Element.Compartment>();
             for(int j = 0; j < oldInput.compartments.size(); j++)
             {
                 Element.Compartment compartment = (Element.Compartment)oldInput.compartments.get(j);
@@ -86,7 +86,7 @@ public class Model implements Cloneable
         for(int i = 0; i < samples.size(); i++)
         {
             Element.Sample oldSample = (Element.Sample)samples.get(i);
-            Vector compartments = new Vector();
+            Vector<Element.Compartment> compartments = new Vector<Element.Compartment>();
             for(int j = 0; j < oldSample.compartments.size(); j++)
             {
                 Element.Compartment compartment = (Element.Compartment)oldSample.compartments.get(j);
@@ -271,13 +271,13 @@ public class Model implements Cloneable
     /** Model name */
     protected String name;
     /** All elements */
-    protected static Vector elements = new Vector();
+    protected static Vector<Element> elements = new Vector<Element>();
     /** All fluxes */
-    protected static Vector fluxes = new Vector();
+    protected static Vector<Element.Flux> fluxes = new Vector<Element.Flux>();
     /** All inputs */
-    protected Vector inputs = new Vector();
+    protected Vector<Element.Input> inputs = new Vector<Element.Input>();
     /** All samples */
-    protected Vector samples = new Vector();
+    protected Vector<Element.Sample> samples = new Vector<Element.Sample>();
     /** Is the model selected */
     protected boolean isSelected = false;
     /** Selected element */
@@ -296,6 +296,6 @@ public class Model implements Cloneable
     protected static String equations = "";
     /** Error block equations of all models */
     protected static String errorEqns = "";
-    private Vector models;
+    private Vector<Model> models;
     private DesignTool tool;
 }

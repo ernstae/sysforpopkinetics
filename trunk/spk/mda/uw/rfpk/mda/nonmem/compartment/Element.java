@@ -182,7 +182,7 @@ public abstract class Element implements Cloneable
         }
 
         /** Attributes */
-        protected Vector attributes = new Vector();
+        protected Vector<String> attributes = new Vector<String>();
         /** Compartment force */
         protected String force = "";
         /** Parameters */
@@ -282,9 +282,9 @@ public abstract class Element implements Cloneable
         /** Number of compartments to simulate the delay. */
         protected int nDelayComps = 2;
         /** Ending compartments from the delay */
-        protected Vector compartments = new Vector();
+        protected Vector<Element> compartments = new Vector<Element>();
         /** Delay fractions */
-        protected Vector fractions = new Vector();
+        protected Vector<String> fractions = new Vector<String>();
     }
     
     /** This class defines flux. */

@@ -60,7 +60,7 @@ public class VectorShow extends javax.swing.JFrame {
         // Set table model
         jTable1.setModel(new javax.swing.table.DefaultTableModel(data, header));
         jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        show();
+        setVisible(true);
     }
     
     /** This method is called from within the constructor to

@@ -45,7 +45,7 @@ public class VariableDialog extends javax.swing.JDialog {
     protected void setVariableList()
     {
         Properties variables = Model.variables;
-        List keySet = new Vector(variables.keySet());
+        List<Object> keySet = new Vector<Object>(variables.keySet());
         Iterator keyIter = keySet.iterator();
         String key, value;
         listModel.removeAllElements();

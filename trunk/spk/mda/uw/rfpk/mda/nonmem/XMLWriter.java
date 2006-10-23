@@ -64,19 +64,20 @@ public class XMLWriter
         setModel();
     }
 
-    /** This function creates Content section of the SPK input file. */    
+    /** This function creates Content section of the SPK input file. */
     private void setSource()
     {
         docSource = builder.newDocument();
-        Element spksource = docSource.createElement("spksource");  
-        docSource.appendChild(spksource);  
-        Element nonmem = docSource.createElement("nonmem"); 
+        Element spksource = docSource.createElement("spksource");
+        docSource.appendChild(spksource);
+        Element nonmem = docSource.createElement("nonmem");
         nonmem.setAttribute("version", "0.1"); 
         spksource.appendChild(nonmem);
         Element constraint = docSource.createElement("constraint");
         nonmem.appendChild(constraint);
         Element analysis = null;
-        if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
+        if(source.analysis.equals("population") || source.analysis.equals("two-stage") || 
+           source.analysis.equals("nonparametric"))
             analysis = docSource.createElement("pop_analysis"); 
         else
             analysis = docSource.createElement("ind_analysis"); 
@@ -85,12 +86,17 @@ public class XMLWriter
             analysis.setAttribute("is_estimation", "yes");
             analysis.setAttribute("sig_digits", source.estimation[1]);
             analysis.setAttribute("mitr", source.estimation[2]);
-            if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
+            if(source.analysis.equals("population") || source.analysis.equals("two-stage") || 
+               source.analysis.equals("nonparametric"))
             {
                 analysis.setAttribute("approximation", source.estimation[0]);
-                if(source.estimation[0].equals("fo"))
-                    analysis.setAttribute("is_eta_out", source.estimation[5]);
-                analysis.setAttribute("interaction", source.estimation[7]);
+                if(source.analysis.equals("population"))
+                {
+                    if(source.estimation[0].equals("fo"))
+                         analysis.setAttribute("is_eta_out", source.estimation[5]);
+                    analysis.setAttribute("interaction", source.estimation[7]);
+                    analysis.setAttribute("abort", source.estimation[4]);
+                }
             }
             analysis.setAttribute("abort", source.estimation[4]);
         }
@@ -100,7 +106,8 @@ public class XMLWriter
         }
         if(source.analysis.equals("identifiability"))
             analysis.setAttribute("is_identifiability", "yes");
-        if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
+        if(source.analysis.equals("population") || source.analysis.equals("two-stage") || 
+           source.analysis.equals("nonparametric"))
             analysis.setAttribute("pop_size", String.valueOf(data.size()));
         constraint.appendChild(analysis); 
         setDescription(analysis);
@@ -125,7 +132,8 @@ public class XMLWriter
             setTheta(analysis);
             setOmega(analysis);
         }
-        if(source.analysis.equals("population") || source.analysis.equals("two-stage"))
+        if(source.analysis.equals("population") || source.analysis.equals("two-stage") || 
+           source.analysis.equals("nonparametric"))
         {
             setSigma(analysis);
             setPop_stat(analysis);
@@ -165,7 +173,7 @@ public class XMLWriter
                 label.setAttribute("name", replaceCharacter(names[0]));
                 if(names.length == 2 && Utility.isStdItem(names[0])) 
                     label.setAttribute("synonym", replaceCharacter(names[1]));
-            }            
+            }
         }
     }
     
@@ -215,7 +223,7 @@ public class XMLWriter
     // Generate sigma
     private void setSigma(Element parent)
     {
-        if(source.analysis.equals("two-stage"))
+        if(source.analysis.equals("two-stage") || source.analysis.equals("nonparametric"))
             source.sigma = source.omega;
         if(source.sigma != null)
         {
@@ -255,7 +263,7 @@ public class XMLWriter
     {
         if(source.omega != null)
         {
-            if(!source.analysis.equals("two-stage"))
+            if(!source.analysis.equals("two-stage") || source.analysis.equals("nonparametric"))
             { 
                 for(int i = 0; i < source.omega.length; i++)
 	        {
@@ -290,7 +298,7 @@ public class XMLWriter
             {
                 int size = source.theta.length; 
                 String length = String.valueOf(size);
-                Element omega = docSource.createElement("omega");     
+                Element omega = docSource.createElement("omega");
                 omega.setAttribute("struct", "block");
                 omega.setAttribute("dimension", length);
                 omega.setAttribute("same_as_previous", "no");
@@ -302,7 +310,7 @@ public class XMLWriter
                 {
                     for(int j = 0; j <= k; j++)
 	            {   
-                        Element value = docSource.createElement("value");                    
+                        Element value = docSource.createElement("value");
                         value.setAttribute("fixed", "no");
                         if(source.covTheta != null)
                         {
@@ -522,28 +530,28 @@ public class XMLWriter
                         scatterplot.appendChild(split);
 		    }
 	        }
-	    }                        
+	    }
 	}
     }
 
     // This method creates Data section of the SPK input file.   
     private void setData()
     { 
-        if(data == null || data.size() == 0 || source.input == null || 
-           source.input.length == 0) 
-            return;  
+        if(data == null || data.size() == 0 || source.input == null ||
+           source.input.length == 0)
+            return;
         int nInd = data.size();
         int nRows = 1;
         for(int i =0; i < nInd; i++)
-            nRows += ((Vector)data.get(i)).size(); 
-        int nColumns = source.input.length;   
-        docData = builder.newDocument(); 
+            nRows += ((Vector)data.get(i)).size();
+        int nColumns = source.input.length;
+        docData = builder.newDocument();
         Element spkdata = docData.createElement("spkdata");
         spkdata.setAttribute("version", "0.1");
-        docData.appendChild(spkdata);         
+        docData.appendChild(spkdata);
         Element table = docData.createElement("table");
         table.setAttribute("columns", String.valueOf(nColumns));
-        table.setAttribute("rows", String.valueOf(nRows));        
+        table.setAttribute("rows", String.valueOf(nRows));
         spkdata.appendChild(table);
         
         Element description = docData.createElement("description");
@@ -552,33 +560,33 @@ public class XMLWriter
 
         Element row = docData.createElement("row");
         row.setAttribute("position", "1");
-        table.appendChild(row); 
+        table.appendChild(row);
         for(int k = 0; k < nColumns; k++)
         {
             Element value = docData.createElement("value");
-            value.setAttribute("type", "string");                    
+            value.setAttribute("type", "string");
             value.appendChild(docData.createTextNode(source.input[k].split("=")[0]));
-            row.appendChild(value);                    
-        }          
+            row.appendChild(value);
+        }
         
         int position = 2;
         for(int i = 0; i < data.size(); i++)
 	{
             int size = ((Vector)data.get(i)).size();
-            Vector indValue = (Vector)data.get(i);                
+            Vector indValue = (Vector)data.get(i);
             for(int j = 0; j < size; j++)
-	    {                
+	    {
                 row = docData.createElement("row");
                 row.setAttribute("position", String.valueOf(j + position));
-		table.appendChild(row); 
+		table.appendChild(row);
                 for(int k = 0; k < nColumns; k++)
 		{
                     Element value = docData.createElement("value");
                     if(k == 0 && source.input[k].split("=")[0].equals("ID"))
-                        value.setAttribute("type", "string");                    
+                        value.setAttribute("type", "string");
                     String dataValue = ((String[])indValue.get(j))[k];
-                    value.appendChild(docData.createTextNode(dataValue));                    
-                    row.appendChild(value);                    
+                    value.appendChild(docData.createTextNode(dataValue));
+                    row.appendChild(value);
 		}
 	    }
             position += size;
@@ -588,11 +596,11 @@ public class XMLWriter
     // This method generates model section of the SPK input file.    
     private void setModel()
     {    
-        docModel = builder.newDocument();  
-        Element spkmodel = docModel.createElement("spkmodel"); 
+        docModel = builder.newDocument();
+        Element spkmodel = docModel.createElement("spkmodel");
         docModel.appendChild(spkmodel);
-        spkmodel.appendChild(docModel.createTextNode("\n" + replaceCharacter(control)));        
-    }    
+        spkmodel.appendChild(docModel.createTextNode("\n" + replaceCharacter(control)));
+    }
     
     /** This method generates model section of the SPK input file.
      * @param text the model text.
@@ -611,7 +619,7 @@ public class XMLWriter
             e.printStackTrace();
         }
         Document document = builder.newDocument();
-        Element spkmodel = document.createElement("spkmodel"); 
+        Element spkmodel = document.createElement("spkmodel");
         document.appendChild(spkmodel);
         spkmodel.appendChild(document.createTextNode("\n" + replaceCharacter(text) + "\n"));
         return getString(document);
@@ -637,7 +645,7 @@ public class XMLWriter
         Document docJob = builder.newDocument();
         Element spkjob = docJob.createElement("spkjob");
         spkjob.setAttribute("id", spkOutput.getProperty("jobId"));
-        spkjob.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("jobAbstract"))); 
+        spkjob.setAttribute("abstract", replaceCharacter(spkOutput.getProperty("jobAbstract")));
         spkjob.setAttribute("submission_time", spkOutput.getProperty("startTime"));
         spkjob.setAttribute("completion_time", spkOutput.getProperty("eventTime"));
         spkjob.setAttribute("method_code", spkOutput.getProperty("methodCode"));
@@ -655,11 +663,11 @@ public class XMLWriter
         spkjob.appendChild(data);
         docJob.appendChild(spkjob);
         String job = getString(docJob);
-//        String job = Utility.formatXML(((DocumentImpl)docJob).saveXML(docJob));                 
+//        String job = Utility.formatXML(((DocumentImpl)docJob).saveXML(docJob));
 
         // Return Spk output
 //        String ls = System.getProperty("line.separator");
-        return job + "\n" + spkOutput.getProperty("report") + spkOutput.getProperty("source");        
+        return job + "\n" + spkOutput.getProperty("report") + spkOutput.getProperty("source");
     }
     
     // Generate a dataset XML
@@ -673,7 +681,7 @@ public class XMLWriter
         docData.appendChild(spkdata);
         Element table = docData.createElement("table");
         table.setAttribute("columns", String.valueOf(nColumns));
-        table.setAttribute("rows", String.valueOf(nRows + 1));        
+        table.setAttribute("rows", String.valueOf(nRows + 1));
         spkdata.appendChild(table);
         Element description = docData.createElement("description");
         description.appendChild(docData.createTextNode(replaceCharacter(datasetDescription)));
@@ -684,9 +692,9 @@ public class XMLWriter
         for(int k = 0; k < nColumns; k++)
         {
             Element value = docData.createElement("value");
-            value.setAttribute("type", "string");                    
+            value.setAttribute("type", "string");
             value.appendChild(docData.createTextNode(dataLabels[k]));
-            row.appendChild(value);                    
+            row.appendChild(value);
         }
         for(int j = 0; j < nRows; j++)
 	{                
@@ -697,9 +705,9 @@ public class XMLWriter
             {
                 Element value = docData.createElement("value");
                 if(k == 0 && dataLabels[k].equals("ID"))
-                    value.setAttribute("type", "string");                    
-                value.appendChild(docData.createTextNode(dataAll[j][k]));                    
-                row.appendChild(value);                    
+                    value.setAttribute("type", "string");
+                value.appendChild(docData.createTextNode(dataAll[j][k]));
+                row.appendChild(value);
             }
         }
         return getString(docData);
@@ -738,7 +746,7 @@ public class XMLWriter
 //        String ls = System.getProperty("line.separator");
 //        return Utility.formatXML(((DocumentImpl)docSource).saveXML(docSource)) + ls +
 //               Utility.formatXML(((DocumentImpl)docData).saveXML(docData)) + ls +
-//               Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel));      
+//               Utility.formatXML(((DocumentImpl)docModel).saveXML(docModel));
     }
     
     private boolean exist(String[] strings, String string)
@@ -764,7 +772,7 @@ public class XMLWriter
         java.io.StringWriter writer = new java.io.StringWriter();
         try
         {
-            Transformer t = TransformerFactory.newInstance().newTransformer();            
+            Transformer t = TransformerFactory.newInstance().newTransformer();
             t.transform(new DOMSource(document), new StreamResult(writer));
         }
         catch(TransformerConfigurationException e){}

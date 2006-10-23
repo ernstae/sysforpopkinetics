@@ -196,7 +196,7 @@ public class TableShow extends javax.swing.JFrame {
                 d[i][j] = Double.parseDouble(data[i][j + 1]);
         
         // Sort the data
-        Arrays.sort(d, new CompareRows(nSort)); 
+        Arrays.sort(d, new CompareRows(nSort));
         
         // Convert data from double to String
         for(int i = 0; i < nRow; i++)
@@ -205,7 +205,7 @@ public class TableShow extends javax.swing.JFrame {
     }
     
     // Class to implements Comparator interface
-    private class CompareRows implements Comparator 
+    private class CompareRows implements Comparator<Object>
     {
         // Constructor
         public CompareRows(int nCompare)
@@ -246,6 +246,6 @@ public class TableShow extends javax.swing.JFrame {
     private String[][][] tableAll = null;
     private double[][] dataAll = null; 
     private ArrayList labelAll = null; 
-    private ArrayList aliasAll = new ArrayList();
+    private ArrayList<String> aliasAll = new ArrayList<String>();
     private Properties dataLabelMap = null;
 }
