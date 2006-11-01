@@ -512,6 +512,8 @@ public:
   void getEta  ( SPK_VA::valarray<Scalar>& ret ) const;
   void getOmega( SPK_VA::valarray<Scalar>& ret ) const;
 
+  const Cov<Scalar>& getOmega() const;
+
   void getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
   void getStandardPar_indPar( SPK_VA::valarray<double>& ret ) const;
 

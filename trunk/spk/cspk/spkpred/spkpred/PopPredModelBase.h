@@ -608,6 +608,9 @@ public:
   void getOmega( SPK_VA::valarray<Scalar>& ret ) const;
   void getSigma( SPK_VA::valarray<Scalar>& ret ) const;
 
+  const Cov<Scalar>& getOmega() const;
+  const Cov<Scalar>& getSigma() const;
+
   void getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
   void getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const;
 
