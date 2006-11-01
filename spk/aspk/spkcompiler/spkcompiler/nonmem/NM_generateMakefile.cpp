@@ -46,14 +46,19 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "TEST_DIR  = spktest" << endl;
   oMakefile << endl;                                   
 
-  oMakefile << "# C++ compiler flags to build a release version." << endl;
-  oMakefile << "#CXX_FLAGS_PROD = -O3 -Dspk_release -DNDEBUG " << endl;
-  oMakefile << "CXX_FLAGS_PROD = -O -Dspk_release" << endl;
+  oMakefile << "# C++ compiler flags to build a production version." << endl;
+  oMakefile << "CXX_FLAGS_PROD = -O3 -Dspk_release -DNDEBUG " << endl;
+  oMakefile << endl;
+
+  oMakefile << "# C++ compiler flags to build a test version." << endl;
+  oMakefile << "# These are the same as the production flags because the" << endl;
+  oMakefile << "# test system will be deployed into the production system." << endl;
+  oMakefile << "CXX_FLAGS = " << endl;
+  oMakefile << "CXX_FLAGS_TEST = $(CXX_FLAGS_PROD) " << endl;
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to build a debug version." << endl;
-  oMakefile << "CXX_FLAGS = " << endl;
-  oMakefile << "CXX_FLAGS_TEST = -g" << endl;
+  oMakefile << "CXX_FLAGS_DEBUG = -g " << endl;
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to turn on profiling" << endl;
@@ -97,6 +102,18 @@ void NonmemTranslator::generateMakefile() const
       
       oMakefile << "test : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
       oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) fitDriver.cpp -o driver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "debug : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) fitDriver.cpp -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
@@ -158,6 +175,20 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
       oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "debug : adapt.o pow_ii.o "           << endl;
+      oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
