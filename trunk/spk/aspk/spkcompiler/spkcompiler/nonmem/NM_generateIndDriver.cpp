@@ -36,6 +36,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "#include <vector>"                 << endl;
   oIndDriver << endl;
 
+  oIndDriver << "#include <spk/scalarToDouble.h>"      << endl;
   oIndDriver << "#include <spk/SpkValarray.h>"      << endl;
   oIndDriver << "#include <spk/SpkException.h>"     << endl;
   oIndDriver << "#include <spk/WarningsManager.h>"  << endl;
@@ -123,6 +124,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      DataSet< CppAD::AD<double> > set;" << endl;
   oIndDriver << "      const int nObservs = set.getNObservs( 0 );" << endl;
   oIndDriver << "      valarray<double> y( nObservs );" << endl;
+  oIndDriver << "      valarray<double> f( nObservs );" << endl;
   oIndDriver << endl;
   
   oIndDriver << "      const bool isSimRequested     = " << ( myIsSimulate? "true":"false" ) << ";" << endl;
@@ -310,7 +312,6 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      valarray<double> iPredOut              ( nRecords );"  << endl;
   oIndDriver << "      valarray<double> iResOut               ( nRecords );"  << endl;
   oIndDriver << "      valarray<double> iResWtdOut            ( nRecords );"  << endl;
-  oIndDriver << "      valarray<double> iPredTrancatedOut     ( nObservs );"  << endl;
   oIndDriver << "      valarray<double> iResTrancatedOut      ( nObservs );"  << endl;
   oIndDriver << "      valarray<double> iResWtdTrancatedOut   ( nObservs );"  << endl;
   oIndDriver << endl;
@@ -455,17 +456,24 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << endl;
   oIndDriver << "         if( isOptRequested && isOptSuccess )" << endl;
   oIndDriver << "         {" << endl;
+  oIndDriver << "            model.setIndPar( bOut );" << endl;
+  oIndDriver << endl;
   oIndDriver << "            assert( haveCompleteData );" << endl;
   oIndDriver << "            try{" << endl;
+  oIndDriver << "               // Make sure this individual's data mean values have" << endl;
+  oIndDriver << "               // been calculated at the optimal parameter values." << endl;
+  oIndDriver << "               model.dataMean( f );" << endl;
+  oIndDriver << endl;
+  oIndDriver << "               // Don't calculate the individual's PRED values." << endl;
+  oIndDriver << "               valarray<double>* pVANull = 0;" << endl;
   oIndDriver << "               indResiduals( modelForDisposal,"     << endl;
   oIndDriver << "                             y, "                   << endl;
   oIndDriver << "                             bOut, "                << endl;
-  oIndDriver << "                            &iPredTrancatedOut, "   << endl;
+  oIndDriver << "                             pVANull, "             << endl;
   oIndDriver << "                            &iResTrancatedOut, "    << endl;
   oIndDriver << "                            &iResWtdTrancatedOut, " << endl;
   oIndDriver << "                             NULL, "                << endl;
   oIndDriver << "                             NULL );"               << endl;
-  oIndDriver << "               dataForDisposal.expand( iPredTrancatedOut,   iPredOut );"   << endl;
   oIndDriver << "               dataForDisposal.expand( iResTrancatedOut,    iResOut );"    << endl;
   oIndDriver << "               dataForDisposal.expand( iResWtdTrancatedOut, iResWtdOut );" << endl;
   oIndDriver << "            }" << endl;
@@ -483,11 +491,18 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "               errors.push( e );" << endl;
   oIndDriver << "               ret = PROGRAMMER_FAILURE;" << endl;
   oIndDriver << "            }" << endl;
+  oIndDriver << "            // Set the IPRED values here so that they have values for" << endl;
+  oIndDriver << "            // all of the data records." << endl;
+  oIndDriver << "            for( int j=0; j<nRecords; j++)" << endl;
+  oIndDriver << "            {" << endl;
+  oIndDriver << "               // This assumes there is only one individual in the DataSet." << endl;
+  oIndDriver << "               scalarToDouble( dataForDisposal.data[0]->PRED[j], iPredOut[j] );" << endl;
+  oIndDriver << "            }" << endl;
   oIndDriver << "            set.replaceIPred( iPredOut );"   << endl;
   oIndDriver << "            set.replaceIRes ( iResOut );"    << endl;
   oIndDriver << "            set.replaceIWRes( iResWtdOut );" << endl;
-  //  oIndDriver << "            set.replacePred ( iPredOut );"   << endl;
-  //  oIndDriver << "            set.replaceRes  ( iResOut );"    << endl;
+  oIndDriver << endl;
+  oIndDriver << "            set.replaceRes  ( iResOut );"    << endl;
   oIndDriver << "            set.replaceWRes ( iResWtdOut );" << endl;
   oIndDriver << "         }" << endl;
  
