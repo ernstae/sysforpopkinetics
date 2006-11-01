@@ -2520,6 +2520,22 @@ void IndPredModelBase<Scalar>::getOmega( SPK_VA::valarray<Scalar>& ret ) const
 
 /*************************************************************************
  *
+ * Function: getOmega
+ *
+ *//**
+ * Gets a non-const reference to the current value for omega.
+ */
+/*************************************************************************/
+
+template<class Scalar>
+const Cov<Scalar>& IndPredModelBase<Scalar>::getOmega() const
+{
+  return *pOmegaCurr;
+}
+
+
+/*************************************************************************
+ *
  * Function: getStandardPar
  *
  *//**
@@ -2878,6 +2894,8 @@ template void IndPredModelBase<double>::getTheta( SPK_VA::valarray<double>& ret 
 template void IndPredModelBase<double>::getEta  ( SPK_VA::valarray<double>& ret ) const;
 template void IndPredModelBase<double>::getOmega( SPK_VA::valarray<double>& ret ) const;
 
+template const Cov<double>& IndPredModelBase<double>::getOmega() const;
+
 template void IndPredModelBase<double>::getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
 template void IndPredModelBase<double>::getStandardPar_indPar( SPK_VA::valarray<double>& ret ) const;
 
@@ -2972,6 +2990,8 @@ template void IndPredModelBase< CppAD::AD<double> >::getIndPar( SPK_VA::valarray
 template void IndPredModelBase< CppAD::AD<double> >::getTheta( SPK_VA::valarray< CppAD::AD<double> >& ret ) const;
 template void IndPredModelBase< CppAD::AD<double> >::getEta  ( SPK_VA::valarray< CppAD::AD<double> >& ret ) const;
 template void IndPredModelBase< CppAD::AD<double> >::getOmega( SPK_VA::valarray< CppAD::AD<double> >& ret ) const;
+
+template const Cov< CppAD::AD<double> >& IndPredModelBase< CppAD::AD<double> >::getOmega() const;
 
 template void IndPredModelBase< CppAD::AD<double> >::getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
 template void IndPredModelBase< CppAD::AD<double> >::getStandardPar_indPar( SPK_VA::valarray<double>& ret ) const;

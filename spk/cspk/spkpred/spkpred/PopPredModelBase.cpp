@@ -3804,6 +3804,38 @@ void PopPredModelBase<Scalar>::getSigma( SPK_VA::valarray<Scalar>& ret ) const
 
 /*************************************************************************
  *
+ * Function: getOmega
+ *
+ *//**
+ * Gets a non-const reference to the current value for omega.
+ */
+/*************************************************************************/
+
+template<class Scalar>
+const Cov<Scalar>& PopPredModelBase<Scalar>::getOmega() const
+{
+  return *pOmegaCurr;
+}
+
+
+/*************************************************************************
+ *
+ * Function: getSigma
+ *
+ *//**
+ * Gets a non-const reference to the current value for sigma.
+ */
+/*************************************************************************/
+
+template<class Scalar>
+const Cov<Scalar>& PopPredModelBase<Scalar>::getSigma() const
+{
+  return *pSigmaCurr;
+}
+
+
+/*************************************************************************
+ *
  * Function: getStandardPar
  *
  *//**
@@ -4278,6 +4310,9 @@ template void PopPredModelBase<double>::getEps  ( SPK_VA::valarray<double>& ret 
 template void PopPredModelBase<double>::getOmega( SPK_VA::valarray<double>& ret ) const;
 template void PopPredModelBase<double>::getSigma( SPK_VA::valarray<double>& ret ) const;
 
+template const Cov<double>& PopPredModelBase<double>::getOmega() const;
+template const Cov<double>& PopPredModelBase<double>::getSigma() const;
+
 template void PopPredModelBase<double>::getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
 template void PopPredModelBase<double>::getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const;
 
@@ -4419,6 +4454,9 @@ template void PopPredModelBase< CppAD::AD<double> >::getEta  ( SPK_VA::valarray<
 template void PopPredModelBase< CppAD::AD<double> >::getEps  ( SPK_VA::valarray< CppAD::AD<double> >& ret ) const;
 template void PopPredModelBase< CppAD::AD<double> >::getOmega( SPK_VA::valarray< CppAD::AD<double> >& ret ) const;
 template void PopPredModelBase< CppAD::AD<double> >::getSigma( SPK_VA::valarray< CppAD::AD<double> >& ret ) const;
+
+template const Cov< CppAD::AD<double> >& PopPredModelBase< CppAD::AD<double> >::getOmega() const;
+template const Cov< CppAD::AD<double> >& PopPredModelBase< CppAD::AD<double> >::getSigma() const;
 
 template void PopPredModelBase< CppAD::AD<double> >::getStandardPar       ( SPK_VA::valarray<double>& ret ) const;
 template void PopPredModelBase< CppAD::AD<double> >::getStandardPar_popPar( SPK_VA::valarray<double>& ret ) const;
