@@ -141,6 +141,9 @@ public:
       // XML DOM related errors
       SPK_XMLDOM_ERR,
 
+      // Error during non-parameteric calculation
+      SPK_NON_PAR_ERR,
+
       // Unknown
       SPK_UNKNOWN_ERR
   };

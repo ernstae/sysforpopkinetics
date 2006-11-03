@@ -139,6 +139,7 @@ libspk_a_SOURCES = \
 	transposeDerivative.cpp \
 	transposeRowBlocks.cpp \
 	twoStageMethod.cpp \
+	spk_non_par.cpp \
 	UTranTimesSymKronSymTimesU.cpp \
 	UTranTimesSymKronSymTimesU_x.cpp \
 	WarningsManager.cpp \

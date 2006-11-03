@@ -92,6 +92,7 @@
 #include "simulateTest.h"
 #include "SpkErrorTest.h"
 #include "SpkExceptionTest.h"
+#include "spk_non_par_test.h"
 #include "SpkModelErrorTest.h"
 #include "subtractTest.h"
 #include "symmetrizeTest.h"
@@ -213,12 +214,14 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "SpkErrorTest" ]                     = SpkErrorTest::suite();
   master_list_of_tests[ "SpkExceptionTest" ]                 = SpkExceptionTest::suite();
   master_list_of_tests[ "SpkModelErrorTest" ]                = SpkModelErrorTest::suite();
+  master_list_of_tests[ "spk_non_par_test" ]                 = spk_non_par_test::suite();
   master_list_of_tests[ "subtractTest" ]                     = subtractTest::suite();
   master_list_of_tests[ "symmetrizeTest" ]                   = symmetrizeTest::suite();
   master_list_of_tests[ "transposeDerivativeTest" ]          = transposeDerivativeTest::suite();
   master_list_of_tests[ "transposeRowBlocksTest" ]           = transposeRowBlocksTest::suite();
   master_list_of_tests[ "transposeTest" ]                    = transposeTest::suite();
   master_list_of_tests[ "twoStageMethodTest" ]               = twoStageMethodTest::suite();
+  master_list_of_tests[ "UTranTimesSymKronSymTimesU_xTest" ] = UTranTimesSymKronSymTimesU_xTest::suite();
   master_list_of_tests[ "UTranTimesSymKronSymTimesU_xTest" ] = UTranTimesSymKronSymTimesU_xTest::suite();
   master_list_of_tests[ "UTranTimesSymKronSymTimesUTest" ]   = UTranTimesSymKronSymTimesUTest::suite();
   master_list_of_tests[ "WarningsManagerTest" ]              = WarningsManagerTest::suite();

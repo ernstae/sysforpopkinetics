@@ -28,7 +28,10 @@ AM_LDFLAGS  = \
 	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
 	$(top_builddir)/spk/libspk.a \
+	-lnon_par \
+	-lmat2cpp \
 	-lQN01Box \
+	-lgsl \
 	-llapack \
 	-llapack_atlas \
 	-lcblas \
@@ -213,6 +216,7 @@ testall_SOURCES = \
 	rvecTest.h \
 	simulateTest.cpp \
 	simulateTest.h \
+	spk_non_par_test.cpp \
 	SpkErrorTest.cpp \
 	SpkErrorTest.h \
 	SpkExceptionTest.cpp \
