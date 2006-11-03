@@ -1,4 +1,4 @@
-$comment
+/*
 %************************************************************************
 %                                                                       *
 %  From:   Resource Facility for Population Kinetics                    *
@@ -18,45 +18,37 @@ $comment
 %                                                                       *
 %************************************************************************
 
-$$
-$begin population$$
-$spell namespace
-$$
+*/
+/*************************************************************************
+ *
+ * File: spk_non_par_test.h
+ *
+ *
+ * Declare spk_non_par_test class.
+ *
+ * Author: Brad Bell
+ *
+ *************************************************************************/
 
-$section Population Parameter Estimation$$
+# ifndef SPK_NON_PAR_TEST_H
+# define SPK_NON_PAR_TEST_H
 
-$comment	ppkaSim.oms/$$
-$comment	LMonte.oms/$$
+#include <cppunit/TestFixture.h>
+#include <cppunit/Test.h>
+#include "../../../spk/DoubleMatrix.h"
 
-Many of the following modules may
-use identifiers defined in the $xref/namespace_population_analysis//namespace_population_analysis/$$
-namespace.
+class spk_non_par_test : public CppUnit::TestFixture
+{
+public: 
+  // CppUnit framework functions.
+  static CppUnit::Test* suite();
+  void setUp();
+  void tearDown();
 
-$childtable/
-    estimateB.cpp/
-    expectedHessian.cpp/
-    firstOrderOpt.cpp/
-    fitPopulation.cpp/
-    EqIndModel.omh/
-    lambda.cpp/
-    lambdaDiff.cpp/
-    lambda2diff.cpp/
-    lTilde.cpp/
-    NaiveFoModel.cpp/
-    namespace_population_analysis.h/ 
-    Objective.h/   
-    ppkaOpt.cpp/
-    popResiduals.cpp/
-    popStatistics.cpp/
-    twoStageMethod.cpp/
-    spk_non_par.cpp
-/$$
-$pre
+private:
+  // Test cases for this unit test.
+  void polynomial_fit_test();
 
-$$
-$center
-$italic
-$include shortCopyright.txt$$
-$$
-$$
-$end
+} ;
+
+#endif

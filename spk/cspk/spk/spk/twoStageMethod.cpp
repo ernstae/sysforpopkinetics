@@ -44,7 +44,14 @@
 
 $begin twoStageMethod$$
 
-$spell
+$spell 
+  pharmacodynamic
+  struct
+  Excep
+  Argenio
+  Cov
+  Schumitzky
+  pharmacokinetic
   Model model
   bool  
   cbc  
@@ -191,7 +198,7 @@ estimates are calculated using the algorithms described in Schumitzky
 (1995).
 
 $head Reference$$
-A. Schumitzky, EM algorithms and two stage methods in phamacokinetic population analysis.
+A. Schumitzky, EM algorithms and two stage methods in pharmacokinetic population analysis.
 in $italic Advanced Methods of Pharmacokinetic and Pharmacodynamic Systems Analysis$$, 
 edited by D. Z. D'Argenio. New York: Plenum, 1995, p. 145-160.
 

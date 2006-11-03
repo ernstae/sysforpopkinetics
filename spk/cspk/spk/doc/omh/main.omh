@@ -23,8 +23,9 @@ $begin main$$
 
 $section System for Population Kinetics$$
 
-$path/..\..\spk/.cpp/$$
-$path/..\..\spk/.h/$$
+$path%../../spk%.cpp%$$
+$path%../../spk%.h%$$
+$path%../../test/UnitTests/src%.cpp%$$
 
 $childtable/
     notes.omh/

@@ -29,4 +29,12 @@
 #
 # -----------------------------------------------------------------
 all :
-	omhelp ../omh/main.omh -l http://depts.washington.edu/rfpk -debug
+	omhelp ../omh/main.omh \
+		-l http://depts.washington.edu/rfpk \
+		-debug \
+		-noframe
+	omhelp ../omh/main.omh \
+		-l http://depts.washington.edu/rfpk \
+		-debug \
+		-xml   \
+		-noframe
