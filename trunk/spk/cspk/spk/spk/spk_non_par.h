@@ -6,6 +6,7 @@
 # include "SpkModel.h"
 
 extern void spk_non_par(
+	size_t                             level       ,
 	SpkModel< CppAD::AD<double> >     &admodel     ,
 	SpkModel<double>                  &model       ,
 	const DoubleMatrix                &N           ,

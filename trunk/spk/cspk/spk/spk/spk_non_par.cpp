@@ -4,6 +4,9 @@ $latex \newcommand{\B}[1]{{\bf #1}}$$
 $latex \newcommand{\R}{{\bf R}}$$
 $latex \newcommand{\T}{{\rm T}}$$
 $spell
+	mu
+	std::cout
+	itr
 	pout
 	CppAD
 	Dirac
@@ -23,19 +26,19 @@ $index nonparametric, population analysis$$
 $index population, nonparametric analysis$$
 
 $head Syntax$$
-$syntax%void spk_non_par(%model%, %N%, %y%, %epsilon%, %blow%, %bup%, %
-	Bin%, %Bout%, %lamout%, %pout%)%$$
+$syntax%void spk_non_par(%level%, %model%, %N%, %y%, %epsilon%, % 
+	blow%, %bup%, %Bin%, %Bout%, %lamout%, %pout%)%$$
 
 $head Problem Definition$$
 We define the discrete measure
-$latex \mu$$ on $latex \R^n$$ 
+$latex \Lambda$$ on $latex \R^n$$ 
 and the non-parametric population objective function
 $latex F : \R^{J \times n} \times \R_+^J \rightarrow \R$$ by
 $latex \[
 \begin{array}{rcl}
-\mu ( b )     & = & \sum_{j=1} \lambda_j \delta ( b - B_j )
+\Lambda ( b )     & = & \sum_{j=1} \lambda_j \delta ( b - B_j )
 \\
-F(B, \lambda) & = & - \sum_{i=1}^M \log [ \B{p} ( y^i | \mu ) ]
+F(B, \lambda) & = & - \sum_{i=1}^M \log [ \B{p} ( y^i | \Lambda ) ]
 \end{array}
 \] $$
 where $latex \delta$$ denotes the Dirac delta function on $latex \R^n$$,
@@ -45,10 +48,10 @@ $cref/M/non_par_model/Notation/M/$$ is the number of individuals
 in the population, 
 $cref/y^i/non_par_model/Notation/y^i/$$ is the 
 measurement vector corresponding to individual $latex i$$,
-the probability of $latex y^i$$ given $latex \mu$$ is given by
+the probability of $latex y^i$$ given $latex \Lambda$$ is given by
 $latex \[
 \begin{array}{rcl}
-\B{p} ( y^i | \mu ) & = & 
+\B{p} ( y^i | \Lambda ) & = & 
 \sum_{j=1} \lambda_j \B{p}( y^i | B_j )
 \\
 \B{p} ( y^i | b ) & = & 
@@ -80,6 +83,51 @@ $latex \[
 	blow \leq B_j \leq bup \; {\rm for} \; j = 1 , \ldots , J
 \end{array}
 \] $$
+
+$head level$$
+The argument $italic level$$ has prototype
+$syntax%
+	size_t %level%
+%$$
+It specifies the level of tracing to write to $code std::cout$$
+during the execution of $code spk_non_par$$ as follows:
+
+$subhead level == 0$$
+No tracing is done
+
+$subhead level >= 1$$
+The current iteration number $italic itr$$,
+the value of the relaxation parameter $code mu$$ and the
+convergence information $code info$$ are printed at each iteration
+(the relaxation parameter and all the convergence information 
+should converge to zero).
+The convergence information has three components 
+in order as follows:
+$list number$$
+$latex \left| 1 - \sum_{j=1}^n \lambda_j \right|$$
+$lnext
+$latex \max_j 
+| \gamma  - \partial_{\lambda(j)}  F(B, \lambda ) | 
+$$
+$lnext
+$latex \max_{j,k} | F_B (B, \lambda)_{i,j} | $$.
+$lend
+where $latex \gamma \in \R$$ is given by
+$latex \[
+\gamma =
+\left.
+\sum_{j=1}^J \partial_{\lambda(j)} F( B , \lambda ) \lambda_j^2
+\right/
+\sum_{j=1}^J \lambda_j^2
+\] $$
+
+$subhead level >= 10$$
+If $italic level$$ is greater than or equal ten,
+$syntax%mod(%level%, 10)%$$ is used as a tracing level
+for $code opt_measure$$ and 
+$syntax%%level% / 10%$$ is used as a tracing level for the
+corresponding call to 
+$code QuasiNewton01Box$$.
 
 $head model$$
 The argument $italic model$$ has prototype
@@ -143,12 +191,13 @@ F_B ( B , \lambda )_{j,k} = \left\{ \begin{array}{ll}
 	& {\rm if} \; \partial_{B(j,k)} F(B, \lambda) \leq 0
 \end{array} \right.
 \] $$
-We define the average partial of $latex F$$ 
-with respect to $latex \lambda$$ ,
-$latex F_\bar{\lambda} (B , \lambda ) \in \R $$ by
+We define $latex \gamma \in \R$$ by
 $latex \[
-F_\bar{\lambda} ( B , \lambda ) = 
-	\frac{1}{J} \sum_{j=1}^J \partial_{\lambda(j)} F( B , \lambda )
+\gamma =
+\left.
+\sum_{j=1}^J \partial_{\lambda(j)} F( B , \lambda ) \lambda_j^2
+\right/
+\sum_{j=1}^J \lambda_j^2
 \] $$
 The output values for $latex B$$ and $latex \lambda$$ satisfy the
 following approximate first order conditions for a minimum:
@@ -160,12 +209,12 @@ $latex \varepsilon \geq | 1 - \sum_{j=1}^J \lambda_j |$$
 $lnext
 for $latex j = 1 , \ldots , J$$, 
 $latex \varepsilon \geq  
-| F_\bar{\lambda} ( B , \lambda )  - \partial_{\lambda(j)}  F(B, \lambda ) | 
+| \gamma  - \partial_{\lambda(j)}  F(B, \lambda ) | \lambda_j
 $$
 $lnext
 for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , p$$,
 $latex 
-\varepsilon \geq | F_B (B, \lambda)_{i,j} | 
+\varepsilon \geq | F_B (B, \lambda)_{j,k} | 
 $$.
 $lend
 
@@ -443,6 +492,7 @@ public:
 } // end of empty namespace
 
 extern void spk_non_par(
+	size_t                             level       ,
 	SpkModel< CppAD::AD<double> >     &admodel     ,
 	SpkModel<double>                  &model       ,
 	const DoubleMatrix                &N           ,
@@ -469,9 +519,6 @@ extern void spk_non_par(
 	size_t n = blow.nr();
 	
 	// ------------ Arguments to non_par::opt_measure --------------------
-
-	// level of tracing
-	size_t level = 0;
 
 	// input likelihood function
 	Like like(admodel, model, N, y, n);
