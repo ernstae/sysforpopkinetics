@@ -250,6 +250,11 @@ double objective(
 //--------------------------------------------------------------------
 void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 {
+	// ------------------- level ----------------------
+	// mod(level, 10) is level  in spk_non_par
+	// (level / 10) is level in QuasiNewton01Box
+	size_t level = 01; 
+
 	// ------------------- model ---------------------
 	// sigma      = measure noise standard deviation
 	// size_t q   = number of measurements per individual
@@ -265,7 +270,6 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 
 	// some temporary indices
 	size_t i, j, k;
-
 
 	polynomial_model<double>       model(sigma, q, m, M, n, J);
 	polynomial_model< ADdouble > admodel(sigma, q, m, M, n, J);
@@ -346,6 +350,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// ------------------------------------------------------------------
 	try
 	{	spk_non_par(
+			level   ,
 			admodel ,
 			model   , 
 			N       , 
@@ -401,13 +406,15 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 			ok        &= bkj <= *(bup.data() + k);
 			ptr[k+j*n] = bkj - step;
 			if( ptr[k+j*n] >= *(blow.data() + k) )
-			{	double obj_m = objective(model, y, N, Bout, lamout);
-				ok          &= obj_m >= obj;
+			{	double obj_m = 
+				objective(model, y, N, Bout, lamout);
+				ok          &= obj_m >= obj - epsilon;
 			}
 			ptr[k+j*n] = bkj + step;
 			if( ptr[k+j*n] <= *(bup.data() + k) )
-			{	double obj_p = objective(model, y, N, Bout, lamout);
-				ok          &= obj_p >= obj;
+			{	double obj_p = 
+				objective(model, y, N, Bout, lamout);
+				ok          &= obj_p >= obj - epsilon;
 			}
 			ptr[k+j*n] = bkj;
 		}
@@ -437,13 +444,13 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		ptr[jmax] = lam_max + step;
 		if( 0. <= ptr[j] )
 		{	double obj_m = objective(model, y, N, Bout, lamout);
-			ok          &= obj_m >= obj;
+			ok          &= obj_m >= obj - epsilon;
 		}
 		ptr[j] = lam_j + step;
 		ptr[jmax] = lam_max - step;
 		if( ptr[j] <= 1. )
 		{	double obj_p = objective(model, y, N, Bout, lamout);
-			ok          &= obj_p >= obj;
+			ok          &= obj_p >= obj - epsilon;
 		}
 		ptr[j]    = lam_j;
 		ptr[jmax] = lam_max;
@@ -490,8 +497,8 @@ void spk_non_par_test::polynomial_fit_test(void)
 	size_t m     = 1;  // number of fixed effects (not used)
 	size_t n     = 2;  // number of random effects per individual
 	size_t q     = 3;  // number of measurements per individual
-	size_t M     = 7;  // number of individuals in the population
-	size_t J     = 7;  // number of discret measure points 
+	size_t M     = 10; // number of individuals in the population
+	size_t J     = 12;  // number of discret measure points 
 
 	one_fit(sigma, q, m, M, n, J);
 }
