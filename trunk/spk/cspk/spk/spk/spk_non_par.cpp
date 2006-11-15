@@ -121,6 +121,16 @@ $latex \[
 \sum_{j=1}^J \lambda_j^2
 \] $$
 
+
+$subhead level >= 2$$
+The weights corresponding to each discrete measure point is printed
+(with the label $code lambda$$)
+at each iteration.
+In addition, the minimum distance from each discrete measure point
+to another discrete measurement point is printed
+with the label $code distance$$.
+
+
 $subhead level >= 10$$
 If $italic level$$ is greater than or equal ten,
 $syntax%mod(%level%, 10)%$$ is used as a tracing level
