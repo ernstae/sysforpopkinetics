@@ -78,7 +78,6 @@ private:
 	const size_t m_;
 	const size_t M_;
 	const size_t n_;
-	const size_t J_;
 	const double sigma_;
 	vector       t_;
 	// current state of the model
@@ -87,8 +86,8 @@ private:
 	Svector b_;
 public:
 	polynomial_model(
-		double sigma, size_t q, size_t m, size_t M, size_t n, size_t J
-	) : sigma_(sigma), q_(q), m_(m), M_(M), n_(n), J_(J), 
+		double sigma, size_t q, size_t m, size_t M, size_t n) 
+	: sigma_(sigma), q_(q), m_(m), M_(M), n_(n), 
 	  t_(q), alpha_(m), b_(n)
 	{	size_t k;
 		for( k = 0; k < q_; k++)
@@ -253,7 +252,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// ------------------- level ----------------------
 	// mod(level, 10) is level  in spk_non_par
 	// (level / 10) is level in QuasiNewton01Box
-	size_t level = 01; 
+	size_t level = 02; 
 
 	// ------------------- model ---------------------
 	// sigma      = measure noise standard deviation
@@ -271,8 +270,8 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// some temporary indices
 	size_t i, j, k;
 
-	polynomial_model<double>       model(sigma, q, m, M, n, J);
-	polynomial_model< ADdouble > admodel(sigma, q, m, M, n, J);
+	polynomial_model<double>       model(sigma, q, m, M, n);
+	polynomial_model< ADdouble > admodel(sigma, q, m, M, n);
 
 	// value for alpha (not used)
 	ADvector adalpha(m);
@@ -314,7 +313,10 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	}
 
 	// --------------------- epsilon ---------------------
-	double epsilon = 1e-3;
+	DoubleMatrix epsilon(2, 1);
+	ptr = epsilon.data();
+	ptr[0] = 1e-7;
+	ptr[1] = 1e-4;
 
 	// ----------------------- blow ----------------------
 	DoubleMatrix blow(n, 1);
@@ -339,13 +341,13 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	}
 
 	// ----------------------- Bout ----------------------
-	DoubleMatrix Bout(n, J);
+	DoubleMatrix Bout;
 
 	// ---------------------- lamout ---------------------
-	DoubleMatrix lamout(1, J);
+	DoubleMatrix lamout;
 
 	// ----------------------- pout ----------------------
-	DoubleMatrix pout(M, J);
+	DoubleMatrix pout;
 
 	// ------------------------------------------------------------------
 	try
@@ -377,6 +379,16 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		false 
 		);
   	}
+	// value of J returned by spk_non_par
+	J = Bout.nc(); 
+	CPPUNIT_ASSERT_MESSAGE(
+		"polynomial_fit_test: dimension error.",
+		Bout.nr()   == n && 
+		lamout.nr() == 1 && 
+		lamout.nc() == J &&
+		pout.nr()   == M &&
+		pout.nc()   == J
+	);
 
 	DoubleMatrix check_pout(M, J);
 	p_y_given_b(model, y, N, Bout, check_pout);
@@ -399,6 +411,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	ptr = Bout.data();
 	double step = 1e-2;
 	double obj  = objective(model, y, N, Bout, lamout);
+	double eps  = *(epsilon.data() + 0);
 	for(j = 0; j < J; j++)
 	{	for(k = 0; k < n; k++)
 		{	double bkj = ptr[k+j*n];
@@ -408,13 +421,13 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 			if( ptr[k+j*n] >= *(blow.data() + k) )
 			{	double obj_m = 
 				objective(model, y, N, Bout, lamout);
-				ok          &= obj_m >= obj - epsilon;
+				ok          &= obj_m >= obj - eps;
 			}
 			ptr[k+j*n] = bkj + step;
 			if( ptr[k+j*n] <= *(bup.data() + k) )
 			{	double obj_p = 
 				objective(model, y, N, Bout, lamout);
-				ok          &= obj_p >= obj - epsilon;
+				ok          &= obj_p >= obj - eps;
 			}
 			ptr[k+j*n] = bkj;
 		}
@@ -433,7 +446,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		if( ptr[j] > ptr[jmax] )
 			jmax = j;
 	}
-	ok &= CppAD::NearEqual(sum, 1., epsilon, epsilon);
+	ok &= CppAD::NearEqual(sum, 1., eps, eps);
 	double lam_max = ptr[jmax];
 	step           = lam_max * 1e-2;
 	for(j = 0; j < J; j++) if( j != jmax )
@@ -444,13 +457,13 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		ptr[jmax] = lam_max + step;
 		if( 0. <= ptr[j] )
 		{	double obj_m = objective(model, y, N, Bout, lamout);
-			ok          &= obj_m >= obj - epsilon;
+			ok          &= obj_m >= obj - eps;
 		}
 		ptr[j] = lam_j + step;
 		ptr[jmax] = lam_max - step;
 		if( ptr[j] <= 1. )
 		{	double obj_p = objective(model, y, N, Bout, lamout);
-			ok          &= obj_p >= obj - epsilon;
+			ok          &= obj_p >= obj - eps;
 		}
 		ptr[j]    = lam_j;
 		ptr[jmax] = lam_max;
@@ -497,8 +510,8 @@ void spk_non_par_test::polynomial_fit_test(void)
 	size_t m     = 1;  // number of fixed effects (not used)
 	size_t n     = 2;  // number of random effects per individual
 	size_t q     = 3;  // number of measurements per individual
-	size_t M     = 10; // number of individuals in the population
-	size_t J     = 12;  // number of discret measure points 
+	size_t M     = 5;  // number of individuals in the population
+	size_t J     = 10; // number of discret measure points 
 
 	one_fit(sigma, q, m, M, n, J);
 }

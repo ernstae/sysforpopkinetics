@@ -185,10 +185,19 @@ Is the $th j$$ data value corresponding to individual $italic i$$.
 $head epsilon$$
 The argument $italic epsilon$$ has prototype
 $syntax%
-	double %epsilon%
+	const DoubleMatrix %epsilon%
 %$$
-It specifies the value $latex \varepsilon$$ in the convergence
-criteria below.
+It specifies the convergence criteria
+$latex \[
+	\varepsilon_0 = *( epilon.data() + 0 )
+\]
+and the joining criteria 
+$latex \[
+	\varepsilon_1 = *( epilon.data() + 1 )
+\]
+used below.
+
+$subhead Notation$$
 We define the scaled projected gradient of $latex F$$
 with respect to $latex B$$,
 $latex F_B (B , \lambda ) \in \R^{J \times n} $$ by
@@ -209,25 +218,41 @@ $latex \[
 \right/
 \sum_{j=1}^J \lambda_j^2
 \] $$
+We define the scaled infinity norm between $latex B_j$$ and B_q$$ by
+$latex \[
+\| B_j - B_q \|_\infty =
+\max_k \frac{ | B_{k,j} - B_{k,q} | } { bup_k - blow_k }
+\] $$
+
+$subhead Convergence Criteria$$
 The output values for $latex B$$ and $latex \lambda$$ satisfy the
 following approximate first order conditions for a minimum:
 $list number$$
 for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , p$$,
 $latex blow_k \leq B_{j,k} \leq bup_k$$.
 $lnext
-$latex \varepsilon \geq | 1 - \sum_{j=1}^J \lambda_j |$$ 
+$latex \varepsilon_0 \geq | 1 - \sum_{j=1}^J \lambda_j |$$ 
 $lnext
 for $latex j = 1 , \ldots , J$$, 
-$latex \varepsilon \geq  
+$latex \varepsilon_0 \geq  
 | \gamma  - \partial_{\lambda(j)}  F(B, \lambda ) | \lambda_j
 $$
 $lnext
 for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , p$$,
 $latex 
-\varepsilon \geq | F_B (B, \lambda)_{j,k} | 
+\varepsilon_0 \geq | F_B (B, \lambda)_{j,k} | 
 $$.
 $lend
 
+$subhead Join Criteria$$
+If there are two columns of $latex B$$ such that
+$latex \[
+	\varepsilon_1 \geq \| B_j - B_q \|_\infty 
+\] $$
+the two columns are joined, 
+the weights are added,
+the column dimension of $italic B$$ ($latex J$$) is reduced by one,
+and the column dimension of $italic lambda$$ is reduced by one.
 
 $head blow$$
 The argument $italic blow$$ has prototype
@@ -259,7 +284,7 @@ $syntax%
 %$$
 Each column of $italic Bin$$ represents an initial guess for the location 
 of the atomic measure points $latex \{ B_j \}$$ that solve the problem.
-The value $syntax%%Bin%.nc()%$$ defines $latex J$$
+The value $syntax%%Bin%.nc()%$$ defines the initial value of $latex J$$; i.e.,
 the number of atomic points in the non-parametric measure
 for the random effects.
 It must be greater than or equal
@@ -275,7 +300,7 @@ $syntax%
 	DoubleMatrix &%Bout%
 %$$
 It must have the same sizes as $italic Bin$$.
-The input value of the elements of $italic Bout$$ does not matter.
+The input value and dimension of $italic Bout$$ does not matter.
 Upon return from $code spk_non_par$$,
 $italic Bout$$ contains the location of the atomic measure points 
 corresponding to the solution of the optimization problem.
@@ -285,10 +310,9 @@ The argument $italic lamout$$ has prototype
 $syntax%
 	DoubleMatrix &%lamout%
 %$$
-The value $syntax%%lamout%.nc()%$$ must be equal to $latex J$$
-and the value $syntax%%lamout%.nr()%$$ must be equal to one. 
-The input value of the elements of $italic lamout$$ does not matter.
-Upon return from $code spk_non_par$$, $italic lamout$$ contains 
+The input value and dimension of $italic lamout$$ does not matter.
+Upon return from $code spk_non_par$$, $italic lamout$$ is a column
+vector (with the same number of rows as $italic Bout$$) containing 
 the weights corresponding to each of the atomic measure points
 in the solution to the optimization problem.
 
@@ -297,9 +321,7 @@ The argument $italic pout$$ has prototype
 $syntax%
 	DoubleMatrix &%pout%
 %$$
-The value $syntax%%pout%.nr()%$$ must be equal to $latex M$$
-and the value $syntax%%lamout%.nc()%$$ must be equal to $latex J$$. 
-The input value of the elements of $italic pout$$ does not matter.
+The input value and dimension of $italic pout$$ does not matter.
 Upon return from $code spk_non_par$$, 
 the $latex (i, j)$$ element of $italic pout$$
 is the probability density for 
@@ -308,7 +330,9 @@ is equal to the $th j$$ column of $italic Bout$$; i.e.
 $latex \[
 	pout [ i * J + j ] = \B{p} ( y^i | b = B_j )
 \] $$
-where $italic B_j$$ is the $th j$$ column of $italic Bout$$..
+where $italic B_j$$ is the $th j$$ column of $italic Bout$$
+and $latex J$$ is the column dimenson of $italic Bout$$
+(which may not be the same as the column dimension of $italic Bin$$).
 
 $children%
 	non_par_model.omh
@@ -507,7 +531,7 @@ extern void spk_non_par(
 	SpkModel<double>                  &model       ,
 	const DoubleMatrix                &N           ,
 	const DoubleMatrix                &y           ,
-	double                             epsilon     ,
+	const DoubleMatrix                &epsilon     ,
 	const DoubleMatrix                &blow        ,
 	const DoubleMatrix                &bup         ,
 	const DoubleMatrix                &Bin         ,
@@ -529,6 +553,8 @@ extern void spk_non_par(
 	size_t n = blow.nr();
 	
 	// ------------ Arguments to non_par::opt_measure --------------------
+	double eps   = *(epsilon.data() + 0);
+	double delta = *(epsilon.data() + 1);
 
 	// input likelihood function
 	Like like(admodel, model, N, y, n);
@@ -566,8 +592,8 @@ extern void spk_non_par(
 	const char *msg;
 
 	// -----------------------------------------------------------------
-	msg = non_par::opt_measure(
-		level, epsilon, &like, M, xLow, xUp, X, lambda, info
+	msg = non_par::opt_measure( level, eps, delta, 
+		&like, M, xLow, xUp, X, lambda, info
 	);
 	// -----------------------------------------------------------------
 
@@ -579,20 +605,28 @@ extern void spk_non_par(
       			__FILE__ 
 		);
 	}
+	// determine number of discrete measure points
+	assert( n == X.size2() );
+	J = X.size1();
 
-	// return discrete measure points
+	// dimension the return matrices
+	Bout.resize(n, J);
+	lamout.resize(1, J);
+	pout.resize(M, J);
+
+	// retrun elements of Bout
 	ptr = Bout.data();
 	for(j = 0; j < J; j++)
 	{	for(k = 0; k < n; k++)
 			ptr[k + j * n] = X(j, k);
 	}
 
-	// return weights
+	// return elements of lamout 
 	ptr = lamout.data();
 	for(j = 0; j < J; j++)
 		ptr[j] = lambda(j, 0);
 
-	// return conditional probabilities
+	// return elements of pout
 	mat2cpp::matrix<double> beta(1, n);
 	mat2cpp::matrix<double> psi(M, 1);
 	ptr = pout.data();
@@ -605,4 +639,3 @@ extern void spk_non_par(
 	}
 	return;
 }
-
