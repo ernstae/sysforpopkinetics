@@ -190,11 +190,11 @@ $syntax%
 It specifies the convergence criteria
 $latex \[
 	\varepsilon_0 = *( epilon.data() + 0 )
-\]
+\] $$
 and the joining criteria 
 $latex \[
 	\varepsilon_1 = *( epilon.data() + 1 )
-\]
+\] $$
 used below.
 
 $subhead Notation$$
@@ -218,7 +218,7 @@ $latex \[
 \right/
 \sum_{j=1}^J \lambda_j^2
 \] $$
-We define the scaled infinity norm between $latex B_j$$ and B_q$$ by
+We define the scaled infinity norm between $latex B_j$$ and $latex B_q$$ by
 $latex \[
 \| B_j - B_q \|_\infty =
 \max_k \frac{ | B_{k,j} - B_{k,q} | } { bup_k - blow_k }
