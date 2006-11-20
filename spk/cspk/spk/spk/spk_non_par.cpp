@@ -4,6 +4,8 @@ $latex \newcommand{\B}[1]{{\bf #1}}$$
 $latex \newcommand{\R}{{\bf R}}$$
 $latex \newcommand{\T}{{\rm T}}$$
 $spell
+	Karush Kuhn Tucker
+	ublas
 	mu
 	std::cout
 	itr
@@ -185,17 +187,28 @@ Is the $th j$$ data value corresponding to individual $italic i$$.
 $head epsilon$$
 The argument $italic epsilon$$ has prototype
 $syntax%
-	const DoubleMatrix %epsilon%
+	ublas::matrix<double> %epsilon%
 %$$
-It specifies the convergence criteria
-$latex \[
-	\varepsilon_0 = *( epilon.data() + 0 )
-\] $$
-and the joining criteria 
-$latex \[
-	\varepsilon_1 = *( epilon.data() + 1 )
-\] $$
-used below.
+and size $latex 4 \times 1$$.
+It specifies the 
+$table
+$bold Description$$ $cnext $bold Name$$ $cnext $bold Suggest Value$$ $rnext
+$cref/convergence criteria/spk_non_par/epsilon/Convergence Criteria/$$
+$cnext $latex \varepsilon_0 = epsilon(0,0)$$ 
+$cnext $pre  $$ $latex 10^{-4}$$
+$rnext
+$cref/joining criteria/spk_non_par/epsilon/Joining Criteria/$$
+$cnext $latex  \varepsilon_1 = epsilon(1,0)$$ 
+$cnext $pre  $$ $latex 10^{-4}$$
+$rnext
+$cref/sub-convergence criteria/spk_non_par/epsilon/Sub-Convergence Criteria/$$
+$cnext $latex \varepsilon_2 = epsilon(2,0) $$ 
+$cnext $pre  $$ $latex 10^{-13}$$
+$rnext
+$cref/relaxation factor/spk_non_par/epsilon/Relaxation Factor/$$
+$cnext $latex \varepsilon_3 = epsilon(3,0) $$ 
+$cnext $pre  $$ $latex 2^{-2}$$
+$tend
 
 $subhead Notation$$
 We define the scaled projected gradient of $latex F$$
@@ -244,7 +257,7 @@ $latex
 $$.
 $lend
 
-$subhead Join Criteria$$
+$subhead Joining Criteria$$
 If there are two columns of $latex B$$ such that
 $latex \[
 	\varepsilon_1 \geq \| B_j - B_q \|_\infty 
@@ -253,6 +266,18 @@ the two columns are joined,
 the weights are added,
 the column dimension of $italic B$$ ($latex J$$) is reduced by one,
 and the column dimension of $italic lambda$$ is reduced by one.
+
+$subhead Sub-Convergence Criteria$$
+The sub-problem, which determines the optimal weight vector 
+$latex \lambda$$ is considered converged when the maximum residual
+in any of the Karush Kuhn Tucker conditions is less than
+$latex \varepsilon_2$$ times the maximum element in the
+matrix that defines the sub-problem objective; i.e.
+the likelihood of each individuals measurement vector
+for each discrete measurement point.
+
+$subhead Relaxation Factor$$
+The amount the sub-problem relaxation factor is decreased each iteration.
 
 $head blow$$
 The argument $italic blow$$ has prototype
@@ -553,9 +578,11 @@ extern void spk_non_par(
 	size_t n = blow.nr();
 	
 	// ------------ Arguments to non_par::opt_measure --------------------
-	mat2cpp::matrix<double> eps(2, 1);
+	mat2cpp::matrix<double> eps(4, 1);
 	eps(0, 0)    = *(epsilon.data() + 0);
 	eps(1, 0)    = *(epsilon.data() + 1);
+	eps(2, 0)    = *(epsilon.data() + 2);
+	eps(3, 0)    = *(epsilon.data() + 3);
 
 	// input likelihood function
 	Like like(admodel, model, N, y, n);
