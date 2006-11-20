@@ -313,10 +313,12 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	}
 
 	// --------------------- epsilon ---------------------
-	DoubleMatrix epsilon(2, 1);
+	DoubleMatrix epsilon(4, 1);
 	ptr = epsilon.data();
 	ptr[0] = 1e-7;
 	ptr[1] = 1e-4;
+	ptr[2] = 1e-13;
+	ptr[3] = 1./4;
 
 	// ----------------------- blow ----------------------
 	DoubleMatrix blow(n, 1);
