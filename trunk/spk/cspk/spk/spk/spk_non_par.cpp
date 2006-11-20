@@ -553,8 +553,9 @@ extern void spk_non_par(
 	size_t n = blow.nr();
 	
 	// ------------ Arguments to non_par::opt_measure --------------------
-	double eps   = *(epsilon.data() + 0);
-	double delta = *(epsilon.data() + 1);
+	mat2cpp::matrix<double> eps(2, 1);
+	eps(0, 0)    = *(epsilon.data() + 0);
+	eps(1, 0)    = *(epsilon.data() + 1);
 
 	// input likelihood function
 	Like like(admodel, model, N, y, n);
@@ -592,7 +593,7 @@ extern void spk_non_par(
 	const char *msg;
 
 	// -----------------------------------------------------------------
-	msg = non_par::opt_measure( level, eps, delta, 
+	msg = non_par::opt_measure( level, eps, 
 		&like, M, xLow, xUp, X, lambda, info
 	);
 	// -----------------------------------------------------------------
