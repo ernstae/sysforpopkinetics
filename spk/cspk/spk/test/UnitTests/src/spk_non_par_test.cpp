@@ -252,7 +252,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// ------------------- level ----------------------
 	// mod(level, 10) is level  in spk_non_par
 	// (level / 10) is level in QuasiNewton01Box
-	size_t level = 02; 
+	size_t level = 00; 
 
 	// ------------------- model ---------------------
 	// sigma      = measure noise standard deviation
@@ -509,7 +509,7 @@ void spk_non_par_test::polynomial_fit_test(void)
 	double sigma = .5; // measure noise standard deviation
 	size_t m     = 1;  // number of fixed effects (not used)
 	size_t n     = 2;  // number of random effects per individual
-	size_t q     = 3;  // number of measurements per individual
+	size_t q     = 4;  // number of measurements per individual
 	size_t M     = 5;  // number of individuals in the population
 	size_t J     = 10; // number of discret measure points 
 
