@@ -368,7 +368,7 @@ $latex \[
 	pout [ i * J + j ] = \B{p} ( y^i | b = B_j )
 \] $$
 where $italic B_j$$ is the $th j$$ column of $italic Bout$$
-and $latex J$$ is the column dimenson of $italic Bout$$
+and $latex J$$ is the column dimension of $italic Bout$$
 (which may not be the same as the column dimension of $italic Bin$$).
 
 $children%
