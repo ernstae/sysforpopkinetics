@@ -28,7 +28,7 @@ $index nonparametric, population analysis$$
 $index population, nonparametric analysis$$
 
 $head Syntax$$
-$syntax%void spk_non_par(%level%, %model%, %N%, %y%, %epsilon%, % 
+$syntax%void spk_non_par(%level%, %model%, %N%, %y%, %max_itr%, %epsilon%, % 
 	blow%, %bup%, %Bin%, %Bout%, %lamout%, %pout%)%$$
 
 $head Problem Definition$$
@@ -184,29 +184,41 @@ $syntax%
 %$$  
 Is the $th j$$ data value corresponding to individual $italic i$$.
 
+$head max_itr$$
+The argument $italic max_itr$$ has prototype
+$syntax%
+	const DoubleMatrix &%max_itr%
+%$$ 
+and size $latex 2 \times 1$$.
+The value $syntax%*(%max_itr%.data()+0)%$$ is the maximum number
+of iterations allowed to satisfy the convergence
+criteria for $code opt_measure$$.
+The value $syntax%*(%max_itr%.data()+1)%$$ is the maximum number
+of iterations of allowed for each of the $cref/relaxed/$$ sub-problems.
+
 $head epsilon$$
 The argument $italic epsilon$$ has prototype
 $syntax%
-	ublas::matrix<double> %epsilon%
+	const DoubleMatrix &%epsilon%
 %$$
 and size $latex 4 \times 1$$.
 It specifies the 
 $table
 $bold Description$$ $cnext $bold Name$$ $cnext $bold Suggest Value$$ $rnext
 $cref/convergence criteria/spk_non_par/epsilon/Convergence Criteria/$$
-$cnext $latex \varepsilon_0 = epsilon(0,0)$$ 
+$cnext $latex \varepsilon_0 = *(epsilon.data() + 0)$$ 
 $cnext $pre  $$ $latex 10^{-4}$$
 $rnext
 $cref/joining criteria/spk_non_par/epsilon/Joining Criteria/$$
-$cnext $latex  \varepsilon_1 = epsilon(1,0)$$ 
+$cnext $latex  \varepsilon_1 = *(epsilon.data() + 1)$$ 
 $cnext $pre  $$ $latex 10^{-4}$$
 $rnext
 $cref/sub-convergence criteria/spk_non_par/epsilon/Sub-Convergence Criteria/$$
-$cnext $latex \varepsilon_2 = epsilon(2,0) $$ 
+$cnext $latex \varepsilon_2 = *(epsilon.data() + 2)$$ 
 $cnext $pre  $$ $latex 10^{-13}$$
 $rnext
 $cref/relaxation factor/spk_non_par/epsilon/Relaxation Factor/$$
-$cnext $latex \varepsilon_3 = epsilon(3,0) $$ 
+$cnext $latex \varepsilon_3 = *(epsilon.data() + 3) $$ 
 $cnext $pre  $$ $latex 2^{-2}$$
 $tend
 
@@ -556,6 +568,7 @@ extern void spk_non_par(
 	SpkModel<double>                  &model       ,
 	const DoubleMatrix                &N           ,
 	const DoubleMatrix                &y           ,
+	const DoubleMatrix                &max_itr     ,
 	const DoubleMatrix                &epsilon     ,
 	const DoubleMatrix                &blow        ,
 	const DoubleMatrix                &bup         ,
@@ -578,6 +591,12 @@ extern void spk_non_par(
 	size_t n = blow.nr();
 	
 	// ------------ Arguments to non_par::opt_measure --------------------
+	assert( max_itr.nr()  == 2 );
+	mat2cpp::matrix<size_t> maxitr(2, 1);
+	maxitr(0, 0) = size_t( *(max_itr.data() + 0) );
+	maxitr(1, 0) = size_t( *(max_itr.data() + 1) );
+
+	assert( epsilon.nr()  == 4 );
 	mat2cpp::matrix<double> eps(4, 1);
 	eps(0, 0)    = *(epsilon.data() + 0);
 	eps(1, 0)    = *(epsilon.data() + 1);
@@ -620,7 +639,7 @@ extern void spk_non_par(
 	const char *msg;
 
 	// -----------------------------------------------------------------
-	msg = non_par::opt_measure( level, eps, 
+	msg = non_par::opt_measure( level, maxitr, eps, 
 		&like, M, xLow, xUp, X, lambda, info
 	);
 	// -----------------------------------------------------------------

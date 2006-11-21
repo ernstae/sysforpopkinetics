@@ -11,6 +11,7 @@ extern void spk_non_par(
 	SpkModel<double>                  &model       ,
 	const DoubleMatrix                &N           ,
 	const DoubleMatrix                &y           ,
+	const DoubleMatrix                &max_itr     ,
 	const DoubleMatrix                &epsilon     ,
 	const DoubleMatrix                &blow        ,
 	const DoubleMatrix                &bup         ,

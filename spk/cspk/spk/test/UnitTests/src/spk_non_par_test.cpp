@@ -312,6 +312,12 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		}
 	}
 
+	// --------------------- max_itr ---------------------
+	DoubleMatrix max_itr(2, 1);
+	ptr = max_itr.data();
+	ptr[0] = 20.;
+	ptr[1] = 20.;
+
 	// --------------------- epsilon ---------------------
 	DoubleMatrix epsilon(4, 1);
 	ptr = epsilon.data();
@@ -359,6 +365,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 			model   , 
 			N       , 
 			y       , 
+			max_itr ,
 			epsilon , 
 			blow    , 
 			bup     , 
