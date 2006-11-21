@@ -194,7 +194,7 @@ The value $syntax%*(%max_itr%.data()+0)%$$ is the maximum number
 of iterations allowed to satisfy the convergence
 criteria for $code opt_measure$$.
 The value $syntax%*(%max_itr%.data()+1)%$$ is the maximum number
-of iterations of allowed for each of the $cref/relaxed/$$ sub-problems.
+of iterations of allowed for each of the $code relaxed$$ sub-problems.
 
 $head epsilon$$
 The argument $italic epsilon$$ has prototype
