@@ -322,11 +322,11 @@ void NonmemTranslator::generateDataSet( ) const
       string carray_name = s->name + "_c";
       
       if( isID )
-	oDataSet_h << "char*";
+	oDataSet_h << "char* const";
       else if( isInt )
-	oDataSet_h << "int";
+	oDataSet_h << "const int";
       else
-	oDataSet_h << "spk_ValueType";
+	oDataSet_h << "const spk_ValueType";
       
       oDataSet_h << " " << carray_name << "[] = { "; 
       // Loop over individuals
