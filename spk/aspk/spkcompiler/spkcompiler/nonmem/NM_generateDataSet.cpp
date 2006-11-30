@@ -290,98 +290,104 @@ void NonmemTranslator::generateDataSet( ) const
   // Constructor body
   //
   oDataSet_h << "{" << endl;
-
-  // Initialize the entire data set.
-  for( int who=0, sofar=0, nRecords=0; who < getPopSize(); who++, sofar+=nRecords )
+  //-----------------------------------------------------------------------------------------++++
+  oDataSet_h << "int NRecords_c[] = { ";
+  for( int who=0; who < getPopSize(); who++)
     {
-      char c_who[256];
-      snprintf( c_who, 256,"%d", who );
-      int nRecords = pID->initial[who].size();
-      int nDVs = 0;
-      const string id = pID->initial[who][0];
-
-      //
-      // The order in which the labels appear must be consistent
-      // with the order in the constructor declaration.
-      // By using the iterator in both places, here and up there,
-      // they shall match.  However, this should be tested in
-      // the corresponding unit tests.
-      //
-      oDataSet_h << "   //------------------------------------" << endl;
-      oDataSet_h << "   // Subject <" << id << "> " << endl;
-      oDataSet_h << "   // # of sampling points = " << nRecords << endl;
-      oDataSet_h << "   //------------------------------------" << endl;
-      oDataSet_h << "   NRecords[" << who << "] = " << nRecords << ";" << endl;
-
-      //
-      // Initialize C arrays with data values.
-      // The C arrays are passed to the valarray's constructor.
-      //
-      pLabel = labels->begin();
-      for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
+      if( who > 0 )
+		oDataSet_h << ", "; 
+      oDataSet_h << pID->initial[who].size();
+    }
+  oDataSet_h << " };" << endl;
+  oDataSet_h << "NRecords = SPK_VA::valarray<int> (NRecords_c, "<< getPopSize() <<" );" << endl;
+  //-----------------------------------------------------------------------------------------++++ 
+  //
+  // The order in which the labels appear must be consistent
+  // with the order in the constructor declaration.
+  // By using the iterator in both places, here and up there,
+  // they shall match.  However, this should be tested in
+  // the corresponding unit tests.
+  //
+  //
+  // Initialize C arrays with data values.
+  // The C arrays are passed to the valarray's constructor.
+  //
+  pLabel = labels->begin();
+  for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
+    {
+      const Symbol * s = table->find( *pLabel );
+      bool isID  = (*pLabel == pID->name);
+      bool isInt = (*pLabel == nonmem::EVID || *pLabel == nonmem::CMT || *pLabel == nonmem::PCMT );
+      
+      string carray_name = s->name + "_c";
+      
+      if( isID )
+	oDataSet_h << "char*";
+      else if( isInt )
+	oDataSet_h << "int";
+      else
+	oDataSet_h << "spk_ValueType";
+      
+      oDataSet_h << " " << carray_name << "[] = { "; 
+      // Loop over individuals
+      for( int who=0, nRecords=0; who < getPopSize(); who++)
 	{
-	  const Symbol * s = table->find( *pLabel );
-	  bool isID  = (*pLabel == pID->name);
-	  bool isInt = (*pLabel == nonmem::EVID || *pLabel == nonmem::CMT || *pLabel == nonmem::PCMT );
-
-	  string carray_name = s->name + "_" + c_who + "_c";
-	  string vector_name = s->name + "_" + c_who;
-
-          if( isID )
-	    oDataSet_h << "char*";
-	  else if( isInt )
-	    oDataSet_h << "int";
-	  else
-	    oDataSet_h << "spk_ValueType";
-	  
-	  oDataSet_h << " " << carray_name << "[] = { ";
+	  nRecords = pID->initial[who].size();
+	  // Loop over records per individual
 	  for( int j=0; j<nRecords; j++ )
 	    {
-	      if( j > 0 )
+	      if( who + j > 0  )
 		oDataSet_h << ", ";
+	      if( j == 0  )
+		//	oDataSet_h << endl << "      ";
+		oDataSet_h << endl << "    /* " << who+1 << "*/  ";
 	      if( isID )
 		oDataSet_h << "\"" << s->initial[who][j] << "\"";
 	      else
 		oDataSet_h << s->initial[who][j];
 	    }
-	  oDataSet_h << " };" << endl;
-	  oDataSet_h << "   std::vector<";
-	  if( isID )
-	    oDataSet_h << "char*";
-	  else if( isInt )
-	    oDataSet_h << "int";
-	  else
-            oDataSet_h << "spk_ValueType";
-          oDataSet_h << "> ";
-	  oDataSet_h << vector_name;
-	  oDataSet_h << "( " << nRecords << " );" << endl;
-	  oDataSet_h << "   copy( " << carray_name << ", " << carray_name << "+" << nRecords;
-	  oDataSet_h << ", " << vector_name << ".begin() );" << endl;
 	}
-
-      //
-      // Create an IndData object.  The order in which the arguments
-      // are passed to the IndData constructor must be strictly
-      // compliant to the order in which the label strings are stored
-      // in the list returned by SymbolTable::getLabels().
-      //
-      oDataSet_h << "   data[" << who << "] = new IndData<spk_ValueType>";
-      oDataSet_h << "( " << nRecords << ", ";
-      pLabel = labels->begin();
-      for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
-	{
-	  if( i>0 )
-	    oDataSet_h << ", ";
-	  const Symbol * s = table->find( *pLabel );
-	  string array_name = s->name + "_" + c_who;
-	  oDataSet_h << array_name;
-	}
-
-      oDataSet_h << " );" << endl;
-      oDataSet_h << endl; 
+      oDataSet_h << " };" << endl;
     }
   oDataSet_h << endl;
 
+
+  // Create IndData object for each individual.  
+  // The order in which the arguments
+  // are passed to the IndData constructor must be strictly
+  // compliant to the order in which the label strings are stored
+  // in the list returned by SymbolTable::getLabels().
+  //
+  oDataSet_h << "for (int i=0, start=0, stop=0, nRec=0; i < " << getPopSize() << "; i++) {" << endl;
+  oDataSet_h << "  nRec = NRecords[i];" << endl;
+  oDataSet_h << "  stop = start + nRec;" << endl;
+  oDataSet_h << "  data[i] = new IndData<spk_ValueType> (nRec";
+
+  pLabel = labels->begin();
+  for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
+    {
+      oDataSet_h << "," << endl;
+      oDataSet_h << "              std::vector<";
+      const Symbol * s = table->find( *pLabel );
+      bool isID  = (*pLabel == pID->name);
+      bool isInt = (*pLabel == nonmem::EVID || *pLabel == nonmem::CMT || *pLabel == nonmem::PCMT );
+      
+      if( isID )
+	oDataSet_h << "char*>        ( ";
+      else if( isInt )
+	oDataSet_h << "int>          ( ";
+      else
+	oDataSet_h << "spk_ValueType>( ";
+
+      oDataSet_h << s->name << "_c+start ," <<  s->name << "_c+stop )";
+    }
+  oDataSet_h << " );" << endl;
+
+  oDataSet_h << "  start = stop;" << endl;
+  oDataSet_h << "}" << endl;
+  oDataSet_h << endl;  
+
+  // ==============================NO CHANGE BELOW ==============================================
   // 
   // Extracts measurements (ie. SPK's y) from the entire data set and keep it in "measurements".
   //
