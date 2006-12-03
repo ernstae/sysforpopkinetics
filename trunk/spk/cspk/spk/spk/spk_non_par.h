@@ -18,7 +18,7 @@ extern void spk_non_par(
 	const DoubleMatrix                &Bin         ,
 	DoubleMatrix                      &Bout        ,
 	DoubleMatrix                      &lamout      ,
-	DoubleMatrix                      &negloglike 
+	DoubleMatrix                      &pout 
 );
 
 # endif
