@@ -327,7 +327,7 @@ for the random effects.
 It must be greater than or equal
 the number of individuals in the study
 $cref/M/non_par_model/Notation/M/$$. 
-The value $syntax%%bup%.nr()%$$ must be 
+The value $syntax%%Bin%.nr()%$$ must be 
 equal to $cref/n/non_par_model/Notation/n/$$ 
 the number if random effects per atomic point in the measure.
 
@@ -336,11 +336,16 @@ The argument $italic Bout$$ has prototype
 $syntax%
 	DoubleMatrix &%Bout%
 %$$
-It must have the same sizes as $italic Bin$$.
 The input value and dimension of $italic Bout$$ does not matter.
 Upon return from $code spk_non_par$$,
 $italic Bout$$ contains the location of the atomic measure points 
 corresponding to the solution of the optimization problem.
+The value $syntax%%Bout%.nc()%$$ defines the final value of $italic J$$;
+i.e., the number of atomic points in the non-parametric measure.
+The value $syntax%%Bout%.nr()%$$ 
+is equal to $cref/n/non_par_model/Notation/n/$$,
+the number if random effects per atomic point in the measure.
+
 
 $head lamout$$
 The argument $italic lamout$$ has prototype
@@ -348,10 +353,11 @@ $syntax%
 	DoubleMatrix &%lamout%
 %$$
 The input value and dimension of $italic lamout$$ does not matter.
-Upon return from $code spk_non_par$$, $italic lamout$$ is a column
-vector (with the same number of rows as $italic Bout$$) containing 
-the weights corresponding to each of the atomic measure points
-in the solution to the optimization problem.
+Upon return from $code spk_non_par$$, $italic lamout$$ is a column vector
+and it $th j$$ element is the weight corresponding to the
+$th j$$ column of $italic Bout$$.
+The value $syntax%%lamout%.nr()%$$ is equal to $italic J$$; i.e.,
+$syntax%%Bout%.nc()%$$.
 
 $head pout$$
 The argument $italic pout$$ has prototype
