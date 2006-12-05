@@ -635,6 +635,11 @@ sub reaper {
         $err_msg .= "a known error was detected during data simulation; ";
         $submit_to_bugzilla &= 0;
     }
+    elsif($child_exit_value ==  17) {
+        $end_code = "idee"; #identifiability error
+        $err_msg .= "a known error was detected during identifiability analysis; ";
+        $submit_to_bugzilla &= 0;
+    }
     elsif($child_exit_value ==  100) {
         $end_code = "accf"; #access failure
         $err_msg .= "an unknown failure occured during file/directory access; ";
@@ -666,6 +671,11 @@ sub reaper {
     elsif($child_exit_value ==  106) {
         $end_code = "simf"; #simulation failure
         $err_msg .= "an unknown failure occured during data simulation; ";
+        $submit_to_bugzilla &= 1;
+    }
+    elsif($child_exit_value ==  107) {
+        $end_code = "idef"; #identifiability failure
+        $err_msg .= "an unknown failure occured during identifiability analysis; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  200) {
