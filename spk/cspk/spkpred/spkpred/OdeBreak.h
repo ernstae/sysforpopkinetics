@@ -692,7 +692,7 @@ void OdeBreak(
 
 				// combine relative and absolute error
 				Scalar bnd = maxabsi * erel + eabs[i];
-				ok         &= (enext[i] <= bnd * fraction);
+				ok         &= static_cast<bool>(enext[i] <= bnd * fraction);
 			}
 			shrink  = ! ok;
 			if( shrink )
@@ -702,7 +702,7 @@ void OdeBreak(
 				}
 				smin = smin / 2;
 			}
-			shrink &= smin > (tnext - t)/Scalar(MaxNumberOdeStep);
+			shrink &= static_cast<bool>(smin > (tnext - t)/Scalar(MaxNumberOdeStep));
 
 			// check for minimum step size
 			if( !( ok | shrink ) )
