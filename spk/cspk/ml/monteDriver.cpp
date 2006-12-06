@@ -171,6 +171,8 @@ $end
 # include <cassert>
 # include <fstream>
 # include <valarray>
+# include "IndData.h"
+# include "DataSet.h"
 # include <spkpred/PopPredModel.h>
 # include <CppAD/CppAD.h>
 # include <sys/time.h>
@@ -190,7 +192,6 @@ $end
 	# include "Pred.h"
 #endif
 
-# include "DataSet.h"
 # include "NonmemPars.h"
 # include "MontePars.h"
 # include "Gsl2SpkError.h"
