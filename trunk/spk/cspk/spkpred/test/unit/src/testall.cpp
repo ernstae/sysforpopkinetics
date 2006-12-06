@@ -4,9 +4,11 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
+#include "calcGroebnerBasisTest.h"
 #include "DiagCovTest.h"
 #include "FullCovTest.h"
 #include "BlkDiagCovTest.h"
+#include "IdentPredBaseTest.h"
 #include "IndPredModelTest.h"
 #include "IndPredModelBaseTest.h"
 #include "OdeBreakTest.h"
@@ -36,9 +38,11 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master_list_of_tests;
   vector<CppUnit::Test*> tests_to_be_executed;
 
+  master_list_of_tests[ "calcGroebnerBasisTest" ]     = calcGroebnerBasisTest   ::suite();
   master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest             ::suite();
   master_list_of_tests[ "FullCovTest" ]               = FullCovTest             ::suite();
   master_list_of_tests[ "BlkDiagCovTest" ]            = BlkDiagCovTest          ::suite();
+  master_list_of_tests[ "IdentPredBaseTest" ]         = IdentPredBaseTest       ::suite();
   master_list_of_tests[ "IndPredModelTest" ]          = IndPredModelTest        ::suite();
   master_list_of_tests[ "IndPredModelBaseTest" ]      = IndPredModelBaseTest    ::suite();
   master_list_of_tests[ "OdeBreakTest" ]              = OdeBreakTest            ::suite();
