@@ -140,6 +140,24 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "#include <spk/cholesky.h>" << endl;
   oIndData_h << "#include <spk/multiply.h>" << endl;
   oIndData_h << "#include <CppAD/CppAD.h>" << endl;
+  oIndData_h << "#include <ginac/ginac.h>" << endl;
+  oIndData_h << endl;
+
+  oIndData_h << "template<class Scalar>" << endl;
+  oIndData_h << "Scalar undefinedValue()" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "  // The default undefined value is a NaN (Not a Number)." << endl;
+  oIndData_h << "  double zero = 0.0;" << endl;
+  oIndData_h << "  return zero / zero;" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+  oIndData_h << "template<>" << endl;
+  oIndData_h << "GiNaC::ex undefinedValue< GiNaC::ex >()" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "  // The undefined value for double values used in GiNaC expressions" << endl;
+  oIndData_h << "  // is -99999.0 because GiNaC does not accept NaN's." << endl;
+  oIndData_h << "  return -99999.0;" << endl;
+  oIndData_h << "}" << endl;
   oIndData_h << endl;
   
   //---------------------------------------------------------------------------------------
@@ -330,6 +348,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "private:" << endl;
   oIndData_h << "   const int nRecords; // the number of data records." << endl;
   oIndData_h << "   void assign( double&, const CppAD::AD<double>& ) const;" << endl;
+  oIndData_h << "   void assign( double&, const GiNaC::ex& ) const;" << endl;
   oIndData_h << "   void assign( double&, double ) const;" << endl;
   oIndData_h << "   /////////////////////////////////////////////////////////" << endl;
   oIndData_h << "   //      original                     y"                    << endl;
@@ -480,8 +499,10 @@ void NonmemTranslator::generateIndData( ) const
   // getScalars()
   //
   oIndData_h << "   //" << endl;
-  oIndData_h << "   // Initialize scalar variables" << endl;
+  oIndData_h << "   // Initialize scalar variables with a value that indicates" << endl;
+  oIndData_h << "   // undefined values. " << endl;
   oIndData_h << "   //" << endl;
+  oIndData_h << "   spk_ValueType undefVal = undefinedValue<spk_ValueType>();" << endl;
   pInternalTable = internalTable->begin();
   for( ; pInternalTable != internalTable->end(); pInternalTable++ )
     {
@@ -491,7 +512,7 @@ void NonmemTranslator::generateIndData( ) const
 
       if( owner != Symbol::DATASET && objectType != Symbol::VECTOR && objectType != Symbol::MATRIX )
 	{
-	  oIndData_h << "fill( " << varName << ".begin(), " << varName << ".end(), -99999 );" << endl;
+	  oIndData_h << "   fill( " << varName << ".begin(), " << varName << ".end(), undefVal );" << endl;
 	}
     }
   oIndData_h << endl;
@@ -503,7 +524,7 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << nonmem::ORGDV << ".begin() );" << endl;
   oIndData_h << endl;
 
-  // Resize and initialize (with -999999) vector variables.
+  // Resize and initialize (with undefVal) vector variables.
   //
   //  table->getVectors();
   //
@@ -517,12 +538,12 @@ void NonmemTranslator::generateIndData( ) const
   if( myThetaLen > 0 )
     {
       oIndData_h << "      " << nonmem::THETA << "[j].resize( " << myThetaLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << nonmem::THETA << "[j].begin(), " << nonmem::THETA << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::THETA << "[j].begin(), " << nonmem::THETA << "[j].end(), undefVal );" << endl;
     }
   if( myEtaLen > 0 )
     {
       oIndData_h << "      " << nonmem::ETA     << "[j].resize( " << myEtaLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << nonmem::ETA << "[j].begin(), " << nonmem::ETA << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::ETA << "[j].begin(), " << nonmem::ETA << "[j].end(), undefVal );" << endl;
       if( getTarget() == POP )
 	{
 	  oIndData_h << "      " << nonmem::ETARES   << "[j].resize( " << myEtaLen << " );" << endl;
@@ -534,27 +555,27 @@ void NonmemTranslator::generateIndData( ) const
 	  oIndData_h << "      " << nonmem::CETARES  << "[j].resize( " << myEtaLen << " );" << endl;
 	  oIndData_h << "      " << nonmem::CWETARES << "[j].resize( " << myEtaLen << " );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::ETARES   << "[j].begin(), ";
-	  oIndData_h << nonmem::ETARES   << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::ETARES   << "[j].end(), undefVal );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::WETARES  << "[j].begin(), ";
-	  oIndData_h << nonmem::WETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::WETARES  << "[j].end(), undefVal );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::IETARES  << "[j].begin(), ";
-	  oIndData_h << nonmem::IETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::IETARES  << "[j].end(), undefVal );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::IWETARES << "[j].begin(), ";
-	  oIndData_h << nonmem::IWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::IWETARES << "[j].end(), undefVal );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::PETARES  << "[j].begin(), ";
-	  oIndData_h << nonmem::PETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::PETARES  << "[j].end(), undefVal );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::PWETARES << "[j].begin(), ";
-	  oIndData_h << nonmem::PWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::PWETARES << "[j].end(), undefVal );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::CETARES  << "[j].begin(), ";
-	  oIndData_h << nonmem::CETARES  << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::CETARES  << "[j].end(), undefVal );" << endl;
 	  oIndData_h << "      " << "fill( " << nonmem::CWETARES << "[j].begin(), ";
-	  oIndData_h << nonmem::CWETARES << "[j].end(), -99999 );" << endl;
+	  oIndData_h << nonmem::CWETARES << "[j].end(), undefVal );" << endl;
 	}
     }
   if( myEpsLen > 0 )
     {
       oIndData_h << "      " << nonmem::EPS   << "[j].resize( " << myEpsLen << " );" << endl;
-      oIndData_h << "      " << "fill( " << nonmem::EPS   << "[j].begin(), " << nonmem::EPS << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::EPS   << "[j].begin(), " << nonmem::EPS << "[j].end(), undefVal );" << endl;
     }
   
   if( myModelSpec == ADVAN6 || myModelSpec == ADVAN8 || myModelSpec == ADVAN9 )
@@ -567,9 +588,9 @@ void NonmemTranslator::generateIndData( ) const
       oIndData_h << "      " << nonmem::A    << "[j].resize( " << myCompModel->getNCompartments()  << " );" << endl;
       oIndData_h << "      " << nonmem::P    << "[j].resize( " << myCompModel->getNParameters()    << " );" << endl;
       
-      oIndData_h << "      " << "fill( " << nonmem::DADT << "[j].begin(), " << nonmem::DADT << "[j].end(), -99999 );" << endl;
-      oIndData_h << "      " << "fill( " << nonmem::A    << "[j].begin(), " << nonmem::A    << "[j].end(), -99999 );" << endl;
-      oIndData_h << "      " << "fill( " << nonmem::P    << "[j].begin(), " << nonmem::P    << "[j].end(), -99999 );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::DADT << "[j].begin(), " << nonmem::DADT << "[j].end(), undefVal );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::A    << "[j].begin(), " << nonmem::A    << "[j].end(), undefVal );" << endl;
+      oIndData_h << "      " << "fill( " << nonmem::P    << "[j].begin(), " << nonmem::P    << "[j].end(), undefVal );" << endl;
       
     }
   
@@ -1048,6 +1069,14 @@ void NonmemTranslator::generateIndData( ) const
   oIndData_h << "void IndData<spk_ValueType>::assign( double & d, const CppAD::AD<double>& ad ) const" << endl;
   oIndData_h << "{" << endl;
   oIndData_h << "   d = CppAD::Value( ad );" << endl;
+  oIndData_h << "   return;" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::assign( double & d, const GiNaC::ex& ex ) const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   using namespace GiNaC;" << endl;
+  oIndData_h << "   d = ex_to<numeric>( ex ).to_double();" << endl;
   oIndData_h << "   return;" << endl;
   oIndData_h << "}" << endl;
   oIndData_h << endl;

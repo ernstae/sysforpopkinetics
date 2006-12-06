@@ -533,7 +533,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   for( int i=0; i<popSize; i++ )" << endl;
   oDataSet_h << "      m += getNRecords(i);" << endl;
   oDataSet_h << "   records.resize( m );" << endl;
-  oDataSet_h << "   records = 0.0;" << endl;
+  oDataSet_h << "   records = undefinedValue<double>();" << endl;
   oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
   oDataSet_h << "   {" << endl;
   oDataSet_h << "      records[ getRecordIndex( i ) ] = measurements[i];" << endl;
@@ -555,7 +555,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "   int m = getNRecords(who);" << endl;
   oDataSet_h << "   assert( m >= n );" << endl;
   oDataSet_h << "   records_who.resize( m );" << endl;
-  oDataSet_h << "   records_who = 0.0;" << endl;
+  oDataSet_h << "   records_who = undefinedValue<double>();" << endl;
   oDataSet_h << "   for( int i=0; i<n; i++ )" << endl;
   oDataSet_h << "   {" << endl;
   oDataSet_h << "      records_who[ getRecordIndex( who, i ) ] = measurements_who[i];" << endl;

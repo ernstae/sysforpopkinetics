@@ -24,8 +24,8 @@ void NonmemTranslator::generateNonmemParsNamespace() const
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, 
-		SpkCompilerError::maxMessageLen(),
-		"Failed to create %s file.", fNonmemPars_h );
+                SpkCompilerError::maxMessageLen(),
+                "Failed to create %s file.", fNonmemPars_h );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -78,60 +78,64 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   // The length of THETA vector." << endl;
   oNonmemPars << "   const int nTheta = " << myThetaLen << ";" << endl;
   oNonmemPars << endl;
-  oNonmemPars << "   // A C-arrary containing the upper boundary values for THETA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   double c_thetaUp[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
-    {
-      if( j>0 )
-        oNonmemPars << ", ";
-      oNonmemPars << pTheta->upper[0][j];
-    }
-  oNonmemPars << "   };" << endl;
-  oNonmemPars << "   const valarray<double> thetaUp ( c_thetaUp,  " << myThetaLen << " );" << endl;
-  oNonmemPars << endl;
 
-  oNonmemPars << "   // A C-arrary containing the lower boundary values for THETA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   double c_thetaLow[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
+  if ( !myIsIdent )
     {
-      if( j>0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pTheta->lower[0][j];
+      oNonmemPars << "   // A C-arrary containing the upper boundary values for THETA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   double c_thetaUp[nTheta] = { ";
+      for( int j=0; j<myThetaLen; j++ )
+        {
+          if( j>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << pTheta->upper[0][j];
+        }
+      oNonmemPars << "   };" << endl;
+      oNonmemPars << "   const valarray<double> thetaUp ( c_thetaUp,  " << myThetaLen << " );" << endl;
+      oNonmemPars << endl;
+    
+      oNonmemPars << "   // A C-arrary containing the lower boundary values for THETA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   double c_thetaLow[nTheta] = { ";
+      for( int j=0; j<myThetaLen; j++ )
+        {
+          if( j>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << pTheta->lower[0][j];
+        }
+      oNonmemPars << "   };" << endl;
+      oNonmemPars << "   const valarray<double> thetaLow( c_thetaLow, " << myThetaLen << " );" << endl;
+    
+      oNonmemPars << "   // A C-arrary containing the initial estimates for THETA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   double c_thetaIn[nTheta] = { ";
+      for( int j=0; j<myThetaLen; j++ )
+        {
+          if( j>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << pTheta->initial[0][j];
+        }
+      oNonmemPars << " };" << endl;
+      oNonmemPars << endl;
+    
+      oNonmemPars << "   // A C-arrary containing the fixation flags for THETA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   bool c_thetaFixed[nTheta] = { ";
+      for( int j=0; j<myThetaLen; j++ )
+        {
+          if( j>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << pTheta->fixed[0][j];
+        }
+      oNonmemPars << " };" << endl;
+      oNonmemPars << endl;
+    
+      oNonmemPars << "   const valarray<bool> thetaFixed( c_thetaFixed, " << myThetaLen << " );" << endl;
+      oNonmemPars << "   // A valarray object that *will* contain the initial values for THETA." << endl;
+      oNonmemPars << "   // The object value may be replaced if a new data set is simulated." << endl;
+      oNonmemPars << "   valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
+      oNonmemPars << endl;
     }
-  oNonmemPars << "   };" << endl;
-  oNonmemPars << "   const valarray<double> thetaLow( c_thetaLow, " << myThetaLen << " );" << endl;
-
-  oNonmemPars << "   // A C-arrary containing the initial estimates for THETA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   double c_thetaIn[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
-    {
-      if( j>0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pTheta->initial[0][j];
-    }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << endl;
-
-  oNonmemPars << "   // A C-arrary containing the fixation flags for THETA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   bool c_thetaFixed[nTheta] = { ";
-  for( int j=0; j<myThetaLen; j++ )
-    {
-      if( j>0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pTheta->fixed[0][j];
-    }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << endl;
-
-  oNonmemPars << "   const valarray<bool> thetaFixed( c_thetaFixed, " << myThetaLen << " );" << endl;
-  oNonmemPars << "   // A valarray object that *will* contain the initial values for THETA." << endl;
-  oNonmemPars << "   // The object value may be replaced if a new data set is simulated." << endl;
-  oNonmemPars << "   valarray<double> thetaIn ( c_thetaIn, nTheta );" << endl;
-  oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // ETA" << endl;
@@ -140,18 +144,21 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   const int nEta = " << myEtaLen << ";" << endl;
   oNonmemPars << endl;
 
-  oNonmemPars << "   // A C-arrary containing the initial estimates for ETA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   double c_etaIn[nEta] = { ";
-  for( int i=0; i<myEtaLen; i++ )
+  if ( !myIsIdent )
     {
-      if( i > 0 )
-	oNonmemPars << ", ";
-      oNonmemPars << pEta->initial[0][i];
+      oNonmemPars << "   // A C-arrary containing the initial estimates for ETA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   double c_etaIn[nEta] = { ";
+      for( int i=0; i<myEtaLen; i++ )
+        {
+          if( i > 0 )
+            oNonmemPars << ", ";
+          oNonmemPars << pEta->initial[0][i];
+        }
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<double> etaIn( c_etaIn, nEta );" << endl;
+      oNonmemPars << endl;
     }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> etaIn( c_etaIn, nEta );" << endl;
-  oNonmemPars << endl;
 
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // OMEGA" << endl;
@@ -181,37 +188,40 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   const int omegaOrder = " << myOmegaOrder.sum() <<  ";" << endl;
   oNonmemPars << endl;
 
-  oNonmemPars << "   // A C-arrary containing the initial estimates for OMEGA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   double c_omegaIn[ omegaOrder ] = { ";
-  for( int i=0; i<nOmegaBlock; i++ )
+  if ( !myIsIdent )
     {
-      for( int j=0; j<myOmegaOrder[i]; j++ )
-	{
-	  if( i+j>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << pOmega->initial[i][j];
-	}
+      oNonmemPars << "   // A C-arrary containing the initial estimates for OMEGA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   double c_omegaIn[ omegaOrder ] = { ";
+      for( int i=0; i<nOmegaBlock; i++ )
+        {
+          for( int j=0; j<myOmegaOrder[i]; j++ )
+            {
+              if( i+j>0 )
+                oNonmemPars << ", ";
+              oNonmemPars << pOmega->initial[i][j];
+            }
+        }
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, omegaOrder );" << endl;
+      oNonmemPars << endl;
+    
+      oNonmemPars << "   // A C-arrary containing the fixation flags for OMEGA." << endl;
+      oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
+      oNonmemPars << "   bool c_omegaFixed[ omegaOrder ] = { ";
+      for( int i=0; i<nOmegaBlock; i++ )
+        { 
+          for( int j=0; j<myOmegaOrder[i]; j++ )
+            {
+              if( i+j>0 )
+                oNonmemPars << ", ";
+              oNonmemPars << (pOmega->fixed[i][j]? "true":"false");
+            }
+        }
+      oNonmemPars << " };" << endl;
+      oNonmemPars << "   const valarray<bool> omegaFixed( c_omegaFixed, omegaOrder );" << endl;
+      oNonmemPars << endl;
     }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<double> omegaIn( c_omegaIn, omegaOrder );" << endl;
-  oNonmemPars << endl;
-
-  oNonmemPars << "   // A C-arrary containing the fixation flags for OMEGA." << endl;
-  oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
-  oNonmemPars << "   bool c_omegaFixed[ omegaOrder ] = { ";
-  for( int i=0; i<nOmegaBlock; i++ )
-    { 
-      for( int j=0; j<myOmegaOrder[i]; j++ )
-	{
-	  if( i+j>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << (pOmega->fixed[i][j]? "true":"false");
-	}
-    }
-  oNonmemPars << " };" << endl;
-  oNonmemPars << "   const valarray<bool> omegaFixed( c_omegaFixed, omegaOrder );" << endl;
-  oNonmemPars << endl;
 
   //Block Diagonal Omega
   oNonmemPars << "   const int nOmegaBlk = " << nOmegaBlock <<  ";" << endl;
@@ -221,7 +231,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   for( int i=0; i<nOmegaBlock; i++ )
     {
       if( i>0 )
-	oNonmemPars << ", ";
+        oNonmemPars << ", ";
       oNonmemPars << (myOmegaStruct[i] == Symbol::TRIANGLE? "FULL" : "DIAGONAL" );
     }
   oNonmemPars << " };" << endl;
@@ -232,7 +242,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   for( int i=0; i<nOmegaBlock; i++ )
     {
       if( i>0 )
-	oNonmemPars << ", ";
+        oNonmemPars << ", ";
       oNonmemPars << myOmegaDim[i];
     }
   oNonmemPars << " };" << endl;
@@ -243,7 +253,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   for( int i=0; i<nOmegaBlock; i++ )
     {
       if( i>0 )
-	oNonmemPars << ", ";
+        oNonmemPars << ", ";
       oNonmemPars << (myOmegaSameAsPrev[i]? "true":"false");
     }
   oNonmemPars << " };" << endl;
@@ -301,14 +311,14 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
       oNonmemPars << "   double c_sigmaIn[ sigmaOrder ] = { ";
       for( int i=0; i<nSigmaBlock; i++ )
-	{
-	  for( int j=0; j<mySigmaOrder[i]; j++ )
-	    {
-	      if( i+j>0 )
-		oNonmemPars << ", ";
-	      oNonmemPars << pSigma->initial[i][j];
-	    }
-	}
+        {
+          for( int j=0; j<mySigmaOrder[i]; j++ )
+            {
+              if( i+j>0 )
+                oNonmemPars << ", ";
+              oNonmemPars << pSigma->initial[i][j];
+            }
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<double> sigmaIn( c_sigmaIn, sigmaOrder );" << endl;
       oNonmemPars << endl;
@@ -317,14 +327,14 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   // This array is used to initializes a valarray object that follows." << endl;
       oNonmemPars << "   bool c_sigmaFixed[ sigmaOrder ] = { ";
       for( int i=0; i<nSigmaBlock; i++ )
-	{ 
-	  for( int j=0; j<mySigmaOrder[i]; j++ )
-	    {
-	      if( i+j>0 )
-		oNonmemPars << ", ";
-	      oNonmemPars << (pSigma->fixed[i][j]? "true":"false");
-	    }
-	}
+        { 
+          for( int j=0; j<mySigmaOrder[i]; j++ )
+            {
+              if( i+j>0 )
+                oNonmemPars << ", ";
+              oNonmemPars << (pSigma->fixed[i][j]? "true":"false");
+            }
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<bool> sigmaFixed( c_sigmaFixed, sigmaOrder );" << endl;
       oNonmemPars << endl;
@@ -335,33 +345,33 @@ void NonmemTranslator::generateNonmemParsNamespace() const
 
       oNonmemPars << "   enum covStruct c_sigmaBlockStruct[ nSigmaBlk ] = { ";
       for( int i=0; i<nSigmaBlock; i++ )
-	{
-	  if( i>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << (mySigmaStruct[i] == Symbol::TRIANGLE? "FULL" : "DIAGONAL" );
-	}
+        {
+          if( i>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << (mySigmaStruct[i] == Symbol::TRIANGLE? "FULL" : "DIAGONAL" );
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<covStruct> sigmaBlockStruct( c_sigmaBlockStruct, nSigmaBlk );" << endl;
       oNonmemPars << endl;
       
       oNonmemPars << "   int c_sigmaBlockDims[ nSigmaBlk ] = { ";
       for( int i=0; i<nSigmaBlock; i++ )
-	{
-	  if( i>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << mySigmaDim[i];
-	}
+        {
+          if( i>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << mySigmaDim[i];
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<int> sigmaBlockDims( c_sigmaBlockDims, nSigmaBlk );" << endl;
       oNonmemPars << endl;
       
       oNonmemPars << "   bool c_sigmaBlockSameAsPrev[ nSigmaBlk ] = { ";
       for( int i=0; i<nSigmaBlock; i++ )
-	{
-	  if( i>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << (mySigmaSameAsPrev[i]? "true":"false");
-	}
+        {
+          if( i>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << (mySigmaSameAsPrev[i]? "true":"false");
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const valarray<bool> sigmaBlockSameAsPrev( c_sigmaBlockSameAsPrev, nSigmaBlk );" << endl;
       oNonmemPars << endl;
@@ -403,17 +413,20 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       oNonmemPars << "   const int  nParameters            = " << myCompModel->getNParameters()        << ";" << endl;
       oNonmemPars << "   const int  defaultDoseComp        = " << myCompModel->getDefaultDose()        << ";" << endl;
       oNonmemPars << "   const int  defaultObservationComp = " << myCompModel->getDefaultObservation() << ";" << endl;
-      oNonmemPars << "   const double relTol               = " << myCompModel->getRelTol()             << ";" << endl;
+      if ( !myIsIdent )
+        {
+          oNonmemPars << "   const double relTol               = " << myCompModel->getRelTol()             << ";" << endl;
+        }
       int n = myCompModel->getNCompartments();
       vector<bool> initialOff( n );
       myCompModel->getInitialOff( initialOff );
       oNonmemPars << "   const bool c_initialOff[] = { ";
       for( int i=0; i<n; i++ )
-	{
-	  if( i>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << initialOff[i];
-	}
+        {
+          if( i>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << initialOff[i];
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const std::valarray<bool> initialOff( c_initialOff, " << n << " );" << endl;
 
@@ -421,11 +434,11 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       myCompModel->getNoOff( noOff );
       oNonmemPars << "   const bool c_noOff[] = { ";
       for( int i=0; i<n; i++ )
-	{
-	  if( i>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << noOff[i];
-	}
+        {
+          if( i>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << noOff[i];
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const std::valarray<bool> noOff( c_noOff, " << n << " );" << endl;
 
@@ -433,11 +446,11 @@ void NonmemTranslator::generateNonmemParsNamespace() const
       myCompModel->getNoDose( noDose );
       oNonmemPars << "   const bool c_noDose[] = { ";
       for( int i=0; i<n; i++ )
-	{
-	  if( i>0 )
-	    oNonmemPars << ", ";
-	  oNonmemPars << noDose[i];
-	}
+        {
+          if( i>0 )
+            oNonmemPars << ", ";
+          oNonmemPars << noDose[i];
+        }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const std::valarray<bool> noDose( c_noDose, " << n << " );" << endl;
     }

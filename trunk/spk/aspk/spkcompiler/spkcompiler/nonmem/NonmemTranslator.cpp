@@ -50,6 +50,7 @@ const char* NonmemTranslator::fPred_h                      ( "Pred.h" );
 const char* NonmemTranslator::fDiffEqn_fortran             ( "diffEqn.fortran" );
 const char* NonmemTranslator::fDiffEqn_cpp                 ( "diffEqn.cpp" );
 const char* NonmemTranslator::fOdePred_h                   ( "OdePred.h" );
+const char* NonmemTranslator::fIdentPred_h                 ( "IdentPred.h" );
 const char* NonmemTranslator::fPkEqn_fortran               ( "pkEqn.fortran" );
 const char* NonmemTranslator::fPkEqn_cpp                   ( "pkEqn.cpp" );
 const char* NonmemTranslator::fErrorEqn_fortran            ( "errorEqn.fortran" );
@@ -69,6 +70,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
     myTrans                 ( TRANS1 ),
     myIsEstimate            ( true ),
     myIsSimulate            ( false ),
+    myIsIdent               ( false ),
     myIsMonte               ( false ),
     myIsStat                ( false ),
     mySubproblemsN          ( 1 ),
@@ -126,6 +128,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   remove( fDiffEqn_fortran );
   remove( fDiffEqn_cpp );
   remove( fOdePred_h );
+  remove( fIdentPred_h );
   remove( fPkEqn_fortran );
   remove( fPkEqn_cpp );
   remove( fErrorEqn_fortran );

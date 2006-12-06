@@ -81,6 +81,7 @@ const char* XmlConstants::C_VEGAS                     = "vegas";
 const char* XmlConstants::C_NUMBEREVAL                = "number_eval";
 const char* XmlConstants::C_POP_SIZE                  = "pop_size";
 const char* XmlConstants::C_IS_ESTIMATION             = "is_estimation";
+const char* XmlConstants::C_IS_IDENTIFIABILITY        = "is_identifiability";
 const char* XmlConstants::C_IS_ETA_OUT                = "is_eta_out";
 const char* XmlConstants::C_IS_RESTART                = "is_restart";
 const char* XmlConstants::C_DATA_LABELS               = "data_labels";
@@ -140,6 +141,8 @@ const char* XmlConstants::C_IND_INVERSE_COVARIANCE_OUT= "ind_inverse_covariance_
 const char* XmlConstants::C_IND_CORRELATION_OUT       = "ind_correlation_out";
 const char* XmlConstants::C_IND_COEFFICIENT_OUT       = "ind_coefficient_out";
 const char* XmlConstants::C_IND_CONFIDENCE_OUT        = "ind_confidence_out";
+const char* XmlConstants::C_IND_IDENT_NUMBER_OF_SOLUTIONS = "ind_ident_number_of_solutions";
+const char* XmlConstants::C_IND_IDENT_STATUS          = "ind_ident_status";
 const char* XmlConstants::C_PRESENTATION_DATA         = "presentation_data";
 const char* XmlConstants::C_NCOMPARTMENTS             = "ncompartments";
 const char* XmlConstants::C_NPARAMETERS               = "nparameters";
@@ -246,6 +249,7 @@ XmlConstants::XmlConstants()
   X_NUMBEREVAL                 = XMLString::transcode( C_NUMBEREVAL );
   X_POP_SIZE                   = XMLString::transcode( C_POP_SIZE  );
   X_IS_ESTIMATION              = XMLString::transcode( C_IS_ESTIMATION );
+  X_IS_IDENTIFIABILITY         = XMLString::transcode( C_IS_IDENTIFIABILITY );
   X_IS_ETA_OUT                 = XMLString::transcode( C_IS_ETA_OUT );
   X_IS_RESTART                 = XMLString::transcode( C_IS_RESTART );
   X_DATA_LABELS                = XMLString::transcode( C_DATA_LABELS );
@@ -322,6 +326,8 @@ XmlConstants::XmlConstants()
   X_IND_CORRELATION_OUT        = XMLString::transcode( C_IND_CORRELATION_OUT );
   X_IND_COEFFICIENT_OUT        = XMLString::transcode( C_IND_COEFFICIENT_OUT );
   X_IND_CONFIDENCE_OUT         = XMLString::transcode( C_IND_CONFIDENCE_OUT );
+  X_IND_IDENT_NUMBER_OF_SOLUTIONS = XMLString::transcode( C_IND_IDENT_NUMBER_OF_SOLUTIONS );
+  X_IND_IDENT_STATUS           = XMLString::transcode( C_IND_IDENT_STATUS );
   X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 }
 XmlConstants::~XmlConstants()
@@ -403,6 +409,7 @@ XmlConstants::~XmlConstants()
   XMLString::release( &X_NUMBEREVAL );
   XMLString::release( &X_POP_SIZE );
   XMLString::release( &X_IS_ESTIMATION );
+  XMLString::release( &X_IS_IDENTIFIABILITY );
   XMLString::release( &X_IS_ETA_OUT );
   XMLString::release( &X_IS_RESTART );
   XMLString::release( &X_DATA_LABELS );
@@ -462,6 +469,8 @@ XmlConstants::~XmlConstants()
   XMLString::release( &X_IND_CORRELATION_OUT );
   XMLString::release( &X_IND_COEFFICIENT_OUT );
   XMLString::release( &X_IND_CONFIDENCE_OUT );
+  XMLString::release( &X_IND_IDENT_NUMBER_OF_SOLUTIONS );
+  XMLString::release( &X_IND_IDENT_STATUS );
   XMLString::release( &X_PRESENTATION_DATA );
 
   XMLString::release( &X_NCOMPARTMENTS );

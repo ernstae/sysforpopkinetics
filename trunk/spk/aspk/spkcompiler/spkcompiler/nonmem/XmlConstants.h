@@ -276,6 +276,16 @@ struct XmlConstants{
   XMLCh* X_IND_STDERROR_OUT;
 
   /** C array version. */
+  static const char * C_IND_IDENT_NUMBER_OF_SOLUTIONS;
+  /** XMLCh array version. */
+  XMLCh* X_IND_IDENT_NUMBER_OF_SOLUTIONS;
+
+  /** C array version. */
+  static const char * C_IND_IDENT_STATUS;
+  /** XMLCh array version. */
+  XMLCh* X_IND_IDENT_STATUS;
+
+  /** C array version. */
   static const char * C_INITIAL_OFF;
   /** XMLCh array version. */
   XMLCh* X_INITIAL_OFF;
@@ -304,6 +314,11 @@ struct XmlConstants{
   static const char * C_IS_ESTIMATION;
   /** XMLCh array version. */
   XMLCh* X_IS_ESTIMATION;
+
+  /** C array version. */
+  static const char * C_IS_IDENTIFIABILITY;
+  /** XMLCh array version. */
+  XMLCh* X_IS_IDENTIFIABILITY;
 
   /** C array version. */
   static const char * C_IS_ETA_OUT;

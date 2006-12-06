@@ -512,7 +512,7 @@ void NonmemTranslator::parseSource()
     }
   else if( myModelSpec == ADVAN6 )
     {
-      generateOdePred( fPkEqn_cpp, fDiffEqn_cpp, fErrorEqn_cpp );
+      generateOdePred( fPkEqn_cpp, fDiffEqn_cpp, fErrorEqn_cpp, myIsIdent );
     }
   else
     {
@@ -532,12 +532,16 @@ void NonmemTranslator::parseSource()
   if( myIsMonte )
     generateMonteParsNamespace();
   
-  if( myIsEstimate || myIsSimulate )
+  if( myIsIdent )
+    {
+      generateIdentDriver();
+    }
+  else if( myIsEstimate || myIsSimulate )
     {
       if( getTarget() == POP )
-	generatePopDriver();
+        generatePopDriver();
       else 
-	generateIndDriver();
+        generateIndDriver();
     }
   //*************************************
   // Generate Makefile.

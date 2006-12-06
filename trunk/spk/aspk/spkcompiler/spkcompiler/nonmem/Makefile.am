@@ -44,6 +44,7 @@ dist_libnonmem_a_SOURCES = \
 	NM_generateNonmemPars.cpp \
 	NM_generateOdePred.cpp \
 	NM_generateIndDriver.cpp \
+	NM_generateIdentDriver.cpp \
 	NM_generatePopDriver.cpp \
         countStrInLhs.cpp \
         countStrInLhs.h \
