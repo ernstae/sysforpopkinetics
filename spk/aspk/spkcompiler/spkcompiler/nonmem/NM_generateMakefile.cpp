@@ -46,8 +46,13 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "TEST_DIR  = spktest" << endl;
   oMakefile << endl;                                   
 
+  oMakefile << "# C++ compiler flages to build a 64-bit version." << endl;
+  oMakefile << "CXX_FLAGS_64_BIT = " << endl;
+  oMakefile << "if [ `uname -i` = \"x86_64\" ]; then  CXX_FLAGS_64_BIT = -DBA0_64BITS; fi" << endl;
+  oMakefile << endl;                                   
+
   oMakefile << "# C++ compiler flags to build a production version." << endl;
-  oMakefile << "CXX_FLAGS_PROD = -O3 -Dspk_release -DNDEBUG " << endl;
+  oMakefile << "CXX_FLAGS_PROD = -O3 -Dspk_release -DNDEBUG $(CXX_FLAGS_64_BIT) " << endl;
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to build a test version." << endl;
@@ -58,11 +63,11 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to build a debug version." << endl;
-  oMakefile << "CXX_FLAGS_DEBUG = -g " << endl;
+  oMakefile << "CXX_FLAGS_DEBUG = -g $(CXX_FLAGS_64_BIT) " << endl;
   oMakefile << endl;
 
   oMakefile << "# C++ compiler flags to turn on profiling" << endl;
-  oMakefile << "# CXX_FLAGS += -pg -Dspk_profiling" << endl;
+  oMakefile << "# CXX_FLAGS += -pg -Dspk_profiling $(CXX_FLAGS_64_BIT) " << endl;
   oMakefile << endl;
 
   if( myModelSpec == ADVAN6 )
@@ -72,12 +77,14 @@ void NonmemTranslator::generateMakefile() const
   }
   oMakefile << endl;                                        
 
-  oMakefile << "LIBS      = -lspkpred -lspk -lQN01Box ";
-  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -llapack -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c" << endl;
+  oMakefile << "LIBS      = -lspkpred -lspk -lQN01Box";
+  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -llapack -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c -lcln -lginac" << (myIsIdent? " -lbad -lbap -lbav -lba0 -lgsl -lgslcblas" : "" ) << endl;
   oMakefile << endl;
 
   oMakefile << "COMMON_INCLUDE = \\" << endl;
-  if( myModelSpec == PRED )
+  if( myIsIdent )
+     oMakefile << "\tIdentPred.h \\" << endl;
+  else if( myModelSpec == PRED )
      oMakefile << "\tPred.h \\" << endl;
   else if( myModelSpec == ADVAN6 )
      oMakefile << "\tOdePred.h \\" << endl;

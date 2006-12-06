@@ -126,6 +126,44 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
       throw e;
     }
 
+  // * is_identifiability = {yes, no}
+  //
+  // Note that because of backwards compatability this attribute is optional.
+  if( !ind_analysis->hasAttribute( XML.X_IS_IDENTIFIABILITY ) )
+    {
+      myIsIdent = false;
+    }
+  else
+    {
+      const XMLCh * xml_is_identifiability = ind_analysis->getAttribute( XML.X_IS_IDENTIFIABILITY );
+      if( XMLString::equals( xml_is_identifiability, XML.X_YES ) )
+        myIsIdent    = true;
+      else if ( XMLString::equals( xml_is_identifiability, XML.X_NO ) )
+        myIsIdent = false;
+      else
+        {
+          char mess[ SpkCompilerError::maxMessageLen() ];
+          snprintf( mess,
+    		SpkCompilerError::maxMessageLen(),
+    	       "Invalid <%s::%s> attribute value: \"%s\".", 
+    	       XML.C_IND_ANALYSIS, 
+    	       XML.C_IS_IDENTIFIABILITY, 
+    	       XMLString::transcode( xml_is_identifiability ) );
+          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+          throw e;
+        }
+    }
+
+  if( myIsEstimate && myIsIdent )
+    {
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      snprintf( mess, 
+		SpkCompilerError::maxMessageLen(),
+		"Individual estimation and identifiability cannot be requested simultaneously." );
+      SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }
+
   setPopSize( 1 );
 
   //---------------------------------------------------------------------------------------
@@ -354,6 +392,10 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
       throw e;
     }
   Symbol * sym_theta = table->insertVector( nonmem::THETA, myThetaLen, Symbol::SYSTEM, Symbol::READONLY );
+
+  // Only get the rest of the theta related values if this is not an
+  // identifiability calculation.
+  if( !myIsIdent )
   {
     //<in>
     DOMNodeList * theta_in_list = theta->getElementsByTagName( XML.X_IN );
@@ -611,6 +653,9 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
 
  Symbol * sym_omega = table->insertSymmetricMatrix( nonmem::OMEGA, myOmegaStruct, myOmegaDim, Symbol::SYSTEM, Symbol::READONLY );
  
+  // Only get the rest of the Omega related values if this is not an
+  // identifiability calculation.
+  if( !myIsIdent )
   {
     //<in>
     DOMNodeList * omega_in_list = omega->getElementsByTagName( XML.X_IN );
@@ -767,6 +812,7 @@ void NonmemTranslator::parseIndAnalysis( const DOMElement* ind_analysis )
   Symbol * sym_eta = table->insertVector( nonmem::ETA, myEtaLen, Symbol::SYSTEM, Symbol::READONLY );
   for( int i=0; i<myEtaLen; i++ ) sym_eta->initial[0][i] = etaDefault;
   sym_eta->fixed[0] = false;
+
   
   //---------------------------------------------------------------------------------------
   // Optional elements

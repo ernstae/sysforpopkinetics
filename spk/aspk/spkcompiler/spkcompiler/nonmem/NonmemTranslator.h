@@ -326,6 +326,9 @@ public:
   /** The header file for the OdePred template class. */
   static const char * fOdePred_h;
 
+  /** The header file for the IdentPred template class. */
+  static const char * fIdentPred_h;
+
   /** The name of file that contains fortran version of
    * the user defined $PK.
    */
@@ -534,15 +537,18 @@ public:
   void generatePred( const char* fPredEqn_cpp ) const;
 
   /**
-   * Generate OdePred.h, defining OdePred class.
+   * Generate OdePred.h or IdentPred.h, defining OdePred or IdentPred
+   * classes, respectively.
    *
    * @param fPkEqn_cpp The name of file containing the C++ translation of PK definition.
      @param fDiffEqn_cpp The name of file containing the C++ translation of DES definition.
    * @param fErrorEqn_cpp The name of file containing the C++ translation of ERROR definition.
+   * @param isIdent If this is equal to true, then the generated file will be IdentPred.h.
    */
   void generateOdePred( const char* fPkEqn_cpp, 
 	                const char* fDiffEqn_cpp, 
-			const char* fErrorEqn_cpp ) const;
+			const char* fErrorEqn_cpp,
+			bool        isIdent ) const;
   /**
    * Generate NonmemPars.h for NonmemPars namespace.
    * NonmemPars namespace declares parameters given by the NONMEM-savvy user.
@@ -564,6 +570,11 @@ public:
    * Generate fitDriver.cpp for individual analysis.
    */
   void generateIndDriver( ) const;
+
+  /**
+   * Generate fitDriver.cpp for individual identifiability.
+   */
+  void generateIdentDriver( ) const;
 
   /**
    * Generate Makefile.SPK, a makefile that builds a job driver.
@@ -602,6 +613,9 @@ private:
 
   /** True if the user requested calculating statistics at the end of parameter estimation. */
   bool              myIsStat; 
+
+  /** True if the user requested individual identifiability. */
+  bool              myIsIdent;
 
   /** True if the user requested the likelihood estimation. */
   bool              myIsMonte;
