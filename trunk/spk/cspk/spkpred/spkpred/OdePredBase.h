@@ -44,6 +44,7 @@
 // SPK library header files.
 #include <spk/intToOrdinalString.h>
 #include <spk/SpkValarray.h>
+#include <spk/WarningsManager.h>
 
 // Standard library header files.
 #include <algorithm>
@@ -137,7 +138,7 @@ public:
     const SPK_VA::valarray<bool>&  compInitialOffIn,
     const SPK_VA::valarray<bool>&  compNoOffIn,
     const SPK_VA::valarray<bool>&  compNoDoseIn,
-    double                         tolRelIn )
+    Value                          tolRelIn )
     :
     isPkBlockAFuncOfTime      ( isPkBlockAFuncOfTIn ),
     nComp                     ( nCompIn ),
@@ -197,6 +198,9 @@ public:
     // Set an invalid initial value for this data item that will be
     // reset if it appears in the data record.
     pcmt = -9999;
+
+    // Set this to indicate the warning has not yet been issued.
+   issuedStartTimeWarning = false;
   }
 
 
@@ -519,6 +523,9 @@ public:
 
 protected:
   int getNComp() const { return nComp; }  ///< Gets the value for nComp.
+
+  int getDefaultDoseComp()   const { return defaultDoseComp; }    ///< Gets the default dose compartment.
+  int getDefaultObservComp() const { return defaultObservComp; }  ///< Gets the default observation compartment.
 
   ///< Gets a const iterator for compAmount.
   typename std::vector<Value>::const_iterator getCompAmountIterator() const
@@ -877,6 +884,8 @@ private:
 
   std::vector<int>   turnOnOrOffComp;             ///< Compartments to be turned on or off.
   std::vector<Value> turnOnOrOffTime;             ///< Times to turn the compartments on or off.
+
+  bool issuedStartTimeWarning;
 
 
   //------------------------------------------------------------
@@ -1755,6 +1764,26 @@ protected:
       breakTime[k] = breakPoint[k].time;
     }
 
+
+    //----------------------------------------------------------
+    // Validate the experiment design information.
+    //----------------------------------------------------------
+
+    // Check for a nonzero start time for this individual.
+    if ( breakTime[0] != Value( 0 ) )
+    {
+      // Issue a warning if necessary.
+      if ( !issuedStartTimeWarning )
+      {
+        WarningsManager::addWarning( 
+          "The integration of the ordinary differential equations begins at the first time available for an individual.  The starting time for the model predictions is not TIME=0 for at least one individual in this data set. If this is not what was intended, adding a data point at TIME=0 will solve this problem.",
+          __LINE__,
+          __FILE__ );
+    
+        issuedStartTimeWarning = true;
+      }
+    }
+    
 
     //----------------------------------------------------------
     // Check the sizes of the experiment design information.
