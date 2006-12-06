@@ -91,14 +91,24 @@ namespace{
   char CLAPACKLIB[] = "atlas";
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
-  char XERCESCLIB[] = "xerces-c";
+  char XERCESCLIB[]  = "xerces-c";
+  char CLNLIB[]      = "cln";
+  char GINACLIB[]    = "ginac";
+  char BADLIB[]      = "bad";
+  char BAPLIB[]      = "bap";
+  char BAVLIB[]      = "bav";
+  char BA0LIB[]      = "ba0";
+  char GSLLIB[]      = "gsl";
+  char GSLCBLASLIB[] = "gslcblas";
+
   char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -L/usr/lib/atlas";
 #ifndef SPK_RELEASE
   char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD -I/usr/local/include";
 #else
   char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD -I/usr/local/include";
 #endif
-  char LDFLAG[514];
+  const unsigned int LDFLAG_MAXCHARS = 512;
+  char LDFLAG[LDFLAG_MAXCHARS+1];
 
   char MY_ASSERT_EQUAL[] =
 "#include <iostream> \n \
@@ -1695,8 +1705,8 @@ void pop_modifyDataItemsTest::setUp()
   snprintf( fODEPredDriver,        MAXCHARS, "%s_ODEPredDriver",        fPrefix );
   snprintf( fODEPredDriver_cpp,    MAXCHARS, "%s_ODEPredDriver.cpp",    fPrefix );
 
-  snprintf( LDFLAG, MAXCHARS, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  snprintf( LDFLAG, LDFLAG_MAXCHARS, "%s -l%s -l%s  -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+     LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB, CLNLIB, GINACLIB, BADLIB, BAPLIB, BAVLIB, BA0LIB, GSLLIB, GSLCBLASLIB );
 
   dataParser = new xercesc::XercesDOMParser;
   dataParser->setValidationScheme( XercesDOMParser::Val_Auto );
