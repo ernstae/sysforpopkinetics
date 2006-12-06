@@ -55,6 +55,8 @@ testall_SOURCES      = \
 	               explangTest.h \
 	               ind_fixedParaTest.cpp \
 	               ind_fixedParaTest.h \
+	               ind_identTest.cpp \
+	               ind_identTest.h \
                        ind_withIDTest.cpp \
                        ind_withIDTest.h \
 	               ind_withoutIDTest.cpp \

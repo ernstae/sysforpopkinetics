@@ -61,13 +61,23 @@ namespace{
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
   char XERCESCLIB[] = "xerces-c";
+  char CLNLIB[]      = "cln";
+  char GINACLIB[]    = "ginac";
+  char BADLIB[]      = "bad";
+  char BAPLIB[]      = "bap";
+  char BAVLIB[]      = "bav";
+  char BA0LIB[]      = "ba0";
+  char GSLLIB[]      = "gsl";
+  char GSLCBLASLIB[] = "gslcblas";
+
   char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest -L/usr/lib/atlas";
 #ifndef SPK_RELEASE
   char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD -I/usr/local/include";
 #else
   char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest -I/usr/local/include/spktest/CppAD -I/usr/local/include";
 #endif
-  char LDFLAG[514];
+  const unsigned int LDFLAG_MAXCHARS = 512;
+  char LDFLAG[LDFLAG_MAXCHARS+1];
 
   char MY_ASSERT_EQUAL[] =
   "#include <iostream> \n \
@@ -229,8 +239,8 @@ void ind_dataSetTest::setUp()
   snprintf( fGetMeasurementIndexDriver,     lenPrefix+128, "%s_getMeasurementIndexDriver",     fPrefix );
   snprintf( fGetMeasurementIndexDriver_cpp, lenPrefix+128, "%s_getMeasurementIndexDriver.cpp", fPrefix );
 
-  snprintf( LDFLAG, 512, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  snprintf( LDFLAG, LDFLAG_MAXCHARS, "%s -l%s -l%s  -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+    LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB, CLNLIB, GINACLIB, BADLIB, BAPLIB, BAVLIB, BA0LIB, GSLLIB, GSLCBLASLIB );
 
   // ID doesn't have an alias
   label_alias[strID]   = NULL;
@@ -584,7 +594,8 @@ void ind_dataSetTest::testExpand()
   for( int i=0, k=0; i<nRecords; i++ )
     {
       if( record[i][3] == 1 )
-	o << "   MY_ASSERT_EQUAL( 0.0, z[" << i << "] );" << endl;
+	// This element should be a NaN, which is not equal to itself.
+	o << "   MY_ASSERT_EQUAL( false, ( z[" << i << "] == z[" << i << "] ) );" << endl;
       else
 	{
 	  o << "   MY_ASSERT_EQUAL( y[" << k << "], z[" << i << "] );" << endl;

@@ -56,14 +56,24 @@ namespace{
   char CLAPACKLIB[] = "atlas";
   char PTHREADLIB[] = "pthread";
   char MLIB[]       = "m";
-  char XERCESCLIB[] = "xerces-c";
+  char XERCESCLIB[]  = "xerces-c";
+  char CLNLIB[]      = "cln";
+  char GINACLIB[]    = "ginac";
+  char BADLIB[]      = "bad";
+  char BAPLIB[]      = "bap";
+  char BAVLIB[]      = "bav";
+  char BA0LIB[]      = "ba0";
+  char GSLLIB[]      = "gsl";
+  char GSLCBLASLIB[] = "gslcblas";
+
   char LDPATH[]     = "../../spkcompiler/libcommon.a ../../spkcompiler/nonmem/libnonmem.a -Wl,--rpath -Wl,/usr/local/lib/spktest -L/usr/local/lib/spktest";
 #ifndef SPK_RELEASE
   char CPPFLAG[]    = "-g -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
 #else
   char CPPFLAG[]    = "-O3 -Dspk_release -DNDEBUG -I./ -I../ -I../../spkcompiler -I/usr/local/include/spktest";
 #endif
-  char LDFLAG[514];
+  const unsigned int LDFLAG_MAXCHARS = 512;
+  char LDFLAG[LDFLAG_MAXCHARS+1];
 
   char MY_ASSERT_EQUAL[] =
 "#include <iostream> \n \
@@ -441,8 +451,8 @@ void pop_diffeqnTest::setUp()
   X_POP_CORRELATION_OUT        = XMLString::transcode( C_POP_CORRELATION_OUT );
   X_PRESENTATION_DATA          = XMLString::transcode( C_PRESENTATION_DATA );
 
-  snprintf( LDFLAG, "%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
-	   LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB );
+  snprintf( LDFLAG, LDFLAG_MAXCHARS, "%s -l%s -l%s  -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s -l%s",
+     LDPATH, SPKLIB, SPKPREDLIB, SPKOPTLIB, ATLASLIB, CBLASLIB, CLAPACKLIB, PTHREADLIB, MLIB, XERCESCLIB, CLNLIB, GINACLIB, BADLIB, BAPLIB, BAVLIB, BA0LIB, GSLLIB, GSLCBLASLIB );
 
   // ID doesn't have an alias
   label_alias[strID]   = NULL;
@@ -1459,7 +1469,7 @@ void pop_diffeqnTest::testDriver()
   printf( "\n--- %s ---\n", fFitDriver );
   int  exitcode      = 0;
   char command[1024];
-  snprintf( command, 1024, "make -f %s test", fMakefile );
+  snprintf( command, 1024, "make -f %s debug", fMakefile );
   if( system( command ) != 0 )
     {
       char message[MAXCHARS+1];
