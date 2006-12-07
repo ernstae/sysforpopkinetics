@@ -417,6 +417,7 @@ CREATE TABLE team (
 INSERT INTO class (class_code, class_name, parent_required) VALUES ('al','Approx. Likelihood',0);
 INSERT INTO class (class_code, class_name, parent_required) VALUES ('le','Likelihood Eval.',1);
 INSERT INTO class (class_code, class_name, parent_required) VALUES ('so','Simulation Only',0);
+INSERT INTO class (class_code, class_name, parent_required) VALUES ('id','identifiability',0);
 
 INSERT INTO end (end_code, end_name) VALUES ('cerr','Compiler Error');
 INSERT INTO end (end_code, end_name) VALUES ('herr','Hard Fault');
@@ -439,6 +440,8 @@ INSERT INTO end (end_code, end_name) VALUES ('deve','Known Prog Error');
 INSERT INTO end (end_code, end_name) VALUES ('devf','Known Prog Failure');
 INSERT INTO end (end_code, end_name) VALUES ('pose','Post-opt Error');
 INSERT INTO end (end_code, end_name) VALUES ('posf','Post-opt Failure');
+INSERT INTO end (end_code, end_name) VALUES ('idee','Model Ident. Error');
+INSERT INTO end (end_code, end_name) VALUES ('idef','Model Ident. Failure');
 INSERT INTO end (end_code, end_name) VALUES ('spku','SPK Unavailable');
 
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('fo','First Order','al',0);
@@ -457,6 +460,7 @@ INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('g2
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('sm','MAP Std. Two-stage','al',0);
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('im','MAP Iter. Two-stage','al',0);
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gm','MAP Global Two-stage','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('id','Identifiability','id',0);
 
 INSERT INTO state (state_code, state_name) VALUES ('q2c','Queued to compile');
 INSERT INTO state (state_code, state_name) VALUES ('q2ml','Queued to M.L.');
