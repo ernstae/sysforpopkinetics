@@ -18,7 +18,7 @@
       <para>
 The general SPK users are biological scientists.  There are two special users: user acount administator and librarian.
 All other users are called ordinary users.  Some of the ordinary users are SPK testers and some of the SPK testers 
-are SPK developers. 
+are SPK developers. An ordinary user can join a group.
       </para>
   </abstract>
  </articleinfo>
@@ -29,7 +29,8 @@ The general SPK users are biological scientists. There are two special users: us
 The SPK user accounts are managed through an web interface which is available solely to the user account administrator.
 SPK provides a library of models, datasets and job examples to all users, which are handled solely by the librarian.
 All other users are called ordinary users.  Some of the ordinary users are SPK testers and some of the SPK testers 
-are SPK developers.  This specification describes the privileges and responsibilities of each type of the users. 
+are SPK developers.  An ordinary user can join a group.  This specification describes the privileges and responsibilities 
+of each type of the users. 
      
     </para>
   </sect1>
@@ -72,8 +73,10 @@ librarian enters the system for the first time.
     <para>
 An ordinary user account may have any unique username except 'useradmin' and 'librarian'.  There may be many ordinary user accounts.
 An ordinary user can download a Model Design Agent and use it.  An ordinary user can also access all the information of the library 
-in read-only basis and all the information in his/her account. The SPK uses Bugzilla as its bug tracking system.  All ordinary users 
-has an acoount in that system and may access it through MySPK web site.
+in read-only basis and all the information in his/her account. The SPK uses Bugzilla as its bug tracking system.  An ordinary user 
+has an acoount in that system and may access it through MySPK web site.  An ordinary user may share jobs with other users and stop 
+the sharing at any time.  The receiver of the file sharing may not share that job with any other user, but may stop the sharing at 
+any time.
     </para>
   </sect1>
   <sect1>
@@ -91,6 +94,22 @@ An SPK developer user account is also an SPK tester account.  There may be many 
 can access in-development features of the Model Design Agent while other users can not such as certain methods and warning/error 
 information.  In the SPK test environment, SPK 
 developers can enter other ordinary user accounts with the account holders' permission to resolve software problems 
+    </para>
+  </sect1>
+  <sect1>
+    <title>Group users</title>
+    <para>
+An ordinary SPK user can join a group.  Each user can join only one group.  A group can have any number of members.  Users in the 
+same group can use other group member's models, datasets and jobs, but can not modify them.  The group users can not either change 
+each other's job abstract or abort each other's job.  
+    </para>
+  </sect1>
+  <sect1>
+    <title></title>
+    <para>
+An ordinary SPK user can join a group.  Each user can join only one group.  A group can have any number of members.  Users in the 
+same group can use other group member's models, datasets and jobs, but can not modify them.  The group users can not either change 
+each other's job abstract or abort each other's job.  
     </para>
   </sect1>
 </article>
