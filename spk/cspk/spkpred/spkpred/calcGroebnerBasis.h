@@ -35,16 +35,20 @@
 
 extern "C"
 {
-  int calcGroebnerBasis( int         level,
-                         int         nTheta,
-                         int         thetaSeed,
-                         int         nIdentComp,
-                         int         nObservType,
-                         int         nDoseType,
-                         const char* sysExpModelRegChainIn,
-                         const char* naturalOrderingIn,
-                         const char* charSetOrderingIn,
-                         char***     groebnerBasisPolyOut );
+
+int calcGroebnerBasis( int         level,
+                       int         nTheta,
+                       int         thetaSeed,
+                       int         nIdentComp,
+                       int         nObservType,
+                       int         nDoseType,
+                       const char* sysExpModelRegChainIn,
+                       const char* naturalOrderingIn,
+                       const char* charSetOrderingIn,
+                       int**       nGroebnerBasisPolyEachOut,
+                       int*        nGroebnerBasisPolyTotalOut,
+                       char***     groebnerBasisPolyAllOut );
+
 }
 
 #endif

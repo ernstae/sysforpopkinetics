@@ -259,17 +259,17 @@ private:
    * using the data values and covariates for the last data record for
    * the individual.
    * 
-   * Next, this function attempts to calculate the Groebner basis that
-   * corresponds to the system-experiment model differential polyomial
-   * regular chain sysExpModelRegChainIn.
+   * Next, this function attempts to calculate the Groebner basis or
+   * bases that correspond to the system-experiment model differential
+   * polyomial regular chain sysExpModelRegChainIn.
    * To be specific, this function attempts to calculate the Groebner
-   * basis for the exhaustive summary polynomials that come from the
+   * bases for the exhaustive summary polynomials that come from the
    * input/output relations' coefficients, which are evaluated at a
    * random value for the vector that will be determined to be
    * identifiable or not, THETA.
    *
-   * Finally, this function attempts to solve the Groebner basis
-   * equations, which are a nonlinear system of polynomials.
+   * Finally, this function attempts to solve each set of Groebner
+   * basis equations, which are a nonlinear system of polynomials.
    *
    *
    * Reference:
@@ -316,14 +316,16 @@ private:
    * 
    * On output from this function this string will contain a
    * description of the status of the identifiability calculation,
-   * e.g. "Globally Identifiable", "Locally Identifiable", "Not
-   * Identifiable", or "Identifiability could not be determined"
+   * e.g. "Globally (Uniquely) Identifiable", "Locally (Nonuniquely )
+   * Identifiable", "Nonidentifiable (Infinite Solutions)",
+   * "Nonidentifiable (No Solutions)", or "Identifiability could not
+   * be determined"
    * 
    * 
    * @return
    *
-   * Returns the number of solutions of the nonlinear system of
-   * equations that make up the Groebner basis equations.
+   * Returns the total number of solutions of the nonlinear system of
+   * equations that make up all of the Groebner basis equations.
    *
    * If the number of solutions is equal to 0, then the
    * identifiability of the individual's THETA parameter could not be
@@ -1191,7 +1193,7 @@ public:
   
   
     //----------------------------------------------------------
-    // Calculate the exhaustive summary Groebner basis polynomials.
+    // Calculate the exhaustive summary Groebner bases polynomials.
     //----------------------------------------------------------
   
     // Set C++ strings that contain the differential polynomials for the
@@ -1206,18 +1208,29 @@ public:
     const char* naturalOrderingCStr     = naturalOrderingStr .c_str();
     const char* charSetOrderingCStr     = charSetOrderingStr .c_str();
   
-    // This pointer to a C style string will be used like an array of C
-    // style strings that will contain the Groebner basis polynomials
-    // after the call to calcGroebnerBasis().
+    // This will be the number of Groebner bases that were found.
+    int nGroebnerBasis;
+
+    // This will be the number of polynomial for each of the Groebner
+    // bases found.
+    int* nGroebnerBasisPolyEachOut;
+
+    // This will be the total number of polynomials for all of the
+    // Groebner bases found.
+    int nGroebnerBasisPolyTotalOut;
+
+    // This pointer to a C style string will be used like an array of
+    // C style strings that will contain the polynomials for all of
+    // the Groebner bases after the call to calcGroebnerBasis().
     //
     // Note that calcGroebnerBasis() uses malloc() to allocate the
     // memory for the polynomials, which means that the allocated memory
     // must be freed by this function after it is no longer needed.
-    char** groebnerBasisPolyCStrOut = 0;
+    char** groebnerBasisPolyAllCStrOut = 0;
   
-    // Calculate the polynomials that make up the Groebner basis for the
-    // exhaustive summary.
-    int nGroebnerBasisPoly = calcGroebnerBasis(
+    // Calculate the Groebner basis or bases for the exhaustive
+    // summary.
+    nGroebnerBasis = calcGroebnerBasis(
       level,
       nTheta,
       thetaSeed,
@@ -1227,11 +1240,13 @@ public:
       sysExpModelRegChainCStr,
       naturalOrderingCStr,
       charSetOrderingCStr,
-      &groebnerBasisPolyCStrOut );
+      &nGroebnerBasisPolyEachOut,
+      &nGroebnerBasisPolyTotalOut,
+      &groebnerBasisPolyAllCStrOut );
   
-    // If the Groebner basis could not be calculated, then this
+    // If the Groebner bases could not be calculated, then this
     // calculation cannot continue.
-    if ( nGroebnerBasisPoly == 0 )
+    if ( nGroebnerBasis == 0 )
     {
       throw SpkException(
         SpkError::SPK_UNKNOWN_ERR, 
@@ -1240,20 +1255,20 @@ public:
         __FILE__ );
     }
   
-    // If the Groebner basis contained multiple regular chains, then
-    // this calculation cannot continue.
-    if ( nGroebnerBasisPoly == -1 )
+    // If multiple Groebner bases were calculated, then this
+    // calculation cannot continue.
+    if ( nGroebnerBasis > 1 )
     {
       throw SpkException(
         SpkError::SPK_UNKNOWN_ERR, 
-        "The parameter identifiability calculation failed because the Groebner basis for the \nexhaustive summary had multiple regular chains.  \n\nPlease submit a bug report.",
+        "The parameter identifiability calculation failed because there were multiple \nGroebner bases for the exhaustive summary. \n\nPlease submit a bug report",
         __LINE__, 
         __FILE__ );
     }
   
   
     //----------------------------------------------------------
-    // Set the exhaustive summary Groebner basis equations.
+    // Set the exhaustive summary Groebner bases equations.
     //----------------------------------------------------------
   
     std::string groebnerBasisEqnStr_m;
@@ -1263,16 +1278,16 @@ public:
   
     int m;
   
-    // Set an equation for each of the Groebner basis polynomials
+    // Set an equation for each of the Groebner bases polynomials
     //
     //     poly   =  0  
     //         m
     //
     // and free its C style string.
-    for ( m = 0; m < nGroebnerBasisPoly; m++ )
+    for ( m = 0; m < nGroebnerBasisPolyTotalOut; m++ )
     {
       // Initially set the equation just equal to the polynomial.
-      groebnerBasisEqnStr_m = std::string( groebnerBasisPolyCStrOut[m] );
+      groebnerBasisEqnStr_m = std::string( groebnerBasisPolyAllCStrOut[m] );
   
       // Add the equality operator and the equations right-hand side to
       // get the full equation.
@@ -1285,56 +1300,63 @@ public:
       groebnerBasisEqn.append( groebnerBasisEqn_m );
   
       // Free the memory for this polynomial's C style string.
-      free( groebnerBasisPolyCStrOut[m] );
+      free( groebnerBasisPolyAllCStrOut[m] );
     }
   
     // Free the memory for pointers to the C style strings.
-    free( groebnerBasisPolyCStrOut );
+    free( groebnerBasisPolyAllCStrOut );
+
+    // Free the memory for this C array.
+    free( nGroebnerBasisPolyEachOut );
   
   
     //----------------------------------------------------------
-    // Solve the Groebner basis equations.
+    // Solve the Groebner bases equations.
     //----------------------------------------------------------
 
     int l;
     int n;
   
     // This will be the number of unique solutions of the Groebner
-    // basis equations.
+    // bases equations.
     int nGroebnerBasisSoln = 0;
 
     // This will be the number of equations for one of the unique
-    // solutions of the Groebner basis equations.
+    // solutions of the Groebner bases equations.
     int nGroebnerBasisSoln_lEqn;
 
     GiNaC::ex groebnerBasisSoln;
 
-    // Try to solve the Groebner basis equations.
+    // Try to solve the Groebner bases equations.
     try
     {
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // [Revisit - A Nonlinear System of Equations Solver is Needed - Mitch]
-      // The Groebner basis equations should really be solved using a
+      // The Groebner bases equations should really be solved using a
       // nonlinear systems of equations solver.
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       //
-      // Try to solve the Groebner basis equations as a linear system
+      // Try to solve the Groebner bases equations as a linear system
       // of equations that are functions of the parameters that will
       // be checked to be identifiable.
+      //
+      // If the system of equations is nonlinear, then the linear
+      // solver will throw an exception.
       groebnerBasisSoln = lsolve( groebnerBasisEqn, identPar );
 
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-      // When a nonlinear systems of equations solver is used there
+      // [Revisit - A Nonlinear System of Equations Solver is Needed - Mitch]
+      // Once a nonlinear systems of equations solver is used there
       // can be multiple solutions and this number can be larger than
-      // one.
+      // one
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       //
-      // If it was possible to solve the equations as a linear system
-      // of equations, i.e.., if no exception was thrown, then that
-      // solution is unique.
+      // If the linear solver is able to solve the equations, set the
+      // number the equations equal to one to indicate there were not
+      // multiple solutions.
       nGroebnerBasisSoln = 1;
 
-      // Print the solution of the Groebner basis equations.
+      // Print the solution of the Groebner bases equations.
       if ( level > 0 )
       {
         outputStream << "Groebner basis solution = {" << endl;
@@ -1360,14 +1382,79 @@ public:
           }
         }
         outputStream << endl;
-        outputStream << "This system-experiment model is globally (uniquely) identifiable." << endl;
+      }
+
+      // Reset the number of solutions if the number of Groebner basis
+      // polynomials does not match the number paramters (THETA's).
+      if ( groebnerBasisEqn.nops() == identPar.nops() )
+      {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+        // [Revisit - A Nonlinear System of Equations Solver is Needed - Mitch]
+        // Once a nonlinear systems of equations solver is used there
+        // can be multiple solutions and this number can be larger than
+        // one, which would make the status string be:  
+        //
+        //     identStatus = "Locally (Nonuniquely) Identifiable";
+	//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //
+        // If there are the same number of equations as unknowns, and
+        // the equations are linear, then the solution is unique.
+        nGroebnerBasisSoln = 1;
+
+        // Set the status string.
+        identStatus = "Globally (Uniquely) Identifiable";
+
+        if ( level > 0 )
+        {
+          outputStream << "This system-experiment model is globally (uniquely) identifiable." << endl;
+        }
+      }
+      else if ( groebnerBasisEqn.nops() < identPar.nops() )
+      {
+        // If there are less equations than unknowns, then there are
+        // an infinite number of solutions.
+        nGroebnerBasisSoln = -1;
+
+        // Set the status string.
+        identStatus = "Nonidentifiable (Infinite Solutions)";
+
+        if ( level > 0 )
+        {
+          outputStream << "There are fewer polynomials in the Groebner basis (" 
+                       << groebnerBasisEqn.nops() << ") than there are parameters (" 
+                       << identPar.nops() << ")." << endl;
+          outputStream << endl;
+          outputStream << "This system-experiment model is nonidentifiable." << endl;
+          outputStream << "It's Groebner basis has an infinite number of solutions." << endl;
+        }
+      }
+      else
+      {
+        // If there are more equations than unknowns, then there are
+        // no solutions.
+        nGroebnerBasisSoln = 0;
+
+        // Set the status string.
+        identStatus = "Nonidentifiable (No Solutions)";
+
+        if ( level > 0 )
+        {
+          outputStream << "There are more polynomials in the Groebner basis (" 
+                       << groebnerBasisEqn.nops() << ") than there are parameters (" 
+                       << identPar.nops() << ")." << endl;
+          outputStream << endl;
+          outputStream << "This system-experiment model is nonidentifiable." << endl;
+          outputStream << "It's Groebner basis has no solutions." << endl;
+        }
+      }
+
+      if ( level > 0 )
+      {
         outputStream << endl;
       }
 
-      // Set the status string.
-      identStatus = "Globally Identifiable";
-
-      // Return the number of unique solutions of the Groebner basis
+      // Return the number of unique solutions of the Groebner bases
       // equations.
       return nGroebnerBasisSoln;  
     }
@@ -1375,20 +1462,17 @@ public:
     {
       if ( level > 0 )
       {
-        std::string message = "An error occurred while using the linear system of equations solver. \n";
+        std::string message = "The Groebner basis is not a linear system of polynomials.  \nSPK cannot currently solve such a nonlinear system. \n";
         message += stde.what();
         outputStream << message << endl;
         outputStream << endl;
-
-        outputStream << "The Groebner basis could not be solved as a linear system of equations." << endl;
-        outputStream << endl;
   
-        outputStream << "Please try solving the Groebner basis by inspection or by using a nonlinear system \nof equations solver to determine if the system-experiment model is identifiable." << endl;
+        outputStream << "Try solving this Groebner basis by inspection or by using a nonlinear system \nof equations solver to determine if the system-experiment model is identifiable." << endl;
         outputStream << endl;
       }
 
       // Set the status string.
-      identStatus = "Identifiability could not be determined.";
+      identStatus = "Groebner basis nonlinear - Identifiability not determined (Possible Multiple Solutions)";
 
       // Return a value of 0 to indicate that the identifiability
       // of the individual's THETA parameter could not be determined.

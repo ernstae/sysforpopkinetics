@@ -60,6 +60,7 @@ public:
 private:
   // Test cases for this unit test.
   void paperTwoCompExample_Test();
+  void oralAbsorpTwoCompModel_twoSolutions_Test();
 };
 
 #endif
