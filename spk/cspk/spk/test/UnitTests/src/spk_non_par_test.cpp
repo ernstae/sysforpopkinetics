@@ -176,20 +176,20 @@ void p_y_given_b(
 	DoubleMatrix             &y       ,
 	DoubleMatrix             &N       ,
 	DoubleMatrix             &B       ,
-	DoubleMatrix             &pout    )
+	DoubleMatrix             &Pout    )
 {	typedef std::valarray<double> vector;
 
 	size_t n  = B.nr();
 	size_t J  = B.nc();
 	size_t M  = N.nr();
-	assert( pout.nr() == M );
-	assert( pout.nc() == J );
+	assert( Pout.nr() == M );
+	assert( Pout.nc() == J );
 	double pi = 4. * std::atan(1.);
 
 	size_t i, j, k, ell;
 	double residual, variance;
 
-	double *p_ptr = pout.data();
+	double *p_ptr = Pout.data();
 	double *B_ptr = B.data();
 
 	for(j = 0; j < J; j++)
@@ -354,8 +354,8 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// ---------------------- lamout ---------------------
 	DoubleMatrix lamout;
 
-	// ----------------------- pout ----------------------
-	DoubleMatrix pout;
+	// ----------------------- Pout ----------------------
+	DoubleMatrix Pout;
 
 	// ------------------------------------------------------------------
 	try
@@ -372,7 +372,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 			Bin     , 
 			Bout    , 
 			lamout  , 
-			pout    
+			Pout    
 		);
 
 	}
@@ -395,15 +395,15 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		Bout.nr()   == n && 
 		lamout.nr() == 1 && 
 		lamout.nc() == J &&
-		pout.nr()   == M &&
-		pout.nc()   == J
+		Pout.nr()   == M &&
+		Pout.nc()   == J
 	);
 
-	DoubleMatrix check_pout(M, J);
-	p_y_given_b(model, y, N, Bout, check_pout);
+	DoubleMatrix check_Pout(M, J);
+	p_y_given_b(model, y, N, Bout, check_Pout);
 	bool ok = true;
-	double *check = check_pout.data();
-	ptr           = pout.data();
+	double *check = check_Pout.data();
+	ptr           = Pout.data();
 	for(i = 0; i < M; i++) 
 	{	for(j = 0; j < J; j++)
 		{	ok &= CppAD::NearEqual(
@@ -412,7 +412,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		}
 	}
 	CPPUNIT_ASSERT_MESSAGE(
-		"polynomial_fit_test: error in pout.",
+		"polynomial_fit_test: error in Pout.",
 		ok
 	);
 
