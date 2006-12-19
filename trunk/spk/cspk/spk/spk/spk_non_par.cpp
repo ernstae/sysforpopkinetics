@@ -9,7 +9,7 @@ $spell
 	mu
 	std::cout
 	itr
-	pout
+	Pout
 	CppAD
 	Dirac
 	lamout
@@ -29,13 +29,37 @@ $index population, nonparametric analysis$$
 
 $head Syntax$$
 $syntax%void spk_non_par(%level%, %model%, %N%, %y%, %max_itr%, %epsilon%, % 
-	blow%, %bup%, %Bin%, %Bout%, %lamout%, %pout%)%$$
+	blow%, %bup%, %Bin%, %Bout%, %lamout%, %Pout%)%$$
+
+$head Notation$$
+
+$subhead M$$
+We use $latex M$$ to denote the number of individuals in the
+population study.
+
+$subhead n$$
+We use $latex n$$ to denote the number of random effects 
+per atomic point in the measure point.
+
+$subhead J$$
+We use $latex J$$ to denote the number of atomic measure points
+in the optimization problem.
+There is an ambiguity in this value because it is different
+upon input and output from $code spk_non_par$$; see 
+$cref/Bin/spk_non_par/Bin/$$ and $cref/Bout/spk_non_par/Bout/$$ below.
+
+$subhead y^i$$
+We use $latex y^i$$ to denote the 
+measurement vector corresponding to individual $latex i$$.
+
+$subhead B_j$$
+We use $latex B_j$$ for the $th j$$ column of the matrix $italic B$$.
 
 $head Problem Definition$$
 We define the discrete measure
 $latex \Lambda$$ on $latex \R^n$$ 
 and the non-parametric population objective function
-$latex F : \R^{J \times n} \times \R_+^J \rightarrow \R$$ by
+$latex F : \R^{n \times J} \times \R_+^J \rightarrow \R$$ by
 $latex \[
 \begin{array}{rcl}
 \Lambda ( b )     & = & \sum_{j=1} \lambda_j \delta ( b - B_j )
@@ -44,12 +68,7 @@ F(B, \lambda) & = & - \sum_{i=1}^M \log [ \B{p} ( y^i | \Lambda ) ]
 \end{array}
 \] $$
 where $latex \delta$$ denotes the Dirac delta function on $latex \R^n$$,
-$latex \R_+$$ denotes the non-negative real numbers,
-$latex B_j$$ denotes the $th j$$ row of the matrix $italic B$$,
-$cref/M/non_par_model/Notation/M/$$ is the number of individuals
-in the population, 
-$cref/y^i/non_par_model/Notation/y^i/$$ is the 
-measurement vector corresponding to individual $latex i$$,
+$latex \R_+$$ denotes the non-negative real numbers, and
 the probability of $latex y^i$$ given $latex \Lambda$$ is given by
 $latex \[
 \begin{array}{rcl}
@@ -71,13 +90,13 @@ $cref/R(i,alpha,b)/non_par_model/Notation/R(i,alpha,b)/$$
 is the variance of $latex y^i$$. 
 The $code spk_non_par$$ routine determines a vector 
 $latex \lambda \in \R^J$$
-and matrix $latex B \in \R^{J \times n}$$ that solves the problem
+and matrix $latex B \in \R^{n \times J}$$ that solves the problem
 $latex \[
 \begin{array}{ll}
 {\rm minimize}      
 	& F(B, \lambda )
 	\; , \;
-	{\rm w.r.t.} \; \lambda \in \R_+^J \; , \; B \in \R^{J \times n}
+	{\rm w.r.t.} \; \lambda \in \R_+^J \; , \; B \in \R^{n \times J}
 \\
 {\rm subject \; to} 
 	& \sum_{j=1}^J \lambda_j = 1
@@ -112,7 +131,7 @@ $latex \max_j
 | \gamma  - \partial_{\lambda(j)}  F(B, \lambda ) | 
 $$
 $lnext
-$latex \max_{j,k} | F_B (B, \lambda)_{i,j} | $$.
+$latex \max_{k,j} | F_B (B, \lambda)_{k,j} | $$.
 $lend
 where $latex \gamma \in \R$$ is given by
 $latex \[
@@ -156,9 +175,7 @@ The argument $italic N$$ has prototype
 $syntax%
 	const DoubleMatrix &%N%
 %$$
-The value $syntax%%N%.nr()%$$ must be equal to
-$cref/M/non_par_model/Notation/M/$$
-the number of individuals in the $italic model$$.
+The value $syntax%%N%.nr()%$$ must be equal to $latex M$$.
 The value $syntax%%N%.nc()%$$ must be equal one.
 For $latex i = 0 , \ldots , M-1$$,
 $syntax%
@@ -204,35 +221,38 @@ $syntax%
 and size $latex 4 \times 1$$.
 It specifies the 
 $table
-$bold Description$$ $cnext $bold Name$$ $cnext $bold Suggest Value$$ $rnext
+$bold Description$$ 
+	$cnext $bold Name$$ 
+	$cnext $bold Suggest Value$$ 
+$rnext
 $cref/convergence criteria/spk_non_par/epsilon/Convergence Criteria/$$
-$cnext $latex \varepsilon_0 = *(epsilon.data() + 0)$$ 
-$cnext $pre  $$ $latex 10^{-4}$$
+	$cnext $latex \varepsilon_0 = $$ $syntax%*(%epsilon%.data() + 0)%$$ 
+	$cnext $pre  $$ $latex 10^{-4}$$
 $rnext
 $cref/joining criteria/spk_non_par/epsilon/Joining Criteria/$$
-$cnext $latex  \varepsilon_1 = *(epsilon.data() + 1)$$ 
-$cnext $pre  $$ $latex 10^{-4}$$
+	$cnext $latex  \varepsilon_1 = $$ $syntax%*(%epsilon%.data() + 1)%$$ 
+	$cnext $pre  $$ $latex 10^{-4}$$
 $rnext
 $cref/sub-convergence criteria/spk_non_par/epsilon/Sub-Convergence Criteria/$$
-$cnext $latex \varepsilon_2 = *(epsilon.data() + 2)$$ 
-$cnext $pre  $$ $latex 10^{-13}$$
+	$cnext $latex \varepsilon_2 = $$ $syntax%*(%epsilon%.data() + 2)%$$ 
+	$cnext $pre  $$ $latex 10^{-13}$$
 $rnext
 $cref/relaxation factor/spk_non_par/epsilon/Relaxation Factor/$$
-$cnext $latex \varepsilon_3 = *(epsilon.data() + 3) $$ 
-$cnext $pre  $$ $latex 2^{-2}$$
+	$cnext $latex \varepsilon_3 = $$ $syntax%*(%epsilon%.data() + 3)%$$ 
+	$cnext $pre  $$ $latex 2^{-2}$$
 $tend
 
 $subhead Notation$$
 We define the scaled projected gradient of $latex F$$
 with respect to $latex B$$,
-$latex F_B (B , \lambda ) \in \R^{J \times n} $$ by
+$latex F_B (B , \lambda ) \in \R^{n \times J} $$ by
 $latex \[
-F_B ( B , \lambda )_{j,k} = \left\{ \begin{array}{ll}
-( bup_k - B_{j,k} ) \partial_{B(j,k)} F(B, \lambda)
-	& {\rm if} \; \partial_{B(j,k)} F(B, \lambda) \geq 0
+F_B ( B , \lambda )_{k,j} = \left\{ \begin{array}{ll}
+( bup_k - B_{k,j} ) \partial_{B(k,j)} F(B, \lambda)
+	& {\rm if} \; \partial_{B(k,j)} F(B, \lambda) \geq 0
 \\
-( B_{j,k} - blow_k ) \partial_{B(j,k)} F(B, \lambda)
-	& {\rm if} \; \partial_{B(j,k)} F(B, \lambda) \leq 0
+( B_{k,j} - blow_k ) \partial_{B(k,j)} F(B, \lambda)
+	& {\rm if} \; \partial_{B(k,j)} F(B, \lambda) \leq 0
 \end{array} \right.
 \] $$
 We define $latex \gamma \in \R$$ by
@@ -253,8 +273,8 @@ $subhead Convergence Criteria$$
 The output values for $latex B$$ and $latex \lambda$$ satisfy the
 following approximate first order conditions for a minimum:
 $list number$$
-for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , p$$,
-$latex blow_k \leq B_{j,k} \leq bup_k$$.
+for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , n$$,
+$latex blow_k \leq B_{k, j} \leq bup_k$$.
 $lnext
 $latex \varepsilon_0 \geq | 1 - \sum_{j=1}^J \lambda_j |$$ 
 $lnext
@@ -263,9 +283,9 @@ $latex \varepsilon_0 \geq
 | \gamma  - \partial_{\lambda(j)}  F(B, \lambda ) | \lambda_j
 $$
 $lnext
-for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , p$$,
+for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , n$$,
 $latex 
-\varepsilon_0 \geq | F_B (B, \lambda)_{j,k} | 
+\varepsilon_0 \geq | F_B (B, \lambda)_{k,j} | 
 $$.
 $lend
 
@@ -275,9 +295,10 @@ $latex \[
 	\varepsilon_1 \geq \| B_j - B_q \|_\infty 
 \] $$
 the two columns are joined, 
-the weights are added,
-the column dimension of $italic B$$ ($latex J$$) is reduced by one,
-and the column dimension of $italic lambda$$ is reduced by one.
+the weights are added and
+$latex J$$ is reduced by one
+($latex J$$ is the column dimension of $italic B$$ and
+the row dimension of $italic lambda$$).
 
 $subhead Sub-Convergence Criteria$$
 The sub-problem, which determines the optimal weight vector 
@@ -289,16 +310,15 @@ the likelihood of each individuals measurement vector
 for each discrete measurement point.
 
 $subhead Relaxation Factor$$
-The amount the sub-problem relaxation factor is decreased each iteration.
+The amount the sub-problem relaxation factor is 
+multiplied by at each iteration.
 
 $head blow$$
 The argument $italic blow$$ has prototype
 $syntax%
 	const DoubleMatrix &%blow%
 %$$
-The value $syntax%%blow%.nr()%$$ must be equal to
-the number of random effects
-$cref/n/non_par_model/Notation/n/$$. 
+The value $syntax%%blow%.nr()%$$ must be equal to $latex n$$.
 The value $syntax%%blow%.nc()%$$ must be equal one.
 It specifies a lower limit for the random effects.
 
@@ -308,9 +328,7 @@ The argument $italic bup$$ has prototype
 $syntax%
 	const DoubleMatrix &%bup%
 %$$
-The value $syntax%%bup%.nr()%$$ must be equal to
-the number of random effects
-$cref/n/non_par_model/Notation/n/$$. 
+The value $syntax%%bup%.nr()%$$ must be equal to $latex n$$.
 The value $syntax%%bup%.nc()%$$ must be equal one.
 It specifies an upper limit for the random effects.
 
@@ -320,62 +338,66 @@ $syntax%
 	const DoubleMatrix &%Bin%
 %$$
 Each column of $italic Bin$$ represents an initial guess for the location 
-of the atomic measure points $latex \{ B_j \}$$ that solve the problem.
-The value $syntax%%Bin%.nc()%$$ defines the initial value of $latex J$$; i.e.,
-the number of atomic points in the non-parametric measure
+of an atomic measure points $latex \{ B_j \}$$.
+The value $syntax%%Bin%.nc()%$$ defines the initial value of $latex J$$; 
+i.e., the initial number of atomic points in the non-parametric measure
 for the random effects.
-It must be greater than or equal
-the number of individuals in the study
-$cref/M/non_par_model/Notation/M/$$. 
-The value $syntax%%Bin%.nr()%$$ must be 
-equal to $cref/n/non_par_model/Notation/n/$$ 
-the number if random effects per atomic point in the measure.
+It must be greater than or equal $latex M$$.
+The value $syntax%%Bin%.nr()%$$ must be $latex n$$.
+For $latex k = 0 , \ldots , n$$ and $latex j = 0 , \ldots , J$$
+(initial value for $latex J$$)
+$syntax%
+	*(%Bin%.data() + %k% + %j% * %n%)
+%$$
+is the $th k$$ component of the $th j$$ atomic measure point.
 
 $head Bout$$
 The argument $italic Bout$$ has prototype
 $syntax%
 	DoubleMatrix &%Bout%
 %$$
-The input value and dimension of $italic Bout$$ does not matter.
+The input element values and dimension of $italic Bout$$ does not matter.
 Upon return from $code spk_non_par$$,
 $italic Bout$$ contains the location of the atomic measure points 
 corresponding to the solution of the optimization problem.
-The value $syntax%%Bout%.nc()%$$ defines the final value of $italic J$$;
-i.e., the number of atomic points in the non-parametric measure.
-The value $syntax%%Bout%.nr()%$$ 
-is equal to $cref/n/non_par_model/Notation/n/$$,
-the number if random effects per atomic point in the measure.
-
+The value $syntax%%Bout%.nc()%$$ defines the final value of $latex J$$;
+i.e., the final number of atomic points in the non-parametric measure.
+The value $syntax%%Bout%.nr()%$$ must equal to $latex n$$.
+For $latex k = 0 , \ldots , n$$ and $latex j = 0 , \ldots , J$$
+(final value for $latex J$$)
+$syntax%
+	*(%Bout%.data() + %k% + %j% * %n%)
+%$$
+is the $th k$$ component of the $th j$$ atomic measure point.
 
 $head lamout$$
 The argument $italic lamout$$ has prototype
 $syntax%
 	DoubleMatrix &%lamout%
 %$$
-The input value and dimension of $italic lamout$$ does not matter.
+The input element values and dimension of $italic lamout$$ does not matter.
 Upon return from $code spk_non_par$$, $italic lamout$$ is a column vector
 and it $th j$$ element is the weight corresponding to the
 $th j$$ column of $italic Bout$$.
-The value $syntax%%lamout%.nr()%$$ is equal to $italic J$$; i.e.,
-$syntax%%Bout%.nc()%$$.
+The value $syntax%%lamout%.nr()%$$ is equal to the final value of $latex J$$
+i.e., $syntax%%Bout%.nc()%$$.
 
-$head pout$$
-The argument $italic pout$$ has prototype
+$head Pout$$
+The argument $italic Pout$$ has prototype
 $syntax%
-	DoubleMatrix &%pout%
+	DoubleMatrix &%Pout%
 %$$
-The input value and dimension of $italic pout$$ does not matter.
+The input element values and dimension of $italic Pout$$ does not matter.
 Upon return from $code spk_non_par$$, 
-the $latex (i, j)$$ element of $italic pout$$
+the $latex (i, j)$$ element of $italic Pout$$
 is the probability density for 
 $latex y^i$$ given the random effects value $latex b$$ 
 is equal to the $th j$$ column of $italic Bout$$; i.e. 
-$latex \[
-	pout [ i * J + j ] = \B{p} ( y^i | b = B_j )
-\] $$
-where $italic B_j$$ is the $th j$$ column of $italic Bout$$
-and $latex J$$ is the column dimension of $italic Bout$$
-(which may not be the same as the column dimension of $italic Bin$$).
+$syntax%
+	*(%Pout%.data() + %i% + %j% * %M%)
+%$$
+is equal to $latex \B{p} ( y^i | b = B_j )$$,
+where $latex B_j$$ is the $th j$$ column of $italic Bout$$.
 
 $children%
 	non_par_model.omh
@@ -581,7 +603,7 @@ extern void spk_non_par(
 	const DoubleMatrix                &Bin         ,
 	DoubleMatrix                      &Bout        ,
 	DoubleMatrix                      &lamout      ,
-	DoubleMatrix                      &pout  )
+	DoubleMatrix                      &Pout  )
 {
 	// temporary indices
 	size_t i, j, k;
@@ -665,7 +687,7 @@ extern void spk_non_par(
 	// dimension the return matrices
 	Bout.resize(n, J);
 	lamout.resize(1, J);
-	pout.resize(M, J);
+	Pout.resize(M, J);
 
 	// retrun elements of Bout
 	ptr = Bout.data();
@@ -679,10 +701,10 @@ extern void spk_non_par(
 	for(j = 0; j < J; j++)
 		ptr[j] = lambda(j, 0);
 
-	// return elements of pout
+	// return elements of Pout
 	mat2cpp::matrix<double> beta(1, n);
 	mat2cpp::matrix<double> psi(M, 1);
-	ptr = pout.data();
+	ptr = Pout.data();
 	for(j = 0; j < J; j++)
 	{	for(k = 0; k < n; k++)
 			beta(0, k) = X(j, k);
