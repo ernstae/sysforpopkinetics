@@ -46,20 +46,21 @@
  * Function: calcGroebnerBasis
  *
  *//**
- * Attempts to calculate the Groebner basis that corresponds to the
- * system-experiment model differential polyomial regular chain
- * sysExpModelRegChainIn.
+ * Attempts to calculate the Groebner basis or bases that correspond
+ * to the system-experiment model differential polyomial regular chain
+ * sysExpModelRegChainIn.  Note that there can be multiple Groebner
+ * bases found.
  *
  * To be specific, this function attempts to calculate the Groebner
- * basis for the exhaustive summary polynomials that come from the
+ * bases for the exhaustive summary polynomials that come from the
  * input/output relations' coefficients, which are evaluated at a
  * random value for the vector that will be determined to be
  * identifiable or not, THETA.  See Audoly et al. (2001) for details
  * on the identifiability algorithm.
  *
- * Note that if the Groebner basis is calculated successfully, then
+ * Note that if the Groebner bases are calculated successfully, then
  * memory will be allocated by this function for an array of C strings
- * containing each of the polynomials in the basis.  When these
+ * containing each of the polynomials in each of the bases.  When these
  * polynomials are no longer needed, the memory required to store them
  * and the memory required for the array should be freed by the caller
  * of this function.
@@ -196,34 +197,54 @@
  * The first and last characters of the string should be left and
  * right square brackets, respectively.
  * 
- * @param groebnerBasisPolyOut
+ * @param nGroebnerBasisPolyEachOut
  * 
- * If the Groebner basis was calculated successfully, then the memory
+ * If the Groebner bases were calculated successfully, then the
+ * integer array pointed to by this pointer to an integer array will
+ * be allocated to have nGroebnerBasis elements. The elements of this
+ * array will be set equal to the number of polynomials for each of
+ * the Groebner bases that were found.  When this array is no longer
+ * needed, its memory should be released by the caller of this
+ * function.  No memory should be allocated by the caller before
+ * calling this function, however, because this function does the
+ * allocation.  It is the responsibility of the caller of the function
+ * to free the memory allocated by this function.
+ *
+ * @param nGroebnerBasisPolyTotalOut
+ * 
+ * If the Groebner bases were calculated successfully, then the
+ * integer pointed to this integer pointer will be set equal to the
+ * total number of polynomials in all of the Groebner bases.
+ *
+ * @param groebnerBasisPolyAllOut
+ * 
+ * If the Groebner bases were calculated successfully, then the memory
  * pointed to by this pointer to a pointer to a char pointer (char***)
  * will contain an array with separate C strings for each of the
- * polynomials in the basis.
- * An example Groebner basis polynomial is
-\verbatim
+ * polynomials for each of the bases.  An example Groebner bases
+ * polynomial with a single basis made up of a single polynomial is
+ * \verbatim
 
     THETA1*THETA2 - 28
 
 \endverbatim
  * When these polynomials are no longer needed, the memory required to
- * store them should be released by the caller of this function.
- * No memory should be allocated by the caller before calling this
- * function, however, because this function does the allocation.
- * It is the responsibility of the caller of the function to free the
- * memory allocated by this function.
- * The memory pointed to by groebnerBasisOut will be allocated using
- * malloc() as a C array of nGroebnerBasisPoly pointers to C style
- * strings, each of which contains a polynomial from the Groebner
- * basis and each of which will be allocated using malloc() with
- * enough memory to hold the polynomial.
- * The following code shows how to get a pointer to the C string that
+ * store them should be released by the caller of this function.  No
+ * memory should be allocated by the caller before calling this
+ * function, however, because this function does the allocation.  It
+ * is the responsibility of the caller of the function to free the
+ * memory allocated by this function.  The memory pointed to by
+ * groebnerBasisOut will be allocated using malloc() as a C array of
+ * nGroebnerBasisPolyTotalOut pointers to C style strings, each of
+ * which contains a polynomial from one of the Groebner bases and each
+ * of which will be allocated using malloc() with enough memory to
+ * hold the polynomial. The value for nGroebnerBasisPolyTotalOut is equal
+ * to the sum of all of the elements in nGroebnerBasisPolyEachOut.  The
+ * following code shows how to get a pointer to the C string that
  * contains the m-th polynomial:
  * \code
  *
- *     char* poly_m = (*groebnerBasisPolyOut)[m];
+ *     char* poly_m = (*groebnerBasisPolyAllOut)[m];
  *
  * \endcode
  * When the polynomials are no longer needed, then the memory for each
@@ -231,17 +252,17 @@
  * pointers to the polynomials' C strings must be freed also using
  * free().
  * The following code shows how to free all of the memory allocated by
- * this function:
+ * this function to hold the Groebner bases polynomials:
  * \code
  *
- *   for ( m = 0; m < nGroebnerBasisPoly; m++)
+ *   for ( m = 0; m < nGroebnerBasisPolyTotalOut; m++)
  *   {
  *     // Free the memory for this polynomial's C style string.
- *     free( (*groebnerBasisPolyOut)[m] );
+ *     free( (*groebnerBasisPolyAllOut)[m] );
  *   }
  * 
  *   // Free the memory for the pointers to the C style strings.
- *   free( (*groebnerBasisPolyOut) );
+ *   free( (*groebnerBasisPolyAllOut) );
  *
  * \endcode
  * The above code should be executed by the caller of this function.
@@ -249,15 +270,11 @@
  *
  * @return
  *
- * If the Groebner basis could not be calculated, then the return
+ * If the Groebner bases could not be calculated, then the return
  * value will be equal to 0.
  *
- * If the Groebner basis was calculated successfully, then the return
- * value will be the number of polynomials in the basis.
- *
- * If the calculated Groebner basis contained multiple regular chains,
- * then the return value will be equal to -1 to indicate that this is
- * an error condition.
+ * If the Groebner bases were calculated successfully, then the return
+ * value will be the number of Groebner bases that were found.
  *
  */
 /*************************************************************************/
@@ -271,7 +288,9 @@ int calcGroebnerBasis( int         level,
                        const char* sysExpModelRegChainIn,
                        const char* naturalOrderingIn,
                        const char* charSetOrderingIn,
-                       char***     groebnerBasisPolyOut )
+                       int**       nGroebnerBasisPolyEachOut,
+                       int*        nGroebnerBasisPolyTotalOut,
+                       char***     groebnerBasisPolyAllOut )
 {
   //----------------------------------------------------------
   // Preliminaries.
@@ -437,7 +456,7 @@ int calcGroebnerBasis( int         level,
 
   bad_init_regchain( &charSetRegChain );
 
-  ba0_sscanf2( "regchain( [], [autoreduced, squarefree, primitive])",
+  ba0_sscanf2( "regchain( [], [autoreduced, squarefree, primitive, normalized])",
                "%regchain", &charSetRegChain );
 
   // Change the ordering for the variables in order to get the
@@ -535,9 +554,9 @@ int calcGroebnerBasis( int         level,
   // Set a random value for the exhaustive summary parameters.
   //----------------------------------------------------------
 
-  struct bav_ev_point inOutRelCoeffEvalPoint;
-  bav_init_ev_point( &inOutRelCoeffEvalPoint );
-  bav_realloc_ev_point( &inOutRelCoeffEvalPoint, nTheta );
+  struct bav_ev_point inOutRelPolyCoeffEvalPoint;
+  bav_init_ev_point( &inOutRelPolyCoeffEvalPoint );
+  bav_realloc_ev_point( &inOutRelPolyCoeffEvalPoint, nTheta );
 
   // Initialize the random number generator state variable.
   gmp_randstate_t randomNumberState;
@@ -595,13 +614,13 @@ int calcGroebnerBasis( int         level,
     ba0_sscanf2(
       evalPointFormatString_r,
       "%v = %d",
-      &inOutRelCoeffEvalPoint.tab[r].var,
-      &inOutRelCoeffEvalPoint.tab[r].value );
+      &inOutRelPolyCoeffEvalPoint.tab[r].var,
+      &inOutRelPolyCoeffEvalPoint.tab[r].value );
   }
 
   // Reset the size to account for the elements that were just added
   // to the table.
-  inOutRelCoeffEvalPoint.size = nTheta;
+  inOutRelPolyCoeffEvalPoint.size = nTheta;
 
   // Free the string.
   free( evalPointFormatString_r );
@@ -609,14 +628,14 @@ int calcGroebnerBasis( int         level,
   // Print the random THETA vector.
   if ( level > 0 )
   {
-    printf( "Random THETA value = {" );
+    printf( "Random THETA value = { " );
 
     // Reset the output driver to avoid spurious line breaks.
     ba0_reset_output();
 
     for ( r = 0; r < nTheta; r++ )
     {
-      ba0_printf( "%d", inOutRelCoeffEvalPoint.tab[r].value );
+      ba0_printf( "%d", inOutRelPolyCoeffEvalPoint.tab[r].value );
 
       if ( r < nTheta - 1 )
       {
@@ -633,7 +652,7 @@ int calcGroebnerBasis( int         level,
 
 
   //----------------------------------------------------------
-  // Get the exhaustive summary.
+  // Prepare to get the exhaustive summary.
   //----------------------------------------------------------
 
   struct bap_itercoeff_mpz inOutRelPolyCoeffIter;
@@ -643,13 +662,25 @@ int calcGroebnerBasis( int         level,
   bap_init_readonly_polynom_mpz( &inOutRelPolyCoeff );
   bav_init_term( &inOutRelPolyTerm );
 
-  mpz_t inOutRelCoeffVal;
-  mpz_t inOutRelCoeffValAbsVal;
-  mpz_t inOutRelCoeffValTimesMinusOne;
+  struct bap_polynom_mpz inOutRelPolyCoeffValTimesLeadingCoeff;
+  struct bap_polynom_mpz inOutRelPolyCoeffValTimesLeadingCoeffReduced;
+  struct bap_polynom_mpz inOutRelPolyLeadingCoeff;
+  struct bap_polynom_mpz inOutRelPolyLeadingCoeffValTimesCoeff;
+  struct bap_polynom_mpz inOutRelPolyLeadingCoeffValTimesCoeffReduced;
+  struct bap_polynom_mpz inOutRelPolyTermsForExhaustSummGCD;
 
-  mpz_init( inOutRelCoeffVal );
-  mpz_init( inOutRelCoeffValAbsVal );
-  mpz_init( inOutRelCoeffValTimesMinusOne );
+  bap_init_polynom_mpz( &inOutRelPolyCoeffValTimesLeadingCoeff );
+  bap_init_polynom_mpz( &inOutRelPolyCoeffValTimesLeadingCoeffReduced );
+  bap_init_polynom_mpz( &inOutRelPolyLeadingCoeff );
+  bap_init_polynom_mpz( &inOutRelPolyLeadingCoeffValTimesCoeff );
+  bap_init_polynom_mpz( &inOutRelPolyLeadingCoeffValTimesCoeffReduced );
+  bap_init_polynom_mpz( &inOutRelPolyTermsForExhaustSummGCD );
+
+  mpz_t inOutRelPolyCoeffVal;
+  mpz_t inOutRelPolyLeadingCoeffVal;
+
+  mpz_init( inOutRelPolyCoeffVal );
+  mpz_init( inOutRelPolyLeadingCoeffVal );
 
   bap_tableof_polynom_mpz exhaustSumm;
   exhaustSumm =( bap_tableof_polynom_mpz)ba0_new_table();
@@ -657,6 +688,11 @@ int calcGroebnerBasis( int         level,
 
   struct bap_polynom_mpz exhaustSummPoly;
   bap_init_polynom_mpz( &exhaustSummPoly );
+
+
+  //----------------------------------------------------------
+  // Get the exhaustive summary.
+  //----------------------------------------------------------
 
   int v;
 
@@ -673,17 +709,100 @@ int calcGroebnerBasis( int         level,
       &inOutRelPolyCoeffIter, 
       charSetRegChain.decision_system.tab[nTheta + v], lastVar );
 
-    // Check each of the monomials in this I/O relation's polynomial.
+    // Get the coefficient for the first monomial in this I/O
+    // relation's polynomial.
+    bap_coeff_itercoeff_mpz( &inOutRelPolyLeadingCoeff, &inOutRelPolyCoeffIter );
+
+    // Get the value of the first monomial's coefficient.
+    bap_eval_polynom_ev_point_mpz(
+      &inOutRelPolyLeadingCoeffVal,
+      &inOutRelPolyLeadingCoeff,
+      &inOutRelPolyCoeffEvalPoint );
+
+    // Since all of the coefficients of the I/O relation's polynomial
+    // are scaled by the first monomial's coefficent, the first
+    // momonial's scaled coefficent will just be equal to one and
+    // won't be included in the exhaustive summary.
+    //
+    // Therefore, get the next monomial in this I/O relation's
+    // polynomial.
+    bap_next_itercoeff_mpz( &inOutRelPolyCoeffIter );
+
+    // Get the exhaustive summary terms that correspond to the rest of
+    // the monomials in this I/O relation's polynomial.
     while ( !bap_outof_itercoeff_mpz( &inOutRelPolyCoeffIter ) )
     {
       // Get the term and coefficient.
       bap_term_itercoeff_mpz( &inOutRelPolyTerm, &inOutRelPolyCoeffIter );
       bap_coeff_itercoeff_mpz( &inOutRelPolyCoeff, &inOutRelPolyCoeffIter );
   
-      // Only add a polynomial to the exhaustive summary that
-      // corresponds to this I/O relation coefficent if the
-      // coefficient depends on the parameters.
-      if ( !bap_is_numeric_polynom_mpz( &inOutRelPolyCoeff ) )
+      // Get the value of the unscaled coefficient.
+      bap_eval_polynom_ev_point_mpz(
+        &inOutRelPolyCoeffVal,
+        &inOutRelPolyCoeff,
+        &inOutRelPolyCoeffEvalPoint );
+
+      // Calculate
+      //
+      //                         |                                              
+      //         coeff ( THETA ) |                      *  coeff ( THETA )  .
+      //              1          | THETA = thetaRandom          k            
+      //
+      bap_mul_polynom_numeric_mpz( 
+        &inOutRelPolyLeadingCoeffValTimesCoeff,
+        &inOutRelPolyCoeff,
+        inOutRelPolyLeadingCoeffVal );
+
+      // Calculate
+      //
+      //                     |                                              
+      //     coeff ( THETA ) |                      *  coeff ( THETA )  .
+      //          k          | THETA = thetaRandom          1            
+      //
+      bap_mul_polynom_numeric_mpz( 
+        &inOutRelPolyCoeffValTimesLeadingCoeff,
+        &inOutRelPolyLeadingCoeff,
+        inOutRelPolyCoeffVal );
+
+      // Reduce the previous two polynomials that were just calculated
+      // by dividing them by their greatest common denominator (GCD).
+      bap_gcd_polynom_mpz( 
+        &inOutRelPolyTermsForExhaustSummGCD,
+        &inOutRelPolyLeadingCoeffValTimesCoeffReduced,
+        &inOutRelPolyCoeffValTimesLeadingCoeffReduced,
+        &inOutRelPolyLeadingCoeffValTimesCoeff,
+        &inOutRelPolyCoeffValTimesLeadingCoeff );
+
+      // Set the exhaustive summary polynomial,
+      //
+      //     exhaustSummPoly  =
+      //
+      //                 -
+      //           1    |                 |                                              
+      //         -----  | coeff ( THETA ) |                      *  coeff ( THETA )
+      //          GCD   |      1          | THETA = thetaRandom          k            
+      //                 -
+      //                                                                                 -
+      //                                        |                                         |     
+      //                     -  coeff ( THETA ) |                      *  coeff ( THETA ) | .
+      //                             k          | THETA = thetaRandom          1          |  
+      //                                                                                 -
+      //
+      // where GCD is the greatest common denominator for the two
+      // terms that are being subtracted.
+      bap_sub_polynom_mpz( 
+        &exhaustSummPoly,
+        &inOutRelPolyLeadingCoeffValTimesCoeffReduced,
+        &inOutRelPolyCoeffValTimesLeadingCoeffReduced );
+
+      // Set the value for this exhaustive summary polynomial in the
+      // table.
+      //
+      // Only add this polynomial to the exhaustive summary if it
+      // depends on the parameters.
+      if ( !bap_is_zero_polynom_mpz   ( &exhaustSummPoly ) &&
+           !bap_is_one_polynom_mpz    ( &exhaustSummPoly ) &&
+           !bap_is_numeric_polynom_mpz( &exhaustSummPoly ) )
       {
         // Prepare the element in the table that will get this
         // polynomial.
@@ -692,34 +811,13 @@ int calcGroebnerBasis( int         level,
         exhaustSumm->size = nExhaustSummPoly;
         exhaustSumm->tab[nExhaustSummPoly-1] = bap_new_polynom_mpz();
 
-        // Get the negative value of the coefficent.
-        bap_eval_polynom_ev_point_mpz(
-          &inOutRelCoeffVal,
-          &inOutRelPolyCoeff,
-          &inOutRelCoeffEvalPoint );
-        mpz_neg( inOutRelCoeffValTimesMinusOne, inOutRelCoeffVal );
-  
-        // Set the exhaustive summary polynomial equal to the 
-        // I/O relation coefficient minus the coefficient's
-        // numeric value,
-        //
-        //     exhaustSummPoly  =
-        //                                                         |
-        //         inOutRelCoeff( THETA ) - inOutRelCoeff( THETA ) |                       .
-        //                                                         | THETA = thetaRandom
-        //
-        bap_add_polynom_numeric_mpz( 
-          &exhaustSummPoly,
-          &inOutRelPolyCoeff,
-          inOutRelCoeffValTimesMinusOne );
-
-        // Set the value for this exhaustive summary polynomial in the
-        // table.
         bap_set_polynom_mpz(
           exhaustSumm->tab[nExhaustSummPoly-1],
           &exhaustSummPoly );
       }
-  
+
+      // Get the next monomial in the I/O relation's differential
+      // polynomial.
       bap_next_itercoeff_mpz( &inOutRelPolyCoeffIter );
     }
   }
@@ -755,14 +853,14 @@ int calcGroebnerBasis( int         level,
 
 
   //----------------------------------------------------------
-  // Get the Groebner basis for the exhaustive summary.
+  // Get the Groebner bases for the exhaustive summary.
   //----------------------------------------------------------
 
   bad_intersectof_regchain exhaustSummGroebnerBasis;
   exhaustSummGroebnerBasis = bad_new_intersectof_regchain();
 
   // Prepare the intersection of regular chains for the exhaustive
-  // summary that will contain the Groebner basis.
+  // summary that will contain the Groebner bases.
   ba0_sscanf2(
     "intersectof_regchain( [], [normalized, primitive, autoreduced])",
     "%intersectof_regchain",
@@ -775,109 +873,129 @@ int calcGroebnerBasis( int         level,
     (bap_tableof_polynom_mpz)0,
     (bav_tableof_variable)0 );
 
-  // Set the number of regular chains in the intersection.
-  int nGroebnerBasisRegChain = exhaustSummGroebnerBasis->inter.size;
+  // Set the number of Groebner bases that were found, which is equal
+  // to the number of regular chains in the intersection.
+  int nGroebnerBasis = exhaustSummGroebnerBasis->inter.size;
 
-  // See if there are any regular chains in the intersection.
-  if ( nGroebnerBasisRegChain == 0 )
+  // See if there were any Groebner bases found.
+  if ( nGroebnerBasis == 0 )
   {
-    // If there are no regular chains in the intersection, then don't
-    // change the Groebner basis output string and return zero for the
-    // number of polynomials in the Groebner basis.
-    return 0;
+    // If no Groebner bases could be found, then don't change the
+    // Groebner bases output string.
+    return nGroebnerBasis;
   }
 
-  // See if there are multiple regular chains in the intersection.
-  if ( nGroebnerBasisRegChain > 1 )
-  {
-    // If there is more than one regular chain in the intersection,
-    // then don't change the Groebner basis output string and return
-    // minus one for the number of polynomials in the Groebner basis 
-    // to indicate that this is an error condition.
-    return -1;
-  }
+  // Allocate the array that will hold the number of polynomials in
+  // each of the Groebner bases that were found.
+  *nGroebnerBasisPolyEachOut = (int*) malloc( nGroebnerBasis * sizeof( int ) );
 
-  // Set the number of polynomials in the Groebner basis.
-  int nGroebnerBasisPoly =
-    (*exhaustSummGroebnerBasis->inter.tab[0]).decision_system.size;
+  int w;
+
+  // Determine the total number of polynomials in all of the Groebner
+  // bases that were found.
+  int nGroebnerBasisPolyTotal = 0;
+  for ( w = 0; w < nGroebnerBasis; w++ )
+  {
+    // Set the number of polynomials for this Groebner basis.
+    (*nGroebnerBasisPolyEachOut)[w] = (*exhaustSummGroebnerBasis->inter.tab[w]).decision_system.size;
+
+    // Add the number of polynomials to the total.
+    nGroebnerBasisPolyTotal += (*nGroebnerBasisPolyEachOut)[w];
+  }
 
   // Allocate enough elements in the output array to hold all of the
-  // of polynomials in the Groebner basis.
-  *groebnerBasisPolyOut = 
-      (char**) malloc( nGroebnerBasisPoly * sizeof( char* ) );
+  // of polynomials for all of the Groebner bases.
+  *groebnerBasisPolyAllOut = 
+      (char**) malloc( nGroebnerBasisPolyTotal * sizeof( char* ) );
 
   char* groebnerBasisPolyString;
   int nGroebnerBasisPolyChar;
+  int groebnerBasisPolyCount;
 
   int m;
 
-  // Set the output array of Groebner basis polynomials.
-  for ( m = 0; m < nGroebnerBasisPoly; m++ )
+  // Set the output array of polynomials for all of the Groebner
+  // bases that were found.
+  groebnerBasisPolyCount = 0;
+  for ( w = 0; w < nGroebnerBasis; w++ )
   {
-    // Get a string that contains this Groebner basis polynomial.
-    //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Possible BLAD Library Memory Leak - Mitch]
-    // Note that this string is allocated by the BLAD library function
-    // ba0_malloc and it is assumed that the BLAD memory clean up
-    // functions will free this memory.
-    //
-    // Even if the memory does not get freed, it is probably not a big
-    // problem since the calculation of the Groebner basis happens
-    // only once during the identifiability calculation, and the
-    // amount of memory for the basis polynomials is relatively small.
-    //
-    // If this is a problem, consider (i.) making a fixed length
-    // buffer that is much longer than any polynomials are likely to
-    // be (1000?) and checking to be sure that it is not overwritten;
-    // or (ii.)  writing the polynomials to a temporary file and using
-    // BLAD's output counter to get the length, which would then be
-    // used to allocate the proper amount of memory.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
-    groebnerBasisPolyString = ba0_new_printf(
-      "%Az",
-      (*exhaustSummGroebnerBasis->inter.tab[0]).decision_system.tab[m] );
+    for ( m = 0; m < (*nGroebnerBasisPolyEachOut)[w]; m++ )
+    {
+      // Get a string that contains this Groebner bases polynomial.
+      //
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [Revisit - Possible BLAD Library Memory Leak - Mitch]
+      // Note that this string is allocated by the BLAD library function
+      // ba0_malloc and it is assumed that the BLAD memory clean up
+      // functions will free this memory.
+      //
+      // Even if the memory does not get freed, it is probably not a big
+      // problem since the calculation of the Groebner bases happens
+      // only once during the identifiability calculation, and the
+      // amount of memory for the bases polynomials is relatively small.
+      //
+      // If this is a problem, consider (i.) making a fixed length
+      // buffer that is much longer than any polynomials are likely to
+      // be (1000?) and checking to be sure that it is not overwritten;
+      // or (ii.)  writing the polynomials to a temporary file and using
+      // BLAD's output counter to get the length, which would then be
+      // used to allocate the proper amount of memory.
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      //
+      groebnerBasisPolyString = ba0_new_printf(
+        "%Az",
+        (*exhaustSummGroebnerBasis->inter.tab[w]).decision_system.tab[m] );
+  
+      // Because the function strlen() gives the number of characters in
+      // the string not including the null termination, allocate enough
+      // memory for the Groebner bases polynomial output string with an
+      // extra character for the null termination.
+      nGroebnerBasisPolyChar = strlen( groebnerBasisPolyString ) + 1;
+      (*groebnerBasisPolyAllOut)[m + groebnerBasisPolyCount] = 
+        (char*) malloc( nGroebnerBasisPolyChar * sizeof( char ) );
+      
+      // Set the Groebner bases output string.
+      strncpy(
+        (*groebnerBasisPolyAllOut)[m + groebnerBasisPolyCount],
+        groebnerBasisPolyString,
+        nGroebnerBasisPolyChar );
+    }
 
-    // Because the function strlen() gives the number of characters in
-    // the string not including the null termination, allocate enough
-    // memory for the Groebner basis polynomial output string with an
-    // extra character for the null termination.
-    nGroebnerBasisPolyChar = strlen( groebnerBasisPolyString ) + 1;
-    (*groebnerBasisPolyOut)[m] = 
-      (char*) malloc( nGroebnerBasisPolyChar * sizeof( char ) );
-    
-    // Set the Groebner basis output string.
-    strncpy(
-      (*groebnerBasisPolyOut)[m],
-      groebnerBasisPolyString,
-      nGroebnerBasisPolyChar );
+    groebnerBasisPolyCount += (*nGroebnerBasisPolyEachOut)[w];
   }
 
-  // Print the polynomials in the Groebner basis.
+  // Print the polynomials in this Groebner basis.
   if ( level > 0 )
   {
-    printf( "Groebner basis = {\n" );
-    printf( "\n" );
-    for ( m = 0; m < nGroebnerBasisPoly; m++ )
+    if ( nGroebnerBasis > 1 )
     {
-      // Reset the output driver to avoid spurious line breaks.
-      ba0_reset_output();
-
-      ba0_printf( "%Az",
-       (*exhaustSummGroebnerBasis->inter.tab[0]).decision_system.tab[m] );
-
-      if ( m < nGroebnerBasisPoly - 1 )
+      printf( "There are multiple Groebner bases. \n" );
+      printf( "\n" );
+    }
+    for ( w = 0; w < nGroebnerBasis; w++ )
+    {
+      printf( "Groebner basis = {\n" );
+      printf( "\n" );
+      for ( m = 0; m < (*nGroebnerBasisPolyEachOut)[w]; m++ )
       {
-        printf( ",\n" );
-      }
-      else
-      {
-        printf( " }\n" );
+        // Reset the output driver to avoid spurious line breaks.
+        ba0_reset_output();
+    
+        ba0_printf( "%Az",
+         (*exhaustSummGroebnerBasis->inter.tab[w]).decision_system.tab[m] );
+    
+        if ( m < (*nGroebnerBasisPolyEachOut)[w] - 1 )
+        {
+          printf( ",\n" );
+        }
+        else
+        {
+          printf( " }\n" );
+        }
+        printf( "\n" );
       }
       printf( "\n" );
     }
-    printf( "\n" );
   }
 
 
@@ -889,9 +1007,8 @@ int calcGroebnerBasis( int         level,
   mpz_clear( thetaRandom_r );
   mpz_clear( thetaRandom_rStartsAtZero );
   mpz_clear( thetaRandomMaxArg );
-  mpz_clear( inOutRelCoeffVal );
-  mpz_clear( inOutRelCoeffValAbsVal );
-  mpz_clear( inOutRelCoeffValTimesMinusOne );
+  mpz_clear( inOutRelPolyCoeffVal );
+  mpz_clear( inOutRelPolyLeadingCoeffVal );
 
   // Undo the last call to bav_R_push_ordering().
   bav_R_pull_ordering();
@@ -902,8 +1019,12 @@ int calcGroebnerBasis( int         level,
   // Call the BLAD library termination function.
   bad_terminate( ba0_init_level );
 
-  // Return the number of polynomials in the Groebner basis.
-  return nGroebnerBasisPoly;
+  // Set the total number of polynomials in all of the Groebner bases
+  // that were found.
+  *nGroebnerBasisPolyTotalOut = nGroebnerBasisPolyTotal;
+
+  // Return the number Groebner basis that were found.
+  return nGroebnerBasis;
 }
 
 
