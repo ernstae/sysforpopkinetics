@@ -4,8 +4,13 @@
  */
 #include <fstream>
 #include <string>
+#include <cstdlib>
 #include "NonmemTranslator.h"
 #include "SpkCompilerException.h"
+#include <fcntl.h>
+#include <malloc.h>
+#include <stdlib.h>
+#include <inttypes.h>
 
 using namespace std;
 using namespace xercesc;
@@ -117,6 +122,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "#include <vector>" << endl;
   oDataSet_h << "#include <spk/SpkValarray.h>" << endl;
   oDataSet_h << "#include \"IndData.h\"" << endl;
+  oDataSet_h << "#include <fcntl.h>" << endl;
+  oDataSet_h << "#include <malloc.h>" << endl;
+  oDataSet_h << "#include <stdlib.h>" << endl;
   oDataSet_h << endl;
 
   //---------------------------------------------------------------------------------------
@@ -292,11 +300,13 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "{" << endl;
   //-----------------------------------------------------------------------------------------++++
   oDataSet_h << "int NRecords_c[] = { ";
+  int nRecords_total = 0;
   for( int who=0; who < getPopSize(); who++)
     {
       if( who > 0 )
 		oDataSet_h << ", "; 
       oDataSet_h << pID->initial[who].size();
+      nRecords_total += pID->initial[who].size();
     }
   oDataSet_h << " };" << endl;
   oDataSet_h << "NRecords = SPK_VA::valarray<int> (NRecords_c, "<< getPopSize() <<" );" << endl;
@@ -312,7 +322,27 @@ void NonmemTranslator::generateDataSet( ) const
   // Initialize C arrays with data values.
   // The C arrays are passed to the valarray's constructor.
   //
+
+  // open up dataset file
+  int n_read, n_written, n_bytes, ok;
+  int fd = open("spk_dataset.dat", O_CREAT|O_RDWR, 0700);
+
+  if ( fd == -1 ) {
+    fprintf(stderr, "open of spk_dataset.dat failed\n");
+    exit(1);
+  }
+
   pLabel = labels->begin();
+
+  // in the output file, we need to define the file descriptor and get 
+  // everything set up for reading in the values.
+  oDataSet_h << endl << "int fd, n_read = 0, n_bytes;" << endl;
+  oDataSet_h << endl << "double buffer_in[" << nRecords_total << "];" << endl;
+  oDataSet_h << endl << "// open for reading, perms for read";
+  oDataSet_h << endl << "fd = open(\"spk_dataset.dat\", O_RDONLY, 0);";
+  oDataSet_h << endl << "if ( fd == -1 ) {" << endl << "fprintf(stderr,\"open of SPK data file failed\\n\");" << endl << "exit(1);" << endl << "}" << endl;
+
+
   for( int i=0; pLabel != labels->end(), i<nLabels; i++, pLabel++ )
     {
       const Symbol * s = table->find( *pLabel );
@@ -320,38 +350,119 @@ void NonmemTranslator::generateDataSet( ) const
       bool isInt = (*pLabel == nonmem::EVID || *pLabel == nonmem::CMT || *pLabel == nonmem::PCMT );
       
       string carray_name = s->name + "_c";
-      
-      if( isID )
+
+      int temp_buffer_int[nRecords_total];
+      double temp_buffer[nRecords_total];
+  
+      if( isID ) {
 	oDataSet_h << "char* const";
-      else if( isInt )
-	oDataSet_h << "const int";
-      else
-	oDataSet_h << "const spk_ValueType";
+	oDataSet_h << " " << carray_name << "[] = { "; 
+      }
+      else if( isInt ) {
+	oDataSet_h << "int";
+	oDataSet_h << " " << carray_name << "[" << nRecords_total << "];" << endl;
+	//	oDataSet_h << "int_buffer_in[" << nRecords_total << "];" << endl;
+	oDataSet_h << "n_bytes = sizeof(int) * " <<  nRecords_total << ";" << endl;
+	oDataSet_h << "n_read = read(fd, &" << carray_name << ", n_bytes);" << endl;
+	oDataSet_h << "if ( n_read != n_bytes ) {" << endl << "exit(1);" << endl << "}" << endl;
+
+	/*	oDataSet_h << "printf(\"" << carray_name << "[]: \");";
+	oDataSet_h << "for ( int me=0; me < " << nRecords_total << "; me++ ) {" << endl;
+      	oDataSet_h << "printf(\"\%d,\", " << carray_name << "[me]);" << endl;
+	oDataSet_h << "}" << endl << endl;
+	*/
+	oDataSet_h << "printf(\"\\n\\n\");" << endl;
+      }
+      else {
+	//	oDataSet_h << "const spk_ValueType";
+	oDataSet_h << "spk_ValueType";
+	oDataSet_h << " " << carray_name << "[" << nRecords_total << "];" << endl;
+	//	oDataSet_h << "free(buffer_in);" << endl;
+	//	oDataSet_h << "double buffer_in[" << nRecords_total << "];" << endl;
+	oDataSet_h << "n_bytes = sizeof(double) * " <<  nRecords_total << ";" << endl;
+	oDataSet_h << "n_read = read(fd, buffer_in, n_bytes);" << endl;
+	oDataSet_h << "if ( n_read != n_bytes ) {" << endl << "exit(1);" << endl << "}" << endl;
+
+	oDataSet_h << "printf(\"" << carray_name << "[]: \");";
+	oDataSet_h << "for ( int me=0; me < " << nRecords_total << "; me++ ) {" << endl;
+	oDataSet_h << carray_name << "[me] = buffer_in[me];" << endl;
+	//	oDataSet_h << "printf(\"\%f,\", buffer_in[me]);" << endl;
+	oDataSet_h << "}" << endl << endl;
+	oDataSet_h << "printf(\"\\n\\n\");" << endl;
+      }
       
-      oDataSet_h << " " << carray_name << "[] = { "; 
+
       // Loop over individuals
+      int nRecsOut = 0;
       for( int who=0, nRecords=0; who < getPopSize(); who++)
 	{
 	  nRecords = pID->initial[who].size();
 	  // Loop over records per individual
 	  for( int j=0; j<nRecords; j++ )
 	    {
-	      if( who + j > 0  )
-		oDataSet_h << ", ";
-	      if( j == 0  )
-		//	oDataSet_h << endl << "      ";
-		oDataSet_h << endl << "    /* " << who+1 << "*/  ";
-	      if( isID )
+	      if ( isID ) {
+		if( who + j > 0  )
+		  oDataSet_h << ", ";
+		if( j == 0  )
+		  //	oDataSet_h << endl << "      ";
+		  oDataSet_h << endl << "    /* " << who+1 << "*/  ";
 		oDataSet_h << "\"" << s->initial[who][j] << "\"";
-	      else
-		oDataSet_h << s->initial[who][j];
+	      }
+	      else if ( isInt ) {
+		temp_buffer_int[nRecsOut] = atoi(s->initial[who][j].c_str());
+		// cout << carray_name << "::temp_buffer_int[" << nRecsOut << "] = " << temp_buffer_int[nRecsOut] << " =? " << s->initial[who][j].c_str() << endl;
+	      } 
+	      else {
+		temp_buffer[nRecsOut] = atof(s->initial[who][j].c_str());
+		// cout << carray_name << "::temp_buffer[" << nRecsOut << "] = " << temp_buffer[nRecsOut] << " =? " << s->initial[who][j].c_str() << endl;
+
+	      }
+	      nRecsOut++;
 	    }
 	}
-      oDataSet_h << " };" << endl;
+      if ( isID ) {
+	oDataSet_h << " };" << endl;
+      }
+      else if ( isInt ) {
+	// output the temporary variable to the data file
+	n_bytes = sizeof(int) * nRecords_total;
+	cout << "Attempting to write " << nRecords_total << " integers " << n_bytes << " bytes for " << carray_name << endl;
+	n_written = write(fd, temp_buffer_int, n_bytes);
+
+      if ( n_written != n_bytes )
+	{
+	  printf("write of something failed in: %s\n", &carray_name);
+	  exit(1);
+	}
+
+      }
+      else {
+	n_bytes = sizeof(double) * nRecords_total;
+	cout << "Attempting to write " << nRecords_total << " doubles " << n_bytes << " bytes for " << carray_name << endl;
+	n_written = write(fd, temp_buffer, n_bytes);
+
+      if ( n_written != n_bytes )
+	{
+	  printf("write of something failed in: %s\n", &carray_name);
+	  exit(1);
+	}
+
+      }
+      
+      oDataSet_h << endl << "/**************** END OF " << carray_name << " *********************/" << endl << endl;
+
+      // deleting causes segfault.
+      //delete(temp_buffer);
+      //delete(temp_buffer_int);
     }
+  
   oDataSet_h << endl;
-
-
+  oDataSet_h << "close(fd);" << endl;
+  
+  // closes the dataset file
+  close(fd);
+  
+  
   // Create IndData object for each individual.  
   // The order in which the arguments
   // are passed to the IndData constructor must be strictly
