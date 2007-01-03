@@ -64,7 +64,6 @@ CREATE TABLE job (
   dataset_version varchar(10) NOT NULL default '',
   model_id int(10) unsigned NOT NULL default '0',
   model_version varchar(10) NOT NULL default '',
-  checkpoint longblob,
   xml_source longblob,
   state_code varchar(4) NOT NULL default '',
   report longblob,
@@ -74,6 +73,9 @@ CREATE TABLE job (
   end_code varchar(4) default NULL,
   method_code char(2) default NULL,
   parent int(10) unsigned default '0',
+  checkpoint longblob,
+  mail tinyint(1) default '0',
+  share_with int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
 
@@ -114,6 +116,17 @@ CREATE TABLE state (
 ) TYPE=MyISAM;
 
 --
+-- Table structure for table `team`
+--
+
+CREATE TABLE `team` (
+  `team_id` int(10) unsigned NOT NULL auto_increment,
+  `team_name` varchar(20) NOT NULL default '',
+  PRIMARY KEY  (`team_id`),
+  UNIQUE KEY `team_name` (`team_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `user`
 --
 
@@ -129,17 +142,8 @@ CREATE TABLE user (
   email varchar(30) default NULL,
   test tinyint(1) default '0',
   dev tinyint(1) default '0',
+  team_id int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
 
-
---- 
---- Create Indexes for tables
---- by: ernst
---- 
-
-create index idx_job_user_id on job(user_id);
-create index idx_user_user_name on user(surname, first_name);
-create index idx_user_user_id on user(user_id_
-create index idx_history_job_id on history(job_id);
