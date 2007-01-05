@@ -56,7 +56,7 @@ namespace // [Begin: unnamed namespace]
 {
   /***********************************************************************
    *
-   * Function: defaultNumericPrintFunc
+   * Function: defaultNumericPrintFuncToPrintDoublesAsIntegers
    *
    * This function prints GiNaC real, non-integer numeric values as
    * integers.
@@ -66,7 +66,7 @@ namespace // [Begin: unnamed namespace]
    *
   /***********************************************************************/
 
-  void defaultNumericPrintFunc(
+  void defaultNumericPrintFuncToPrintDoublesAsIntegers(
     const GiNaC::numeric&     x,
     const GiNaC::print_dflt&  printContext,
     unsigned                  parentOperatorLevel )
@@ -163,6 +163,29 @@ namespace // [Begin: unnamed namespace]
       printContext.s << ")";
     }
 
+  }
+
+  /***********************************************************************
+   *
+   * Function: defaultNumericPrintFunc
+   *
+   * This function prints all GiNaC numeric values in their normal
+   * default way.
+   *
+   * It is intended to be used with GiNaC's default output format
+   * (print_dflt).
+   *
+  /***********************************************************************/
+
+  void defaultNumericPrintFunc(
+    const GiNaC::numeric&     x,
+    const GiNaC::print_dflt&  printContext,
+    unsigned                  parentOperatorLevel )
+  { 
+    using namespace GiNaC;
+    
+    // Print the numeric value in the normal way.
+    x.print( printContext.s );
   }
 
 } // [End: unnamed namespace]
@@ -341,6 +364,9 @@ private:
    * THETA parameter has an infinite number of solutions and is
    * nonidentifiable.
    *
+   * If the number of solutions is equal to -2, then the individual's
+   * THETA parameter had multiple Groebner bases.
+   *
    */
   /*************************************************************************/
 
@@ -366,7 +392,7 @@ public:
 
     // Replace the method for the default output of numeric values
     // with a version that prints double values as integers.
-    set_print_func<numeric, print_dflt>( defaultNumericPrintFunc );
+    set_print_func<numeric, print_dflt>( defaultNumericPrintFuncToPrintDoublesAsIntegers );
 
 
     //----------------------------------------------------------
@@ -1254,18 +1280,10 @@ public:
         __LINE__, 
         __FILE__ );
     }
-  
-    // If multiple Groebner bases were calculated, then this
-    // calculation cannot continue.
-    if ( nGroebnerBasis > 1 )
-    {
-      throw SpkException(
-        SpkError::SPK_UNKNOWN_ERR, 
-        "The parameter identifiability calculation failed because there were multiple \nGroebner bases for the exhaustive summary. \n\nPlease submit a bug report",
-        __LINE__, 
-        __FILE__ );
-    }
-  
+
+    // Reset the default methods for the output of numeric values.
+    set_print_func<numeric, print_dflt>( defaultNumericPrintFunc );
+
   
     //----------------------------------------------------------
     // Set the exhaustive summary Groebner bases equations.
@@ -1309,14 +1327,11 @@ public:
     // Free the memory for this C array.
     free( nGroebnerBasisPolyEachOut );
   
-  
+
     //----------------------------------------------------------
     // Solve the Groebner bases equations.
     //----------------------------------------------------------
 
-    int l;
-    int n;
-  
     // This will be the number of unique solutions of the Groebner
     // bases equations.
     int nGroebnerBasisSoln = 0;
@@ -1325,6 +1340,41 @@ public:
     // solutions of the Groebner bases equations.
     int nGroebnerBasisSoln_lEqn;
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // [Revisit - Multiple Groebner Bases are not Currently Solved - Mitch]
+    // Right now, this does not try to solve the Groebner bases if
+    // there are more than one of them.
+    //
+    // Once we have decided upon the proper messaging and
+    // interpretation of this situation, then this function should
+    // probably try to solve each of the Groebner bases.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //
+    // See if multiple Groebner bases were calculated.
+    if ( nGroebnerBasis > 1 )
+    {
+      // Set the value used to indicate that there were multiple
+      // bases.
+      nGroebnerBasisSoln = -2;
+
+      // Set the status string.
+      identStatus = "Multiple Groebner Bases - Identifiability not Determined (Possible Multiple Solutions)";
+
+      if ( level > 0 )
+      {
+        outputStream << "This system-experiment model had multiple Groebner bases." << endl;
+        outputStream << "SPK cannot currently determine its identifiability." << endl;
+        outputStream << endl;
+      }
+
+      // Return the number of unique solutions of the Groebner bases
+      // equations.
+      return nGroebnerBasisSoln;  
+    }
+  
+    int l;
+    int n;
+  
     GiNaC::ex groebnerBasisSoln;
 
     // Try to solve the Groebner bases equations.
@@ -1395,7 +1445,7 @@ public:
         // one, which would make the status string be:  
         //
         //     identStatus = "Locally (Nonuniquely) Identifiable";
-	//
+        //
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //
         // If there are the same number of equations as unknowns, and
@@ -1426,7 +1476,7 @@ public:
                        << identPar.nops() << ")." << endl;
           outputStream << endl;
           outputStream << "This system-experiment model is nonidentifiable." << endl;
-          outputStream << "It's Groebner basis has an infinite number of solutions." << endl;
+          outputStream << "Its Groebner basis has an infinite number of solutions." << endl;
         }
       }
       else
@@ -1445,7 +1495,7 @@ public:
                        << identPar.nops() << ")." << endl;
           outputStream << endl;
           outputStream << "This system-experiment model is nonidentifiable." << endl;
-          outputStream << "It's Groebner basis has no solutions." << endl;
+          outputStream << "Its Groebner basis has no solutions." << endl;
         }
       }
 
@@ -1472,7 +1522,7 @@ public:
       }
 
       // Set the status string.
-      identStatus = "Groebner basis nonlinear - Identifiability not determined (Possible Multiple Solutions)";
+      identStatus = "Groebner Basis Nonlinear - Identifiability not Determined (Possible Multiple Solutions)";
 
       // Return a value of 0 to indicate that the identifiability
       // of the individual's THETA parameter could not be determined.
