@@ -334,6 +334,7 @@ CREATE TABLE history (
   job_id int(10) unsigned NOT NULL default '0',
   host varchar(100) NOT NULL default '',
   PRIMARY KEY  (history_id)
+  KEY `idx_history_job_id` (`job_id`)
 ) TYPE=InnoDB;
 
 CREATE TABLE job (
@@ -357,6 +358,8 @@ CREATE TABLE job (
   mail tinyint(1) default '0',
   share_with int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (job_id)
+  KEY `idx_job_user_id` (`user_id`)
+  KEY `idx_job_share_with` (`share_with`)
 ) TYPE=InnoDB;
 
 CREATE TABLE method (
