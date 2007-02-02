@@ -48,6 +48,7 @@ public:
 private:
   // Test cases for this unit test.
   void polynomial_fit_test();
+  void polynomial_and_variance_fit_test();
 
 } ;
 

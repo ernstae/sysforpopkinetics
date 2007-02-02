@@ -79,6 +79,7 @@ private:
 	const size_t M_;
 	const size_t n_;
 	const double sigma_;
+	const bool   fit_variance_;   // This determines if the variance parameter is fit or not.
 	vector       t_;
 	// current state of the model
 	size_t   i_;
@@ -86,9 +87,9 @@ private:
 	Svector b_;
 public:
 	polynomial_model(
-		double sigma, size_t q, size_t m, size_t M, size_t n) 
+		double sigma, size_t q, size_t m, size_t M, size_t n, bool fit_variance = false) 
 	: sigma_(sigma), q_(q), m_(m), M_(M), n_(n), 
-	  t_(q), alpha_(m), b_(n)
+	  t_(q), alpha_(m), b_(n), fit_variance_(fit_variance)
 	{	size_t k;
 		for( k = 0; k < q_; k++)
 			t_[k] = (k + 1.) / double(q);
@@ -120,7 +121,13 @@ private:
 		{	double   tpow = 1.;
 			Scalar   sum  = 0.;
 			for(j = 0; j < n_; j++)
-			{	sum += b_[j] *  tpow;
+			{	// If the variance parameter is being
+				// fit, then it should not be included
+				// in the polynomial.
+				if(fit_variance_ && j == n_ - 1)
+					break;
+
+				sum += b_[j] *  tpow;
 				tpow *= t_[k];
 			}
 			f_out[ k ] = sum;
@@ -132,7 +139,13 @@ private:
 		for(k1 = 0; k1 < q_; k1++)
 		{	for(k2 = 0; k2 < q_; k2++)
 				R_out[ k1 * q_ + k2 ] = 0.;
-			R_out [ k1 * q_ + k1 ] = sigma_ * sigma_;
+
+			// If the variance parameter is being fit,
+			// then use it to calculate the variance.
+			if(fit_variance_)
+				R_out [ k1 * q_ + k1 ] = b_[n_ - 1] * b_[n_ - 1];
+			else
+				R_out [ k1 * q_ + k1 ] = sigma_ * sigma_;
 		}
     	}
 	// functions that should not be pure virtual but should rather have
@@ -176,20 +189,20 @@ void p_y_given_b(
 	DoubleMatrix             &y       ,
 	DoubleMatrix             &N       ,
 	DoubleMatrix             &B       ,
-	DoubleMatrix             &Pout    )
+	DoubleMatrix             &pout    )
 {	typedef std::valarray<double> vector;
 
 	size_t n  = B.nr();
 	size_t J  = B.nc();
 	size_t M  = N.nr();
-	assert( Pout.nr() == M );
-	assert( Pout.nc() == J );
+	assert( pout.nr() == M );
+	assert( pout.nc() == J );
 	double pi = 4. * std::atan(1.);
 
 	size_t i, j, k, ell;
 	double residual, variance;
 
-	double *p_ptr = Pout.data();
+	double *p_ptr = pout.data();
 	double *B_ptr = B.data();
 
 	for(j = 0; j < J; j++)
@@ -247,7 +260,7 @@ double objective(
 	return objective;
 }
 //--------------------------------------------------------------------
-void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
+void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J, bool fit_variance = false)
 {
 	// ------------------- level ----------------------
 	// mod(level, 10) is level  in spk_non_par
@@ -270,8 +283,8 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// some temporary indices
 	size_t i, j, k;
 
-	polynomial_model<double>       model(sigma, q, m, M, n);
-	polynomial_model< ADdouble > admodel(sigma, q, m, M, n);
+	polynomial_model<double>       model(sigma, q, m, M, n, fit_variance);
+	polynomial_model< ADdouble > admodel(sigma, q, m, M, n, fit_variance);
 
 	// value for alpha (not used)
 	ADvector adalpha(m);
@@ -302,6 +315,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		// simulate true random effects for this subject
 		for(k = 0; k < n; k++)
 			b[k] = simulate(GAUSSIAN_01);
+
 		model.setIndPar(b);
 
 		// data mean plus noise
@@ -315,13 +329,13 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// --------------------- max_itr ---------------------
 	DoubleMatrix max_itr(2, 1);
 	ptr = max_itr.data();
-	ptr[0] = 20.;
-	ptr[1] = 20.;
+	ptr[0] = 100.;
+	ptr[1] = 100.;
 
 	// --------------------- epsilon ---------------------
 	DoubleMatrix epsilon(4, 1);
 	ptr = epsilon.data();
-	ptr[0] = 1e-7;
+	ptr[0] = 1e-4;
 	ptr[1] = 1e-4;
 	ptr[2] = 1e-13;
 	ptr[3] = 1./4;
@@ -332,11 +346,21 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	for(i = 0; i < n; i++)
 		ptr[i] = -.5;
 
+	// If the variance parameter is being fit,
+	// then set its lower limit.
+	if(fit_variance)
+		ptr[n - 1] = 0.0;
+
 	// ----------------------- bup -----------------------
 	DoubleMatrix bup(n, 1);
 	ptr = bup.data();
 	for(i = 0; i < n; i++)
 		ptr[i] = +.5;
+
+	// If the variance parameter is being fit,
+	// then set its upper limit.
+	if(fit_variance)
+		ptr[n - 1] = +1.0;
 
 	// ----------------------- Bin -----------------------
 	DoubleMatrix Bin(n, J);
@@ -345,6 +369,12 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	{	for(i = 0; i < n; i++)
 		{	// uniform distribution on [-.5, +.5]
 			ptr[j * n + i] = simulate(UNIFORM_01) - .5;
+
+			// If the variance parameter is being fit,
+			// then its initial values should have a
+			// uniform distribution on [0.0, +1.0].
+			if(fit_variance && i == n - 1)
+				ptr[j * n + i] += .5;
 		}
 	}
 
@@ -354,10 +384,9 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	// ---------------------- lamout ---------------------
 	DoubleMatrix lamout;
 
-	// ----------------------- Pout ----------------------
-	DoubleMatrix Pout;
+	// ----------------------- pout ----------------------
+	DoubleMatrix pout;
 
-	// ------------------------------------------------------------------
 	try
 	{	spk_non_par(
 			level   ,
@@ -372,7 +401,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 			Bin     , 
 			Bout    , 
 			lamout  , 
-			Pout    
+			pout    
 		);
 
 	}
@@ -393,17 +422,17 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 	CPPUNIT_ASSERT_MESSAGE(
 		"polynomial_fit_test: dimension error.",
 		Bout.nr()   == n && 
-		lamout.nr() == 1 && 
-		lamout.nc() == J &&
-		Pout.nr()   == M &&
-		Pout.nc()   == J
+		lamout.nr() == J && 
+		lamout.nc() == 1 &&
+		pout.nr()   == M &&
+		pout.nc()   == J
 	);
 
-	DoubleMatrix check_Pout(M, J);
-	p_y_given_b(model, y, N, Bout, check_Pout);
+	DoubleMatrix check_pout(M, J);
+	p_y_given_b(model, y, N, Bout, check_pout);
 	bool ok = true;
-	double *check = check_Pout.data();
-	ptr           = Pout.data();
+	double *check = check_pout.data();
+	ptr           = pout.data();
 	for(i = 0; i < M; i++) 
 	{	for(j = 0; j < J; j++)
 		{	ok &= CppAD::NearEqual(
@@ -412,7 +441,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J)
 		}
 	}
 	CPPUNIT_ASSERT_MESSAGE(
-		"polynomial_fit_test: error in Pout.",
+		"polynomial_fit_test: error in pout.",
 		ok
 	);
 
@@ -508,6 +537,12 @@ CppUnit::Test* spk_non_par_test::suite()
 			&spk_non_par_test::polynomial_fit_test
 		)
 	);
+	suiteOfTests->addTest(
+		new TestCaller<spk_non_par_test>(
+      			"polynomial_and_variance_fit_test", 
+			&spk_non_par_test::polynomial_and_variance_fit_test
+		)
+	);
 	return suiteOfTests;
 }
 
@@ -523,4 +558,26 @@ void spk_non_par_test::polynomial_fit_test(void)
 	size_t J     = 10; // number of discret measure points 
 
 	one_fit(sigma, q, m, M, n, J);
+}
+
+//--------------------------------------------------------------------
+void spk_non_par_test::polynomial_and_variance_fit_test(void)
+{
+	// can change these values or better yet run different combinations of these values
+	double sigma = .5; // measure noise standard deviation
+	size_t m     = 1;  // number of fixed effects (not used)
+	size_t n     = 2;  // number of random effects per individual
+	size_t q     = 4;  // number of measurements per individual
+	size_t M     = 5;  // number of individuals in the population
+	size_t J     = 10; // number of discret measure points 
+
+	// Set this so that the variance parameter be treated as a
+	// random effect that is estimated.
+	bool fit_variance = true;
+
+	// Increase the number of random effects to make room for
+	// the variance parameter.
+	n++;
+
+	one_fit(sigma, q, m, M, n, J, fit_variance);
 }
