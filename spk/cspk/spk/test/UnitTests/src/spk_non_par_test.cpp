@@ -87,9 +87,14 @@ private:
 	Svector b_;
 public:
 	polynomial_model(
-		double sigma, size_t q, size_t m, size_t M, size_t n, bool fit_variance = false) 
-	: sigma_(sigma), q_(q), m_(m), M_(M), n_(n), 
-	  t_(q), alpha_(m), b_(n), fit_variance_(fit_variance)
+		double sigma      , 
+		size_t q          , 
+		size_t m          , 
+		size_t M          , 
+		size_t n          , 
+		bool fit_variance ) 
+	: sigma_(sigma), q_(q), m_(m), M_(M), n_(n), t_(q)
+	, alpha_(m), b_(n), fit_variance_(fit_variance)
 	{	size_t k;
 		for( k = 0; k < q_; k++)
 			t_[k] = (k + 1.) / double(q);
@@ -116,18 +121,15 @@ private:
 	}
 	void doDataMean(Svector &f_out) const
 	{	assert( f_out.size() == q_ );	
-		size_t j, k;
+		size_t j, k, n_amplitude;
+		if( fit_variance_ )
+			n_amplitude = n_ - 1;
+		else	n_amplitude = n_;
 		for(k = 0; k < q_; k++)
 		{	double   tpow = 1.;
 			Scalar   sum  = 0.;
-			for(j = 0; j < n_; j++)
-			{	// If the variance parameter is being
-				// fit, then it should not be included
-				// in the polynomial.
-				if(fit_variance_ && j == n_ - 1)
-					break;
-
-				sum += b_[j] *  tpow;
+			for(j = 0; j < n_amplitude; j++)
+			{	sum += b_[j] *  tpow;
 				tpow *= t_[k];
 			}
 			f_out[ k ] = sum;
@@ -143,9 +145,9 @@ private:
 			// If the variance parameter is being fit,
 			// then use it to calculate the variance.
 			if(fit_variance_)
-				R_out [ k1 * q_ + k1 ] = b_[n_ - 1] * b_[n_ - 1];
+				R_out[k1*q_ + k1] = exp( b_[n_-1] );
 			else
-				R_out [ k1 * q_ + k1 ] = sigma_ * sigma_;
+				R_out[k1*q_ + k1] = sigma_ * sigma_;
 		}
     	}
 	// functions that should not be pure virtual but should rather have
@@ -260,7 +262,14 @@ double objective(
 	return objective;
 }
 //--------------------------------------------------------------------
-void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J, bool fit_variance = false)
+void one_fit(
+	double sigma      , 
+	size_t q          , 
+	size_t m          , 
+	size_t M          , 
+	size_t n          , 
+	size_t J          , 
+	bool fit_variance )
 {
 	// ------------------- level ----------------------
 	// mod(level, 10) is level  in spk_non_par
@@ -335,10 +344,10 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J, boo
 	// --------------------- epsilon ---------------------
 	DoubleMatrix epsilon(4, 1);
 	ptr = epsilon.data();
-	ptr[0] = 1e-4;
+	ptr[0] = 1e-7;
 	ptr[1] = 1e-4;
 	ptr[2] = 1e-13;
-	ptr[3] = 1./4;
+	ptr[3] = 1./4.;
 
 	// ----------------------- blow ----------------------
 	DoubleMatrix blow(n, 1);
@@ -347,9 +356,9 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J, boo
 		ptr[i] = -.5;
 
 	// If the variance parameter is being fit,
-	// then set its lower limit.
+	// set its lower limit differently
 	if(fit_variance)
-		ptr[n - 1] = 0.0;
+		ptr[n - 1] = log(1e-4);
 
 	// ----------------------- bup -----------------------
 	DoubleMatrix bup(n, 1);
@@ -358,9 +367,9 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J, boo
 		ptr[i] = +.5;
 
 	// If the variance parameter is being fit,
-	// then set its upper limit.
+	// set its upper limit differently
 	if(fit_variance)
-		ptr[n - 1] = +1.0;
+		ptr[n - 1] = log(1e+4);
 
 	// ----------------------- Bin -----------------------
 	DoubleMatrix Bin(n, J);
@@ -368,13 +377,8 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J, boo
 	for(j = 0; j < J; j++)
 	{	for(i = 0; i < n; i++)
 		{	// uniform distribution on [-.5, +.5]
+			// (include the variance parameter)
 			ptr[j * n + i] = simulate(UNIFORM_01) - .5;
-
-			// If the variance parameter is being fit,
-			// then its initial values should have a
-			// uniform distribution on [0.0, +1.0].
-			if(fit_variance && i == n - 1)
-				ptr[j * n + i] += .5;
 		}
 	}
 
@@ -387,6 +391,7 @@ void one_fit(double sigma, size_t q, size_t m, size_t M, size_t n, size_t J, boo
 	// ----------------------- pout ----------------------
 	DoubleMatrix pout;
 
+	// ------------------------------------------------------------------
 	try
 	{	spk_non_par(
 			level   ,
@@ -549,35 +554,31 @@ CppUnit::Test* spk_non_par_test::suite()
 //--------------------------------------------------------------------
 void spk_non_par_test::polynomial_fit_test(void)
 {
-	// can change these values or better yet run different combinations of these values
+	// can change these values or better yet 
+	// run different combinations of these values
 	double sigma = .5; // measure noise standard deviation
 	size_t m     = 1;  // number of fixed effects (not used)
 	size_t n     = 2;  // number of random effects per individual
 	size_t q     = 4;  // number of measurements per individual
 	size_t M     = 5;  // number of individuals in the population
 	size_t J     = 10; // number of discret measure points 
+	bool fit_variance = false; // variance is a fixed effect
 
-	one_fit(sigma, q, m, M, n, J);
+	one_fit(sigma, q, m, M, n, J, fit_variance);
 }
 
 //--------------------------------------------------------------------
 void spk_non_par_test::polynomial_and_variance_fit_test(void)
 {
-	// can change these values or better yet run different combinations of these values
+	// can change these values or better yet run different combinations 
+	// of these values
 	double sigma = .5; // measure noise standard deviation
 	size_t m     = 1;  // number of fixed effects (not used)
-	size_t n     = 2;  // number of random effects per individual
+	size_t n     = 3;  // number of random effects per individual
 	size_t q     = 4;  // number of measurements per individual
 	size_t M     = 5;  // number of individuals in the population
 	size_t J     = 10; // number of discret measure points 
-
-	// Set this so that the variance parameter be treated as a
-	// random effect that is estimated.
-	bool fit_variance = true;
-
-	// Increase the number of random effects to make room for
-	// the variance parameter.
-	n++;
+	bool fit_variance = true; // variance is a random effect
 
 	one_fit(sigma, q, m, M, n, J, fit_variance);
 }
