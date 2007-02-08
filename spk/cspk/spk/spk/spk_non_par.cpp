@@ -218,7 +218,7 @@ The argument $italic epsilon$$ has prototype
 $syntax%
 	const DoubleMatrix &%epsilon%
 %$$
-and size $latex 4 \times 1$$.
+and size $latex 5 \times 1$$.
 It specifies the 
 $table
 $bold Description$$ 
@@ -229,16 +229,20 @@ $cref/convergence criteria/spk_non_par/epsilon/Convergence Criteria/$$
 	$cnext $latex \varepsilon_0 = $$ $syntax%*(%epsilon%.data() + 0)%$$ 
 	$cnext $pre  $$ $latex 10^{-4}$$
 $rnext
+$cref/zero weight criteria/spk_non_par/epsilon/Zero Weight Criteria/$$
+$cnext $latex  \varepsilon_1 = $$ $syntax%*(%epsilon%.data() + 1)%$$ 
+$cnext $pre  $$ $latex 10^{-4}$$
+$rnext
 $cref/joining criteria/spk_non_par/epsilon/Joining Criteria/$$
-	$cnext $latex  \varepsilon_1 = $$ $syntax%*(%epsilon%.data() + 1)%$$ 
+	$cnext $latex  \varepsilon_2 = $$ $syntax%*(%epsilon%.data() + 2)%$$ 
 	$cnext $pre  $$ $latex 10^{-4}$$
 $rnext
 $cref/sub-convergence criteria/spk_non_par/epsilon/Sub-Convergence Criteria/$$
-	$cnext $latex \varepsilon_2 = $$ $syntax%*(%epsilon%.data() + 2)%$$ 
+	$cnext $latex \varepsilon_3 = $$ $syntax%*(%epsilon%.data() + 3)%$$ 
 	$cnext $pre  $$ $latex 10^{-13}$$
 $rnext
 $cref/relaxation factor/spk_non_par/epsilon/Relaxation Factor/$$
-	$cnext $latex \varepsilon_3 = $$ $syntax%*(%epsilon%.data() + 3)%$$ 
+	$cnext $latex \varepsilon_4 = $$ $syntax%*(%epsilon%.data() + 4)%$$ 
 	$cnext $pre  $$ $latex 2^{-2}$$
 $tend
 
@@ -289,10 +293,15 @@ $latex
 $$.
 $lend
 
+$subhead Zero Weight Criteria$$
+If at the end of an iteration
+$latex \lambda_j \leq \varepsilon_1 \| \lambda \|_\infty$$,
+the $th j$$ discrete measure point is removed.
+
 $subhead Joining Criteria$$
 If there are two columns of $latex B$$ such that
 $latex \[
-	\varepsilon_1 \geq \| B_j - B_q \|_\infty 
+	\varepsilon_2 \geq \| B_j - B_q \|_\infty 
 \] $$
 the two columns are joined, 
 the weights are added and
@@ -304,8 +313,7 @@ $subhead Sub-Convergence Criteria$$
 The sub-problem, which determines the optimal weight vector 
 $latex \lambda$$ is considered converged when the maximum residual
 in any of the Karush Kuhn Tucker conditions is less than
-$latex \varepsilon_2$$ times the maximum element in the
-matrix that defines the sub-problem objective; i.e.
+$latex \varepsilon_3$$; i.e.
 the likelihood of each individuals measurement vector
 for each discrete measurement point.
 
@@ -624,12 +632,13 @@ extern void spk_non_par(
 	maxitr(0, 0) = size_t( *(max_itr.data() + 0) );
 	maxitr(1, 0) = size_t( *(max_itr.data() + 1) );
 
-	assert( epsilon.nr()  == 4 );
-	mat2cpp::matrix<double> eps(4, 1);
+	assert( epsilon.nr()  == 5 );
+	mat2cpp::matrix<double> eps(5, 1);
 	eps(0, 0)    = *(epsilon.data() + 0);
 	eps(1, 0)    = *(epsilon.data() + 1);
 	eps(2, 0)    = *(epsilon.data() + 2);
 	eps(3, 0)    = *(epsilon.data() + 3);
+	eps(4, 0)    = *(epsilon.data() + 4);
 
 	// input likelihood function
 	Like like(admodel, model, N, y, n);
@@ -686,7 +695,7 @@ extern void spk_non_par(
 
 	// dimension the return matrices
 	Bout.resize(n, J);
-	lamout.resize(1, J);
+	lamout.resize(J, 1);
 	Pout.resize(M, J);
 
 	// retrun elements of Bout
