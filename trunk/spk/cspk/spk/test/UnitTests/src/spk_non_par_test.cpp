@@ -342,12 +342,13 @@ void one_fit(
 	ptr[1] = 100.;
 
 	// --------------------- epsilon ---------------------
-	DoubleMatrix epsilon(4, 1);
+	DoubleMatrix epsilon(5, 1);
 	ptr = epsilon.data();
 	ptr[0] = 1e-7;
 	ptr[1] = 1e-4;
-	ptr[2] = 1e-13;
-	ptr[3] = 1./4.;
+	ptr[2] = 1e-4;
+	ptr[3] = 1e-13;
+	ptr[4] = 1./4.;
 
 	// ----------------------- blow ----------------------
 	DoubleMatrix blow(n, 1);
