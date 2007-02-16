@@ -465,6 +465,8 @@ INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('sm
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('im','MAP Iter. Two-stage','al',0);
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gm','MAP Global Two-stage','al',0);
 INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('id','Identifiability','id',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gn','Grid Nonparam.','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('un','Uniform Nonparam.','al',0);
 
 INSERT INTO state (state_code, state_name) VALUES ('q2c','Queued to compile');
 INSERT INTO state (state_code, state_name) VALUES ('q2ml','Queued to M.L.');
