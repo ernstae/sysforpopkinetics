@@ -617,6 +617,15 @@ private:
   /** True if the user requested individual identifiability. */
   bool              myIsIdent;
 
+  /** True if the user requested the nonparametric method. */
+  bool              myIsNonparam;
+
+  /** Number of initial measure points per grid side for the nonparametric method. */
+  unsigned int      myNonparamGridMeasurePointPerSideIn;
+
+  /** Number of initial random measure points for the nonparametric method. */
+  unsigned int      myNonparamRandomMeasurePointIn;
+
   /** True if the user requested the likelihood estimation. */
   bool              myIsMonte;
 

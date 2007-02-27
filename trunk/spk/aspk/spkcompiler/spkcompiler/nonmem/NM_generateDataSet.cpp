@@ -120,6 +120,7 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "#define DATASET_H" << endl;
 
   oDataSet_h << "#include <vector>" << endl;
+  oDataSet_h << "#include <spk/doubleToScalar.h>" << endl;
   oDataSet_h << "#include <spk/SpkValarray.h>" << endl;
   oDataSet_h << "#include \"IndData.h\"" << endl;
   oDataSet_h << "#include <fcntl.h>" << endl;
@@ -365,13 +366,6 @@ void NonmemTranslator::generateDataSet( ) const
 	oDataSet_h << "n_bytes = sizeof(int) * " <<  nRecords_total << ";" << endl;
 	oDataSet_h << "n_read = read(fd, &" << carray_name << ", n_bytes);" << endl;
 	oDataSet_h << "if ( n_read != n_bytes ) {" << endl << "exit(1);" << endl << "}" << endl;
-
-	/*	oDataSet_h << "printf(\"" << carray_name << "[]: \");";
-	oDataSet_h << "for ( int me=0; me < " << nRecords_total << "; me++ ) {" << endl;
-      	oDataSet_h << "printf(\"\%d,\", " << carray_name << "[me]);" << endl;
-	oDataSet_h << "}" << endl << endl;
-	*/
-	oDataSet_h << "printf(\"\\n\\n\");" << endl;
       }
       else {
 	//	oDataSet_h << "const spk_ValueType";
@@ -383,12 +377,9 @@ void NonmemTranslator::generateDataSet( ) const
 	oDataSet_h << "n_read = read(fd, buffer_in, n_bytes);" << endl;
 	oDataSet_h << "if ( n_read != n_bytes ) {" << endl << "exit(1);" << endl << "}" << endl;
 
-	oDataSet_h << "printf(\"" << carray_name << "[]: \");";
 	oDataSet_h << "for ( int me=0; me < " << nRecords_total << "; me++ ) {" << endl;
-	oDataSet_h << carray_name << "[me] = buffer_in[me];" << endl;
-	//	oDataSet_h << "printf(\"\%f,\", buffer_in[me]);" << endl;
+	oDataSet_h << "doubleToScalar( buffer_in[me], " << carray_name << "[me] );" << endl;
 	oDataSet_h << "}" << endl << endl;
-	oDataSet_h << "printf(\"\\n\\n\");" << endl;
       }
       
 
@@ -410,12 +401,9 @@ void NonmemTranslator::generateDataSet( ) const
 	      }
 	      else if ( isInt ) {
 		temp_buffer_int[nRecsOut] = atoi(s->initial[who][j].c_str());
-		// cout << carray_name << "::temp_buffer_int[" << nRecsOut << "] = " << temp_buffer_int[nRecsOut] << " =? " << s->initial[who][j].c_str() << endl;
 	      } 
 	      else {
 		temp_buffer[nRecsOut] = atof(s->initial[who][j].c_str());
-		// cout << carray_name << "::temp_buffer[" << nRecsOut << "] = " << temp_buffer[nRecsOut] << " =? " << s->initial[who][j].c_str() << endl;
-
 	      }
 	      nRecsOut++;
 	    }
@@ -426,7 +414,6 @@ void NonmemTranslator::generateDataSet( ) const
       else if ( isInt ) {
 	// output the temporary variable to the data file
 	n_bytes = sizeof(int) * nRecords_total;
-	cout << "Attempting to write " << nRecords_total << " integers " << n_bytes << " bytes for " << carray_name << endl;
 	n_written = write(fd, temp_buffer_int, n_bytes);
 
       if ( n_written != n_bytes )
@@ -438,7 +425,6 @@ void NonmemTranslator::generateDataSet( ) const
       }
       else {
 	n_bytes = sizeof(double) * nRecords_total;
-	cout << "Attempting to write " << nRecords_total << " doubles " << n_bytes << " bytes for " << carray_name << endl;
 	n_written = write(fd, temp_buffer, n_bytes);
 
       if ( n_written != n_bytes )
