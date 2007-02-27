@@ -40,6 +40,7 @@ libspkpred_a_SOURCES = \
 	isEqual.cpp \
 	PopPredModel.cpp \
 	PopPredModelBase.cpp \
+	predNonparamMethod.cpp \
 	predTwoStageMethod.cpp \
 	calcGroebnerBasis.h \
 	Cov.h \
@@ -58,6 +59,7 @@ libspkpred_a_SOURCES = \
 	PopPredModel.h \
 	PopPredModelBase.h \
 	PredBase.h \
+	predNonparamMethod.h \
 	predTwoStageMethod.h \
 	$(top_builddir)/config.h
 
@@ -79,5 +81,6 @@ pkginclude_HEADERS = \
 	PopPredModel.h \
 	PopPredModelBase.h \
 	PredBase.h \
+	predNonparamMethod.h \
 	predTwoStageMethod.h
 
