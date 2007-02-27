@@ -58,24 +58,25 @@ using SPK_VA::valarray;
  *
  *//**
  * This Pred library specific two-stage method wrapper determines
- * population means and covariances for individual parameters.
+ * population means and covariances for individual parameters by
+ * performing one of the two-stage methods.
  *
  * This function performs a two-stage method analysis using the
  * individual model, indModelWithPopData, which should contain the same
  * data and model as the population model, popModel.
  *
  * At the end, the population parameters for the population model are
- * set to the values determined by the two-stage method.
+ * set equal to the values determined by the two-stage method.
  *
  * To be specific, at the end of these methods,
  * \f[
- *     theta^{\mbox{(Pop)}}  =  thetaMean^{\mbox{(Ind)}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  theta_i^{\mbox{(Ind)}}   ,
+ *     theta^{\mbox{(Pop)}}  =  \overline{ theta^{\mbox{(Ind)}} }  =  \mbox{E}\left[ theta^{\mbox{(Ind)}} \right]  =  \frac{1}{nInd} \sum_{i = 1}^{nInd} theta_i^{\mbox{(Ind)}}  ,
  * \f]
  * \f[
- *     Omega^{\mbox{(Pop)}}  =  thetaCov^{\mbox{(Ind)}}  ,
+ *     Omega^{\mbox{(Pop)}}  =  \mbox{Cov}\left[ theta^{\mbox{(Ind)}} \right]  ,
  * \f]
  * \f[
- *     Sigma^{\mbox{(Pop)}}  =  OmegaMean^{\mbox{(Ind)}}  =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  Omega_i^{\mbox{(Ind)}}   .
+ *     Sigma^{\mbox{(Pop)}}  =  \overline{ Omega^{\mbox{(Ind)}} }  =  \mbox{E}\left[ Omega^{\mbox{(Ind)}} \right]  =  \frac{1}{nInd} \sum_{i = 1}^{nInd} Omega_i^{\mbox{(Ind)}}   .
  * \f]
  * This function, therefore, requires that the following be true:
  * \f[
@@ -109,14 +110,16 @@ using SPK_VA::valarray;
  * For the Standard Two-Stage methods (STS), the population mean of
  * the individuals' parameter estimates is calculated as
  * \f[
- *     bMean       =  \frac{1}{nInd} \sum_{i = 1}^{nInd}  bOut_i   
+ *     \overline{ b }  =  \mbox{E}\left[ b \right]  =  \frac{1}{nInd} \sum_{i = 1}^{nInd} \hat{b_i}  ,
  * \f]
- * 
  * and the population covariance of the individuals' estimates is
  * calculated as
  * \f[
- *     bCov       =  \frac{1}{nInd} \sum_{i = 1}^{nInd}   ( bOut_i  -  bMean ) ( bOut_i  -  bMean )^T   .
+ *     \mbox{Cov}\left[ b \right]  =  \frac{1}{nInd} \sum_{i = 1}^{nInd} \left[ \hat{b_i} - \overline{ b } \right] \left[ \hat{b_i} - \overline{ b } \right]^T  ,
  * \f]
+ * where the \f$ \hat{b_i} \f$ are the optimal individual parameter values
+ * for each of the individuals that were determined by the two-stage
+ * method
  * 
  * For the Iterative and Global Two-Stage methods (ITS and GTS), the
  * population mean and the population covariance of the individuals' 
@@ -128,6 +131,20 @@ using SPK_VA::valarray;
  * A. Schumitzky, EM algorithms and two stage methods in phamacokinetic population analysis.
  * in "Advanced Methods of Pharmacokinetic and Pharmacodynamic Systems Analysis", 
  * edited by D. Z. D'Argenio. New York: Plenum, 1995, p. 145-160.
+ *
+ *
+ * @param pIndParAllOut If pIndParAllOut is not NULL, then the
+ * SPK_VA::valarray<double> object pointed to by pIndParAllOut must be
+ * declared in the function that calls this function, and its size
+ * must be equal to the number of individuals \f$ nInd \f$ times the
+ * number of individual parameters \f$ nB \f$.  If pIndParAllOut is
+ * not NULL and this function completed the two-stage method
+ * successfully, then the object pointed to by pIndParAllOut will
+ * contain the matrix of optimal individual parameter values for each
+ * of the individuals that were determined by the two-stage method.
+ * Each column of the matrix will contain one of the column vectors
+ * \f$ \hat{b_i} \f$.  Otherwise, this function will not attempt to
+ * change the contents of the object pointed to by pIndParAllOut.
  */
 /*************************************************************************/
 
