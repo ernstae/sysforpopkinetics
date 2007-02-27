@@ -45,7 +45,8 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   //--------------------------------------------------------------------------------------
   // Attributes that are required when <pop_analysis::is_estimation> is "yes".
   //
-  // * approximation = {fo, foce, laplace}
+  // * approximation = {fo, foce, laplace, std_two_stage, global_two_stage,
+  // *                  iterative_two_stage, nonparametric}
   // * pop_size
   // * is_estimation = {yes, no}
   //--------------------------------------------------------------------------------------
@@ -77,6 +78,8 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	setApproximation( GLOBAL_TWO_STAGE );
       else if( XMLString::equals( xml_approx, XML.X_ITERATIVE_TWO_STAGE ) )
 	setApproximation( ITERATIVE_TWO_STAGE );
+      else if( XMLString::equals( xml_approx, XML.X_NONPARAMETRIC ) )
+	myIsNonparam = true;
       else
 	{
 	  char mess[ SpkCompilerError::maxMessageLen() ];
@@ -164,6 +167,186 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	      myPopEpsilon = myIndEpsilon;
 	    }
 	}
+    }
+
+  //---------------------------------------------------------------------------------------
+  // Elements that are required when <pop_analysis::approximation> is "nonparametric".
+  //
+  // * nonparametric_info
+  //
+  // Elements that are required in <nonparametric_info>
+  //
+  // * measure_points_in
+  //
+  // Elements that are required in <measure_points_in>
+  //
+  // * auto_generate_method = {grid, random_uniform}
+  //
+  // Attributes that are required when <auto_generate_method> = "grid"
+  //
+  // * points_per_dimension
+  //
+  // Attributes that are required when <auto_generate_method> = "random_uniform"
+  //
+  // * number_of_points
+  // * seed
+  //---------------------------------------------------------------------------------------
+  if( myIsNonparam )
+    {
+      DOMNodeList * nonparametric_info_list = pop_analysis->getElementsByTagName( XML.X_NONPARAMETRIC_INFO );
+      if( nonparametric_info_list->getLength() > 1 )
+        {
+          char mess[ SpkCompilerError::maxMessageLen() ];
+          snprintf( mess, 
+                    SpkCompilerError::maxMessageLen(),
+                    "Multiple <%s> elements found in the sourceML document.", XML.C_NONPARAMETRIC_INFO );
+          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+          throw e;
+        }
+      if( nonparametric_info_list->getLength() < 1 )
+        {
+          char mess[ SpkCompilerError::maxMessageLen() ];
+          snprintf( mess, 
+                    SpkCompilerError::maxMessageLen(),
+                    "Missing <%s> element.", XML.C_NONPARAMETRIC_INFO );
+          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+          throw e;
+        }
+
+      DOMElement * nonparametric_info = dynamic_cast<DOMElement*>( nonparametric_info_list->item(0) );
+      DOMNodeList * measure_points_in_list = nonparametric_info->getElementsByTagName( XML.X_MEASURE_POINTS_IN );
+      if( measure_points_in_list->getLength() > 1 )
+        {
+          char mess[ SpkCompilerError::maxMessageLen() ];
+          snprintf( mess,
+                    SpkCompilerError::maxMessageLen(),
+                    "Multiple <%s> child elements found under <%s>.", 
+                    XML.C_MEASURE_POINTS_IN, XML.C_NONPARAMETRIC_INFO );
+          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+          throw e;
+        }
+      if( measure_points_in_list->getLength() < 1 )
+        {
+          char mess[ SpkCompilerError::maxMessageLen() ];
+          snprintf( mess,
+                    SpkCompilerError::maxMessageLen(),
+                    "Missing <%s> child under <%s>.", 
+                    XML.C_MEASURE_POINTS_IN, XML.C_NONPARAMETRIC_INFO );
+          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+          throw e;
+        }
+      DOMElement * measure_points_in = dynamic_cast<DOMElement*>( measure_points_in_list->item(0) );
+
+      if( measure_points_in->hasAttribute( XML.X_AUTO_GENERATE_METHOD ) )
+        {
+          const XMLCh* xml_auto_generate_method = measure_points_in->getAttribute( XML.X_AUTO_GENERATE_METHOD );
+          if( XMLString::equals( xml_auto_generate_method, XML.X_GRID ) )
+            {
+              setApproximation( NONPARAM_GRID );
+
+              const XMLCh* xml_points_per_dimension;
+              if( measure_points_in->hasAttribute( XML.X_POINTS_PER_DIMENSION ) )
+                {
+                  xml_points_per_dimension = measure_points_in->getAttribute( XML.X_POINTS_PER_DIMENSION );
+                  if( XMLString::stringLen( xml_points_per_dimension ) > 0 )
+                    {
+                      if( !XMLString::textToBin( xml_points_per_dimension, myNonparamGridMeasurePointPerSideIn ) )
+                        {
+                          char mess[ SpkCompilerError::maxMessageLen() ];
+                          snprintf( mess, 
+                                    SpkCompilerError::maxMessageLen(),
+                                    "Invalid <%s::%s> attribute value: \"%s\".", 
+                                    XML.C_MEASURE_POINTS_IN, 
+                                    XML.C_POINTS_PER_DIMENSION, 
+                                   XMLString::transcode( xml_points_per_dimension ) );
+                          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+                                                  __LINE__, __FILE__);
+                          throw e;
+                        }
+                      if( myNonparamGridMeasurePointPerSideIn < 1 )
+                        {
+                          char mess[ SpkCompilerError::maxMessageLen() ];
+                          snprintf( mess, 
+                                    SpkCompilerError::maxMessageLen(),
+                                    "Invalid <%s::%s> attribute value: \"%s\".  Value must be greater than zero.", 
+                                    XML.C_MEASURE_POINTS_IN, XML.C_POINTS_PER_DIMENSION, XMLString::transcode( xml_points_per_dimension )  );
+                          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+                                                  __LINE__, __FILE__);
+                          throw e;
+                        }
+        	    }
+        	}
+            }
+          else
+            {
+              setApproximation( NONPARAM_RANDOM_UNIFORM );
+
+              const XMLCh* xml_number_of_points;
+              if( measure_points_in->hasAttribute( XML.X_NUMBER_OF_POINTS ) )
+                {
+                  xml_number_of_points = measure_points_in->getAttribute( XML.X_NUMBER_OF_POINTS );
+                  if( XMLString::stringLen( xml_number_of_points ) > 0 )
+                    {
+                      if( !XMLString::textToBin( xml_number_of_points, myNonparamRandomMeasurePointIn ) )
+                        {
+                          char mess[ SpkCompilerError::maxMessageLen() ];
+                          snprintf( mess, 
+                                    SpkCompilerError::maxMessageLen(),
+                                    "Invalid <%s::%s> attribute value: \"%s\".", 
+                                    XML.C_MEASURE_POINTS_IN, 
+                                    XML.C_NUMBER_OF_POINTS, 
+                                   XMLString::transcode( xml_number_of_points ) );
+                          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+                                                  __LINE__, __FILE__);
+                          throw e;
+                        }
+                      if( myNonparamRandomMeasurePointIn < 1 )
+                        {
+                          char mess[ SpkCompilerError::maxMessageLen() ];
+                          snprintf( mess, 
+                                    SpkCompilerError::maxMessageLen(),
+                                    "Invalid <%s::%s> attribute value: \"%s\".  Value must be greater than zero.", 
+                                    XML.C_MEASURE_POINTS_IN, XML.C_NUMBER_OF_POINTS, XMLString::transcode( xml_number_of_points )  );
+                          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+                                                  __LINE__, __FILE__);
+                          throw e;
+                        }
+        	    }
+        	}
+
+              const XMLCh* xml_seed;
+              if( measure_points_in->hasAttribute( XML.X_SEED ) )
+                {
+                  xml_seed = measure_points_in->getAttribute( XML.X_SEED );
+                  if( XMLString::stringLen( xml_seed ) > 0 )
+                    {
+                      if( !XMLString::textToBin( xml_seed, mySeed ) )
+                        {
+                          char mess[ SpkCompilerError::maxMessageLen() ];
+                          snprintf( mess, 
+                                    SpkCompilerError::maxMessageLen(),
+                                    "Invalid <%s::%s> attribute value: \"%s\".", 
+                                    XML.C_MEASURE_POINTS_IN, 
+                                    XML.C_SEED, 
+                                   XMLString::transcode( xml_seed ) );
+                          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, 
+                                                  __LINE__, __FILE__);
+                          throw e;
+                        }
+        	    }
+        	}
+            }
+        }
+      else
+        {
+          char mess[ SpkCompilerError::maxMessageLen() ];
+          snprintf( mess,
+                    SpkCompilerError::maxMessageLen(),
+                    "Missing <%s> child under <%s>.", 
+                    XML.C_AUTO_GENERATE_METHOD, XML.C_MEASURE_POINTS_IN );
+          SpkCompilerException e( SpkCompilerError::ASPK_SOURCEML_ERR, mess, __LINE__, __FILE__ );
+          throw e;
+        }
     }
 
   //---------------------------------------------------------------------------------------
@@ -1010,7 +1193,6 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
   // <simulation>
   //-------------------------------------------
   myIsSimulate = false;
-  mySeed       = 0;
   DOMNodeList * simulations = pop_analysis->getElementsByTagName( XML.X_SIMULATION );
   if( simulations->getLength() > 0 )
     {
@@ -1025,6 +1207,7 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
 	  throw e;
 	}
       myIsSimulate = true;
+      mySeed       = 0;
       DOMElement* simulation = dynamic_cast<DOMElement*>( simulations->item(0) );
       if( !simulation->hasAttribute( XML.X_SEED ) )
 	{

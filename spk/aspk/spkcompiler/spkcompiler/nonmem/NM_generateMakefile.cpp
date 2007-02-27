@@ -77,8 +77,8 @@ void NonmemTranslator::generateMakefile() const
   }
   oMakefile << endl;                                        
 
-  oMakefile << "LIBS      = -lspkpred -lspk -lQN01Box";
-  oMakefile << (myIsMonte? " -lgsl" : "" ) << " -llapack -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c -lcln -lginac" << (myIsIdent? " -lbad -lbap -lbav -lba0 -lgsl -lgslcblas" : "" ) << endl;
+  oMakefile << "LIBS      = -lspkpred -lspk -lnon_par -lmat2cpp -lQN01Box";
+  oMakefile << " -lgsl -llapack -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c -lcln -lginac" << (myIsIdent? " -lbad -lbap -lbav -lba0 -lgslcblas" : "" ) << endl;
   oMakefile << endl;
 
   oMakefile << "COMMON_INCLUDE = \\" << endl;

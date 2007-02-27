@@ -64,54 +64,57 @@ const char* NonmemTranslator::fResult_xml                  ( "result.xml" );
 const char* NonmemTranslator::fCheckpoint_xml              ( "checkpoint.xml" );
 
 NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
-  : ClientTranslator        ( sourceIn, dataIn ),
-    myDescription           ( NULL ),
-    myModelSpec             ( PRED ),
-    myTrans                 ( TRANS1 ),
-    myIsEstimate            ( true ),
-    myIsSimulate            ( false ),
-    myIsIdent               ( false ),
-    myIsMonte               ( false ),
-    myIsStat                ( false ),
-    mySubproblemsN          ( 1 ),
-    myIntegMethod           ( PLAIN ),
-    myIntegNumberEvals      ( 1 ), // this is a vector
-    myIntegNEvals           ( 1 ),
-    myIsPosthoc             ( true ),
-    myIsRestart             ( false ),
-    myIndWriteCheckpoint    ( true ),
-    myPopWriteCheckpoint    ( true ),
-    myThetaLen              ( 0 ),
-    myOmegaDim              ( 0 ),                 //valarray
-    myOmegaOrder            ( 0 ),                 //valarray
-    myOmegaStruct           ( Symbol::TRIANGLE ),  //valarray
-    myOmegaSameAsPrev       ( false ),             //valarray
-    mySigmaDim              ( 0 ),                 //valarray
-    mySigmaOrder            ( 0 ),                 //valarray
-    mySigmaStruct           ( Symbol::TRIANGLE ),  //valarray
-    mySigmaSameAsPrev       ( false ),             //valarray
-    myEtaLen                ( 0 ),
-    myEpsLen                ( 0 ),
-    mySigDigits             ( 3 ),
-    myPopMitr               ( 100 ),
-    myIndMitr               ( 100 ),
-    myPopEpsilon            ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
-    myIndEpsilon            ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
-    myPopTraceLevel         ( 1 ),
-    myIndTraceLevel         ( 1 ),
-    mySeed                  ( 0 ),
-    myCovForm               ( "RSR" ), // default for population level
-    myIsStderr              ( true ),
-    myIsCorrelation         ( true ),
-    myIsCov                 ( true ),
-    myIsInvCov              ( true ),
-    myIsConfidence          ( true ),
-    myIsCoefficient         ( true ),
-    myRecordNums            ( 1 ),
-    myCompModel             ( NULL ),
-    myIsMissingCmt          ( true ),
-    myIsMissingPcmt         ( true ),
-    myIsMissingRate         ( true )
+  : ClientTranslator                    ( sourceIn, dataIn ),
+    myDescription                       ( NULL ),
+    myModelSpec                         ( PRED ),
+    myTrans                             ( TRANS1 ),
+    myIsEstimate                        ( true ),
+    myIsSimulate                        ( false ),
+    myIsIdent                           ( false ),
+    myIsNonparam                        ( false ),
+    myNonparamGridMeasurePointPerSideIn ( 0 ),
+    myNonparamRandomMeasurePointIn      ( 0 ),
+    myIsMonte                           ( false ),
+    myIsStat                            ( false ),
+    mySubproblemsN                      ( 1 ),
+    myIntegMethod                       ( PLAIN ),
+    myIntegNumberEvals                  ( 1 ), // this is a vector
+    myIntegNEvals                       ( 1 ),
+    myIsPosthoc                         ( true ),
+    myIsRestart                         ( false ),
+    myIndWriteCheckpoint                ( true ),
+    myPopWriteCheckpoint                ( true ),
+    myThetaLen                          ( 0 ),
+    myOmegaDim                          ( 0 ),                 //valarray
+    myOmegaOrder                        ( 0 ),                 //valarray
+    myOmegaStruct                       ( Symbol::TRIANGLE ),  //valarray
+    myOmegaSameAsPrev                   ( false ),             //valarray
+    mySigmaDim                          ( 0 ),                 //valarray
+    mySigmaOrder                        ( 0 ),                 //valarray
+    mySigmaStruct                       ( Symbol::TRIANGLE ),  //valarray
+    mySigmaSameAsPrev                   ( false ),             //valarray
+    myEtaLen                            ( 0 ),
+    myEpsLen                            ( 0 ),
+    mySigDigits                         ( 3 ),
+    myPopMitr                           ( 100 ),
+    myIndMitr                           ( 100 ),
+    myPopEpsilon                        ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
+    myIndEpsilon                        ( pow    ( 10.0, -(mySigDigits+1.0) ) ),
+    myPopTraceLevel                     ( 1 ),
+    myIndTraceLevel                     ( 1 ),
+    mySeed                              ( 0 ),
+    myCovForm                           ( "RSR" ), // default for population level
+    myIsStderr                          ( true ),
+    myIsCorrelation                     ( true ),
+    myIsCov                             ( true ),
+    myIsInvCov                          ( true ),
+    myIsConfidence                      ( true ),
+    myIsCoefficient                     ( true ),
+    myRecordNums                        ( 1 ),
+    myCompModel                         ( NULL ),
+    myIsMissingCmt                      ( true ),
+    myIsMissingPcmt                     ( true ),
+    myIsMissingRate                     ( true )
 {
   table = ClientTranslator::getSymbolTable();
 

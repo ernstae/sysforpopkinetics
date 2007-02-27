@@ -390,7 +390,7 @@ void NonmemTranslator::generateNonmemParsNamespace() const
   oNonmemPars << "   //-------------------------------------------" << endl;
   oNonmemPars << "   // Data Simulation" << endl;
   oNonmemPars << "   //-------------------------------------------" << endl;  
-  if( myIsSimulate )
+  if( myIsSimulate || myIsNonparam )
     {
       oNonmemPars << "   // The seed for data simulation." << endl;
       oNonmemPars << "   const int seed = " << mySeed << ";" << endl;
@@ -453,7 +453,15 @@ void NonmemTranslator::generateNonmemParsNamespace() const
         }
       oNonmemPars << " };" << endl;
       oNonmemPars << "   const std::valarray<bool> noDose( c_noDose, " << n << " );" << endl;
+      oNonmemPars << endl;
     }
+
+  oNonmemPars << "   //-------------------------------------------" << endl;
+  oNonmemPars << "   // Nonparametric Estimation Information" << endl;
+  oNonmemPars << "   //-------------------------------------------" << endl;  
+  oNonmemPars << "   const int nBMeasurePointIn       = " << myNonparamRandomMeasurePointIn << ";" << endl;  
+  oNonmemPars << "   const int nBMeasurePointPerDimIn = " << myNonparamGridMeasurePointPerSideIn << ";" << endl;
+  oNonmemPars << endl;
 
   oNonmemPars << "};" << endl;
   oNonmemPars << "#endif" << endl;

@@ -42,6 +42,11 @@ struct XmlConstants{
   XMLCh* X_APPROXIMATION;
 
   /** C array version. */
+  static const char * C_AUTO_GENERATE_METHOD;
+  /** XMLCh array version. */
+  XMLCh* X_AUTO_GENERATE_METHOD;
+
+  /** C array version. */
   static const char * C_BLOCK;
   /** XMLCh array version. */
   XMLCh* X_BLOCK;
@@ -386,6 +391,11 @@ struct XmlConstants{
   XMLCh* X_MDV;
 
   /** C array version. */
+  static const char * C_MEASURE_POINTS_IN;
+  /** XMLCh array version. */
+  XMLCh* X_MEASURE_POINTS_IN;
+
+  /** C array version. */
   static const char * C_MESSAGE;
   /** XMLCh array version. */
   XMLCh* X_MESSAGE;
@@ -446,6 +456,21 @@ struct XmlConstants{
   XMLCh* X_NONMEM;
 
   /** C array version. */
+  static const char * C_NONPARAMETRIC;
+  /** XMLCh array version. */
+  XMLCh* X_NONPARAMETRIC;
+
+  /** C array version. */
+  static const char * C_NONPARAMETRIC_INFO;
+  /** XMLCh array version. */
+  XMLCh* X_NONPARAMETRIC_INFO;
+
+  /** C array version. */
+  static const char * C_NONPARAMETRIC_RESULT;
+  /** XMLCh array version. */
+  XMLCh* X_NONPARAMETRIC_RESULT;
+
+  /** C array version. */
   static const char * C_NPARAMETERS;
   /** XMLCh array version. */
   XMLCh* X_NPARAMETERS;
@@ -454,6 +479,11 @@ struct XmlConstants{
   static const char * C_NUMBER_EVAL;
   /** XMLCh array version. */
   XMLCh* X_NEMBER_EVAL;
+
+  /** C array version. */
+  static const char * C_NUMBER_OF_POINTS;
+  /** XMLCh array version. */
+  XMLCh* X_NUMBER_OF_POINTS;
 
   /** C array version. */
   static const char * C_NUMBEREVAL;
@@ -499,6 +529,11 @@ struct XmlConstants{
   static const char * C_POINTONE;
   /** XMLCh array version. */
   XMLCh* X_POINTONE;
+
+  /** C array version. */
+  static const char * C_POINTS_PER_DIMENSION;
+  /** XMLCh array version. */
+  XMLCh* X_POINTS_PER_DIMENSION;
 
   /** C array version. */
   static const char * C_POSITION;
@@ -589,6 +624,11 @@ struct XmlConstants{
   static const char * C_PRESENTATION_DATA;
   /** XMLCh array version. */
   XMLCh* X_PRESENTATION_DATA;
+
+  /** C array version. */
+  static const char * C_RANDOM_UNIFORM;
+  /** XMLCh array version. */
+  XMLCh* X_RANDOM_UNIFORM;
 
   /** C array version. */
   static const char * C_ROW;
