@@ -19,8 +19,11 @@
 #include "pop_monteTest.h"
 #include "ind_mdvTest.h"
 #include "pop_mdvTest.h"
+#include "pop_mdvTest.h"
 #include "ind_subprobTest.h"
 #include "pop_subprobTest.h"
+#include "pop_nonparamMethodGridTest.h"
+#include "pop_nonparamMethodRandomUniformTest.h"
 #include "pop_twoStageMethodTest.h"
 #include "CompartmentInfoTest.h"
 #include "CompModelInfoTest.h"
@@ -116,6 +119,10 @@ int main( int argc, const char * argv[] )
   // to repeat the whole process.
   master[ "ind_subprobTest" ] = ind_subprobTest::suite();
   master[ "pop_subprobTest" ] = pop_subprobTest::suite();
+
+  // tests for NonmemTranslator: ability to handle a nonparametric method requests 
+  master[ "pop_nonparamMethodGridTest" ]          = pop_nonparamMethodGridTest::suite();
+  master[ "pop_nonparamMethodRandomUniformTest" ] = pop_nonparamMethodRandomUniformTest::suite();
 
   // test for NonmemTranslator: ability to handle a two-stage method request 
   master[ "pop_twoStageMethodTest" ] = pop_twoStageMethodTest::suite();

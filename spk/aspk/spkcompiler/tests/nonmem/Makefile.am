@@ -81,6 +81,10 @@ testall_SOURCES      = \
 	               pop_fixedParaTest.h \
 	               pop_subprobTest.cpp \
                        pop_subprobTest.h \
+	               pop_nonparamMethodGridTest.cpp \
+                       pop_nonparamMethodGridTest.h \
+	               pop_nonparamMethodRandomUniformTest.cpp \
+                       pop_nonparamMethodRandomUniformTest.h \
 	               pop_twoStageMethodTest.cpp \
                        pop_twoStageMethodTest.h \
                        pop_advan6Test.cpp \
