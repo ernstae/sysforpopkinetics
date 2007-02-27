@@ -41,6 +41,9 @@
 // CppAD header files.
 #include <CppAD/CppAD.h>
 
+// GiNaC computer algebra library header files.
+#include <ginac/ginac.h>
+
 using SPK_VA::valarray;
 
 
@@ -59,6 +62,12 @@ void doubleToScalar( const double& doubleIn, Scalar& scalarOut )
   scalarOut = doubleIn;
 }
 
+template<>
+void doubleToScalar< CppAD::AD< CppAD::AD<double> > >( const double& doubleIn, CppAD::AD< CppAD::AD<double> >& scalarOut )
+{
+  scalarOut = CppAD::AD<double>( CppAD::AD<double>( doubleIn ) );
+}
+
 
 /*------------------------------------------------------------------------
  * Template function instantiations.
@@ -67,4 +76,8 @@ void doubleToScalar( const double& doubleIn, Scalar& scalarOut )
 template void doubleToScalar( const double& doubleIn, double& scalarOut );
 
 template void doubleToScalar( const double& doubleIn, CppAD::AD<double>& scalarOut );
+
+template void doubleToScalar( const double& doubleIn, CppAD::AD< CppAD::AD<double> >& scalarOut );
+
+template void doubleToScalar( const double& doubleIn, GiNaC::ex& scalarOut );
 
