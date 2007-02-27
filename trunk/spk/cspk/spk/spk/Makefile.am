@@ -126,20 +126,20 @@ libspk_a_SOURCES = \
 	scalarToDouble.cpp \
 	scalarToDoubleArray.cpp \
 	simulate.cpp \
-	statistics.cpp \
-	StatusList.cpp \
-	subtract.cpp \
-	symmetrize.cpp \
+	spk_non_par.cpp \
 	SpkError.cpp \
 	SpkException.cpp \
 	SpkModel.cpp \
 	SpkWarning.cpp \
+	statistics.cpp \
+	StatusList.cpp \
+	subtract.cpp \
+	symmetrize.cpp \
 	System.cpp \
 	transpose.cpp \
 	transposeDerivative.cpp \
 	transposeRowBlocks.cpp \
 	twoStageMethod.cpp \
-	spk_non_par.cpp \
 	UTranTimesSymKronSymTimesU.cpp \
 	UTranTimesSymKronSymTimesU_x.cpp \
 	WarningsManager.cpp \
@@ -252,6 +252,7 @@ libspk_a_SOURCES = \
 	scalarToDouble.h \
 	scalarToDoubleArray.h \
 	simulate.h \
+	spk_non_par.h \
 	Spk.h \
 	SpkError.h \
 	SpkException.h \
@@ -383,6 +384,7 @@ pkginclude_HEADERS = \
 	scalarToDouble.h \
 	scalarToDoubleArray.h \
 	simulate.h \
+	spk_non_par.h \
 	Spk.h \
 	SpkError.h \
 	SpkException.h \
