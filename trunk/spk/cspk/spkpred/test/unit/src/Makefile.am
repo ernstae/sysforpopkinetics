@@ -47,7 +47,9 @@ AM_LDFLAGS  = \
 	-lbav \
 	-lba0 \
 	-lgsl \
-	-lgslcblas
+	-lgslcblas \
+	-lnon_par \
+	-lmat2cpp
 
 testall_SOURCES = \
 	calcGroebnerBasisTest.cpp \
@@ -62,6 +64,7 @@ testall_SOURCES = \
 	OdePredBaseTest.cpp \
 	PopPredModelTest.cpp \
 	PopPredModelBaseTest.cpp \
+	predNonparamMethodTest.cpp \
 	predTwoStageMethodTest.cpp \
 	testall.cpp \
 	calcGroebnerBasisTest.h \
@@ -76,6 +79,7 @@ testall_SOURCES = \
 	OdePredBaseTest.h \
 	PopPredModelTest.h \
 	PopPredModelBaseTest.h \
+	predNonparamMethodTest.h \
 	predTwoStageMethodTest.h \
 	$(top_builddir)/config.h
 
@@ -92,5 +96,6 @@ pkginclude_HEADERS = \
 	OdePredBaseTest.h \
 	PopPredModelTest.h \
 	PopPredModelBaseTest.h \
+	predNonparamMethodTest.h \
 	predTwoStageMethodTest.h \
 	@top_builddir@/config.h

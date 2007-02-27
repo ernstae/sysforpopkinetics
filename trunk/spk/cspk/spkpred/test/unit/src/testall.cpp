@@ -15,6 +15,7 @@
 #include "OdePredBaseTest.h"
 #include "PopPredModelTest.h"
 #include "PopPredModelBaseTest.h"
+#include "predNonparamMethodTest.h"
 #include "predTwoStageMethodTest.h"
 
 using namespace std;
@@ -49,6 +50,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "OdePredBaseTest" ]           = OdePredBaseTest         ::suite();
   master_list_of_tests[ "PopPredModelTest" ]          = PopPredModelTest        ::suite();
   master_list_of_tests[ "PopPredModelBaseTest" ]      = PopPredModelBaseTest    ::suite();
+  master_list_of_tests[ "predNonparamMethodTest" ]    = predNonparamMethodTest  ::suite();
   master_list_of_tests[ "predTwoStageMethodTest" ]    = predTwoStageMethodTest  ::suite();
 
   //
