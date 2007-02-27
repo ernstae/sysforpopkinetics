@@ -29,12 +29,17 @@ class ClientTranslator{
   /**
    * Approximation method
    */
-  enum APPROX     { FO, 		/**< First Order */
-                    FOCE,               /**< Expected Hessian */
-                    LAPLACE,            /**< Modified Laplace */
-                    STD_TWO_STAGE,      /**< Standard two stage */
-                    GLOBAL_TWO_STAGE,   /**< Global two stage*/
-                    ITERATIVE_TWO_STAGE /**< Iterative two stage */
+  enum APPROX     { FO, 		            /**< First Order */
+                    FOCE,                           /**< Expected Hessian */
+                    LAPLACE,                        /**< Modified Laplace */
+                    STD_TWO_STAGE,                  /**< Standard two stage */
+                    GLOBAL_TWO_STAGE,               /**< Global two stage*/
+                    ITERATIVE_TWO_STAGE,            /**< Iterative two stage */
+                    MAP_BAYES_STANDARD_TWO_STAGE,   /**< Standard two stage with Bayesian objective */ 
+                    MAP_BAYES_GLOBAL_TWO_STAGE,	    /**< Global two stage with Bayesian objective*/    
+                    MAP_BAYES_ITERATIVE_TWO_STAGE,  /**< Iterative two stage with Bayesian objective */
+                    NONPARAM_GRID,                  /**< Nonparametic with grid starting points */
+                    NONPARAM_RANDOM_UNIFORM         /**< Nonparametic with random starting points */
                   };
   /** Likelihood evaluation method. */
   enum INTEG_METHOD { ADAPT, GRID, PLAIN, MISER, VEGAS };                                                                                
