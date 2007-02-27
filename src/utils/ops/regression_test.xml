@@ -53,10 +53,16 @@
     <!--job>972</job--><!-- Population POP041, Argatroban 1 cpt ODE -->
     <!--job>961</job--><!-- Population POP042, Argatroban 1 cpt ODE -->
     <!--job>969</job--><!-- Very expensive! 30 minutes! Population POP043, Argatroban 1 cpt ODE -->
+    <job>1947</job><!-- Population POP065, Ketorolac 2 cpt ODE -->
     <job>962</job><!-- Population POP045, Argatroban 1 cpt ODE -->
     <job>993</job><!-- Individual IND035, 2 Comp ODE -->  
     <job>1401</job><!-- 1000 point Vegas: True likelihood is 99.4385 -->
     <job>1405</job><!-- 32 by 32 Grid: True likelihood is 99.4385 -->
+    <job>1413</job><!-- Population, Standard Two-Stage (STS), Rail -->
+    <job>4071</job><!-- Population, Iterative Two-Stage (ITS), Rail -->
+    <job>1418</job><!-- Population, Standard Two-Stage (STS), Argatroban 1 cpt ODE -->
+    <job>1516</job><!-- Population, Iterative Two-Stage (ITS), Argatroban 1 cpt Analytic -->
+    <job>1519</job><!-- Population, Global Two-Stage (GTS), Argatroban 1 cpt Analytic -->
     <ignore>elapsedtime</ignore>
   </srun>
   <serr>
