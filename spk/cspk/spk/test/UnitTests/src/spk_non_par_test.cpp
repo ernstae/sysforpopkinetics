@@ -53,6 +53,7 @@ ySim  : simulate measurement values
 */
 // *************************************************************************
 # include <cmath>
+# include <string>
 # include <CppAD/CppAD.h>
 # include <gsl/gsl_rng.h>
 # include <gsl/gsl_randist.h>
@@ -61,6 +62,7 @@ ySim  : simulate measurement values
 
 # include "../../../spk/SpkModel.h"
 # include "../../../spk/spk_non_par.h"
+# include "../../../spk/WarningsManager.h"
 
 # include "spk_non_par_test.h"
 // *************************************************************************
@@ -566,6 +568,19 @@ void spk_non_par_test::polynomial_fit_test(void)
 	bool fit_variance = false; // variance is a fixed effect
 
 	one_fit(sigma, q, m, M, n, J, fit_variance);
+
+	// Uncomment these statements to see the warnings that are
+	// generated for this test because its measure points are
+	// constrained by their bounds.
+	/*
+	using namespace std;
+	string warnings;
+	WarningsManager::getAllWarnings( warnings );
+	cout << "########################################" << endl;
+	cout << warnings;
+	cout << "########################################" << endl;
+	*/
+
 }
 
 //--------------------------------------------------------------------
