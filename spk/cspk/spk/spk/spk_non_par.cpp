@@ -431,6 +431,7 @@ $end
 # include "SpkModel.h"
 # include "SpkException.h"
 # include "SpkError.h"
+# include "WarningsManager.h"
 
 namespace { // define the class Like in the empty namespace
 
@@ -596,6 +597,12 @@ public:
 	} 
 };
 
+void checkMeasurePoints(
+  double                   epsilon_convergence_criteria,
+  mat2cpp::matrix<double>& xLow,
+  mat2cpp::matrix<double>& xUp,
+  mat2cpp::matrix<double>& X );
+
 } // end of empty namespace
 
 extern void spk_non_par(
@@ -721,5 +728,165 @@ extern void spk_non_par(
 		for(i = 0; i < M; i++)
 			ptr[ i + j * M ] = psi(i, 0);
 	}
+
+	// Check for measure points that are constrained
+	checkMeasurePoints( eps(0, 0), xLow, xUp, X );
+
 	return;
 }
+
+
+/*========================================================================
+ *
+ *
+ * Local Function Definitions
+ *
+ *
+ *========================================================================*/
+
+namespace // [Begin: unnamed namespace]
+{
+
+/*************************************************************************
+ *
+ * Function: checkMeasurePoints
+ *
+ *
+ * Checks the matrix of output measure points X to see if any of its
+ * elements is constrained by its corresponding lower or upper limit
+ * but not by both.
+ *
+ *************************************************************************/
+
+void checkMeasurePoints(
+  double                   epsilon_convergence_criteria,
+  mat2cpp::matrix<double>& xLow,
+  mat2cpp::matrix<double>& xUp,
+  mat2cpp::matrix<double>& X )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int nMeasurePoint = X.size1();
+  int nX            = X.size2();
+
+
+  //------------------------------------------------------------
+  // Check the measure points to see if any are constrained.
+  //------------------------------------------------------------
+
+  // Prepare a warning message that will only be issued if there
+  // are constrained measure points.
+  ostringstream warning;
+
+  int j;
+  int k;
+  double X_j_k;
+  double maxDistFromBound_k;
+
+  int colWidth1 = 14 - 2;
+  int colWidth2 = 9;
+  int colWidth3 = 13 + 2;
+  int colWidth4 = 12;
+  string colSpacer = "  ";
+
+  warning << "The following measure points are at or near their bounds." << endl;
+  warning << endl;
+  warning << "Measure Point  Parameter       Value            Bound"      << endl;
+  warning << "-------------  ---------  ---------------  ---------------" << endl;
+
+  // Check each of the measure point's elements to see if they are
+  // constrained by their lower or upper bound;
+  bool isAnyXAtOrNearLimit = false;
+  bool printIndex;
+  for ( j = 0; j < nMeasurePoint; j++ )
+  {
+    printIndex = true;
+
+    for ( k = 0; k < nX; k++ )
+    {
+      // Don't give a warning if the value is constrained by both
+      // of its bounds.
+      if ( xLow( 0, k ) != xUp( 0, k ) )
+      {
+        // Set the maximum distance allowed from either bound.
+        maxDistFromBound_k = 
+          epsilon_convergence_criteria * ( xUp( 0, k ) - xLow( 0, k ) );
+    
+        X_j_k = X( j, k );
+    
+        // Give a warning if the value is within the maximum distance of
+        // either bound.
+        if ( X_j_k     - xLow( 0, k ) <= maxDistFromBound_k ||
+             xUp( 0, k ) - X_j_k      <= maxDistFromBound_k )
+        {
+          isAnyXAtOrNearLimit = true;
+    
+          // Column 1.
+          warning << setw( colWidth1 );
+          if ( printIndex )
+          {
+            warning << j + 1;
+          }
+          else
+          {
+            warning << "";
+          }
+          warning << colSpacer;
+    
+          // Column 2.
+          warning << setw( colWidth2 ) << k + 1 << colSpacer;
+    
+          // Column 3.
+          warning << setw( colWidth3 ) << scientific 
+                  << setprecision( 3 ) << X_j_k << colSpacer;
+    
+          // Column 4.
+          warning << colSpacer << colSpacer << setw( colWidth4 );
+          if ( X_j_k == xLow( 0, k ) )
+          {
+            warning << "Lower (at)  ";
+          }
+          else if ( X_j_k == xUp( 0, k ) )
+          {
+            warning << "Upper (at)  ";
+          }
+          else if ( xUp( 0, k ) - xLow( 0, k ) <= maxDistFromBound_k ) 
+          {
+            warning << "Both (near) ";
+          }
+          else if ( X_j_k - xLow( 0, k ) <= maxDistFromBound_k )
+          {
+            warning << "Lower (near)";
+          }
+          else
+          {
+            warning << "Upper (near)";
+          }
+    
+          warning << endl;
+    
+          printIndex = false;
+        }
+      }
+    }
+  }
+
+
+  //------------------------------------------------------------
+  // Issue a warning message if necessary.
+  //------------------------------------------------------------
+
+  // Only issue the warning message if at least one of the
+  // values is constrained.
+  if ( isAnyXAtOrNearLimit )
+  {
+    string warningStr = warning.str();
+    WarningsManager::addWarning( warningStr, __LINE__, __FILE__);
+  }
+}
+
+} // [End: unnamed namespace]
