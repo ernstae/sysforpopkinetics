@@ -226,6 +226,7 @@ my $dbpasswd = shift;
 my $mode     = shift;
 my $shost    = shift;
 my $sport    = shift;
+my $max_concurrent = shift;
 
 my $hostname = hostname();
 my $from = 'rfpksoft\@u.washington.edu';
@@ -234,7 +235,10 @@ my $alert = 'jjdu@u.washington.edu,ernst@u.washington.edu';
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.1.101:8081/";
 
-my $max_concurrent = 2;
+$max_concurrent = &getNumProcs() unless defined $max_concurrent;
+
+syslog("info","maximum concurrent jobs == $max_concurrent");
+
 my $concurrent = 0;
 
 my $service_root = "spkrun";
@@ -983,6 +987,23 @@ sub compress {
     close(FH);
     return $report;
 }
+
+
+sub getNumProcs {
+
+    my $numprocs = 0;
+
+    open (CPUinfo, "/proc/cpuinfo") || die "Couldn't open cpuinfo for reading\n";
+    while ( <CPUinfo> ) {
+        next unless /^processor.*:/;
+        $numprocs += (/^processor.*: (\d+)/);
+    }
+    close (CPUinfo);
+
+    return $numprocs;
+}
+
+
 # become a daemon
 Proc::Daemon::Init();
 
