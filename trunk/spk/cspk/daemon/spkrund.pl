@@ -460,8 +460,8 @@ sub escapeSpecialChars {
     my $raw = shift;
     my $xml = $raw;
     $xml =~ s/&/&amp;/g;
-    $xml =~ s/'/&apos;/g;
-    $xml =~ s/"/&quot;/g;
+    $xml =~ s/\'/&apos;/g;
+    $xml =~ s/\"/&quot;/g;
     $xml =~ s/</&lt;/g;
     $xml =~ s/>/&gt;/g;
     return $xml;
