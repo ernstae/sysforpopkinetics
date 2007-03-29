@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.io.*;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import javax.swing.JOptionPane;
 
 /** This class defines an object that reads two XML documents: Spk source file and Spk report file.
@@ -172,6 +173,26 @@ public class XMLReader
             {
                 analysis = (Element)pop_analysisList.item(0);
                 output.analysis = "population";
+                if(analysis.getAttribute("approximation").equals("nonparametric"))
+                {
+                    NodeList pointList = analysis.getElementsByTagName("measure_points_in");
+                    if(pointList.getLength() > 0)
+                    {
+                        Element point = (Element)pointList.item(0);
+                        output.nonparamMethod = point.getAttribute("auto_generate_method");
+                        if(output.nonparamMethod.equals("random_uniform"))
+                        {
+                            output.methodCode = "un";
+                            output.nonparamNumOfPoints = point.getAttribute("number_of_points");
+                            output.nonparamSeed = point.getAttribute("seed");
+                        }
+                        if(output.nonparamMethod.equals("grid"))
+                        {
+                            output.methodCode = "gn";
+                            output.nonparamPointsPerDim = point.getAttribute("points_per_dimension");
+                        }
+                    }
+                }
             }
             else if(ind_analysisList.getLength() > 0)
             {
@@ -393,19 +414,6 @@ public class XMLReader
             }
         }
         
-        // Get identifiability result
-        NodeList ident_resultList = spkreport.getElementsByTagName("identifiability_result");
-        if(ident_resultList.getLength() > 0)
-        {
-            Element ident_result = (Element)ident_resultList.item(0);
-            output.computingTimes = new String[1];
-            output.computingTimes[0] = ident_result.getAttribute("elapsedtime");
-            NodeList statusList = ident_result.getElementsByTagName("ident_status");
-            output.identifyStatus = statusList.item(0).getFirstChild().getNodeValue();
-            NodeList solutionList = ident_result.getElementsByTagName("ident_number_of_solutions");
-            output.identifySolutions = solutionList.item(0).getFirstChild().getNodeValue();
-        }
-        
         // Get individual analysis result
         NodeList ind_analysis_resultList = spkreport.getElementsByTagName("ind_analysis_result");
         if(ind_analysis_resultList.getLength() > 0)
@@ -415,6 +423,9 @@ public class XMLReader
             NodeList stat_resultList = ind_analysis_result.getElementsByTagName("ind_stat_result");     
             if(stat_resultList.getLength() > 0)
                 getStatisticsResult((Element)stat_resultList.item(0));
+            NodeList ident_resultList = ind_analysis_result.getElementsByTagName("ind_ident_result");
+            if(ident_resultList.getLength() > 0)
+                getIdentifiabilityResult((Element)ident_resultList.item(0));
         }        
         
         // Get persentation data result
@@ -428,6 +439,23 @@ public class XMLReader
             getOptTraceOut((Element)opt_trace_outList.item(0));        
     }
 
+    // Get identifiability result
+    private void getIdentifiabilityResult(Element ident_result)
+    {
+        output.computingTimes = new String[1];
+        output.computingTimes[0] = ident_result.getAttribute("elapsedtime");
+        NodeList seedList = ident_result.getElementsByTagName("seed");
+        NodeList valueList = ((Element)seedList.item(0)).getElementsByTagName("value");
+        if(valueList.getLength() > 0)
+            output.simulationSeed = valueList.item(0).getFirstChild().getNodeValue();
+        NodeList statusList = ident_result.getElementsByTagName("ind_ident_status");
+        output.identifyStatus = statusList.item(0).getFirstChild().getNodeValue();
+        NodeList solutionList = ident_result.getElementsByTagName("ind_ident_number_of_solutions");
+        valueList = ((Element)solutionList.item(0)).getElementsByTagName("value");
+        if(valueList.getLength() > 0)
+            output.identifySolutions = valueList.item(0).getFirstChild().getNodeValue();
+    }
+   
     // Get error message    
     private void getErrorMessage(Element error_message)
     {
@@ -507,9 +535,91 @@ public class XMLReader
             getTheta(pop_opt_result);
             getOmega(pop_opt_result);
             getSigma(pop_opt_result);
+            
+            // Get nonparametric result
+            NodeList nonparamList = pop_opt_result.getElementsByTagName("nonparametric_result");
+            if(nonparamList.getLength() > 0)
+            {
+                Element nonparametricResult = (Element)nonparamList.item(0);
+                getNonparametricResult(nonparametricResult);
+            }
         }
     }
       
+    // Get nonparametric result
+    private void getNonparametricResult(Element nonparametricResult)
+    {
+        // Get measure point in result
+        NodeList measurePointList = nonparametricResult.getElementsByTagName("measure_point_in");
+        Element element = (Element)measurePointList.item(0);
+        output.nonparamInPoints = element.getAttribute("number");
+        NodeList list = element.getElementsByTagName("theta_all_in");
+        String[] rows = ((Element)list.item(0)).getFirstChild().getNodeValue().trim().split("\n");
+        output.nonparamInTheta = new String[rows.length][];
+        for(int i = 0; i < rows.length; i++)
+            output.nonparamInTheta[i] = rows[i].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+        list = element.getElementsByTagName("omega_all_in");
+        int nBlock = list.getLength();
+        output.nonparamInOmega = new String[nBlock][][];
+        for(int i = 0; i < nBlock; i++)
+        {
+            rows = ((Element)list.item(i)).getFirstChild().getNodeValue().trim().split("\n");
+            output.nonparamInOmega[i] = new String[rows.length][];
+            for(int j = 0; j < rows.length; j++)
+                output.nonparamInOmega[i][j] = rows[j].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+        }
+        
+        // Get measure point out result
+        measurePointList = nonparametricResult.getElementsByTagName("measure_point_out");
+        element = (Element)measurePointList.item(0);
+        output.nonparamOutPoints = element.getAttribute("number");
+        list = element.getElementsByTagName("theta_all_out");
+        rows = ((Element)list.item(0)).getFirstChild().getNodeValue().trim().split("\n");
+        output.nonparamOutTheta = new String[rows.length][];
+        for(int i = 0; i < rows.length; i++)
+            output.nonparamOutTheta[i] = rows[i].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+        list = element.getElementsByTagName("omega_all_out");
+        nBlock = list.getLength();
+        output.nonparamOutOmega = new String[nBlock][][];
+        for(int i = 0; i < nBlock; i++)
+        {
+            rows = ((Element)list.item(i)).getFirstChild().getNodeValue().trim().split("\n");
+            output.nonparamOutOmega[i] = new String[rows.length][];
+            for(int j = 0; j < rows.length; j++)
+                output.nonparamOutOmega[i][j] = rows[j].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+        }
+        
+        // Get weight result
+        list = nonparametricResult.getElementsByTagName("weight_all_out");
+        output.nonparamWeight = ((Element)list.item(0)).getFirstChild().getNodeValue().trim().replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split("\n");
+        
+        // Get probability density result
+        list = nonparametricResult.getElementsByTagName("probability_density_all_out");
+        rows = ((Element)list.item(0)).getFirstChild().getNodeValue().trim().split("\n");
+        output.nonparamDensity = new String[rows.length][];
+        for(int i = 0; i < rows.length; i++)
+            output.nonparamDensity[i] = rows[i].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+        
+        // Get posterior mean result
+        list = nonparametricResult.getElementsByTagName("posterior_mean_out");
+        element = (Element)list.item(0);
+        list = element.getElementsByTagName("theta_all_out");
+        rows = ((Element)list.item(0)).getFirstChild().getNodeValue().trim().split("\n");
+        output.nonparamMeanTheta = new String[rows.length][];
+        for(int i = 0; i < rows.length; i++)
+            output.nonparamMeanTheta[i] = rows[i].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+        list = element.getElementsByTagName("omega_all_out");
+        nBlock = list.getLength();
+        output.nonparamMeanOmega = new String[nBlock][][];
+        for(int i =0; i < nBlock; i++)
+        {
+            rows = ((Element)list.item(i)).getFirstChild().getNodeValue().trim().split("\n");
+            output.nonparamMeanOmega[i] = new String[rows.length][];
+            for(int j = 0; j < rows.length; j++)
+                output.nonparamMeanOmega[i][j] = rows[j].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+        }
+    }
+    
     // Get population estimation result
     private void getIndEstimationResult(Element ind_analysis_result)  
     {
@@ -1055,7 +1165,7 @@ public class XMLReader
             output.dataAll = new double[nRows][nColumns];
             for(int i = 0; i < nRows; i++)
             {
-                elements = rows[i + 1].split(",");
+                elements = rows[i + 1].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
                 if(elements.length != nColumns)
                 {
                     JOptionPane.showMessageDialog(null, "An error was found in presentation data",
@@ -1078,7 +1188,7 @@ public class XMLReader
     
     /** Convert the data XML back to the original.
      * @param dataXML data XML as a String object.
-     * @param addLable true for adding labels, false for otherwise.
+     * @param addLabel true for adding labels, false for otherwise.
      * @return a String object containing the original data, null if failed.
      */
     public static String parseDataXML(String dataXML, boolean addLabel)
@@ -1249,10 +1359,10 @@ public class XMLReader
     // Format the data of type string
     private static String formatString(String number)
     {
-        String string = "";
+        StringBuffer stringBuffer = new StringBuffer();
         for(int i = 0; i < 12 - number.length(); i++)
-            string +=" ";
-        return string + number;
+            stringBuffer.append(" ");
+        return stringBuffer.append(number).toString();
     }
     
     // Format the data of type numeric 
@@ -1260,7 +1370,8 @@ public class XMLReader
     {
         if(number.equals("."))
             number += "0";
-        DecimalFormat f = new DecimalFormat("0.0000E00");
+        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        f.applyPattern("0.0000E00");
         return Utility.formatData(8, f.format(Double.parseDouble(number)));  
     }
     

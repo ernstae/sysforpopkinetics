@@ -189,7 +189,6 @@ public class Database {
                          modelVersion, 
                          source,
                          "",
-                         "author",
                          0L,
                          false,
                          false);
@@ -197,7 +196,7 @@ public class Database {
                                           ", has been added to the database.",  
                                           "Job submission information",
                                           JOptionPane.INFORMATION_MESSAGE);  
-                        
+                 
             // Disconnect to the database
             Spkdb.disconnect(con);
         }
@@ -239,7 +238,7 @@ public class Database {
     public String[][] getUserJobs(int maxNum, long leftOff)
     {
         // Prepare for the return
-        Vector jobList = new Vector();
+        Vector<String[]> jobList = new Vector<String[]>();
 
         try
         {
@@ -252,8 +251,8 @@ public class Database {
             long userId = userRS.getLong("user_id");
 
             // Get user jobs
-            ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff);
-            
+            ResultSet userJobsRS = Spkdb.userJobs(con, userId, maxNum, leftOff, null,
+                                                  null, null, null, null);
             // Set state_code conversion
             ResultSet stateRS = Spkdb.getStateTable(con);
             Properties state = new Properties();                
@@ -417,7 +416,7 @@ public class Database {
     public String[][] getUserModels(int maxNum, long leftOff)
     {
         // Prepare for the return
-        Vector modelList = new Vector();
+        Vector<String[]> modelList = new Vector<String[]>();
        
         try 
         {
@@ -604,7 +603,7 @@ public class Database {
     public String[][] getUserDatasets(int maxNum, long leftOff)
     {
         // Prepare for the return
-        Vector datasetList = new Vector();
+        Vector<String[]> datasetList = new Vector<String[]>();
         
         try
         {

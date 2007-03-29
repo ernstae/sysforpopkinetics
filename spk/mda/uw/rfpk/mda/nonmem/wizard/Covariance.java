@@ -253,8 +253,8 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
-            jRadioButton4.setEnabled(iterator.getIsInd());
-            jRadioButton5.setEnabled(iterator.getIsInd());
+            jRadioButton4.setEnabled(!iterator.analysis.equals("population"));
+            jRadioButton5.setEnabled(!iterator.analysis.equals("population"));
             if(iterator.getIsReload())
             {
                 String text = iterator.getReload().getProperty("COVARIANCE");

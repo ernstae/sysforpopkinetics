@@ -87,9 +87,34 @@ public class XMLWriter
             analysis.setAttribute("sig_digits", source.estimation[1]);
             analysis.setAttribute("mitr", source.estimation[2]);
             if(source.analysis.equals("population") || source.analysis.equals("two-stage") || 
-               source.analysis.equals("nonparametric"))
+               source.analysis.startsWith("nonparametric"))
             {
-                analysis.setAttribute("approximation", source.estimation[0]);
+                if(!source.analysis.startsWith("nonparametric"))
+                    analysis.setAttribute("approximation", source.estimation[0]);
+                else
+                {
+                    analysis.setAttribute("approximation", "nonparametric");
+                    Element nonparamInfo = docSource.createElement("nonparametric_info");
+                    analysis.appendChild(nonparamInfo);
+                    Element measurePointsIn = docSource.createElement("measure_points_in");
+                    nonparamInfo.appendChild(measurePointsIn);
+                    if(source.estimation[0].endsWith("uniform"))
+                    {
+                        measurePointsIn.setAttribute("auto_generate_method", "random_uniform");
+                        measurePointsIn.setAttribute("number_of_points", source.nonparamNumOfPoints);
+                        measurePointsIn.setAttribute("seed", source.nonparamSeed);
+                    }
+                    else if(source.estimation[0].endsWith("grid"))
+                    {
+                        measurePointsIn.setAttribute("auto_generate_method", "grid");
+                        measurePointsIn.setAttribute("points_per_dimension", source.nonparamPointsPerDim);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Method not found", "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 if(source.analysis.equals("population"))
                 {
                     if(source.estimation[0].equals("fo"))
@@ -98,7 +123,6 @@ public class XMLWriter
                     analysis.setAttribute("abort", source.estimation[4]);
                 }
             }
-            analysis.setAttribute("abort", source.estimation[4]);
         }
         else
         {
@@ -124,7 +148,9 @@ public class XMLWriter
             theta.setAttribute("length", source.nTheta);
             analysis.appendChild(theta);
             Element omega = docSource.createElement("omega");
-            omega.setAttribute("length", source.nEta);
+            omega.setAttribute("dimension", source.nEta);
+            omega.setAttribute("same_as_previous", "no");
+            omega.setAttribute("struct", "diagonal");
             analysis.appendChild(omega);
         }
         else
@@ -263,7 +289,7 @@ public class XMLWriter
     {
         if(source.omega != null)
         {
-            if(!source.analysis.equals("two-stage") || source.analysis.equals("nonparametric"))
+            if(!source.analysis.equals("two-stage") && !source.analysis.equals("nonparametric"))
             { 
                 for(int i = 0; i < source.omega.length; i++)
 	        {

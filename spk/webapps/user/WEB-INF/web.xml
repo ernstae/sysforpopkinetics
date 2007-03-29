@@ -1,11 +1,25 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
-      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-    version="2.4">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee        http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <context-param>
+        <description>The driver of the db</description>
+        <param-name>bugdb_driver</param-name>
+        <param-value>com.mysql.jdbc.Driver</param-value>
+    </context-param>
+    <context-param>
+        <description>The url of the db</description>
+        <param-name>bugdb_url</param-name>
+        <param-value>jdbc:mysql:/localhost:3306/bugs</param-value>
+    </context-param>
+    <context-param>
+        <description>The name of Bugzilla db user</description>
+        <param-name>bugdb_user</param-name>
+        <param-value>bugs</param-value>
+    </context-param>
+    <context-param>
+        <description>The password of Bugzilla db user</description>
+        <param-name>bugdb_password</param-name>
+        <param-value>locust17</param-value>
+    </context-param>
     <servlet>
         <servlet-name>invoker</servlet-name>
         <servlet-class>
@@ -26,7 +40,7 @@
     <!-- Used by Web Start jnlp file and other temporary files -->
     <context-param>
         <param-name>jnlp_directory</param-name>
-        <param-value>/home/jiaji/jakarta-tomcat-5.0.19/webapps/user/jnlp/</param-value>
+        <param-value>/home/jiaji/NetBeans_projects/WebProject/build/web/jnlp/</param-value>
         <description>The directory for the jnlp file and other temporary files</description>
     </context-param>
 
@@ -92,7 +106,7 @@
 
     <context-param>
         <param-name>bugzillaURL</param-name>
-        <param-value>http://192.168.2.2:8081/index.cgi</param-value>
+        <param-value>http://192.168.1.101:8081/index.cgi</param-value>
         <description>The URL of the Bugzilla main page</description>
     </context-param>
 

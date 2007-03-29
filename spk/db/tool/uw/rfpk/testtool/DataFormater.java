@@ -242,7 +242,7 @@ public class DataFormater extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        new DataFormater().show();
+        new DataFormater().setVisible(true);
     }
     
     

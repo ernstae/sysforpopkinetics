@@ -17,7 +17,7 @@ License can be found in the COPYING file in the root directory of this
 distribution.
 **********************************************************************/
 package uw.rfpk.beans;
-
+import javax.swing.JOptionPane;
 /**
  * User bean contains user information.
  * @author Jiaji Du
@@ -105,7 +105,7 @@ public class UserInfo implements java.io.Serializable
      */    
     public void setTester(String tester)
     {
-        this.tester = tester; 
+        this.tester = tester;
     }
         
     /** Sets developer.

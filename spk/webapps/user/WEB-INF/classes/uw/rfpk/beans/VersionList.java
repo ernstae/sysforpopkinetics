@@ -27,7 +27,7 @@ import rfpk.spk.spkdb.*;
 import uw.rfpk.rcs.Archive;
 
 /**
- * Get version list of a model or a dataset.
+ * Getting version list of a model or a dataset.
  * @author Jiaji
  */
 public class VersionList implements java.io.Serializable

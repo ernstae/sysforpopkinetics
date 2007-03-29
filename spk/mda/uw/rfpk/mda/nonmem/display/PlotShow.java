@@ -29,10 +29,12 @@ import java.util.Properties;
 import java.util.Comparator;
 import java.util.Arrays;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
-/** This class's instance processes scatterplot information and displays scatterplots.
+/** This class processes scatterplot information and displays scatterplots.
  *
  * @author  Jiaji Du
  */
@@ -69,7 +71,8 @@ public class PlotShow extends JFrame {
         DefaultListModel model = new DefaultListModel();
         jList1.setModel(model);
         dataList = new double[plotAll.length][][];
-        DecimalFormat f = new DecimalFormat("0.00E00");
+        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        f.applyPattern("0.00E00");
         for(int i = 0; i < plotAll.length; i++)
         {
             // Get data for the plots from the presentation data            
@@ -243,20 +246,19 @@ public class PlotShow extends JFrame {
             ArrayList split = (ArrayList)splitList.get(p);
         
             // Put data in double arrays, only one curve in the plot
-            double[][] dataX = new double[1][];    
-            double[][] dataY = new double[1][];
             String title = "";
             int columnX = alias.indexOf(tokens[4]);
             int columnY = alias.indexOf(tokens[2]);
+            double[] dataXAll, dataYAll; 
             
             if(plot[3] == null)
             {
-                dataX[0] = new double[data.length];
-                dataY[0] = new double[data.length];
+                dataXAll = new double[data.length];
+                dataYAll = new double[data.length];
                 for(int i = 0; i < data.length; i++)
                 {
-                    dataX[0][i] = data[i][columnX];
-                    dataY[0][i] = data[i][columnY];
+                    dataXAll[i] = data[i][columnX];
+                    dataYAll[i] = data[i][columnY];
                 }
             }
             else
@@ -265,18 +267,30 @@ public class PlotShow extends JFrame {
                 int n = Integer.parseInt(s.substring(0, s.length() - 1)) - 1;
                 Portion portion = (Portion)split.get(n); 
                 int length = portion.index2 - portion.index1;
-                dataX[0] = new double[length];
-                dataY[0] = new double[length];
+                dataXAll = new double[length];
+                dataYAll = new double[length];
                 for(int i = 0; i < length; i++) 
                 {
-                    dataX[0][i] = data[portion.index1 + i][columnX];
-                    dataY[0][i] = data[portion.index1 + i][columnY];                
+                    dataXAll[i] = data[portion.index1 + i][columnX];
+                    dataYAll[i] = data[portion.index1 + i][columnY];                
                 }      
                 title = "This plot is for " + tokens[5];
                 if(plot[3].length > 1)
                     title += " " + tokens[6];
             }
 
+            // Check for missing data values
+            double[][] dataOut = Utility.removeMissingValue(dataXAll, dataYAll, 0, dataXAll.length - 1);
+            if(dataOut == null)
+            {
+                JOptionPane.showMessageDialog(null, "Data missing for the plot.");
+                return;
+            }
+            double[][] dataX = new double[1][];    
+            double[][] dataY = new double[1][];
+            dataX[0] = dataOut[0];
+            dataY[0] = dataOut[1];
+            
             // Display the plot
             JFrame frame = new JFrame(); 
             Plotter plotter = new Plotter(dataX, dataY, title, tokens[4], tokens[2],

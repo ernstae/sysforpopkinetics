@@ -50,15 +50,34 @@ author: Jiaji Du
     value="Country Name missing" />
   <c:set var="isValid" value="false" />
 </c:if>
-<c:if test="${empty param.email}">
-  <c:set var="emailAddressError" scope="request"
-    value="Email address missing" />
-  <c:set var="isValid" value="false" />
-</c:if>
-<c:set target="${validUser}" property="company" value="${param.company}" />
-<c:set target="${validUser}" property="country" value="${param.country}" />
-<c:set target="${validUser}" property="state" value="${param.state}" />
-<c:set target="${validUser}" property="email" value="${param.email}" />
+<c:choose>
+  <c:when test="${empty param.email}">
+    <c:set var="emailAddressError" scope="request"
+      value="Email address missing" />
+    <c:set var="isValid" value="false" /> 
+  </c:when>
+  <c:otherwise>
+    <c:if test="${not empty initParam.bugdb_driver}">
+      <sql:setDataSource var="bugdb" scope="request"
+           driver="${initParam.bugdb_driver}"
+           url="${initParam.bugdb_url}"
+           user="${initParam.bugdb_user}"
+           password="${initParam.bugdb_password}" />
+      <c:if test="${param.email != bugLogin}">
+        <sql:query var="bugDb" dataSource="${bugdb}">
+           SELECT * FROM profiles
+           WHERE login_name = ?
+           <sql:param value="${param.email}" />
+        </sql:query>
+        <c:if test="${bugDb.rowCount != 0}">
+          <c:set var="emailAddressError" scope="request" 
+            value="Email address already used" />
+          <c:set var="isValid" value="false" />  
+        </c:if>
+      </c:if>
+    </c:if>
+  </c:otherwise>
+</c:choose>
 <c:choose>
   <c:when test="${isValid}">
       <sql:update>
@@ -74,6 +93,19 @@ author: Jiaji Du
           <sql:param value="${param.email}" />
           <sql:param value="${validUser.userId}" />
       </sql:update>
+      <c:if test="${not empty initParam.bugdb_driver}">
+        <sql:update dataSource="${bugdb}">
+          UPDATE profiles
+            SET login_name = ?
+            WHERE login_name = ?
+          <sql:param value="${param.email}" />
+          <sql:param value="${bugLogin}" />
+        </sql:update>
+      </c:if>
+      <c:set target="${validUser}" property="company" value="${param.company}" />
+      <c:set target="${validUser}" property="country" value="${param.country}" />
+      <c:set target="${validUser}" property="state" value="${param.state}" />
+      <c:set target="${validUser}" property="email" value="${param.email}" />
       <c:redirect url="usermain.jsp" />
   </c:when>
   <c:otherwise>

@@ -40,8 +40,8 @@ public class MDAIterator implements StepIterator{
     private Vector<Object> steps = new Vector<Object>(); 
     private int actual = 0;
     private boolean isFirst = true;
-    private boolean isInd = false;
-    private boolean isTwoStage = false;
+//    private boolean isInd = false;
+//    private boolean isTwoStage = false;
     private boolean isPred = false;
     private boolean isCov = false;
     private boolean isEstimation = true;
@@ -94,6 +94,21 @@ public class MDAIterator implements StepIterator{
     private long jobId = 0;
     private boolean isLast = false;
     
+    /** Analysis type */
+    public String analysis = "population";
+    
+    /** Identifiability seed */
+    public String identifiabilitySeed = null;
+    
+    /** Nonparametric seed */
+    public String nonparamSeed = null;
+    
+    /** Nonparametric number of points */
+    public String nonparamNumberOfPoints = null;
+    
+    /** Nonparametric points per dimension */
+    public String nonparamPointsPerDim = null;
+    
     /** ADVAN number */
     public int adn = 0;
     
@@ -108,12 +123,6 @@ public class MDAIterator implements StepIterator{
   
     /** Is graphic */
     protected boolean isGraphic = false;
-    
-    /** Is identifiability */
-    public boolean isIdentify = false;
-    
-    /** Is nonparametric model */
-    public boolean isNonparam = false;
     
     /** Constructor to create a MDAIterator object.
      * @param server the web server associated with the MDA.
@@ -162,16 +171,6 @@ public class MDAIterator implements StepIterator{
      */    
     public void setIsNewData(boolean b) { isNewData = b; }    
         
-    /** Set if it is an individual analysis.
-     * @param b a boolean, true for individual, false for population analysis.
-     */    
-    public void setIsInd(boolean b) { isInd = b; }
-    
-    /** Set if it is a two-stage analysis.
-     * @param b a boolean, true for two-stage, false for otherwise.
-     */    
-    public void setIsTwoStage(boolean b) { isTwoStage = b; }
-    
     /** Set if using user predefined PK model.
      * @param b a boolean, true for using user defined model, false for using ADVANs.
      */    
@@ -268,16 +267,6 @@ public class MDAIterator implements StepIterator{
      * @return a boolean, true if $SIMULATION is in analysis, false if otherwise.
      */    
     public boolean getIsSimulation() { return isSimulation; };
-    
-    /** Get if it is an individual analysis.
-     * @return a boolean, true if it is an individual analysis, false if otherwise.
-     */    
-    public boolean getIsInd() { return isInd; };    
-    
-    /** Get if it is a two-stage analysis.
-     * @return a boolean, true if it is a two-stage analysis, false if otherwise.
-     */    
-    public boolean getIsTwoStage() { return isTwoStage; };
     
     /** Get if using user predefined PK model.
      * @return a boolean, true if using user defined model, false if otherwise.
@@ -410,9 +399,12 @@ public class MDAIterator implements StepIterator{
             }
             if(!isGraphic) steps.add(error); 
         }
-        if(!isIdentify) steps.add(theta);
-        if(!isIdentify) steps.add(omega);
-        if(!isInd && !isTwoStage && !isNonparam) steps.add(sigma);
+        if(!analysis.equals("identifiability"))
+        {
+            steps.add(theta);
+            steps.add(omega);
+        }
+        if(analysis.equals("population")) steps.add(sigma);
         if(isSimulation) steps.add(simulation);
         if(isEstimation) steps.add(estimation);
         if(isCov) steps.add(covariance);
@@ -525,6 +517,7 @@ public class MDAIterator implements StepIterator{
                     method = analysis.substring(i, analysis.indexOf("\"", i));
                     if(method.endsWith("two_stage"))
                     {
+                        analysis = "two-stage";
                         if(method.startsWith("map")) 
                         {
                             covTheta = Utility.getOmegaValues(text);
@@ -536,6 +529,34 @@ public class MDAIterator implements StepIterator{
                             }
                         }
                     }
+                    if(method.equals("nonparametric"))
+                    {
+                        analysis = "nonparametric";
+                        int index = text.indexOf("measure_points_in");
+                        String nonparam = text.substring(index, text.indexOf("/>", index));
+                        index = nonparam.indexOf("auto_generate_method=") + 22;
+                        String methodString = nonparam.substring(index, nonparam.indexOf("\"", index));
+                        if(methodString.equals("random_uniform"))
+                        {
+                            method = "nonparametric_uniform";
+                            index = nonparam.indexOf("number_of_points=") + 18;
+                            nonparamNumberOfPoints = nonparam.substring(index, nonparam.indexOf("\"", index));
+                            index = nonparam.indexOf("seed=") + 6;
+                            nonparamSeed = nonparam.substring(index, nonparam.indexOf("\"", index));
+                        }
+                        if(methodString.equals("grid"))
+                        {
+                            method = "nonparametric_grid";  
+                            index = nonparam.indexOf("points_per_dimension=") + 22;
+                            nonparamPointsPerDim = nonparam.substring(index, nonparam.indexOf("\"", index));
+                        }
+                    }
+                    else
+                    {
+                        nonparamSeed = null;
+                        nonparamNumberOfPoints = null;
+                        nonparamPointsPerDim = null;
+                    }
                 }
             }
             if(text.indexOf("<ind_analysis ") != -1)
@@ -543,13 +564,22 @@ public class MDAIterator implements StepIterator{
                 int i = text.indexOf("<ind_analysis ");
                 String analysis = text.substring(i, text.indexOf(">", i));
                 if(analysis.indexOf("is_identifiability=\"yes\"") != -1)
+                {
                     method = "identifiability";
+                    i = text.indexOf("<simulation ");
+                    String simulation = text.substring(i, text.indexOf("/>", i));
+                    identifiabilitySeed = simulation.substring(18, simulation.lastIndexOf("\""));
+                }
             }
             parseControl(XMLReader.getModelArchive(text.substring(indexModel)), method, covTheta);           
         }
         else if(text.indexOf("$PROBLEM") != -1 && text.indexOf("$DATA") != -1 &&
                 text.indexOf("$INPUT") != -1)
         {
+            identifiabilitySeed = null;
+            nonparamSeed = null;
+            nonparamNumberOfPoints = null;
+            nonparamPointsPerDim = null;
             isDataXML = false;
             parseControl(text, null, null);
         }

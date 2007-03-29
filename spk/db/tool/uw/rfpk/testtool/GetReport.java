@@ -71,6 +71,7 @@ public class GetReport extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -168,7 +169,7 @@ public class GetReport extends javax.swing.JFrame {
 
         jButton2.setText("Update");
         jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton2.setPreferredSize(new java.awt.Dimension(90, 19));
+        jButton2.setPreferredSize(new java.awt.Dimension(60, 19));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -201,7 +202,7 @@ public class GetReport extends javax.swing.JFrame {
 
         jButton5.setText("print");
         jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton5.setPreferredSize(new java.awt.Dimension(90, 19));
+        jButton5.setPreferredSize(new java.awt.Dimension(50, 19));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -209,6 +210,16 @@ public class GetReport extends javax.swing.JFrame {
         });
 
         jPanel2.add(jButton5);
+
+        jButton6.setText("Open");
+        jButton6.setPreferredSize(new java.awt.Dimension(67, 19));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(jButton6);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
@@ -240,6 +251,34 @@ public class GetReport extends javax.swing.JFrame {
 
         pack();
     }//GEN-END:initComponents
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        String text = null; 
+        JFileChooser files = new JFileChooser();
+        files.setDialogTitle("Open File");
+        int result = files.showOpenDialog(null);
+        if(result == files.APPROVE_OPTION) 
+	{
+            try
+	    {
+                StringBuffer buffer = new StringBuffer();
+                BufferedReader in = new BufferedReader(new FileReader(files.getSelectedFile()));
+                String line;
+                while((line = in.readLine()) != null)
+                    buffer.append(line).append("\n");
+                in.close();
+                text = buffer.toString();
+            }
+            catch(IOException e)
+	    {
+                System.err.println(e);
+                JOptionPane.showMessageDialog(null, "Error opening file",  // Display opening file 
+                                              "File Error",                // error message
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        jTextArea1.setText(text);
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         String text = jTextArea1.getText();
@@ -292,7 +331,7 @@ public class GetReport extends javax.swing.JFrame {
         }
         action = "update";
         indexList = 0;
-        lists = new Vector();
+        lists = new Vector<String[][]>();
         showArchiveList(0);           
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -394,7 +433,7 @@ public class GetReport extends javax.swing.JFrame {
         }
         action = "get";
         indexList = 0;
-        lists = new Vector();
+        lists = new Vector<String[][]>();
         showArchiveList(0);
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -459,7 +498,7 @@ public class GetReport extends javax.swing.JFrame {
             length--; 
         reportDialog.setSize(800, 16 * length + 90);  
         reportDialog.setTitle(title);
-        reportDialog.show();
+        reportDialog.setVisible(true);
     } 
     
     private class DisplayTableModel extends AbstractTableModel 
@@ -514,7 +553,7 @@ public class GetReport extends javax.swing.JFrame {
      * @param args the command line arguments, not being used.
      */
     public static void main(String args[]) {
-        new GetReport().show();
+        new GetReport().setVisible(true);
     }
     
     
@@ -525,6 +564,7 @@ public class GetReport extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -548,7 +588,7 @@ public class GetReport extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     // List collection
-    private Vector lists = null;
+    private Vector<String[][]> lists = null;
     
     // Index of the list in list collection
     private int indexList = 0; 

@@ -22,7 +22,7 @@ import java.sql.*;
 import rfpk.spk.spkdb.*;
 
 /**
- * Get user email address list from archive.
+ * Getting user email address list from archive.
  * @author Jiaji Du
  */
 public class EmailAddress implements java.io.Serializable

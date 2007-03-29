@@ -108,6 +108,7 @@ public class Archive {
         String timeZone = Calendar.getInstance().getTimeZone().getDisplayName(false, 0) + " ";
         int n = getNumRevision(archive);
         int index = 0;
+        String log;
         String[][] versionList = new String[n][4];
         for(int i = n; i > 0; i--)
         {
@@ -120,8 +121,10 @@ public class Archive {
         for(int i = n; i > 0; i--)
         {
             index = archive.indexOf("@\n\n\n1." + i + "\nlog\n@", index);
-            index = archive.indexOf("\nlog\n@", index) + 6; 
-            versionList[i - 1][3] = archive.substring(index, archive.indexOf("\n@", index));
+            index = archive.indexOf("\nlog\n@", index) + 6;
+            log = archive.substring(index, archive.indexOf("\n@", index));
+            if(log.startsWith("@")) log = "None";
+            versionList[i - 1][3] = log;
         }
         return versionList;
     }
@@ -135,7 +138,9 @@ public class Archive {
     {
         int index = archive.indexOf("@\n\n\n" + version + "\nlog\n@");
         index = archive.indexOf("\nlog\n@", index) + 6;
-        return archive.substring(index, archive.indexOf("\n@", index));
+        String log = archive.substring(index, archive.indexOf("\n@", index));
+        if(log.startsWith("@")) log = "None";
+        return log;
     }
     
     private static String checkIn(String archive, String text, String perlDir, String workingDir,

@@ -232,7 +232,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(238, 238, 238));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter total number of compartments except the output compartment, \nnumber of equilibrium compartments, number of basic PK parameters.  \nThen enter the definition of each compartments: its name and attributes.\n(Note:  These items are all optional in order to create a compartment.)");
+        jTextPane1.setText("Enter the definition of each compartment: its name and attributes.\n(Note:  Attributes DEFDOSE and DEFOBSERVATION are required.\n            Compartment name and other attributes are optional.)");
         jTextPane1.setFocusable(false);
         jTextPane1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jTextPane1.setMinimumSize(new java.awt.Dimension(500, 60));
@@ -434,38 +434,48 @@ public class Model extends javax.swing.JPanel implements WizardStep {
 
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
+    private void init()
+    {
         index = jList1.getSelectedIndex();
-        
-        // Reload selected value
-        String selectedValue = (String)jList1.getSelectedValue();
-        int beginIndex = selectedValue.indexOf("(") + 1;
-        int endIndex = selectedValue.indexOf(")");
-        selectedValue = selectedValue.substring(beginIndex, endIndex);
-        String name = "";
-        int end = -1;
-        if(selectedValue.startsWith("\""))
+        if(index < 0)
         {
-            end = selectedValue.indexOf("\"", 1);
-            name = selectedValue.substring(0, ++end);
-        }
-        else if(selectedValue.startsWith("'"))
-        {
-            end = selectedValue.indexOf("'", 1);
-            name = selectedValue.substring(0, ++end);
+            jTextField4.setText("");
+            clearAttributes();
         }
         else
         {
-            end = selectedValue.indexOf(" ");
-            if(end == -1) end = selectedValue.indexOf(")");
-            name = selectedValue.substring(0, end);
-        }
-        selectedValue = selectedValue.substring(++end);
-        jTextField4.setText(name);
-        int spaceIndex = selectedValue.indexOf(" ");
-        if(spaceIndex != -1)
-        {            
-            String attributes = selectedValue.substring(spaceIndex);
+            // Reload selected value
+            String selectedValue = (String)jList1.getSelectedValue();
+            int beginIndex = selectedValue.indexOf("(") + 1;
+            int endIndex = selectedValue.indexOf(")");
+            selectedValue = selectedValue.substring(beginIndex, endIndex);
+            String name = "";
+            int end = -1;
+            if(selectedValue.startsWith("\""))
+            {
+                end = selectedValue.indexOf("\"", 1);
+                name = selectedValue.substring(0, ++end);
+            }
+            else if(selectedValue.startsWith("'"))
+            {
+                end = selectedValue.indexOf("'", 1);
+                name = selectedValue.substring(0, ++end);
+            }
+            else
+            {
+                end = selectedValue.indexOf(" ");
+                if(end != -1)
+                {
+                    name = selectedValue.substring(0, end);
+                    selectedValue = selectedValue.substring(end);
+                }
+                else
+                {
+                    name = selectedValue;
+                    selectedValue = "";
+                }
+            }
+            jTextField4.setText(name);
             jCheckBox1.setSelected(selectedValue.indexOf(" INITIALOFF") != -1);
             jCheckBox2.setSelected(selectedValue.indexOf(" NOOFF") != -1);
             jCheckBox3.setSelected(selectedValue.indexOf(" NODOSE") != -1);
@@ -479,14 +489,17 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             else
             {
                 jCheckBox4.setEnabled(false);
-                jCheckBox5.setEnabled(false);                
+                jCheckBox5.setEnabled(false);
             }
             jCheckBox6.setSelected(selectedValue.indexOf(" DEFOBSERVATION") != -1);
-            jCheckBox7.setSelected(selectedValue.indexOf(" DEFDOSE") != -1);            
+            jCheckBox7.setSelected(selectedValue.indexOf(" DEFDOSE") != -1);
         }
+    }
         
+    private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
+        init();
         changeButton.setEnabled(true);
-        deleteButton.setEnabled(true);        
+        deleteButton.setEnabled(true);
         Utility.setUpDownButton(index, model, upButton, downButton);
     }//GEN-LAST:event_jList1MouseClicked
 
@@ -518,7 +531,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             jCheckBox4.setSelected(false);
             jCheckBox5.setSelected(false);            
         }
-        jDialog1.setSize(250,280);            
+        jDialog1.setSize(260,300);
+        jDialog1.setLocationRelativeTo(this);
         jDialog1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -529,7 +543,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         model.removeElement(jList1.getSelectedValue());
         jTextField1.setText(String.valueOf(model.size()));
         jList1.setSelectedIndex(--index);
-        clear();
+        init();
         
         // Set add button
         addButton.setEnabled(true);
@@ -565,11 +579,11 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         String element = "COMP=(" + name + attributes + ")";
         model.setElementAt(element, index);     
         jList1.setSelectedIndex(index);
-        clear();
     }//GEN-LAST:event_changeButtonActionPerformed
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
         jList1.setSelectedIndex(++index);
+        init();
         if(index == 0)
         {
             changeButton.setEnabled(true);
@@ -587,23 +601,26 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         {
             name = "COMP" + (++compN);
         }
-        String element = "COMP=(" + name + attributes + ")";
+        
         // Check if addable
         for(int i = 0; i < model.getSize(); i++)
         {
-            if(element.split(" ")[0].equals(((String)model.get(i)).split(" ")[0]))
+            if(name.equals(((String)model.get(i)).split(" ")[0].substring(6)))
             {
                 JOptionPane.showMessageDialog(null, "The name '" + name + "' is already used.",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
+        clearAttributes();
+        jButton1.doClick();
+        
+        String element = "COMP=(" + name + attributes + ")";
 
         // Add element
         model.add(++index, element);
         jTextField1.setText(String.valueOf(model.size()));
         jList1.setSelectedIndex(index);
-        clear();
 
         // Set up and down buttons
         Utility.setUpDownButton(index, model, upButton, downButton);
@@ -646,9 +663,8 @@ public class Model extends javax.swing.JPanel implements WizardStep {
         }        
     }//GEN-LAST:event_addButtonActionPerformed
 
-    private void clear()
+    private void clearAttributes()
     {
-        jTextField4.setText("");
         attributes = "";
         jCheckBox1.setSelected(false);
         jCheckBox2.setSelected(false);
@@ -661,6 +677,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
     
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
         jList1.setSelectedIndex(--index);
+        init();
         
         // Set up and down buttons
         Utility.setUpDownButton(index, model, upButton, downButton);
@@ -775,7 +792,13 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 else
                     for(int i = 0; i < model.size(); i++)
                         model.set(i, checkAttribute((String)model.get(i)));
-                
+                if(model.size() > 0)
+                    init();
+                else
+                {
+                    jTextField4.setText("");
+                    clearAttributes();
+                }
                 if(iterator.getAdvan() == 6 && iterator.initAdvan.contains("model"))
                 {
                     initModel();
@@ -795,6 +818,13 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 {
                     for(int i = 0; i < model.size(); i++)
                         model.set(i, checkAttribute((String)model.get(i)));
+                    if(model.size() > 0)
+                        init();
+                    else
+                    {
+                        jTextField4.setText("");
+                        clearAttributes();
+                    }
                 }
                 isValid = true;
                 wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -877,7 +907,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 {
                     if(JOptionPane.showConfirmDialog(null, 
                         "You have set a non-zero NPARAMETERS, which means that\n" +
-                        "the variables nP(1), P(2), ..., P(NPARAMETERS) will be used\n" + 
+                        "the variables P(1), P(2), ..., P(NPARAMETERS) will be used\n" + 
                         "in the model expressions.  Do you really intend to do this?\n" +
                         "If you click the No button, NPARAMETERS will be reset to 0.",
                         "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != 0)
@@ -903,6 +933,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             {
                 String s = (String)model.get(0);                
                 model.set(0, s.substring(0, s.length() - 1) + " DEFDOSE)");
+                init();
                 JOptionPane.showMessageDialog(null, "The 'DEFDOSE' was not found in the compartments." + 
                                               "\nThe MDA added it to the first compartment as default.",
                                               "Warning Message", JOptionPane.WARNING_MESSAGE);         
@@ -920,6 +951,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             {
                 String s = (String)model.get(0);                
                 model.set(0, s.substring(0, s.length() - 1) + " DEFOBSERVATION)");
+                init();
                 JOptionPane.showMessageDialog(null, "The 'DEFOBSERVATION' was not found in the compartments." + 
                                               "\nThe MDA added it to the first compartment as default.",
                                               "Warning Message", JOptionPane.WARNING_MESSAGE);         

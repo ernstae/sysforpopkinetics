@@ -61,16 +61,17 @@ author: Jiaji Du
               Please enter information about an existing user below and click the submit button to update the user account.
               <form action="validate.jsp?task=update" method="post">
               <table>
-            <c:choose>
-              <c:when test="${param.userId != '0'}">
                 <sql:query var="user">
                   SELECT * FROM user WHERE user_id = ?
                   <sql:param value="${param.userId}" />
                 </sql:query>
                 <c:set var="dbValues" value="${user.rows[0]}" />
+                <c:set var="bugLogin" value="${dbValues.email}" scope="session" />
+                <c:set var="userId" value="${param.userId}" scope="session" />
                 <tr>
                   <td>Username:</td>
-                  <td><input type="text" name="userName" readonly value="${fn:escapeXml(dbValues.username)}"></td>
+                  <td><input type="text" name="userName" value="${fn:escapeXml(dbValues.username)}"></td>
+                  <td><font color="red">${fn:escapeXml(userNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>Password:</td>
@@ -79,30 +80,37 @@ author: Jiaji Du
                 <tr>
                   <td>First Name:</td>
                   <td><input type="text" name="firstName" value="${fn:escapeXml(dbValues.first_name)}"></td>
+                  <td><font color="red">${fn:escapeXml(firstNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>Last Name:</td>
                   <td><input type="text" name="lastName" value="${fn:escapeXml(dbValues.surname)}"></td>
+                  <td><font color="red">${fn:escapeXml(lastNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>Company:</td>
-                  <td><input type="text" name="company" value="${fn:escapeXml(dbValues.company)}"></td>               
+                  <td><input type="text" name="company" value="${fn:escapeXml(dbValues.company)}"></td> 
+                  <td><font color="red">${fn:escapeXml(companyNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>State:</td>
                   <td><input type="text" name="state" value="${fn:escapeXml(dbValues.state)}"></td>
+                  <td><font color="red">${fn:escapeXml(stateNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>Country:</td>
                   <td><input type="text" name="country" value="${fn:escapeXml(dbValues.country)}"></td>
+                  <td><font color="red">${fn:escapeXml(countryNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>Email:</td>
                   <td><input type="text" name="email" value="${fn:escapeXml(dbValues.email)}"></td>
+                  <td><font color="red">${fn:escapeXml(emailAddressError)}</font></td>
                 </tr>
                 <tr>
                   <td>Group ID:</td>
                   <td><input type="text" name="teamId" value="${fn:escapeXml(dbValues.team_id)}"></td>
+                  <td><font color="red">${fn:escapeXml(teamIdError)}</font></td>
                 </tr>
                 <tr>
                   <td>Tester?:</td>
@@ -122,72 +130,6 @@ author: Jiaji Du
                     value="1">
                   </td>
                 </tr>
-              </c:when>
-              <c:otherwise>
-                <tr>
-                  <td>Username:</td>
-                  <td><input type="text" name="userName" readonly value="${fn:escapeXml(dbValues.username)}"></td>
-                </tr>
-                <tr>
-                  <td>Password:</td>
-                  <td><input type="password" name="password" value="${fn:escapeXml(param.password)}"></td>
-                  <td><font color="red">${fn:escapeXml(passwordError)}</font></td>
-                </tr>
-                <tr>
-                  <td>First Name:</td>
-                  <td><input type="text" name="firstName" value="${fn:escapeXml(param.firstName)}"></td>
-                  <td><font color="red">${fn:escapeXml(firstNameError)}</font></td>
-                </tr>
-                <tr>
-                  <td>Last Name:</td>
-                  <td><input type="text" name="lastName" value="${fn:escapeXml(param.lastName)}"></td>
-                  <td><font color="red">${fn:escapeXml(lastNameError)}</font></td>
-                </tr>
-                <tr>
-                  <td>Company:</td>
-                  <td><input type="text" name="company" value="${fn:escapeXml(param.company)}"></td>
-                  <td><font color="red">${fn:escapeXml(companyNameError)}</font></td>
-                </tr>
-                <tr>
-                  <td>State:</td>
-                  <td><input type="text" name="state" value="${fn:escapeXml(param.state)}"></td>
-                  <td><font color="red">${fn:escapeXml(stateNameError)}</font></td>
-                </tr>
-                <tr>
-                  <td>Country:</td>
-                  <td><input type="text" name="country" value="${fn:escapeXml(param.country)}"></td>
-                  <td><font color="red">${fn:escapeXml(countryNameError)}</font></td>
-                </tr>
-                <tr>
-                  <td>Email:</td>
-                  <td><input type="text" name="email" value="${fn:escapeXml(param.email)}"></td>
-                  <td><font color="red">${fn:escapeXml(emailAddressError)}</font></td>
-                </tr>
-                <tr>
-                  <td>Group ID:</td>
-                  <td><input type="text" name="teamId" value="${fn:escapeXml(param.teamId)}"></td>
-                  <td><font color="red">${fn:escapeXml(teamIdError)}</font></td>
-                </tr>
-                <tr>
-                  <td>Tester?:</td>
-                  <td><input type="checkbox" name="tester"
-                    <c:if test="${param.tester == '1'}">
-                      checked
-                    </c:if>
-                    value="1">
-                  </td>
-                </tr>
-                <tr>
-                  <td>Developer?:</td>
-                  <td><input type="checkbox" name="developer" 
-                    <c:if test="${param.developer == '1'}">
-                      checked
-                    </c:if>
-                    value="1">
-                  </td>
-                </tr>                                        
-              </c:otherwise>
-            </c:choose>
                 <tr>
                   <th align="left"><input type="submit" value="Submit"></th>
                 </tr>

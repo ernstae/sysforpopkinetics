@@ -176,7 +176,7 @@
           <Color blue="ee" green="ee" red="ee" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" value="Enter total number of compartments except the output compartment, &#xa;number of equilibrium compartments, number of basic PK parameters.  &#xa;Then enter the definition of each compartments: its name and attributes.&#xa;(Note:  These items are all optional in order to create a compartment.)"/>
+        <Property name="text" type="java.lang.String" value="Enter the definition of each compartment: its name and attributes.&#xa;(Note:  Attributes DEFDOSE and DEFOBSERVATION are required.&#xa;            Compartment name and other attributes are optional.)"/>
         <Property name="focusable" type="boolean" value="false"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[0, 0, 0, 0]"/>

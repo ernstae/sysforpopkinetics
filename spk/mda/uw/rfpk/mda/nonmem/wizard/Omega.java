@@ -1090,20 +1090,20 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-            if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam)
+            if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
                 return "Residual Unknown\nVariability Covariance";
   	    return "Random Effects\nCovariance";
   	}
 
 	public String getStepTitle(){
-            if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam)
+            if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
                 return "Residual Unknown Variability Covariance";
 	    return "Random Effects Covariance";
 	}
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
-            if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam)
+            if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
                 jTextPane1.setText("Enter residual unknown variability covariance initial estimate." + 
                                    "\nBounds on residual unknown variability covariance set internally" +
                                    "\nby SPK.");
@@ -1149,7 +1149,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                         }
                         else
                         {
-                            if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam)
+                            if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
                                 JOptionPane.showMessageDialog(null, "Error in random effects covariance" +
                                                               "\n($OMEGA record) of the reloaded model.",
                                                               "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -1173,8 +1173,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                     Utility.setUpDownButton(index, model, upButton, downButton);
                 }
                                     
-                if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam &&
-                   iterator.initAdvan.contains("omega"))
+                if(iterator.analysis.equals("population") && iterator.initAdvan.contains("omega"))
                 {
                     model.removeAllElements();
                     dimList.removeAllElements();
@@ -1229,7 +1228,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
                         omega[i][j + 3] = items[j];
                                         
                     // Conversions
-                    if(struc.equals("block") && !omega[i][3].endsWith("F"))
+                    if(struc.equals("block") && !omega[i][3].endsWith("F") && !dimen.equals("1"))
                     {
                         int bandWidth = Utility.bandWidth(omega[i]);
                         if(bandWidth == 1)

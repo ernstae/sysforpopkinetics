@@ -64,7 +64,7 @@ author: Jiaji Du
 	  </td>
 	  <td colspan=1 vAlign=top width=10><img alt="trans gif" height=5 src="./images/white.gif" width=10/>
 	  <td colspan=1 vAlign=top>
-	    <h3>All User List</h3>
+	    <h3>SPK Usesage List</h3>
 	    <p> 
           <c:choose>
             <c:when test="${userList.rowCount == 0}">

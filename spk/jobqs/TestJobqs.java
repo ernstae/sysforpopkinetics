@@ -47,7 +47,7 @@ public class TestJobqs
 //        String classpath = "/home/jiaji/r2/src/apps/spk/db/api/java/:/home/jiaji/r2/src/apps/spk/jobqs/:" + 
 //        "/home/jiaji/mysql-connector-java-3.0.10-stable/mysql-connector-java-3.0.10-stable-bin.jar:.";
         
-        final int maxTests = 31;
+        final int maxTests = 32;
         final int port = 9001;
 	boolean b = true;
 	boolean target = true;
@@ -63,7 +63,7 @@ public class TestJobqs
 	    conn = Spkdb.connect(dbName, host, dbUser, dbPassword);
             long[] jobs = new long[8];
             for(int j = 0; j < 8; j++)
-                jobs[j] = Spkdb.newJob(conn, 1L, "", 1L, "", 1L, "", "", "", "", 0, false, false);
+                jobs[j] = Spkdb.newJob(conn, 1L, "", 1L, "", 1L, "", "", "", 0L, false, false);
 
             Spkdb.setStateCode(conn, jobs[1], "cmp");
             Spkdb.setStateCode(conn, jobs[2], "q2r");
@@ -424,7 +424,13 @@ public class TestJobqs
                         s = "calling the server Hi";
                         out.println("Hi");
                         b = in.readLine().equals("Hi");
-                        break;  
+                        break;
+                    case 32:
+                        target = true;
+                        s = "closing the connection";
+                        out.println("close");
+                        b = in.readLine().equals("closing");
+                        break;
 		    default:
 		        break;
                 }

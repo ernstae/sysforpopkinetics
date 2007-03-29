@@ -126,7 +126,7 @@ public class DesignTool extends javax.swing.JFrame {
         addButton.doClick();
         Reload reload = new Reload(this);
         isInit = false;
-        if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam)
+        if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
         {
             addButton.setEnabled(false);
             applyButton.setEnabled(false);
@@ -229,13 +229,13 @@ public class DesignTool extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         buttonGroup1 = new javax.swing.ButtonGroup();
-        equationDialog = new javax.swing.JDialog();
+        transferDialog = new javax.swing.JDialog();
         jScrollPane7 = new javax.swing.JScrollPane();
-        equationTextArea = new javax.swing.JTextArea();
+        jList2 = new javax.swing.JList();
         jPanel8 = new javax.swing.JPanel();
-        eqOKButton = new javax.swing.JButton();
-        eqCancelButton = new javax.swing.JButton();
-        eqHelpButton = new javax.swing.JButton();
+        upButton = new javax.swing.JButton();
+        downButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane2 = new javax.swing.JSplitPane();
@@ -264,7 +264,7 @@ public class DesignTool extends javax.swing.JFrame {
         jToggleButton1 = new javax.swing.JToggleButton();
         jPanel2 = new javax.swing.JPanel();
         variableButton = new javax.swing.JButton();
-        equationButton = new javax.swing.JButton();
+        transferButton = new javax.swing.JButton();
         finishButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jPanel3 = new javax.swing.JPanel();
@@ -398,38 +398,48 @@ public class DesignTool extends javax.swing.JFrame {
 
         jPopupMenu1.add(jMenuItem1);
 
-        jScrollPane7.setViewportView(equationTextArea);
+        transferDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        transferDialog.setTitle("Transfers");
+        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane7.setViewportView(jList2);
 
-        equationDialog.getContentPane().add(jScrollPane7, java.awt.BorderLayout.CENTER);
+        transferDialog.getContentPane().add(jScrollPane7, java.awt.BorderLayout.CENTER);
 
-        eqOKButton.setText("OK");
-        eqOKButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        eqOKButton.addActionListener(new java.awt.event.ActionListener() {
+        upButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/icons/up.png")));
+        upButton.setPreferredSize(new java.awt.Dimension(50, 25));
+        upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eqOKButtonActionPerformed(evt);
+                upButtonActionPerformed(evt);
             }
         });
 
-        jPanel8.add(eqOKButton);
+        jPanel8.add(upButton);
 
-        eqCancelButton.setText("Cancel");
-        eqCancelButton.addActionListener(new java.awt.event.ActionListener() {
+        downButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/icons/down.png")));
+        downButton.setPreferredSize(new java.awt.Dimension(50, 25));
+        downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eqCancelButtonActionPerformed(evt);
+                downButtonActionPerformed(evt);
             }
         });
 
-        jPanel8.add(eqCancelButton);
+        jPanel8.add(downButton);
 
-        eqHelpButton.setText("Help");
-        eqHelpButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        jPanel8.add(eqHelpButton);
+        jButton1.setText("Close");
+        jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        equationDialog.getContentPane().add(jPanel8, java.awt.BorderLayout.SOUTH);
+        jPanel8.add(jButton1);
+
+        transferDialog.getContentPane().add(jPanel8, java.awt.BorderLayout.SOUTH);
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel4.setText("Edit equations");
-        equationDialog.getContentPane().add(jLabel4, java.awt.BorderLayout.NORTH);
+        jLabel4.setText("Select item to change order");
+        transferDialog.getContentPane().add(jLabel4, java.awt.BorderLayout.NORTH);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Compartment Model Design Tool");
@@ -588,6 +598,7 @@ public class DesignTool extends javax.swing.JFrame {
         variableButton.setToolTipText("Show user defined variables");
         variableButton.setMaximumSize(new java.awt.Dimension(74, 27));
         variableButton.setMinimumSize(new java.awt.Dimension(74, 27));
+        variableButton.setPreferredSize(new java.awt.Dimension(74, 27));
         variableButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 variableButtonActionPerformed(evt);
@@ -596,15 +607,18 @@ public class DesignTool extends javax.swing.JFrame {
 
         jToolBar2.add(variableButton);
 
-        equationButton.setText("Equations");
-        equationButton.setToolTipText("Showing user defined equations");
-        equationButton.addActionListener(new java.awt.event.ActionListener() {
+        transferButton.setText("Transfers");
+        transferButton.setToolTipText("Showing user defined equations");
+        transferButton.setMaximumSize(new java.awt.Dimension(74, 27));
+        transferButton.setMinimumSize(new java.awt.Dimension(74, 27));
+        transferButton.setPreferredSize(new java.awt.Dimension(74, 27));
+        transferButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                equationButtonActionPerformed(evt);
+                transferButtonActionPerformed(evt);
             }
         });
 
-        jToolBar2.add(equationButton);
+        jToolBar2.add(transferButton);
 
         finishButton.setText("Finish");
         finishButton.setToolTipText("Finish using this tool");
@@ -781,34 +795,65 @@ public class DesignTool extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        
+        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
     }//GEN-LAST:event_helpButtonActionPerformed
 
-    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        
-    }//GEN-LAST:event_helpButtonActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        transferDialog.setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void subjectDialogWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_subjectDialogWindowClosing
         subjectDialog.toFront();
         doneButton.doClick();
     }//GEN-LAST:event_subjectDialogWindowClosing
 
-    private void eqCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eqCancelButtonActionPerformed
-        equationDialog.setVisible(false);
-    }//GEN-LAST:event_eqCancelButtonActionPerformed
+    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        int index = jList2.getSelectedIndex();
+        if(index < transferList.size() - 1)
+        {
+            Model.fluxList.set(index, Model.fluxList.get(index + 1));
+            Model.fluxList.set(index + 1, (String)jList2.getSelectedValue());
+            transferList.clear();
+            for(String name : Model.fluxList)
+                transferList.addElement(name);
+            jList2.setSelectedIndex(index + 1);
+            setRecords();
+        }
+        setCursor(null);
+    }//GEN-LAST:event_downButtonActionPerformed
 
-    private void eqOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eqOKButtonActionPerformed
-        Model.equations = equationTextArea.getText();
-    }//GEN-LAST:event_eqOKButtonActionPerformed
+    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        int index = jList2.getSelectedIndex();
+        if(index > 0)
+        {
+            Model.fluxList.set(index, Model.fluxList.get(index - 1));
+            Model.fluxList.set(index - 1, (String)jList2.getSelectedValue());
+            transferList.clear();
+            for(String name : Model.fluxList)
+                transferList.addElement(name);
+            jList2.setSelectedIndex(index - 1);
+            setRecords();
+        }
+        setCursor(null);
+    }//GEN-LAST:event_upButtonActionPerformed
 
-    private void equationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_equationButtonActionPerformed
-        equationTextArea.setText(Model.equations);
-        equationDialog.setSize(350, 350);
-        equationDialog.setVisible(true);
-    }//GEN-LAST:event_equationButtonActionPerformed
+    private void transferButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transferButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        jList2.setModel(transferList);
+        transferList.clear();
+        for(String name : Model.fluxList)
+            transferList.addElement(name);
+        transferDialog.setSize(200, 250);
+        transferDialog.setLocationRelativeTo(transferButton);
+        transferDialog.setVisible(true);
+        setCursor(null);
+    }//GEN-LAST:event_transferButtonActionPerformed
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
         // Get a PrinterJob object and a PageFormat object.
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         printerJob = PrinterJob.getPrinterJob();
         attributes = new HashPrintRequestAttributeSet();         
         pageFormat = printerJob.pageDialog(attributes);
@@ -829,11 +874,13 @@ public class DesignTool extends javax.swing.JFrame {
                                               JOptionPane.ERROR_MESSAGE);
             }
         }
+        setCursor(null);
     }//GEN-LAST:event_printButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         // Create an image to save
         // Create a buffered image in which to draw
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         int plotWidth = diagram.getSize().width;
         int plotHeight = diagram.getSize().height;
         BufferedImage bufferedImage = new BufferedImage(plotWidth, plotHeight, 
@@ -880,6 +927,7 @@ public class DesignTool extends javax.swing.JFrame {
         {
             JOptionPane.showMessageDialog(null, e, "File Error", JOptionPane.ERROR_MESSAGE);
         }
+        setCursor(null);
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private class MyFilter extends FileFilter 
@@ -912,6 +960,7 @@ public class DesignTool extends javax.swing.JFrame {
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean ok = record.setModel(object);
         ok = ok && record.setPK(object, iterator);
         ok = ok && record.setDes(object);
@@ -934,19 +983,25 @@ public class DesignTool extends javax.swing.JFrame {
             ((Subroutines)panel).setValid();
             setVisible(false);
         }
+        setCursor(null);
     }//GEN-LAST:event_finishButtonActionPerformed
 
     private void variableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_variableButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         variableDialog.setVariableList();
-        variableDialog.setVisible(true);        
+        variableDialog.setLocationRelativeTo(variableButton);
+        variableDialog.setVisible(true);
+        setCursor(null);
     }//GEN-LAST:event_variableButtonActionPerformed
 
     private void doneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         for(int i = 0; i < subjectModel.size(); i++)
             if(subjectModel.getProperty(subjects[i]).equals(""))
             {
                 JOptionPane.showMessageDialog(null, "Subject " + subjects[i] + " is not assigned to group.",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
+                setCursor(null);
                 return;
             }
         for(int i = 0; i < models.size(); i++)
@@ -961,10 +1016,14 @@ public class DesignTool extends javax.swing.JFrame {
                     deleteModel();
                 }
                 else
+                {
+                    setCursor(null);
                     return;
+                }
             }
         subjectDialog.setVisible(false);
         setRecords();
+        setCursor(null);
     }//GEN-LAST:event_doneButtonActionPerformed
     
     /** Display records */
@@ -985,18 +1044,22 @@ public class DesignTool extends javax.swing.JFrame {
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         String name = JOptionPane.showInputDialog(null, "Enter new name.", selectedModel.name);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if(name != null && !name.trim().equals(""))
         {
             selectedModel.name = name;
             setRecords();
             resetStatusBar();
         }
+        setCursor(null);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam)
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
         {
             clearButton.doClick();
+            setCursor(null);
             return;
         }
         deleteModel();
@@ -1011,6 +1074,7 @@ public class DesignTool extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "To continue, create a new ID group and assign IDs.");
         }
         setRecords();
+        setCursor(null);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void deleteModel()
@@ -1025,16 +1089,21 @@ public class DesignTool extends javax.swing.JFrame {
     }
     
     private void rightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         index++;
         resetStatusBar();
+        setCursor(null);
     }//GEN-LAST:event_rightButtonActionPerformed
 
     private void leftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_leftButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         index--;
         resetStatusBar();
+        setCursor(null);
     }//GEN-LAST:event_leftButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if(selectedModel != null) selectedModel.isSelected = false;
         diagram.model.isCopyToDiagram = false;
         diagram.model.inputs.clear();
@@ -1053,6 +1122,7 @@ public class DesignTool extends javax.swing.JFrame {
         if(!isInit) 
             applyButton.doClick();      
         jTextField1.setText(String.valueOf(models.size()));
+        setCursor(null);
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void resetStatusBar()
@@ -1086,21 +1156,26 @@ public class DesignTool extends javax.swing.JFrame {
     }
     
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        if(Model.elements.size() > 0 &&
+           JOptionPane.showConfirmDialog(null, "Are you sure you want to remove all models?",
+                                         "Confirmation Question",
+                                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
+            clear();
+    }//GEN-LAST:event_clearButtonActionPerformed
+    
+    /* Remove all models and if initial add a group. **/
+    protected void clear()
+    {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         list.removeAllElements();
         Model.variables.clear();
+        Model.variableList.clear();
+        Model.fluxList.clear();
         Model.equations = "";
         Model.errorEqns = "";
         models.removeAllElements();
         modelId = 0;
         resetStatusBar();
-/*
-        if(selectedButton != null)
-        {
-            buttonGroup.remove(selectedButton);
-            selectedButton.setSelected(false);
-            buttonGroup.add(selectedButton);
-        }
-*/
         selectedModel = null;
         diagram.model.clear();
         diagram.startElement = null;
@@ -1116,11 +1191,14 @@ public class DesignTool extends javax.swing.JFrame {
         addButton.setEnabled(true);
         addButton.doClick();
         isInit = false;
-        if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam) addButton.setEnabled(false);       
+        if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
+            addButton.setEnabled(false);       
         setRecords();
-    }//GEN-LAST:event_clearButtonActionPerformed
-
+        setCursor(null);   
+    }
+        
     private void assignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Model group = ((Model)models.get(subjectComboBox.getSelectedIndex()));
         int[] selectedIndices = jList1.getSelectedIndices();
         for(int i = 0; i < selectedIndices.length; i++)
@@ -1129,6 +1207,7 @@ public class DesignTool extends javax.swing.JFrame {
             subjectModel.setProperty(subjects[in], String.valueOf(group.id));
             list.setElementAt("Subject " + subjects[in] + ":  " + group.name, in);
         }
+        setCursor(null);
     }//GEN-LAST:event_assignButtonActionPerformed
 
     private boolean removeModel(Model model)
@@ -1192,6 +1271,7 @@ public class DesignTool extends javax.swing.JFrame {
     }//GEN-LAST:event_compButtonActionPerformed
 
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         subjectComboBox.removeAllItems();
         for(int i = 0; i < models.size(); i++)
             subjectComboBox.addItem(((Model)models.get(i)).name);
@@ -1211,6 +1291,7 @@ public class DesignTool extends javax.swing.JFrame {
         Point p = applyButton.getLocation();
         subjectDialog.setLocation(p.x + 200, p.y + 100);
         subjectDialog.setVisible(true);
+        setCursor(null);
     }//GEN-LAST:event_applyButtonActionPerformed
 
     class ModelButton extends JToggleButton
@@ -1241,6 +1322,7 @@ public class DesignTool extends javax.swing.JFrame {
         
         private void modelButtonActionPerformed(java.awt.event.ActionEvent evt) 
         {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             selectedButton = (ModelButton)evt.getSource();
             if(selectedModel != null) selectedModel.isSelected = false;
             for(int i = 0; i < models.size(); i++)
@@ -1257,6 +1339,7 @@ public class DesignTool extends javax.swing.JFrame {
                     break;
                 }
             }
+            setCursor(null);
         }
         private int id;
     }
@@ -1288,6 +1371,7 @@ public class DesignTool extends javax.swing.JFrame {
     /** Save the selected model */
     protected void saveModel()
     {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         int i = models.indexOf(selectedModel);
         int id = selectedModel.id;
         String name = selectedModel.name;
@@ -1298,18 +1382,13 @@ public class DesignTool extends javax.swing.JFrame {
         models.remove(i);
         models.insertElementAt(selectedModel, i);
         setRecords();
+        setCursor(null);
     }
     
     /** Click Finish button */
     protected void clickFinishButton()
     {
         doneButton.doClick();
-    }
-
-    /** Click Clear button */
-    protected void clickClearButton()
-    {
-        clearButton.doClick();
     }
 
     private class Printer implements Printable
@@ -1374,17 +1453,13 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JButton delayButton;
     private javax.swing.JTextArea desTextArea;
     private javax.swing.JButton doneButton;
-    private javax.swing.JButton eqCancelButton;
-    private javax.swing.JButton eqHelpButton;
-    private javax.swing.JButton eqOKButton;
-    private javax.swing.JButton equationButton;
-    private javax.swing.JDialog equationDialog;
-    private javax.swing.JTextArea equationTextArea;
+    private javax.swing.JButton downButton;
     private javax.swing.JTextArea errorTextArea;
     private javax.swing.JButton finishButton;
     private javax.swing.JButton fluxButton;
     private javax.swing.JButton helpButton;
     private javax.swing.JButton inputButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
@@ -1396,6 +1471,7 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JList jList1;
+    private javax.swing.JList jList2;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
@@ -1434,6 +1510,9 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JPanel statusBarR;
     private javax.swing.JComboBox subjectComboBox;
     private javax.swing.JDialog subjectDialog;
+    private javax.swing.JButton transferButton;
+    private javax.swing.JDialog transferDialog;
+    private javax.swing.JButton upButton;
     private javax.swing.JButton variableButton;
     // End of variables declaration//GEN-END:variables
     
@@ -1460,6 +1539,7 @@ public class DesignTool extends javax.swing.JFrame {
     private ButtonGroup buttonGroup;
     private Cursor compCursor, delayCursor, fluxCursor, inputCursor, sampleCursor;
     private DefaultListModel list = new DefaultListModel();
+    private DefaultListModel transferList = new DefaultListModel();
     private String[] subjects;
     private Record record = new Record(this);
     /** Show name*/

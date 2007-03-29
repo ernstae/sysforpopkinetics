@@ -23,6 +23,7 @@ import org.netbeans.ui.wizard.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import java.awt.Component;
+import java.awt.CardLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.table.*;
@@ -41,9 +42,10 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private StepDescriptor sd = new MyStepDescriptor(); 
     private JComponent panel = this;
     private MDAIterator iterator = null;
-    private boolean first = true;
+    private boolean isFirst = true;
     private boolean isValid = false;
     private JWizardPane wizardPane = null;
+    private String analysis = "";
     private String method = "METHOD=0 ";
     private String posthoc = "";
     private String interaction = "";
@@ -78,6 +80,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jButton1 = new javax.swing.JButton();
         jTextArea2 = new javax.swing.JTextArea();
         jRadioButton7 = new javax.swing.JRadioButton();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
         jTextPane3 = new javax.swing.JTextPane();
@@ -85,20 +88,6 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jTextArea1 = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
-        jPanel1 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jRadioButton5 = new javax.swing.JRadioButton();
-        jRadioButton6 = new javax.swing.JRadioButton();
-        jPanel2 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -108,6 +97,32 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         jTextField2 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        leftCards = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jRadioButton4 = new javax.swing.JRadioButton();
+        jRadioButton5 = new javax.swing.JRadioButton();
+        jRadioButton6 = new javax.swing.JRadioButton();
+        jPanel4 = new javax.swing.JPanel();
+        jRadioButton8 = new javax.swing.JRadioButton();
+        jRadioButton9 = new javax.swing.JRadioButton();
+        rightCards = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jCheckBox5 = new javax.swing.JCheckBox();
+        jButton2 = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        jTextField4 = new javax.swing.JTextField();
+        jTextField5 = new javax.swing.JTextField();
 
         jDialog1.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -172,11 +187,10 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(238, 238, 238));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Select estimation method and available option(s).");
         jTextPane1.setMaximumSize(new java.awt.Dimension(377, 21));
         jTextPane1.setMinimumSize(new java.awt.Dimension(377, 21));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jTextPane1, gridBagConstraints);
@@ -233,7 +247,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.insets = new java.awt.Insets(6, 0, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 4, 0);
         add(jSeparator1, gridBagConstraints);
 
         jSeparator2.setMaximumSize(new java.awt.Dimension(350, 2));
@@ -246,177 +260,6 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         add(jSeparator2, gridBagConstraints);
-
-        jPanel1.setLayout(new java.awt.GridLayout(6, 1));
-
-        jPanel1.setPreferredSize(new java.awt.Dimension(180, 128));
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("First Order");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(jRadioButton1);
-
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Expected Hessian");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(jRadioButton2);
-
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Laplace Approximation");
-        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton3ActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(jRadioButton3);
-
-        buttonGroup1.add(jRadioButton4);
-        jRadioButton4.setText("Standard Two-Stage");
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(jRadioButton4);
-
-        buttonGroup1.add(jRadioButton5);
-        jRadioButton5.setText("Iterative Two-Stage");
-        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton5ActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(jRadioButton5);
-
-        buttonGroup1.add(jRadioButton6);
-        jRadioButton6.setText("Global Two-Stage");
-        jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton6ActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(jRadioButton6);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 3);
-        add(jPanel1, gridBagConstraints);
-
-        jPanel2.setLayout(new java.awt.GridBagLayout());
-
-        jPanel2.setMaximumSize(new java.awt.Dimension(200, 92));
-        jPanel2.setMinimumSize(new java.awt.Dimension(200, 92));
-        jPanel2.setPreferredSize(new java.awt.Dimension(200, 92));
-        jCheckBox1.setText("Obtain individual estimates");
-        jCheckBox1.setMargin(new java.awt.Insets(1, 2, 1, 2));
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel2.add(jCheckBox1, gridBagConstraints);
-
-        jCheckBox2.setText("RUV depends on random effects");
-        jCheckBox2.setEnabled(false);
-        jCheckBox2.setMargin(new java.awt.Insets(1, 2, 1, 2));
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel2.add(jCheckBox2, gridBagConstraints);
-
-        jCheckBox3.setText("Center random effects");
-        jCheckBox3.setEnabled(false);
-        jCheckBox3.setMargin(new java.awt.Insets(1, 2, 1, 2));
-        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox3ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel2.add(jCheckBox3, gridBagConstraints);
-
-        jCheckBox4.setText("Make automatic error recovery");
-        jCheckBox4.setMargin(new java.awt.Insets(1, 2, 1, 2));
-        jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox4ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel2.add(jCheckBox4, gridBagConstraints);
-
-        jCheckBox5.setText("Use MAP Bayesian Objective");
-        jCheckBox5.setEnabled(false);
-        jCheckBox5.setMargin(new java.awt.Insets(1, 2, 1, 2));
-        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox5ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel2.add(jCheckBox5, gridBagConstraints);
-
-        jButton2.setText("Enter Cov for THETA");
-        jButton2.setEnabled(false);
-        jButton2.setMargin(new java.awt.Insets(1, 5, 1, 5));
-        jButton2.setMaximumSize(new java.awt.Dimension(145, 19));
-        jButton2.setMinimumSize(new java.awt.Dimension(145, 19));
-        jButton2.setPreferredSize(new java.awt.Dimension(145, 19));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        jPanel2.add(jButton2, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 6);
-        add(jPanel2, gridBagConstraints);
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
@@ -528,7 +371,320 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.gridwidth = 3;
         add(jPanel3, gridBagConstraints);
 
+        leftCards.setLayout(new java.awt.CardLayout());
+
+        jPanel1.setLayout(new java.awt.GridLayout(6, 1));
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(180, 128));
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.setSelected(true);
+        jRadioButton1.setText("First Order");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton1);
+
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.setText("Expected Hessian");
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton2);
+
+        buttonGroup1.add(jRadioButton3);
+        jRadioButton3.setText("Laplace Approximation");
+        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton3ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton3);
+
+        buttonGroup1.add(jRadioButton4);
+        jRadioButton4.setText("Standard Two-Stage");
+        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton4ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton4);
+
+        buttonGroup1.add(jRadioButton5);
+        jRadioButton5.setText("Iterative Two-Stage");
+        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton5ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton5);
+
+        buttonGroup1.add(jRadioButton6);
+        jRadioButton6.setText("Global Two-Stage");
+        jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton6ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(jRadioButton6);
+
+        leftCards.add(jPanel1, "card2");
+
+        jPanel4.setLayout(new java.awt.GridBagLayout());
+
+        buttonGroup2.add(jRadioButton8);
+        jRadioButton8.setText("Uniform random");
+        jRadioButton8.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton8.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jRadioButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton8ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 16, 0);
+        jPanel4.add(jRadioButton8, gridBagConstraints);
+
+        buttonGroup2.add(jRadioButton9);
+        jRadioButton9.setText("Grid");
+        jRadioButton9.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton9.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jRadioButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton9ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(16, 0, 0, 0);
+        jPanel4.add(jRadioButton9, gridBagConstraints);
+
+        leftCards.add(jPanel4, "card3");
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        add(leftCards, gridBagConstraints);
+
+        rightCards.setLayout(new java.awt.CardLayout());
+
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jPanel2.setMaximumSize(new java.awt.Dimension(200, 92));
+        jPanel2.setMinimumSize(new java.awt.Dimension(200, 92));
+        jPanel2.setPreferredSize(new java.awt.Dimension(200, 92));
+        jCheckBox1.setText("Obtain individual estimates");
+        jCheckBox1.setMargin(new java.awt.Insets(1, 2, 1, 2));
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox1, gridBagConstraints);
+
+        jCheckBox2.setText("RUV depends on random effects");
+        jCheckBox2.setEnabled(false);
+        jCheckBox2.setMargin(new java.awt.Insets(1, 2, 1, 2));
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox2, gridBagConstraints);
+
+        jCheckBox3.setText("Center random effects");
+        jCheckBox3.setEnabled(false);
+        jCheckBox3.setMargin(new java.awt.Insets(1, 2, 1, 2));
+        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox3ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox3, gridBagConstraints);
+
+        jCheckBox4.setText("Make automatic error recovery");
+        jCheckBox4.setMargin(new java.awt.Insets(1, 2, 1, 2));
+        jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox4ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox4, gridBagConstraints);
+
+        jCheckBox5.setText("Use MAP Bayesian Objective");
+        jCheckBox5.setEnabled(false);
+        jCheckBox5.setMargin(new java.awt.Insets(1, 2, 1, 2));
+        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox5ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox5, gridBagConstraints);
+
+        jButton2.setText("Enter Cov for THETA");
+        jButton2.setEnabled(false);
+        jButton2.setMargin(new java.awt.Insets(1, 5, 1, 5));
+        jButton2.setMaximumSize(new java.awt.Dimension(145, 19));
+        jButton2.setMinimumSize(new java.awt.Dimension(145, 19));
+        jButton2.setPreferredSize(new java.awt.Dimension(145, 19));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        jPanel2.add(jButton2, gridBagConstraints);
+
+        rightCards.add(jPanel2, "card2");
+
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        jLabel6.setText("Number of points");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        jPanel5.add(jLabel6, gridBagConstraints);
+
+        jLabel7.setText("Random seed");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 3);
+        jPanel5.add(jLabel7, gridBagConstraints);
+
+        jLabel8.setText("Points per dimension");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        jPanel5.add(jLabel8, gridBagConstraints);
+
+        jTextField3.setPreferredSize(new java.awt.Dimension(80, 20));
+        jTextField3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField3KeyReleased(evt);
+            }
+        });
+
+        jPanel5.add(jTextField3, new java.awt.GridBagConstraints());
+
+        jTextField4.setPreferredSize(new java.awt.Dimension(80, 20));
+        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField4KeyReleased(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        jPanel5.add(jTextField4, gridBagConstraints);
+
+        jTextField5.setPreferredSize(new java.awt.Dimension(80, 20));
+        jTextField5.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField5KeyReleased(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        jPanel5.add(jTextField5, gridBagConstraints);
+
+        rightCards.add(jPanel5, "card3");
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        add(rightCards, gridBagConstraints);
+
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
+        setRecord();
+    }//GEN-LAST:event_jTextField5KeyReleased
+
+    private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
+        setRecord();
+    }//GEN-LAST:event_jTextField4KeyReleased
+
+    private void jTextField3KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyReleased
+        setRecord();
+    }//GEN-LAST:event_jTextField3KeyReleased
+
+    private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
+        jLabel6.setEnabled(false);
+        jLabel7.setEnabled(false);
+        jLabel8.setEnabled(true);
+        jTextField3.setEnabled(false);
+        jTextField4.setEnabled(false);
+        jTextField5.setEnabled(true);
+        jTextField3.setText("");
+        jTextField4.setText("");
+        jTextField3.setEditable(false);
+        jTextField4.setEditable(false);
+        jTextField5.setEditable(true);
+        setRecord();
+    }//GEN-LAST:event_jRadioButton9ActionPerformed
+
+    private void jRadioButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton8ActionPerformed
+        jLabel6.setEnabled(true);
+        jLabel7.setEnabled(true);
+        jLabel8.setEnabled(false);
+        jTextField3.setEnabled(true);
+        jTextField4.setEnabled(true); 
+        jTextField5.setEnabled(false);
+        jTextField5.setText("");
+        jTextField5.setEditable(false);
+        jTextField3.setEditable(true);
+        jTextField4.setEditable(true);
+        setRecord();
+    }//GEN-LAST:event_jRadioButton8ActionPerformed
 
     private void jRadioButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton7ActionPerformed
         method = "";
@@ -855,6 +1011,30 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private void setRecord()
     {
         isValid = true;
+        if(iterator.analysis.equals("nonparametric"))
+        {
+            if(jRadioButton8.isSelected())
+            {
+                if(!Utility.isPosIntNumber(jTextField3.getText()))
+                {
+                    jTextField3.setToolTipText("It must be a positive integer.");
+                    isValid = false;
+                }
+                if(!Utility.isPosIntNumber(jTextField4.getText()))
+                {
+                    jTextField4.setToolTipText("It must be a positive integer.");
+                    isValid = false;
+                }
+            }
+            if(jRadioButton9.isSelected())
+            {
+                if(!Utility.isPosIntNumber(jTextField5.getText()))
+                {
+                    jTextField5.setToolTipText("It must be a positive integer.");
+                    isValid = false;
+                }
+            }
+        }
         String maxEvals = jTextField1.getText();
         if(maxEvals.startsWith("+"))
             maxEvals = maxEvals.substring(1).trim(); 
@@ -901,6 +1081,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
@@ -915,9 +1096,14 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
@@ -925,6 +1111,8 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JRadioButton jRadioButton7;
+    private javax.swing.JRadioButton jRadioButton8;
+    private javax.swing.JRadioButton jRadioButton9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
@@ -934,9 +1122,14 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
+    private javax.swing.JPanel leftCards;
+    private javax.swing.JPanel rightCards;
     // End of variables declaration//GEN-END:variables
     
     /**
@@ -963,7 +1156,21 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 
 	public void showingStep(JWizardPane wizard){
             wizardPane = wizard;
-            if(iterator.getIsReload())
+            if(!iterator.analysis.equals(analysis))
+                isFirst = true;
+            CardLayout cl1 = (CardLayout)leftCards.getLayout();
+            CardLayout cl2 = (CardLayout)rightCards.getLayout();
+            if(iterator.analysis.equals("nonparametric"))
+            {
+                cl1.show(leftCards, "card3");
+                cl2.show(rightCards, "card3");
+            }
+            else
+            {
+                cl1.show(leftCards, "card2");
+                cl2.show(rightCards, "card2");
+            }
+            if(iterator.getIsReload() && iterator.getReload().getProperty("ESTIMATION") != null)
             {
                 String text = iterator.getReload().getProperty("ESTIMATION");
                 if(text != null)
@@ -971,7 +1178,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     iterator.getReload().remove("ESTIMATION");
                     text = text.trim() + " ";
                     // Initialize method
-                    if(iterator.getIsTwoStage())
+                    if(iterator.analysis.equals("two-stage"))
                     {
                         jTextPane1.setText("Select a two-stage method and MAP Bayesian objective");
                         jRadioButton1.setEnabled(false);
@@ -1005,13 +1212,29 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                             jCheckBox5.setSelected(false);
                         }
                     }
-                    else if(iterator.isNonparam)
+                    else if(iterator.analysis.equals("nonparametric"))
                     {
+                        jTextPane1.setText("Select measure-point generation method:");
                         jRadioButton7.doClick();
+                        String method = iterator.getReload().getProperty("METHOD");
+                        if(method != null)
+                        {                           
+                            if(method.equals("nonparametric_uniform"))
+                            {
+                                jRadioButton8.doClick();
+                                jTextField3.setText(iterator.nonparamNumberOfPoints);
+                                jTextField4.setText(iterator.nonparamSeed);
+                            }
+                            if(method.equals("nonparametric_grid"))
+                            {
+                                jRadioButton9.doClick();
+                                jTextField5.setText(iterator.nonparamPointsPerDim);
+                            }
+                        }
                     }
                     else
                     {                        
-                        if(iterator.getIsInd())
+                        if(iterator.analysis.equals("individual"))
                         {                           
                             jRadioButton7.doClick();
                         }
@@ -1110,9 +1333,9 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     setRecord();
                 }
             }
-            else if(first)
+            else if(isFirst)
             {
-                if(iterator.getIsTwoStage())
+                if(iterator.analysis.equals("two-stage"))
                 {
                     jTextPane1.setText("Select a two-stage method and MAP Bayesian objective");
                     jRadioButton1.setEnabled(false);
@@ -1125,13 +1348,15 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     jButton2.setEnabled(false);  // true temporary
                     jRadioButton4.doClick();
                 }
-                else if(iterator.isNonparam)
+                else if(iterator.analysis.equals("nonparametric"))
                 {
+                    jTextPane1.setText("Select measure-point generation method:");
                     jRadioButton7.doClick();
+                    jRadioButton8.doClick();
                 }
                 else
                 {
-                    if(iterator.getIsInd())
+                    if(iterator.analysis.equals("individual"))
                     {
                         jRadioButton7.doClick();
                     }
@@ -1156,7 +1381,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     }
                 }
             }
-            first = false;
+            isFirst = false;
             isValid = true;
             wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
             grayOutNoabort();
@@ -1176,7 +1401,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             
             String[] estimation = new String[8];
             // Find method
-            if(iterator.getIsTwoStage())
+            if(iterator.analysis.equals("two-stage"))
             {
                 if(jRadioButton4.isSelected())
                     if(jCheckBox5.isSelected())
@@ -1194,9 +1419,12 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                     else
                         estimation[0] = "global_two_stage";
             }
-            else if(iterator.isNonparam)
+            else if(iterator.analysis.equals("nonparametric"))
             {
-                estimation[0] = "nonparametric";
+                if(jRadioButton8.isSelected())
+                    estimation[0] = "nonparametric_uniform";
+                if(jRadioButton9.isSelected())
+                    estimation[0] = "nonparametric_grid";
             }
             else
             {
@@ -1253,6 +1481,16 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
                 object.getSource().covTheta = covTheta.split(" ");
             else
                 object.getSource().covTheta = null;
+            if(iterator.analysis.equals("nonparametric"))
+            {
+                if(jRadioButton8.isSelected())
+                {
+                    object.getSource().nonparamSeed = jTextField4.getText();
+                    object.getSource().nonparamNumOfPoints = jTextField3.getText();
+                }
+                if(jRadioButton9.isSelected())
+                    object.getSource().nonparamPointsPerDim = jTextField5.getText();
+            }
 	}
 
 	public boolean isValid(){

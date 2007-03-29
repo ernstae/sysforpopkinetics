@@ -19,6 +19,7 @@ distribution.
 package uw.rfpk.mda.nonmem.compartment;
 
 import java.awt.Dimension;
+import java.awt.Cursor;
 import java.util.regex.*;
 import javax.swing.JOptionPane;
 import javax.help.*;
@@ -41,8 +42,8 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         this.modelExpression = modelExpression;
         this.isPopulation = isPopulation;
         initComponents();
-        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
-        CSH.setHelpIDString(helpButton, "Prepare_Input_Residual_Unknown_Variability_Model");
+//        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
+//        CSH.setHelpIDString(helpButton, "Prepare_Input_Residual_Unknown_Variability_Model");
         if(!isPopulation)
             jTextArea1.setText("Select a residual unknown variability (RUV) model:\n  - F denotes the model function vector\n  - DV denotes the observed data vector\n  - Y, a random variable, represents the predcted observation\n  - Model must contain RUV parameter ETA\n  - Enter appropriate number in () following ETA (e.g. ETA(1))");
         if(isPopulation)
@@ -60,7 +61,10 @@ public class ErrorModelDialog extends javax.swing.JDialog {
           jLabel9.setText("F + F * ETA + ETA");            
         }
         nameTextField.setText(modelExpression[2]);
-        userDefinedTextField.setText(modelExpression[0]);
+        if(modelExpression[0].length() == 0)
+            userDefinedTextField.setText("Y=");
+        else
+            userDefinedTextField.setText(modelExpression[0]);
         eqnTextArea.setText(modelExpression[1]);
         userDefinedRadioButton.setSelected(true);
         Dimension wndSize = getToolkit().getScreenSize();
@@ -305,6 +309,12 @@ public class ErrorModelDialog extends javax.swing.JDialog {
 
         helpButton.setText("Help");
         helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        helpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpButtonActionPerformed(evt);
+            }
+        });
+
         jPanel1.add(helpButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -376,6 +386,10 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
+        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
+    }//GEN-LAST:event_helpButtonActionPerformed
+
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
         if(isPopulation) userDefinedTextField.setText("Y=F+F*EPS()+EPS()");
         else userDefinedTextField.setText("Y=F+F*ETA()+ETA()");
@@ -386,23 +400,33 @@ public class ErrorModelDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         String text = userDefinedTextField.getText();
         String eqns = eqnTextArea.getText();
         String name = nameTextField.getText();
+        if(!text.replaceAll(" ", "").startsWith("Y="))
+        {
+            JOptionPane.showMessageDialog(null, "\"Y=\" is missing in the model.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+            setCursor(null);
+            return;
+        }
         if(isPopulation)
         {
             if(!Pattern.compile("\\bEPS\\b", Pattern.UNIX_LINES).matcher(text).find())
             {
                 JOptionPane.showMessageDialog(null, "EPS is missing in the RUV model.",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
+                setCursor(null);
                 return;
             }
             else
             {
-                if(!Pattern.compile("\\bEPS\\(\\d+\\)", Pattern.UNIX_LINES).matcher(text).find())
+                if(Pattern.compile("\\bEPS\\(\\)", Pattern.UNIX_LINES).matcher(text).find())
                 {
                     JOptionPane.showMessageDialog(null, "EPS Number is missing.",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
+                    setCursor(null);
                     return;
                 }
             }
@@ -413,14 +437,16 @@ public class ErrorModelDialog extends javax.swing.JDialog {
             {
                 JOptionPane.showMessageDialog(null, "ETA is missing in the RUV model.",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
+                setCursor(null);
                 return;
             }
             else
             {
-                if(!Pattern.compile("\\bETA\\(\\d+\\)", Pattern.UNIX_LINES).matcher(text).find())
+                if(Pattern.compile("\\bETA\\(\\)", Pattern.UNIX_LINES).matcher(text).find())
                 {
-                    JOptionPane.showMessageDialog(null, "EPA Number is missing.",
+                    JOptionPane.showMessageDialog(null, "ETA Number is missing.",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
+                    setCursor(null);
                     return;
                 }
             }            
@@ -429,22 +455,25 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         {
             JOptionPane.showMessageDialog(null, "THETA cannot be in any equation.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
+            setCursor(null);
             return;
         }
         if(name.trim().length() == 0)
         {
             JOptionPane.showMessageDialog(null, "Name is missing.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
+            setCursor(null);
             return;
         }
         modelExpression[0] = text;
         modelExpression[1] = eqns;
         modelExpression[2] = name;
         setVisible(false);
+        setCursor(null);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void userDefinedRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userDefinedRadioButtonActionPerformed
-        userDefinedTextField.setText("");
+        userDefinedTextField.setText("Y=");
     }//GEN-LAST:event_userDefinedRadioButtonActionPerformed
 
     private void exponentialRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exponentialRadioButtonActionPerformed

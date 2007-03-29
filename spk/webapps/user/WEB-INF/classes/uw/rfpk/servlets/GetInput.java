@@ -117,10 +117,12 @@ public class GetInput extends HttpServlet
                 userStmt = userRS.getStatement();
                 userRS.next();
 
-                // Check if the job belongs to the user in the group or to the library
+                // Check if the job belongs to the user in the group, belongs to the library
+                // or is shared wit this user
                 if((groupId != 0 && userRS.getLong("team_id") == groupId) || 
                    (groupId == 0 && Long.parseLong(user.getUserId()) == userId) || 
-                   userRS.getString("username").equals("librarian"))               
+                   userRS.getString("username").equals("librarian") ||
+                   Long.parseLong(user.getUserId()) == jobRS.getLong("share_with"))               
                 {
                     // Get source
                     Blob blob = jobRS.getBlob("xml_source");

@@ -9,7 +9,7 @@ java:
 
 test:
 	load_spktest.pl --schema ../schema.sql --basedata ../basedata.sql --userdata ../userdata.sql
-	java TestSpkdb $(HOST)
+	/usr/java/jdk1.5.0_07/bin/java TestSpkdb $(HOST)
 
 installdocs:
 	scp -r docs/*.html docs/*.css docs/resources docs/rfpk $(WEB)

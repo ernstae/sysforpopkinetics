@@ -71,7 +71,9 @@ author: Jiaji Du
               </c:if>
               The following user information are found as bellow.<br>You may update the Company, State, Country, Email. 
             <p>
-            <form action="validateuser.jsp" method="POST">                
+                
+            <form action="validateuser.jsp" method="POST">
+                <c:set var="bugLogin" value="${validUser.email}" scope="session" />
             <table border="0">
               <tr>
                   <td>User ID</td>

@@ -182,6 +182,8 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            // Correct IF conditions
+            record = Utility.correctIFConditions(record);
             while(record.indexOf("\n\n") != -1)
                 record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();

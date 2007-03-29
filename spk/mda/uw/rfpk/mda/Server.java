@@ -151,7 +151,7 @@ public class Server {
     /** Send a message to the server to set job abstract.
      * @param jobId id number of the job.
      * @param jobAbstract abstract field of the job to set.
-     * @return true if the job's state_code is set to "end" by this method, otherwise false.
+     * @return true if the job's abstract has been successfully updated, otherwise false.
      */
     public boolean setJobAbstract(long jobId, String jobAbstract)
     {
@@ -165,6 +165,35 @@ public class Server {
             // Talk to the server
             Network network = new Network("https://" + serverHost + ":" + serverPort + 
                                           "/user/servlet/uw.rfpk.servlets.SetJobAbstract",
+                                          sessionId);
+            success = (String)network.talk(messageOut);
+         }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",         
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return success.equals("true");
+    }
+    
+    /** Send a message to the server to set job share_with.
+     * @param jobId id number of the job.
+     * @param shareWithName username of the user with whom the job is to share.
+     * @return true if the job's share_wide has been successfully set, otherwise false.
+     */
+    public boolean setJobShareWith(long jobId, String shareWithName)
+    {
+        String[] messageOut = new String[3];
+        messageOut[0] = secret;
+        messageOut[1] = String.valueOf(jobId);
+        messageOut[2] = shareWithName;
+        String success = "false";
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.SetJobShareWith",
                                           sessionId);
             success = (String)network.talk(messageOut);
          }

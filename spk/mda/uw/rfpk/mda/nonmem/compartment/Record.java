@@ -106,24 +106,31 @@ public class Record {
             sb.append("\n" + Model.equations);
         
         // append user defined variables
-        List<Object> keySet = new Vector<Object>(Model.variables.keySet());
-        Iterator keyIter = keySet.iterator();
-        String key, value;
-        while(keyIter.hasNext())
-        {
-            key = (String)keyIter.next();
-            value = Model.variables.getProperty(key);
-            if(value != null)
-                sb.append("\n" + key + "=" + value);
-        }
+        String value;
+        if(Model.variableList != null)
+            for(String key : Model.variableList)
+            {
+                value = Model.variables.getProperty(key);
+                if(value != null)
+                    sb.append("\n" + value.trim().replaceAll("\n", ";\n"));
+            }
                 
         // Append fluxes
         int size = Model.fluxes.size();
-        for(int i = 0; i < size; i++)
+//        for(int i = 0; i < size; i++)
+//        {
+//            Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
+//            if(flux.element1 == null || flux.element1 instanceof Element.Compartment)
+//                sb.append("\n" + flux.flowRate.trim().replaceAll("\n", ";\n"));
+//        }
+        for(String name: Model.fluxList)
         {
-            Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
-            if(flux.element1 == null || flux.element1 instanceof Element.Compartment)
-                sb.append("\n" + flux.name + "=" + flux.flowRate);
+            for(int i = 0; i < size; i++)
+            {
+                Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
+                if(flux.name.equals(name))
+                    sb.append("\n" + flux.flowRate.trim().replaceAll("\n", ";\n"));
+            }
         }
         
         // Append compartments and delays
@@ -141,18 +148,18 @@ public class Record {
                 while(keys.hasMoreElements())
                 {
                     param = (String)keys.nextElement();
-                    sb.append("\n" + param + "=" + comp.parameters.getProperty(param));
+                    sb.append("\n" + comp.parameters.getProperty(param).trim().replaceAll("\n", ";\n"));
                 }
             }
             else
             {
                 Element.Delay delay = (Element.Delay)element;
                 if(delay.compartments.size() > 0 && !delay.delayTime.equals(""))
-                    sb.append("\nTLAG" + delay.number + "=" + delay.delayTime);
+                    sb.append("\n" + delay.delayTime.trim().replaceAll("\n", ";\n"));
             }
         }
 
-        pkText = sb.toString().trim();
+        pkText = sb.toString().trim().replaceAll(" ", "");
         return pkText;
     }
     
@@ -287,12 +294,12 @@ public class Record {
                     if(interval[0].equals(interval[1]))
                         condition += "ID .EQ. " + interval[0];
                     else
-                        if(list.size() == 1) condition += "ID .GE. " + interval[0] + " AND .LE. " + interval[1];
-                        else condition += "(ID .GE. " + interval[0] + " AND .LE. " + interval[1] + ")";
+                        if(list.size() == 1) condition += "ID .GE. " + interval[0] + " .AND. ID .LE. " + interval[1];
+                        else condition += "(ID .GE. " + interval[0] + " .AND. ID .LE. " + interval[1] + ")";
                     if(j == list.size() - 1)
                         condition += ") THEN";
                     else
-                        condition += " OR ";
+                        condition += " .OR. ";
                 }
                 sb.append(condition + "\n");
             }                       
@@ -358,13 +365,13 @@ public class Record {
             Model model = (Model)tool.models.get(i);
             if(model.inputs.size() == 0)
             {
-                JOptionPane.showMessageDialog(null, "The model for " + model.name + " has not a dose.",
+                JOptionPane.showMessageDialog(null, "The model for group " + model.name + " has not a dose.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
             if(model.samples.size() == 0)
             {
-                JOptionPane.showMessageDialog(null, "The model for " + model.name + " has no observation.",
+                JOptionPane.showMessageDialog(null, "The model for group " + model.name + " has no observation.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -483,7 +490,8 @@ public class Record {
        
         // Find number of THETAs and number of ETAS
         int nTheta = Utility.find(code, "THETA");
-        if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
+        int nEta = Utility.find(code.replaceAll("THETA", ""), "ETA");
+        if(iterator.analysis.equals("population"))
         {
             if(nTheta == 0)
             {
@@ -491,7 +499,6 @@ public class Record {
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-            int nEta = Utility.find(code.replaceAll("THETA", ""), "ETA");
             if(nEta == 0)
             {
                 JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
@@ -506,6 +513,12 @@ public class Record {
             if(nTheta == 0)
             {
                 JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            if(nEta != 0)
+            {
+                JOptionPane.showMessageDialog(null, "ETA is not a valid model parameter for an individual model.\n",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -587,7 +600,7 @@ public class Record {
         // Find number of EPSs for population analysis or Etas for individual analysis
         int nEta = 0;
         int nEps = 0;
-        if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
+        if(iterator.analysis.equals("population"))
         {
             String pkCode = Utility.eliminateComments(pkText);
             if(pkCode != null)
@@ -613,7 +626,7 @@ public class Record {
             }
         }
         iterator.setNEta(nEta);
-        if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
+        if(iterator.analysis.equals("population"))
             iterator.setNEps(nEps);
         
         // Set source and record

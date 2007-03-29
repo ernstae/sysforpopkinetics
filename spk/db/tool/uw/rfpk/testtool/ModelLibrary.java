@@ -244,7 +244,7 @@ public class ModelLibrary extends javax.swing.JFrame {
         jButton3.setText("Update");
         jButton3.setEnabled(true);        
         indexList = 0;
-        lists = new Vector();
+        lists = new Vector<String[][]>();
         showArchiveList(0);
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
@@ -412,7 +412,7 @@ public class ModelLibrary extends javax.swing.JFrame {
             if(indexList != 0)
                 leftOff = Long.parseLong(((String[][])lists.get(indexList - 1))[maxNum - 1][0]);
        
-            Vector modelList = new Vector();
+            Vector<String[]> modelList = new Vector<String[]>();
             try
             {
                 Connection con = Spkdb.connect(jTextField4.getText(), 
@@ -504,7 +504,7 @@ public class ModelLibrary extends javax.swing.JFrame {
             length--;
         reportDialog.setSize(800, 16 * length + 90);  
         reportDialog.setTitle(title);
-        reportDialog.show();
+        reportDialog.setVisible(true);
     } 
     
     private class DisplayTableModel extends AbstractTableModel 
@@ -570,7 +570,7 @@ public class ModelLibrary extends javax.swing.JFrame {
      * @param args the command line arguments, not being used.
      */
     public static void main(String args[]) {
-        new ModelLibrary().show();
+        new ModelLibrary().setVisible(true);
     }
     
     
@@ -614,7 +614,7 @@ public class ModelLibrary extends javax.swing.JFrame {
     private String versionLog = "";
     
     // List collection
-    private Vector lists = null;
+    private Vector<String[][]> lists = null;
     
     // Index of the list in list collection
     private int indexList = 0; 

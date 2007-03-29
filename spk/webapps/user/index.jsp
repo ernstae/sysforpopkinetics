@@ -99,8 +99,10 @@ author: Jiaji Du
             <p>
                 MySPK provides the ability to create population kinetic models using the interactive
                 Model Design Agent, to compile these models into highly efficient
-                machine code, and to run them on a computational cluster (according to our <a href="RFPK_SPK_TERMS_OF_SERVICE.html" target="_blank">Terms of Service</a>). To obtain an account, please contact 
-                <a href="mailto:vicini@u.washington.edu">Dr. Paolo Vicini</A>, 
+                machine code, and to run them on a computational cluster (according to our <a href="RFPK_SPK_TERMS_OF_SERVICE.html" target="_blank">Terms of Service</a>). 
+                To obtain an account, please go to the 
+                <a href="https://newaccount.rfpk.washington.edu">new user account page</a>.  For more information, please contact 
+                <a href="mailto:vicini@u.washington.edu">Dr. Paolo Vicini</a>, 
                 the RFPK Principal Investigator.  </font>            
 	  </td>
 	</tr>

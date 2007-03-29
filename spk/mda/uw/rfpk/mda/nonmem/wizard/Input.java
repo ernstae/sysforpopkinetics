@@ -44,7 +44,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     private boolean isValid = false;
     private MDAIterator iterator = null;
     private String[] input = null; 
-    private Vector data = null;
+    private Vector<Vector> data = null;
     private String[][] dataArray = null;
     private String[][] dataTemp = null;
     private int nDataRow = 0;    
@@ -354,7 +354,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         String[] header;
-        if(!exist(input, "MDV") && JOptionPane.showConfirmDialog(null, 
+        if(indexOf(input, "MDV") == -1 && JOptionPane.showConfirmDialog(null, 
                                          "Do you want to add a data column as MDV?",   
                                          "Question Dialog",
                                          JOptionPane.YES_NO_OPTION,
@@ -425,6 +425,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         dataTemp = null;
         dataEditor.dispose();
         
+        setDataObject();
+        checkValidity();
         setTable();
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -456,7 +458,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(!iterator.getIsInd() && index == 0)
+        if(index == 0 && (iterator.analysis.equals("population") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric")))
             return;
         
         if(!input[index].equalsIgnoreCase("MDV"))
@@ -472,7 +474,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                     
             // If input is empty, gray out the Remove button
             int j = 0;
-            if(!iterator.getIsInd())
+            if(iterator.analysis.equals("population") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
                 j = 1;
             for(int i = j; i < input.length; i++)
                 if(!input[i].equals(""))
@@ -535,11 +537,22 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        if(iterator.analysis.equals("population") || iterator.analysis.equals("two-stage") || 
+           iterator.analysis.equals("nonparametric") && index == 0 && input[0].equals("ID"))
+        {
+            JOptionPane.showMessageDialog(null, 
+                                          "The first data labe must be ID for a population dataset.", 
+                                          "Input Error",    
+                                          JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String element = null;
         if(jRadioButton1.isSelected())
         {
             element = (String)jComboBox1.getSelectedItem();
             String alias = jTextField1.getText().trim().toUpperCase();
+            if(!Utility.checkDataLabels(new String[]{alias}))
+                return;
             if(!alias.equals(""))
             {
                 element = element + "=" + alias;
@@ -548,9 +561,11 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         else if(jRadioButton2.isSelected())
         {
             element = jTextField2.getText().trim().toUpperCase();
+            if(!Utility.checkDataLabels(new String[]{element}))
+                return;
             if(element.equals(""))
                 return;
-            if(exist(stdItems, element))
+            if(indexOf(stdItems, element) != -1)
             {
                 JOptionPane.showMessageDialog(null, 
                                               element + " is one of the reserved " +
@@ -582,43 +597,9 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         // Repaint the table
         jTable1.repaint();  
         
-        if(!exist(input, "")) 
-        {
-            if(!iterator.getIsPred())
-            {
-                if(exist(input, "DV"))
-                {                
-                    isValid = true;
-                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, 
-                                                  "Data item \"DV\" is required.",   
-                                                  "Input Error",    
-                                                  JOptionPane.ERROR_MESSAGE); 
-                    isValid = false;
-                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
-                }
-            }
-            else
-            {
-                if(exist(input, "DV"))
-                {                
-                    isValid = true;
-                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, 
-                                                  "Data item \"DV\" is required.",   
-                                                  "Input Error",    
-                                                  JOptionPane.ERROR_MESSAGE);
-                    isValid = false;
-                    wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
-                }                    
-            }
-        }
+        // Check validaty
+        checkValidity();
+        
         jTextField1.setText("");
         jTextField2.setText("");
         jCheckBox1.setSelected(false);
@@ -626,6 +607,59 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         // Repaint the table
         jTable1.repaint();
     }//GEN-LAST:event_addButtonActionPerformed
+    
+    // Check validity
+    private void checkValidity()
+    {
+        if(indexOf(input, "") == -1) 
+        {
+            if(indexOf(input, "DV") != -1 && Utility.checkDataLabels(input) && checkMDV())
+            {                
+                isValid = true;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, 
+                                              "Data item \"DV\" is required.",   
+                                              "Input Error",    
+                                              JOptionPane.ERROR_MESSAGE); 
+                isValid = false;
+                wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                    
+            }
+        }
+    }
+    
+    // Check if every individual has DV
+    private boolean checkMDV()
+    {
+        int indexMDV = indexOf(input, "MDV");
+        if(indexMDV != -1)
+        {
+            Vector indData;
+            int j;
+            int indSize;
+            String mdv;
+            for(int i = 0; i < data.size(); i++)
+            {
+                indData = data.get(i);
+                indSize = indData.size();
+                for(j = 0; j < indSize; j++)
+                {
+                    mdv = ((String[])indData.get(j))[indexMDV];   
+                    if(mdv.equals("0")) 
+                        break;
+                }
+                if(j == indSize)
+                {
+                    JOptionPane.showMessageDialog(null, "Individual " + (i + 1) + " missed all DV record.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     
         private class ATableModel extends AbstractTableModel {
         
@@ -674,13 +708,13 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 	}
     }
     
-    private boolean exist(String[] strings, String string)
+    private int indexOf(String[] strings, String string)
     {
         String first = string.split("=")[0];
         for(int i = 0; i < strings.length; i++)
             if(first.equals(strings[i].split("=")[0]))
-                return true;
-        return false;
+                return i;
+        return -1;
     }
     
     private void setDataObject()
@@ -688,13 +722,14 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         Vector<Vector> dataObject = new Vector<Vector>();
         Vector<String[]> indData = new Vector<String[]>();
         String[] row;
-        int nDataRow = dataArray.length;
-        if(iterator.getIsInd())
+        int nDataRow = tableEditModel.getRowCount();
+        int nDataColumn = tableEditModel.getColumnCount();
+        if(iterator.analysis.equals("individual") || iterator.analysis.equals("identifiability"))
         {
             for(int i = 0; i < nDataRow; i++)
             {
-                row = new String[nDataCol];
-                for(int j = 0; j < nDataCol; j++)
+                row = new String[nDataColumn];
+                for(int j = 0; j < nDataColumn; j++)
                     row[j] = (String)tableEditModel.getValueAt(i, j);
                 indData.add(row);
             }
@@ -705,8 +740,8 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             String id = "";
             for(int i = 0; i < nDataRow; i++)
             {
-                row = new String[nDataCol];
-                for(int j = 0; j < nDataCol; j++)
+                row = new String[nDataColumn];
+                for(int j = 0; j < nDataColumn; j++)
                     row[j] = (String)tableEditModel.getValueAt(i, j);
                 if(row[0].equalsIgnoreCase(id))
                     indData.add(row);
@@ -721,8 +756,9 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             dataObject.add(indData);
         }
         ((MDAObject)wizardPane.getCustomizedObject()).setData(dataObject);
+        data = dataObject;
     }
-
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -784,10 +820,10 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             nDataCol = iterator.getNDataCol();
             setDataArray();
             input = ((MDAObject)wizard.getCustomizedObject()).getDataLabels();
-
+            
             index = -1;
             jComboBox1.removeItem("ID");
-            if(!iterator.getIsInd())
+            if(iterator.analysis.equals("population") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
             {
                 input[0] = "ID";
             }
@@ -796,17 +832,10 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 jComboBox1.insertItemAt("ID", 1);
             }
 
-            isValid = exist(input, "DV");
-            wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
-            
+            checkValidity();
             setTable();
-            if(!isValid && !exist(input, ""))
-                JOptionPane.showMessageDialog(null, 
-                                              "Data item \"DV\" is required.",   
-                                              "Input Error",    
-                                              JOptionPane.ERROR_MESSAGE);
 	}
-        
+
         private void setDataArray()
         {
             int nRow = 0;
@@ -843,7 +872,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 setDataObject();
             }
             object.getSource().input = inputs.split(" ");
-            if(iterator.getIsTwoStage() || iterator.isNonparam)
+            if(iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
                 inputs = inputs.substring(3);
             String record = "$INPUT " + inputs.replaceAll("\r", "");
             object.getRecords().setProperty("Input", record);

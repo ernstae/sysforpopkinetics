@@ -61,7 +61,7 @@ public class DigestPassword implements java.io.Serializable
     public String getPassword()
     {
         return password; 
-    }  
+    }
     
     private String password = null;
 }

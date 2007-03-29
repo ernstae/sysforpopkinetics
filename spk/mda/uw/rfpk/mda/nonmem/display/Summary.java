@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
 import java.text.SimpleDateFormat;
-//import java.text.NumberFormat;
+import java.text.NumberFormat;
 
 /**
  * This class makes a summary report.
@@ -51,7 +51,10 @@ public class Summary {
             return null;   
         }
         // Preparation
-        DecimalFormat f = new DecimalFormat("0.00E00");
+        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        f.applyPattern("0.00E00");
+        
+//        DecimalFormat f = new DecimalFormat("0.00E00");
 //        NumberFormat p = NumberFormat.getPercentInstance();
 //        p.setMaximumFractionDigits(1);
 //        p.setMinimumFractionDigits(1);
@@ -68,19 +71,19 @@ public class Summary {
         // Write theta
         if(output.theta != null)
         {
-            theta = "THETA" + "\n";
+            theta = "THETA\n";
             for(int i = 0; i < output.theta.length; i++)
             {
                 n = String.valueOf(i + 1);        
-                par = output.theta[i] != null && !output.theta[i].equals("nan") ? 
+                par = output.theta[i] != null && !output.theta[i].equals("nan") && !output.theta[i].endsWith("inf")  ? 
                       Utility.formatData(6, f.format(Double.parseDouble(output.theta[i]))) : NA;
-                ser = output.stdErrTheta != null && output.stdErrTheta[i] != null && !output.stdErrTheta[i].equals("nan") ? 
+                ser = output.stdErrTheta != null && output.stdErrTheta[i] != null && !output.stdErrTheta[i].equals("nan") && !output.stdErrTheta[i].endsWith("inf") ? 
                       Utility.formatData(6, f.format(Double.parseDouble(output.stdErrTheta[i]))) : NA;
-                rse = output.coefVariation != null && output.coefVariation[i] != null && !output.coefVariation[i].equals("nan") ? 
+                rse = output.coefVariation != null && output.coefVariation[i] != null && !output.coefVariation[i].equals("nan") && !output.coefVariation[i].endsWith("inf") ? 
                       Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[i]))) : NA;
-                lb = output.confInterval != null && output.confInterval[0][i] != null && !output.confInterval[0][i].equals("nan") ? 
+                lb = output.confInterval != null && output.confInterval[0][i] != null && !output.confInterval[0][i].equals("nan") && !output.confInterval[0][i].endsWith("inf") ? 
                      Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][i]))) : NA;
-                ub = output.confInterval != null && output.confInterval[1][i] != null && !output.confInterval[1][i].equals("nan")? 
+                ub = output.confInterval != null && output.confInterval[1][i] != null && !output.confInterval[1][i].equals("nan") && !output.confInterval[1][i].endsWith("inf") ? 
                      Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][i]))) : NA;
                 theta = theta + getSpace(5 - n.length()) + n + "     " + par + getSpace(12 - par.length()) + ser +
                         getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub + "\n";  
@@ -93,22 +96,22 @@ public class Summary {
         {
             for(int l = 0; l < output.omega.length; l++)
             {
-                omega += "OMEGA" + "\n";
+                omega += "OMEGA\n";
                 if(output.omegaStruct[l].equals("block"))
                 {
                     for(int j = 1; j < output.omega[l].length + 1; j++)
                     {
                         for(int i = j - 1; i < output.omega[l].length; i++)  
                         {
-                            par = output.omega[l][i][j] != null && !output.omega[l][i][j].equals("nan") ? 
+                            par = output.omega[l][i][j] != null && !output.omega[l][i][j].equals("nan") && !output.omega[l][i][j].endsWith("inf") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][j]))) : NA;
-                            ser = output.stdErrOmega != null && output.stdErrOmega[l][i][j] != null && !output.stdErrOmega[l][i][j].equals("nan") ? 
+                            ser = output.stdErrOmega != null && output.stdErrOmega[l][i][j] != null && !output.stdErrOmega[l][i][j].equals("nan") && !output.stdErrOmega[l][i][j].endsWith("inf") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][j]))) : NA;
-                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
+                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
+                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
+                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                             cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                                  Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
@@ -126,15 +129,15 @@ public class Summary {
                 {
                     for(int i = 0; i < output.omega[l].length; i++)
                     {
-                        par = output.omega[l][i][i + 1] != null && !output.omega[l][i][i + 1].equals("nan") ?
+                        par = output.omega[l][i][i + 1] != null && !output.omega[l][i][i + 1].equals("nan") && !output.omega[l][i][i + 1].endsWith("inf") ?
                               Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][i + 1]))) : NA;
-                        ser = output.stdErrOmega != null && output.stdErrOmega[l][i][i + 1] != null && !output.stdErrOmega[l][i][i + 1].equals("nan") ? 
+                        ser = output.stdErrOmega != null && output.stdErrOmega[l][i][i + 1] != null && !output.stdErrOmega[l][i][i + 1].equals("nan")  && !output.stdErrOmega[l][i][i + 1].endsWith("inf") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
+                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
+                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
+                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                         cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                              Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
@@ -152,22 +155,22 @@ public class Summary {
         {
             for(int l = 0; l < output.sigma.length; l++)
             {
-                sigma += "SIGMA" + "\n";                
+                sigma += "SIGMA\n";                
                 if(output.sigmaStruct[l].equals("block"))
                 {            
                     for(int j = 1; j < output.sigma[l].length + 1; j++)
                     {
                         for(int i = j - 1; i < output.sigma[l].length; i++)  
                         {                        
-                            par = output.sigma[l][i][j] != null && !output.sigma[l][i][j].equals("nan") ? 
+                            par = output.sigma[l][i][j] != null && !output.sigma[l][i][j].equals("nan") && !output.sigma[l][i][j].endsWith("inf") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][j]))) : NA;
-                            ser = output.stdErrSigma != null && output.stdErrSigma[l][i][j] != null && !output.stdErrSigma[l][i][j].equals("nan") ? 
+                            ser = output.stdErrSigma != null && output.stdErrSigma[l][i][j] != null && !output.stdErrSigma[l][i][j].equals("nan") && !output.stdErrSigma[l][i][j].endsWith("inf") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][j]))) : NA;   
-                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
+                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
                                   Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
+                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
+                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
                                  Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                             sd = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                                  Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
@@ -182,18 +185,18 @@ public class Summary {
                 }
  
                 if(output.sigmaStruct[l].equals("diagonal"))
-                {        
+                {
                     for(int i = 0; i < output.sigma[l].length; i++)
                     {
-                        par = output.sigma[l][i][i + 1] != null && !output.sigma[l][i][i + 1].equals("nan") ?
+                        par = output.sigma[l][i][i + 1] != null && !output.sigma[l][i][i + 1].equals("nan") && !output.sigma[l][i][i + 1].endsWith("inf") ?
                               Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][i + 1]))) : NA;
-                        ser = output.stdErrSigma != null && output.stdErrSigma[l][i][i + 1] != null && !output.stdErrSigma[l][i][i + 1].equals("nan") ? 
+                        ser = output.stdErrSigma != null && output.stdErrSigma[l][i][i + 1] != null && !output.stdErrSigma[l][i][i + 1].equals("nan") && !output.stdErrSigma[l][i][i + 1].endsWith("inf") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") ? 
+                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
                               Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") ? 
+                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") ? 
+                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
                              Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
                         cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
                              Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
@@ -216,8 +219,7 @@ public class Summary {
                 if(output.computingTimes[i] != null && !output.computingTimes[i].equals(""))
                     elapsedTime += Double.parseDouble(output.computingTimes[i]);
             }
-            if(elapsedTime != 0)
-                computingTime = String.valueOf(elapsedTime) + " s";
+            computingTime = String.valueOf(elapsedTime) + " s";
         }
         
         String jobId = output.jobId != null ? output.jobId : NA;
@@ -225,8 +227,6 @@ public class Summary {
         String submissionTime = output.submissionTime != null ? formatTime(output.submissionTime) : NA;
         String completionTime = output.completionTime != null ? formatTime(output.completionTime) : NA;        
         String analysis = output.analysis != null ? output.analysis : NA;
-        String subProblem = output.subProblem != null ? output.subProblem : NA;
-        String simulationSeed = output.simulationSeed != null ? output.simulationSeed : NA;
         String jobMethod = NA + " due to offline (Job Code: " + output.methodCode + ")";
         if(isOnline)
         {
@@ -257,6 +257,13 @@ public class Summary {
         }
         String identifyStatus = output.identifyStatus != null ? output.identifyStatus : NA;
         String identifySolutions = output.identifySolutions != null ? output.identifySolutions : NA;
+        if(identifySolutions.trim().equals("0") || identifySolutions.trim().equals("1"))
+            identifySolutions = "See the identifiability trace for details.";
+        String nonparamNumOfPoints = output.nonparamNumOfPoints != null ? output.nonparamNumOfPoints : NA;
+        String nonparamSeed = output.nonparamSeed != null ? output.nonparamSeed : NA;
+        String nonparamPointsPerDim = output.nonparamPointsPerDim != null ? output.nonparamPointsPerDim : NA;
+        String nonparamInPoints = output.nonparamInPoints != null ? output.nonparamInPoints : NA;
+        String nonparamOutPoints = output.nonparamOutPoints != null ? output.nonparamOutPoints : NA;
         String errorMessage = "";
         if(output.error != null)
         {
@@ -289,48 +296,57 @@ public class Summary {
         warningMessage = warningMessage.replaceAll("\n", "\n     ");
         
         // Write summary
-        String summary = "Summary Report" +
-                         "\n\nJob Identification number: " + jobId +
-                         "\nJob Description: " + jobAbstract + 
-                         "\n\nTime of Job Submission: " + submissionTime + 
-                         "\nTime of Job Completion: " + completionTime +
-                         "\nSPK Computing Time: " + computingTime +
-                         "\n\nAnalysis Type: " + analysis +
-                         "\n\nSub-problem Number: " + subProblem +
-                         "\nSeed for Simulation: " + simulationSeed +
-                         "\n\nAnalysis Method: " + jobMethod +                      
-                         "\n\nModel Name: " + modelName + "   Model Version: " + modelVersion +
-                         "\nModel Description: " + modelAbstract +
-                         "\nModel Version Log: " + modelVersionLog +
-                         "\n\nDataset Name: " + dataName + "   Dataset Version: " + dataVersion +
-                         "\nDataset Description: " + dataAbstract +
-                         "\nDataset Version Log: " + dataVersionLog +
-                         "\n\nError Messages: " + errorMessage +
-                         "\n\nWarning Messages: " + warningMessage +
-                         objectiveItem + objStdErrItem + nEvaluationItem +
-                         "\n\nIdentifiability Status: " + identifyStatus +
-                         "\nIdentifiability Number of Solutions: " + identifySolutions +
-                         "\n\nParameter Estimation Result: ";
-        if(output.theta == null)
-            summary += NA;
+        StringBuffer summary = new StringBuffer("Summary Report");
+        summary.append("\n\nJob Identification number: ").append(jobId)
+               .append("\nJob Description: ").append(jobAbstract) 
+               .append("\n\nTime of Job Submission: ").append(submissionTime) 
+               .append("\nTime of Job Completion: ").append(completionTime)
+               .append("\nSPK Computing Time: ").append(computingTime)
+               .append("\n\nAnalysis Type: ").append(analysis)
+               .append("\n\nAnalysis Method: ").append(jobMethod)                      
+               .append("\n\nModel Name: ").append(modelName).append("   Model Version: ").append(modelVersion)
+               .append("\nModel Description: ").append(modelAbstract)
+               .append("\nModel Version Log: ").append(modelVersionLog)
+               .append("\n\nDataset Name: ").append(dataName).append("   Dataset Version: ").append(dataVersion)
+               .append("\nDataset Description: ").append(dataAbstract)
+               .append("\nDataset Version Log: ").append(dataVersionLog)
+               .append("\n\nError Messages: ").append(errorMessage)
+               .append("\n\nWarning Messages: ").append(warningMessage);
+        if(output.subProblem != null)
+            summary.append("\n\nSub-problem Number: ").append(output.subProblem);
+        if(output.simulationSeed != null)
+            summary.append("\n\nSeed for Simulation: ").append(output.simulationSeed);        
+        if(!output.methodCode.equals("id"))
+            summary.append(objectiveItem).append(objStdErrItem).append(nEvaluationItem);
         else
+            summary.append("\n\nIdentifiability Status: ").append(identifyStatus)
+                   .append("\nIdentifiability Number of Solutions: ").append(identifySolutions);
+        if(output.methodCode.equals("un"))
+            summary.append("\n\nNonparametric Number of Initial Points: ").append(nonparamInPoints)
+                   .append("\nNonparametric Number of Output Points: ").append(nonparamOutPoints)
+                   .append("\nNonparametric Seed: ").append(nonparamSeed);
+        else if(output.methodCode.equals("gn"))
+            summary.append("\n\nNonparametric Number of Initial Points: ").append(nonparamInPoints)
+                   .append("\nNonparametric Number of Output Points: ").append(nonparamOutPoints);
+        if(output.theta != null)
         {
+            summary.append("\n\nParameter Estimation Result: ");
             String variability = "*This column indicates RUV in standard deviation units.";
             if(output.analysis.equals("population"))
                 variability = "*For OMEGA, this column indicates BSV in standard deviation units.\n" +
                               " For SIGMA, this column indicates RUV in standard deviation units.";
-            summary += "\n" +
-                         "=====================================================================================" + "\n\n" +
-                         "Parameter  Estimate  Std. Error  Coef. of Var.  95% Confidence Interval  Variability*" + "\n" +
-                         "                                                  L-bound     U-bound"                 + "\n" + 
-                         theta + "\n" + omega + "\n";
+            summary.append("\n")
+                   .append("=====================================================================================\n\n")
+                   .append("Parameter  Estimate  Std. Error  Coef. of Var.  95% Confidence Interval  Variability*\n")
+                   .append("                                                  L-bound     U-bound\n")
+                   .append(theta).append("\n").append(omega).append("\n");
             if(output.analysis.equals("population"))             
-                summary += sigma + "\n";
-            summary += variability + "\n\n" +
-                       "=====================================================================================";                    
+                summary.append(sigma).append("\n");
+            summary.append(variability).append("\n\n")
+                   .append("=====================================================================================");                    
         }
 
-        return summary;
+        return summary.toString();
     }
     
     // This function return spaces.
