@@ -241,7 +241,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
         } 
         if(advan == 6 || advan == 8 || advan == 9 || advan == 10)
         {
-            if(!iterator.isIdentify)
+            if(!iterator.analysis.equals("identifiability"))
                 record += " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();
         }
         jTextArea1.setText(record);
@@ -396,10 +396,10 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
             text = "$SUBROUTINES ADVAN" + String.valueOf(advan);
             if(jLabel2.isEnabled())
                 text += " " + ((String)jComboBox2.getSelectedItem()).trim();
-            if(jLabel1.isEnabled() && !iterator.isIdentify)
+            if(jLabel1.isEnabled() && !iterator.analysis.equals("identifiability"))
                 text += " TOL=" + ((String)jComboBox1.getSelectedItem()).trim();                    
             jTextArea1.setText(text);
-            if(iterator.isIdentify)
+            if(iterator.analysis.equals("identifiability"))
             {
                 jLabel1.setEnabled(false);
                 jTextPane1.setEnabled(false);

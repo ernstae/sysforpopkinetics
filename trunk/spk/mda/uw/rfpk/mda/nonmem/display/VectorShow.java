@@ -21,8 +21,9 @@ package uw.rfpk.mda.nonmem.display;
 import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.table.*;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
-/** This class's instance display a vector show on the screen.
+/** This class displays a vector show on the screen.
  *
  * @author  Jiaji Du
  */
@@ -46,10 +47,11 @@ public class VectorShow extends javax.swing.JFrame {
          
         // Format the data
         int dimension = vector.length;
-        DecimalFormat f = new DecimalFormat("0.00E00");
+        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        f.applyPattern("0.00E00");
         for(int i = 0; i < dimension; i++)
         {
-            if(!vector[i].equals("nan"))
+            if(!vector[i].equals("nan") && !vector[i].endsWith("inf"))
                 vector[i] = Utility.formatData(6, f.format(Double.parseDouble(vector[i])));
             else
                 vector[i] = "   N/A";

@@ -540,7 +540,9 @@ public class Table extends javax.swing.JPanel implements WizardStep {
     
     private void leftListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_leftListMouseClicked
         changeItemButton.setEnabled(leftList.getSelectedIndex() >= 0);
-        deleteItemButton.setEnabled(leftList.getSelectedIndex() >= 0); 
+        deleteItemButton.setEnabled(leftList.getSelectedIndex() >= 0);
+        String selectedItem = (String)leftList.getSelectedValue();
+        rightButton.setEnabled(selectedItem.equals("ID") || selectedItem.equals("TIME"));
     }//GEN-LAST:event_leftListMouseClicked
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
@@ -633,8 +635,8 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         if(rightModel.indexOf(selectedValue) != -1) return;
         rightModel.add(rightList.getSelectedIndex() + 1, selectedValue);
         rightList.setSelectedIndex(rightList.getSelectedIndex() + 1);
-        if(leftModel.getSize() == rightModel.getSize()) 
-            rightButton.setEnabled(false);
+//        if(leftModel.getSize() == rightModel.getSize()) 
+        rightButton.setEnabled(false);
         leftButton.setEnabled(true);        
     }//GEN-LAST:event_rightButtonActionPerformed
 
@@ -690,7 +692,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             addItemButton.setEnabled(false);
         deleteItemButton.setEnabled(true);
         changeItemButton.setEnabled(true);
-        rightButton.setEnabled(true); 
     }//GEN-LAST:event_addItemButtonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -722,7 +723,8 @@ public class Table extends javax.swing.JPanel implements WizardStep {
         addItemButton.setEnabled(true);
         changeItemButton.setEnabled(leftModel.size() > 0);
         deleteItemButton.setEnabled(leftModel.size() > 0);
-        leftButton.setEnabled(false); 
+        leftButton.setEnabled(false);
+        rightButton.setEnabled(false);
         jDialog1.setLocationRelativeTo(this); 
         jDialog1.setSize(420, 435);            
         jDialog1.setVisible(true);
@@ -913,7 +915,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                     item = tokens[1];
                 else
                     item = tokens[0];
-                if(!iterator.getIsInd())
+                if(iterator.analysis.equals("population"))
                     jComboBox1.addItem(item);
                 else
                     if(!item.equals("ID")) 
@@ -922,7 +924,7 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             jComboBox1.addItem("PRED");
             jComboBox1.addItem("RES");
             jComboBox1.addItem("WRES"); 
-            if(!iterator.getIsInd() && iterator.getIsMethod1OrPosthoc())
+            if(iterator.analysis.equals("population") && iterator.getIsMethod1OrPosthoc())
             {
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");

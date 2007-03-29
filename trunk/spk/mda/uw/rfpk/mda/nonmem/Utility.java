@@ -334,8 +334,19 @@ public class Utility {
      * false for otherwise.
      */    
     public static boolean isFloatNumber(String s)
-    {
-        // Check string length
+    {        
+        double d;
+        try
+        {
+            d = Double.parseDouble(s);
+        }
+        catch(NumberFormatException e)
+        {
+            return false;   
+        }
+        return true;
+        
+/*        // Check string length
         if(s.length() == 0) return false; 
         // Check sign
         if(s.startsWith("+") || s.startsWith("-"))
@@ -356,6 +367,7 @@ public class Utility {
         if(s.charAt(0) == '0' && s.length() > 1 && s.charAt(1) != '.')
             return false;
         return true;
+*/
     }
     
     /** Determine if a character sting represents an positive integer number.
@@ -408,10 +420,9 @@ public class Utility {
      * contains the data of one individual.  The individual data vector contains
      * String arrays.  The number of arrays is the number of the data records
      * for the individual.  Each array contains data items of number of columns.
-     * @param isInd a boolean true for individual analysis, false for population analysis.
      * @return a String array containing the data labels.
      */        
-    public static String[] parseDataXML(String dataXML, Vector<Vector> data, boolean isInd)
+    public static String[] parseDataXML(String dataXML, Vector<Vector> data)
     {
         int nDataCol = -1;
         String[] labels = null;
@@ -462,6 +473,9 @@ public class Utility {
                 value = (Element)valueList.item(j);
                 labels[j] = value.getFirstChild().getNodeValue();                 
             }            
+            
+            // If first label is not ID, it is an individual dataset
+            boolean isInd = !labels[0].equals("ID");
             
             // Put the first row in a String[]
             row = (Element)rowList.item(1);
@@ -543,7 +557,7 @@ public class Utility {
                 int nLabels = commentToken.countTokens();
                 labels = new String[nLabels];
                 for(int i = 0; i < nLabels; i++)
-                    labels[i] = commentToken.nextToken();
+                    labels[i] = commentToken.nextToken().toUpperCase();
                 firstLine = in.readLine();
             }
                       
@@ -858,8 +872,32 @@ public class Utility {
         return names;
     }
 
+    /** Check data labels.
+     * @param labels String array containing the data labels to check.
+     * @return true if all the labes are good, false otherwise.
+     */
+    public static boolean checkDataLabels(String[] labels)
+    {
+        boolean ok = true;
+        String[] phrases = {"A", "DADT", "THETA", "ETA", "EPS", "P", "PRED", "IPRED", "CPRED", "RES", "CRES", "IRES",
+                            "CWRES", "IWRES", "WRES", "F", "Y", "[S|F|R|D]\\d+", "ALAG\\d+"};
+        for(String label: labels)
+        {
+            for(String phrase: phrases)
+                if(label.matches(phrase))
+                {
+                    JOptionPane.showMessageDialog(null, "'" + label + "' is a reserved phrase.\n" +
+                                                  "It cannot be used as a data label",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    ok = false;
+                    break;
+                }
+        }
+        return ok;
+    }
+    
     /** Check if END IF is contained in the text.
-     * @param text the program to be checked.
+     * @param text the code to be checked.
      * @param step the step title.
      */
     public static void checkENDIF(String text, String step)
@@ -1157,12 +1195,130 @@ public class Utility {
         return true;
     }
     
+    /** Remove missing values in a data array.
+     * @param data a data array of double values.
+     * @return the resulted data array or null if there is no data in the original array.
+     */
+    public static double[] removeMissingValue(double[] data)
+    {
+        double value;
+        double[] dataOut = null;
+        Vector<Double> temp = new Vector<Double>();
+        int j = 0;
+        int size = data.length;
+        for(int i = 0; i < size; i++)
+        {
+            value = data[i];
+            if(value == value && !String.valueOf(value).endsWith("Infinity"))
+            temp.add(value);
+        }
+        if(temp.size() > 0)
+        {
+            dataOut = new double[temp.size()];
+            int i = 0;
+            for(double number : temp)
+                dataOut[i++] = number;
+        }
+        else
+            JOptionPane.showMessageDialog(null, "No data were found.");
+        return dataOut;
+    }
+    
+    /** Remove missing values in two data array. If a data element is missing in one array,
+     *  the data element in the other array is also removed.  The data element before the 
+     *  specified starting index and after the specified ending index are also removed.
+     * @param dataX a data array of double values.
+     * @param dataY a data array of double values.
+     * @param start starting index to pick data.
+     * @param end ending index to pick data.
+     * @return the two resulted data arrays or null if there is no data in the original arrays.
+     *         The two returned arrays are bundled in an array: first for dataX, last for dataY.
+     */
+    public static double[][] removeMissingValue(double[] dataX, double[] dataY, int start, int end)
+    {
+        double valueX, valueY;
+        double[][] dataOut = null;
+        Vector<Double> tempX = new Vector<Double>();
+        Vector<Double> tempY = new Vector<Double>();
+        int j = 0;
+        int size = dataX.length;
+        for(int i = start; i <= end; i++)
+        {
+            valueX = dataX[i];
+            valueY = dataY[i];
+            if(valueX == valueX && !String.valueOf(valueX).endsWith("Infinity") &&
+               valueY == valueY && !String.valueOf(valueY).endsWith("Infinity"))
+            {
+                tempX.add(valueX);
+                tempY.add(valueY);
+            }
+        }
+        if(tempX.size() > 0)
+        {
+            dataOut = new double[2][tempX.size()];
+            int i = 0;
+            for(double number : tempX)
+                dataOut[0][i++] = number;
+            i = 0;
+            for(double number : tempY)
+                dataOut[1][i++] = number;
+        }
+        return dataOut;
+    }
+    
+    /** Check syntax error in IF conditions and correct them.
+     * @param text the code to be checked.
+     * @return correct code.
+     */
+    public static String correctIFConditions(String text)
+    {
+        int index = text.indexOf("IF");
+        if(index != -1)
+        {
+            index = text.indexOf(".AND.");
+            while(index > 0)
+            {
+                if(text.charAt(index - 1) != ' ')
+                    text = text.substring(0, index) + " " + text.substring(index);
+                index = text.indexOf(".AND.", index + 6);
+            }
+            index = text.indexOf(".OR.");
+            while(index > 0)
+            {
+                if(text.charAt(index - 1) != ' ')
+                    text = text.substring(0, index) + " " + text.substring(index);
+                index = text.indexOf(".OR.", index + 5);
+            }
+        }
+        return text;
+    }
+    
     /** Test methods.
      * @param args argument not used.
      */    
     public static void main(String[] args)
     {
-        System.out.println(checkCharacter("øaB1*%$)>@/", "test")); //ø
+          System.out.println(correctIFConditions("IF((T.GE.0.AND.T.LE.1).OR.(T.EQ.2.AND.T.EQ.3))"));
+//        String[] dataLabels = {"ID", "DV", "TIME", "PRED", "A", "S1","ALAG2", "R3N"};
+//        System.out.print(checkDataLabels(dataLabels));
+        
+//        double[] dataX = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//        double[] dataY = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//        dataX[2] = Double.parseDouble("NaN");
+//        dataY[5] = Double.parseDouble("Infinity");
+//        double[][] dataOut = removeMissingValue(dataX, dataY, 1, 8);
+//        for(int i = 0; i < dataOut[0].length; i++)
+//            System.out.println(dataOut[0][i] + " : " + dataOut[1][i]);
+        
+//        double[] data = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+//        data[1] = Double.parseDouble("NaN");
+//        data[3] = Double.parseDouble("Infinity");
+//        data[5] = Double.parseDouble("+Infinity");
+//        data[7] = Double.parseDouble("-Infinity");
+//        data = removeMissingValue(data);
+//        for(int i = 0; i < data.length; i++)
+//            System.out.println(data[i]);
+//        System.out.println(checkCharacter("øaB1*%$)>@/", "test")); //ø
 //        checkENDIF("END IF", "STEP");
 //        String model = "FRONT\n$OMEGA BLOCK(4) 1 2 3 4 5 6 7 8 9 10\nBACK";
 //        System.out.println(diagonalizeOmegaModel(model));

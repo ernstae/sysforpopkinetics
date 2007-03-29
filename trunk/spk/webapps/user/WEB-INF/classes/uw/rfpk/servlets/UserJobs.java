@@ -164,7 +164,13 @@ public class UserJobs extends HttpServlet
                     for(int i = 0; i < maxNum; i++)
                     {                  
                         String[] job = new String[6];   
-                        job[0] = String.valueOf(userJobsRS.getLong("job_id"));
+                        String jobId = String.valueOf(userJobsRS.getLong("job_id"));
+                        long shareWith = userJobsRS.getLong("share_with");
+                        if(shareWith == userId)
+                            jobId += "s";
+                        else if(shareWith > 0)
+                            jobId = "s" + jobId;
+                        job[0] = jobId;
                         job[1] = formater.format(new Date(userJobsRS.getLong("start_time") * 1000));                   
                         job[2] = state.getProperty(userJobsRS.getString("state_code"));
                         String endCode = userJobsRS.getString("end_code");

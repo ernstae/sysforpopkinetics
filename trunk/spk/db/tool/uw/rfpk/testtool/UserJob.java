@@ -377,7 +377,7 @@ public class UserJob extends javax.swing.JFrame {
             return;
         }        
         indexList = 0;
-        lists = new Vector();
+        lists = new Vector<String[][]>();
         showArchiveList(0);
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -474,7 +474,7 @@ public class UserJob extends javax.swing.JFrame {
             length--; 
         reportDialog.setSize(800, 16 * length + 90);  
         reportDialog.setTitle(title);
-        reportDialog.show();
+        reportDialog.setVisible(true);
     } 
     
     private class DisplayTableModel extends AbstractTableModel 
@@ -529,7 +529,7 @@ public class UserJob extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        new UserJob().show();
+        new UserJob().setVisible(true);
     }
     
     
@@ -564,7 +564,7 @@ public class UserJob extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     // List collection
-    private Vector lists = null;
+    private Vector<String[][]> lists = null;
     
     // Index of the list in list collection
     private int indexList = 0; 

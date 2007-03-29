@@ -28,7 +28,7 @@ import rfpk.spk.spkdb.*;
 import uw.rfpk.rcs.Archive;
 
 /**
- * Get user model list from archive.
+ * Getting user model list from archive.
  * @author Jiaji Du
  */
 public class ModelList implements java.io.Serializable

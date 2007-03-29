@@ -47,7 +47,12 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
      */
     public GettingStarted(MDAIterator iter) {
         iterator = iter;
-        initComponents();       
+        initComponents();
+        
+        // Remove identifiability
+        jPanel2.remove(jLabel9);        // Uncomment it to remove identifiability
+        jPanel2.remove(seedTextField);  // Uncomment it to remove identifiability
+        jPanel2.remove(jRadioButton7);  // Uncomment it to remove identifiability
     }
     
     /** This method is called from within the constructor to
@@ -82,36 +87,43 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         trans5 = new javax.swing.JMenuItem();
         trans6 = new javax.swing.JMenuItem();
         buttonGroup3 = new javax.swing.ButtonGroup();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        buttonGroup4 = new javax.swing.ButtonGroup();
+        jRadioButton10 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
         jRadioButton4 = new javax.swing.JRadioButton();
         jRadioButton5 = new javax.swing.JRadioButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
         jSeparator1 = new javax.swing.JSeparator();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jCheckBox6 = new javax.swing.JCheckBox();
         jSeparator3 = new javax.swing.JSeparator();
         jButton1 = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
-        jRadioButton6 = new javax.swing.JRadioButton();
         graphicalEditor = new javax.swing.JRadioButton();
         jSeparator6 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jCheckBox3 = new javax.swing.JCheckBox();
         jCheckBox4 = new javax.swing.JCheckBox();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel8 = new javax.swing.JLabel();
         textEditor = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton7 = new javax.swing.JRadioButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        seedTextField = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        jRadioButton9 = new javax.swing.JRadioButton();
+        jRadioButton6 = new javax.swing.JRadioButton();
+        jRadioButton8 = new javax.swing.JRadioButton();
+        jLabel4 = new javax.swing.JLabel();
 
         jPopupMenu1.setBackground(new java.awt.Color(255, 255, 255));
         jPopupMenu1.setAutoscrolls(true);
@@ -320,42 +332,16 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         jPopupMenu2.add(trans6);
 
+        buttonGroup4.add(jRadioButton10);
+        jRadioButton10.setText("jRadioButton10");
+        jRadioButton10.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton10.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
         setLayout(new java.awt.GridBagLayout());
 
         setPreferredSize(new java.awt.Dimension(500, 380));
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("Individual analysis");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        add(jRadioButton1, gridBagConstraints);
-
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Population analysis");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 0);
-        add(jRadioButton2, gridBagConstraints);
-
         buttonGroup2.add(jRadioButton3);
+        jRadioButton3.setSelected(true);
         jRadioButton3.setText("Analytic/algebraic model");
         jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -387,7 +373,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 0);
         add(jRadioButton4, gridBagConstraints);
 
-        jRadioButton5.setText("Computing statistics of parameter estimates");
+        jRadioButton5.setText("Compute statistics of parameter estimates");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 12;
@@ -396,75 +382,14 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 20, 3, 0);
         add(jRadioButton5, gridBagConstraints);
 
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Parametric model");
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 8, 0, 0);
-        add(jCheckBox1, gridBagConstraints);
-
-        jCheckBox2.setText("Data simulation");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 20);
-        add(jCheckBox2, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 20, 2, 20);
+        gridBagConstraints.insets = new java.awt.Insets(7, 20, 7, 20);
         add(jSeparator1, gridBagConstraints);
-
-        jCheckBox5.setText("Parameter identifiability analysis");
-        jCheckBox5.setEnabled(false);
-        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox5ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 32, 4, 0);
-        add(jCheckBox5, gridBagConstraints);
-
-        jCheckBox6.setText("Nonparametric model");
-        jCheckBox6.setEnabled(false);
-        jCheckBox6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox6ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 20);
-        add(jCheckBox6, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -504,20 +429,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(8, 20, 8, 20);
         add(jSeparator5, gridBagConstraints);
 
-        buttonGroup1.add(jRadioButton6);
-        jRadioButton6.setText("Two-stage analysis");
-        jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton6ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        add(jRadioButton6, gridBagConstraints);
-
         buttonGroup3.add(graphicalEditor);
         graphicalEditor.setText("Graphical model editor");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -555,32 +466,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 20);
         add(jPanel1, gridBagConstraints);
-
-        jLabel2.setText("Parameter estimation");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 20, 3, 0);
-        add(jLabel2, gridBagConstraints);
-
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel3.setText("Select Model and Analysis Options:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 20, 0, 0);
-        add(jLabel3, gridBagConstraints);
-
-        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel4.setText("Select Analysis Type:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 20, 3, 0);
-        add(jLabel4, gridBagConstraints);
 
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel5.setText("Select Model Type:");
@@ -647,27 +532,214 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         gridBagConstraints.insets = new java.awt.Insets(0, 50, 0, 0);
         add(textEditor, gridBagConstraints);
 
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jCheckBox2.setText("Data simulation");
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox2, gridBagConstraints);
+
+        jCheckBox1.setSelected(true);
+        jCheckBox1.setText("Parameter estimation");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jCheckBox1, gridBagConstraints);
+
+        jLabel3.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel3.setText("Select Analysis Type:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 20, 0, 0);
+        jPanel2.add(jLabel3, gridBagConstraints);
+
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.setText("Individual");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
+        jPanel2.add(jRadioButton1, gridBagConstraints);
+
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.setSelected(true);
+        jRadioButton2.setText("Population");
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 4);
+        jPanel2.add(jRadioButton2, gridBagConstraints);
+
+        buttonGroup1.add(jRadioButton7);
+        jRadioButton7.setText("Identifiability");
+        jRadioButton7.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton7.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jRadioButton7.setPreferredSize(new java.awt.Dimension(101, 23));
+        jRadioButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton7ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jRadioButton7, gridBagConstraints);
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel2.setText("Choose:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanel2.add(jLabel2, gridBagConstraints);
+
+        jLabel9.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel9.setText("seed: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
+        jPanel2.add(jLabel9, gridBagConstraints);
+
+        seedTextField.setMaximumSize(new java.awt.Dimension(84, 19));
+        seedTextField.setMinimumSize(new java.awt.Dimension(84, 19));
+        seedTextField.setPreferredSize(new java.awt.Dimension(84, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(seedTextField, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jPanel2, gridBagConstraints);
+
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        buttonGroup4.add(jRadioButton9);
+        jRadioButton9.setSelected(true);
+        jRadioButton9.setText("Parametric");
+        jRadioButton9.setActionCommand("Parametric model");
+        jRadioButton9.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton9.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jRadioButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton9ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 23, 0, 22);
+        jPanel3.add(jRadioButton9, gridBagConstraints);
+
+        buttonGroup4.add(jRadioButton6);
+        jRadioButton6.setText("Two-stage    ");
+        jRadioButton6.setActionCommand("Two-stage");
+        jRadioButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton6ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 9);
+        jPanel3.add(jRadioButton6, gridBagConstraints);
+
+        buttonGroup4.add(jRadioButton8);
+        jRadioButton8.setText("Nonparametric");
+        jRadioButton8.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton8.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jRadioButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton8ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
+        jPanel3.add(jRadioButton8, gridBagConstraints);
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
+        jLabel4.setText("Select Population-level Model:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 20, 3, 0);
+        jPanel3.add(jLabel4, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jPanel3, gridBagConstraints);
+
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCheckBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox6ActionPerformed
-        if(jCheckBox6.isSelected())
-        {
-            jCheckBox1.setSelected(false);
-            jCheckBox2.setSelected(false);
-            jCheckBox5.setSelected(false);
-        }
+    private void jRadioButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton8ActionPerformed
         refresh();
-    }//GEN-LAST:event_jCheckBox6ActionPerformed
+    }//GEN-LAST:event_jRadioButton8ActionPerformed
 
-    private void jCheckBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox5ActionPerformed
-        if(jCheckBox5.isSelected())
-        {
-            jCheckBox1.setSelected(false);
-            jCheckBox2.setSelected(false);
-            jCheckBox6.setSelected(false);
-        }
+    private void jRadioButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton9ActionPerformed
         refresh();
-    }//GEN-LAST:event_jCheckBox5ActionPerformed
+    }//GEN-LAST:event_jRadioButton9ActionPerformed
+
+    private void jRadioButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton7ActionPerformed
+        refresh();
+    }//GEN-LAST:event_jRadioButton7ActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        refresh();
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void textEditorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textEditorActionPerformed
         if(jRadioButton4.isSelected() && isGraphicalModel()) 
@@ -732,7 +804,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             jCheckBox2.setSelected(true);
         else
             jCheckBox2.setSelected(false);
-        refresh();
         if(reload.getProperty("TABLE") != null)
             jCheckBox3.setSelected(true);
         else
@@ -744,16 +815,25 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         if(reload.getProperty("SIGMA") == null)
             jRadioButton1.setSelected(true);
         else
+        {
             jRadioButton2.setSelected(true);
+            jRadioButton9.setSelected(true);
+        }
         if(reload.getProperty("METHOD") != null)
         {
             String method = reload.getProperty("METHOD");
             if(method.endsWith("two_stage"))
+            {
                 jRadioButton6.setSelected(true);
+                jRadioButton2.setSelected(true);
+            }
             if(method.equals("identifiability"))
-                jCheckBox5.doClick();
-            if(method.equals("nonparametric"))
-                jCheckBox6.doClick();
+                jRadioButton7.setSelected(true);
+            if(method.startsWith("nonparam"))
+            {
+                jRadioButton8.setSelected(true);
+                jRadioButton2.setSelected(true);
+            }
         }
         if(reload.getProperty("PRED") != null)
             jRadioButton3.setSelected(true);
@@ -788,7 +868,9 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         boolean is = isGraphicalModel();
         graphicalEditor.setEnabled(is);
         graphicalEditor.setSelected(is);
-        setLeftOptions();        
+        if(iterator.identifiabilitySeed != null)
+            seedTextField.setText(iterator.identifiabilitySeed);
+        refresh();        
     }
     
     // Find if reload graphical model
@@ -805,63 +887,73 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         if(jCheckBox2.isSelected())
         {
-            jCheckBox5.setSelected(false);
-            jCheckBox6.setSelected(false);
+            
         }
         refresh();
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void refresh()
     {
-        boolean isCheckBox1 = jCheckBox1.isSelected();
-        boolean isCheckBox2 = jCheckBox2.isSelected();
-        boolean isCheckBox5 = jCheckBox5.isSelected();
-        boolean isCheckBox6 = jCheckBox6.isSelected();
-        boolean isSelected = isCheckBox1 || isCheckBox2;
-        jRadioButton1.setEnabled(isSelected || isCheckBox5);
-        jRadioButton2.setEnabled(isSelected || isCheckBox6);
-        jRadioButton3.setEnabled(isSelected || isCheckBox6);
-        jRadioButton4.setEnabled(isSelected || isCheckBox5 || isCheckBox6);
-        jRadioButton5.setEnabled(isCheckBox1);
-        jRadioButton6.setEnabled(isCheckBox1);
-        jCheckBox3.setEnabled(isSelected || isCheckBox6);
-        jCheckBox4.setEnabled(isSelected || isCheckBox6);
-        if(jRadioButton6.isSelected())  // statistics not available for two-stage
-        {
-            jRadioButton5.setSelected(false);
-            jRadioButton5.setEnabled(false);
+        boolean isPopulation = jRadioButton2.isSelected();
+        boolean isIndividual = jRadioButton1.isSelected();
+        boolean isIdentifiability = jRadioButton7.isSelected();
+        boolean isParametric = jRadioButton9.isSelected();
+        boolean isEstimation = jCheckBox1.isSelected();
+
+        // Estimation and simulation
+        jCheckBox1.setEnabled(isPopulation || isIndividual);
+        jCheckBox2.setEnabled(isPopulation || isIndividual);
+        if(!jCheckBox1.isEnabled()) jCheckBox1.setSelected(false);
+        if(!jCheckBox2.isEnabled()) jCheckBox2.setSelected(false);
+        
+        // Population-level models
+        jRadioButton9.setEnabled(isPopulation && isEstimation);
+        jRadioButton6.setEnabled(isPopulation && isEstimation);
+        jRadioButton8.setEnabled(isPopulation && isEstimation);
+        if(jCheckBox1.isSelected() && jCheckBox2.isSelected())  // Two-stage and nonparam
+        {                                                       // are not yet available
+            jRadioButton6.setEnabled(false);                    // if both estimation and
+            jRadioButton8.setEnabled(false);                    // sinulation are selected.
         }
-        if(!isCheckBox1)
+        if(!jRadioButton9.isEnabled()) jRadioButton9.setSelected(false);
+        if(!jRadioButton6.isEnabled()) jRadioButton6.setSelected(false);
+        if(!jRadioButton8.isEnabled()) jRadioButton8.setSelected(false);
+        jRadioButton10.setSelected(!isPopulation);
+        
+        // Model types
+        if(isIdentifiability)
         {
-            jRadioButton5.setSelected(false);
-            if(jRadioButton6.isSelected())
-                jRadioButton1.doClick();
+            jRadioButton4.setSelected(true);
+            jRadioButton3.setEnabled(false);
+            graphicalEditor.setEnabled(true);
+            graphicalEditor.setSelected(isGraphicalModel());
         }
-        if(isCheckBox5)
+        else
         {
-            jCheckBox3.setSelected(false);
-            jCheckBox4.setSelected(false);
-            jRadioButton1.doClick();
-            jRadioButton4.doClick();
+            jRadioButton3.setEnabled(true);
         }
-        if(isCheckBox6)
+        
+        // Computing statistics
+        jRadioButton5.setEnabled(isEstimation && ((isPopulation && isParametric) || isIndividual));
+        if(!jRadioButton5.isEnabled()) jRadioButton5.setSelected(false);
+        
+        // Nonmem compatible table and plot
+        jCheckBox3.setEnabled(!isIdentifiability);
+        jCheckBox4.setEnabled(!isIdentifiability);
+        if(!jCheckBox3.isEnabled()) jCheckBox3.setSelected(false);
+        if(!jCheckBox4.isEnabled()) jCheckBox4.setSelected(false);
+        
+        // Identifiability seed text field
+        seedTextField.setEnabled(isIdentifiability);
+        if(!seedTextField.isEnabled()) seedTextField.setText("");
+        setLeftOptions();
+        if(!iterator.getIsTester())
         {
-            jRadioButton2.setSelected(true);
+            jRadioButton8.setSelected(false);
+            jRadioButton8.setEnabled(false);
         }
-        jCheckBox3.setEnabled(isSelected);
-        jCheckBox4.setEnabled(isSelected);
-        setLeftOptions();        
     }
     
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        if(jCheckBox1.isSelected())
-        {
-            jCheckBox5.setSelected(false);
-            jCheckBox6.setSelected(false);
-        }
-        refresh();
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
-
     private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
         addSubroutine(evt, 12);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
@@ -910,6 +1002,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
         if(iterator.getReload() != null && iterator.getReload().getProperty("METHOD") != null)
             iterator.getReload().remove("METHOD");
+        refresh();
         setLeftOptions();
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
@@ -924,6 +1017,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
         if(iterator.getReload() != null && iterator.getReload().getProperty("METHOD") != null)
             iterator.getReload().remove("METHOD");
+        refresh();
         setLeftOptions();
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
@@ -947,12 +1041,11 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     }
     
     private void setLeftOptions()
-    {       
-        isValid = (jCheckBox1.isSelected() || jCheckBox2.isSelected() || 
-                   jCheckBox5.isSelected() || jCheckBox6.isSelected()) && 
-                  (jRadioButton1.isSelected() || jRadioButton2.isSelected() ||
-                   jRadioButton6.isSelected()) &&
-                  (jRadioButton3.isSelected() || jRadioButton4.isSelected());
+    {
+        isValid = ((jRadioButton1.isSelected() || jRadioButton2.isSelected()) && (jCheckBox1.isSelected() || jCheckBox2.isSelected()) || jRadioButton7.isSelected());
+        if(jRadioButton2.isSelected() && jCheckBox1.isSelected())
+            isValid = isValid && (jRadioButton6.isSelected() || jRadioButton8.isSelected() || jRadioButton9.isSelected());
+        isValid = isValid && (jRadioButton3.isSelected() || jRadioButton4.isSelected()) && (textEditor.isSelected() || graphicalEditor.isSelected());
         wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());                  
     }
     
@@ -1031,14 +1124,13 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
     private javax.swing.JRadioButton graphicalEditor;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1047,6 +1139,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
@@ -1060,20 +1153,27 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton10;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JRadioButton jRadioButton6;
+    private javax.swing.JRadioButton jRadioButton7;
+    private javax.swing.JRadioButton jRadioButton8;
+    private javax.swing.JRadioButton jRadioButton9;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JTextField seedTextField;
     private javax.swing.JRadioButton textEditor;
     private javax.swing.JMenuItem trans1;
     private javax.swing.JMenuItem trans2;
@@ -1136,58 +1236,61 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             control.theta = null;            
             control.table = null;
             control.splot = null;
-            
-            graphicalEditor.setEnabled(iterator.getIsTester());
-            jCheckBox5.setEnabled(iterator.getIsDeveloper());
-            jCheckBox6.setEnabled(iterator.getIsDeveloper());
+            if(iterator.identifiabilitySeed != null)
+                seedTextField.setText(iterator.identifiabilitySeed);
+            if(!iterator.getIsTester())
+            {
+                jRadioButton8.setSelected(false);
+                jRadioButton8.setEnabled(false);
+            }
 	}
 
 	public void hidingStep(JWizardPane wizard){
-            iterator.setIsEstimation(jCheckBox1.isSelected() || jCheckBox6.isSelected()); 
+            iterator.setIsEstimation(jCheckBox1.isSelected()); 
             iterator.setIsSimulation(jCheckBox2.isSelected());
             iterator.isTable = jCheckBox3.isSelected();
             iterator.isPlot = jCheckBox4.isSelected();
-            iterator.isIdentify = jCheckBox5.isSelected();
-            iterator.isNonparam = jCheckBox6.isSelected();
             iterator.setIsCov(jRadioButton5.isSelected());
             iterator.setIsPred(jRadioButton3.isSelected());
-            iterator.setIsInd(jRadioButton1.isSelected() || jCheckBox5.isSelected());
-            iterator.setIsTwoStage(jRadioButton6.isSelected());
-            
-            if(jRadioButton1.isSelected())
-            {
-                iterator.setIsInd(true);
-                iterator.setIsTwoStage(false);
-            }
-            if(jRadioButton2.isSelected())
-            {
-                iterator.setIsInd(false);
-                iterator.setIsTwoStage(false);
-            }
-            if(jRadioButton6.isSelected())
-            {
-                iterator.setIsInd(false);
-                iterator.setIsTwoStage(true);
-            }
             
             if(jRadioButton4.isSelected())
             {
-                int advanNumber = Integer.parseInt(subroutine.substring(16));
+                int advanNumber = 6;
+                if(subroutine != null)
+                    advanNumber = Integer.parseInt(subroutine.substring(16));
                 if(advanNumber <= 4 || advanNumber >= 10) advanNumber = 6;
                 iterator.setAdvan(advanNumber);                
             }
             if(jRadioButton2.isSelected())
-                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "population";
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = iterator.analysis = "population";
             if(jRadioButton1.isSelected())
-                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "individual";
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = iterator.analysis = "individual";
             if(jRadioButton6.isSelected())
-                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "two-stage";
-            if(jCheckBox5.isSelected())
-                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "identifiability";
-            if(jCheckBox6.isSelected())
-                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = "nonparametric";
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = iterator.analysis = "two-stage";
+            if(jRadioButton7.isSelected())
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = iterator.analysis = "identifiability";
+            if(jRadioButton8.isSelected())
+                ((MDAObject)wizard.getCustomizedObject()).getSource().analysis = iterator.analysis = "nonparametric";
             iterator.isGraphic = graphicalEditor.isSelected();
             if(graphicalEditor.isSelected()) iterator.setAdvan(6);
+            if(iterator.analysis.equals("identifiability"))
+            {
+                if(!seedTextField.equals(""))
+                {
+                    String seed = seedTextField.getText().trim();
+                    if(seed.length() > 10)
+                        seed = seed.substring(0, 10);
+                    if(Utility.isPosIntNumber(seed))
+                        ((MDAObject)wizard.getCustomizedObject()).getSource().seed = seed;
+                    else
+                        JOptionPane.showMessageDialog(null, "The seed for model identifiability must be a positive integer.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "The seed for model identifiability is missing.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+            iterator.identifiabilitySeed = null;
 	}
 
 	public boolean isValid(){

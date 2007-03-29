@@ -45,12 +45,12 @@ public class MDAObject {
     /** Get Parsed data for SPK input file.
      * @return an Vector object containing the parsed data to generate SPK data.
      */
-    public Vector getData() { return data; }
+    public Vector<Vector> getData() { return data; }
     
     /** Set Parsed data for SPK input file.
      * @param v an vector containing the parsed data to generate SPK data.
      */
-    public void setData(Vector v) { data = v; }
+    public void setData(Vector<Vector> v) { data = v; }
     
     /** Get data labels.
      * @return a String array containing the data labels.
@@ -79,7 +79,7 @@ public class MDAObject {
     private Source source = new Source(); 
     
     // Parsed data for SPK input file
-    private Vector data = null;
+    private Vector<Vector> data = null;
     
     // Data labels
     private String[] dataLabels = null;

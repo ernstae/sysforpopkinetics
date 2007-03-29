@@ -22,7 +22,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.File;
 /**
- * Session object deleting jnlp file for the session.
+ * Session object to delete jnlp file for the session.
  * @author Jiaji Du
  */
 public class SessionObject implements HttpSessionBindingListener

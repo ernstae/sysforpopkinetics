@@ -62,16 +62,35 @@ author: Jiaji Du
                 <tr>
                   <td>Username:</td>
                   <td><input type="text" name="userName"
-                    value="${fn:escapeXml(param.userName)}">                  
+                    value="${fn:escapeXml(param.userName)}">
                   </td>
                   <td><font color="red">${fn:escapeXml(userNameError)}</font></td>
                 </tr>
                 <tr>
                   <td>Password:</td>
-                  <td><input type="text" name="password"
-                    value="${fn:escapeXml(param.password)}">
-                  </td>
-                  <td><font color="red">${fn:escapeXml(passwordError)}</font></td>
+                  <c:choose>
+                      <c:when test="${empty param.password && empty passwordError}">
+                          <% char[] pw = new char[8];
+                             int c = 0;
+                             for (int i=0; i < 8; i++)
+                             {
+                                 switch((int)(Math.random() * 3))
+                                 {
+                                     case 0: c = '0' +  (int)(Math.random() * 10); break;
+                                     case 1: c = 'a' +  (int)(Math.random() * 26); break;
+                                     case 2: c = 'A' +  (int)(Math.random() * 26); break;
+                                 }
+                                 pw[i] = (char)c;
+                             } %>
+                          <td><input type="text" name="password" value=<%=new String(pw)%>></td>
+                      </c:when>
+                      <c:otherwise>
+                          <td><input type="text" name="password"
+                          value="${fn:escapeXml(param.password)}">
+                          </td>
+                          <td><font color="red">${fn:escapeXml(passwordError)}</font></td>
+                      </c:otherwise>
+                  </c:choose>
                 </tr>
                 <tr>
                   <td>First Name:</td>
@@ -144,8 +163,8 @@ author: Jiaji Du
                   <th align="left"><input type="submit" value="Submit"></th>
                 </tr>
               </table>
-            </form>                   
-            <p>
+            </form>
+            </p><p>
                When you are done, please <a href="logout.jsp">log out</a>.
             </p>
        	  </td>

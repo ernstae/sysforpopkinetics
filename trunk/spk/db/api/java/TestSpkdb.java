@@ -8,7 +8,8 @@ public class TestSpkdb {
 	String password = "codered";
 	String firstName = "Mike";
 	String surname = "Jordan";
-	final int maxTests = 61;
+        String email = "air@u.w.e";
+	final int maxTests = 63;
 	String xmlSource = "<spksource>\n\tline1\n\tline2\n</spksource>";
 	boolean b = true;
 	boolean target = true;
@@ -67,13 +68,13 @@ public class TestSpkdb {
 		case 4:
 		    target = true;
 		    {
-			String n[] = {"username", "password", "first_name", "surname"};
-			String v[] = { username,  password, firstName, surname };
+			String n[] = {"username", "password", "first_name", "surname", "email", "test"};
+			String v[] = { username,  password, firstName, surname, email, "1" };
 			s = "newUser";
 			userId = Spkdb.newUser(conn, n, v);   
 			s += " is user number " + userId;
 			b = userId == 1;
-                        String u[] = {"water", "secret", "unknown", "unknown"};
+                        String u[] = {"water", "secret", "unknown", "unknown", "water@u.w.e", "0"};
                         userId = Spkdb.newUser(conn, n, u);
                         b = b && userId == 2;
                         s += " and another new user is user number " + userId;
@@ -785,6 +786,21 @@ public class TestSpkdb {
                     rs = Spkdb.getJob(conn, 1);
                     rs.next();
                     b = b && rs.getString("abstract").equals("Abstract 1: updated");
+                    break;
+                case 62:
+                    target = true;
+                    s = "getEmailAddress";
+                    rs = Spkdb.getEmailAddress(conn, "tester");
+                    rs.next();
+                    b = rs.getString("email").equals("air@u.w.e");
+                    break;
+                case 63:
+                    target = true;
+                    s = "setJobShareWith";
+                    b = Spkdb.setJobShareWith(conn, 2, 3, 1);
+                    rs = Spkdb.getJob(conn, 3);
+                    rs.next();
+                    b = b && rs.getLong("share_with") == 1;
                     break;
 		default:
 		    break;

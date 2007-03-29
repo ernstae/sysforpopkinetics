@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
 import java.io.*;
 import javax.swing.JOptionPane;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * This class handels the parameter estimates in all the sub-problems of a job.
@@ -96,7 +97,8 @@ public class ParameterAll {
     protected static String getParameterAll(String source, String report)
     {
         Document docSource, docReport;
-        DecimalFormat f = new DecimalFormat("0.0000E00");
+        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        f.applyPattern("0.0000E00");
         try
         {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

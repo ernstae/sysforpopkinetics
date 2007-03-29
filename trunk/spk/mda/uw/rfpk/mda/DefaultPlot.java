@@ -18,6 +18,7 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda;
 
+import uw.rfpk.mda.nonmem.Utility;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.awt.Color;
@@ -86,33 +87,49 @@ public class DefaultPlot extends javax.swing.JDialog {
         int[] selectedIndex = curveList.getSelectedIndices();
         if(selectedIndex.length == 1 && selectedIndex[0] < 0)
             return;
-        int inds = indPoints.length;
+        int inds = indPointsAll.length;
         int[] startIndex = new int[inds];
         startIndex[0] = 0;
         for(int i = 1; i < inds; i++)
-            startIndex[i] = startIndex[i - 1] + indPoints[i - 1];
+            startIndex[i] = startIndex[i - 1] + indPointsAll[i - 1];
         int nCurve = name.length;
         double[][] dataX, dataY;
         String title;
         int l;
         for(int j = 0; j < selectedIndex.length; j++)
         {
-            int rows = indPoints[selectedIndex[j]];
+            int rows = indPointsAll[selectedIndex[j]];
             int startRow = startIndex[selectedIndex[j]];
-            dataX = new double[nCurve][rows];
-            dataY = new double[nCurve][rows];
-            for(int i = 0; i < nCurve; i++)
+            double[][] dataOut1 = Utility.removeMissingValue(dataXAll[0], dataYAll[0], startRow, startRow + rows - 1);
+            double[][] dataOut2 = null;
+            dataX = new double[nCurve][];
+            dataY = new double[nCurve][];
+            if(nCurve == 1)
             {
-                for(int k = 0; k < rows; k++)
+                if(dataOut1 == null)
                 {
-                    l = startRow + k;
-                    dataX[i][k] = dataXAll[i][l];    
-                    dataY[i][k] = dataYAll[i][l];
+                    JOptionPane.showMessageDialog(null, "Data missing for ind = " + indIDNames[selectedIndex[j]]);    
+                    continue;
                 }
+                dataX[0] = dataOut1[0];
+                dataY[0] = dataOut1[1];
             }
+            if(nCurve == 2)
+            {
+                dataOut2 = Utility.removeMissingValue(dataXAll[1], dataYAll[1], startRow, startRow + rows - 1);
+                if(dataOut1 == null || dataOut2 == null)
+                {
+                    JOptionPane.showMessageDialog(null, "Data missing for ind = " + indIDNames[selectedIndex[j]]);    
+                    continue;
+                }
+                dataX[0] = dataOut1[0];
+                dataY[0] = dataOut1[1];
+                dataX[1] = dataOut2[0];
+                dataY[1] = dataOut2[1];
+            } 
             title = titleAll + " for ind = " + indIDNames[selectedIndex[j]];
             l = j - j / 10 * 10;
-            plot(dataX, dataY, title, l * 50, l * 40, false, null);            
+            plot(dataX, dataY, title, l * 50, l * 40, false, null);
         }
     }//GEN-LAST:event_displayButtonActionPerformed
     
@@ -141,19 +158,60 @@ public class DefaultPlot extends javax.swing.JDialog {
         dataYAll = new double[1][rows];
         for(int i = 0; i < rows; i++)
         {
-            dataYAll[0][i] = dataValues[i][indexPRED];
-            dataXAll[0][i] = dataValues[i][indexDV];
+            dataXAll[0][i] = dataValues[i][indexPRED];
+            dataYAll[0][i] = dataValues[i][indexDV];
+        }
+        indPointsAll = getIndPoints(indIDs);
+        int[] curveIndPoints = new int[indPointsAll.length];
+        Vector<double[][]> curveDataAll = new Vector<double[][]>();
+        int startIndex = 0;
+        int nInd = indPointsAll.length;
+        for(int i = 0; i < nInd; i++)
+        {
+            double[][] dataOut = Utility.removeMissingValue(dataXAll[0], dataYAll[0], startIndex, startIndex + indPointsAll[i] - 1);
+            startIndex += indPointsAll[i];
+            if(dataOut != null)
+            {
+                curveDataAll.add(dataOut);
+                curveIndPoints[i] = dataOut[0].length;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Data values missing for individual " + (i + 1) + ".");
+                curveIndPoints[i] = 0;
+            }
+        }
+        if(curveDataAll.size() == 0)
+            return;
+        indPoints = new int[1][];
+        indPoints[0] = curveIndPoints;
+        int curveLength = 0;
+        for(int j = 0; j < nInd; j++)
+            curveLength += curveIndPoints[j];                
+        double[][] dataX = new double[1][curveLength];   
+        double[][] dataY = new double[1][curveLength];
+        int j = 0;
+        int k;
+        for(Object item : curveDataAll)
+        {
+            double[][] temp = (double[][])item;
+            for(k = 0; k < temp[0].length; k++)
+            {
+                dataX[0][j + k] = temp[0][k];
+                dataY[0][j + k] = temp[1][k];
+            }
+            j = j + k;
         }
         name = new String[]{titleY};
         symbol = new int[]{0};
         color = new Color[]{Color.black};
         titleAll = titleY + " VS " + titleX;
-        setPlotRange(dataXAll, dataYAll, true);
+        setPlotRange(dataX, dataY, true);
         uLine = true;
         xLine = false;
         yLine = false;
         if(!byID)
-            plot(dataXAll, dataYAll, titleAll, 0, 0, true, indIDs);
+            plot(dataX, dataY, titleAll, 0, 0, true, indIDs);
         else
             plotIndividual(indIDs);
     }
@@ -189,16 +247,90 @@ public class DefaultPlot extends javax.swing.JDialog {
             dataXAll[0][i] = dataValues[i][indexTIME];
             dataXAll[1][i] = dataValues[i][indexTIME];
         }
+        indPointsAll = getIndPoints(indIDs);
+        int[] curveIndPoints1 = new int[indPointsAll.length];
+        int[] curveIndPoints2 = new int[indPointsAll.length];
+        Vector<double[][]> curveDataAll1 = new Vector<double[][]>();
+        Vector<double[][]> curveDataAll2 = new Vector<double[][]>();
+        int startIndex = 0;
+        int nInd = indPointsAll.length;
+        for(int i = 0; i < nInd; i++)
+        {
+            double[][] dataOut1 = Utility.removeMissingValue(dataXAll[0], dataYAll[0], startIndex, startIndex + indPointsAll[i] - 1);
+            double[][] dataOut2 = Utility.removeMissingValue(dataXAll[1], dataYAll[1], startIndex, startIndex + indPointsAll[i] - 1);
+            startIndex += indPointsAll[i];
+            if(dataOut1 != null)
+            {
+                curveDataAll1.add(dataOut1);
+                curveIndPoints1[i] = dataOut1[0].length;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Data values missing for individual " + (i + 1) + " in PRED vs. TIME.");
+                curveIndPoints1[i] = 0;
+            }
+            if(dataOut2 != null)
+            {
+                curveDataAll2.add(dataOut2);
+                curveIndPoints2[i] = dataOut2[0].length;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Data values missing for individual " + (i + 1) + " in DV vs. TIME.");
+                curveIndPoints2[i] = 0;
+            }
+        }
+        if(curveDataAll1.size() == 0 || curveDataAll1.size() == 0)
+            return;
+        indPoints = new int[2][];
+        indPoints[0] = curveIndPoints1;
+        indPoints[1] = curveIndPoints2;
+        int curveLength1 = 0;
+        int curveLength2 = 0;
+        for(int j = 0; j < nInd; j++)
+        {
+            curveLength1 += curveIndPoints1[j];
+            curveLength2 += curveIndPoints2[j];
+        }
+        double[][] dataX = new double[2][];   
+        double[][] dataY = new double[2][];
+        dataX[0] = new double[curveLength1];
+        dataY[0] = new double[curveLength1];
+        dataX[1] = new double[curveLength2];
+        dataY[1] = new double[curveLength2];
+        int j = 0;
+        int k;
+        for(Object item : curveDataAll1)
+        {
+            double[][] temp = (double[][])item;
+            for(k = 0; k < temp[0].length; k++)
+            {
+                dataX[0][j + k] = temp[0][k];
+                dataY[0][j + k] = temp[1][k];
+            }
+            j = j + k;
+        }
+        j = 0;
+        for(Object item : curveDataAll2)
+        {
+            double[][] temp = (double[][])item;
+            for(k = 0; k < temp[0].length; k++)
+            {
+                dataX[1][j + k] = temp[0][k];
+                dataY[1][j + k] = temp[1][k];
+            }
+            j = j + k;
+        }
         name = new String[]{itemY, "DV"};
         symbol = new int[]{10, 0};
         color = new Color[]{Color.black, Color.black};
         titleAll = titleY + " Versus " + titleX;
-        setPlotRange(dataXAll, dataYAll, false);
+        setPlotRange(dataX, dataY, false);
         xLine = false;
         yLine = false;
         uLine = false;
         if(!byID)
-            plot(dataXAll, dataYAll, titleAll, 0, 0, true, indIDs);
+            plot(dataX, dataY, titleAll, 0, 0, true, indIDs);
         else
             plotIndividual(indIDs);
     }
@@ -246,8 +378,8 @@ public class DefaultPlot extends javax.swing.JDialog {
     
     private static void plotIndividual(String[] indIDs)
     {
-        indPoints = getIndPoints(indIDs);
-        indIDNames = new String[indPoints.length];
+        indPointsAll = getIndPoints(indIDs);
+        indIDNames = new String[indPointsAll.length];
         indIDNames[0] = indIDs[0];
         model.clear();
         model.addElement("ind = " + indIDs[0]);
@@ -285,18 +417,17 @@ public class DefaultPlot extends javax.swing.JDialog {
             id = indIDs[i];
         }
         points.add(new Integer(++count));
-        indPoints = new int[points.size()];
+        indPointsAll = new int[points.size()];
         for(int i = 0; i < points.size(); i++)
-            indPoints[i] = ((Integer)points.get(i)).intValue();
-        return indPoints;
+            indPointsAll[i] = ((Integer)points.get(i)).intValue();
+        return indPointsAll;
     }
         
     private static void plot(double[][] dataX, double[][] dataY, String title, int x, int y,
                              boolean isIndividualized, String[] indIDs)
     {
-        int[] indPoints = null;
-        if(isIndividualized)
-             indPoints = getIndPoints(indIDs);
+        if(!isIndividualized) 
+            indPoints = null;
         JFrame frame = new JFrame();
         Plotter plotter = new Plotter(dataX, dataY, title, titleX, titleY, name, symbol, color,
                                       xLine, yLine, uLine, false, false, true, true, 0, 0,
@@ -330,7 +461,8 @@ public class DefaultPlot extends javax.swing.JDialog {
     private static double[][] dataXAll, dataYAll;
     private static double maxX, minX, maxY, minY;
     private static String[] name, indIDNames;
-    private static int[] symbol, indPoints;
+    private static int[] symbol, indPointsAll;
+    private static int[][] indPoints;
     private static int nHDivi, nVDivi;
     private static Color[] color;
     private static String titleAll, titleX, titleY;

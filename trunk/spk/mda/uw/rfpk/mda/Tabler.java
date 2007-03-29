@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /** This class handles table outpput
  *
@@ -249,10 +250,11 @@ public class Tabler extends javax.swing.JFrame {
             {
                 for(int i = 0; i < nColumns; i++)
                     buffer.append(formatData(10, (String)dataLabels.get(columns[i])));
-                DecimalFormat f = new DecimalFormat("0.0000E00");
-            
+                DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+                f.applyPattern("0.0000E00");
+                double value;
                 for(int i = 0; i < nInds; i++)
-                    for(int j = 0; j < indPoints[i]; j++)
+                    for(int j = 0; j < indPoints[inds[i]]; j++)
                     {
                         buffer.append("\n");
                         if(dataLabels.get(columns[0]).equals("ID"))
@@ -260,15 +262,35 @@ public class Tabler extends javax.swing.JFrame {
                             buffer.append(formatData(10, String.valueOf(indIDs[startRows[inds[i]]])));
                             for(int k = 1; k < nColumns; k++)
                             {
-                                buffer.append(" ");
-                                buffer.append(Utility.formatData(8, f.format(dataValues[startRows[inds[i]] + j][columns[k]])));
+                                value = dataValues[startRows[inds[i]] + j][columns[k]];
+                                if(String.valueOf(value).equals("NaN"))
+                                    buffer.append("         NaN");
+                                else if(String.valueOf(value).equals("-Infinity"))
+                                    buffer.append("   -Infinity");
+                                else if(String.valueOf(value).equals("Infinity") || String.valueOf(value).equals("+Infinity"))
+                                    buffer.append("   +Infinity");
+                                else
+                                {
+                                    buffer.append(" ");
+                                    buffer.append(Utility.formatData(8, f.format(value)));
+                                }
                             }
                         }
                         else
                             for(int k = 0; k < nColumns; k++)
                             {
-                                buffer.append(" ");
-                                buffer.append(Utility.formatData(8, f.format(dataValues[startRows[inds[i]] + j][columns[k]])));
+                                value = dataValues[startRows[inds[i]] + j][columns[k]];
+                                if(String.valueOf(value).equals("NaN"))
+                                    buffer.append("         NaN");
+                                else if(String.valueOf(value).equals("-Infinity"))
+                                    buffer.append("   -Infinity");
+                                else if(String.valueOf(value).equals("Infinity") || String.valueOf(value).equals("+Infinity"))
+                                    buffer.append("   +Infinity");
+                                else
+                                {
+                                    buffer.append(" ");
+                                    buffer.append(Utility.formatData(8, f.format(value)));
+                                }
                             }
                     }
             }
@@ -284,7 +306,7 @@ public class Tabler extends javax.swing.JFrame {
                     if(length > lengths[i]) lengths[i] = length;
                 }
                 for(int i = 0; i < nInds; i++)
-                    for(int j = 0; j < indPoints[i]; j++)
+                    for(int j = 0; j < indPoints[inds[i]]; j++)
                         if(dataLabels.get(columns[0]).equals("ID"))
                         {
                             length = String.valueOf(indIDs[startRows[inds[i]]]).length();
@@ -304,7 +326,7 @@ public class Tabler extends javax.swing.JFrame {
                 for(int i = 0; i < nColumns; i++)
                     buffer.append(formatData(lengths[i], (String)dataLabels.get(columns[i])));
                 for(int i = 0; i < nInds; i++)
-                    for(int j = 0; j < indPoints[i]; j++)
+                    for(int j = 0; j < indPoints[inds[i]]; j++)
                     {
                         buffer.append("\n");
                         if(dataLabels.get(columns[0]).equals("ID"))
@@ -352,20 +374,32 @@ public class Tabler extends javax.swing.JFrame {
         int[] columns = new int[nColumns];
         for(int i = 0; i < nColumns; i++)
             columns[i] = dataLabels.indexOf(labels[i]);
-        DecimalFormat f = new DecimalFormat("0.0000E00");
+        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        f.applyPattern("0.0000E00");
         StringBuffer buffer = new StringBuffer();
         if(exponential)
         {
             for(int i = 0; i < nColumns; i++)
                 buffer.append(formatData(10, (String)dataLabels.get(columns[i])));
+            double value;
             for(int i = 0; i < nRows; i++)
             {
                 buffer.append("\n");
                 buffer.append(formatData(10,  indIDs[i]));
                 for(int j = 1; j < nColumns; j++)
                 {
-                    buffer.append(" ");
-                    buffer.append(Utility.formatData(8, f.format(dataValues[i][columns[j]])));
+                    value = dataValues[i][columns[j]];
+                    if(String.valueOf(value).equals("NaN"))
+                        buffer.append("         NaN");
+                    else if(String.valueOf(value).equals("-Infinity"))
+                        buffer.append("   -Infinity");
+                    else if(String.valueOf(value).equals("Infinity") || String.valueOf(value).equals("+Infinity"))
+                        buffer.append("   +Infinity");
+                    else
+                    {
+                        buffer.append(" ");
+                        buffer.append(Utility.formatData(8, f.format(value)));
+                    }
                 }
             }
         }

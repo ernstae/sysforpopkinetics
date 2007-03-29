@@ -20,6 +20,7 @@ package uw.rfpk.mda.nonmem.compartment;
 
 import java.util.Observable;
 import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -29,7 +30,7 @@ import java.awt.Dimension;
  *
  * @author  Jiaji Du
  */
-public class Model implements Cloneable
+ public class Model implements Cloneable
 {    
     /** Creates a new instance of Model. 
      * @param tool the DesignTool object.
@@ -145,7 +146,10 @@ public class Model implements Cloneable
             {
                 Element.Flux flux = (Element.Flux)fluxes.get(i);
                 if(flux.element1 == element && flux.element2 != element)
-                    variables.remove(String.valueOf(((Element.Flux)fluxes.remove(i--)).number));
+                {
+//                    variables.remove(String.valueOf(((Element.Flux)fluxes.remove(i--)).number));
+                    i--;
+                }
                 if(flux.element1 != element && flux.element2 == element)
                 {
                     if(flux.element1 instanceof Element.Delay)
@@ -155,7 +159,8 @@ public class Model implements Cloneable
                         delay.compartments.remove(index);
                         delay.fractions.remove(index);
                     }
-                    variables.remove(String.valueOf(((Element.Flux)fluxes.remove(i--)).number));
+//                    variables.remove(String.valueOf(((Element.Flux)fluxes.remove(i--)).number));
+                    i--;
                 }
             }
             for(int i = 0; i < inputs.size(); i++)
@@ -211,7 +216,7 @@ public class Model implements Cloneable
         if(element instanceof Element.Flux)
         {
             fluxes.remove(element);
-            variables.remove(String.valueOf(((Element.Flux)element).number));
+//            variables.remove(String.valueOf(((Element.Flux)element).number));
             Element.Flux flux = (Element.Flux)element;
             if(flux.element1 instanceof Element.Delay)
             {
@@ -220,6 +225,7 @@ public class Model implements Cloneable
                 delay.compartments.remove(index);
                 delay.fractions.remove(index);
             }
+            fluxList.remove(flux.name);
         }
         if(element instanceof Element.Input)
         {
@@ -290,11 +296,15 @@ public class Model implements Cloneable
     protected static boolean isClone;
     /** Is copy to the diagram */
     protected boolean isCopyToDiagram;
-    /** Mixed effects variables of all models */
+    /** User defined variables of all groups */
+    protected static ArrayList<String> variableList = new ArrayList<String>();
+    /** User defined variable map of all groups */
     protected static Properties variables = new Properties();
+    /** Flux list */
+    protected static ArrayList<String> fluxList = new ArrayList<String>();
     /** Equations of all models */
     protected static String equations = "";
-    /** Error block equations of all models */
+    /** Error block equations of all groups */
     protected static String errorEqns = "";
     private Vector<Model> models;
     private DesignTool tool;

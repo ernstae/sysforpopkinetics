@@ -231,6 +231,8 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();        
             String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            // Correct IF conditions
+            record = Utility.correctIFConditions(record);
             while(record.indexOf("\n\n") != -1)
                 record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
@@ -240,18 +242,18 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 object.getRecords().setProperty("PK", "$PK \n" + record);
                 
                 // Eliminate comments
-                String code = Utility.eliminateComments(record); 
+                String code = Utility.eliminateComments(record);
                 
                 object.getSource().pk = "\n" + code.trim() + "\n";
                 
                 // Find number of THETAs and number of ETAS
                 iterator.setNTheta(Utility.find(code, "THETA"));
-                if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
+                iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                if(iterator.analysis.equals("population"))
                 {
                     if(iterator.getNTheta() == 0)
                         JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
-                                                      "Input Error", JOptionPane.ERROR_MESSAGE);                
-                    iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
                     if(iterator.getNEta() == 0)
                         JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -261,9 +263,12 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                     if(iterator.getNTheta() == 0)
                         JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
+                    if(iterator.getNEta() != 0)
+                        JOptionPane.showMessageDialog(null, "ETA is not a valid model parameter for an individual model.\n",
+                                                      "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
                 
-                object.getSource().nTheta = String.valueOf(iterator.getNTheta());               
+                object.getSource().nTheta = String.valueOf(iterator.getNTheta());
                 
                 // Check ENDIF syntax
                 Utility.checkENDIF(code, title);
@@ -275,7 +280,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 Vector errors = Utility.checkLeftExpression(code, title);
                 // Highlight the incompatible function names and mismatched parenthesis lines
                 if(isHighlighted)
-                {                
+                {
                     highlighter.removeAllHighlights();
                     isHighlighted = false;
                 }
@@ -427,7 +432,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                             pk = "K=\nK12=\nK21=\nK13=\nK31=";
                             break;
                         case 4:
-                            pk = "CL=\nV1=\nQ2=\nV2=\nQ3=\nV3=\nK=CL/V1\nK12=Q2/V1\nK21=Q2/V2\nK13=Q3/V1\nK31=Q3/V2";
+                            pk = "CL=\nV1=\nQ2=\nV2=\nQ3=\nV3=\nK=CL/V1\nK12=Q2/V1\nK21=Q2/V2\nK13=Q3/V1\nK31=Q3/V3";
                             break;
                         case 6:
                             pk = "ALPHA=\nBETA=\nGAMMA=\nK21=\nK31=\nK=ALPHA*BETA*GAMMA/(K21*K31)\nS=ALPHA+BETA+GAMMA\nP=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA\nK13=(P+K31*K31-K31*S-K*K21)/(K21-K31)\nK12=S-K-K13-K21-K31";

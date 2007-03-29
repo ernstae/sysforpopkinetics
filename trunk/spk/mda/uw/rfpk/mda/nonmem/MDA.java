@@ -41,9 +41,17 @@ public class MDA
     {
         if(!System.getProperty("java.version").startsWith("1.5."))
         {
-            JOptionPane.showMessageDialog(null, "The version of Java Runtime Environmemt (JRE) on your computer is no longer supported.\n" +
-                                                "Please update the JRE version and re-download MDA.");
-            System.exit(0);
+            if(!System.getProperty("java.version").startsWith("1.6."))
+            {
+                JOptionPane.showMessageDialog(null, "The version of Java Runtime Environmemt (JRE) on your computer is no longer supported.\n" +
+                                              "Please update the JRE version and re-download MDA.", "JRE Version Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "The version of Java Runtime Environmemt (JRE) on your computer is not yet supported.\n" +
+                                              "While this version may work, the current supported version is 5.", "JRE Version Warning", JOptionPane.WARNING_MESSAGE);
+            }   
         }
         if(args.length != 0)
         {

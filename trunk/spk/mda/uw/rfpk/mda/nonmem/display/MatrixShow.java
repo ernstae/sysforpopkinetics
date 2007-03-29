@@ -22,11 +22,12 @@ import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.table.*;
 import javax.swing.JTable;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.awt.*;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
-/** This class's instance display a matrix show on the screen.
+/** This class displays a matrix show on the screen.
  *
  * @author  Jiaji Du
  */
@@ -58,11 +59,12 @@ public class MatrixShow extends javax.swing.JFrame {
         
         // Format the data
         int dimension = data.length;
-        DecimalFormat f = new DecimalFormat("0.00E00");
+        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        f.applyPattern("0.00E00");
         if(isDiagonal)
             for(int i = 0; i < dimension; i++)
             {
-                if(!data[i][i + 1].equals("nan"))
+                if(!data[i][i + 1].equalsIgnoreCase("nan") && !data[i][i + 1].endsWith("inf") && !data[i][i + 1].endsWith("Infinity"))
                     data[i][i + 1] = Utility.formatData(6, f.format(Double.parseDouble(data[i][i + 1])));
                 else
                     data[i][i + 1] = "   N/A";
@@ -71,7 +73,7 @@ public class MatrixShow extends javax.swing.JFrame {
             for(int i = 0; i < dimension; i++)
                 for(int j = 1; j < data[i].length; j++)
                 {
-                    if(!data[i][j].equals("nan"))
+                    if(!data[i][j].equalsIgnoreCase("nan") && !data[i][j].endsWith("inf") && !data[i][j].endsWith("Infinity"))
                         data[i][j] = Utility.formatData(6, f.format(Double.parseDouble(data[i][j])));
                     else
                         data[i][j] = "   N/A";

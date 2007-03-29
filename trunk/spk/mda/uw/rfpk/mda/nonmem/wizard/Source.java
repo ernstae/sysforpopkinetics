@@ -76,4 +76,10 @@ public class Source {
     public String nTheta = null;
     /** The number of eta for identifiability analysis */
     public String nEta = null;
+    /** The seed for nonparametric model */
+    public String nonparamSeed = null;
+    /** The number of points for random uniform method of nonparametric model */
+    public String nonparamNumOfPoints = null;
+    /** The number of points per dimension for grid method of nonparametric model */
+    public String nonparamPointsPerDim = null;
 }

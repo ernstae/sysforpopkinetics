@@ -901,13 +901,13 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 	}
        
   	public String getContentItem(){
-            if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam) 
+            if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric")) 
                 return "Random Effects";
   	    return "Fixed Effects";
   	}
 
 	public String getStepTitle(){
-            if(iterator.getIsInd() || iterator.getIsTwoStage() || iterator.isNonparam) 
+            if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric")) 
                 return "Random Effects";
 	    return "Fixed Effects";
 	}

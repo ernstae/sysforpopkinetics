@@ -113,10 +113,12 @@ public class GetHistory extends HttpServlet
                 userStmt = userRS.getStatement();
                 userRS.next();
 
-                // Check if the job belongs to the user in the group or to the library
+                // Check if the job belongs to the user in the group, belongs to the library
+                // or is shared with this user
                 if((groupId != 0 && userRS.getLong("team_id") == groupId) || 
                    (groupId == 0 && Long.parseLong(user.getUserId()) == userId) || 
-                   userRS.getString("username").equals("librarian"))
+                   userRS.getString("username").equals("librarian") ||
+                   Long.parseLong(user.getUserId()) == jobRS.getLong("share_with"))
                 {
                     // get job history
                     ResultSet historyRS = Spkdb.jobHistory(con, jobId);

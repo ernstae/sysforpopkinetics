@@ -34,6 +34,7 @@ import java.awt.Point;
 import java.awt.print.*;
 import java.awt.image.*;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.awt.event.MouseEvent;
 import javax.print.attribute.*;
 import java.awt.Polygon;
@@ -75,7 +76,7 @@ public class Plotter extends JPanel
      * @param symbol the symbol types of the curves in an int array. Each element represents:
      *        "dot", "circle", "filled square", "square", "filled up triangle", "up triangle",
      *        "filled down triangle", "down triangle", "cross", "check mark", "thick solid line",
-     *        "thin solid line", "thin dashed line" or "thick dashed line".
+     *        "thin solid line", "thin dashed line", "thick dashed line or vertical bar".
      * @param color the colors of the curves in a Color array. Each element represents:
      *        "red", "yellow", "orange", "blue", "pink", "magenta", "cyan", "green", "gray", or "black".
      * @param legendLocation the location of the legend: "Inside", "Top", "Right", or null if
@@ -111,8 +112,8 @@ public class Plotter extends JPanel
      * @param nDigitX number of digits right to the decimal point of the X numerical lable.
      * @param nDigitY number of digits right to the decimal point of the Y numerical lable.
      * @param frame window of the plot.
-     * @param indPoints an int array containing number of data points for each individual, 
-              null for not individualized.
+     * @param indPoints an array of int arrays each containing number of data points for each individual
+     *        of a curve, null for not individualized.
      */
     public Plotter(double[][] dataX, double[][] dataY, String title, String labelX, String labelY, 
                    String[] name, int[] symbol, Color[] color, boolean xLine, boolean yLine, 
@@ -126,7 +127,7 @@ public class Plotter extends JPanel
                    int topInset, int bottomInset, int leftInset, int rightInset, 
                    boolean isExpX, boolean isExpY, boolean isLogX, boolean isLogY, 
                    boolean isHistogram, double intervalSize, boolean baseline, String baseLabel,
-                   int nDigitX, int nDigitY, JFrame frame, int[] indPoints)
+                   int nDigitX, int nDigitY, JFrame frame, int[][] indPoints)
     {
         this.frame = frame;
 	this.dataX = dataX;
@@ -253,33 +254,39 @@ public class Plotter extends JPanel
         this.rightInset += rightInset;        
         if(legendLocation != null)
             start = null;
-        dFormat = new DecimalFormat("0.000E00");
-        nFormat = new DecimalFormat("0.0000");
+        dFormat = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        dFormat.applyPattern("0.000E00");
+        nFormat = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        nFormat.applyPattern("0.0000");
         String form = "";
         if(isExpX)
         {
             for(int i = 0; i < nDigitX; i++)
                 form += "0";
-            formatX = new DecimalFormat("0." + form + "E00");
+            formatX = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+            formatX.applyPattern("0." + form + "E00");
         }
         else
         {
             for(int i = 0; i < nDigitX; i++)
                 form += "#";
-            formatX = new DecimalFormat("###." + form);            
+            formatX = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+            formatX.applyPattern("###." + form);
         }
         form = "";
         if(isExpY)
         {
             for(int i = 0; i < nDigitY; i++)
                 form += "0";
-            formatY = new DecimalFormat("0." + form + "E00");
+            formatY = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+            formatY.applyPattern("0." + form + "E00");
         }
         else
         {
             for(int i = 0; i < nDigitY; i++)
                 form += "#";
-            formatY = new DecimalFormat("###." + form);            
+            formatY = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
+            formatY.applyPattern("###." + form);
         }
         this.indPoints = indPoints;
         initComponents();
@@ -600,7 +607,7 @@ public class Plotter extends JPanel
         // Show print setting dialog if pageFormat != null.
         if(pageFormat != null)
         {
-            scaleDialog.setSize(227, 205);
+            scaleDialog.setSize(227, 225);
             scaleDialog.setVisible(true);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
@@ -1057,7 +1064,7 @@ public class Plotter extends JPanel
 	        newX[i][j] = (int)(leftInset + (dataX[i][j] - minX)/spanX * width); 
                 newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
             }
-            drawCurve(gc2D, symbol[i], i);
+            drawCurve(gc2D, symbol[i], i, height + top);
         }
     }
     
@@ -1513,7 +1520,7 @@ public class Plotter extends JPanel
 	                newX[i][j] = (int)(left + (dataX[i][j] - minX)/spanX * width); 
                         newY[i][j] = (int)(height + top - (dataY[i][j] - minY)/spanY * height);
                     }
-                    drawCurve(gc2D, symbol[i], i);
+                    drawCurve(gc2D, symbol[i], i, height + top);
                 }
             }
             return PAGE_EXISTS;
@@ -1601,11 +1608,16 @@ public class Plotter extends JPanel
                                                BasicStroke.JOIN_BEVEL, 0, 
                                                new float[]{5.0f, 2.0f}, 0));
                 gc2D.drawLine(x - 20, y, x + 20, y);
-                gc2D.setStroke(new BasicStroke());           
+                gc2D.setStroke(new BasicStroke());
+                break;
+            case 14:
+                gc2D.setStroke(new BasicStroke(2.0f));
+                gc2D.drawLine(x, y - 5, x, y + 5);
+                gc2D.setStroke(new BasicStroke());
         }
     }
 
-    private void drawCurve(Graphics2D gc2D, int symbolType, int i)
+    private void drawCurve(Graphics2D gc2D, int symbolType, int i, int yBase)
     {
         switch(symbolType)
         {
@@ -1690,39 +1702,45 @@ public class Plotter extends JPanel
             case 10:
                 gc2D.setStroke(new BasicStroke(2.0f));
                 if(indPoints != null)
-                    drawIndLines(gc2D, newX[i], newY[i]);
+                    drawIndLines(gc2D, newX[i], newY[i], i);
                 else
                     gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());
                 break;
             case 11:
-                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
+                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i], i);
                 else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 break;                
             case 12:
                 gc2D.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, 
                                BasicStroke.JOIN_BEVEL, 0, new float[]{5.0f, 2.0f}, 0));
-                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
+                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i], i);
                 else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
                 gc2D.setStroke(new BasicStroke());
                 break;
             case 13:
                 gc2D.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, 
                                BasicStroke.JOIN_BEVEL, 0, new float[]{5.0f, 2.0f}, 0));
-                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i]);
+                if(indPoints != null) drawIndLines(gc2D, newX[i], newY[i], i);
                 else gc2D.drawPolyline(newX[i], newY[i], newX[i].length);
-                gc2D.setStroke(new BasicStroke());    
+                gc2D.setStroke(new BasicStroke());
+                break;
+            case 14:
+                gc2D.setStroke(new BasicStroke(2.0f));
+                for(int j = 0; j < newX[i].length; j++)
+                    gc2D.drawLine(newX[i][j], newY[i][j], newX[i][j], yBase);
+                gc2D.setStroke(new BasicStroke());
         }        
     }
     
-    private void drawIndLines(Graphics2D gc2D, int[] allX, int[] allY)
+    private void drawIndLines(Graphics2D gc2D, int[] allX, int[] allY, int curve)
     {
         int[] indX, indY;
         int offset = 0;
-        for(int k = 0; k < indPoints.length; k++)
+        for(int k = 0; k < indPoints[curve].length; k++)
         {
-            indX = new int[indPoints[k]];
-            indY = new int[indPoints[k]];
+            indX = new int[indPoints[curve][k]];
+            indY = new int[indPoints[curve][k]];
             for(int l = 0; l < indX.length; l++)
             {
                 indX[l] = allX[offset + l];
@@ -1739,7 +1757,16 @@ public class Plotter extends JPanel
      */
     public static double[] getDefaultRange(double[][] data, boolean isLog)
     {
-        double min = data[0][0];
+        double min = 0;
+        for(int i = 0; i < data.length; i++)
+        {
+            if(data[i].length > 0)
+            {
+                min = data[i][0];
+                break;
+            }
+        }
+        
         double max = min;
         for(int i = 0; i < data.length; i++)
             for(int j = 0; j < data[i].length; j++)
@@ -2046,7 +2073,7 @@ public class Plotter extends JPanel
     private String baseLabel;
     private int baseX, meanX, medianX;
     private double baselineX;
-    private int[] indPoints;
+    private int[][] indPoints;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

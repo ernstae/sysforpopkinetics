@@ -204,6 +204,7 @@ public abstract class Element implements Cloneable
             super.model = model;
             number = newNumber(Model.elements);
             name = "D" + number;
+            delayTime= "TLAG" + number + "=";
         }
         
         /** Draw delay.
@@ -278,7 +279,7 @@ public abstract class Element implements Cloneable
         }
        
         /** Delay time. */
-        protected String delayTime = "";
+        protected String delayTime;
         /** Number of compartments to simulate the delay. */
         protected int nDelayComps = 2;
         /** Ending compartments from the delay */
@@ -345,6 +346,9 @@ public abstract class Element implements Cloneable
 //                else
 //                    name = "K" + "0T" + element2.number;
             }
+            flowRate = name + "=";
+            if(name.startsWith("K"))
+                Model.fluxList.add(name);
         }
         
         /** Draw flux.
@@ -584,7 +588,7 @@ public abstract class Element implements Cloneable
         private double cos, sin, tan;
         private static final int shift = 10;
         /** Flow rate */
-        protected String flowRate = "";
+        protected String flowRate;
     }
     
     /** This class defines input. */

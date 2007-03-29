@@ -214,6 +214,8 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            // Correct IF conditions
+            record = Utility.correctIFConditions(record);
             while(record.indexOf("\n\n") != -1)
                 record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
@@ -237,7 +239,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 iterator.setNEta(Utility.find(code, "ETA"));
                 if(iterator.getNEta() == 0)
                 {
-                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
+                    if(iterator.analysis.equals("population"))
                         JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                     else
@@ -246,7 +248,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 }
                 // Find number of EPSs
                 iterator.setNEps(Utility.find(code, "EPS"));                
-                if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam && iterator.getNEps() == 0)
+                if(iterator.analysis.equals("population") && iterator.getNEps() == 0)
                     JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
 

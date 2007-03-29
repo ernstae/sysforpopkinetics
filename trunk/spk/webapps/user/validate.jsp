@@ -50,13 +50,13 @@ author: Jiaji Du
     <c:choose>
       <c:when test="${param.task == 'addnew'}">
         <c:if test="${userDb.rowCount != 0}">
-          <c:set var="userNameError" scope="request" value="User Name already used" />
+          <c:set var="userNameError" scope="request" value="Username already used" />
           <c:set var="isValid" value="false" />  
         </c:if>
       </c:when>
       <c:otherwise>
         <c:if test="${userDb.rowCount == 0}">
-          <c:set var="userNameError" scope="request" value="User Name not found" />
+          <c:set var="userNameError" scope="request" value="Username not found" />
           <c:set var="isValid" value="false" />  
         </c:if>
       </c:otherwise>
@@ -93,11 +93,34 @@ author: Jiaji Du
     value="Country Name missing" />
   <c:set var="isValid" value="false" />
 </c:if>
-<c:if test="${empty param.email}">
-  <c:set var="emailAddressError" scope="request"
-    value="Email address missing" />
-  <c:set var="isValid" value="false" />
-</c:if>
+<c:choose>
+  <c:when test="${empty param.email}">
+    <c:set var="emailAddressError" scope="request"
+      value="Email address missing" />
+    <c:set var="isValid" value="false" /> 
+  </c:when>
+  <c:otherwise>
+    <c:if test="${not empty initParam.bugdb_driver}">
+      <sql:setDataSource var="bugdb" scope="request"
+           driver="${initParam.bugdb_driver}"
+           url="${initParam.bugdb_url}"
+           user="${initParam.bugdb_user}"
+           password="${initParam.bugdb_password}" />
+      <c:if test="${param.task == 'addnew' || (param.task == 'update' && param.email != bugLogin)}">
+        <sql:query var="bugDb" dataSource="${bugdb}">
+           SELECT * FROM profiles
+           WHERE login_name = ?
+           <sql:param value="${param.email}" />
+        </sql:query>
+        <c:if test="${bugDb.rowCount != 0}">
+          <c:set var="emailAddressError" scope="request" 
+            value="Email address already used as Bugzilla login name" />
+          <c:set var="isValid" value="false" />  
+        </c:if>
+      </c:if>
+    </c:if>
+  </c:otherwise>
+</c:choose>
 <c:if test="${empty param.teamId}">
   <c:set var="teamIdError" scope="request"
     value="Group ID missing" />

@@ -27,7 +27,7 @@ import java.net.Socket;
 import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
 
-/** This servlet abort the job specified by the client.
+/** This servlet aborts the job specified by the client.
  * The servlet receives a String array containing two String objects from the client.
  * The first String object is the secret code to identify the client.  The second String  
  * object is the job_id.  The servlet sends an aborting job message to the job-queue server. 

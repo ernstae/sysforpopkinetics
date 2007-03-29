@@ -37,7 +37,7 @@ import uw.rfpk.beans.UserInfo;
  * method_code and parent. Then, the model_id is passed in the database API method getModel
  * to get model_name and model_abstract; and the dataset_id is passed in the database API method getDataset to 
  * get dataset_name and dataset_abstract.  The servlet puts job_abstract, owner, model_id, model_name, model_version,
- * model_abstract, dataset_id, dataset_name, dataset_version, dataset_abstract, state_code, end_code,
+ * model_abstract, dataset_id, dataset_name, dataset_version, dataset_abstract, state_code, end_code, share_with,
  * parent(id) and method_code into a java.util.Properties object.  The servlet sends back 
  * two objects.  The first object is a String containing the error message if there 
  * is an error or an empty String if there is not any error.  The second object is the 
@@ -111,11 +111,14 @@ public class GetJobInfo extends HttpServlet
                 ResultSet userRS = Spkdb.getUserById(con, userId);
                 userStmt = userRS.getStatement();
                 userRS.next();
+                String username = userRS.getString("username");
                 
-                // Check if the job belongs to the user in the group or to the library
+                // Check if the job belongs to the user in the group, belongs to the library
+                // or is shared with this user
                 if((groupId != 0 && userRS.getLong("team_id") == groupId) || 
                    (groupId == 0 && Long.parseLong(user.getUserId()) == userId) || 
-                   userRS.getString("username").equals("librarian"))
+                   username.equals("librarian") ||
+                   Long.parseLong(user.getUserId()) == jobRS.getLong("share_with"))
                 {            
                     // Get job information
                     String jobAbstract = jobRS.getString("abstract");
@@ -139,6 +142,14 @@ public class GetJobInfo extends HttpServlet
                     datasetRS.next();
                     String datasetName = datasetRS.getString("name");
                     String datasetAbstract = datasetRS.getString("abstract");
+                    long shareWithId = jobRS.getLong("share_with");
+                    String shareWithName = "";
+                    if(shareWithId > 0)
+                    {
+                        userRS = Spkdb.getUserById(con, shareWithId);
+                        userRS.next();
+                        shareWithName = userRS.getString("username");
+                    }
              
                     // Put returning objects into the Properties
                     jobInfo.setProperty("jobAbstract", jobAbstract);
@@ -151,10 +162,11 @@ public class GetJobInfo extends HttpServlet
                     jobInfo.setProperty("datasetAbstract", datasetAbstract);
                     jobInfo.setProperty("datasetVersion", datasetVersion.substring(2));
                     jobInfo.setProperty("parent", String.valueOf(parent));
+                    jobInfo.setProperty("shareWithName", String.valueOf(shareWithName));
                     jobInfo.setProperty("methodCode", methodCode);
                     jobInfo.setProperty("stateCode", stateCode);
                     jobInfo.setProperty("endCode", endCode);
-                    jobInfo.setProperty("username", userRS.getString("username"));
+                    jobInfo.setProperty("username", username);
                 }
                 else
                 {

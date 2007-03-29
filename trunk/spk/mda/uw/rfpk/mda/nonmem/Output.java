@@ -127,6 +127,32 @@ public class Output {
     public String identifyStatus = null;
     /** Identifiability number of solutions */
     public String identifySolutions = null;
-    /** Nonparametric result */
-    public String[][] nonparamResult = null;
+    /** The generation method for nonparametric model */
+    public String nonparamMethod = null;
+    /** The seed for nonparametric model */
+    public String nonparamSeed = null;
+    /** The number of points for random uniform method of nonparametric model */
+    public String nonparamNumOfPoints = null;
+    /** The number of points per dimension for grid method of nonparametric model */
+    public String nonparamPointsPerDim = null;
+    /** Nonparametric initial theta*/
+    public String[][] nonparamInTheta = null;
+    /** Nonparametric initial omega*/
+    public String[][][] nonparamInOmega = null;
+    /** Nonparametric theta output*/
+    public String[][] nonparamOutTheta = null;
+    /** Nonparametric omega output*/
+    public String[][][] nonparamOutOmega = null;
+    /** Nonparametric weight */
+    public String[] nonparamWeight = null;
+    /** Nonparametric probability density of measurements */
+    public String[][] nonparamDensity = null;
+    /** Nonparametric posterior mean of theta */
+    public String[][] nonparamMeanTheta = null;
+    /** Nonparametric posterior mean of theta */
+    public String[][][] nonparamMeanOmega = null;
+    /** Nonparametric initial number of points */
+    public String nonparamInPoints = null;
+    /** Nonparametric output number of points */
+    public String nonparamOutPoints = null;
 }

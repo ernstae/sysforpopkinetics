@@ -21,7 +21,7 @@ package uw.rfpk.mda;
 import uw.rfpk.mda.nonmem.Utility;
 
 /**
- * Open a browser to display an url.
+ * This class opens a browser to display an url.
  * @author  jiaji Du
  */
 public class OpenBrowser extends javax.swing.JButton

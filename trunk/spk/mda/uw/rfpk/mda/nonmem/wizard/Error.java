@@ -185,7 +185,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 String value = jTextArea1.getText();
                 if(value.equals(""))
                 {
-                    if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
+                    if(iterator.analysis.equals("population"))
                         jTextArea1.setText("Y=F+EPS(1)");
                     else
                         jTextArea1.setText("Y=F+ETA(1)");
@@ -202,6 +202,8 @@ public class Error extends javax.swing.JPanel implements WizardStep {
             }            
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            // Correct IF conditions
+            record = Utility.correctIFConditions(record);
             while(record.indexOf("\n\n") != -1)
                 record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
@@ -211,7 +213,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 // Eliminate comments
                 String code = Utility.eliminateComments(record); 
                 // Find number of EPSs for population analysis or Etas for individual analysis                    
-                if(!iterator.getIsInd() && !iterator.getIsTwoStage() && !iterator.isNonparam)
+                if(iterator.analysis.equals("population"))
                 {
                     String pkCode = Utility.eliminateComments(object.getRecords().getProperty("PK"));
                     if(pkCode != null)
@@ -226,12 +228,11 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 else
                 {
                     iterator.setNEta(Utility.find(code, "ETA"));
-                    if(iterator.getNEta() == 0)
+                    if(!iterator.analysis.equals("identifiability") && iterator.getNEta() == 0)
                         JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
-                object.getRecords().setProperty("Error", "$ERROR \n" + record);     
-                
+                object.getRecords().setProperty("Error", "$ERROR \n" + record);
                 object.getSource().error = "\n" + code + "\n";
                 object.getSource().nEta = String.valueOf(iterator.getNEta());
                 

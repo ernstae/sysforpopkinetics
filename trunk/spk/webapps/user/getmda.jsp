@@ -157,7 +157,7 @@ author: Jiaji Du
                The Model Design Agent (MDA) is the user interface to create and submit jobs and view and plot results in SPK.  The MDA download checks automatically for the latest version.  While downloading, you will see a Java Web Start window and "Model Design Agent, RFPK UW".  Answer "Yes" to related security questions if they appear.
             </p>
                 <p style="color:red">Important Message:<br>
-                As of Octorber 16, 2006, the MDA will require Java Runtime Environment version 1.5.0 or higher. Please follow instructions below.</p>
+                As of October 16, 2006, the MDA will require Java Runtime Environment version 1.5.0 or higher. Please follow instructions below.</p>
             <p>
                To download and use the MDA, it is necessary to install the Java Runtime Environment (JRE) on your computer.  Instructions for download and installation of the JRE are provided below:<br>
                <a href="http://www.java.com/en/download/manual.jsp" target="_blank">http://www.java.com/en/download/manual.jsp</a>,

@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.Arrays;
 import javax.swing.DefaultListModel;
 
-/** This class's instance processes table information and displays and saves tables.
+/** This class processes table information and displays and saves tables.
  *
  * @author  Jiaji Du
  */

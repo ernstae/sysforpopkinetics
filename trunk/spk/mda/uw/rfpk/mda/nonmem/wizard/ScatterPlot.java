@@ -1113,7 +1113,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                 else
                     item = tokens[0];                
 
-                if(!iterator.getIsInd())
+                if(iterator.analysis.equals("population"))
                 {
                     jComboBox1.addItem(item);
                 }
@@ -1128,7 +1128,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             jComboBox1.addItem("RES");
             jComboBox1.addItem("WRES");
  
-            if(!iterator.getIsInd() && iterator.getIsMethod1OrPosthoc())
+            if(iterator.analysis.equals("population") && iterator.getIsMethod1OrPosthoc())
             {
                 for(int i = 0; i < iterator.getNEta(); i++)
                     jComboBox1.addItem("ETA(" + (i + 1) +")");

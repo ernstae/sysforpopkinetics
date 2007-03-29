@@ -94,7 +94,7 @@ if(index($stdout, "spk$mode") != -1) {
     die;
 }
 
-my $command = "/usr/java/j2sdk1.4.2_03/bin/java";
+my $command = "/usr/java/jdk1.5.0_07/bin/java";
 my $classpath = "-cp /usr/local/lib/mysql-connector-java-3.0.10-stable-bin.jar:/usr/local/bin/spk$mode/:.";
 my $lockfile_exists = 0;
 my $jobqs_port = 9000;

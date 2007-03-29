@@ -28,7 +28,7 @@ import rfpk.spk.spkdb.*;
 import uw.rfpk.rcs.Archive;
 
 /**
- * Get user dataset list from archive.
+ * Getting user dataset list from archive.
  * @author Jiaji Du
  */
 public class DatasetList implements java.io.Serializable

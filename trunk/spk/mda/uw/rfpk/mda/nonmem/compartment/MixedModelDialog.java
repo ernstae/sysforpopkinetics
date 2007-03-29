@@ -20,6 +20,7 @@ package uw.rfpk.mda.nonmem.compartment;
 
 import uw.rfpk.mda.nonmem.Utility;
 import java.awt.Dimension;
+import java.awt.Cursor;
 import java.util.regex.*;
 import javax.swing.JOptionPane;
 import javax.help.*;
@@ -33,7 +34,7 @@ public class MixedModelDialog extends javax.swing.JDialog {
     
     /** Creates new form ModelModelDialog.     
      * @param parent parent of this dialog.
-     * @param modelExpression a String array containing model expression and equations.
+     * @param modelExpression a String array containing model expression.
      * @param name name of the parameter to define a model on.
      * @param dataLabels a String array containing data labels of the dataset.
      */
@@ -41,19 +42,22 @@ public class MixedModelDialog extends javax.swing.JDialog {
     {
         super(parent, true);
         this.modelExpression = modelExpression;
+        this.name = name;
         initComponents();
         nameLabel.setText("Name: " + name);
-        userDefinedTextField.setText(modelExpression[0]);
-        eqnTextArea.setText(modelExpression[1]);
-        userDefinedRadioButton.setSelected(true);
         for(int i = 0; i < dataLabels.length; i++)
             if(!Utility.isStdItem(dataLabels[i]) && !dataLabels[i].equals("ID"))
                 dataNameComboBox.addItem(dataLabels[i]);
-        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
-        CSH.setHelpIDString(helpButton, "Prepare_Input_Model_Parameters");
+        if(modelExpression[0].length() == 0)
+            userDefinedTextArea.setText(name + "=");
+        else
+            userDefinedTextArea.setText(modelExpression[0]);
+        userDefinedRadioButton.setSelected(true);
+//        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
+//        CSH.setHelpIDString(helpButton, "Prepare_Input_Model_Parameters");
         Dimension wndSize = getToolkit().getScreenSize();
         setLocation(wndSize.width/2, wndSize.height/3);
-        setSize(410, 550);
+        setSize(410, 490);
         setVisible(true);
     }
     
@@ -85,17 +89,14 @@ public class MixedModelDialog extends javax.swing.JDialog {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        userDefinedTextField = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         dataNameComboBox = new javax.swing.JComboBox();
-        jLabel15 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        eqnTextArea = new javax.swing.JTextArea();
+        userDefinedTextArea = new javax.swing.JTextArea();
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -280,25 +281,6 @@ public class MixedModelDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 12);
         getContentPane().add(jLabel13, gridBagConstraints);
 
-        jLabel14.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel14.setText("Note: ETA is a zero-mean Normal random variable.");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 12, 3, 12);
-        getContentPane().add(jLabel14, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
-        getContentPane().add(userDefinedTextField, gridBagConstraints);
-
         jButton1.setText("OK");
         jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -320,11 +302,17 @@ public class MixedModelDialog extends javax.swing.JDialog {
 
         helpButton.setText("Help");
         helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        helpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpButtonActionPerformed(evt);
+            }
+        });
+
         jPanel1.add(helpButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         getContentPane().add(jPanel1, gridBagConstraints);
@@ -333,7 +321,7 @@ public class MixedModelDialog extends javax.swing.JDialog {
         jLabel1.setText("Select data item to be added to the model");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
@@ -341,94 +329,98 @@ public class MixedModelDialog extends javax.swing.JDialog {
 
         dataNameComboBox.setMinimumSize(new java.awt.Dimension(32, 20));
         dataNameComboBox.setPreferredSize(new java.awt.Dimension(32, 20));
+        dataNameComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataNameComboBoxActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 15, 2, 12);
         getContentPane().add(dataNameComboBox, gridBagConstraints);
 
-        jLabel15.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel15.setText("Enter additional equations used to define mixed effect model");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 2, 12);
-        getContentPane().add(jLabel15, gridBagConstraints);
-
-        jScrollPane1.setViewportView(eqnTextArea);
+        jScrollPane1.setViewportView(userDefinedTextArea);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipady = 60;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 3, 12);
         getContentPane().add(jScrollPane1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
+        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
+    }//GEN-LAST:event_helpButtonActionPerformed
+
+    private void dataNameComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataNameComboBoxActionPerformed
+        String data = (String)dataNameComboBox.getSelectedItem();
+        userDefinedTextArea.insert(data, userDefinedTextArea.getCaretPosition());
+    }//GEN-LAST:event_dataNameComboBoxActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String text = userDefinedTextField.getText();
-        String eqns = eqnTextArea.getText();
-        if(!Pattern.compile("\\bTHETA\\b", Pattern.UNIX_LINES).matcher(text).find())
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        String text = userDefinedTextArea.getText().trim();
+        if(text.indexOf("\n") == -1)
         {
-            JOptionPane.showMessageDialog(null, "THETA is missing in the mixed effect model.",
-                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        else
-        {
-            if(!Pattern.compile("\\bTHETA\\(\\d+\\)", Pattern.UNIX_LINES).matcher(text).find())
+            if(!Pattern.compile("\\bTHETA\\b", Pattern.UNIX_LINES).matcher(text).find())
             {
-                JOptionPane.showMessageDialog(null, "THETA Number is missing.",
+                JOptionPane.showMessageDialog(null, "THETA is missing in the mixed effect model.",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
+                setCursor(null);
+                return;
+            }
+            else
+            {
+                if(Pattern.compile("\\bTHETA\\(\\)", Pattern.UNIX_LINES).matcher(text).find())
+                {
+                    JOptionPane.showMessageDialog(null, "THETA Number is missing.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    setCursor(null);
+                    return;
+                }
+            }
+            if(Pattern.compile("\\bETA\\(\\)", Pattern.UNIX_LINES).matcher(text).find())
+            {
+                JOptionPane.showMessageDialog(null, "ETA Number is missing.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                setCursor(null);
                 return;
             }
         }
-        if(Pattern.compile("\\bETA\\b", Pattern.UNIX_LINES).matcher(text).find() &&
-           !Pattern.compile("\\bETA\\(\\d+\\)", Pattern.UNIX_LINES).matcher(text).find())
-        {
-            JOptionPane.showMessageDialog(null, "ETA Number is missing.",
-                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        } 
-        if(Pattern.compile("\\bTHETA\\b", Pattern.UNIX_LINES).matcher(eqns).find())
-        {
-            JOptionPane.showMessageDialog(null, "THETA cannot be in any equation.",
-                                          "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
         modelExpression[0] = text;
-        modelExpression[1] = eqns;
         setVisible(false);
+        setCursor(null);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void userDefinedRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userDefinedRadioButtonActionPerformed
-        userDefinedTextField.setText("");
+        userDefinedTextArea.setText("\n\n\n" + name + "=");
     }//GEN-LAST:event_userDefinedRadioButtonActionPerformed
 
     private void exponentialRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exponentialRadioButtonActionPerformed
-        userDefinedTextField.setText("THETA()*EXP(ETA())");
+        userDefinedTextArea.setText("\n\n\n" + name + "=THETA()*EXP(ETA())");
     }//GEN-LAST:event_exponentialRadioButtonActionPerformed
 
     private void proportionalRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proportionalRadioButtonActionPerformed
-        userDefinedTextField.setText("THETA()+THETA()*ETA()");
+        userDefinedTextArea.setText("\n\n\n" + name + "=THETA()+THETA()*ETA()");
     }//GEN-LAST:event_proportionalRadioButtonActionPerformed
 
     private void additiveRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_additiveRadioButtonActionPerformed
-        userDefinedTextField.setText("THETA()+ETA()");
+        userDefinedTextArea.setText("\n\n\n" + name + "=THETA()+ETA()");
     }//GEN-LAST:event_additiveRadioButtonActionPerformed
     
     /** Closes the dialog */
@@ -441,11 +433,10 @@ public class MixedModelDialog extends javax.swing.JDialog {
      * @param args the command line arguments which are not being used.
      */
     public static void main(String args[]) {
-        String[] model = {"expression", "equations"};
+        String[] model = {"name=expression"};
         String[] dataLabels = {"ID", "TIME", "DV", "AMT"};
         new MixedModelDialog(new DesignTool(), model, "name", dataLabels);
-        System.out.println(model[0]);
-        System.out.println(model[1]);
+        System.out.println(model);
     }
     
     
@@ -453,7 +444,6 @@ public class MixedModelDialog extends javax.swing.JDialog {
     private javax.swing.JRadioButton additiveRadioButton;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox dataNameComboBox;
-    private javax.swing.JTextArea eqnTextArea;
     private javax.swing.JRadioButton exponentialRadioButton;
     private javax.swing.JButton helpButton;
     private javax.swing.JButton jButton1;
@@ -463,8 +453,6 @@ public class MixedModelDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -479,8 +467,9 @@ public class MixedModelDialog extends javax.swing.JDialog {
     private javax.swing.JLabel nameLabel;
     private javax.swing.JRadioButton proportionalRadioButton;
     private javax.swing.JRadioButton userDefinedRadioButton;
-    private javax.swing.JTextField userDefinedTextField;
+    private javax.swing.JTextArea userDefinedTextArea;
     // End of variables declaration//GEN-END:variables
     
     private String[] modelExpression;
+    private String name;
 }
