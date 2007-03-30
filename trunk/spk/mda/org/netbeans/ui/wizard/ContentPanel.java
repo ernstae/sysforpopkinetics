@@ -88,7 +88,7 @@ public class ContentPanel extends ImagedPanel {
 	this.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
 	contentList = new JList(){
-		public boolean isFocusTraversable(){
+		public boolean isFocusable(){
 		    return accessibleSupport;
 		}
 	    };
@@ -108,7 +108,7 @@ public class ContentPanel extends ImagedPanel {
 	scroll.setOpaque(false);
 
 	title = new JLabel(titleText){
-		public boolean isFocusTraversable(){
+		public boolean isFocusable(){
 		    return accessibleSupport;
 		}
 	    };
@@ -317,7 +317,7 @@ public class ContentPanel extends ImagedPanel {
         JLabel numberLabel = new JLabel();
         ContentPanel owner;
 
-	public boolean isFocusTraversable(){
+	public boolean isFocusable(){
 	    return true; //accessibleSupport;
 	}
 

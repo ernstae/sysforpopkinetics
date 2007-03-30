@@ -194,10 +194,10 @@ public class JWizardPane extends JComponent {
 		    if (e.getPropertyName().equals(VALUE_PROPERTY)) {
 			if (e.getNewValue()instanceof Integer) {
 			    int val = ((Integer)e.getNewValue()).intValue();
-
-			    System.out.println(val);
-			    System.out.println("----");
-
+                            if (DEBUG) {
+			        System.out.println(val);
+			        System.out.println("----");
+                            }
 			    switch (val) {
 
 			    case JWizardPane.PREVIOUS_OPTION: 
@@ -350,7 +350,8 @@ public class JWizardPane extends JComponent {
 	//....
 	items.add(iterator.getCurrent().getStepDescription().getContentItem());
 
-	while (iterator.hasPrevious() && (iterator.getCurrent() != this.currentStep)) iterator.previousStep(); 
+	while (iterator.hasPrevious() && (iterator.getCurrent() != this.currentStep))
+            iterator.previousStep(); 
 	String[] c = items.getItems();
 	// ----
 
@@ -375,7 +376,7 @@ public class JWizardPane extends JComponent {
      */
     public Vector getUpdatedLeftOptions(){
 
-	Vector lb = new Vector();
+	Vector<Integer> lb = new Vector<Integer>();
 	int b;
 
 	// BACK button
@@ -392,15 +393,19 @@ public class JWizardPane extends JComponent {
 	lb.add( new Integer(b));	
 	
 	// LAST or FINISH button
-       	if (iterator.canFinish()) {
-		if (iterator.hasNext()){
-		    b = (currentStep.getStepDescription().isValid()) ? LAST_OPTION: LAST_OPTION_DISABLED;
-		}
-		else { 
-		    b = (currentStep.getStepDescription().isValid()) ? FINISH_OPTION : FINISH_OPTION_DISABLED;
-		    if (b == FINISH_OPTION) defaultButton = new Integer(FINISH_OPTION);
-		}
-	    } 
+        if (!iterator.canFinish())
+        {
+            b = LAST_OPTION_DISABLED;
+            defaultButton = new Integer(PREVIOUS_OPTION);
+        }
+        else if (iterator.hasNext()){
+	    b = (currentStep.getStepDescription().isValid()) ? LAST_OPTION: LAST_OPTION_DISABLED;
+	}
+	else { 
+	    b = (currentStep.getStepDescription().isValid()) ? FINISH_OPTION : FINISH_OPTION_DISABLED;
+	    if (b == FINISH_OPTION) defaultButton = new Integer(FINISH_OPTION);
+	}
+ 
 	lb.add( new Integer(b));
 
 	return lb;
@@ -411,7 +416,7 @@ public class JWizardPane extends JComponent {
      */
     public Vector getUpdatedRightOptions(){
 
-	Vector rb = new Vector();
+	Vector<Integer> rb = new Vector<Integer>();
 	int b;
 
 	// CANCEL button
