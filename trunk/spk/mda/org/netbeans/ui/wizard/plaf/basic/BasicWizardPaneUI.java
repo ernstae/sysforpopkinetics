@@ -56,6 +56,10 @@ import java.awt.GridBagConstraints;
 import org.netbeans.ui.wizard.JWizardPane;
 import org.netbeans.ui.wizard.plaf.WizardPaneUI;
 import java.util.ResourceBundle;
+import javax.help.*;
+import java.net.URL;
+import uw.rfpk.mda.nonmem.MDAFrame;
+import javax.help.*;
 
 /**
  *
@@ -98,8 +102,9 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 		if (e.getSource() == cancelButton) wizardPane.setValue(new Integer(JWizardPane.CANCEL_OPTION));
 		if (e.getSource() == helpButton) {
 		    wizardPane.setValue(new Integer(JWizardPane.HELP_OPTION));
-		    wizardPane.getCurrentStep().getStepDescription().getHelpAction().actionPerformed(e);
-		}
+                    CSH.setHelpIDString(helpButton, wizardPane.getCurrentStep().getStepDescription().getHelpID());
+//                    wizardPane.getCurrentStep().getStepDescription().getHelpAction().actionPerformed(e);
+                }
 	    }};
 
     /** 
@@ -135,8 +140,9 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 
 	helpButton.setText( rb.getString("Button.Help.Text"));
 	helpButton.setMnemonic(rb.getString("Button.Help.Mnemonic").charAt(0));
-	helpButton.addActionListener( buttonListener);
-
+	helpButton.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
+        helpButton.addActionListener( buttonListener);
+        
 	finishButton.setText( rb.getString("Button.Finish.Text"));
 	finishButton.setMnemonic(rb.getString("Button.Finish.Mnemonic").charAt(0));
 	finishButton.addActionListener( buttonListener);
@@ -146,7 +152,24 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	cancelButton.addActionListener( buttonListener);
 
     }
-
+    
+    private HelpBroker getHelpBroker()
+    {
+        HelpSet hs = null;
+        try
+        {
+            ClassLoader cl = MDAFrame.class.getClassLoader();
+            String hsName = "spkhelp.hs";
+            URL hsURL = HelpSet.findHelpSet(cl, hsName);
+            hs = new HelpSet(null, hsURL);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        return hs.createHelpBroker();
+    }
+    
     /** 
      * JWizardPane that the reciever is providing the look and feel for.
      */
@@ -182,7 +205,8 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 	installComponents();
         installListeners(); 
         //installKeyboardActions();
-	System.out.println("BasicWizardPaneUI-installUI");
+        if(DEBUG)
+	    System.out.println("BasicWizardPaneUI-installUI");
     }
 
     /** Removes the receiver from the L&F controller of the passed in split
