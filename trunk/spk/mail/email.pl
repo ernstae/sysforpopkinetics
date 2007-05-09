@@ -20,6 +20,7 @@
 
 my $from = shift;
 my $to = shift;
+my $bcc = shift;
 my $subject = shift;
 my $message = shift;
 
@@ -27,6 +28,7 @@ use MIME::Lite;
 my $msg = MIME::Lite->new(
            From     => $from,
            To       => $to,
+           Bcc      => $bcc,
            Subject  => $subject,
 	   Data     => $message
            );
