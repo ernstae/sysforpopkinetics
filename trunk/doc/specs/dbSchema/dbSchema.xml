@@ -398,6 +398,9 @@ CREATE TABLE user (
   email varchar(40) default NULL,
   test tinyint(1) default '0',
   dev tinyint(1) default '0',
+  team_id int(10) unsigned NOT NULL,
+  register_time timestamp default now(),
+  contact tinyint(1) NOT NULL default '1', 
   PRIMARY KEY  (user_id),
   UNIQUE KEY username (username)
 ) TYPE=InnoDB;
@@ -1217,6 +1220,20 @@ INSERT INTO state (state_code, state_name) VALUES ('arun','Aborting run');
 		<entry>
                   The team_id of the user, 0 if the user is not in a team.
                 </entry>
+	      </row>
+	      <row>
+		<entry>register_time</entry>
+		<entry>timestamp</entry>
+		<entry>
+		  The time when the user is registered.
+		</entry>
+	      </row>
+	      <row>
+		<entry>contact</entry>
+		<entry>tinyint(1)</entry>
+		<entry>
+		  Whether the user is in the contact list.
+		</entry>
 	      </row>
 	    </tbody>
 	  </tgroup>
