@@ -525,6 +525,7 @@ sub insert_optimizer_trace {
     return $report;
 }
 sub reaper {
+    
     my $child_pid = shift;
     my $value = shift;
     my $child_exit_value    = $value >> 8;
@@ -708,7 +709,7 @@ sub reaper {
 	$err_msg .= "aborted by user; ";
         $submit_to_bugzilla &= 0;
     }
-    elsif ($child_signal_number == SIGSEGV) {
+    elsif ($child_signal_number == SIGSEGV ) {
 	$end_code = "herr";
 	$err_msg .= "segmentation fault; ";
         $submit_to_bugzilla &= 1;
@@ -1061,6 +1062,7 @@ my $time = 0;
 syslog('info', "processing new computational runs");
 
 while(1) {
+    eval {
     # if there is a job queued-to-run, fork the driver
     if ($concurrent < $max_concurrent) {
         print $sh "get-q2r\n";
@@ -1128,4 +1130,5 @@ while(1) {
         &job_status($dbh, 1);
         $time = 0;
     }
+}
 };
