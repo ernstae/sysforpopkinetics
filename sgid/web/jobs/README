@@ -1,0 +1,15 @@
+SGID IDENTIFIABILITY
+====================
+
+The jobs directory is where all runs will take place.  A separate directory will be created for each job run with the following naming convention
+
+sgid-job-#
+
+where # represents the ID number of the job as determined by the SGID database.
+
+Jobs are "picked up" by the application "sgid_runqueue.php" which checks with
+the database to see if there are any jobs in the "queue" status.
+
+It is important to know that there may be multiple versions of sgid_runqueue.php running on your system at any given time.  
+
+You can change the $OPTIONS['max_daemons'] options, which is set by default to 5
