@@ -37,13 +37,6 @@ $db = DB::connect($GLOBALS['OPTIONS']['DSN']);
 $db->setFetchMode(DB_FETCHMODE_OBJECT);
 
 
-
-
-
-
-
-
-
 /***************************************************************************
  * FUNCTIONS
  *
@@ -68,6 +61,9 @@ $TDATA = array( 'input_eq' => array(),
  }
 
  clean_equations ( $equations );
+
+ // strip the equations of comments
+ $equations = ereg_replace("#(.*)$", "", $equations);
  
  // tokenize the whole equation input data
   $tok = strtok( $equations, $delims );
