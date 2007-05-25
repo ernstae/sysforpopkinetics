@@ -61,7 +61,7 @@ $TDATA = array( 'input_eq' => array(),
  $I_elements = array();
  
  $not_params = array("()","Y");
- 
+
  // check random seed
  if ( $seed == NULL ) {
    $seed = rand($GLOBALS['OPTIONS']['seed_min'], $GLOBALS['OPTIONS']['seed_max']);
@@ -81,7 +81,20 @@ $TDATA = array( 'input_eq' => array(),
   while ( each ($toks) ) {
     
     echo "Found: $toks[$i] <br />\n";
+
+    // first determine whether there are any function calls within the code
+    // and add the function names to the not_parameters array.
+    $regexp = "/([A-Z0-9]+)\(/";
     
+    preg_match_all( $regexp, $toks[$i], $full_matches, PREG_PATTERN_ORDER );
+    $matches = $full_matches[1];
+      
+    foreach ( $matches as $val ) {
+      $not_params[] = $val;
+    }
+
+    $_SESSION['not_params_ernst'] = $not_params;
+
     // if the equation ends with an operator, this not not allowed.
     if ( eregi ("[" . $operators . "]$", $toks[$i], $regs ))
       {
@@ -92,7 +105,7 @@ $TDATA = array( 'input_eq' => array(),
       $ae = $regs[2];
       $not_params[] = $regs[1];
 
-      isolate_elements( $ae, $I_elements );
+      isolate_elements( $ae, $I_elements, $not_params);
 
       $TDATA['out_eq'][] = $toks[$i];
       echo "  is an output equation<br />\n";
@@ -103,7 +116,7 @@ $TDATA = array( 'input_eq' => array(),
       $not_params[] = $regs[1];
       $elements = $regs[2];
       
-      isolate_elements( $elements, $I_elements );
+      isolate_elements( $elements, $I_elements, $not_params );
       
       
       $TDATA['input_eq'][] = $toks[$i];
@@ -129,7 +142,7 @@ $TDATA = array( 'input_eq' => array(),
     }
 
     // determine whether this is a parameter or not
-    elseif ( array_search ( $element, $not_params ) == FALSE 
+    elseif ( in_array( $element, $not_params ) === FALSE 
 	     && $element != NULL
 	     && eregi("^[A-Z]+[1-9]{0,1}[0-9]{0,100}$", $element)
 	     ) {
@@ -389,42 +402,36 @@ function valid_chars( $txt ) {
    
 }
 
-function isolate_elements ( $rhs, &$I_elements ) {
+function isolate_elements ( $rhs, &$I_elements, $not_params ) {
   /***************************************************************************
    * isolate_elements looks at the RHS of an equation and determines which
    * of the variables are parameters
    *
    * takes:  $rhs (an equation)
    *         $I_elements (reference to global array of tokenized elements
+   *         $not_params[] from which includes elements which should NOT be
+   *                       treated as parameters.
    ***************************************************************************/
+
+  // now, we need to find all the parameters in the equations
+  $regexp = "/[^A-Z0-9]+/";
+  $tmp_elements = preg_split( $regexp, $rhs);
+
   
-  openlog('sgid', LOG_PID | LOG_0DELAY,LOG_LOCAL4);
-  syslog(LOG_INFO, "looking at " . $rhs);
-  closelog();
+  // now we remove all the found tokens which are not parameters
+  $elements = array();
 
-  $x = strtok ( $rhs, $GLOBALS['OPTIONS']['operators'] );
-  while ( $x !== false ) {
-    if ( !eregi("[A-Z]+\(([A-Z]+[A-Z0-9]{0,20})\)", $x, $regi) ) {
-      $I_elements[] = $x;
-    }
-    else {
-      $I_elements[] = $regi[1];
-    }
-
-    $x = strtok( $GLOBALS['OPTIONS']['operators'] );
-
+  foreach ( $tmp_elements as $val ) {
+    if ( in_array($val, $not_params ) !== TRUE )
+      {
+	$elements[] = $val;
+      }
   }
-
-  // take into consideration parameters inside a function call
-  preg_match_all("/\(([A-Z]+[0-9A-Z]{0,100})\)/i", $rhs, $matches, PREG_PATTERN_ORDER );
-
-  if ( sizeof($matches) > 0 ) {
-    foreach ( $matches as $val ) {
-      $I_elements[] = $val[0];
-    }
-  }
-
+  
+  // join the master array with the new one.
+  $I_elements = array_merge( $I_elements, $elements );
 }
+
 
 function SGID_generateXML ( $TDATA, $seed ) {
   $s = new XML_Serializer( $GLOBALS['OPTIONS']['serializer_options'] );
