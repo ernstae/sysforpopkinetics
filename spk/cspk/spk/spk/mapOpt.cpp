@@ -1094,6 +1094,20 @@ void mapOpt(  SpkModel<double>&   model,
 
 
   //------------------------------------------------------------
+  // Validate the inputs.
+  //------------------------------------------------------------
+
+  if ( dvecY.nr() == 0  )
+  {
+    throw SpkException(
+      SpkError::SPK_USER_INPUT_ERR, 
+      "Individual level optimization was not attempted because there \nwere no data values for this individual.", 
+      __LINE__,
+      __FILE__ );  
+  }
+
+
+  //------------------------------------------------------------
   // Prepare the inputs for quasiNewtonAnyBox.
   //------------------------------------------------------------
 
