@@ -13,4 +13,4 @@
 AUTOMAKE_OPTIONS = gnu
 
 # Set the subdirectories for which to generate their Makefiles.
-SUBDIRS = src
+SUBDIRS = src test
