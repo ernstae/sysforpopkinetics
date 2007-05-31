@@ -41,6 +41,12 @@
 	<authorinitials>afw</authorinitials>
 	<revremark>Expanded section on connections originating on a server.</revremark>
       </revision>
+      <revision>
+	<revnumber>1.6</revnumber>
+	<date>May 31, 2007</date>
+	<authorinitials>ae</authorinitials>
+	<revremark>Simplified sending your identity to other server.</revremark>
+      </revision>
     </revhistory>
     <abstract>
       <para>
@@ -283,22 +289,7 @@
     <sect2>
       <title>Create a Pair of Keys</title>
       <para>
-	Open up a shell window.  Determine whether
-	or not the <filename moreinfo="none">.ssh</filename> directory
-	exists in your home directory:
-	<screen format="linespecific">
-cd
-ls -al
-	</screen>
-	If there is no .ssh directory, create it as follows, and set
-	the permission mode bits:
-	<screen format="linespecific">
-mkdir .ssh
-chmod 755 .ssh
-	</screen>
-      </para>
-      <para>
-	Next, you need to generate your two keys, using
+	Open up a shell window. You need to generate your two keys, using
 	the <command moreinfo="none">ssh-keygen</command> command:
 	<screen format="linespecific">
 ssh-keygen -t dsa
@@ -353,47 +344,18 @@ ssh-keygen -t dsa
       <para>
 	Next, you need to copy your public key to the remote host
 	that you want access
-	to. You can use <command moreinfo="none">scp</command>
+	to. You can use <command moreinfo="none">ssh</command>
 	to accomplish this.
 	In the following
 	example, we assume that the remote machine has the domain name
 	<emphasis>remote-host</emphasis>.  An IP address or an alias
 	could be used instead of the domain name.
 	<screen format="linespecific">
-scp ~/.ssh/id_dsa.pub remote-host:
+cat ~/.ssh/id_dsa.pub | ssh remote-host 'mkdir -p .ssh; cat - >> ~/.ssh/authorized_keys; chmod 644 .ssh/authorized_keys'
 	</screen>
 	You will be asked to supply your username and
 	password for the remote host, because
 	public key authentication is not yet configured.
-      </para>
-      <para>
-	Log in to the remote machine using your username and password,
-	then use the command <command>ls -al</command> to determine whether or not
-	not <filename moreinfo="none">.ssh</filename> exists in your home
-	directory on that machine:
-	<screen>
-ssh remote-host
-ls -al
-	</screen>
-	If <filename>.ssh</filename> does not exist, create it 
-	and set the permission mode bits:
-	<screen format="linespecific">
-mkdir .ssh
-chmod 755 .ssh
-	</screen>
-      </para>
-      <para>
-	Concatenate your
-	<emphasis>public key</emphasis> onto the end of the
-	list of public keys
-	in the file <filename moreinfo="none">authorized_keys</filename>
-	and insure that the mode bits are set properly 
-	(<command moreinfo="none">ssh</command> is very fussy about
-	mode bits):
-	<screen format="linespecific">
-cat id_dsa.pub >> .ssh/authorized_keys
-chmod 644 .ssh/authorized_keys
-	</screen>
       </para>
     </sect2>
     <sect2>
@@ -492,24 +454,8 @@ ssh remote-host
 	Suppose that the remote server is called <emphasis>server</emphasis>.  
 	Transfer your key pair to that machine.  As an ordinary user:
 	<screen>
-cd
-cd .ssh
-scp id_dsa id_dsa.pub <emphasis>server:</emphasis>
-ssh <emphasis>server</emphasis>
-mkdir .ssh
-chmod 755 .ssh
-mv id_dsa id_dsa.pub .ssh
+cat ~/.ssh/id_dsa.pub | ssh <emphasis>server</emphasis> 'mkdir -p .ssh; cat - >> ~/.ssh/authorized_keys; chmod 644 .ssh/authorized_keys'
 	</screen>
-      </para>
-    </sect2>
-    <sect2>
-      <title>Configure For Password-Free Incoming Connections</title>
-      <para>
-	<screen>
-cd .ssh
-cat id_dsa.pub >> authorized_keys
-chmod 600 authorized_keys
-	</screen>	
       </para>
     </sect2>
     <sect2>
