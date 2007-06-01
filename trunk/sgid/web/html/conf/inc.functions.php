@@ -15,9 +15,10 @@
  ***************************************************************************/
 require_once("DB.php");
 require_once("XML/Serializer.php");
+require_once("XML/Unserializer.php");
 require_once("inc.errors.php");
 require_once("inc.config.php");
-
+require_once("Mail.php");
 
 /****************************************************************************
  * GLOBAL VARIABLES
@@ -433,7 +434,7 @@ function SGID_generateXML ( $TDATA, $seed ) {
   $s = new XML_Serializer( $GLOBALS['OPTIONS']['serializer_options'] );
 
   // create array of data
-  $xml = array ( "parameters" => array ( "name" => $TDATA['parameter_list'],
+  $xml = array ("parameters" => array ( "name" => $TDATA['parameter_list'],
 					 'attributes' => array ('seed' => $seed )
 					 ),
 		 "system_experiment_model" =>  
@@ -462,6 +463,19 @@ function SGID_generateXML ( $TDATA, $seed ) {
     add_error('xml', $result);
     return ( $result );
   }
+}
+
+function SGID_getXML ( $xml_string ) {
+  // returns structure of xml data (array)
+  
+  $options = array(
+                    'complexType'       => 'array'
+		    );
+
+  $us = new XML_Unserializer($options);
+  $result = $us->unserialize( $xml_string );
+  
+  return ($us->getUnserializedData());
 }
 
 ?>
