@@ -38,4 +38,13 @@ CREATE TRIGGER queue_job AFTER INSERT ON job FOR EACH ROW
 BEGIN
  INSERT INTO job_history (job_id, state_code) VALUES ( NEW.id, 'queue' );
 END$$
+
+-- CREATE UPDATE TRIGGER
+CREATE TRIGGER update_jobhistory AFTER UPDATE ON job FOR EACH ROW 
+BEGIN
+  INSERT INTO job_history (job_id, state_code) VALUES ( OLD.id, NEW.state_code );
+END;
+$$
+
 DELIMITER ;
+
