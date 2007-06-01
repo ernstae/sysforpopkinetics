@@ -63,8 +63,6 @@ namespace // [Begin: unnamed namespace]
 
   const char* stdoutFileName = "identDetails.txt";
 
-  std::string job_idStr    = "Unknown";
-
   std::string errorMessage = "";
 
   // This will be the seed for the random parameter values.
@@ -472,8 +470,6 @@ namespace // [Begin: unnamed namespace]
 
     identResultsStream << "<identifiability_output>" << endl;
     identResultsStream << endl;
-    identResultsStream << "<job_id>" << job_idStr << "</job_id>" << endl;
-    identResultsStream << endl;
     identResultsStream << "<elapsed_seconds>" << nElapsedSec << "</elapsed_seconds>" << endl;
     identResultsStream << endl;
     identResultsStream << "<parameter_seed>" << paramSeed << "</parameter_seed>" << endl;
@@ -572,8 +568,6 @@ namespace // [Begin: unnamed namespace]
 
 <identifiability_input>
 
-  <job_id>m34am349234amm</job_id>
-
   <parameters seed="34890">
 
     <name>k21</name>
@@ -631,8 +625,6 @@ namespace // [Begin: unnamed namespace]
 <?xml version="1.0" encoding="UTF-8"?>
 
 <identifiability_output>
-
-<job_id>m34am349234amm</job_id>
 
 <elapsed_seconds>4439</elapsed_seconds>
 
@@ -767,35 +759,6 @@ int main( int nArg, char* argCStr[] )
   {
     errorMessage = bugReportMessage(
       "The first element of the identifiability input file had the wrong name." );
-    printResultsFile();
-    return 1;
-  }
-
-
-  //---------------------------------------------------------
-  // Handle
-  //
-  //     <job_id>m34am349234amm</job_id>
-  //
-  //----------------------------------------------------------
-
-  const string job_idErrorStr =
-    "The job ID could not be determined from the input identifiability file.";
-
-  try
-  {
-    job_idStr = getElementText( pDOMElementRoot, "job_id" );
-  }
-  catch ( const IdentException& e )
-  {
-    errorMessage = bugReportMessage( job_idErrorStr + "\n\n" + e.what() );
-    printResultsFile();
-    return 1;
-  }
-  catch ( ... )
-  {
-    errorMessage = bugReportMessage( job_idErrorStr + "\n\n" 
-      + "The reason for this problem is unknown." );
     printResultsFile();
     return 1;
   }
