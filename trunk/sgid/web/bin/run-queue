@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ~ernst/r2/identifiability/web/bin;
+./job-runner.php;
+
+exit(0);
