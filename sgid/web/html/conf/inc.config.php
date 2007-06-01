@@ -8,6 +8,8 @@
 
 $OPTIONS = array (
 		  'site_name'   => 'Service for Global Identifiability Detection (SGID)',
+		  'site_url'    => 'http://toronto.rfpk.washington.edu/sgid',
+		  'service_of'  => 'Resource for Population Kinetics (RFPK) at the University of Washington',
 		  'seed_min'    => 10000,
 		  'seed_max'    => 99999,
 		  'daemons_max' => 6,              
@@ -24,7 +26,10 @@ $OPTIONS = array (
 						   'rootName' => 'identifiability_input',
 						   'XML_SERIALIZER_OPTION_ATTRIBUTES_KEY' => 'attributes',
 						   'XML_SERIALIZER_OPTION_MODE' => 'XML_SERIALIZER_MODE_SIMPLEXML'
-						   )
+						   ),
+		  'email_from'  => "rfpksoft@u.washington.edu",
+		  'email_subject' => "[SGID] Results: ",
+		  'email_bcc'   => 'ernst@washington.edu'
 		  );
 
 $GLOBALS['OPTIONS'] = $OPTIONS;
