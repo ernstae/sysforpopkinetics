@@ -500,32 +500,6 @@ int main( int nArg, char* argCStr[] )
 
 
   //---------------------------------------------------------
-  // Check that the job ID is in the output file.
-  //----------------------------------------------------------
-
-  string job_idStr;
-
-  const string job_idErrorStr =
-    "The job ID could not be determined from the output identifiability file.";
-
-  try
-  {
-    job_idStr = getElementText( pDOMElementRoot, "job_id" );
-  }
-  catch ( const IdentException& e )
-  {
-    cout << testFailedMessage( job_idErrorStr + "\n\n" + e.what() );
-    return 1;
-  }
-  catch ( ... )
-  {
-    cout << testFailedMessage( job_idErrorStr + "\n\n" 
-      + "The reason for this problem is unknown." );
-    return 1;
-  }
-
-
-  //---------------------------------------------------------
   // Check the number of solutions for the Groebner basis or bases.
   //----------------------------------------------------------
 
