@@ -323,7 +323,7 @@ function clean_equations ( &$equations ) {
   
   
   // strip out the whitespace
-  $equations = eregi_replace("[ \\n\\r]+", "", $equations);
+  $equations = eregi_replace("[ ]+", "", $equations);
   
   // make string upper case
   $equations = strtoupper($equations);
@@ -421,7 +421,7 @@ function isolate_elements ( $rhs, &$I_elements, $not_params ) {
   foreach ( $tmp_elements as $val ) {
     if ( in_array($val, $not_params ) !== TRUE )
       {
-	$elements[] = $val;
+	$elements[] = eregi_replace("[^A-Z0-9]", "", $val);
       }
   }
   
