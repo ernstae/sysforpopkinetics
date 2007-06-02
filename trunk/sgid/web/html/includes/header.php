@@ -8,7 +8,7 @@ if (! $title ) {
 
 <html>
 <head>
-   <title>SPK: The System for Population Kinetics : <? print($title); ?></title>
+<title>SGID: The System for Global IDentifiability : <? print($title); ?></title>
    <link href="css/stylesheet.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
