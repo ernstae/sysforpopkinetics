@@ -19,9 +19,15 @@ switch ($step) {
 case 0:
   $fieldlist = array( 'equations' => 'Equations',
 		      'seed'      => 'Seed',
-		      'email_address' => 'Email address');
+		      'email_address' => 'Email address',
+		      'special_code' => 'Security Code');
 
   check_required($fieldlist, $_SESSION);  
+
+  if ( $_SESSION['special_code'] != '355061' )
+    {
+      add_error('security', "The security code was invalid.  Please try again.");
+    }
 
   if ( ! valid_chars($_SESSION['equations']) ) {
     add_error('parse', "Invalid characters were found in your equations");

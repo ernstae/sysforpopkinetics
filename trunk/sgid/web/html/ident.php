@@ -54,6 +54,10 @@ case 0:
 <br />
 <label for="email_address">Email Address:</label>
 <input type="text" name="email_address" id="email_address" value="<?= $_SESSION['email_address'] ?>" />
+<br />
+<label for="special_code">Security Code:</label>
+<input type="password" name="special_code" id="special_code" value="<?= $_SESSION['special_code'] ?>" />
+<br />
 </fieldset>
 <input type="submit" name="submit" value="Validate Job" />
 </form>
@@ -135,6 +139,11 @@ case 2:
 Thank you.  Your job has been submitted for processing.  You will be notified via e-mail when the job has completed.
 <br />
 <br />
+<? 
+unset($_SESSION['seed']);
+unset($_SESSION['equations']); 
+?>
+<a href="ident.php">Click here</a> to begin another job.
 
 <br />
 </fieldset>
