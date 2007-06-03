@@ -93,7 +93,10 @@ case 1:
       if ( $row = $result->fetchRow() ) 
 	{
 	  $job_id = $row->id;
-	  $_SESSION['web_id'] = md5($job_id . $_SESSION['seed']);
+	  $jobid = md5($job_id, $_SESSION['seed']);
+	  $_SESSION['web_id'] = $jobid;
+	  if ( !isset($_SESSION['myjobs']) ) { $_SESSION['myjobs'] = array(); }
+	  else { $_SESSION['myjobs'][] = $jobid; }
 	}
       else
 	{
