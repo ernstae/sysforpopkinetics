@@ -132,6 +132,11 @@ Email:  <?= $_SESSION['email_address'] ?>
 <? /********************* END OF STEP 1 ***************************************/break;
 case 2:
 
+// get all the old jobs and bring them to the user's desktop
+$query = $db->prepare("SELECT state_code, end_code, md5(concat(id,seed)) as jobid FROM job WHERE jobid IN (?)");
+
+$result = $db->execute($query, $_SESSION['myjobs']);
+
 ?>
 <form>
 <fieldset>
@@ -146,6 +151,18 @@ unset($_SESSION['equations']);
 <a href="ident.php">Click here</a> to begin another job.
 
 <br />
+<br />
+
+<table>
+<? while ( $result->fetchInto($row) )  { ?>
+<tr>
+<td><?= $row->jobid ?></td>
+<td><?= $row->state_code ?></td>
+<td><?= $row->end_code ?></td>
+</tr>
+					<? } ?>
+</table>
+
 </fieldset>
 </form>
 

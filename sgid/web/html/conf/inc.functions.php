@@ -13,7 +13,7 @@
  * INCLUDE LIBRARIES
  *
  ***************************************************************************/
-require_once("DB.php");
+require_once("MDB2.php");
 require_once("XML/Serializer.php");
 require_once("XML/Unserializer.php");
 require_once("inc.errors.php");
@@ -34,8 +34,19 @@ $special_key       = "012af024ab-05";
  * Open global database connection
  *
  ***************************************************************************/
-$db = DB::connect($GLOBALS['OPTIONS']['DSN']);
-$db->setFetchMode(DB_FETCHMODE_OBJECT);
+$db =& MDB2::connect($GLOBALS['OPTIONS']['DSN']);
+
+echo "<pre>";
+echo var_dump($db);
+echo "</pre>";
+
+if (PEAR::isError($db)) {
+  add_error("DB", $db->getMessage());
+  die($mdb2->getMessage());
+ }
+
+$db->setFetchMode(MDB2_FETCHMODE_OBJECT);
+
 
 
 /***************************************************************************

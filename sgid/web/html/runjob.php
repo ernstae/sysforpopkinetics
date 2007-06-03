@@ -12,7 +12,7 @@ if ( isset($_REQUEST['jobid']) && strlen($_REQUEST['jobid']) > 0 )
     
     $results = $db->query("SELECT * FROM job WHERE md5(concat(id,seed))='" . $jobid . "'");
     
-    if ( $results->fetchInto($row) ) 
+    if ( $row = $results->fetchRow() ) 
       {
 	$_SESSION['email_address'] = $row->email_address;
 	$_SESSION['seed'] = $row->seed;
