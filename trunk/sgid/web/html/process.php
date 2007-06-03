@@ -86,7 +86,7 @@ case 1:
       $db->execute($query, $data);
       
       $result = $db->query("select last_insert_id() as id");
-      if ( $result->fetchInto($row) ) 
+      if ( $row = $result->fetchRow() ) 
 	{
 	  $job_id = $row->id;
 	  $_SESSION['web_id'] = md5($job_id . $_SESSION['seed']);
