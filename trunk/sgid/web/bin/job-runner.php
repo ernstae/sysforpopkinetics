@@ -71,12 +71,12 @@ function signal_handler($signal) {
 }
 
 
-$dba = DB::connect($GLOBALS['OPTIONS']['DSN']);
-$dba->setFetchMode(DB_FETCHMODE_OBJECT);
+$dba = MDB2::connect($GLOBALS['OPTIONS']['DSN']);
+//$dba->setFetchMode(MDB2_FETCHMODE_OBJECT);
 
 $result = $dba->query("SELECT id, xml_input, email_address FROM job WHERE state_code='queue'");
 
-while ( $result->fetchInto($row) )
+while ( $row = $result->fetchRow() )
   {
     echo "Queuing: $row->id for user $row->email_address \n";
     // add to the stack.
@@ -106,7 +106,7 @@ while(1) {
       ++$concurrent;
       $err_msg = '';
 
-      $dba = DB::connect($GLOBALS['OPTIONS']['DSN']);
+      $dba = MDB2::connect($GLOBALS['OPTIONS']['DSN']);
       $result = $dba->query("UPDATE job SET state_code='run' WHERE id='" . $job['id'] . "'");
       $dba->disconnect();
       unset ($dba);
@@ -195,13 +195,13 @@ while(1) {
 	    
 	    */
 	    
-	    $dba = DB::connect($GLOBALS['OPTIONS']['DSN']);
+	    $dba = MDB2::connect($GLOBALS['OPTIONS']['DSN']);
 	    $result = $dba->query("UPDATE job set state_code='end', end_code='" . $end_code . "', result_xml='" . $job['xml_output'] . "' WHERE id=" . $job['id']);
 	    
 
 	    send_report ( $job );
 	    
-	    if ( DB::isError( $dba ) ) 
+	    if ( PEAR::isError( $dba ) ) 
 	      {
 		$err_msg .= $dba->getMessage() . "\n";
 		
