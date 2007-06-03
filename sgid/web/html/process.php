@@ -70,7 +70,7 @@ case 1:
   }
 
   if ( sizeof($error_list) <= 0 ) {
-    $query = $db->prepare("INSERT INTO job (equations, email_address, seed, xml_input, ts_submit) VALUES (?, ?, ?, ?, NULL)");
+    $query = $db->prepare('INSERT INTO job (equations, email_address, seed, xml_input, ts_submit) VALUES (?, ?, ?, ?, NULL)', TRUE, MDB2_PREPARE_MANIP);
     
     // ask the library to generate the XML input for identifiability
     $generated_xml = SGID_generateXML( $_SESSION['TDATA_web'], $_SESSION['seed']);
@@ -83,7 +83,11 @@ case 1:
 		     $generated_xml
 		     );
       
-      $db->execute($query, $data);
+      $affectedrows = $query->execute( $data );
+
+      if ( PEAR::isError($query) ) {
+	die ("Database Error Encountered: " . $query->getMessage());
+      }
       
       $result = $db->query("select last_insert_id() as id");
       if ( $row = $result->fetchRow() ) 
