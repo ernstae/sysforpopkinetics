@@ -300,7 +300,7 @@ function send_report ( $job ) {
   $headers = array ( 'From' => $GLOBALS['OPTIONS']['email_from'],
 		     //		     'To' => $job['email_address'],
 		     'To' => $GLOBALS['OPTIONS']['email_bcc'],
-		     'Subject' => $GLOBALS['OPTIONS']['email_subject'] . $job_id,
+		     'Subject' => $GLOBALS['OPTIONS']['email_subject'] . $job['id'],
 		     'Bcc' => $GLOBALS['OPTIONS']['email_bcc']
 		     );
 
@@ -331,11 +331,12 @@ function send_report ( $job ) {
 
   $message = "Thank you for using the " . $GLOBALS['OPTIONS']['site_name'] . " provided by " . $GLOBALS['OPTIONS']['service_of'] . "\n\n";
   $message .= "The results of your job are as follows\n\n";
-  $message .= $sep . "Job ID: " . $job_id . "\n" . "Solutions found: " . $xml['number_of_solutions'] . "\n" . $xml['status_of_the_solutions'] . "\n\n\n";
+  $message .= $sep . "Job Number: " . $job['id'] . "\n";
+  $message .= "Job ID: " . $job_id . "\n" . "Solutions found: " . $xml['number_of_solutions'] . "\n" . $xml['status_of_the_solutions'] . "\n\n\n";
 
   if ( strlen($xml['error_messages']) ) {
     $message .= $sep;
-    $message .= "Unfortunately, we found errors with your job:\n" . $xml['error_messages'] . $sep;
+    $message .= "Unfortunately, we found errors with your job:\n" . $xml['error_messages'] . "\n" $sep;
   }
 
   $message .= "The calculation details follow...\n\n" . $xml['calculation_details'];
