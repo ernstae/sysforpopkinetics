@@ -36,10 +36,6 @@ $special_key       = "012af024ab-05";
  ***************************************************************************/
 $db =& MDB2::connect($GLOBALS['OPTIONS']['DSN']);
 
-echo "<pre>";
-echo var_dump($db);
-echo "</pre>";
-
 if (PEAR::isError($db)) {
   add_error("DB", $db->getMessage());
   die($mdb2->getMessage());
