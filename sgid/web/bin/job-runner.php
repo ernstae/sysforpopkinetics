@@ -70,9 +70,8 @@ function signal_handler($signal) {
   $concurrent--;
 }
 
-
 $dba = MDB2::connect($GLOBALS['OPTIONS']['DSN']);
-//$dba->setFetchMode(MDB2_FETCHMODE_OBJECT);
+$dba->setFetchMode(MDB2_FETCHMODE_OBJECT);
 
 $result = $dba->query("SELECT id, xml_input, email_address FROM job WHERE state_code='queue'");
 
@@ -336,7 +335,7 @@ function send_report ( $job ) {
 
   if ( strlen($xml['error_messages']) ) {
     $message .= $sep;
-    $message .= "Unfortunately, we found errors with your job:\n" . $xml['error_messages'] . "\n" $sep;
+    $message .= "Unfortunately, we found errors with your job:\n" . $xml['error_messages'] . "\n" . $sep;
   }
 
   $message .= "The calculation details follow...\n\n" . $xml['calculation_details'];
