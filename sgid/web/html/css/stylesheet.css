@@ -189,3 +189,28 @@ border: 2px outset #00000;
 	width: 500px;
 	border: 1px inset #c0c0c0;
 }
+
+table.sample {
+	border-width: 0px 0px 0px 0px;
+	border-spacing: 0px;
+	border-style: none none none none;
+	border-color: gray gray gray gray;
+	border-collapse: separate;
+	background-color: rgb(255, 255, 240);
+}
+table.sample th {
+	border-width: thin thin thin thin;
+	padding: 2px 2px 2px 2px;
+	border-style: outset outset outset outset;
+	border-color: gray gray gray gray;
+	background-color: rgb(250, 240, 230);
+	-moz-border-radius: 0px 0px 0px 0px;
+}
+table.sample td {
+	border-width: thin thin thin thin;
+	padding: 2px 2px 2px 2px;
+	border-style: outset outset outset outset;
+	border-color: gray gray gray gray;
+	background-color: rgb(250, 240, 230);
+	-moz-border-radius: 0px 0px 0px 0px;
+}
