@@ -132,10 +132,20 @@ Email:  <?= $_SESSION['email_address'] ?>
 <? /********************* END OF STEP 1 ***************************************/break;
 case 2:
 
-// get all the old jobs and bring them to the user's desktop
-$query = $db->prepare("SELECT state_code, end_code, md5(concat(id,seed)) as jobid FROM job WHERE jobid IN (?)");
+$myjobs = "0";
 
-$result = $db->execute($query, $_SESSION['myjobs']);
+if ( isset($_SESSION['myjobs']) && sizeof($_SESSION['myjobs']) > 0 ) 
+  {
+    foreach ( $_SESSION['myjobs'] as $value ) 
+      {
+	$myjobs .= ",'" . $value . "'";
+      }
+
+    $myjobs = eregi_replace(",$","",$myjobs);
+  }
+
+// get all the old jobs and bring them to the user's desktop
+$result = $db->query("SELECT id, state_code, end_code, md5(concat(id,seed)) as jobid FROM job WHERE md5(concat(id,seed)) IN (" . $myjobs . ")");
 
 ?>
 <form>
@@ -153,12 +163,22 @@ unset($_SESSION['equations']);
 <br />
 <br />
 
-<table>
-<? while ( $result->fetchInto($row) )  { ?>
+<h3>Job History</h3>
+Jobs submitted during this session are listed below.  Click on the Job Number to re-submit that job.
+<br />
+<br />
+<table class="sample">
 <tr>
-<td><?= $row->jobid ?></td>
-<td><?= $row->state_code ?></td>
-<td><?= $row->end_code ?></td>
+<th>Job Number</th>
+<th>Current State</th>
+<th>Status</th>
+</tr>
+
+<? while ( $row = $result->fetchRow() )  { ?>
+<tr>
+<td><a href="runjob.php?jobid=<?= $row->jobid ?>"><?= $row->id ?></a></td>
+<td><?= $GLOBALS['OPTIONS']['state_codes'][$row->state_code] ?></td>
+<td><?= $GLOBALS['OPTIONS']['end_codes'][$row->end_code] ?></td>
 </tr>
 					<? } ?>
 </table>

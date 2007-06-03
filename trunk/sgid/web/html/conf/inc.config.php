@@ -27,6 +27,12 @@ $OPTIONS = array (
 						   'XML_SERIALIZER_OPTION_ATTRIBUTES_KEY' => 'attributes',
 						   'XML_SERIALIZER_OPTION_MODE' => 'XML_SERIALIZER_MODE_SIMPLEXML'
 						   ),
+		  'end_codes'  => array ( 'srun' => 'Success',
+					    'serr' => 'Error: Software',
+					    'herr' => 'Error: Unknown' ),
+		  'state_codes' => array ( 'queue' => 'Queued',
+					   'run'   => 'Now Running',
+					   'end'   => 'Completed' ),
 		  'email_from'  => "rfpksoft@u.washington.edu",
 		  'email_subject' => "[SGID] Your job results: ",
 		  'email_bcc'   => 'ernst@washington.edu'
