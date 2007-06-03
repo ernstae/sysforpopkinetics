@@ -338,7 +338,7 @@ function send_report ( $job ) {
     $message .= "Unfortunately, we found errors with your job:\n" . $xml['error_messages'] . "\n" . $sep;
   }
 
-  $message .= "The calculation details follow...\n\n" . $xml['calculation_details'];
+  $message .= "The calculation details follow...\n\n" . $xml['calculation_details'] . "\n\n";
 
   $message .= $sep . "This job can be re-run by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/runjob.php?job_id=" . $job_id . "\n";
 
