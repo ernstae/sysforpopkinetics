@@ -38,7 +38,7 @@ $db =& MDB2::connect($GLOBALS['OPTIONS']['DSN']);
 
 if (PEAR::isError($db)) {
   add_error("DB", $db->getMessage());
-  die($mdb2->getMessage());
+  die($db->getMessage());
  }
 
 $db->setFetchMode(MDB2_FETCHMODE_OBJECT);
