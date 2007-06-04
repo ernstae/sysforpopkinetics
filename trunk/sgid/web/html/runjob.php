@@ -2,6 +2,14 @@
 
 require_once ("conf/SGID.php");
 
+if ( !isset($_SESSION) ) 
+  {
+    session_start();
+    $_SESSION = array();
+    session_destroy();
+  }
+
+
 if ( isset($_REQUEST['jobid']) && strlen($_REQUEST['jobid']) > 0 )
   {
     $jobid = htmlentities($_REQUEST['jobid']);
