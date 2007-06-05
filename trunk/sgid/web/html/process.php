@@ -87,18 +87,13 @@ case 1:
 
       var_dump($affectedrows);
 
-      if ( PEAR::isError($query) ) {
-	die ("Database Error Encountered: " . $query->getMessage());
-      }
-      
       $result = $db->query("select last_insert_id() as id");
       if ( $row = $result->fetchRow() ) 
 	{
 	  $job_id = $row->id;
-	  $jobid = md5($job_id . $_SESSION['seed']);
+	  $jobid = hash('md5', $job_id . $_SESSION['seed'])
 	  $_SESSION['web_id'] = $jobid;
-	  if ( !isset($_SESSION['myjobs']) ) { $_SESSION['myjobs'] = array(); }
-	  else { $_SESSION['myjobs'][] = $jobid; }
+	  $_SESSION['myjobs'] .= ",'" . $jobid . "'";
 	}
       else
 	{
