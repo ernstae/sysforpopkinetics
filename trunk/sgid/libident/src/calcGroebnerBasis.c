@@ -403,11 +403,58 @@ int calcGroebnerBasis( int         level,
     "regchain( %s, [prime, differential, autoreduced, squarefree, primitive] )",
     sysExpModelRegChainIn );
 
+  // Initialize a BLAD library exception handling structure and
+  // set a catch point for the long jump associated with it.
+  struct ba0_exception_code excepHandlerSysExpModel;
+  BA0_PUSH_EXCEPTION( excepHandlerSysExpModel );
+
   // Set the sytem-experiment model regular chain.
-  ba0_sscanf2(
-    sysExpModelRegChainString,
-    "%regchain",
-    &sysExpModelRegChain );
+  //
+  // The first time this if block is executed ba0_exception_is_set()
+  // will return true.  The long jump will return here if an exception
+  // is raised and then ba0_exception_is_set() will return false.
+  if ( ba0_exception_is_set( excepHandlerSysExpModel ) )
+  {
+    ba0_sscanf2(
+      sysExpModelRegChainString,
+      "%regchain",
+      &sysExpModelRegChain );
+
+    // Remove this exception catching point.
+    ba0_pull_exception( excepHandlerSysExpModel );
+  }
+  else
+  {
+    if ( level > 0 )
+    {
+      printf( "The identifiability calculation failed while setting the system-experiment model \n" );
+
+      // Check to see what type of error occurred.
+      if ( ba0_mesgerr == BA0_ERROOM )
+      {
+        printf( "because too much computer memory was used. \n" );
+      }
+      else if ( ba0_mesgerr == BA0_ERRALG )
+      {
+        printf( "because a BLAD library internal algebra error occurred. \n" );
+        printf( "\n" );
+        printf( "Please submit a bug report.\n" );
+      }
+      else
+      {
+        printf( "because of an unknown error.\n" );
+        printf( "\n" );
+        printf( "Please submit a bug report.\n" );
+      }
+      printf( "\n" );
+    }
+
+    // Call the BLAD library termination function.
+    bad_terminate( ba0_init_level );
+
+    // Return zero to indicate no Groebner basis was found. 
+    return 0;
+  }    
 
   // Free the string.
   free( sysExpModelRegChainString );
@@ -485,9 +532,56 @@ int calcGroebnerBasis( int         level,
   ba0_sscanf2( "regchain( [], [autoreduced, squarefree, primitive, normalized])",
                "%regchain", &charSetRegChain );
 
+  // Initialize a BLAD library exception handling structure and
+  // set a catch point for the long jump associated with it.
+  struct ba0_exception_code excepHandlerCharSet;
+  BA0_PUSH_EXCEPTION( excepHandlerCharSet );
+
   // Change the ordering for the variables in order to get the
   // characteristic set.
-  bad_pardi( &charSetRegChain, charSetOrdering, &sysExpModelRegChain );
+  //
+  // The first time this if block is executed ba0_exception_is_set()
+  // will return true.  The long jump will return here if an exception
+  // is raised and then ba0_exception_is_set() will return false.
+  if ( ba0_exception_is_set( excepHandlerCharSet ) )
+  {
+    bad_pardi( &charSetRegChain, charSetOrdering, &sysExpModelRegChain );
+
+    // Remove this exception catching point.
+    ba0_pull_exception( excepHandlerCharSet );
+  }
+  else
+  {
+    if ( level > 0 )
+    {
+      printf( "The identifiability calculation failed while calculating the characteristic set \n" );
+
+      // Check to see what type of error occurred.
+      if ( ba0_mesgerr == BA0_ERROOM )
+      {
+        printf( "because too much computer memory was used. \n" );
+      }
+      else if ( ba0_mesgerr == BA0_ERRALG )
+      {
+        printf( "because a BLAD library internal algebra error occurred. \n" );
+        printf( "\n" );
+        printf( "Please submit a bug report.\n" );
+      }
+      else
+      {
+        printf( "because of an unknown error.\n" );
+        printf( "\n" );
+        printf( "Please submit a bug report.\n" );
+      }
+      printf( "\n" );
+    }
+
+    // Call the BLAD library termination function.
+    bad_terminate( ba0_init_level );
+
+    // Return zero to indicate no Groebner basis was found. 
+    return 0;
+  }    
 
   // Set the number of polynomials in the characteristic set.
   int nCharSetPoly = charSetRegChain.decision_system.size;
@@ -892,12 +986,59 @@ int calcGroebnerBasis( int         level,
     "%intersectof_regchain",
     exhaustSummGroebnerBasis );
 
+  // Initialize a BLAD library exception handling structure and
+  // set a catch point for the long jump associated with it.
+  struct ba0_exception_code excepHandlerGroebnerBasis;
+  BA0_PUSH_EXCEPTION( excepHandlerGroebnerBasis );
+
   // Calculate the intersection of regular chains.
-  bad_Rosenfeld_Groebner( 
-    exhaustSummGroebnerBasis,
-    exhaustSumm,
-    (bap_tableof_polynom_mpz)0,
-    (bav_tableof_variable)0 );
+  //
+  // The first time this if block is executed ba0_exception_is_set()
+  // will return true.  The long jump will return here if an exception
+  // is raised and then ba0_exception_is_set() will return false.
+  if ( ba0_exception_is_set( excepHandlerGroebnerBasis ) )
+  {
+    bad_Rosenfeld_Groebner( 
+      exhaustSummGroebnerBasis,
+      exhaustSumm,
+      (bap_tableof_polynom_mpz)0,
+      (bav_tableof_variable)0 );
+
+    // Remove this exception catching point.
+    ba0_pull_exception( excepHandlerGroebnerBasis );
+  }
+  else
+  {
+    if ( level > 0 )
+    {
+      printf( "The identifiability calculation failed while calculating the Groebner basis \n" );
+
+      // Check to see what type of error occurred.
+      if ( ba0_mesgerr == BA0_ERROOM )
+      {
+        printf( "because too much computer memory was used. \n" );
+      }
+      else if ( ba0_mesgerr == BA0_ERRALG )
+      {
+        printf( "because a BLAD library internal algebra error occurred. \n" );
+        printf( "\n" );
+        printf( "Please submit a bug report.\n" );
+      }
+      else
+      {
+        printf( "because of an unknown error.\n" );
+        printf( "\n" );
+        printf( "Please submit a bug report.\n" );
+      }
+      printf( "\n" );
+    }
+
+    // Call the BLAD library termination function.
+    bad_terminate( ba0_init_level );
+
+    // Return zero to indicate no Groebner basis was found. 
+    return 0;
+  }    
 
   // Set the number of Groebner bases that were found, which is equal
   // to the number of regular chains in the intersection.
