@@ -19,7 +19,7 @@ error_reporting(E_ALL);
  ***************************************************************************/
 $concurrent = 0;
 $max_concurrent = 1;
-$check_ident = "/home/ernst/sgid/bin/check_ident";
+$check_ident = "/usr/local/sgid/bin/check_ident";
 
 $q_queued = array();
 $q_running = array();
@@ -341,6 +341,7 @@ function send_report ( $job ) {
   $message .= "The calculation details follow...\n\n" . $xml['calculation_details'] . "\n\n";
 
   $message .= $sep . "This job can be re-run by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/runjob.php?job_id=" . $job_id . "\n";
+  $message .= This report is available by clicking on . " . $GLOBALS['OPTIONS']['site_url'] . "/showjob.php?jobid=" . $job_id . "\n";
 
   if ( validate_email ( $job['email_address'] ) ) 
     {
