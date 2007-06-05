@@ -340,8 +340,8 @@ function send_report ( $job ) {
 
   $message .= "The calculation details follow...\n\n" . $xml['calculation_details'] . "\n\n";
 
-  $message .= $sep . "This job can be re-run by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/runjob.php?job_id=" . $job_id . "\n";
-  $message .= This report is available by clicking on . " . $GLOBALS['OPTIONS']['site_url'] . "/showjob.php?jobid=" . $job_id . "\n";
+  $message .= $sep . "This job can be re-run by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/runjob.php?jobid=" . $job_id . "\n";
+  $message .= "This report is available by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/showjob.php?jobid=" . $job_id . "\n";
 
   if ( validate_email ( $job['email_address'] ) ) 
     {
