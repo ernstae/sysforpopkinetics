@@ -73,13 +73,14 @@ function signal_handler($signal) {
 $dba = MDB2::connect($GLOBALS['OPTIONS']['DSN']);
 $dba->setFetchMode(MDB2_FETCHMODE_OBJECT);
 
-$result = $dba->query("SELECT id, xml_input, email_address FROM job WHERE state_code='queue'");
+$result = $dba->query("SELECT id, xml_input, email_address, md5(concat(id,seed)) as jobid FROM job WHERE state_code='queue'");
 
 while ( $row = $result->fetchRow() )
   {
     echo "Queuing: $row->id for user $row->email_address \n";
     // add to the stack.
     $q_queued[] = array ( 'id' => $row->id, 
+			  'jobid' => $row->jobid,
 			  'xml_input' => $row->xml_input, 
 			  'email_address' => $row->email_address,
 			  'xml_output' => NULL);
@@ -294,11 +295,9 @@ function create_workdir ( $job_id ) {
 
 
 function send_report ( $job ) {
-  $job_id = md5($job['id'] . $xml['parameter_seed']);
 
   $headers = array ( 'From' => $GLOBALS['OPTIONS']['email_from'],
-		     //		     'To' => $job['email_address'],
-		     'To' => $GLOBALS['OPTIONS']['email_bcc'],
+		     'To' => $job['email_address'],
 		     'Subject' => $GLOBALS['OPTIONS']['email_subject'] . $job['id'],
 		     'Bcc' => $GLOBALS['OPTIONS']['email_bcc']
 		     );
@@ -331,7 +330,7 @@ function send_report ( $job ) {
   $message = "Thank you for using the " . $GLOBALS['OPTIONS']['site_name'] . " provided by " . $GLOBALS['OPTIONS']['service_of'] . "\n\n";
   $message .= "The results of your job are as follows\n\n";
   $message .= $sep . "Job Number: " . $job['id'] . "\n";
-  $message .= "Job ID: " . $job_id . "\n" . "Solutions found: " . $xml['number_of_solutions'] . "\n" . $xml['status_of_the_solutions'] . "\n\n\n";
+  $message .= "Job ID: " . $job['jobid'] . "\n" . "Solutions found: " . $xml['number_of_solutions'] . "\n" . $xml['status_of_the_solutions'] . "\n\n\n";
 
   if ( strlen($xml['error_messages']) ) {
     $message .= $sep;
@@ -340,8 +339,8 @@ function send_report ( $job ) {
 
   $message .= "The calculation details follow...\n\n" . $xml['calculation_details'] . "\n\n";
 
-  $message .= $sep . "This job can be re-run by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/runjob.php?jobid=" . $job_id . "\n";
-  $message .= "This report is available by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/showjob.php?jobid=" . $job_id . "\n";
+  $message .= $sep . "This job can be re-run by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/runjob.php?jobid=" . $job['jobid'] . "\n";
+  $message .= "This report is available by clicking on " . $GLOBALS['OPTIONS']['site_url'] . "/showjob.php?jobid=" . $job['jobid'] . "\n";
 
   if ( validate_email ( $job['email_address'] ) ) 
     {
