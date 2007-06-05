@@ -8,7 +8,7 @@
 
 $OPTIONS = array (
 		  'site_name'   => 'System for Global IDentifiability (SGID)',
-		  'site_url'    => 'http://toronto.rfpk.washington.edu/sgid',
+		  'site_url'    => 'http://sgid.rfpk.washington.edu',
 		  'service_of'  => 'Resource for Population Kinetics (RFPK) at the University of Washington',
 		  'seed_min'    => 10000,
 		  'seed_max'    => 99999,
