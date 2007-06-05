@@ -132,20 +132,19 @@ Email:  <?= $_SESSION['email_address'] ?>
 <? /********************* END OF STEP 1 ***************************************/break;
 case 2:
 
-$myjobs = "0";
+$myjobs = "'0'";
 
-if ( isset($_SESSION['myjobs']) && sizeof($_SESSION['myjobs']) > 0 ) 
-  {
-    foreach ( $_SESSION['myjobs'] as $value ) 
-      {
-	$myjobs .= ",'" . $value . "'";
-      }
+if ( strlen($_SESSION['myjobs']) > 0 ) {
+  $myjobs = $_SESSION['myjobs'];
+ }
 
-    $myjobs = eregi_replace(",$","",$myjobs);
-  }
 
 // get all the old jobs and bring them to the user's desktop
 $result = $db->query("SELECT id, state_code, end_code, md5(concat(id,seed)) as jobid FROM job WHERE md5(concat(id,seed)) IN (" . $myjobs . ")");
+
+if ( PEAR::isError($result) ) {
+  die ("Error DB: " . $result->getMessage());
+ }
 
 ?>
 <form>
@@ -163,26 +162,35 @@ unset($_SESSION['equations']);
 <br />
 <br />
 
+<?
+
+if ( $result->numRows() > 0 ) {
+
+?>
+
 <h3>Job History</h3>
-Jobs submitted during this session are listed below.  Click on the Job Number to re-submit that job.
+Jobs submitted during this session are listed below.  You can view the results of completed jobs, or re-run your jobs by using the "actions" column.
 <br />
 <br />
 <table class="sample">
 <tr>
-<th>Job Number</th>
+<th>Job #</th>
+<th>Actions</th>
 <th>Current State</th>
 <th>Status</th>
 </tr>
 
 <? while ( $row = $result->fetchRow() )  { ?>
 <tr>
-<td><a href="runjob.php?jobid=<?= $row->jobid ?>"><?= $row->id ?></a></td>
+<td><?= $row->id ?></td>
+					   <td><a href="runjob.php?jobid=<?= $row->jobid ?>">re-run</a> <? if ( $row->state_code == 'end' ) { ?> | <a href="showjob.php?jobid=<?= $row->jobid ?>">results</a> <? } ?></td>
 <td><?= $GLOBALS['OPTIONS']['state_codes'][$row->state_code] ?></td>
 <td><?= $GLOBALS['OPTIONS']['end_codes'][$row->end_code] ?></td>
 </tr>
 					<? } ?>
 </table>
 
+<? } // end of if ( numrows > 0) ?>
 </fieldset>
 </form>
 
