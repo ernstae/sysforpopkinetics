@@ -1,10 +1,9 @@
 <?
 
 // start session
-if ( !isset($_SESSION['step']) ) {
-	//session_start();
-	$_SESSION['step'] = 0;
-	$step=0;
+if ( !isset($_SESSION) ) {
+  //  session_destroy();
+  // session_start();
 }
 
 require_once("conf/SGID.php");
@@ -13,10 +12,15 @@ $jobid = 0;
 
 if ( isset($_REQUEST['jobid']) && strlen($_REQUEST['jobid']) > 0 ) {
   $jobid = htmlentities($_REQUEST['jobid']);
+  $_SESSION['myjobs'] .= ",'" . $jobid . "'";
+  $_SESSION['myjobs'] = eregi_replace("^,","",$_SESSION['myjobs']);
  }
  else {
    add_error("nojob", "You must provide a valid job id to me.");
  }
+
+
+
 
 $title = "Job status for SGID job: " . $jobid;
 
