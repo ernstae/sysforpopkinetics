@@ -2,13 +2,8 @@
 
 require_once ("conf/SGID.php");
 
-if ( !isset($_SESSION) ) 
-  {
-    session_start();
-    $_SESSION = array();
-    session_destroy();
-  }
-
+session_destroy();
+session_start();
 
 if ( isset($_REQUEST['jobid']) && strlen($_REQUEST['jobid']) > 0 )
   {
@@ -34,6 +29,6 @@ if ( isset($_REQUEST['jobid']) && strlen($_REQUEST['jobid']) > 0 )
   }
 
 
-Header("Location: ident.php\n\r");
+Header("Location: ident.php?step=0\n\r");
 
 ?>
