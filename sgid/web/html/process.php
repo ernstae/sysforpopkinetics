@@ -91,9 +91,10 @@ case 1:
       if ( $row = $result->fetchRow() ) 
 	{
 	  $job_id = $row->id;
-	  $jobid = hash('md5', $job_id . $_SESSION['seed'])
+	  $jobid = hash('md5', $job_id . $_SESSION['seed']);
 	  $_SESSION['web_id'] = $jobid;
 	  $_SESSION['myjobs'] .= ",'" . $jobid . "'";
+	  $_SESSION['myjobs'] = eregi_replace("^,","", $_SESSION['myjobs']);
 	}
       else
 	{
