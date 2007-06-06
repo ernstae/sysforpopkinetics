@@ -171,69 +171,68 @@ while(1) {
 
 	  echo "job-runner: spawned child $pid for job_id=" . $job['id'] . "\n";
 
-	  while ( pcntl_waitpid( $pid, $status ) != -1 ) {
-	    $status = pcntl_wexitstatus($status);
-	    echo "Job ID: " . $job['id'] . " child $pid exited with ", pcntl_wexitstatus($status), " : end_code= $end_code\n";
-	    --$concurrent;
-
-	    // get the results of the run.
-	    if ( file_exists($outfile) ) 
-	      {
-		$job["xml_output"] = file_get_contents( $outfile );
-		$xml = SGID_getXML( $job["xml_output"] );
-		//echo $job["xml_output"];
-	      }
-	    else 
-	      {
-		$end_code = "serr";
-		$err_msg .= "job-runner: could not find XML output file $outfile\n";
-	      }
-	    
-	    /*	    $data = array ( $end_code, $job['xml_output'], $job['id'] );
-	    $query = $db->prepare("UPDATE job SET state_code='end', end_code=?, result_xml=? WHERE id=?;");
-	    $db->execute($query, $data);
-	    
-	    */
-	    
-	    $dba = MDB2::connect($GLOBALS['OPTIONS']['DSN']);
-	    $result = $dba->query("UPDATE job set state_code='end', end_code='" . $end_code . "', result_xml='" . $job['xml_output'] . "' WHERE id=" . $job['id']);
-	    
-
-	    send_report ( $job );
-	    
-	    if ( PEAR::isError( $dba ) ) 
-	      {
-		$err_msg .= $dba->getMessage() . "\n";
-		
-		echo "============================================================\n";
-		echo "ERROR MESSAGES:\n\n" . $err_msg . "\n";
-		echo "============================================================\n\n";
-		
-	      }
-	    
-	    if ( strlen( $err_msg ) > 0 ) 
-	      {
-		$data = array ( $job['id'], $err_msg );
-		$query = $dba->prepare("INSERT INTO error_reports VALUES (?, ?)");
-		$dba->execute($query, $data);
-	      }
-
-	    $dba->disconnect();
-	    unset($dba);
-	  }
+	  while ( pcntl_waitpid( $pid, $status ) != -1 ) 
+	    {
+	      $status = pcntl_wexitstatus($status);
+	      echo "Job ID: " . $job['id'] . " child $pid exited with ", pcntl_wexitstatus($status), " : end_code= $end_code\n";
+	      --$concurrent;
+	      
+	      // get the results of the run.
+	      if ( file_exists($outfile) ) 
+		{
+		  $job["xml_output"] = file_get_contents( $outfile );
+		  $xml = SGID_getXML( $job["xml_output"] );
+		  
+		  if ( isset($xml['error_messages']) && strlen($xml['error_messages'] ))
+		    {
+		      $err_msg .= $xml['error_messages'];
+		      $end_code = 'liberr';
+		    }
+		}
+	      else 
+		{
+		  $end_code = "serr";
+		  $err_msg .= "job-runner: could not find XML output file $outfile\n";
+		}
+	      
+	      $dba = MDB2::connect($GLOBALS['OPTIONS']['DSN']);
+	      $result = $dba->query("UPDATE job set state_code='end', end_code='" . $end_code . "', result_xml='" . addslashes($job['xml_output']) . "' WHERE id=" . $job['id']);
+	      
+	      
+	      send_report ( $job );
+	      
+	      if ( PEAR::isError( $dba ) ) 
+		{
+		  $err_msg .= $dba->getMessage() . "\n";
+		  
+		  echo "============================================================\n";
+		  echo "ERROR MESSAGES:\n\n" . $err_msg . "\n";
+		  echo "============================================================\n\n";
+		  
+		}
+	      
+	      if ( strlen( $err_msg ) > 0 ) 
+		{
+		  $data = array ( $job['id'], $err_msg );
+		  $results = $dba->query("INSERT INTO error_reports VALUES (" . $job['id'] . ", '" . addslashes($err_msg) . "'");
+		}
+	      
+	      $dba->disconnect();
+	      unset($dba);
+	    }
 	  
 	}
       //  echo "Currently " . $concurrent . "\n";
       
     }
   
-
-      if ( $concurrent <= 0 && sizeof($q_queued) <= 0) 
-	{
-	  echo "No more jobs to process.\n";
-	  exit(0);
-	}
-      
+  
+  if ( $concurrent <= 0 && sizeof($q_queued) <= 0) 
+    {
+      echo "No more jobs to process.\n";
+      exit(0);
+    }
+  
   
   sleep(1);
   
