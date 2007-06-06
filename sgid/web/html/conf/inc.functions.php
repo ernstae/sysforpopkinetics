@@ -421,6 +421,13 @@ function check_required ( $fieldlist, $array ) {
    }
 }
 
+function valid_syntax ( $txt ) {
+  if ( strpos( $txt , "**" ) !== FALSE ) {
+    add_error("parse_exponents", "The operand '**' was found in your equations.  Exponents must be represented using the '^' character.");
+  }
+}
+
+
 function valid_chars( $txt ) {
   if ( eregi("[^A-Z0-9\-\+\=\[\]\(\)\/\*]", $txt) ) {
     return false;

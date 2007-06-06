@@ -36,12 +36,13 @@ case 0:
   if ( ! validate_email($_SESSION['email_address']) ) {
     add_error('web_email', $_SESSION['email_address']);
   }
-  
 
 
   if ( sizeof($error_list) <= 0 ) {
     SGID_identify( $_SESSION['equations'], $_SESSION['email_address'], $_SESSION['seed'] );
   }
+
+  valid_syntax($_SESSION['equations']);
 
 break;
 
