@@ -77,7 +77,7 @@ case 1:
     
     if ( sizeof($generated_xml) > 0 ) {
       $data = array (
-		     'equations' => $_SESSION['equations'],
+		     'equations' => $_SESSION['orig_equations'],
 		     'email_address' => $_SESSION['email_address'],
 		     'seed' => $_SESSION['seed'],
 		     'xml_input' => $generated_xml

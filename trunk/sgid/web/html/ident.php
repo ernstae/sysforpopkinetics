@@ -70,6 +70,8 @@ case 1:
 $parameters = "";
 $eq_array = array();
 
+$orig_equations = $_SESSION['equations'];
+
 foreach ( $_SESSION['TDATA_web'] as $rkey => $rval ) {
   if ( eregi("(input_eq|out_eq)", $rkey, $match) ) {
     foreach ( $_SESSION['TDATA_web'][$rkey] as $akey => $aval ) {
@@ -96,6 +98,7 @@ review.email_address.disabled = true;
 <form id="review" name="review" method="POST" action="process.php">
 <input type="hidden" name="step" value="<?= $step ?>">
 <input type="hidden" name="equations" value="<?= $equations ?>">
+<input type="hidden" name="orig_equations" value="<?= $orig_equations ?>">
 <input type="hidden" name="email_address" value="<?= $_SESSION['email_address'] ?>">
 <input type="hidden" name="seed" value="<?= $_SESSION['seed'] ?>">
 <fieldset>
