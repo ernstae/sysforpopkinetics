@@ -68,6 +68,7 @@ if ( PEAR::isError($results) ) {
 
 <legend>Job Results : <?= $job_id ?></legend>
 
+<ol>
 <?    
     if ( $row->state_code == 'run' || $row->state_code == 'queue' ) 
       { 
@@ -78,17 +79,12 @@ elseif ( $row->state_code == 'end' )
   if ( isset($xml) && ($row->end_code != 'srun' || strlen($xml['error_messages']) > 0 )) {
     // we need to show an error block
     ?>
-    
-    <ol>
-      <b>Errors Were Detected: </b>
+    <b>Errors Were Detected: </b>
       <ul>
-      <pre>
-      <?= $xml['error_messages'] ?>
-      </pre>
+      <pre><?= $xml['error_messages'] ?></pre>
       </ul>
       
       <? } // end of error block ?>
-  <ol>
      <b>Solutions Found</b>:
   <ul>
      <pre><?= $xml['number_of_solutions'] ?> <?= $xml['status_of_the_solutions'] ?></pre>
@@ -104,9 +100,7 @@ elseif ( $row->state_code == 'end' )
      
      <b>Computation Information</b>:
   <ul>
-     <pre>
-     <?= eregi_replace("\n{3,100}", "\n", htmlentities($xml['calculation_details'])) ?>
-     </pre>
+     <pre><?= eregi_replace("\n{3,100}", "\n", htmlentities($xml['calculation_details'])) ?></pre>
      </ul>
      
      <b>Your input equations were</b>:
