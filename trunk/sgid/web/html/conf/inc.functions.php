@@ -52,6 +52,7 @@ $db->setFetchMode(MDB2_FETCHMODE_OBJECT);
 function SGID_identify ( $equations, $email_address, $seed=NULL  ) {
 $TDATA = array( 'input_eq' => array(),
 		'out_eq' => array(),
+		'alg_eq' => array(),
 		'parameter_list' => array(),
 		'inputs' => array()
 		);
@@ -70,8 +71,6 @@ $TDATA = array( 'input_eq' => array(),
 
  clean_equations ( $equations );
 
- // strip the equations of comments
- $equations = ereg_replace("#(.*)$", "", $equations);
  
  // tokenize the whole equation input data
   $tok = strtok( $equations, $delims );
@@ -104,16 +103,6 @@ $TDATA = array( 'input_eq' => array(),
       {
 	add_error('parse','The following equation must not end in an operator: ' . $toks[$i]);
       }
-    elseif ( eregi ("^(Y.*)\=(.*)$", $toks[$i], $regs )) {
-      // if the equation starts with [A-Z]\[T\] then it is an input equation.
-      $ae = $regs[2];
-      $not_params[] = $regs[1];
-
-      isolate_elements( $ae, $I_elements, $not_params);
-
-      $TDATA['out_eq'][] = $toks[$i];
-      echo "  is an output equation<br />\n";
-    }
     elseif ( eregi ("^(A[1-9][0-9]{0,2})\[T\][ ]{0,10}\=(.*)$", $toks[$i], $regs ) ) {
       
       // add equation name to list of not_params
@@ -122,10 +111,31 @@ $TDATA = array( 'input_eq' => array(),
       
       isolate_elements( $elements, $I_elements, $not_params );
       
-      
       $TDATA['input_eq'][] = $toks[$i];
       echo "  is an input equation<br />\n";
     }
+    elseif ( eregi ("^(Y.*)\=(.*)$", $toks[$i], $regs )) {
+      // if the equation starts with Y it is an output equation.
+      $ae = $regs[2];
+      $not_params[] = $regs[1];
+
+      isolate_elements( $ae, $I_elements, $not_params);
+
+      $TDATA['out_eq'][] = $toks[$i];
+      echo "  is an output equation<br />\n";
+    }    elseif ( eregi ("^([A-Z][A-Z0-9]{0,100})[ ]{0,10}\=(.*)$", $toks[$i], $regs ) ) {
+      $ae = $regs[2];
+
+      // we are looking at assignments of algebraic equations.
+      $not_params[] = $regs[1];
+
+      isolate_elements( $ae, $I_elements, $not_params );
+
+      // store the equivalents in the data structure.
+      $TDATA['alg_eq'][] = $toks[$i];
+      echo "  is an algebraic equation<br />\n";
+    }
+
     else {
       add_error('parse_unknown', "<em>" . $toks[$i] . "</em>");
     }
@@ -135,6 +145,9 @@ $TDATA = array( 'input_eq' => array(),
 
   // store the elements in TDATA for other use
   $TDATA['elements'] = $I_elements;
+
+  // perform algebraic equation substitutions.
+  SGID_replaceEquivalent( $TDATA );
 
   // look at all the elements and build an array of inputs
   foreach ( $I_elements as $element ) {
@@ -166,9 +179,12 @@ $TDATA = array( 'input_eq' => array(),
   // send TDATA back to _SESSION
   $_SESSION['TDATA_web'] = $TDATA;
 
-echo "There are " . sizeof($TDATA['parameter_list']) . " parameters\n";
-var_dump($TDATA);
-echo "</pre>";
+  if ( $GLOBALS['OPTIONS']['debug'] )
+    {
+      echo "There are " . sizeof($TDATA['parameter_list']) . " parameters\n";
+      var_dump($TDATA);
+      echo "</pre>";
+    }
 }
 
 function remove_duplicates ( &$TDATA ) {
@@ -205,7 +221,7 @@ function natsort_array ( &$TDATA ) {
   $tmp_arr = array();
   
   foreach ( $TDATA as $key => $val ) {
-    echo "seen $key / $val<br>";
+    //    echo "seen $key / $val<br>";
     
     $tmp_arr = $TDATA[$key];
 
@@ -235,6 +251,12 @@ function error_check( &$TDATA ) {
   // error check the inputs to determine if the user has consecutively numbered inputs
   //  if not, throw error requiring them to be numbered { U1, U2, U3, .., Un }
   
+  if ( !(!array_search ( "**", $TDATA['input_eq'] ) || !array_search ( "**", $TDATA['out_eq']) || !array_search ( "**", $TDATA['alg_eq'] )) )
+    {
+      add_error('parse_exponent');
+    }
+
+
   if ( sizeof($TDATA['inputs']) == 1 ) {
     if ( array_search ( "U", $TDATA['inputs'] ) === FALSE ) {
       add_error('parse_in_Umissing', $TDATA['inputs'][0]);
@@ -332,6 +354,9 @@ function clean_equations ( &$equations ) {
   // strip out the whitespace
   $equations = eregi_replace("[ ]+", "", $equations);
   
+  // strip the equations of comments
+  $equations = preg_replace("/\#(.*?)\n/", "", $equations);
+
   // make string upper case
   $equations = strtoupper($equations);
 }
@@ -482,8 +507,95 @@ function SGID_getXML ( $xml_string ) {
   $us = new XML_Unserializer($options);
   $result = $us->unserialize( $xml_string );
   
+  if ( PEAR::isError($result) ) {
+    add_error("parse", $result->getMessage());
+  }
+
   return ($us->getUnserializedData());
 }
+
+// go through the equations and replace all equivalents.
+function  SGID_replaceEquivalent( &$TDATA ) {
+
+
+  foreach ( $TDATA['alg_eq'] as $alg_key => &$alg_val) {
+    // get the equation which will change
+    $src = explode("=", $alg_val);
+
+    
+    foreach ( $TDATA['alg_eq'] as $t_key => $t_val ) 
+      // get the substitutation values.
+      {
+	$target = explode("=", $t_val);
+	
+	
+	if ( $src[0] !== $t_key )
+	  // if we're not looking at ourself...
+	  {
+	    // handles if it is in the first line.
+	    $src[1] = preg_replace("/(^|[^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/", "\\1" . $target[1] . "\\2", $src[1]);
+	    //	    $src[1] = preg_replace("/([^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/", "\\1"  . $target[1] . "\\2", $src[1]);
+	    //	    $src[1] = preg_replace("/([^A-Z0-9])" . $target[0] . "([^A-Z0-9])/", "\\1"  . $target[1] . "\\2", $src[1]);
+	    $alg_val = $src[0] . "=" . $src[1];
+	  }
+      }
+  }
+  
+  
+  $blocks = array ( "input_eq", "out_eq" );
+  
+  foreach ( $blocks as $block )
+    {
+        foreach ( $TDATA[$block] as $eq_key => &$equation ) 
+	{
+	  echo "EQ_KEY: " . $eq_key . "\n";
+	  unset ($src);
+	  $src = explode ("=", $equation );
+	  echo $equation . "\n";
+	  foreach ( $TDATA['alg_eq'] as $t_key => $t_val )
+	    {
+	      $target = explode( "=", $t_val );
+	      $regexp = "/(^|[^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/";
+	      $src[1] = preg_replace($regexp, "\\1" . $target[1] . "\\2",  $src[1]);
+	      //$TDATA[$block] = $src[0] . "=" . preg_replace("/" . $target[0] . "/", $target[1], $src[1] );
+	      //$TDATA['ernst'][] = $src[0] . "=" . preg_replace("/" . $target[0] . "/", $target[1], $src[1] );
+	    }
+	  $equation = $src[0] . "=" . $src[1];
+	}
+
+    }
+
+}
+
+
+function SGID_finalParamCheck( $param_arr, $eq_arr ) {
+  $missing_params = array();
+
+  return (0);
+      foreach ( $param_arr as $param )
+	{
+	  $found = false;
+	  foreach ( $eq_arr as $equation ) 
+	    {
+	      if ( eregi($param, $equation) )
+		$found = true;
+	    }
+	  if ( ! $found )
+	    {
+	      $missing_params[] = $param;
+	    }
+	}
+
+      if ( sizeof($missing_params) > 0 ) 
+	{
+	  foreach ( $missing_params as $mp ) {
+	    $err_message .= ", " . $mp;
+	  }
+	  $err_message = eregi_replace("^,","", $err_message);
+	  add_error('parse','The following parameters were found in your algebraic assignments, but were not');
+	}
+}
+
 
 ?>
 

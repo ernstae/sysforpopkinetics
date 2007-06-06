@@ -16,6 +16,10 @@ $errors =
 	    => 'With one input, U must be your parameter name. I found',
 	    'parse_illegal'
 	    => 'The following illegal character was found',
+	    'parse'
+	    => '',
+	    'parse_exponent'
+	    => 'I detected "**" in your equations.  Exponentials must be expressed using a "^" character.',
 	    'parse_unknown'
 	    => 'Parser error I Could not understand',
 	    'web_required'
