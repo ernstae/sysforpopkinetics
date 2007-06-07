@@ -150,10 +150,13 @@ if ( PEAR::isError($result) ) {
  }
 
 ?>
+
+<meta http-equiv="refresh" content="20">
+
 <form>
 <fieldset>
 <legend><?= $steps[$step] ?></legend>
-Thank you.  Your job has been submitted for processing.  You will be notified via e-mail when the job has completed.
+Thank you.  Your job has been submitted for processing.  You will be notified via e-mail when the job has completed.  This page will also refresh every 30 seconds.
 <br />
 <br />
 <? 
