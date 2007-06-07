@@ -524,16 +524,19 @@ function SGID_getXML ( $xml_string ) {
 // go through the equations and replace all equivalents.
 function  SGID_replaceEquivalent( &$TDATA ) {
 
-
-  foreach ( $TDATA['alg_eq'] as $alg_key => &$alg_val) {
+  
+  foreach ( $TDATA['alg_eq'] as $alg_key => $alg_val) {
     // get the equation which will change
     $src = explode("=", $alg_val);
 
-    
+    //    echo "\n\n\nLooking at equation: " . $alg_val . "\n";
+  
+	
     foreach ( $TDATA['alg_eq'] as $t_key => $t_val ) 
       // get the substitutation values.
       {
 	$target = explode("=", $t_val);
+	//	echo "looking for instances of:  " . $target[0] . "\n";
 	
 	
 	if ( $src[0] !== $t_key )
@@ -544,21 +547,22 @@ function  SGID_replaceEquivalent( &$TDATA ) {
 	    //	    $src[1] = preg_replace("/([^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/", "\\1"  . $target[1] . "\\2", $src[1]);
 	    //	    $src[1] = preg_replace("/([^A-Z0-9])" . $target[0] . "([^A-Z0-9])/", "\\1"  . $target[1] . "\\2", $src[1]);
 	    $alg_val = $src[0] . "=" . $src[1];
+	    $TDATA['alg_eq'][$alg_key] = $src[0] . "=" . $src[1];
 	  }
       }
   }
   
-  
+
   $blocks = array ( "input_eq", "out_eq" );
   
   foreach ( $blocks as $block )
     {
         foreach ( $TDATA[$block] as $eq_key => &$equation ) 
 	{
-	  echo "EQ_KEY: " . $eq_key . "\n";
+	  //	  echo "EQ_KEY: " . $eq_key . "\n";
 	  unset ($src);
 	  $src = explode ("=", $equation );
-	  echo $equation . "\n";
+	  //	  echo $equation . "\n";
 	  foreach ( $TDATA['alg_eq'] as $t_key => $t_val )
 	    {
 	      $target = explode( "=", $t_val );
