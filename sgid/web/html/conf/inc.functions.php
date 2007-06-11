@@ -161,7 +161,7 @@ $TDATA = array( 'input_eq' => array(),
     // determine whether this is a parameter or not
     elseif ( in_array( $element, $not_params ) === FALSE 
 	     && $element != NULL
-	     && eregi("^[A-Z]+[1-9]{0,1}[0-9]{0,100}$", $element)
+	     && eregi("^[A-Z]+[A-Z1-9]{0,1}[A-Z0-9]{0,100}$", $element)
 	     ) {
       //	     && !eregi("[^A-Z]+[1-9]{0,1}[0-9]+", $element ) ) {
             $TDATA['parameter_list'][] = $element;
