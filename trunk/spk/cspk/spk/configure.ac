@@ -23,7 +23,7 @@ dnl       exactly "package version"
 dnl    AC_PACKAGE_BUGREPORT, PACKAGE_BUG_REPORT
 dnl       exactly "bug-report"
 dnl
-AC_INIT(Spk Library, 0.1, watrous@u.washington.edu, spklib )
+AC_INIT(Spk Library, 0.1, watrous@u.washington.edu, spklib)
 
 dnl
 dnl <AC_CONFIG_SRCDIR>
