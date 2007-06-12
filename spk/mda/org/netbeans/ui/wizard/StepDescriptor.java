@@ -77,6 +77,12 @@ public abstract class StepDescriptor {
      *  the settings with its current customized state.
      * @param wizard a JWizardPane object provided to the step.
      */
+    public abstract boolean checkingStep(JWizardPane wizard);
+    
+    /** Provides the wizard panel with the opportunity to check the correctness of
+     *  its current customized state.
+     * @param wizard a JWizardPane object provided to the step.
+     */
     public abstract void hidingStep(JWizardPane wizard);
 
     /** Test whether the panel is finished and it is safe to proceed to the next one.

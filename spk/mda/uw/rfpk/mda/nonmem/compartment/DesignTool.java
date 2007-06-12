@@ -19,6 +19,7 @@ distribution.
 package uw.rfpk.mda.nonmem.compartment;
 
 import uw.rfpk.mda.nonmem.MDAFrame;
+import uw.rfpk.mda.nonmem.Utility;
 import uw.rfpk.mda.nonmem.wizard.MDAObject;
 import uw.rfpk.mda.nonmem.wizard.MDAIterator;
 import uw.rfpk.mda.nonmem.wizard.Subroutines;
@@ -39,6 +40,7 @@ import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 import javax.swing.BorderFactory;
 import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Enumeration;
 import javax.swing.JToggleButton;
@@ -229,14 +231,6 @@ public class DesignTool extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         buttonGroup1 = new javax.swing.ButtonGroup();
-        transferDialog = new javax.swing.JDialog();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList();
-        jPanel8 = new javax.swing.JPanel();
-        upButton = new javax.swing.JButton();
-        downButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane2 = new javax.swing.JSplitPane();
         jSplitPane3 = new javax.swing.JSplitPane();
@@ -255,6 +249,7 @@ public class DesignTool extends javax.swing.JFrame {
         errorTextArea = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
+        jToggleButton2 = new javax.swing.JToggleButton();
         compButton = new javax.swing.JButton();
         delayButton = new javax.swing.JButton();
         fluxButton = new javax.swing.JButton();
@@ -263,8 +258,8 @@ public class DesignTool extends javax.swing.JFrame {
         changeButton = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
         jPanel2 = new javax.swing.JPanel();
-        variableButton = new javax.swing.JButton();
-        transferButton = new javax.swing.JButton();
+        parameterButton = new javax.swing.JButton();
+        defaultsButton = new javax.swing.JButton();
         finishButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jPanel3 = new javax.swing.JPanel();
@@ -398,50 +393,7 @@ public class DesignTool extends javax.swing.JFrame {
 
         jPopupMenu1.add(jMenuItem1);
 
-        transferDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        transferDialog.setTitle("Transfers");
-        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane7.setViewportView(jList2);
-
-        transferDialog.getContentPane().add(jScrollPane7, java.awt.BorderLayout.CENTER);
-
-        upButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/icons/up.png")));
-        upButton.setPreferredSize(new java.awt.Dimension(50, 25));
-        upButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
-            }
-        });
-
-        jPanel8.add(upButton);
-
-        downButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/icons/down.png")));
-        downButton.setPreferredSize(new java.awt.Dimension(50, 25));
-        downButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downButtonActionPerformed(evt);
-            }
-        });
-
-        jPanel8.add(downButton);
-
-        jButton1.setText("Close");
-        jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jPanel8.add(jButton1);
-
-        transferDialog.getContentPane().add(jPanel8, java.awt.BorderLayout.SOUTH);
-
-        jLabel4.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel4.setText("Select item to change order");
-        transferDialog.getContentPane().add(jLabel4, java.awt.BorderLayout.NORTH);
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Compartment Model Design Tool");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -472,7 +424,7 @@ public class DesignTool extends javax.swing.JFrame {
 
         jSplitPane3.setTopComponent(jInternalFrame1);
 
-        jInternalFrame3.setTitle("Mixed Effect Model");
+        jInternalFrame3.setTitle("Model Parameters");
         jInternalFrame3.setVisible(true);
         pkTextArea.setEditable(false);
         jScrollPane5.setViewportView(pkTextArea);
@@ -511,6 +463,20 @@ public class DesignTool extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jToggleButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/compartment/unlock.png")));
+        jToggleButton2.setToolTipText("Toggle compartment, delay and transfer lock/unlock");
+        jToggleButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jToggleButton2.setMaximumSize(new java.awt.Dimension(15, 40));
+        jToggleButton2.setMinimumSize(new java.awt.Dimension(15, 40));
+        jToggleButton2.setPreferredSize(new java.awt.Dimension(15, 40));
+        jToggleButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton2ActionPerformed(evt);
+            }
+        });
+
+        jToolBar2.add(jToggleButton2);
+
         compButton.setToolTipText("Compartment: click canvas");
         compButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         compButton.setMaximumSize(new java.awt.Dimension(40, 40));
@@ -571,19 +537,25 @@ public class DesignTool extends javax.swing.JFrame {
 
         jToolBar2.add(sampleButton);
 
-        changeButton.setToolTipText("Change Condition");
+        changeButton.setToolTipText("Change condition in Differential Equation Structure");
         changeButton.setMargin(new java.awt.Insets(2, 0, 2, 0));
         changeButton.setMaximumSize(new java.awt.Dimension(40, 40));
         changeButton.setMinimumSize(new java.awt.Dimension(40, 40));
         changeButton.setPreferredSize(new java.awt.Dimension(40, 40));
+        changeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changeButtonActionPerformed(evt);
+            }
+        });
+
         jToolBar2.add(changeButton);
 
-        jToggleButton1.setText("^");
+        jToggleButton1.setText("1");
         jToggleButton1.setToolTipText("Toggle compartment and delay number/name");
         jToggleButton1.setMargin(new java.awt.Insets(2, 0, 2, 0));
-        jToggleButton1.setMaximumSize(new java.awt.Dimension(14, 40));
-        jToggleButton1.setMinimumSize(new java.awt.Dimension(14, 40));
-        jToggleButton1.setPreferredSize(new java.awt.Dimension(14, 40));
+        jToggleButton1.setMaximumSize(new java.awt.Dimension(15, 40));
+        jToggleButton1.setMinimumSize(new java.awt.Dimension(15, 40));
+        jToggleButton1.setPreferredSize(new java.awt.Dimension(15, 40));
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton1ActionPerformed(evt);
@@ -592,33 +564,35 @@ public class DesignTool extends javax.swing.JFrame {
 
         jToolBar2.add(jToggleButton1);
 
+        jPanel2.setMinimumSize(new java.awt.Dimension(0, 10));
+        jPanel2.setPreferredSize(new java.awt.Dimension(0, 10));
         jToolBar2.add(jPanel2);
 
-        variableButton.setText("Variables");
-        variableButton.setToolTipText("Show user defined variables");
-        variableButton.setMaximumSize(new java.awt.Dimension(74, 27));
-        variableButton.setMinimumSize(new java.awt.Dimension(74, 27));
-        variableButton.setPreferredSize(new java.awt.Dimension(74, 27));
-        variableButton.addActionListener(new java.awt.event.ActionListener() {
+        parameterButton.setText("Parameter");
+        parameterButton.setToolTipText("Show user defined variables");
+        parameterButton.setMaximumSize(new java.awt.Dimension(74, 27));
+        parameterButton.setMinimumSize(new java.awt.Dimension(74, 27));
+        parameterButton.setPreferredSize(new java.awt.Dimension(74, 27));
+        parameterButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                variableButtonActionPerformed(evt);
+                parameterButtonActionPerformed(evt);
             }
         });
 
-        jToolBar2.add(variableButton);
+        jToolBar2.add(parameterButton);
 
-        transferButton.setText("Transfers");
-        transferButton.setToolTipText("Showing user defined equations");
-        transferButton.setMaximumSize(new java.awt.Dimension(74, 27));
-        transferButton.setMinimumSize(new java.awt.Dimension(74, 27));
-        transferButton.setPreferredSize(new java.awt.Dimension(74, 27));
-        transferButton.addActionListener(new java.awt.event.ActionListener() {
+        defaultsButton.setText("Defaults");
+        defaultsButton.setToolTipText("Showing user defined equations");
+        defaultsButton.setMaximumSize(new java.awt.Dimension(74, 27));
+        defaultsButton.setMinimumSize(new java.awt.Dimension(74, 27));
+        defaultsButton.setPreferredSize(new java.awt.Dimension(74, 27));
+        defaultsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                transferButtonActionPerformed(evt);
+                defaultsButtonActionPerformed(evt);
             }
         });
 
-        jToolBar2.add(transferButton);
+        jToolBar2.add(defaultsButton);
 
         finishButton.setText("Finish");
         finishButton.setToolTipText("Finish using this tool");
@@ -794,62 +768,34 @@ public class DesignTool extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
+        new ChangeCondition(this);
+    }//GEN-LAST:event_changeButtonActionPerformed
+
+    private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
+        lock = !lock;
+        if(lock)
+            jToggleButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/compartment/lock.png")));
+        else
+            jToggleButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/compartment/unlock.png")));
+        pickedElement = "";
+        diagram.setCursor(null);
+    }//GEN-LAST:event_jToggleButton2ActionPerformed
+
     private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
         JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
     }//GEN-LAST:event_helpButtonActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        transferDialog.setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void subjectDialogWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_subjectDialogWindowClosing
         subjectDialog.toFront();
         doneButton.doClick();
     }//GEN-LAST:event_subjectDialogWindowClosing
 
-    private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+    private void defaultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultsButtonActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        int index = jList2.getSelectedIndex();
-        if(index < transferList.size() - 1)
-        {
-            Model.fluxList.set(index, Model.fluxList.get(index + 1));
-            Model.fluxList.set(index + 1, (String)jList2.getSelectedValue());
-            transferList.clear();
-            for(String name : Model.fluxList)
-                transferList.addElement(name);
-            jList2.setSelectedIndex(index + 1);
-            setRecords();
-        }
+        new DefaultModelDialog(this);
         setCursor(null);
-    }//GEN-LAST:event_downButtonActionPerformed
-
-    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        int index = jList2.getSelectedIndex();
-        if(index > 0)
-        {
-            Model.fluxList.set(index, Model.fluxList.get(index - 1));
-            Model.fluxList.set(index - 1, (String)jList2.getSelectedValue());
-            transferList.clear();
-            for(String name : Model.fluxList)
-                transferList.addElement(name);
-            jList2.setSelectedIndex(index - 1);
-            setRecords();
-        }
-        setCursor(null);
-    }//GEN-LAST:event_upButtonActionPerformed
-
-    private void transferButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transferButtonActionPerformed
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        jList2.setModel(transferList);
-        transferList.clear();
-        for(String name : Model.fluxList)
-            transferList.addElement(name);
-        transferDialog.setSize(200, 250);
-        transferDialog.setLocationRelativeTo(transferButton);
-        transferDialog.setVisible(true);
-        setCursor(null);
-    }//GEN-LAST:event_transferButtonActionPerformed
+    }//GEN-LAST:event_defaultsButtonActionPerformed
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
         // Get a PrinterJob object and a PageFormat object.
@@ -951,11 +897,22 @@ public class DesignTool extends javax.swing.JFrame {
     }
     
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        setVisible(false);
+        if(JOptionPane.showConfirmDialog(null, 
+                                         "Are you sure you want to close the graphical model editor?",   
+                                         "Question Dialog",
+                                         JOptionPane.YES_NO_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE) == 0)
+        {
+            setVisible(false);
+        }
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         showName = !showName;
+        if(showName)
+            jToggleButton1.setText("A");
+        else
+            jToggleButton1.setText("1");
         repaint();
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
@@ -986,13 +943,11 @@ public class DesignTool extends javax.swing.JFrame {
         setCursor(null);
     }//GEN-LAST:event_finishButtonActionPerformed
 
-    private void variableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_variableButtonActionPerformed
+    private void parameterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parameterButtonActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        variableDialog.setVariableList();
-        variableDialog.setLocationRelativeTo(variableButton);
-        variableDialog.setVisible(true);
+        VariableDialog variableDialog = new VariableDialog(this);
         setCursor(null);
-    }//GEN-LAST:event_variableButtonActionPerformed
+    }//GEN-LAST:event_parameterButtonActionPerformed
 
     private void doneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButtonActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -1168,10 +1123,8 @@ public class DesignTool extends javax.swing.JFrame {
     {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         list.removeAllElements();
-        Model.variables.clear();
-        Model.variableList.clear();
-        Model.fluxList.clear();
-        Model.equations = "";
+        Model.parameterList.clear();
+//        Model.equationList.clear();
         Model.errorEqns = "";
         models.removeAllElements();
         modelId = 0;
@@ -1251,11 +1204,13 @@ public class DesignTool extends javax.swing.JFrame {
     }//GEN-LAST:event_delayButtonActionPerformed
 
     private void sampleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleButtonActionPerformed
+        if(lock) jToggleButton2.doClick();
         pickedElement = "sample";
         diagram.setCursor(sampleCursor);
     }//GEN-LAST:event_sampleButtonActionPerformed
 
     private void inputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputButtonActionPerformed
+        if(lock) jToggleButton2.doClick();
         pickedElement = "input";
         diagram.setCursor(inputCursor);
     }//GEN-LAST:event_inputButtonActionPerformed
@@ -1408,9 +1363,166 @@ public class DesignTool extends javax.swing.JFrame {
         }
     }
 
+    /** Update parameter list following updating depending variable list of the passed-in parameter.
+     * @param parameter parameter that has been changed in value or removed.
+     * @param isRemove true for parameter has been removed, false otherwise.
+     * return true if new variable is added to the parameter list, otherwise false.
+     */
+    protected boolean updateParameterList(Parameter parameter, boolean isRemove)
+    {
+        // update parameter list after removing a parameter
+        if(isRemove)
+        {
+            for(Variable variable : parameter.dependVariables)
+            {
+                variable.refCount--;
+                if(variable.refCount == 0)
+                    Model.parameterList.remove(variable);
+            }
+            return false;
+        }
+        
+        // Tokenize the parameter value
+        String[] lines = parameter.value.trim().split("\n");
+        ArrayList<String> symbols = new ArrayList<String>();
+        ArrayList<String> variables = new ArrayList<String>();
+        for(int i = 0; i < lines.length; i++) 
+        {
+            if(lines[i].startsWith("IF("))
+            {
+                String[] tokens = lines[i].toUpperCase().replaceAll(".AND.", " ").replaceAll(".OR.", " ")
+                                  .replaceAll(".EQ.", " ").replaceAll(".NE.", " ").replaceAll(".GT.", " ")
+                                  .replaceAll(".LT.", " ").replaceAll(".GE.", " ").replaceAll(".LE.", " ")
+                                  .split("[ |+|\\-|*|/|(|)|>|<|=]");
+                for(String token : tokens)
+                    if(checkVariableName(token) && symbols.indexOf(token) == -1)
+                        if(variables.indexOf(token) == -1)
+                            variables.add(token);
+            }
+            else if(lines[i].equals("ELSE") || lines[i].equals("ENDIF"))
+            {}
+            else
+            {
+                String[] sides = lines[i].replaceAll(" ", "").split("=");
+                if(sides.length == 2)
+                {
+                    String[] tokens = sides[1].toUpperCase().split("[+|\\-|*|/|(|)]");
+                    for(String token : tokens)
+                        if(checkVariableName(token) && symbols.indexOf(token) == -1)
+                            if(variables.indexOf(token) == -1)
+                                variables.add(token);
+                    symbols.add(sides[0].toUpperCase());
+                }
+                else if(sides.length == 1)
+                {
+                    symbols.add(sides[0].toUpperCase());
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Error was found in parameter model.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+        }
+        
+        // Comparing new and old depending variable lists and update parameter list
+        int size = parameter.dependVariables.size();
+        for(int i = 0; i < size;  i++)
+        {
+            Variable var = parameter.dependVariables.get(i);
+            if(variables.indexOf(var.name) == -1)    // the depending variable is removed
+            {
+                --var.refCount;
+                if(var.refCount == 0)
+                {
+                    parameter.dependVariables.remove(var);
+                    Model.parameterList.remove(var);
+                }
+            }
+        }
+        boolean isNewVariableAdded = false;
+        for(String name : variables)
+        {
+            boolean isNew = true;
+            for(Variable var : parameter.dependVariables)
+            {
+                if(name.equals(var.name))
+                {
+                    isNew = false;
+                    break;
+                }
+            }
+            if(isNew)
+            {
+                Variable variable = checkVariableExist(name);
+                if(variable == null)
+                {
+                    variable = new Variable(name, name + "=");
+                    Model.parameterList.add(Model.parameterList.indexOf(parameter), variable);
+                    isNewVariableAdded = true;
+                }
+                parameter.dependVariables.add(variable);
+            }
+        }
+        return isNewVariableAdded;
+    }
+    
+    private Variable checkVariableExist(String name)
+    {
+        for(Parameter parameter : Model.parameterList)
+        {
+            if(parameter instanceof Variable)
+            {
+                if(parameter.name.equals(name))
+                {
+                    ((Variable)parameter).refCount++;
+                    return (Variable)parameter;
+                }
+            }
+        }
+        return null;
+    }
+    
+/*    private boolean checkEquationExist(String name)
+    {
+        for(Parameter parameter : Model.equationList)
+            if(parameter.name.equals(name))
+                return true;
+        return false;
+    }*/
+    
+    private boolean checkVariableName(String name)
+    {
+        name = name.toUpperCase();
+        String[] functions = {"", "ABS", "COS", "SIN", "ACOS", "ASIN", "ATAN", "ATAN2", "COSH",
+                              "MAX", "MIN", "MOD", "SINH", "TAN", "TANH", "EXP", "THETA", "ETA",
+                              "IF", "THEN", "ELSE", "ENDIF"};
+        for(String function : functions)
+            if(name.equals(function))
+                return false;
+        if(name.matches("TLAG\\d+") || name.matches("[S|F|R|D]\\d+") || name.matches("ALAG\\d+") ||
+           name.matches("K\\d+") || name.matches("K\\d+T\\d+") || Utility.isFloatNumber(name))
+            return false;
+        for(String dataLabel : object.getDataLabels())
+        {
+            String[] sides = dataLabel.split("=");
+            if(name.equals(sides[0]) || (sides.length == 2 && name.equals(sides[1])))
+                return false;
+        }
+        return true;
+    }
+    
     /** Exit the Application */
     private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
-        setVisible(false);
+        if(JOptionPane.showConfirmDialog(null, 
+                                         "Are you sure you want to close the graphical model editor?",   
+                                         "Question Dialog",
+                                         JOptionPane.YES_NO_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE) == 0)
+        {
+            setVisible(false);
+        }
     }//GEN-LAST:event_exitForm
     
     /** Main method of the application
@@ -1447,19 +1559,18 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JButton assignButton;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JButton changeButton;
+    protected javax.swing.JButton changeButton;
     private javax.swing.JButton clearButton;
     private javax.swing.JButton compButton;
+    protected javax.swing.JButton defaultsButton;
     private javax.swing.JButton delayButton;
     private javax.swing.JTextArea desTextArea;
     private javax.swing.JButton doneButton;
-    private javax.swing.JButton downButton;
     private javax.swing.JTextArea errorTextArea;
     private javax.swing.JButton finishButton;
     private javax.swing.JButton fluxButton;
     private javax.swing.JButton helpButton;
     private javax.swing.JButton inputButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
@@ -1467,11 +1578,9 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JList jList1;
-    private javax.swing.JList jList2;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
@@ -1481,7 +1590,6 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -1489,7 +1597,6 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
@@ -1498,9 +1605,11 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JButton leftButton;
     private javax.swing.JTextArea modelTextArea;
+    protected javax.swing.JButton parameterButton;
     private javax.swing.JTextArea pkTextArea;
     private javax.swing.JButton printButton;
     private javax.swing.JButton rightButton;
@@ -1510,10 +1619,6 @@ public class DesignTool extends javax.swing.JFrame {
     private javax.swing.JPanel statusBarR;
     private javax.swing.JComboBox subjectComboBox;
     private javax.swing.JDialog subjectDialog;
-    private javax.swing.JButton transferButton;
-    private javax.swing.JDialog transferDialog;
-    private javax.swing.JButton upButton;
-    private javax.swing.JButton variableButton;
     // End of variables declaration//GEN-END:variables
     
     /** MDAObject */
@@ -1537,15 +1642,16 @@ public class DesignTool extends javax.swing.JFrame {
     private ModelButton selectedButton = null;
     private int modelId = 0;
     private ButtonGroup buttonGroup;
-    private Cursor compCursor, delayCursor, fluxCursor, inputCursor, sampleCursor;
+    private Cursor compCursor, delayCursor, inputCursor, sampleCursor;
+    /** Cursor for transfer */
+    protected Cursor fluxCursor;
     private DefaultListModel list = new DefaultListModel();
     private DefaultListModel transferList = new DefaultListModel();
-    private String[] subjects;
+    /** Subject IDs */
+    protected String[] subjects;
     private Record record = new Record(this);
     /** Show name*/
     protected static boolean showName = false;
-    /** Variable dialog object */
-    protected VariableDialog variableDialog = new VariableDialog(this);
     /** MDAIterator object */
     protected MDAIterator iterator;
     private JPanel panel;
@@ -1554,5 +1660,7 @@ public class DesignTool extends javax.swing.JFrame {
     private PrintRequestAttributeSet attributes;
     /** Is reload */
     protected boolean isInit = true;
+    /** Is locked */
+    protected boolean lock = false;
 }
 

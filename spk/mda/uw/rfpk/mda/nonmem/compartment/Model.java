@@ -20,6 +20,8 @@ package uw.rfpk.mda.nonmem.compartment;
 
 import java.util.Observable;
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.awt.Graphics2D;
@@ -147,7 +149,9 @@ import java.awt.Dimension;
                 Element.Flux flux = (Element.Flux)fluxes.get(i);
                 if(flux.element1 == element && flux.element2 != element)
                 {
-//                    variables.remove(String.valueOf(((Element.Flux)fluxes.remove(i--)).number));
+                    fluxes.remove(flux);
+                    parameterList.remove(flux.flowRate);
+                    tool.updateParameterList(flux.flowRate, true);
                     i--;
                 }
                 if(flux.element1 != element && flux.element2 == element)
@@ -159,7 +163,9 @@ import java.awt.Dimension;
                         delay.compartments.remove(index);
                         delay.fractions.remove(index);
                     }
-//                    variables.remove(String.valueOf(((Element.Flux)fluxes.remove(i--)).number));
+                    fluxes.remove(flux);
+                    parameterList.remove(flux.flowRate);
+                    tool.updateParameterList(flux.flowRate, true);
                     i--;
                 }
             }
@@ -198,10 +204,20 @@ import java.awt.Dimension;
                 }
             }
             elements.remove(element);
-            
-            // Renumber compartments and delays
-            for(int i = element.number - 1; i < elements.size(); i++)
-                ((Element)elements.get(i)).number--;
+            Element.Compartment compartment = (Element.Compartment)element;
+            Iterator iterator = compartment.parameters.keySet().iterator();
+            while(iterator.hasNext())
+            {
+                Parameter parameter = (Parameter)compartment.parameters.get(iterator.next());
+                parameterList.remove(parameter);
+                tool.updateParameterList(parameter, true);
+            }
+            if(compartment.force != null)
+            {
+                parameterList.remove(compartment.force);
+                tool.updateParameterList(compartment.force, true);
+            }
+            renumberElements(element);
         }
         if(element instanceof Element.Delay)
         {
@@ -209,23 +225,33 @@ import java.awt.Dimension;
             {
                 Element.Flux flux = (Element.Flux)fluxes.get(i);
                 if(flux.element1 == element || flux.element2 == element)
+                {
                     fluxes.remove(i--);
+                    parameterList.remove(flux.flowRate);
+                    tool.updateParameterList(flux.flowRate, true);
+                }
             }
             elements.remove(element);
+            Parameter parameter = ((Element.Delay)element).delayTime;
+            parameterList.remove(parameter);
+            tool.updateParameterList(parameter, true);
+            renumberElements(element);
         }
         if(element instanceof Element.Flux)
         {
             fluxes.remove(element);
-//            variables.remove(String.valueOf(((Element.Flux)element).number));
             Element.Flux flux = (Element.Flux)element;
+            parameterList.remove(flux.flowRate);
+            tool.updateParameterList(flux.flowRate, true);
             if(flux.element1 instanceof Element.Delay)
             {
                 Element.Delay delay = (Element.Delay)flux.element1;
                 int index = delay.compartments.indexOf(flux.element2);
                 delay.compartments.remove(index);
                 delay.fractions.remove(index);
+                parameterList.remove(delay.delayTime);
+                tool.updateParameterList(delay.delayTime, true);
             }
-            fluxList.remove(flux.name);
         }
         if(element instanceof Element.Input)
         {
@@ -272,6 +298,132 @@ import java.awt.Dimension;
         element = null;
     }
     
+    private void renumberElements(Element element)
+    {
+        for(int i = element.number - 1; i < elements.size(); i++)
+        {
+            Element elem = ((Element)elements.get(i));
+            elem.number--;
+            if(elem instanceof Element.Compartment)
+            {
+                Element.Compartment comp = (Element.Compartment)elem;
+                if(comp.force != null)
+                {
+                    comp.force.name = "FF" + comp.number;
+                    comp.force.value = "FF" + comp.number + comp.force.value.substring(comp.force.value.indexOf("="));
+                    tool.updateParameterList(comp.force, false);
+                }
+                Iterator iterator = comp.parameters.keySet().iterator();
+                while(iterator.hasNext())
+                {
+                    Parameter parameter = (Parameter)comp.parameters.get(iterator.next());
+                    if(parameter.name.startsWith("S")) parameter.name = "S" + comp.number;
+                    if(parameter.name.startsWith("F")) parameter.name = "F" + comp.number;
+                    if(parameter.name.startsWith("R")) parameter.name = "R" + comp.number;
+                    if(parameter.name.startsWith("D")) parameter.name = "D" + comp.number;
+                    if(parameter.name.startsWith("ALAG")) parameter.name = "ALAG" + comp.number;
+                    if(parameter.value.indexOf("IF(") == -1)
+                    {
+                        parameter.value = "\n" + parameter.value;
+                        parameter.value = parameter.value.substring(0, parameter.value.lastIndexOf("\n") + 1) +
+                                          parameter.name + parameter.value.substring(parameter.value.lastIndexOf("="));
+                        parameter.value = parameter.value.trim();
+                    }
+                    else
+                    {
+                        int indexIF = parameter.value.indexOf("IF(");
+                        String[] lines = parameter.value.substring(indexIF).split("\n");
+                        lines[1] = parameter.name + lines[1].substring(lines[1].indexOf("="));
+                        lines[3] = parameter.name + lines[3].substring(lines[1].indexOf("="));
+                        parameter.value = parameter.value.substring(0, indexIF) + lines[0] + lines[1] + lines[2] + lines[3] + lines[4];
+                    }       
+                    tool.updateParameterList(parameter, false);
+                }
+            }
+            else if(elem instanceof Element.Delay)
+            {
+                Element.Delay delay = (Element.Delay)elem;
+                delay.delayTime.name = "TLAG" + delay.number;
+                if(delay.delayTime.value.indexOf("IF(") == -1)
+                {
+                    delay.delayTime.value = "\n" + delay.delayTime.value;
+                    delay.delayTime.value = delay.delayTime.value.substring(0, delay.delayTime.value.lastIndexOf("\n") + 1) +
+                                            delay.delayTime.name + delay.delayTime.value.substring(delay.delayTime.value.lastIndexOf("="));
+                    delay.delayTime.value = delay.delayTime.value.trim();
+                }
+                else
+                {
+                    int indexIF = delay.delayTime.value.indexOf("IF(");
+                    String[] lines = delay.delayTime.value.substring(indexIF).split("\n");
+                    lines[1] = delay.delayTime.name + lines[1].substring(lines[1].indexOf("="));
+                    lines[3] = delay.delayTime.name + lines[3].substring(lines[1].indexOf("="));
+                    delay.delayTime.value = delay.delayTime.value.substring(0, indexIF) + lines[0] + lines[1] + lines[2] + lines[3] + lines[4];
+                }
+                tool.updateParameterList(delay.delayTime, false);
+            }
+            for(Element.Flux flux: fluxes)
+            {
+                if(flux.element1 == element || flux.element2 == element)
+                {
+                    if(flux.element1 != null && flux.element2 != null)
+                    {
+                        if(flux.element1 instanceof Element.Compartment)
+                        {
+                            if(flux.element1.number < 10 && flux.element2.number < 10)
+                                flux.name = "K" + flux.element1.number + flux.element2.number;
+                            else
+                                flux.name = "K" + flux.element1.number + "T" + flux.element2.number;
+                        }
+                        if(flux.element1 instanceof Element.Delay)
+                        {
+                            if(flux.element1.number < 10 && flux.element2.number < 10)
+                                flux.name = "D" + flux.element1.number + flux.element2.number;
+                            else
+                                flux.name = "D" + flux.element1.number + "T" + flux.element2.number;
+                        }
+                    }
+                    else if(flux.element2 == null)
+                    {
+                        if(flux.element1 instanceof Element.Compartment)
+                        {
+                            if(flux.element1.number < 10)
+                                flux.name = "K" + flux.element1.number + "0";
+                            else
+                                flux.name = "K" + flux.element1.number + "T0";
+                        }
+                        if(flux.element1 instanceof Element.Delay)
+                        {
+                            if(flux.element1.number < 10)
+                                flux.name = "D" + flux.element1.number + "0";
+                            else
+                                flux.name = "D" + flux.element1.number + "T0";                   
+                        }
+                    }
+                    flux.flowRate.name = flux.name;
+                    if(!flux.name.startsWith("D"))
+                    {
+                        if(flux.flowRate.value.indexOf("IF(") == -1)
+                        {
+                            flux.flowRate.value = "\n" + flux.flowRate.value;
+                            flux.flowRate.value = flux.flowRate.value.substring(0, flux.flowRate.value.lastIndexOf("\n") + 1) +
+                                                  flux.name + flux.flowRate.value.substring(flux.flowRate.value.lastIndexOf("="));
+                            flux.flowRate.value = flux.flowRate.value.trim();
+                        }
+                        else
+                        {
+                            int indexIF = flux.flowRate.value.indexOf("IF(");
+                            String[] lines = flux.flowRate.value.substring(indexIF).split("\n");
+                            lines[1] = flux.flowRate.name + lines[1].substring(lines[1].indexOf("="));
+                            lines[3] = flux.flowRate.name + lines[3].substring(lines[1].indexOf("="));
+                            flux.flowRate.value = flux.flowRate.value.substring(0, indexIF) + lines[0] + lines[1] + lines[2] + lines[3] + lines[4];
+                        }
+                        tool.updateParameterList(flux.flowRate, false);
+                    }
+                }
+            }
+        }
+    }
+    
     /** Model ID */
     protected int id;
     /** Model name */
@@ -296,14 +448,10 @@ import java.awt.Dimension;
     protected static boolean isClone;
     /** Is copy to the diagram */
     protected boolean isCopyToDiagram;
-    /** User defined variables of all groups */
-    protected static ArrayList<String> variableList = new ArrayList<String>();
-    /** User defined variable map of all groups */
-    protected static Properties variables = new Properties();
-    /** Flux list */
-    protected static ArrayList<String> fluxList = new ArrayList<String>();
-    /** Equations of all models */
-    protected static String equations = "";
+    /** User defined parameter of all groups */
+    protected static ArrayList<Parameter> parameterList = new ArrayList<Parameter>();
+    /** Des block equations of all groups */
+    protected static String desEqns = "";
     /** Error block equations of all groups */
     protected static String errorEqns = "";
     private Vector<Model> models;

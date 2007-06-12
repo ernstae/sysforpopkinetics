@@ -25,7 +25,4 @@
     <fileobject name="Record.java">
         <attr name="class_dependency_java.util.Comparator" stringvalue="Record.Comparer"/>
     </fileobject>
-    <fileobject name="VariableDialog.java">
-        <attr name="class_dependency_javax.swing.JDialog" stringvalue="VariableDialog"/>
-    </fileobject>
 </attributes>

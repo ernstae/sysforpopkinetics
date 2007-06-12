@@ -33,7 +33,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
- * This class defines a step to create the $PROBLEm record.
+ * This class defines a step to create the $PROBLEM record.
  * @author  Jiaji Du
  */
 public class Problem extends javax.swing.JPanel implements WizardStep {
@@ -152,7 +152,9 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 	return sd;
     }
 
-    private class MyStepDescriptor extends StepDescriptor{ 
+    private class MyStepDescriptor extends StepDescriptor{
+        
+        private String record;
 
 	public Component getComponent(){
 	    return panel;
@@ -194,19 +196,17 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
             jTextArea1.requestFocusInWindow();
         }
         
+        public boolean checkingStep(JWizardPane wizard){
+            record = jTextArea1.getText().replaceAll("\n", "");
+            return Utility.checkCharacter(record, getStepTitle());
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
                 iterator.setIsBack(false);
                 return;
-            }            
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
             }
-            String record = jTextArea1.getText().replaceAll("\n", "");
-            Utility.checkCharacter(record, getStepTitle());
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Problem", "$PROBLEM " + record);
             object.getSource().problem = record;            

@@ -112,8 +112,8 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField9.setText(jobAbstract);
         jTextField9.setCaretPosition(0);
         jButton11.setEnabled(isJobOwner);
-        ok = (id != 0 && endCode.equals("srun") && (methodCode.equals("fo") ||
-              methodCode.equals("eh") || methodCode.equals("la")));
+        ok = id != 0 && (endCode.equals("srun") || endCode.equals("staf")) &&
+             (methodCode.equals("fo") || methodCode.equals("eh") || methodCode.equals("la"));
         jButton14.setEnabled(ok);
         jTextArea8.setEnabled(ok);
 //        jButton8.setEnabled(false);
@@ -1013,20 +1013,35 @@ public class JobInfo extends javax.swing.JFrame {
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        if(jTextField10.getText().trim().equals(frame.myName))
-        {
-            JOptionPane.showMessageDialog(null, "You cannot share a job with yourself.");
-            setCursor(null);
-            return;
-        }
-        if(!frame.server.setJobShareWith(id, jTextField10.getText().trim()))
-        {
-            JOptionPane.showMessageDialog(null, "The job cannot be shared with this user.");
-            setCursor(null);
-            return;
-        }
         if(jButton15.getText().startsWith("Unshare"))
+        {
+            if(!frame.server.setJobShareWith(id, ""))
+            {
+                JOptionPane.showMessageDialog(null, "The job cannot be unshared with this user.");
+            }
+            else
+            {
+                jTextField10.setText("");
+            }
+            setCursor(null);
             setVisible(false);
+            return;
+        }
+        else
+        {
+            if(jTextField10.getText().trim().equals(frame.myName))
+            {
+                JOptionPane.showMessageDialog(null, "You cannot share a job with yourself.");
+                setCursor(null);
+                return;
+            }
+            if(!frame.server.setJobShareWith(id, jTextField10.getText().trim()))
+            {
+                JOptionPane.showMessageDialog(null, "The job cannot be shared with this user.");
+                setCursor(null);
+                return;
+            }
+        }
         setCursor(null);
     }//GEN-LAST:event_jButton15ActionPerformed
 
@@ -1358,7 +1373,7 @@ public class JobInfo extends javax.swing.JFrame {
         if(reports != null && !reports.equals(""))
         {
             String text = "";
-            if(reports.length > 2)
+            if(isParsing && reports.length > 2)
             {
                 Object[] subProblems = new String[reports.length];
                 subProblems[0] = "Parameter-All";

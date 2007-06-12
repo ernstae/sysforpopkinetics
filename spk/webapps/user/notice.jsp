@@ -57,7 +57,7 @@ author: Jiaji Du
         }
         String subject = "SPK service is now available.";
         String message = subject + "\n\nThis message was sent by the SPK service provider.";
-        String[] command = {"perl", perlDir + "email.pl", spkEmail, emailList, subject, message};
+        String[] command = {"perl", perlDir + "email.pl", spkEmail, spkEmail, emailList, subject, message};
         process = Runtime.getRuntime().exec(command);
         process.waitFor();
     }

@@ -60,6 +60,7 @@ author: Jiaji Du
             </c:when>
             <c:otherwise>
 	      <h3>Welcome.  Account Members, Please Log In</h3>
+              <p>If you do not remember your password, click <a href="enteremail.jsp">here.</a> </p>
             </c:otherwise>
           </c:choose>
             <p>

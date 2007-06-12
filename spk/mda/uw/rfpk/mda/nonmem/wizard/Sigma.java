@@ -1161,6 +1161,15 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
             }
 	}
 
+        public boolean checkingStep(JWizardPane wizard){
+            if(model.getSize() == 0)
+            {
+                JOptionPane.showMessageDialog(null, "Covariance was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
@@ -1168,55 +1177,52 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             int size = model.getSize();
-            if(size != 0)
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            String record = (String)model.get(0); 
+            for(int i = 1; i < size; i++)
+                record = record.trim() + "\n" + ((String)model.get(i)).trim();
+            object.getRecords().setProperty("Sigma", record);
+            String[][] sigma = new String[size][];
+            for(int i = 0; i < size; i++)
             {
-                MDAObject object = (MDAObject)wizard.getCustomizedObject();
-                String record = (String)model.get(0); 
-                for(int i = 1; i < size; i++)
-                    record = record.trim() + "\n" + ((String)model.get(i)).trim();
-                object.getRecords().setProperty("Sigma", record);
-                String[][] sigma = new String[size][];
-                for(int i = 0; i < size; i++)
+                String same = "no";
+                String block = (String)model.get(i);
+                int k = i;
+                while(block.indexOf("SAME") != -1)
                 {
-                    String same = "no";
-                    String block = (String)model.get(i);
-                    int k = i;
-                    while(block.indexOf("SAME") != -1)
+                    same = "yes";
+                    block = (String)model.get(--k);   
+                }                    
+                block = block.replaceAll(" FIXED", "F");
+                String[] items = block.split(" ");
+                String struc = items[1].substring(0, items[1].indexOf("(")).toLowerCase();  
+                String dimen = items[1].substring(items[1].indexOf("(") + 1, 
+                                                  items[1].length() - 1);
+                items = block.substring(block.indexOf(")") + 2).trim().split(" ");                
+                sigma[i] = new String[items.length + 3];
+                sigma[i][0] = struc;
+                sigma[i][1] = dimen;
+                sigma[i][2] = same;
+                for(int j = 0; j < items.length; j++)
+                    sigma[i][j + 3] = items[j];
+                
+                // Conversions
+                if(struc.equals("block") && !sigma[i][3].endsWith("F"))
+                {
+                    int bandWidth = Utility.bandWidth(sigma[i]);
+                    if(bandWidth == 1)
                     {
-                        same = "yes";
-                        block = (String)model.get(--k);   
-                    }                    
-                    block = block.replaceAll(" FIXED", "F");
-                    String[] items = block.split(" ");
-                    String struc = items[1].substring(0, items[1].indexOf("(")).toLowerCase();  
-                    String dimen = items[1].substring(items[1].indexOf("(") + 1, 
-                                                     items[1].length() - 1);
-                    items = block.substring(block.indexOf(")") + 2).trim().split(" ");                
-                    sigma[i] = new String[items.length + 3];
-                    sigma[i][0] = struc;
-                    sigma[i][1] = dimen;
-                    sigma[i][2] = same;
-                    for(int j = 0; j < items.length; j++)
-                        sigma[i][j + 3] = items[j];
-                    
-                    // Conversions
-                    if(struc.equals("block") && !sigma[i][3].endsWith("F"))
+                        if(JOptionPane.showConfirmDialog(null, 
+                           "Do you intend to use a diagonal covariance matrix for Block " + (i + 1) + "?", 
+                           "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
+                            sigma[i] = Utility.diagonalMatrix(sigma[i]);
+                    }
+                    else if(bandWidth < Integer.parseInt(dimen))
                     {
-                        int bandWidth = Utility.bandWidth(sigma[i]);
-                        if(bandWidth == 1)
-                        {
-                            if(JOptionPane.showConfirmDialog(null, 
-                                "Do you intend to use a diagonal covariance matrix for Block " + (i + 1) + "?", 
-                                "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
-                                sigma[i] = Utility.diagonalMatrix(sigma[i]);
-                        }
-                        else if(bandWidth < Integer.parseInt(dimen))
-                        {
-                            if(JOptionPane.showConfirmDialog(null, 
-                                "Do you intend to use a banded covariance matrix for Block " + (i + 1) + "?",
-                                "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
-                                Utility.bandedMatrix(sigma[i], bandWidth);
-                        }
+                        if(JOptionPane.showConfirmDialog(null, 
+                           "Do you intend to use a banded covariance matrix for Block " + (i + 1) + "?",
+                           "Question Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0)
+                            Utility.bandedMatrix(sigma[i], bandWidth);
                     }
                 }
                 object.getSource().sigma = sigma;

@@ -280,7 +280,7 @@ public class PlotShow extends JFrame {
             }
 
             // Check for missing data values
-            double[][] dataOut = Utility.removeMissingValue(dataXAll, dataYAll, 0, dataXAll.length - 1);
+            double[][] dataOut = Utility.removeMissingValue(dataXAll, dataYAll, 0, dataXAll.length - 1, false, false);
             if(dataOut == null)
             {
                 JOptionPane.showMessageDialog(null, "Data missing for the plot.");

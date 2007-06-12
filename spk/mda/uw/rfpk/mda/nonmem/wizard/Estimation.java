@@ -1387,6 +1387,10 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
             grayOutNoabort();
      	}
 
+        public boolean checkingStep(JWizardPane wizard){
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {

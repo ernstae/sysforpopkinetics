@@ -161,6 +161,9 @@ public class Des extends javax.swing.JPanel implements WizardStep {
     }
 
     private class MyStepDescriptor extends StepDescriptor{ 
+        
+        private String record;
+        private String code;
 
 	public Component getComponent(){
 	    return panel;
@@ -218,31 +221,21 @@ public class Des extends javax.swing.JPanel implements WizardStep {
             jTextArea1.requestFocusInWindow();
 	}
 
-	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+        public boolean checkingStep(JWizardPane wizard){
+            record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
             // Correct IF conditions
             record = Utility.correctIFConditions(record);
+            // Eliminate empty lines
             while(record.indexOf("\n\n") != -1)
                 record = record.replaceAll("\n\n", "\n");
             String title = getStepTitle();
             if(!record.equals(""))
             {
-                Utility.checkCharacter(record, title);
-                object.getRecords().setProperty("Des", "$DES \n" + record);
-                
+                if(!Utility.checkCharacter(record, title)) return false;              
                 // Eliminate comments
-                String code = Utility.eliminateComments(record);
-                
-                object.getSource().des = "\n" + code.trim() + "\n";
-                
+                code = Utility.eliminateComments(record);
                 // Check ENDIF syntax
-                Utility.checkENDIF(code, title);
+                if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -304,9 +297,27 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                     catch(BadLocationException e) 
                     {
                         JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
-                    }                    
+                    }
+                    return false;
                 }
             }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Code was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
+	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            object.getRecords().setProperty("Des", "$DES \n" + record);
+            object.getSource().des = "\n" + code.trim() + "\n";
 	}
 
 	public boolean isValid(){

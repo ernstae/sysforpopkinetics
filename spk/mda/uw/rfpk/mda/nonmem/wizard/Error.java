@@ -145,6 +145,9 @@ public class Error extends javax.swing.JPanel implements WizardStep {
 
     private class MyStepDescriptor extends StepDescriptor{ 
 
+        private String record;
+        private String code;
+        
 	public Component getComponent(){
 	    return panel;
 	}
@@ -194,14 +197,8 @@ public class Error extends javax.swing.JPanel implements WizardStep {
             jTextArea1.requestFocusInWindow();
 	}
 
-	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+        public boolean checkingStep(JWizardPane wizard){
+            record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
             // Correct IF conditions
             record = Utility.correctIFConditions(record);
             while(record.indexOf("\n\n") != -1)
@@ -209,35 +206,31 @@ public class Error extends javax.swing.JPanel implements WizardStep {
             String title = getStepTitle();
             if(!record.equals(""))
             {
-                Utility.checkCharacter(record, title);
+                if(!Utility.checkCharacter(record, title)) return false;
                 // Eliminate comments
-                String code = Utility.eliminateComments(record); 
+                code = Utility.eliminateComments(record); 
                 // Find number of EPSs for population analysis or Etas for individual analysis                    
                 if(iterator.analysis.equals("population"))
                 {
-                    String pkCode = Utility.eliminateComments(object.getRecords().getProperty("PK"));
-                    if(pkCode != null)
-                        iterator.setNEta(Utility.find(pkCode + code, "ETA"));
-                    else
-                        iterator.setNEta(Utility.find(code, "ETA"));
-                    iterator.setNEps(Utility.find(code, "EPS"));
-                    if(iterator.getNEps() == 0)
+                    if(Utility.find(code, "EPS") == 0)
+                    {
                         JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
                 }
                 else
                 {
-                    iterator.setNEta(Utility.find(code, "ETA"));
-                    if(!iterator.analysis.equals("identifiability") && iterator.getNEta() == 0)
+                    if(!iterator.analysis.equals("identifiability") && Utility.find(code, "ETA") == 0)
+                    {
                         JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
                 }
-                object.getRecords().setProperty("Error", "$ERROR \n" + record);
-                object.getSource().error = "\n" + code + "\n";
-                object.getSource().nEta = String.valueOf(iterator.getNEta());
                 
                 // Check ENDIF syntax
-                Utility.checkENDIF(code, title);
+                if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -299,9 +292,42 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                     catch(BadLocationException e) 
                     {
                         JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
-                    }                    
+                    }
+                    return false;
                 }
             }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Code was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
+	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }            
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            // Find number of EPSs for population analysis or Etas for individual analysis                    
+            if(iterator.analysis.equals("population"))
+            {
+                String pkCode = Utility.eliminateComments(object.getRecords().getProperty("PK"));
+                if(pkCode != null)
+                    iterator.setNEta(Utility.find(pkCode + code, "ETA"));
+                else
+                    iterator.setNEta(Utility.find(code, "ETA"));
+                iterator.setNEps(Utility.find(code, "EPS"));
+            }
+            else
+            {
+                iterator.setNEta(Utility.find(code, "ETA"));
+            }
+            object.getRecords().setProperty("Error", "$ERROR \n" + record);
+            object.getSource().error = "\n" + code + "\n";
+            object.getSource().nEta = String.valueOf(iterator.getNEta());
 	}
 
 	public boolean isValid(){

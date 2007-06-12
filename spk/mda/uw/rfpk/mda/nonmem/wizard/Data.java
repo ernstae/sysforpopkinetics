@@ -379,7 +379,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             initialize(selectedRadioButton);
             return;
         }
-        Vector<Vector> data = new Vector<Vector>(); 
+        Vector<Vector<String[]>> data = new Vector<Vector<String[]>>(); 
         String dataXML = iterator.getDataXML(1);
         if(dataXML == null) return;
         String[] labels = Utility.parseDataXML(dataXML, data);
@@ -439,7 +439,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             if(selectedRadioButton == 0) iterator.setIsDataXML(true);
             return;
         }
-        Vector<Vector> data = new Vector<Vector>();
+        Vector<Vector<String[]>> data = new Vector<Vector<String[]>>();
         String dataXML = iterator.getDataXML(1);
         if(dataXML == null) return;
         String[] labels = Utility.parseDataXML(dataXML, data);
@@ -461,7 +461,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         // Initialize GUI components
         initialize(0);
         // Get the data object as an Vector and the number of columns in the data file
-        Vector<Vector> data = new Vector<Vector>();
+        Vector<Vector<String[]>> data = new Vector<Vector<String[]>>();
         String dataXML = iterator.getDataXML(0);
         if(dataXML == null) return;
         String[] labels = Utility.parseDataXML(dataXML, data);
@@ -490,7 +490,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String path = jTextField1.getText().trim();
-        Vector<Vector> data = new Vector<Vector>();
+        Vector<Vector<String[]>> data = new Vector<Vector<String[]>>();
         String[] labels = Utility.parseDataFile(path, data, isInd);
         if(labels == null) return;
         int nDataCol = labels.length;
@@ -549,6 +549,8 @@ public class Data extends javax.swing.JPanel implements WizardStep {
 
     private class MyStepDescriptor extends StepDescriptor{
 
+        private String fileName;
+        
 	public Component getComponent(){
 	    return panel;
 	}
@@ -633,7 +635,8 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             }
             
             // Check dataset type for population-level
-            if(!isInd && !((MDAObject)wizard.getCustomizedObject()).getDataLabels()[0].equals("ID"))
+            if(!isInd && ((MDAObject)wizard.getCustomizedObject()).getDataLabels() != null &&
+               !((MDAObject)wizard.getCustomizedObject()).getDataLabels()[0].equals("ID"))
             {
                 isValid = false;
                 wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray());
@@ -641,22 +644,15 @@ public class Data extends javax.swing.JPanel implements WizardStep {
             }
 	}
 
-	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+        public boolean checkingStep(JWizardPane wizard){
             String filePath = filename.trim();
             if(filePath == "")
-                return;
+            {
+                JOptionPane.showMessageDialog(null, "Dataset name was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
             String[] path = filePath.replace('\\', '/').split("/");            
-            String fileName = path[path.length - 1]; 
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = "$DATA " + fileName.replaceAll("\r", "");
-            object.getRecords().setProperty("Data", record); 
-            object.getSource().data = record.substring(6);
-            iterator.setIsDataXML(selectedRadioButton == 0);
+            fileName = path[path.length - 1];
             if(iterator.analysis.equals("individual") || iterator.analysis.equals("identifiability"))
             {
                 int nInd = ((MDAObject)wizard.getCustomizedObject()).getData().size();            
@@ -664,7 +660,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
                 {
                     String[] possibleValues = new String[nInd];
                     java.util.ArrayList<String> idList = new java.util.ArrayList<String>(nInd);
-                    Vector<Vector> popData = ((MDAObject)wizard.getCustomizedObject()).getData();
+                    Vector<Vector<String[]>> popData = ((MDAObject)wizard.getCustomizedObject()).getData();
                     int i = 0;
                     for(Object indData : popData)
                     {
@@ -678,14 +674,31 @@ public class Data extends javax.swing.JPanel implements WizardStep {
                                                                     possibleValues[0]);
                     if(id != null)
                     {
-                        Vector selectedData = popData.get(idList.indexOf(id));
+                        Vector<String[]> selectedData = popData.get(idList.indexOf(id));
                         popData.removeAllElements();
                         popData.add(selectedData);
                     }
                     else
-                        JOptionPane.showMessageDialog(null, "Please go back to load another dataset.");
+                    {
+                        JOptionPane.showMessageDialog(null, "Please load another dataset.");
+                        return false;
+                    }
                 }
             }
+            return true;
+        }
+        
+	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }             
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            String record = "$DATA " + fileName.replaceAll("\r", "");
+            object.getRecords().setProperty("Data", record); 
+            object.getSource().data = record.substring(6);
+            iterator.setIsDataXML(selectedRadioButton == 0);
 	}
 
 	public boolean isValid(){

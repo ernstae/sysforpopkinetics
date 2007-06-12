@@ -190,6 +190,31 @@ public abstract class Spkdb {
         pstmt.close();
         return ok;
     }
+    /** Set job share_with.
+     * @return true if the job's share_with is set as the specified, otherwise false.
+     * @param userId job owner's user ID.
+     * @param shareWith  user_id of the user to share the job.
+     * @param conn open connection to the database
+     * @param jobId id number of the job.
+     * @throws SQLException a SQL exception.
+     */
+    public static boolean setJobShareWith(Connection conn, long userId, long jobId, long shareWith)
+        throws SQLException
+    {
+        String sql = "update job set share_with=" + shareWith + " where job_id=" + jobId 
+                     + " and user_id=" + userId;
+        Statement stmt = conn.createStatement();
+        boolean ok = false;
+        if(stmt.executeUpdate(sql) == 1)
+            ok = true;
+        else if(stmt.executeUpdate(sql) == 0)
+        {
+            sql = "update job set share_with=0 where job_id=" + jobId;
+            ok = stmt.executeUpdate(sql) == 1;
+        }
+        stmt.close();
+        return ok;
+    }
     /**        Get a sequence of jobs for a given user.
      * @return Object of type java.sql.Resultset, containing a sequence of rows of the
      *        job table, belonging to a given user. Three fields, xml_source, cpp_source, and
@@ -212,9 +237,9 @@ public abstract class Spkdb {
 	throws SQLException
     {
 	String
-	    sql = "select job_id, abstract, state_code, start_time, event_time, "
+	    sql = "select job_id, share_with, abstract, state_code, start_time, event_time, "
 	    + "end_code, model_id, model_version, dataset_id, dataset_version "
-	    + "from job where user_id=" + userId;
+	    + "from job where (user_id=" + userId + " or share_with=" + userId + ")";
 	if (leftOff != 0) {
 	    sql += " and job_id < " + leftOff;
 	}
@@ -229,9 +254,9 @@ public abstract class Spkdb {
         if(keyWords != null)
         {
             String[] words = keyWords.split(" ");
-            sql = "select j.job_id, j.abstract, j.state_code, j.start_time, j.event_time, "
+            sql = "select j.job_id, j.share_with, j.abstract, j.state_code, j.start_time, j.event_time, "
 	          + "j.end_code, j.model_id, j.model_version, j.dataset_id, j.dataset_version "
-	          + "from job j, model m, dataset d where j.user_id=" + userId 
+	          + "from job j, model m, dataset d where (j.user_id=" + userId + " or j.share_with=" + userId + ")" 
                   + " and j.model_id=m.model_id and j.dataset_id=d.dataset_id";
 	    if (leftOff != 0)
 	        sql += " and j.job_id < " + leftOff;
@@ -398,6 +423,7 @@ public abstract class Spkdb {
 	 if (pattern1.matcher(name[0]).find()) {
 	     throw new SpkdbException("invalid attempt to change dataset_id");
 	 }
+/*
 	 String sql = "update dataset set " + name[0] + "='" + value[0] + "'";
 	 for (int i = 1; i < name.length; i++) {
 	     if (pattern1.matcher(name[i]).find()) {
@@ -410,6 +436,21 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 boolean ok = stmt.getUpdateCount() == 1;
          stmt.close();
+*/         
+         String sql = "update dataset set " + name[0] + "=?";
+	 for (int i = 1; i < name.length; i++) {
+	     if (pattern1.matcher(name[i]).find()) {
+		 throw new SpkdbException("invalid attempt to change dataset_id");
+	     }
+ 	     sql += ", " + name[i] + "=?";
+	 }
+	 sql += " where dataset_id=" + datasetId + ";";
+         PreparedStatement pstmt = conn.prepareStatement(sql);
+         for(int i = 0; i < name.length; i++)
+            pstmt.setString(i + 1, value[i]);
+         pstmt.executeUpdate();
+         boolean ok = pstmt.getUpdateCount() == 1;
+         pstmt.close();
          return ok;
     }
     /**        Get datasets belonging to a given user
@@ -502,6 +543,7 @@ public abstract class Spkdb {
 	 if (pattern1.matcher(name[0]).find()) {
 	     throw new SpkdbException("invalid attempt to change model_id");
 	 }
+/*         
 	 String sql = "update model set " + name[0] + "='" + value[0] + "'";
 	 for (int i = 1; i < name.length; i++) {
 	     if (pattern1.matcher(name[i]).find()) {
@@ -514,6 +556,21 @@ public abstract class Spkdb {
 	 stmt.executeUpdate(sql);
 	 boolean ok = stmt.getUpdateCount() == 1;
          stmt.close();
+*/
+         String sql = "update model set " + name[0] + "=?";
+	 for (int i = 1; i < name.length; i++) {
+	     if (pattern1.matcher(name[i]).find()) {
+		 throw new SpkdbException("invalid attempt to change model_id");
+	     }
+ 	     sql += ", " + name[i] + "=?";
+	 }
+	 sql += " where model_id=" + modelId + ";";
+         PreparedStatement pstmt = conn.prepareStatement(sql);
+         for(int i = 0; i < name.length; i++)
+            pstmt.setString(i + 1, value[i]);
+         pstmt.executeUpdate();
+         boolean ok = pstmt.getUpdateCount() == 1;
+         pstmt.close();
          return ok;
     }
     /**        Get a sequence of  models belonging to a given user
@@ -837,6 +894,24 @@ public abstract class Spkdb {
     {
         String sql = "select username from user where team_id=" + group_id + 
                      " order by username";
+        Statement stmt = conn.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	return rs;
+    }
+    /** Get email addresses of users
+     * @param conn open connection to the database
+     * @param type user type: developer, tester or all
+     * @return email address list
+     * @throws SQLException a SQL exception.
+     */
+    public static ResultSet getEmailAddress(Connection conn, String type)
+        throws SQLException, SpkdbException
+    {
+        String sql = null;
+        if(type.equals("developer")) sql = "select email from user where dev=1";
+        if(type.equals("tester")) sql = "select email from user where test=1";
+        if(type.equals("all")) sql = "select email from user where contact=1";
+        if(sql == null) throw new SpkdbException("The user type was not correctly specified.");
         Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
 	return rs;

@@ -161,6 +161,9 @@ public class PK extends javax.swing.JPanel implements WizardStep {
     }
 
     private class MyStepDescriptor extends StepDescriptor{ 
+        
+        private String record;
+        private String code;
 
 	public Component getComponent(){
 	    return panel;
@@ -223,14 +226,8 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             jTextArea1.requestFocusInWindow();
 	}
 
-	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();        
-            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+        public boolean checkingStep(JWizardPane wizard){
+            record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
             // Correct IF conditions
             record = Utility.correctIFConditions(record);
             while(record.indexOf("\n\n") != -1)
@@ -238,40 +235,44 @@ public class PK extends javax.swing.JPanel implements WizardStep {
             String title = getStepTitle();
             if(!record.equals(""))
             {
-                Utility.checkCharacter(record, title);
-                object.getRecords().setProperty("PK", "$PK \n" + record);
-                
+                if(!Utility.checkCharacter(record, title)) return false;
                 // Eliminate comments
-                String code = Utility.eliminateComments(record);
-                
-                object.getSource().pk = "\n" + code.trim() + "\n";
-                
-                // Find number of THETAs and number of ETAS
-                iterator.setNTheta(Utility.find(code, "THETA"));
-                iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+                code = Utility.eliminateComments(record);
+                // Check number of THETAs and number of ETAS
+                int nTheta = Utility.find(code, "THETA");
+                int nEta = Utility.find(code.replaceAll("THETA", ""), "ETA");
                 if(iterator.analysis.equals("population"))
                 {
-                    if(iterator.getNTheta() == 0)
+                    if(nTheta == 0)
+                    {
                         JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
-                    if(iterator.getNEta() == 0)
+                        return false;
+                    }
+                    if(nEta == 0)
+                    {
                         JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
                 }
                 else
                 {
-                    if(iterator.getNTheta() == 0)
+                    if(nTheta == 0)
+                    {
                         JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
-                    if(iterator.getNEta() != 0)
+                        return false;
+                    }
+                    if(nEta != 0)
+                    {
                         JOptionPane.showMessageDialog(null, "ETA is not a valid model parameter for an individual model.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
                 }
-                
-                object.getSource().nTheta = String.valueOf(iterator.getNTheta());
-                
                 // Check ENDIF syntax
-                Utility.checkENDIF(code, title);
+                if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -333,9 +334,31 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                     catch(BadLocationException e) 
                     {
                         JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
-                    }                    
-                }                
+                    }
+                    return false;
+                }
             }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Code was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
+	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();        
+            record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+            object.getRecords().setProperty("PK", "$PK \n" + record);
+            object.getSource().pk = "\n" + code.trim() + "\n";
+            iterator.setNTheta(Utility.find(code, "THETA"));
+            iterator.setNEta(Utility.find(code.replaceAll("THETA", ""), "ETA"));
+            object.getSource().nTheta = String.valueOf(iterator.getNTheta());        
 	}
         
 	public boolean isValid(){
@@ -399,7 +422,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                             pk = "CL=\nV1=\nQ=\nV2=\nK=CL/V1\nK12=Q/V1\nK21=Q/V2";
                             break;
                         case 5:
-                            pk = "AOB=\nALPHA=\nBETA=\nK21= (AOB*BETA+ALPHA)/(AOB+1)\nK= ALPHA*BETA/K21\nK12= ALPHA+BETA-K21-K";    
+                            pk = "AOB=\nALPHA=\nBETA=\nK21=(AOB*BETA+ALPHA)/(AOB+1)\nK=ALPHA*BETA/K21\nK12=ALPHA+BETA-K21-K";    
                     }
                     break;
                 case 4: 
@@ -415,7 +438,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                             pk = "CL=\nV2=\nQ=\nV3=\nKA=\nK=CL/V2\nK23=Q/V2\nK32=Q/V3";
                             break;
                         case 5:
-                            pk = "AOB=\nALPHA=\nBETA=\nKA=\nK32= (AOB*BETA+ALPHA)/(AOB+1)\nK= ALPHA*BETA/K32\nK23= ALPHA+BETA-K32-K";
+                            pk = "AOB=\nALPHA=\nBETA=\nKA=\nK32=(AOB*BETA+ALPHA)/(AOB+1)\nK=ALPHA*BETA/K32\nK23=ALPHA+BETA-K32-K";
                     }
                     break;
                 case 10: 

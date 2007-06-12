@@ -1039,6 +1039,15 @@ public class Table extends javax.swing.JPanel implements WizardStep {
             return record;
         }
     
+        public boolean checkingStep(JWizardPane wizard){
+            if(model.getSize() == 0)
+            {
+                JOptionPane.showMessageDialog(null, "Table was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
     	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
@@ -1046,8 +1055,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             int size = model.getSize();
-            if(size == 0)
-                return; 
             MDAObject object = (MDAObject)wizard.getCustomizedObject();  
             // Create and save record
             String record = ((String)model.get(0)).replaceAll("\r", "");

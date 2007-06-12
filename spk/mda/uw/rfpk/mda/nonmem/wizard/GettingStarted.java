@@ -341,7 +341,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         setPreferredSize(new java.awt.Dimension(500, 380));
         buttonGroup2.add(jRadioButton3);
-        jRadioButton3.setSelected(true);
         jRadioButton3.setText("Analytic/algebraic model");
         jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -431,6 +430,12 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
         buttonGroup3.add(graphicalEditor);
         graphicalEditor.setText("Graphical model editor");
+        graphicalEditor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphicalEditorActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 9;
@@ -516,7 +521,6 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         add(jLabel8, gridBagConstraints);
 
         buttonGroup3.add(textEditor);
-        textEditor.setSelected(true);
         textEditor.setText("Text model editor");
         textEditor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -725,6 +729,10 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
     }// </editor-fold>//GEN-END:initComponents
 
+    private void graphicalEditorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphicalEditorActionPerformed
+        setLeftOptions();
+    }//GEN-LAST:event_graphicalEditorActionPerformed
+
     private void jRadioButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton8ActionPerformed
         refresh();
     }//GEN-LAST:event_jRadioButton8ActionPerformed
@@ -745,6 +753,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         if(jRadioButton4.isSelected() && isGraphicalModel()) 
             JOptionPane.showMessageDialog(null, "The graphical information will be gone",
                                           "Warning Message", JOptionPane.WARNING_MESSAGE);
+        setLeftOptions();
     }//GEN-LAST:event_textEditorActionPerformed
 
     private void trans6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trans6ActionPerformed
@@ -868,6 +877,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
         boolean is = isGraphicalModel();
         graphicalEditor.setEnabled(is);
         graphicalEditor.setSelected(is);
+        textEditor.setSelected(!is);
         if(iterator.identifiabilitySeed != null)
             seedTextField.setText(iterator.identifiabilitySeed);
         refresh();        
@@ -1193,6 +1203,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 
     private class MyStepDescriptor extends StepDescriptor{ 
 
+        private String seed;
+        
 	public Component getComponent(){
 	    return panel;
 	}
@@ -1245,6 +1257,31 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             }
 	}
 
+        public boolean checkingStep(JWizardPane wizard){
+            if(iterator.analysis.equals("identifiability"))
+            {
+                if(!seedTextField.equals(""))
+                {
+                    seed = seedTextField.getText().trim();
+                    if(seed.length() > 10)
+                        seed = seed.substring(0, 10);
+                    if(!Utility.isPosIntNumber(seed))
+                    {
+                        JOptionPane.showMessageDialog(null, "The seed for model identifiability must be a positive integer.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "The seed for model identifiability is missing.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             iterator.setIsEstimation(jCheckBox1.isSelected()); 
             iterator.setIsSimulation(jCheckBox2.isSelected());
@@ -1274,22 +1311,7 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             iterator.isGraphic = graphicalEditor.isSelected();
             if(graphicalEditor.isSelected()) iterator.setAdvan(6);
             if(iterator.analysis.equals("identifiability"))
-            {
-                if(!seedTextField.equals(""))
-                {
-                    String seed = seedTextField.getText().trim();
-                    if(seed.length() > 10)
-                        seed = seed.substring(0, 10);
-                    if(Utility.isPosIntNumber(seed))
-                        ((MDAObject)wizard.getCustomizedObject()).getSource().seed = seed;
-                    else
-                        JOptionPane.showMessageDialog(null, "The seed for model identifiability must be a positive integer.",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else
-                    JOptionPane.showMessageDialog(null, "The seed for model identifiability is missing.",
-                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
+                ((MDAObject)wizard.getCustomizedObject()).getSource().seed = seed;
             iterator.identifiabilitySeed = null;
 	}
 

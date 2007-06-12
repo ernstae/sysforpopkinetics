@@ -995,6 +995,15 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
             }            
  	}
 
+        public boolean checkingStep(JWizardPane wizard){
+            if(nTheta == 0 || model.getSize() == 0 || model.getSize() != nTheta)
+            {
+                JOptionPane.showMessageDialog(null, "Value was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
@@ -1007,31 +1016,28 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
             String record = "";
             for(int i = 0; i < nTheta; i++)
                 record = record + "\n" + ((String)model.get(i)).replaceAll("\r", "");
-            if(!record.equals(""))
+            object.getRecords().setProperty("Theta", "$THETA " + record);
+            String[][] theta = new String[nTheta][4];
+            for(int i = 0; i < nTheta; i++)
             {
-                object.getRecords().setProperty("Theta", "$THETA " + record);
-                String[][] theta = new String[nTheta][4];
-                for(int i = 0; i < nTheta; i++)
+                String element = (String)model.get(i);
+                element = element.substring(1, element.length() - 1);
+                String[] values = element.split(",");
+                if(values.length == 1)
                 {
-                    String element = (String)model.get(i);
-                    element = element.substring(1, element.length() - 1);
-                    String[] values = element.split(",");
-                    if(values.length == 1)
-                    {
-                        String value = values[0].split(" ")[0];
-                        for(int j = 0; j < 3; j++)
-                            theta[i][j] = value;
-                        theta[i][3] = "yes";
-                    }
-                    else
-                    {
-                        for(int j = 0; j < 3; j++)
-                            theta[i][j] = values[j];
-                        theta[i][3] = "no";
-                    }
+                    String value = values[0].split(" ")[0];
+                    for(int j = 0; j < 3; j++)
+                        theta[i][j] = value;
+                    theta[i][3] = "yes";
                 }
-                object.getSource().theta = theta;
+                else
+                {
+                    for(int j = 0; j < 3; j++)
+                        theta[i][j] = values[j];
+                    theta[i][3] = "no";
+                }
             }
+            object.getSource().theta = theta;
 	}
 
 	public boolean isValid(){

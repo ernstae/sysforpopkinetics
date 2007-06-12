@@ -422,7 +422,7 @@ public class Utility {
      * for the individual.  Each array contains data items of number of columns.
      * @return a String array containing the data labels.
      */        
-    public static String[] parseDataXML(String dataXML, Vector<Vector> data)
+    public static String[] parseDataXML(String dataXML, Vector<Vector<String[]>> data)
     {
         int nDataCol = -1;
         String[] labels = null;
@@ -534,7 +534,7 @@ public class Utility {
      * @return a String array containing the data labels in the comment line.
      * In case of error, null is returned.
      */        
-    public static String[] parseDataFile(String filename, Vector<Vector> data, boolean isInd)
+    public static String[] parseDataFile(String filename, Vector<Vector<String[]>> data, boolean isInd)
     {
         Vector<String[]> indData = new Vector<String[]>();
         String[] labels = null;
@@ -549,7 +549,7 @@ public class Utility {
             
 
             boolean hasComment = false;
-            if(firstLine.startsWith("C") || firstLine.startsWith("c"))
+            if(firstLine.startsWith("C") || firstLine.startsWith("c") || firstLine.startsWith("#"))
             {
                 hasComment = true;
                 firstLine = firstLine.substring(1).trim();
@@ -900,14 +900,16 @@ public class Utility {
      * @param text the code to be checked.
      * @param step the step title.
      */
-    public static void checkENDIF(String text, String step)
+    public static boolean checkENDIF(String text, String step)
     {                 
         if(Pattern.compile("\\bEND IF\\b", Pattern.UNIX_LINES).matcher(text).find())
         {
             JOptionPane.showMessageDialog(null, "A syntax error 'END IF' was found in " + step + "." +
                                           " The correct syntax is 'ENDIF'. Please correct it.",
                                           "Error Message", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
+        return true;
     }
     
     /** check if parentheses are mismatched.
@@ -942,7 +944,7 @@ public class Utility {
                 else
                     JOptionPane.showMessageDialog(null, "Parenthesis mismatch was found in '" + step +
                                                   "' line " + (i + 1) + ", ' ( ' is expected.\n" + 
-                                                  "Please click the 'Back' button and correct it.", "Input Error",
+                                                  "Please correct it.", "Input Error",
                                                   JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -1226,15 +1228,19 @@ public class Utility {
     
     /** Remove missing values in two data array. If a data element is missing in one array,
      *  the data element in the other array is also removed.  The data element before the 
-     *  specified starting index and after the specified ending index are also removed.
-     * @param dataX a data array of double values.
-     * @param dataY a data array of double values.
+     *  specified starting index and after the specified ending index are also removed. If
+     *  log scale is specified, non-positive data are removed.
+     * @param dataX a data array of double values for x.
+     * @param dataY a data array of double values for y.
      * @param start starting index to pick data.
      * @param end ending index to pick data.
+     * @param isLogX true for log scale, false for uniform scale in x.
+     * @param isLogX true for log scale, false for uniform scale in y.
      * @return the two resulted data arrays or null if there is no data in the original arrays.
      *         The two returned arrays are bundled in an array: first for dataX, last for dataY.
      */
-    public static double[][] removeMissingValue(double[] dataX, double[] dataY, int start, int end)
+    public static double[][] removeMissingValue(double[] dataX, double[] dataY, int start, int end,
+                                                boolean isLogX, boolean isLogY)
     {
         double valueX, valueY;
         double[][] dataOut = null;
@@ -1249,8 +1255,35 @@ public class Utility {
             if(valueX == valueX && !String.valueOf(valueX).endsWith("Infinity") &&
                valueY == valueY && !String.valueOf(valueY).endsWith("Infinity"))
             {
-                tempX.add(valueX);
-                tempY.add(valueY);
+                if(!isLogX && !isLogY)
+                {
+                    tempX.add(valueX);
+                    tempY.add(valueY);
+                }
+                else if(isLogX && !isLogY)
+                {
+                    if(valueX > 0)
+                    {
+                        tempX.add(valueX);
+                        tempY.add(valueY);
+                    }
+                }
+                else if(!isLogX && isLogY)
+                {
+                    if(valueY > 0)
+                    {
+                        tempX.add(valueX);
+                        tempY.add(valueY);
+                    }
+                }    
+                else
+                {
+                    if(valueX > 0 && valueY > 0)
+                    {
+                        tempX.add(valueX);
+                        tempY.add(valueY);
+                    }
+                }
             }
         }
         if(tempX.size() > 0)

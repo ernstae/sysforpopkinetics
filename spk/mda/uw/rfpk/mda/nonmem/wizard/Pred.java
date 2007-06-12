@@ -169,6 +169,9 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
     }
 
     private class MyStepDescriptor extends StepDescriptor{ 
+        
+        private String record;
+        private String code;
 
 	public Component getComponent(){
 	    return panel;
@@ -208,12 +211,8 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
             jTextArea1.requestFocusInWindow();
 	}
 
-	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-                return;
-           
-            MDAObject object = (MDAObject)wizard.getCustomizedObject();
-            String record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
+        public boolean checkingStep(JWizardPane wizard){
+            record = jTextArea1.getText().trim().replaceAll("\r", "").toUpperCase();
             // Correct IF conditions
             record = Utility.correctIFConditions(record);
             while(record.indexOf("\n\n") != -1)
@@ -221,39 +220,43 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
             String title = getStepTitle();
             if(!record.equals(""))
             {
-                Utility.checkCharacter(record, title);
-                object.getRecords().setProperty("Pred", "$PRED \n" + record);
-
+                if(!Utility.checkCharacter(record, title)) return false;
                 // Eliminate comments
-                String code = Utility.eliminateComments(record);
-                
-                object.getSource().pred = "\n" + code.trim() + "\n";
-                
-                // Find number of THETAs
-                iterator.setNTheta(Utility.find(code, "THETA"));
-                if(iterator.getNTheta() == 0)
+                code = Utility.eliminateComments(record);
+                // Find number of THETAs, ETAs and EPSs
+                int nTheta = Utility.find(code, "THETA");
+                int nEta = Utility.find(code, "ETA");
+                int nEps = Utility.find(code, "EPS");
+                if(nTheta == 0)
+                {
                     JOptionPane.showMessageDialog(null, "The number of fixed effect parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
-                // Find number of ETAs
-                int nE = Utility.find(code, "ETA");
-                iterator.setNEta(Utility.find(code, "ETA"));
-                if(iterator.getNEta() == 0)
+                    return false;
+                }
+                if(nEta == 0)
                 {
                     if(iterator.analysis.equals("population"))
+                    {
                         JOptionPane.showMessageDialog(null, "The number of random effect parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
                     else
+                    {
                         JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                       "Input Error", JOptionPane.ERROR_MESSAGE);
-                }
-                // Find number of EPSs
-                iterator.setNEps(Utility.find(code, "EPS"));                
-                if(iterator.analysis.equals("population") && iterator.getNEps() == 0)
+                        return false;
+                    }
+                }           
+                if(iterator.analysis.equals("population") && nEps == 0)
+                {
                     JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
 
                 // Check ENDIF syntax
-                Utility.checkENDIF(code, title);
+                if(!Utility.checkENDIF(code, title)) return false;;
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch
@@ -315,9 +318,30 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                     catch(BadLocationException e) 
                     {
                         JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
-                    }                    
+                    }
+                    return false;
                 }
-            }            
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Code was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+            
+	public void hidingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
+            MDAObject object = (MDAObject)wizard.getCustomizedObject();
+            object.getRecords().setProperty("Pred", "$PRED \n" + record);
+            object.getSource().pred = "\n" + code.trim() + "\n";
+            iterator.setNTheta(Utility.find(code, "THETA"));
+            iterator.setNEta(Utility.find(code, "ETA"));
+            iterator.setNEps(Utility.find(code, "EPS"));
 	}
 
 	public boolean isValid(){

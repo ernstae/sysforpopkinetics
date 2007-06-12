@@ -301,6 +301,10 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
             }
      	}
 
+        public boolean checkingStep(JWizardPane wizard){
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {

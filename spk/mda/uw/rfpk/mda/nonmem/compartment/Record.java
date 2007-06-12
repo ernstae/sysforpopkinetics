@@ -100,66 +100,19 @@ public class Record {
     protected String getPK()
     {
         StringBuffer sb = new StringBuffer();
-        
-        // Append user defined equations
-        if(!Model.equations.equals(""))
-            sb.append("\n" + Model.equations);
-        
-        // append user defined variables
-        String value;
-        if(Model.variableList != null)
-            for(String key : Model.variableList)
-            {
-                value = Model.variables.getProperty(key);
-                if(value != null)
-                    sb.append("\n" + value.trim().replaceAll("\n", ";\n"));
-            }
-                
-        // Append fluxes
-        int size = Model.fluxes.size();
-//        for(int i = 0; i < size; i++)
-//        {
-//            Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
-//            if(flux.element1 == null || flux.element1 instanceof Element.Compartment)
-//                sb.append("\n" + flux.flowRate.trim().replaceAll("\n", ";\n"));
-//        }
-        for(String name: Model.fluxList)
+        for(Parameter parameter : Model.parameterList)
         {
-            for(int i = 0; i < size; i++)
-            {
-                Element.Flux flux = (Element.Flux)Model.fluxes.get(i);
-                if(flux.name.equals(name))
-                    sb.append("\n" + flux.flowRate.trim().replaceAll("\n", ";\n"));
-            }
-        }
-        
-        // Append compartments and delays
-        size = Model.elements.size();
-        for(int i = 0; i < size; i++)
-        {
-            Element element = (Element)Model.elements.get(i);
-            if(element instanceof Element.Compartment)
-            {
-                Element.Compartment comp = (Element.Compartment)element;
-                if(!comp.force.equals(""))
-                    sb.append("\nFF" + comp.number + "=" + comp.force);
-                Enumeration keys = comp.parameters.keys();
-                String param;
-                while(keys.hasMoreElements())
-                {
-                    param = (String)keys.nextElement();
-                    sb.append("\n" + comp.parameters.getProperty(param).trim().replaceAll("\n", ";\n"));
-                }
-            }
+            int indexIF = parameter.value.indexOf("IF(");
+            if(indexIF == -1)
+                sb.append(parameter.value.replaceAll("\n", ";\n"));
             else
             {
-                Element.Delay delay = (Element.Delay)element;
-                if(delay.compartments.size() > 0 && !delay.delayTime.equals(""))
-                    sb.append("\n" + delay.delayTime.trim().replaceAll("\n", ";\n"));
+                sb.append(parameter.value.substring(0, indexIF).replaceAll("\n", ";\n"));
+                sb.append(parameter.value.substring(indexIF));
             }
+            sb.append("\n"); 
         }
-
-        pkText = sb.toString().trim().replaceAll(" ", "");
+        pkText = sb.toString().trim();
         return pkText;
     }
     
@@ -198,7 +151,7 @@ public class Record {
                     Element.Flux flux = (Element.Flux)Model.fluxes.get(j);
                     if(flux.element1 == element)
                     {
-                        if(!((Element.Compartment)flux.element1).force.equals(""))
+                        if(((Element.Compartment)flux.element1).force != null)
                             eqn += "-" + flux.name + "*FF" + compartment.number;
                         else
                             eqn += "-" + flux.name + "*A(" + compartment.number + ")";
@@ -207,7 +160,7 @@ public class Record {
                     {
                         if(flux.element1 instanceof Element.Compartment)
                         {
-                            if(!((Element.Compartment)flux.element1).force.equals(""))
+                            if(((Element.Compartment)flux.element1).force != null)
                                 eqn += "+" + flux.name + "*FF" + flux.element1.number;
                             else
                                 eqn += "+" + flux.name + "*A(" + flux.element1.number + ")";
@@ -223,6 +176,7 @@ public class Record {
                         }
                     }
                 }
+                eqn += " " + compartment.timeRate;
                 if(!eqn.endsWith("="))
 //                    sb.append(eqn);
                     eqns[compartment.number - 1] = eqn;
@@ -237,7 +191,7 @@ public class Record {
                     if(flux.element2 == element && flux.element1 != null)
                     {
                         if(flux.element1 instanceof Element.Compartment && 
-                           !((Element.Compartment)flux.element1).force.equals(""))
+                           ((Element.Compartment)flux.element1).force != null)
                             eqn += "+" + flux.name + "*FF" + flux.element1.number;
                         else
                             eqn += "+" + flux.name + "*A(" + flux.element1.number + ")";
@@ -264,10 +218,11 @@ public class Record {
             }
         }
         for(int i = 0; i < eqns.length; i++)
-            sb.append(eqns[i]);
+            if(eqns[i] != null)
+                sb.append(eqns[i]);
         desText = sb.toString().trim();
-        if(desText.equals("null"))
-            return "";
+        if(!Model.desEqns.equals(""))
+            desText = Model.desEqns + "\n" + desText;
         return desText;       
     }
     
@@ -313,7 +268,7 @@ public class Record {
                 else
                 {
                     Element.Compartment comp = (Element.Compartment)sample.compartments.get(0);
-                    str += "IF(CMP .EQ. " + comp.number + ") THEN\n  " + space + sample.errorModel + 
+                    str += "IF(CMT .EQ. " + comp.number + ") THEN\n  " + space + sample.errorModel + 
                            "\n" + space + "ENDIF";
                 }
                 sb.append(str);
@@ -342,8 +297,8 @@ public class Record {
             }
         }
         errorText += sb.toString();
-        if(Model.errorEqns.length() != 0)
-            errorText = Model.errorEqns + "\n" + errorText;
+        if(Model.errorEqns.trim().length() != 0)
+            errorText = Model.errorEqns.trim().replaceAll("\n", ";\n") + ";\n" + errorText;
         return errorText;
     }
 
@@ -375,6 +330,38 @@ public class Record {
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+        }
+        int nDefDose = 0;
+        int nDefObservation = 0;
+        for(Element element : Model.elements)
+        {
+            if(element instanceof Element.Compartment)
+            {
+                if(((Element.Compartment)element).attributes.indexOf("DEFDOSE") != -1)
+                    nDefDose++;
+                if(((Element.Compartment)element).attributes.indexOf("DEFOBSERVATION") != -1)
+                    nDefObservation++;    
+            }
+        }
+        if(nDefDose == 0)
+        {
+            JOptionPane.showMessageDialog(null, "DEFDOSE is missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if(nDefObservation == 0)
+        {
+            JOptionPane.showMessageDialog(null, "DEFOBSERVATION is missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if(nDefDose > 1)
+        {
+            JOptionPane.showMessageDialog(null, "Multiple DEFDOSEs were found.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if(nDefObservation > 1)
+        {
+            JOptionPane.showMessageDialog(null, "Multiple DEFOBSERVATIONs were found.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
         // Set source
         String[] modelLines = modelText.split("\n");
@@ -476,6 +463,8 @@ public class Record {
         String[] sizes;
         for(int i = 0; i < rows.length; i++)
         {
+            if(rows[i].startsWith("IF(") || rows[i].equals("ELSE") || rows[i].equals("ENDIF"))
+                continue;
             sizes = rows[i].trim().split("=");
             if(sizes.length != 2)
             {
@@ -546,7 +535,7 @@ public class Record {
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        String[] rows = desText.split("\n");
+        String[] rows = desText.substring(desText.indexOf("DADT")).split("\n");
         String[] sizes;
         for(int i = 0; i < rows.length; i++)
         {
