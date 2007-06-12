@@ -69,7 +69,7 @@ author: Jiaji Du
             <% String sender = getServletContext().getInitParameter("emailAddress");
                String receiver = "Developers";
                String subject = "";
-               String message = "";
+               String message = "\n\nPlease let us know if you would prefer not to receive future mailings about the SPK software, new features and other training offerings by sending a message to rfpksoft@u.washington.edu with \"REMOVE\" in the subject line.";
                try
                {
                    File file = new File("/tmp/letter");
@@ -179,7 +179,7 @@ author: Jiaji Du
                 
             <% if(emailList != null)
                {
-                   String[] command = {"perl", perlDir + "email.pl", sender, emailList, subject, message};
+                   String[] command = {"perl", perlDir + "email.pl", sender, sender, emailList, subject, message};
                    Process process = null;
                    try
                    {

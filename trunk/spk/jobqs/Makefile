@@ -4,9 +4,9 @@ T = jobqserver
 WEB = $(WEBDIR)/v0.1/specs/$T
 
 java:	
-	/usr/java/j2sdk1.4.2_03/bin/javac uw/rfpk/jobqs/JobQueue.java
-	/usr/java/j2sdk1.4.2_03/bin/javac -classpath ../db/api/java/:. TestJobqs.java
-	/usr/java/j2sdk1.4.2_03/bin/javadoc -d docs uw.rfpk.jobqs
+	/usr/java/jdk1.5.0_07/bin/javac uw/rfpk/jobqs/JobQueue.java
+	/usr/java/jdk1.5.0_07/bin/javac -classpath ../db/api/java/:. TestJobqs.java
+	/usr/java/jdk1.5.0_07/bin/javadoc -d docs uw.rfpk.jobqs
 	
 test:
 	load_spktest.pl --schema ../db/api/schema.sql --basedata ../db/api/basedata.sql --userdata ../db/api/userdata.sql

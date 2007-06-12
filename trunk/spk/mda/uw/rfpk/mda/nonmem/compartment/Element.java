@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.BasicStroke;
 import java.util.Vector;
+import java.util.HashMap;
 import java.util.Properties;
 
 /** This class defines elements of graphical representation of a model.
@@ -184,9 +185,11 @@ public abstract class Element implements Cloneable
         /** Attributes */
         protected Vector<String> attributes = new Vector<String>();
         /** Compartment force */
-        protected String force = "";
+        protected Parameter force = null;
         /** Parameters */
-        protected Properties parameters = new Properties();
+        protected HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
+        /** Time rate of concentration */
+        protected String timeRate = "";
     }
     
     /** This class defines delay. */
@@ -204,7 +207,9 @@ public abstract class Element implements Cloneable
             super.model = model;
             number = newNumber(Model.elements);
             name = "D" + number;
-            delayTime= "TLAG" + number + "=";
+            delayTime = new Parameter(name, "TLAG" + number + "=");
+//            delayTime= "TLAG" + number + "=";
+            Model.parameterList.add(delayTime);
         }
         
         /** Draw delay.
@@ -279,7 +284,8 @@ public abstract class Element implements Cloneable
         }
        
         /** Delay time. */
-        protected String delayTime;
+        protected Parameter delayTime;
+//        protected String delayTime;
         /** Number of compartments to simulate the delay. */
         protected int nDelayComps = 2;
         /** Ending compartments from the delay */
@@ -346,9 +352,10 @@ public abstract class Element implements Cloneable
 //                else
 //                    name = "K" + "0T" + element2.number;
             }
-            flowRate = name + "=";
+            flowRate = new Parameter(name, name + "=");
             if(name.startsWith("K"))
-                Model.fluxList.add(name);
+                Model.parameterList.add(flowRate);
+//                Model.fluxList.add(name);
         }
         
         /** Draw flux.
@@ -536,7 +543,7 @@ public abstract class Element implements Cloneable
             }
             else
             {
-                name = "U(" + element2.number + ")";
+//                name = "U(" + element2.number + ")";
 //                if(element2.number < 10)
 //                    name = "K" + "0" + element2.number;
 //                else
@@ -588,7 +595,8 @@ public abstract class Element implements Cloneable
         private double cos, sin, tan;
         private static final int shift = 10;
         /** Flow rate */
-        protected String flowRate;
+        protected Parameter flowRate;
+//        protected String flowRate;
     }
     
     /** This class defines input. */

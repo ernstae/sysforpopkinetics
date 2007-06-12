@@ -1308,6 +1308,15 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
             return n1 * n2;
         }
         
+        public boolean checkingStep(JWizardPane wizard){
+            if(model.getSize() == 0)
+            {
+                JOptionPane.showMessageDialog(null, "Plot was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
@@ -1315,8 +1324,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             int size = model.getSize();
-            if(size == 0)
-                return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject(); 
             // Create and save record
             String record = (String)model.get(0);
@@ -1395,7 +1402,6 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
                     splots[i][3] = null;                                      
                 }
             }
-                                
             object.getSource().splot = splots;  
 	}
 

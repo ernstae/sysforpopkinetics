@@ -110,7 +110,7 @@ public class Test{
 //            Theta step = new Theta(i);
             MDAObject object = new MDAObject();
             Properties records = object.getRecords();
-            object.setData(new Vector<Vector>());
+            object.setData(new Vector<Vector<String[]>>());
             records.setProperty("Aesinitial",  "");
             records.setProperty("Aes",  "");
             records.setProperty("Error",  "");

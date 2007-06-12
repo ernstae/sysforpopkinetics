@@ -44,7 +44,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     private boolean isValid = false;
     private MDAIterator iterator = null;
     private String[] input = null; 
-    private Vector<Vector> data = null;
+    private Vector<Vector<String[]>> data = null;
     private String[][] dataArray = null;
     private String[][] dataTemp = null;
     private int nDataRow = 0;    
@@ -537,11 +537,12 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        if(iterator.analysis.equals("population") || iterator.analysis.equals("two-stage") || 
-           iterator.analysis.equals("nonparametric") && index == 0 && input[0].equals("ID"))
+        if((iterator.analysis.equals("population") || iterator.analysis.equals("two-stage") || 
+           iterator.analysis.equals("nonparametric")) && !input[0].equals("ID"))
         {
+            
             JOptionPane.showMessageDialog(null, 
-                                          "The first data labe must be ID for a population dataset.", 
+                                          "The first data label must be ID for a population dataset.", 
                                           "Input Error",    
                                           JOptionPane.ERROR_MESSAGE);
             return;
@@ -719,7 +720,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
     
     private void setDataObject()
     {
-        Vector<Vector> dataObject = new Vector<Vector>();
+        Vector<Vector<String[]>> dataObject = new Vector<Vector<String[]>>();
         Vector<String[]> indData = new Vector<String[]>();
         String[] row;
         int nDataRow = tableEditModel.getRowCount();
@@ -850,15 +851,23 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                     dataArray[k++] = (String[])indData.get(j);
             }
             nDataRow = nRow;
-        }        
+        }
+        
+        public boolean checkingStep(JWizardPane wizard){
+            if(nDataCol == 0)
+            {
+                JOptionPane.showMessageDialog(null, "Data was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
                 iterator.setIsBack(false);
                 return;
             }            
-            if(nDataCol == 0)
-                return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String inputs = "";
             for(int i = 0; i < nDataCol - 1; i++)
@@ -876,6 +885,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 inputs = inputs.substring(3);
             String record = "$INPUT " + inputs.replaceAll("\r", "");
             object.getRecords().setProperty("Input", record);
+            object.setDataLabels(input);
 	}
 
 	public boolean isValid(){

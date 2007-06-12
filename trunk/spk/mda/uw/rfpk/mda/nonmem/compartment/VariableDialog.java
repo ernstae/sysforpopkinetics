@@ -18,46 +18,49 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.compartment;
 
+import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.DefaultListModel;
 import java.awt.Cursor;
 import java.util.*;
 import javax.swing.JList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Dimension;
 
 /** This class defines variable dialog.
  *
  * @author  Jiaji Du
  */
+
 public class VariableDialog extends javax.swing.JDialog {
     
-    /** Creates new form VariableDialog.
+    /**
+     * Creates new form VariableDialog.
+     * 
      * @param parent DesignTool object.
      */
     public VariableDialog(DesignTool parent) {
         super(parent, false);
-        initComponents();
         tool = parent;
+        initComponents();
+        jList1.setModel(listModel);
+        setVariableList();
+        jList1.setCellRenderer(new MyCellRenderer());
         setSize(400, 350);
+        setLocationRelativeTo(tool.parameterButton);
+        setVisible(true);
     }
     
-    /** Set variable list */
-    protected void setVariableList()
+    private void setVariableList()
     {
-        String value;
         listModel.removeAllElements();
-        if(Model.variableList != null)
-            for(String key : Model.variableList)
-            {
-                value = Model.variables.getProperty(key);
-                if(value != null)
-                {
-                    if(value.indexOf("\n") != -1)
-                        value = value.substring(value.lastIndexOf("\n") + 1);
-                    listModel.addElement(value);
-                }
-            }
-        jList1.setModel(listModel);
+        for(Parameter parameter : Model.parameterList)
+            listModel.addElement(parameter.value);
     }
     
     /** This method is called from within the constructor to
@@ -78,7 +81,8 @@ public class VariableDialog extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("User Defined Variable Models");
+        setTitle("Parameter List");
+        setModal(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
@@ -86,7 +90,7 @@ public class VariableDialog extends javax.swing.JDialog {
         });
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel1.setText("Select item to model or to change order");
+        jLabel1.setText("Select an item to modify or to change order");
         getContentPane().add(jLabel1, java.awt.BorderLayout.NORTH);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(259, 200));
@@ -161,22 +165,38 @@ public class VariableDialog extends javax.swing.JDialog {
     private void modelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelButtonActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         int index = jList1.getSelectedIndex();
-        String variable = Model.variableList.get(index);
-        String[] model = new String[1];
-        model[0] = Model.variables.getProperty(variable);
-        if(tool.iterator.analysis.equals("population"))
-            new MixedModelDialog(null, model, variable, tool.object.getDataLabels());
-        else
-            new IndModelDialog(null, model, variable, tool.object.getDataLabels());
-        if(model[0].equals(""))
+        if(index < 0)
         {
-            JOptionPane.showMessageDialog(null, "The variable's model has not been defined.",
-                                          "Error Message", JOptionPane.ERROR_MESSAGE);
             setCursor(null);
             return;
         }
-        String value = model[0];
-        Model.variables.setProperty(variable, value);
+        Parameter parameter = Model.parameterList.get(index);
+        if(parameter.name.matches("FF\\d+"))
+        {
+            parameter.value = JOptionPane.showInputDialog(null, "Enter forcing function:                        ", 
+                                                          parameter.value);
+        }
+        else
+        {
+            int[] isOK = {1};
+            if(tool.iterator.analysis.equals("population"))
+                new MixedModelDialog(null, parameter, tool.object.getDataLabels(), isOK);
+            else
+                new IndModelDialog(null, parameter, tool.object.getDataLabels(), isOK);
+            if(isOK[0] == 0)
+            {
+                setCursor(null);
+                return;
+            }
+        }
+        if(parameter.value.equals("") || parameter.value.endsWith("="))
+        {
+            JOptionPane.showMessageDialog(null, "The parameter's model has not been defined.",
+                                          "Warning Message", JOptionPane.WARNING_MESSAGE);
+            setCursor(null);
+            return;
+        }
+        tool.updateParameterList(parameter, false);
         setVariableList();
         tool.setRecords();
         setCursor(null);
@@ -187,9 +207,9 @@ public class VariableDialog extends javax.swing.JDialog {
         int index = jList1.getSelectedIndex();
         if(index < listModel.size() - 1)
         {
-            String variable = Model.variableList.get(index);
-            Model.variableList.set(index, Model.variableList.get(index + 1));
-            Model.variableList.set(index + 1, variable);
+            Parameter parameter = Model.parameterList.get(index);
+            Model.parameterList.set(index, Model.parameterList.get(index + 1));
+            Model.parameterList.set(index + 1, parameter);
             setVariableList();
             jList1.setSelectedIndex(index + 1);
             tool.setRecords();
@@ -202,9 +222,9 @@ public class VariableDialog extends javax.swing.JDialog {
         int index = jList1.getSelectedIndex();
         if(index > 0)
         {
-            String variable = Model.variableList.get(index);
-            Model.variableList.set(index, Model.variableList.get(index - 1));
-            Model.variableList.set(index - 1, variable);
+            Parameter parameter = Model.parameterList.get(index);
+            Model.parameterList.set(index, Model.parameterList.get(index - 1));
+            Model.parameterList.set(index - 1, parameter);
             setVariableList();
             jList1.setSelectedIndex(index - 1);
             tool.setRecords();
@@ -225,95 +245,7 @@ public class VariableDialog extends javax.swing.JDialog {
         new VariableDialog(new DesignTool()).setVisible(true);
     }
     
-    /** Update variable list and variable map.
-     * return true if any new variable was added, otherwise false.
-     */
-    protected boolean updateVariableList()
-    {
-        String model, token;
-        StringTokenizer tokenizer;
-        Properties parameters;
-        Enumeration keys;
-        Model.variableList.clear();
-        for(int i = 0; i < Model.fluxes.size(); i++)
-        {
-            if(Model.fluxes.get(i).element1 instanceof Element.Compartment)
-            {
-                model = Model.fluxes.get(i).flowRate.trim().replaceAll(" ", "").replaceAll("\n", "");
-                if(model.split("=").length == 2)
-                {
-                    tokenizer = new StringTokenizer(model.split("=")[1], "+-*/()");
-                    while(tokenizer.hasMoreTokens())
-                    {
-                        token = tokenizer.nextToken();
-                        if(Model.variableList.indexOf(token) == -1 && checkVariableName(token))
-                            Model.variableList.add(token);
-                    }
-                }
-            }
-        }
-        for(int i = 0; i < Model.elements.size(); i++)
-        {
-            if(Model.elements.get(i) instanceof Element.Compartment)
-            {
-                parameters = ((Element.Compartment)Model.elements.get(i)).parameters;
-                keys = parameters.keys();
-                while(keys.hasMoreElements())
-                {
-                    model = parameters.getProperty((String)keys.nextElement()).trim().replaceAll(" ", "").replaceAll("\n", "").split("=")[1];
-                    tokenizer = new StringTokenizer(model, "+-*/()");
-                    while(tokenizer.hasMoreTokens())
-                    {
-                        token = tokenizer.nextToken();
-                        if(Model.variableList.indexOf(token) == -1 && checkVariableName(token))
-                            Model.variableList.add(token);
-                    }
-                }
-            }
-            else
-            {
-                model = ((Element.Delay)Model.elements.get(i)).delayTime;
-                tokenizer = new StringTokenizer(model, "+-*/()");
-                while(tokenizer.hasMoreTokens())
-                {
-                    token = tokenizer.nextToken();
-                    if(Model.variableList.indexOf(token) == -1 && checkVariableName(token))
-                        Model.variableList.add(token);
-                }
-            }
-        }
-        keys = Model.variables.keys();
-        while(keys.hasMoreElements())
-        {
-            String key = (String)keys.nextElement();
-                if(Model.variableList.indexOf(key) == -1)
-                    Model.variables.remove(key);                
-        }
-        boolean isNewVariableAdded = false;
-        for(String variable : Model.variableList)
-            if(!variable.equals("") && !Model.variables.containsKey(variable))
-            {
-                Model.variables.setProperty(variable, variable + "=");
-                isNewVariableAdded = true;
-            }
-        return isNewVariableAdded;
-    }
-    
-    private boolean checkVariableName(String name)
-    {
-        name = name.toUpperCase();
-        String[] functions = {"ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "COSH",
-                              "MAX", "MIN", "MOD", "SINH", "TAN", "TANH", "THETA", "ETA"};
-        for(String function : functions)
-            if(name.equals(function))
-                return false;
-        if(name.matches("TLAG\\d+") || name.matches("[S|F|R|D]\\d+") ||
-           name.matches("ALAG\\d+") || name.matches("\\d\\w*") ||
-           name.matches("K\\d+") || name.matches("K\\d+T\\d+"))
-            return false;
-        return true;
-    }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton downButton;
     private javax.swing.JButton helpButton;
@@ -328,4 +260,39 @@ public class VariableDialog extends javax.swing.JDialog {
 
     private DefaultListModel listModel = new DefaultListModel();
     private DesignTool tool;
+}
+
+class MyCellRenderer extends JPanel implements ListCellRenderer
+{
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+    {
+        string = (String)value;
+        background = isSelected ? list.getSelectionBackground() : list.getBackground();
+        foreground = isSelected ? list.getSelectionForeground() : list.getForeground();
+        return this;
+    }
+    
+    public void paintComponent(Graphics g)
+    {
+        g.setColor(background);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(foreground);
+        String[] lines = string.split("\n");
+        for(int i = 0; i < lines.length; i++)
+            g.drawString(lines[i], 0, 10 * (i + 1) + 4);
+    }
+    
+    public Dimension getPreferredSize()
+    {
+        String[] lines = string.split("\n");
+//        int length = lines[0].length();
+//        if(lines.length > 1)
+//            for(int i = 1; i < lines.length; i++)
+//                length = Math.max(lines[i].length(), length);
+        return new Dimension(0, lines.length * 10 + 8);
+    }
+    
+    private String string;
+    private Color background;
+    private Color foreground;
 }

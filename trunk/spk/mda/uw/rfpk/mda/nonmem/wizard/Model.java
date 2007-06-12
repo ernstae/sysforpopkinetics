@@ -880,6 +880,54 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             return element;
         }
         
+        public boolean checkingStep(JWizardPane wizard){
+            if(model.getSize() == 0)
+            {
+                JOptionPane.showMessageDialog(null, "Compartment was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            // Find default dose and default observation
+            boolean hasIt = false;
+            for(int i = 0; i < model.getSize(); i++)
+            {
+                if(((String)model.get(i)).indexOf(" DEFDOSE") != -1)
+                {
+                    hasIt = true;
+                    break;
+                }
+            }
+            if(!hasIt)
+            {
+                String s = (String)model.get(0);                
+                model.set(0, s.substring(0, s.length() - 1) + " DEFDOSE)");
+                init();
+                JOptionPane.showMessageDialog(null, "The 'DEFDOSE' was not found in the compartments." + 
+                                              "\nThe MDA added it to the first compartment as default.",
+                                              "Warning Message", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            hasIt = false;
+            for(int i = 0; i < model.getSize(); i++)
+            {
+                if(((String)model.get(i)).indexOf(" DEFOBSERVATION") != -1)
+                {
+                    hasIt = true;
+                    break;
+                }
+            }
+            if(!hasIt)
+            {
+                String s = (String)model.get(0);                
+                model.set(0, s.substring(0, s.length() - 1) + " DEFOBSERVATION)");
+                init();
+                JOptionPane.showMessageDialog(null, "The 'DEFOBSERVATION' was not found in the compartments." + 
+                                              "\nThe MDA added it to the first compartment as default.",
+                                              "Warning Message", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
             if(iterator.getIsBack())
             {
@@ -887,8 +935,6 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 return;
             }            
             int size = model.getSize();
-            if(size == 0)
-                return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = "";
             String n1 = jTextField1.getText().trim();
@@ -918,45 +964,7 @@ public class Model extends javax.swing.JPanel implements WizardStep {
                 }
                 record += " NPARAMETERS=" + n3 + " ";
             }
-            
-            // Find default dose and default observation
-            boolean hasIt = false;
-            for(int i = 0; i < size; i++)
-            {
-                if(((String)model.get(i)).indexOf(" DEFDOSE") != -1)
-                {
-                    hasIt = true;
-                    break;
-                }
-            }
-            if(!hasIt)
-            {
-                String s = (String)model.get(0);                
-                model.set(0, s.substring(0, s.length() - 1) + " DEFDOSE)");
-                init();
-                JOptionPane.showMessageDialog(null, "The 'DEFDOSE' was not found in the compartments." + 
-                                              "\nThe MDA added it to the first compartment as default.",
-                                              "Warning Message", JOptionPane.WARNING_MESSAGE);         
-            }
-            hasIt = false;
-            for(int i = 0; i < size; i++)
-            {
-                if(((String)model.get(i)).indexOf(" DEFOBSERVATION") != -1)
-                {
-                    hasIt = true;
-                    break;
-                }
-            }
-            if(!hasIt)
-            {
-                String s = (String)model.get(0);                
-                model.set(0, s.substring(0, s.length() - 1) + " DEFOBSERVATION)");
-                init();
-                JOptionPane.showMessageDialog(null, "The 'DEFOBSERVATION' was not found in the compartments." + 
-                                              "\nThe MDA added it to the first compartment as default.",
-                                              "Warning Message", JOptionPane.WARNING_MESSAGE);         
-            }
-            
+   
             // Set records
             for(int i = 0; i < size; i++)
                 record += "\n" + ((String)model.get(i)).replaceAll("\r", "");

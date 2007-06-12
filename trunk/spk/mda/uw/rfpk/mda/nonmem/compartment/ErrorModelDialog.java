@@ -98,7 +98,6 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
         userDefinedTextField = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
@@ -115,7 +114,6 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         setTitle("Residual Unknown Variability Model");
-        setLocationRelativeTo(this);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
@@ -270,16 +268,6 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 12);
         getContentPane().add(jLabel13, gridBagConstraints);
 
-        jLabel14.setFont(new java.awt.Font("Dialog", 0, 12));
-        jLabel14.setText("Note: EPS is a zero-mean Normal random variable.");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 12, 4, 12);
-        getContentPane().add(jLabel14, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 7;
@@ -319,7 +307,7 @@ public class ErrorModelDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         getContentPane().add(jPanel1, gridBagConstraints);
@@ -361,20 +349,22 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         jLabel1.setText("Enter additional equations used to define the RUV model");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 2, 12);
         getContentPane().add(jLabel1, gridBagConstraints);
 
+        eqnTextArea.setMaximumSize(new java.awt.Dimension(350, 80));
+        eqnTextArea.setMinimumSize(new java.awt.Dimension(350, 80));
+        eqnTextArea.setPreferredSize(new java.awt.Dimension(350, 80));
         jScrollPane1.setViewportView(eqnTextArea);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipady = 60;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         getContentPane().add(jScrollPane1, gridBagConstraints);
 
@@ -522,7 +512,6 @@ public class ErrorModelDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

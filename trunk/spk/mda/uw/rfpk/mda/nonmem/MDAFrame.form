@@ -1884,12 +1884,9 @@
     </Component>
   </NonVisualComponents>
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="defaultCloseOperation" type="int" value="0"/>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="cc" green="cc" red="0" type="rgb"/>
-    </Property>
-    <Property name="locationRelativeTo" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-      <ComponentRef name="Form"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -2825,7 +2822,7 @@
                       <SubComponents>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="PRED vs DV"/>
+                            <Property name="text" type="java.lang.String" value="DV vs PRED"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
@@ -2833,7 +2830,7 @@
                         </MenuItem>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="PRED vs DV by ID"/>
+                            <Property name="text" type="java.lang.String" value="DV vs PRED by ID"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>
@@ -2841,7 +2838,7 @@
                         </MenuItem>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem5">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="DV PRED vs TIME"/>
+                            <Property name="text" type="java.lang.String" value="PRED DV vs TIME"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem5ActionPerformed"/>
@@ -2849,7 +2846,7 @@
                         </MenuItem>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem6">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="DV PRED vs TIME by ID"/>
+                            <Property name="text" type="java.lang.String" value="PRED DV vs TIME by ID"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem6ActionPerformed"/>
@@ -2857,7 +2854,7 @@
                         </MenuItem>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="IPRED vs DV"/>
+                            <Property name="text" type="java.lang.String" value="DV vs IPRED"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem3ActionPerformed"/>
@@ -2865,7 +2862,7 @@
                         </MenuItem>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="IPRED vs DV by ID"/>
+                            <Property name="text" type="java.lang.String" value="DV vs IPRED by ID"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem4ActionPerformed"/>
@@ -2873,7 +2870,7 @@
                         </MenuItem>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem7">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="DV IPRED vs TIME"/>
+                            <Property name="text" type="java.lang.String" value="IPRED DV vs TIME"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem7ActionPerformed"/>
@@ -2881,7 +2878,7 @@
                         </MenuItem>
                         <MenuItem class="javax.swing.JMenuItem" name="jMenuItem8">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="DV IPRED vs TIME by ID"/>
+                            <Property name="text" type="java.lang.String" value="IPRED DV vs TIME by ID"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem8ActionPerformed"/>

@@ -54,11 +54,8 @@ public class Reload {
     {
         Model.elements.clear();
         Model.fluxes.clear();
-        Model.equations = "";
         Model.errorEqns = "";
-        Model.variables.clear();
-        Model.variableList.clear();
-        Model.fluxList.clear();
+        Model.parameterList.clear();
         String text = null;
         if(tool.iterator.getAdvan() == 6 && tool.iterator.initAdvan.contains("model"))
         {
@@ -100,6 +97,7 @@ public class Reload {
     {
         Model model = tool.diagram.model;
         String[] modelLines = modelText.split("\n");
+        int j = 0;
         for(int i = 1; i < modelLines.length; i++)
         {
             if(modelLines[i].indexOf(";") == -1) break;
@@ -153,6 +151,7 @@ public class Reload {
                 Model.elements.add(compartment);
                 compartment.name = name;
                 compartment.attributes = attributes;
+                compartment.timeRate = timeRates.get(j++);
             }
             else
             {
@@ -180,12 +179,13 @@ public class Reload {
     private void parsePK(String pkText)
     {
         Model model = tool.diagram.model;
-        ArrayList<String> variableList = new ArrayList<String>();
         for(int i = 0; i < Model.elements.size(); i++)
             if((Element)Model.elements.get(i) instanceof Element.Compartment)
                 ((Element.Compartment)Model.elements.get(i)).parameters.clear();
-        String[] pkLines = pkText.split("\n");
+        String[] pkLines = pkText.replaceAll(" THEN\n", " THEN").split("\n");
         String helperEqn = "";
+        String condition = "";
+        boolean isIF = false;
         for(int i = 0; i < pkLines.length; i++)
         {
             if(pkLines[i].endsWith(";"))
@@ -193,30 +193,60 @@ public class Reload {
                 helperEqn += pkLines[i].replace(';', '\n');
                 continue;
             }
+            if(pkLines[i].startsWith("IF(") || pkLines[i].equals("ELSE"))
+            {
+                isIF = true;
+                condition += pkLines[i].replaceAll(" THEN", " THEN\n") + "\n";
+                continue;
+            }
+            if(pkLines[i].equals("ENDIF")) continue;
             String[] sides = pkLines[i].split("=");
             if(sides[0].matches("TLAG\\d+"))
             {
-                System.out.println("TLAG:  " + helperEqn + pkLines[i]);                
-                ((Element.Delay)Model.elements.get(Integer.parseInt(sides[0].substring(4)) - 1))
-                .delayTime = helperEqn + pkLines[i];
+                System.out.println("TLAG:  " + helperEqn + pkLines[i]);
+                Element.Delay delay = (Element.Delay)Model.elements.get(Integer.parseInt(sides[0].substring(4)) - 1);
+                Model.parameterList.remove(delay.delayTime);
+                if(!isIF)
+                    delay.delayTime = new Parameter(sides[0], helperEqn + pkLines[i]);
+                else
+                    delay.delayTime = new Parameter(sides[0], helperEqn + condition + pkLines[i] + "\nENDIF");
+                Model.parameterList.add(delay.delayTime);
+                tool.updateParameterList(delay.delayTime, false);
             }
             else if(sides[0].matches("[S|F|R|D]\\d+"))
             {
                 System.out.println("Comp param:  " + helperEqn + pkLines[i]);
+                Parameter parameter;
+                if(!isIF)
+                    parameter = new Parameter(sides[0], helperEqn + pkLines[i]);
+                else
+                    parameter = new Parameter(sides[0], helperEqn + condition + pkLines[i] + "\nENDIF");
                 ((Element.Compartment)Model.elements.get(Integer.parseInt(sides[0].substring(1)) - 1))
-                .parameters.setProperty(sides[0], helperEqn + pkLines[i]);
+                .parameters.put(sides[0], parameter);
+                Model.parameterList.add(parameter);
+                tool.updateParameterList(parameter, false);
             }
             else if(sides[0].matches("ALAG\\d+"))
             {
                 System.out.println("Comp param:  " + helperEqn + pkLines[i]);
+                Parameter parameter;
+                if(!isIF)
+                    parameter = new Parameter(sides[0], helperEqn + pkLines[i]);
+                else
+                    parameter = new Parameter(sides[0], helperEqn + condition + pkLines[i] + "\nENDIF");
                 ((Element.Compartment)Model.elements.get(Integer.parseInt(sides[0].substring(4)) - 1))
-                .parameters.setProperty(sides[0], helperEqn + pkLines[i]);
+                .parameters.put(sides[0], parameter);
+                Model.parameterList.add(parameter);
+                tool.updateParameterList(parameter, false);
             }
             else if(sides[0].matches("FF\\d+"))
             {
                 System.out.println("Force:  " + pkLines[i]);
+                Parameter parameter = new Parameter(sides[0], pkLines[i]);
                 ((Element.Compartment)Model.elements.get(Integer.parseInt(sides[0].substring(2)) - 1))
-                .force = sides[1];
+                .force = parameter;
+                Model.parameterList.add(parameter);
+                tool.updateParameterList(parameter, false);
             }
             else if(sides[0].matches("K\\d+") || sides[0].matches("K\\d+T\\d+"))
             {
@@ -241,35 +271,60 @@ public class Reload {
                 else
                     flux = new Element.Flux((Element)Model.elements.get(element1 - 1), 
                                             (Element)Model.elements.get(element2 - 1), model);
-                flux.flowRate = helperEqn + pkLines[i];
+                if(!isIF)
+                    flux.flowRate.value = helperEqn + pkLines[i];
+                else
+                    flux.flowRate.value = helperEqn + condition + pkLines[i] + "\nENDIF";
+                tool.updateParameterList(flux.flowRate, false);
                 Model.fluxes.add(flux);
             }
-            else if(Pattern.compile("\\bTHETA\\(\\d+\\)", Pattern.UNIX_LINES).matcher(sides[1]).find())
-            {
-                System.out.println("Variables:  " + helperEqn + pkLines[i]);
-                Model.variables.setProperty(sides[0], helperEqn + pkLines[i]);
-                variableList.add(sides[0]);
-            }
+//            else if(Pattern.compile("\\bTHETA\\(\\d+\\)", Pattern.UNIX_LINES).matcher(sides[1]).find())
             else
             {
-                System.out.println("Equations:  " + pkLines[i]);
-                if(!Model.equations.equals(""))
-                    Model.equations += " ";
-                Model.equations += pkLines[i];
+                System.out.println("Variables:  " + helperEqn + pkLines[i]);
+                Variable variable;
+                if(!isIF)
+                    variable = new Variable(sides[0], helperEqn + pkLines[i]);
+                else
+                    variable = new Variable(sides[0], helperEqn + condition + pkLines[i] + "\nENDIF");
+                variable.refCount = 0;
+                Model.parameterList.add(variable);
+                tool.updateParameterList(variable, false);
             }
+/*            else
+            {
+                System.out.println("Equations:  " + pkLines[i]);
+                Parameter parameter = new Parameter(sides[0], pkLines[i]);
+                Model.equationList.add(parameter);
+                Model.parameterList.add(parameter);
+                tool.updateParameterList(parameter, false);
+            }*/
             helperEqn = "";
+            condition = "";
+            isIF = false;
         }
-        Model.variableList = variableList;
     }
 
     private void parseError(String errorText)
     {
+        // Find error equations
+        String[] rows = errorText.split("\n");
+        Model.errorEqns = "";
+        errorText = "";
+        for(String row : rows)
+        {
+            if(row.endsWith(";"))
+                Model.errorEqns += row + "\n";
+            else
+                errorText += row + "\n";
+        }
+        Model.errorEqns = Model.errorEqns.replaceAll(";\n", "\n").trim();
         subjectModel = new Properties();
         compErrorModels = new Vector<String[]>();
         int index1 = errorText.indexOf("IF(ID ");
         if(index1 != -1)
         {
-            if(index1 != 0) Model.errorEqns = errorText.substring(0, index1).trim();
+//            if(index1 != 0) Model.errorEqns = errorText.substring(0, index1).trim();
             int index2 = errorText.indexOf("\nENDIF\nIF(ID ");
 //            int index2 = errorText.indexOf("\nELSE IF(ID ");
             int index3;  
@@ -295,11 +350,11 @@ public class Reload {
                     }
                 }
             
-                // Get compErrorModels from IF(CMP)
+                // Get compErrorModels from IF(CMT)
                 parseCmp(code);
             
                 index1 = index2;
-                index2 = errorText.indexOf("\nENIF\nIF(ID ", index1 + 5);
+                index2 = errorText.indexOf("\nENDIF\nIF(ID ", index1 + 5);
 //                index2 = errorText.indexOf("\nELSE IF(ID ", index1 + 5);
                 if(index2 == -1) index2 = errorText.indexOf("\nENDIF", index1 + 5);
                 i++;
@@ -312,7 +367,7 @@ public class Reload {
             if(indexY == -1) return;
             if(indexY != 0)
             {
-                Model.errorEqns = errorText.substring(0, indexY).trim();
+//                Model.errorEqns = errorText.substring(0, indexY).trim();
                 errorText = errorText.substring(indexY);
             }
             parseCmp(errorText);
@@ -344,7 +399,7 @@ public class Reload {
     {
         String n, model;
         String[] comps;
-        int index3 = code.indexOf("IF(CMP ");           
+        int index3 = code.indexOf("IF(CMT ");           
         if(index3 != -1)
         {
             code = code.substring(index3);
@@ -376,7 +431,30 @@ public class Reload {
 
     private void parseDes(String desText)
     {
+        // Find equations
+        int indexDE = desText.indexOf("DADT");
+        Model.desEqns = desText.substring(0, indexDE).trim();
+        desText = desText.substring(indexDE);
+        
+        // Find apended time rate of concentration
         String[] desLines = desText.trim().split("\n");
+        timeRates = new Vector<String>();
+        for(int i = 0; i < desLines.length; i++)
+        {
+            if(desLines[i].indexOf(";") == -1)
+            {
+                int indexSpace = desLines[i].indexOf(" ");
+                if(indexSpace != -1)
+                {
+                    timeRates.add(desLines[i].substring(indexSpace).trim());
+                    desLines[i] = desLines[i].substring(0, indexSpace);
+                }
+                else
+                {
+                    timeRates.add("");
+                }
+            }
+        }
         String regExp = "[+](\\d)+/TLAG(\\d+)[*](\\S+)[*]A[(]\\d+[)]";
         Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
         isDelay = new boolean[desLines.length];
@@ -455,9 +533,9 @@ public class Reload {
         String errorText = "Error Equation = 1\n" +
                            "Error Equation = 2\n" +
                            "IF(ID .EQ. 1 OR (ID .GE. 3 AND .LE. 10)) THEN\n" +
-                           "  IF(CMP .EQ. 1) THEN\n" +
+                           "  IF(CMT .EQ. 1) THEN\n" +
                            "    Y=F+EPS(1)\n" +
-                           "  ELSE IF(CMP .EQ. 2) THEN\n" +
+                           "  ELSE IF(CMT .EQ. 2) THEN\n" +
                            "    Y=F+F*EPS(2)\n" +
                            "  END IF\n" +
                            "ELSE IF(ID .EQ. 2) THEN\n" +
@@ -466,9 +544,9 @@ public class Reload {
                            ";Group-1;Dose1:92,253(1);Obs1:147,129;Obs2:300,130\n" +
                            ";Group-2;Dose2:74,202(2);Obs3:128,111";
 /*
-        errorText = "IF(CMP .EQ. 1) THEN\n" +
+        errorText = "IF(CMT .EQ. 1) THEN\n" +
                     "  Y=F+EPS(1)\n" +
-                    "ELSE IF(CMP .EQ. 2) THEN\n" +
+                    "ELSE IF(CMT .EQ. 2) THEN\n" +
                     "  Y=F+F*EPS(2)\n" +
                     "END IF\n" +
                     ";Model1";
@@ -554,10 +632,7 @@ public class Reload {
         Element.Sample sample = null;
         Model.elements.clear();
         Model.fluxes.clear();
-        Model.variables.clear();
-        Model.variableList.clear();
-        Model.fluxList.clear();
-        Model.equations = "";
+        Model.parameterList.clear();
         Model.errorEqns = "";
         switch(adn)
         {
@@ -579,11 +654,15 @@ public class Reload {
                     case 1:
                         break;
                     case 2:
-                        flux10.flowRate = "K10=CL/V";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V", "V=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V");
+                        flux10.flowRate.value = "K10=CL/V";
+                        Variable cl = new Variable("CL", "CL=");
+                        Variable v = new Variable("V", "V=");
+                        Model.parameterList.remove(flux10.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v);
+                        Model.parameterList.add(flux10.flowRate);
+                        flux10.flowRate.dependVariables.add(cl);
+                        flux10.flowRate.dependVariables.add(v);
                 }
                 break;
             case 2:
@@ -612,11 +691,15 @@ public class Reload {
                     case 1:
                         break;
                     case 2:
-                        flux20.flowRate = "K20=CL/V";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V", "V=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V");
+                        flux20.flowRate.value = "K20=CL/V";
+                        Variable cl = new Variable("CL", "CL=");
+                        Variable v = new Variable("V", "V=");
+                        Model.parameterList.remove(flux20.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v);
+                        Model.parameterList.add(flux20.flowRate);
+                        flux20.flowRate.dependVariables.add(cl);
+                        flux20.flowRate.dependVariables.add(v);
                 }
                 break;
             case 3:
@@ -645,41 +728,83 @@ public class Reload {
                     case 1:
                         break;
                     case 3:
-                        flux10.flowRate = "K10=CL/V";
-                        flux12.flowRate = "K12=Q/V";
-                        flux21.flowRate = "K21=Q/(VSS-V)";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V", "V=");
-                        Model.variables.setProperty("Q", "Q=");
-                        Model.variables.setProperty("VSS", "VSS=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V");
-                        Model.variableList.add("Q");
-                        Model.variableList.add("VSS");
+                        flux10.flowRate.value = "K10=CL/V";
+                        flux12.flowRate.value = "K12=Q/V";
+                        flux21.flowRate.value = "K21=Q/(VSS-V)";
+                        Variable cl = new Variable("CL", "CL=");
+                        Variable v = new Variable("V", "V=");
+                        Variable q = new Variable("Q", "Q=");
+                        Variable vss = new Variable("VSS", "VSS=");
+                        Model.parameterList.remove(flux10.flowRate);
+                        Model.parameterList.remove(flux12.flowRate);
+                        Model.parameterList.remove(flux21.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v);
+                        Model.parameterList.add(q);
+                        Model.parameterList.add(vss);
+                        Model.parameterList.add(flux10.flowRate);
+                        Model.parameterList.add(flux12.flowRate);
+                        Model.parameterList.add(flux21.flowRate);
+                        flux10.flowRate.dependVariables.add(cl);
+                        flux10.flowRate.dependVariables.add(v);
+                        flux12.flowRate.dependVariables.add(q);
+                        flux12.flowRate.dependVariables.add(v);
+                        flux21.flowRate.dependVariables.add(q);
+                        flux21.flowRate.dependVariables.add(v);
+                        flux21.flowRate.dependVariables.add(vss);
+                        v.refCount = 3;
+                        q.refCount = 2;
                         break;
                     case 4:
-                        flux10.flowRate = "K10=CL/V1";
-                        flux12.flowRate = "K12=Q/V1";
-                        flux21.flowRate = "K21=Q/V2";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V1", "V1=");
-                        Model.variables.setProperty("Q", "Q=");
-                        Model.variables.setProperty("V2", "V2=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V1");
-                        Model.variableList.add("Q");
-                        Model.variableList.add("V2");
+                        flux10.flowRate.value = "K10=CL/V1";
+                        flux12.flowRate.value = "K12=Q/V1";
+                        flux21.flowRate.value = "K21=Q/V2";
+                        cl = new Variable("CL", "CL=");
+                        Variable v1 = new Variable("V1", "V1=");
+                        q = new Variable("Q", "Q=");
+                        Variable v2 = new Variable("V2", "V2=");
+                        Model.parameterList.remove(flux10.flowRate);
+                        Model.parameterList.remove(flux12.flowRate);
+                        Model.parameterList.remove(flux21.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v1);
+                        Model.parameterList.add(q);
+                        Model.parameterList.add(v2);
+                        Model.parameterList.add(flux10.flowRate);
+                        Model.parameterList.add(flux12.flowRate);
+                        Model.parameterList.add(flux21.flowRate);
+                        flux10.flowRate.dependVariables.add(cl);
+                        flux10.flowRate.dependVariables.add(v1);
+                        flux12.flowRate.dependVariables.add(q);
+                        flux12.flowRate.dependVariables.add(v1);
+                        flux21.flowRate.dependVariables.add(q);
+                        flux21.flowRate.dependVariables.add(v2);
+                        v1.refCount = q.refCount = 2;
                         break;
                     case 5:
-                        flux21.flowRate = "K21=(AOB*BETA+ALPHA)/(AOB+1)";
-                        flux10.flowRate = "K10=ALPHA*BETA/K21";
-                        flux12.flowRate = "K12=ALPHA+BETA-K21-K10";                        
-                        Model.variables.setProperty("AOB", "AOB=");
-                        Model.variables.setProperty("ALPHA", "ALPHA=");
-                        Model.variables.setProperty("BETA", "BETA=");
-                        Model.variableList.add("AOB");
-                        Model.variableList.add("ALPHA");
-                        Model.variableList.add("BETA");
+                        flux21.flowRate.value = "K21=(AOB*BETA+ALPHA)/(AOB+1)";
+                        flux10.flowRate.value = "K10=ALPHA*BETA/K21";
+                        flux12.flowRate.value = "K12=ALPHA+BETA-K21-K10";
+                        Variable aob = new Variable("AOB", "AOB=");
+                        Variable alpha = new Variable("ALPHA", "ALPHA=");
+                        Variable beta = new Variable("BETA", "BETA=");
+                        Model.parameterList.remove(flux21.flowRate);
+                        Model.parameterList.remove(flux10.flowRate);
+                        Model.parameterList.remove(flux12.flowRate);
+                        Model.parameterList.add(aob);
+                        Model.parameterList.add(alpha);
+                        Model.parameterList.add(beta);
+                        Model.parameterList.add(flux21.flowRate);
+                        Model.parameterList.add(flux10.flowRate);
+                        Model.parameterList.add(flux12.flowRate);
+                        flux21.flowRate.dependVariables.add(aob);
+                        flux21.flowRate.dependVariables.add(alpha);
+                        flux21.flowRate.dependVariables.add(beta);
+                        flux10.flowRate.dependVariables.add(alpha);
+                        flux10.flowRate.dependVariables.add(beta);
+                        flux12.flowRate.dependVariables.add(alpha);
+                        flux12.flowRate.dependVariables.add(beta);
+                        alpha.refCount = beta.refCount = 3;
                 }
                 break;
             case 4:
@@ -707,7 +832,7 @@ public class Reload {
                 Model.fluxes.add(flux12);
                 comps = new Vector<Element.Compartment>(1);
                 comps.add(comp1);
-                input = new Element.Input(comps, 0, 0, model);     
+                input = new Element.Input(comps, 0, 0, model);
                 comps = new Vector<Element.Compartment>(1);
                 comps.add(comp2);
                 sample = new Element.Sample(comps, 0, 0, model);
@@ -716,41 +841,83 @@ public class Reload {
                     case 1:
                         break;
                     case 3:
-                        flux20.flowRate = "K20=CL/V";
-                        flux23.flowRate = "K23=Q/V";
-                        flux32.flowRate = "K32=Q/(VSS-V)";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V", "V=");
-                        Model.variables.setProperty("Q", "Q=");
-                        Model.variables.setProperty("VSS", "VSS=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V");
-                        Model.variableList.add("Q");
-                        Model.variableList.add("VSS");
+                        flux20.flowRate.value = "K20=CL/V";
+                        flux23.flowRate.value = "K23=Q/V";
+                        flux32.flowRate.value = "K32=Q/(VSS-V)";
+                        Variable cl = new Variable("CL", "CL=");
+                        Variable v = new Variable("V", "V=");
+                        Variable q = new Variable("Q", "Q=");
+                        Variable vss = new Variable("VSS", "VSS=");
+                        Model.parameterList.remove(flux20.flowRate);
+                        Model.parameterList.remove(flux23.flowRate);
+                        Model.parameterList.remove(flux32.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v);
+                        Model.parameterList.add(q);
+                        Model.parameterList.add(vss);
+                        Model.parameterList.add(flux20.flowRate);
+                        Model.parameterList.add(flux23.flowRate);
+                        Model.parameterList.add(flux32.flowRate);
+                        flux20.flowRate.dependVariables.add(cl);
+                        flux20.flowRate.dependVariables.add(v);
+                        flux23.flowRate.dependVariables.add(q);
+                        flux23.flowRate.dependVariables.add(v);
+                        flux32.flowRate.dependVariables.add(v);
+                        flux32.flowRate.dependVariables.add(q);
+                        flux32.flowRate.dependVariables.add(vss);
+                        v.refCount = 3;
+                        q.refCount = 2;
                         break;
                     case 4:
-                        flux12.flowRate = "K12=CL/V2";
-                        flux23.flowRate = "K23=Q/V2";
-                        flux32.flowRate = "K32=Q/V3";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V2", "V2=");
-                        Model.variables.setProperty("Q", "Q=");
-                        Model.variables.setProperty("V3", "V3=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V2");
-                        Model.variableList.add("Q");
-                        Model.variableList.add("V3");
+                        flux20.flowRate.value = "K20=CL/V2";
+                        flux23.flowRate.value = "K23=Q/V2";
+                        flux32.flowRate.value = "K32=Q/V3";
+                        cl = new Variable("CL", "CL=");
+                        Variable v2 = new Variable("V2", "V2=");
+                        q = new Variable("Q", "Q=");
+                        Variable v3 = new Variable("V3", "V3=");
+                        Model.parameterList.remove(flux20.flowRate);
+                        Model.parameterList.remove(flux23.flowRate);
+                        Model.parameterList.remove(flux32.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v2);
+                        Model.parameterList.add(q);
+                        Model.parameterList.add(v3);
+                        Model.parameterList.add(flux20.flowRate);
+                        Model.parameterList.add(flux23.flowRate);
+                        Model.parameterList.add(flux32.flowRate);
+                        flux20.flowRate.dependVariables.add(cl);
+                        flux20.flowRate.dependVariables.add(v2);
+                        flux23.flowRate.dependVariables.add(q);
+                        flux23.flowRate.dependVariables.add(v2);
+                        flux32.flowRate.dependVariables.add(q);
+                        flux32.flowRate.dependVariables.add(v3);
+                        v2.refCount = q.refCount = 2;
                         break;
                     case 5:
-                        flux32.flowRate = "K32=(AOB*BETA+ALPHA)/(AOB+1)";
-                        flux20.flowRate = "K20=ALPHA*BETA/K32";
-                        flux23.flowRate = "K23=ALPHA+BETA-K32-K20";                        
-                        Model.variables.setProperty("AOB", "AOB=");
-                        Model.variables.setProperty("ALPHA", "ALPHA=");
-                        Model.variables.setProperty("BETA", "BETA=");
-                        Model.variableList.add("AOB");
-                        Model.variableList.add("ALPHA");
-                        Model.variableList.add("BETA");
+                        flux32.flowRate.value = "K32=(AOB*BETA+ALPHA)/(AOB+1)";
+                        flux20.flowRate.value = "K20=ALPHA*BETA/K32";
+                        flux23.flowRate.value = "K23=ALPHA+BETA-K32-K20";
+                        Variable aob = new Variable("AOB", "AOB=");
+                        Variable alpha = new Variable("ALPHA", "ALPHA=");
+                        Variable beta = new Variable("BETA", "BETA=");
+                        Model.parameterList.remove(flux32.flowRate);
+                        Model.parameterList.remove(flux20.flowRate);
+                        Model.parameterList.remove(flux23.flowRate);
+                        Model.parameterList.add(aob);
+                        Model.parameterList.add(alpha);
+                        Model.parameterList.add(beta);
+                        Model.parameterList.remove(flux32.flowRate);
+                        Model.parameterList.remove(flux20.flowRate);
+                        Model.parameterList.remove(flux23.flowRate);
+                        flux32.flowRate.dependVariables.add(aob);
+                        flux32.flowRate.dependVariables.add(alpha);
+                        flux32.flowRate.dependVariables.add(beta);
+                        flux20.flowRate.dependVariables.add(alpha);
+                        flux20.flowRate.dependVariables.add(beta);
+                        flux23.flowRate.dependVariables.add(alpha);
+                        flux23.flowRate.dependVariables.add(beta);
+                        alpha.refCount = beta.refCount = 3;
                 }
                 break;
             case 10:
@@ -769,11 +936,15 @@ public class Reload {
                 switch(trn)
                 {
                     case 1:
-                        flux10.flowRate = "K10=VM/(KM+A(1))";
-                        Model.variables.setProperty("VM", "VM=");
-                        Model.variables.setProperty("KM", "KM=");
-                        Model.variableList.add("VM");
-                        Model.variableList.add("KM");
+                        flux10.flowRate.value = "K10=VM/(KM+A(1))";
+                        Variable vm = new Variable("VM", "VM=");
+                        Variable km = new Variable("KM", "KM=");
+                        Model.parameterList.remove(flux10.flowRate);
+                        Model.parameterList.add(vm);
+                        Model.parameterList.add(km);
+                        Model.parameterList.add(flux10.flowRate);
+                        flux10.flowRate.dependVariables.add(vm);
+                        flux10.flowRate.dependVariables.add(km);
                 }
                 break;
             case 11:
@@ -810,34 +981,72 @@ public class Reload {
                     case 1:
                         break;
                     case 4:
-                        flux10.flowRate = "K10=CL/V1";
-                        flux12.flowRate = "K12=Q2/V1";
-                        flux21.flowRate = "K21=Q2/V2";
-                        flux13.flowRate = "K13=Q3/V1";
-                        flux31.flowRate = "K31=Q3/V3";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V1", "V1=");
-                        Model.variables.setProperty("Q2", "Q2=");
-                        Model.variables.setProperty("V2", "V2=");
-                        Model.variables.setProperty("Q3", "Q3=");
-                        Model.variables.setProperty("V3", "V3=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V1");
-                        Model.variableList.add("Q2");
-                        Model.variableList.add("V2");
-                        Model.variableList.add("Q3");
-                        Model.variableList.add("V3");
+                        flux10.flowRate.value = "K10=CL/V1";
+                        flux12.flowRate.value = "K12=Q2/V1";
+                        flux21.flowRate.value = "K21=Q2/V2";
+                        flux13.flowRate.value = "K13=Q3/V1";
+                        flux31.flowRate.value = "K31=Q3/V3";
+                        Variable cl = new Variable("CL", "CL=");
+                        Variable v1 = new Variable("V1", "V1=");
+                        Variable q2 = new Variable("Q2", "Q2=");
+                        Variable v2 = new Variable("V2", "V2=");
+                        Variable q3 = new Variable("Q3", "Q3=");
+                        Variable v3 = new Variable("V3", "V3=");
+                        Model.parameterList.remove(flux10.flowRate);
+                        Model.parameterList.remove(flux12.flowRate);
+                        Model.parameterList.remove(flux21.flowRate);
+                        Model.parameterList.remove(flux13.flowRate);
+                        Model.parameterList.remove(flux31.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v1);
+                        Model.parameterList.add(q2);
+                        Model.parameterList.add(v2);
+                        Model.parameterList.add(q3);
+                        Model.parameterList.add(v3);
+                        Model.parameterList.add(flux10.flowRate);
+                        Model.parameterList.add(flux12.flowRate);
+                        Model.parameterList.add(flux21.flowRate);
+                        Model.parameterList.add(flux13.flowRate);
+                        Model.parameterList.add(flux31.flowRate);
+                        flux10.flowRate.dependVariables.add(cl);
+                        flux10.flowRate.dependVariables.add(v1);
+                        flux12.flowRate.dependVariables.add(q2);
+                        flux12.flowRate.dependVariables.add(v1);
+                        flux21.flowRate.dependVariables.add(q2);
+                        flux21.flowRate.dependVariables.add(v2);
+                        flux13.flowRate.dependVariables.add(q3);
+                        flux13.flowRate.dependVariables.add(v1);
+                        flux31.flowRate.dependVariables.add(q3);
+                        flux31.flowRate.dependVariables.add(v3);
+                        v1.refCount = 3;
+                        q2.refCount = q3.refCount = 2;
                         break;
                     case 6:
-                        flux10.flowRate = "K10=ALPHA*BETA*GAMMA/(K21*K31)";
-                        flux13.flowRate = "P=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA\nS=ALPHA+BETA+GAMMA\nK13=(P+K31*K31-K31*S-K10*K21)/(K21-K31)";
-                        flux12.flowRate = "S=ALPHA+BETA+GAMMA\nK12=S-K10-K13-K21-K31";
-                        Model.variables.setProperty("ALPHA", "ALPHA=");
-                        Model.variables.setProperty("BETA", "BETA=");
-                        Model.variables.setProperty("GAMMA", "GAMMA=");
-                        Model.variableList.add("ALPHA");
-                        Model.variableList.add("BETA");
-                        Model.variableList.add("GAMMA");
+                        flux10.flowRate.value = "K10=ALPHA*BETA*GAMMA/(K21*K31)";
+                        flux13.flowRate.value = "P=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA\nS=ALPHA+BETA+GAMMA\nK13=(P+K31*K31-K31*S-K10*K21)/(K21-K31)";
+                        flux12.flowRate.value = "S=ALPHA+BETA+GAMMA\nK12=S-K10-K13-K21-K31";
+                        Variable alpha = new Variable("ALPHA", "ALPHA=");
+                        Variable beta = new Variable("BETA", "BETA=");
+                        Variable gamma = new Variable("GAMMA", "GAMMA=");
+                        Model.parameterList.remove(flux10.flowRate);
+                        Model.parameterList.remove(flux13.flowRate);
+                        Model.parameterList.remove(flux12.flowRate);
+                        Model.parameterList.add(alpha);
+                        Model.parameterList.add(beta);
+                        Model.parameterList.add(gamma);
+                        Model.parameterList.add(flux10.flowRate);
+                        Model.parameterList.add(flux13.flowRate);
+                        Model.parameterList.add(flux12.flowRate);
+                        flux10.flowRate.dependVariables.add(alpha);
+                        flux10.flowRate.dependVariables.add(beta);
+                        flux10.flowRate.dependVariables.add(gamma);
+                        flux13.flowRate.dependVariables.add(alpha);
+                        flux13.flowRate.dependVariables.add(beta);
+                        flux13.flowRate.dependVariables.add(gamma);
+                        flux12.flowRate.dependVariables.add(alpha);
+                        flux12.flowRate.dependVariables.add(beta);
+                        flux12.flowRate.dependVariables.add(gamma);
+                        alpha.refCount = beta.refCount = gamma.refCount = 3;
                 }
                 break;
             case 12:
@@ -882,34 +1091,72 @@ public class Reload {
                     case 1:
                         break;
                     case 4:
-                        flux20.flowRate = "K20=CL/V2";
-                        flux23.flowRate = "K23=Q3/V2";
-                        flux32.flowRate = "K32=Q3/V3";
-                        flux24.flowRate = "K24=Q4/V2";
-                        flux42.flowRate = "K42=Q4/V4";
-                        Model.variables.setProperty("CL", "CL=");
-                        Model.variables.setProperty("V2", "V2=");
-                        Model.variables.setProperty("Q3", "Q3=");
-                        Model.variables.setProperty("V3", "V3=");
-                        Model.variables.setProperty("Q4", "Q4=");
-                        Model.variables.setProperty("V4", "V4=");
-                        Model.variableList.add("CL");
-                        Model.variableList.add("V2");
-                        Model.variableList.add("Q3");
-                        Model.variableList.add("V3");
-                        Model.variableList.add("Q4");
-                        Model.variableList.add("V4");
+                        flux20.flowRate.value = "K20=CL/V2";
+                        flux23.flowRate.value = "K23=Q3/V2";
+                        flux32.flowRate.value = "K32=Q3/V3";
+                        flux24.flowRate.value = "K24=Q4/V2";
+                        flux42.flowRate.value = "K42=Q4/V4";
+                        Variable cl = new Variable("CL", "CL=");
+                        Variable v2 = new Variable("V2", "V2=");
+                        Variable q3 = new Variable("Q3", "Q3=");
+                        Variable v3 = new Variable("V3", "V3=");
+                        Variable q4 = new Variable("Q4", "Q4=");
+                        Variable v4 = new Variable("V4", "V4=");
+                        Model.parameterList.remove(flux20.flowRate);
+                        Model.parameterList.remove(flux23.flowRate);
+                        Model.parameterList.remove(flux32.flowRate);
+                        Model.parameterList.remove(flux24.flowRate);
+                        Model.parameterList.remove(flux42.flowRate);
+                        Model.parameterList.add(cl);
+                        Model.parameterList.add(v2);
+                        Model.parameterList.add(q3);
+                        Model.parameterList.add(v3);
+                        Model.parameterList.add(q4);
+                        Model.parameterList.add(v4);
+                        Model.parameterList.add(flux20.flowRate);
+                        Model.parameterList.add(flux23.flowRate);
+                        Model.parameterList.add(flux32.flowRate);
+                        Model.parameterList.add(flux24.flowRate);
+                        Model.parameterList.add(flux42.flowRate);
+                        flux20.flowRate.dependVariables.add(cl);
+                        flux20.flowRate.dependVariables.add(v2);
+                        flux23.flowRate.dependVariables.add(q3);
+                        flux23.flowRate.dependVariables.add(v2);
+                        flux32.flowRate.dependVariables.add(q3);
+                        flux32.flowRate.dependVariables.add(v3);
+                        flux24.flowRate.dependVariables.add(q4);
+                        flux24.flowRate.dependVariables.add(v2);
+                        flux42.flowRate.dependVariables.add(q4);
+                        flux42.flowRate.dependVariables.add(v4);
+                        v2.refCount = 3;
+                        q3.refCount = q4.refCount = 2;
                         break;
                     case 6:
-                        flux20.flowRate = "K20=ALPHA*BETA*GAMMA/(K32*K42)";
-                        flux24.flowRate = "P=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA\nS=ALPHA+BETA+GAMMA\nK24=(P+K42*K42-K42*S-K20*K32)/(K32-K42)";
-                        flux23.flowRate = "S=ALPHA+BETA+GAMMA\nK23=S-K20-K24-K32-K42";
-                        Model.variables.setProperty("ALPHA", "ALPHA=");
-                        Model.variables.setProperty("BETA", "BETA=");
-                        Model.variables.setProperty("GAMMA", "GAMMA=");
-                        Model.variableList.add("ALPHA");
-                        Model.variableList.add("BETA");
-                        Model.variableList.add("GAMMA");
+                        flux20.flowRate.value = "K20=ALPHA*BETA*GAMMA/(K32*K42)";
+                        flux24.flowRate.value = "P=ALPHA*BETA+ALPHA*GAMMA+BETA*GAMMA\nS=ALPHA+BETA+GAMMA\nK24=(P+K42*K42-K42*S-K20*K32)/(K32-K42)";
+                        flux23.flowRate.value = "S=ALPHA+BETA+GAMMA\nK23=S-K20-K24-K32-K42";
+                        Variable alpha = new Variable("ALPHA", "ALPHA=");
+                        Variable beta = new Variable("BETA", "BETA=");
+                        Variable gamma = new Variable("GAMMA", "GAMMA=");
+                        Model.parameterList.remove(flux20.flowRate);
+                        Model.parameterList.remove(flux24.flowRate);
+                        Model.parameterList.remove(flux23.flowRate);
+                        Model.parameterList.add(alpha);
+                        Model.parameterList.add(beta);
+                        Model.parameterList.add(gamma);
+                        Model.parameterList.add(flux20.flowRate);
+                        Model.parameterList.add(flux24.flowRate);
+                        Model.parameterList.add(flux23.flowRate);
+                        flux20.flowRate.dependVariables.add(alpha);
+                        flux20.flowRate.dependVariables.add(beta);
+                        flux20.flowRate.dependVariables.add(gamma);
+                        flux24.flowRate.dependVariables.add(alpha);
+                        flux24.flowRate.dependVariables.add(beta);
+                        flux24.flowRate.dependVariables.add(gamma);
+                        flux23.flowRate.dependVariables.add(alpha);
+                        flux23.flowRate.dependVariables.add(beta);
+                        flux23.flowRate.dependVariables.add(gamma);
+                        alpha.refCount = beta.refCount = gamma.refCount = 3;
                 }
         }
         if(tool.iterator.analysis.equals("population"))
@@ -943,4 +1190,5 @@ public class Reload {
     private String[] modelNames;      // model/group names
     private String[][] inputInfo;     // [[dose name:x,y(comp number)]s for each model/group]s
     private String[][] sampleInfo;    // [[observation name:x,y]s for each model/group]s
+    private Vector<String> timeRates; // timeRate of each compartment in order
 }

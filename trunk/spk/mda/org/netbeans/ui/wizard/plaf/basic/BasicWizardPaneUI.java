@@ -96,7 +96,8 @@ public class BasicWizardPaneUI extends WizardPaneUI {
 		wizardPane.setValue(new Integer(-1));
 		if (e.getSource() == lastButton) wizardPane.setValue(new Integer(JWizardPane.LAST_OPTION));
       		if (e.getSource() == nextButton) 
-                    wizardPane.setValue(new Integer(JWizardPane.NEXT_OPTION));
+                    if (wizardPane.getCurrentStep().getStepDescription().checkingStep(wizardPane))
+                        wizardPane.setValue(new Integer(JWizardPane.NEXT_OPTION));
 		if (e.getSource() == previousButton) wizardPane.setValue(new Integer(JWizardPane.PREVIOUS_OPTION));
 		if (e.getSource() == finishButton) wizardPane.setValue(new Integer(JWizardPane.FINISH_OPTION));
 		if (e.getSource() == cancelButton) wizardPane.setValue(new Integer(JWizardPane.CANCEL_OPTION));

@@ -114,7 +114,11 @@ public class Continue extends javax.swing.JPanel implements WizardStep {
             }
             jTextArea1.setText(control);            
 	}
-
+        
+        public boolean checkingStep(JWizardPane wizard){
+            return true;
+        }
+        
 	public void hidingStep(JWizardPane wizard){
 
 	}

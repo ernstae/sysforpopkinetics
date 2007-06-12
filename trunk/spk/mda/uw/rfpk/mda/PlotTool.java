@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -93,6 +94,7 @@ public class PlotTool extends JFrame {
         c1ComboBox.setRenderer(renderer);
         c2ComboBox.setRenderer(renderer);
         c3ComboBox.setRenderer(renderer);
+        c4ComboBox.setRenderer(renderer);
         xlComboBox.setRenderer(renderer);
         ylComboBox.setRenderer(renderer);
         ulComboBox.setRenderer(renderer);
@@ -112,13 +114,15 @@ public class PlotTool extends JFrame {
         y2ComboBox.addItem("none");
         y3ComboBox.addItem("none");
         xComboBox.addItem("none");
+        ArrayList<String> tokens = new ArrayList<String>();
         for(int i = begin; i < nTokens; i++)
         {
             token = tokenizer.nextToken();
             y1ComboBox.addItem(token);
             y2ComboBox.addItem(token);
             y3ComboBox.addItem(token);
-            xComboBox.addItem(token);            
+            xComboBox.addItem(token);
+            tokens.add(token);
         }
         
         // If the first item is not ID, gray out jCheckBox4
@@ -130,8 +134,30 @@ public class PlotTool extends JFrame {
             
         // Read the data into a double array.
         indIDs = new String[lines.length - 1];
-        if(isIDString) dataAll = new double[nTokens - 1][lines.length - 1];
-        else dataAll = new double[nTokens][lines.length - 1];
+        hasMDV = tokens.indexOf("MDV") != -1;
+        indexDV = tokens.indexOf("DV");
+        int indexMDV = -1;
+        if(!hasMDV)
+        {
+            if(isIDString) dataAll = new double[nTokens - 1][lines.length - 1];
+            else dataAll = new double[nTokens][lines.length - 1];
+        }
+        else
+        {
+            indexMDV = tokens.indexOf("MDV");
+            if(isIDString)
+            {
+                indexEMDV = nTokens - 1;
+                indexHMDV = nTokens;
+                dataAll = new double[nTokens + 1][lines.length - 1];
+            }
+            else
+            {
+                indexEMDV = nTokens;
+                indexHMDV = nTokens + 1;
+                dataAll = new double[nTokens + 2][lines.length - 1];
+            }
+        }
         for(int i = 0; i < lines.length - 1; i++)
         {
             tokenizer = new StringTokenizer(lines[i + 1].trim(), " ", false);
@@ -146,12 +172,38 @@ public class PlotTool extends JFrame {
                 indIDs[i] = tokenizer.nextToken();
                 for(int j = 0; j < nTokens - 1; j++)
                     dataAll[j][i] = Double.parseDouble(tokenizer.nextToken());
+                if(hasMDV)
+                {
+                    if(dataAll[indexMDV][i] == 0)
+                    {
+                        dataAll[indexEMDV][i] = dataAll[indexDV][i];
+                        dataAll[indexHMDV][i] = Double.parseDouble("NaN");
+                    }
+                    else
+                    {
+                        dataAll[indexEMDV][i] = Double.parseDouble("NaN");
+                        dataAll[indexHMDV][i] = dataAll[indexDV][i];
+                    }
+                }
             }
             else
             {
                 for(int j = 0; j < nTokens; j++)
                     dataAll[j][i] = Double.parseDouble(tokenizer.nextToken());
                 indIDs[i] = String.valueOf(dataAll[0][i]);
+                if(hasMDV)
+                {
+                    if(dataAll[indexMDV][i] == 0)
+                    {
+                        dataAll[indexEMDV][i] = dataAll[indexDV][i];
+                        dataAll[indexHMDV][i] = Double.parseDouble("NaN");
+                    }
+                    else
+                    {
+                        dataAll[indexEMDV][i] = Double.parseDouble("NaN");
+                        dataAll[indexHMDV][i] = dataAll[indexDV][i];
+                    }
+                }
             }
         }
                 
@@ -313,6 +365,11 @@ public class PlotTool extends JFrame {
         jTextField5 = new javax.swing.JTextField();
         jTextField6 = new javax.swing.JTextField();
         jLabel36 = new javax.swing.JLabel();
+        c4ComboBox = new javax.swing.JComboBox(intArray1);
+        jCheckBox13 = new javax.swing.JCheckBox();
+        jPanel14 = new javax.swing.JPanel();
+        jLabel38 = new javax.swing.JLabel();
+        jCheckBox12 = new javax.swing.JCheckBox();
 
         curveListDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         curveListDialog.setTitle("Plot List");
@@ -947,7 +1004,7 @@ public class PlotTool extends JFrame {
         jLabel3.setText("Plot Title");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 1, 0);
         getContentPane().add(jLabel3, gridBagConstraints);
@@ -965,7 +1022,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 2, 12);
@@ -1006,7 +1063,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 17;
+        gridBagConstraints.gridy = 18;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 10, 12);
         getContentPane().add(jPanel1, gridBagConstraints);
@@ -1014,7 +1071,7 @@ public class PlotTool extends JFrame {
         jCheckBox1.setText("Add a vertical line along X = ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 6);
@@ -1023,7 +1080,7 @@ public class PlotTool extends JFrame {
         jCheckBox2.setText("Add a horizontal line along Y =");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 0);
@@ -1032,7 +1089,7 @@ public class PlotTool extends JFrame {
         jCheckBox3.setText("Add a unit slope line passing the origin Y = X");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 0);
@@ -1097,6 +1154,7 @@ public class PlotTool extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 1, 6);
         getContentPane().add(s1ComboBox, gridBagConstraints);
 
@@ -1105,6 +1163,7 @@ public class PlotTool extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 6);
         getContentPane().add(s2ComboBox, gridBagConstraints);
 
@@ -1113,6 +1172,7 @@ public class PlotTool extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 6);
         getContentPane().add(s3ComboBox, gridBagConstraints);
 
@@ -1151,6 +1211,9 @@ public class PlotTool extends JFrame {
         getContentPane().add(c3ComboBox, gridBagConstraints);
 
         jCheckBox4.setText("Plot for each ID number");
+        jCheckBox4.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jCheckBox4.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jCheckBox4.setPreferredSize(new java.awt.Dimension(169, 19));
         jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox4ActionPerformed(evt);
@@ -1169,7 +1232,7 @@ public class PlotTool extends JFrame {
         xlComboBox.setPreferredSize(new java.awt.Dimension(60, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(xlComboBox, gridBagConstraints);
 
@@ -1177,7 +1240,7 @@ public class PlotTool extends JFrame {
         ylComboBox.setPreferredSize(new java.awt.Dimension(60, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(ylComboBox, gridBagConstraints);
 
@@ -1185,14 +1248,14 @@ public class PlotTool extends JFrame {
         ulComboBox.setPreferredSize(new java.awt.Dimension(60, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(ulComboBox, gridBagConstraints);
 
         jLabel7.setText("X - Lable");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(2, 12, 2, 0);
         getContentPane().add(jLabel7, gridBagConstraints);
@@ -1200,7 +1263,7 @@ public class PlotTool extends JFrame {
         jLabel8.setText("Y - Label");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         getContentPane().add(jLabel8, gridBagConstraints);
@@ -1218,7 +1281,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 12);
@@ -1237,7 +1300,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 12);
@@ -1252,7 +1315,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 0);
@@ -1262,7 +1325,7 @@ public class PlotTool extends JFrame {
         jCheckBox6.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 0);
@@ -1272,7 +1335,7 @@ public class PlotTool extends JFrame {
         rComboBox.setPreferredSize(new java.awt.Dimension(80, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         getContentPane().add(rComboBox, gridBagConstraints);
 
@@ -1281,7 +1344,7 @@ public class PlotTool extends JFrame {
         pComboBox.setPreferredSize(new java.awt.Dimension(80, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         getContentPane().add(pComboBox, gridBagConstraints);
 
@@ -1289,7 +1352,7 @@ public class PlotTool extends JFrame {
         rcComboBox.setPreferredSize(new java.awt.Dimension(60, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(rcComboBox, gridBagConstraints);
 
@@ -1297,7 +1360,7 @@ public class PlotTool extends JFrame {
         pcComboBox.setPreferredSize(new java.awt.Dimension(60, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(pcComboBox, gridBagConstraints);
 
@@ -1311,7 +1374,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         getContentPane().add(jCheckBox7, gridBagConstraints);
 
@@ -1325,7 +1388,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(jCheckBox8, gridBagConstraints);
@@ -1341,7 +1404,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
@@ -1357,7 +1420,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
@@ -1366,7 +1429,7 @@ public class PlotTool extends JFrame {
         jLabel35.setText("Color");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(jLabel35, gridBagConstraints);
 
@@ -1375,7 +1438,7 @@ public class PlotTool extends JFrame {
         x0ComboBox.setPreferredSize(new java.awt.Dimension(80, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         getContentPane().add(x0ComboBox, gridBagConstraints);
 
@@ -1384,7 +1447,7 @@ public class PlotTool extends JFrame {
         y0ComboBox.setPreferredSize(new java.awt.Dimension(80, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         getContentPane().add(y0ComboBox, gridBagConstraints);
 
@@ -1398,7 +1461,7 @@ public class PlotTool extends JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
@@ -1407,7 +1470,7 @@ public class PlotTool extends JFrame {
         jCheckBox9.setText("Draw a vertical line at the 1st X data value, as");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 18, 0, 6);
@@ -1416,7 +1479,7 @@ public class PlotTool extends JFrame {
         jTextField5.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(jTextField5, gridBagConstraints);
@@ -1424,7 +1487,7 @@ public class PlotTool extends JFrame {
         jTextField6.setText("True Value");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         getContentPane().add(jTextField6, gridBagConstraints);
@@ -1432,11 +1495,74 @@ public class PlotTool extends JFrame {
         jLabel36.setText("Interval Size");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 13;
         getContentPane().add(jLabel36, gridBagConstraints);
+
+        c4ComboBox.setMaximumRowCount(10);
+        c4ComboBox.setPreferredSize(new java.awt.Dimension(60, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 2, 12);
+        getContentPane().add(c4ComboBox, gridBagConstraints);
+
+        jCheckBox13.setText("Hightlight");
+        jCheckBox13.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBox13.setEnabled(false);
+        jCheckBox13.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jCheckBox13.setMaximumSize(new java.awt.Dimension(84, 19));
+        jCheckBox13.setMinimumSize(new java.awt.Dimension(84, 19));
+        jCheckBox13.setPreferredSize(new java.awt.Dimension(84, 19));
+        jCheckBox13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox13ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 1, 3, 0);
+        getContentPane().add(jCheckBox13, gridBagConstraints);
+
+        jLabel38.setText("For missing DV   ");
+        jLabel38.setEnabled(false);
+        jPanel14.add(jLabel38);
+
+        jCheckBox12.setText("Eliminate");
+        jCheckBox12.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBox12.setEnabled(false);
+        jCheckBox12.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jCheckBox12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox12ActionPerformed(evt);
+            }
+        });
+
+        jPanel14.add(jCheckBox12);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(2, 12, 2, 0);
+        getContentPane().add(jPanel14, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jCheckBox13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox13ActionPerformed
+        if(jCheckBox13.isSelected())
+            jCheckBox12.setSelected(false);
+        setTitle();
+    }//GEN-LAST:event_jCheckBox13ActionPerformed
+
+    private void jCheckBox12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox12ActionPerformed
+        if(jCheckBox12.isSelected())
+            jCheckBox13.setSelected(false);
+        setTitle();
+    }//GEN-LAST:event_jCheckBox12ActionPerformed
 
     private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
         jCheckBox1.setEnabled(false);
@@ -1775,7 +1901,8 @@ public class PlotTool extends JFrame {
         
         // Get data and other information
         Object[] elements = curveList.getSelectedValues();
-        int nCurve = selection.size();
+        int nSelection = selection.size();
+        missingItem = new boolean[nSelection];
         double[][] dataX, dataY;        
         for(int j = 0; j < elements.length; j++)
         {
@@ -1783,19 +1910,25 @@ public class PlotTool extends JFrame {
             int endRow = startIndex.get(selectedIndex[j] + 1) - 1;
             Vector<double[][]> all = new Vector<double[][]>();
             double[][] dataOut;
-            for(int i = 0; i < nCurve; i++)
+            int nCurve = 0;
+            for(int i = 0; i < nSelection; i++)
             {
                 int indexX = xComboBox.getSelectedIndex() - 1;
                 int indexY = selection.get(i) - 1;
-                dataOut = Utility.removeMissingValue(dataAll[indexX], dataAll[indexY], startRow, endRow);
+                dataOut = Utility.removeMissingValue(dataAll[indexX], dataAll[indexY], startRow, endRow,
+                                                     jCheckBox7.isSelected(), jCheckBox8.isSelected());
                 if(dataOut == null)
                 {
-                    JOptionPane.showMessageDialog(null, "Data missing for a curve.");
-                    nCurve--;
-                    i--;
-                    continue;
+                    if(!jCheckBox13.isSelected() && !((String)curveName.get(i)).equals("Missing DV"))
+                        JOptionPane.showMessageDialog(null, "Data missing for a curve.");
+                    missingItem[i] = true;
                 }
-                all.add(dataOut);
+                else
+                {
+                    nCurve++;
+                    missingItem[i] = false;
+                    all.add(dataOut);
+                }
             }
             if(nCurve > 0)
             {
@@ -1848,11 +1981,41 @@ public class PlotTool extends JFrame {
         }
     }//GEN-LAST:event_displayButtonActionPerformed
 
+    private void setMDV()
+    {
+        if(hasMDV)
+        {
+            String y1 = (String)y1ComboBox.getSelectedItem();
+            String y2 = (String)y2ComboBox.getSelectedItem();
+            String y3 = (String)y3ComboBox.getSelectedItem();
+            int nDV = 0;
+            if(y1 != null && y1.equals("DV")) nDV++;
+            if(y2 != null && y2.equals("DV")) nDV++;
+            if(y3 != null && y3.equals("DV")) nDV++;
+            if(nDV == 1)
+            {
+                jCheckBox12.setEnabled(true);
+                jCheckBox13.setEnabled(true);
+                jLabel38.setEnabled(true);
+            }
+            else
+            {
+                jCheckBox12.setEnabled(false);
+                jCheckBox13.setEnabled(false);
+                jCheckBox12.setSelected(false);
+                jCheckBox13.setSelected(false);
+                jLabel38.setEnabled(false);
+            }
+        }
+    }
+    
     private void y2ComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_y2ComboBoxActionPerformed
+        setMDV();
         setTitle();
     }//GEN-LAST:event_y2ComboBoxActionPerformed
 
     private void y1ComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_y1ComboBoxActionPerformed
+        setMDV();
         setTitle();
     }//GEN-LAST:event_y1ComboBoxActionPerformed
 
@@ -1871,6 +2034,7 @@ public class PlotTool extends JFrame {
     }//GEN-LAST:event_jTextField1KeyTyped
 
     private void y3ComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_y3ComboBoxActionPerformed
+        setMDV();
         setTitle();
     }//GEN-LAST:event_y3ComboBoxActionPerformed
 
@@ -1928,7 +2092,8 @@ public class PlotTool extends JFrame {
         startIndex.addElement(new Integer(dataAll[0].length));
         int nInd = startIndex.size() - 1;
         if(jCheckBox4.isSelected())
-        {        
+        {
+            model.clear();
             for(int i = 0; i < nInd; i++)
                 model.addElement("ID = " + indIDs[startIndex.get(i)]);
             jCheckBox10.setSelected(false);
@@ -1939,6 +2104,7 @@ public class PlotTool extends JFrame {
         else
         {
             int nCurve = selection.size();
+            missingItem = new boolean[nCurve];
             Vector<Vector> allData = new Vector<Vector>(); // Store data for every curve
             Vector<int[]> allIndPoints = new Vector<int[]>();     // Store ind points for every curve
             double[][] dataOut;
@@ -1950,7 +2116,8 @@ public class PlotTool extends JFrame {
                 Vector<double[][]> curveDataAll = new Vector<double[][]>();
                 for(int j = 0; j < nInd; j++)
                 {
-                    dataOut = Utility.removeMissingValue(dataAll[indexX], dataAll[indexY], startIndex.get(j), startIndex.get(j + 1) - 1);
+                    dataOut = Utility.removeMissingValue(dataAll[indexX], dataAll[indexY], startIndex.get(j), startIndex.get(j + 1) - 1,
+                                                         jCheckBox7.isSelected(), jCheckBox8.isSelected());
                     if(dataOut != null)
                     { 
                         curveDataAll.add(dataOut);
@@ -1958,19 +2125,24 @@ public class PlotTool extends JFrame {
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog(null, "Some data values missing for individual " + (i + 1) + ".");
+                        if(!((String)curveName.get(i)).equals("Missing DV"))
+                            JOptionPane.showMessageDialog(null, "Some data values missing for individual " + (j + 1) + ".");
                         curveIndPoints[j] = 0;
                     }
                 }
                 if(curveDataAll.size() == 0)
                 {
-                    JOptionPane.showMessageDialog(null, "Data missing for a curve.");
+                    if(!((String)curveName.get(i)).equals("Missing DV"))
+                        JOptionPane.showMessageDialog(null, "Data missing for a curve.");
                     nCurve--;
-                    i--;
-                    continue;
+                    missingItem[i] = true;
                 }
-                allData.add(curveDataAll);
-                allIndPoints.add(curveIndPoints);
+                else
+                {
+                    allData.add(curveDataAll);
+                    allIndPoints.add(curveIndPoints);
+                    missingItem[i] = false;
+                }
             }
             int[] curveLength = new int[nCurve];
             int i = 0;
@@ -2060,33 +2232,50 @@ public class PlotTool extends JFrame {
     private void plot(double[][] dataX, double[][] dataY, String idTitle, int x, int y, int hDivi, int vDivi,
                       boolean isIndividualized, double xMin, double xMax, double yMin, double yMax)
     {
-        int nCurve = selection.size();
+        int nSelection = selection.size();
+        int nCurve = 0;
+        for(int i = 0; i < nSelection; i++)
+            if(!missingItem[i]) nCurve++;
         String[] name = new String[nCurve];
         int[] symbol = new int[nCurve];
         Color[] color = new Color[nCurve];
-        for(int i = 0; i < nCurve; i++)
+        int j = 0;
+        for(int i = 0; i < nSelection; i++)
         {
+            if(missingItem[i]) continue;
             if(((String)curveName.get(i)).equals("y1"))
             {
-                name[i]   = (String)y1ComboBox.getSelectedItem();
-                symbol[i] = s1ComboBox.getSelectedIndex();
-                color[i]  = colorList[c1ComboBox.getSelectedIndex()];
+                name[j]   = (String)y1ComboBox.getSelectedItem();
+                symbol[j] = s1ComboBox.getSelectedIndex();
+                color[j]  = colorList[c1ComboBox.getSelectedIndex()];
             }
             if(((String)curveName.get(i)).equals("y2"))
             {
-                name[i]   = (String)y2ComboBox.getSelectedItem();                
-                symbol[i] = s2ComboBox.getSelectedIndex();
-                color[i]  = colorList[c2ComboBox.getSelectedIndex()];
+                name[j]   = (String)y2ComboBox.getSelectedItem();                
+                symbol[j] = s2ComboBox.getSelectedIndex();
+                color[j]  = colorList[c2ComboBox.getSelectedIndex()];
             }
             if(((String)curveName.get(i)).equals("y3"))
             {
-                name[i]   = (String)y3ComboBox.getSelectedItem();                
-                symbol[i] = s3ComboBox.getSelectedIndex();
-                color[i]  = colorList[c3ComboBox.getSelectedIndex()];
+                name[j]   = (String)y3ComboBox.getSelectedItem();                
+                symbol[j] = s3ComboBox.getSelectedIndex();
+                color[j]  = colorList[c3ComboBox.getSelectedIndex()];
             }
-            if(jCheckBox8.isSelected()) name[i] = "log(" + name[i] + ")";
+            if(((String)curveName.get(i)).equals("Missing DV"))
+            {
+                name[j]   = "Missing DV";
+                if(y1ComboBox.getSelectedIndex() == indexDV + 1)
+                    symbol[j] = s1ComboBox.getSelectedIndex();
+                if(y2ComboBox.getSelectedIndex() == indexDV + 1)
+                    symbol[j] = s2ComboBox.getSelectedIndex();
+                if(y3ComboBox.getSelectedIndex() == indexDV + 1)
+                    symbol[j] = s3ComboBox.getSelectedIndex();
+                color[i]  = colorList[c4ComboBox.getSelectedIndex()];
+            }
+            if(jCheckBox8.isSelected()) name[j] = "log(" + name[j] + ")";
+            j++;
         }
-
+        
         Color[] addedLineColor = new Color[]{colorList[xlComboBox.getSelectedIndex()],
                                              colorList[ylComboBox.getSelectedIndex()],
                                              colorList[ulComboBox.getSelectedIndex()],
@@ -2178,6 +2367,24 @@ public class PlotTool extends JFrame {
 	frame.setVisible(true);
     }//GEN-LAST:event_OKButtonActionPerformed
 
+    private void setMDVSelection()
+    {
+        if(jCheckBox12.isSelected())
+        {
+            selection.addElement(new Integer(indexEMDV + 1));
+        }
+        else if(jCheckBox13.isSelected())
+        {
+            selection.addElement(new Integer(indexDV + 1));
+            selection.addElement(new Integer(indexHMDV + 1));
+            curveName.addElement("Missing DV");
+        }
+        else
+        {
+            selection.addElement(new Integer(indexDV + 1));
+        }
+    }
+    
     private void setTitle()
     {
         String x = (String)xComboBox.getSelectedItem();
@@ -2199,7 +2406,10 @@ public class PlotTool extends JFrame {
             else
                 y += y1 + " ";
             curveName.addElement("y1");
-            selection.addElement(new Integer(y1ComboBox.getSelectedIndex()));
+            if(y1.equals("DV"))
+                setMDVSelection();
+            else
+                selection.addElement(new Integer(y1ComboBox.getSelectedIndex()));
             rComboBox.addItem(y1);
             if(jRadioButton1.isSelected() && !jCheckBox4.isSelected())
                 y0ComboBox.addItem("1st Y_1");
@@ -2211,7 +2421,10 @@ public class PlotTool extends JFrame {
             else
                 y += y2 + " ";
             curveName.addElement("y2");
-            selection.addElement(new Integer(y2ComboBox.getSelectedIndex()));
+            if(y2.equals("DV"))
+                setMDVSelection();
+            else
+                selection.addElement(new Integer(y2ComboBox.getSelectedIndex()));
             rComboBox.addItem(y2);
             if(jRadioButton1.isSelected() && !jCheckBox4.isSelected())
                 y0ComboBox.addItem("1st Y_2");
@@ -2223,7 +2436,10 @@ public class PlotTool extends JFrame {
             else
                 y += y3 + " ";
             curveName.addElement("y3");
-            selection.addElement(new Integer(y3ComboBox.getSelectedIndex()));
+            if(y3.equals("DV"))
+                setMDVSelection();
+            else
+                selection.addElement(new Integer(y3ComboBox.getSelectedIndex()));
             rComboBox.addItem(y3);
             if(jRadioButton1.isSelected() && !jCheckBox4.isSelected())
                 y0ComboBox.addItem("1st Y_3");
@@ -2266,6 +2482,8 @@ public class PlotTool extends JFrame {
             
             // Determine the data range
             int nCurve = selection.size();
+            boolean isLogX = jCheckBox7.isSelected();
+            boolean isLogY = jCheckBox8.isSelected();
             double[][] dataX = null;
             double[][] dataY = null;
             if(jRadioButton3.isSelected())
@@ -2283,19 +2501,25 @@ public class PlotTool extends JFrame {
             {
                 Vector<double[][]> all = new Vector<double[][]>();
                 double[][] dataOut;
+                missingItem = new boolean[nCurve];
                 for(int i = 0; i < nCurve; i++)
                 {
                     int indexX = xComboBox.getSelectedIndex() - 1;
                     int indexY = selection.get(i) - 1;
-                    dataOut = Utility.removeMissingValue(dataAll[indexX], dataAll[indexY], 0, dataAll[indexX].length - 1);
+                    dataOut = Utility.removeMissingValue(dataAll[indexX], dataAll[indexY], 0, dataAll[indexX].length - 1,
+                                                         isLogX, isLogY);
                     if(dataOut == null)
                     {
-                        JOptionPane.showMessageDialog(null, "Data missing for a curve.");
+                        if(!((String)curveName.get(i)).equals("Missing DV"))
+                            JOptionPane.showMessageDialog(null, "Data missing for a curve.");
                         nCurve--;
-                        i--;
-                        continue;
+                        missingItem[i] = true;
                     }
-                    all.add(dataOut);
+                    else
+                    {
+                        missingItem[i] = false;
+                        all.add(dataOut);
+                    }
                 }
                 if(nCurve == 0)
                 {
@@ -2312,9 +2536,7 @@ public class PlotTool extends JFrame {
                     i++;
                 }
             }
-            
-            boolean isLogX = jCheckBox7.isSelected();
-            boolean isLogY = jCheckBox8.isSelected();
+/*
             if(isLogX || isLogY)            
             {
                 Vector<Double> tempX = new Vector<Double>();
@@ -2341,6 +2563,7 @@ public class PlotTool extends JFrame {
                     }
                 }
             }
+ */
             if(!jRadioButton3.isSelected())
             {
                 double[] range = Plotter.getDefaultRange(dataX, isLogX);
@@ -2472,6 +2695,7 @@ public class PlotTool extends JFrame {
     private javax.swing.JComboBox c1ComboBox;
     private javax.swing.JComboBox c2ComboBox;
     private javax.swing.JComboBox c3ComboBox;
+    private javax.swing.JComboBox c4ComboBox;
     private javax.swing.JButton cancelAdvancedButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox csComboBox;
@@ -2487,6 +2711,8 @@ public class PlotTool extends JFrame {
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;
+    private javax.swing.JCheckBox jCheckBox12;
+    private javax.swing.JCheckBox jCheckBox13;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JCheckBox jCheckBox4;
@@ -2526,6 +2752,7 @@ public class PlotTool extends JFrame {
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -2537,6 +2764,7 @@ public class PlotTool extends JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -2606,6 +2834,7 @@ public class PlotTool extends JFrame {
                                             Color.orange, Color.yellow, Color.green, 
                                             Color.magenta, Color.cyan, Color.blue};    
     private Vector<Integer> selection = null;
+    private boolean[] missingItem;
     private Vector<String> curveName = null;
     private Vector<Integer> startIndex = null;
     private boolean isHighlight1 = false;
@@ -2646,6 +2875,10 @@ public class PlotTool extends JFrame {
     private boolean isIDString = false;
     private boolean isIDFirst = true;
     private int[][] indPoints = null;
+    private boolean hasMDV = false;
+    private int indexDV = -1;
+    private int indexEMDV = -1;
+    private int indexHMDV = -1;
     
     /** Test MDA plotter.
      * @param args argument not used.
