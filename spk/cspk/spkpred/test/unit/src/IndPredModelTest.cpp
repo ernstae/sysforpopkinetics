@@ -186,10 +186,10 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w;
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + j] = ds * d / e;
-      depVar[yOffset + j] = depVar[fOffset + j] * exp(indepVar[etaOffset + 0]); 
+      depVar[yOffset + j] = depVar[fOffset + j] * CppAD::exp(indepVar[etaOffset + 0]); 
 
 
       //--------------------------------------------------------
@@ -322,7 +322,7 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w;
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + j] = ds * d / e;
       depVar[yOffset + j] = depVar[fOffset + j] + indepVar[etaOffset + 0]
@@ -483,7 +483,7 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w;
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + m] = ds * d / e;
       depVar[yOffset + m] = depVar[fOffset + m] + indepVar[etaOffset + 0]
@@ -645,7 +645,11 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
   // Set the number of data values for this individual.
   int nY_iKnown = 3;
 
-  OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_ModelBasedExpY_Pred< double > predEvaluator( nY_iKnown );
+
+  OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_ModelBasedExpY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -691,6 +695,8 @@ void IndPredModelTest::OneExpF_ModelBasedExpY_Test()
 
   IndPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -1104,7 +1110,11 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< double > predEvaluator( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -1154,6 +1164,8 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
   IndPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -1676,7 +1688,11 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test()
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< double > predEvaluator( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -1726,6 +1742,8 @@ void IndPredModelTest::OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test()
 
   IndPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -2220,7 +2238,11 @@ void IndPredModelTest::isCachingProperlyTest()
   // Set the number of data values for this individual.
   int nY_iKnown = 3;
 
-  OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_ModelBasedExpY_Pred< double > predEvaluator( nY_iKnown );
+
+  OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_ModelBasedExpY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -2266,6 +2288,8 @@ void IndPredModelTest::isCachingProperlyTest()
 
   IndPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -2329,16 +2353,13 @@ void IndPredModelTest::isCachingProperlyTest()
     "The cached value for dataMean was used when it was not valid.",
     model.getUsedCachedDataMean() == false );
   CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block AD function object was used when it was not valid.",
-    model.getUsedCachedPredADFun() == false );
+    "The cached f and h value was used when it was not valid.",
+    model.getUsedCachedFAndH() == false );
 
   model.dataVariance( dataVariance );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVariance was used when it was not valid.",
     model.getUsedCachedDataVariance() == false );
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block first derivatives were used when they were not valid.",
-    model.getUsedCachedPredFirstDeriv() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omega was used when it was not valid.",
     model.getUsedCachedOmega() == false );
@@ -2352,14 +2373,14 @@ void IndPredModelTest::isCachingProperlyTest()
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataMean_indPar was used when it was not valid.",
     model.getUsedCachedDataMean_indPar() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached fAndH_theta value was used when it was not valid.",
+    model.getUsedCachedFAndH_theta() == false );
 
   ok = model.dataVariance_indPar( dataVariance_indPar );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVariance_indPar was used when it was not valid.",
     model.getUsedCachedDataVariance_indPar() == false );
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block second derivatives were used when they were not valid.",
-    model.getUsedCachedPredSecondDeriv() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omega_omegaPar was used when it was not valid.",
     model.getUsedCachedOmega_omegaPar() == false );
@@ -2383,16 +2404,13 @@ void IndPredModelTest::isCachingProperlyTest()
     "The cached value for dataMean was not used when it was valid.",
     model.getUsedCachedDataMean() == true );
   CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block AD function object was not used when it was valid.",
-    model.getUsedCachedPredADFun() == true );
+    "The cached f and h value was not used when it was valid.",
+    model.getUsedCachedFAndH() == true );
 
   model.dataVariance( dataVariance );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVariance was not used when it was valid.",
     model.getUsedCachedDataVariance() == true );
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block first derivatives were not used when they were valid.",
-    model.getUsedCachedPredFirstDeriv() == true );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for omega was not used when it was valid.",
     model.getUsedCachedOmega() == true );
@@ -2406,6 +2424,9 @@ void IndPredModelTest::isCachingProperlyTest()
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataMean_indPar was not used when it was valid.",
     model.getUsedCachedDataMean_indPar() == true );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached fAndH_theta was not used when they were valid.",
+    model.getUsedCachedFAndH_theta() == true );
 
   ok = model.dataVariance_indPar( dataVariance_indPar );
   CPPUNIT_ASSERT_MESSAGE( 
@@ -2421,13 +2442,6 @@ void IndPredModelTest::isCachingProperlyTest()
   //------------------------------------------------------------
   // See if these cached values are not used when the parameter does not change.
   //------------------------------------------------------------
-
-  // Because the cached value for dataVariance_indPar contains the
-  // second derivatives of the Pred block, this cached value is
-  // not required and therefore is not used in this case.
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block second derivatives were used when they should not have been.",
-    model.getUsedCachedPredSecondDeriv() == false );
 
   // Because the cached value for dataVariance_indPar contains the
   // derivatives of omega, this cached value is not required and

@@ -92,7 +92,9 @@ using SPK_VA::valarray;
 //Constructor (original)
 template<class Scalar>
 IndPredModelBase<Scalar>::IndPredModelBase(
-    PredBase< CppAD::AD<Scalar> >&   predEvaluatorIn,
+    PredBase< Scalar >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<Scalar> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<Scalar> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -103,35 +105,37 @@ IndPredModelBase<Scalar>::IndPredModelBase(
   :
   nTheta                            ( nThetaIn ),
   nEta                              ( nEtaIn ),
+  nEps                              ( 0 ),
   thetaOffsetInIndPar               ( 0 ),
   omegaParOffsetInIndPar            ( nThetaIn ),
   nZ                                ( nThetaIn + nEtaIn ),
   thetaOffsetInZ                    ( 0 ),
   etaOffsetInZ                      ( nThetaIn ),
+  epsOffsetInZ                      ( nThetaIn + nEtaIn ),
   omegaParOffsetInZ                 ( nThetaIn + nEtaIn ),
-  fOffsetInW                        ( 0 ),
   pOmegaCurr                        ( 0 ),
-  pPredADFunCurr                    ( 0 ),
   predEvaluator                     ( predEvaluatorIn ),
+  predEvaluatorAD                   ( predEvaluatorADIn ),
+  predEvaluatorADAD                 ( predEvaluatorADADIn ),
   zCurr                             ( nZ ),
+  zCurrAD                           ( nZ ),
+  zCurrADAD                         ( nZ ),
   isDataMeanCurrOk                  ( false ),
   isDataMean_indParCurrOk           ( false ),
   isDataVarianceCurrOk              ( false ),
   isDataVariance_indParCurrOk       ( false ),
   isDataVarianceInvCurrOk           ( false ),
   isDataVarianceInv_indParCurrOk    ( false ),
-  isPredADFunCurrOk                 ( false ),
-  isPredFirstDerivCurrOk            ( false ),
-  isPredSecondDerivCurrOk           ( false ),
+  isFAndHCurrOk                     ( false ),
+  isFAndH_thetaCurrOk               ( false ),
   usedCachedDataMean                ( false ),
   usedCachedDataMean_indPar         ( false ),
   usedCachedDataVariance            ( false ),
   usedCachedDataVariance_indPar     ( false ),
   usedCachedDataVarianceInv         ( false ),
   usedCachedDataVarianceInv_indPar  ( false ),
-  usedCachedPredADFun               ( false ),
-  usedCachedPredFirstDeriv          ( false ),
-  usedCachedPredSecondDeriv         ( false )
+  usedCachedFAndH                   ( false ),
+  usedCachedFAndH_theta             ( false )
 {
   //------------------------------------------------------------
   // Initialize quantities related to the covariance matrix.
@@ -223,6 +227,13 @@ IndPredModelBase<Scalar>::IndPredModelBase(
   etaCurr.resize( nEta );
   etaCurr = 0.0;
 
+  // Resize AD<Scalar> and AD< AD<Scalar> > versions of these
+  // parameters.
+  thetaCurrAD  .resize( nTheta );
+  etaCurrAD    .resize( nEta );
+  thetaCurrADAD.resize( nTheta );
+  etaCurrADAD  .resize( nEta );
+
 
   //------------------------------------------------------------
   // Initialize quantities related to the individual.
@@ -296,7 +307,9 @@ IndPredModelBase<Scalar>::IndPredModelBase(
 //[Revist - get rid of 2nd constructor - Dave]
 template<class Scalar>
 IndPredModelBase<Scalar>::IndPredModelBase(
-    PredBase< CppAD::AD<Scalar> >&   predEvaluatorIn,
+    PredBase< Scalar >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<Scalar> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<Scalar> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -308,35 +321,37 @@ IndPredModelBase<Scalar>::IndPredModelBase(
   :
   nTheta                            ( nThetaIn ),
   nEta                              ( nEtaIn ),
+  nEps                              ( 0 ),
   thetaOffsetInIndPar               ( 0 ),
   omegaParOffsetInIndPar            ( nThetaIn ),
   nZ                                ( nThetaIn + nEtaIn ),
   thetaOffsetInZ                    ( 0 ),
   etaOffsetInZ                      ( nThetaIn ),
+  epsOffsetInZ                      ( nThetaIn + nEtaIn ),
   omegaParOffsetInZ                 ( nThetaIn + nEtaIn ),
-  fOffsetInW                        ( 0 ),
   pOmegaCurr                        ( 0 ),
-  pPredADFunCurr                    ( 0 ),
   predEvaluator                     ( predEvaluatorIn ),
+  predEvaluatorAD                   ( predEvaluatorADIn ),
+  predEvaluatorADAD                 ( predEvaluatorADADIn ),
   zCurr                             ( nZ ),
+  zCurrAD                           ( nZ ),
+  zCurrADAD                         ( nZ ),
   isDataMeanCurrOk                  ( false ),
   isDataMean_indParCurrOk           ( false ),
   isDataVarianceCurrOk              ( false ),
   isDataVariance_indParCurrOk       ( false ),
   isDataVarianceInvCurrOk           ( false ),
   isDataVarianceInv_indParCurrOk    ( false ),
-  isPredADFunCurrOk                 ( false ),
-  isPredFirstDerivCurrOk            ( false ),
-  isPredSecondDerivCurrOk           ( false ),
+  isFAndHCurrOk                     ( false ),
+  isFAndH_thetaCurrOk               ( false ),
   usedCachedDataMean                ( false ),
   usedCachedDataMean_indPar         ( false ),
   usedCachedDataVariance            ( false ),
   usedCachedDataVariance_indPar     ( false ),
   usedCachedDataVarianceInv         ( false ),
   usedCachedDataVarianceInv_indPar  ( false ),
-  usedCachedPredADFun               ( false ),
-  usedCachedPredFirstDeriv          ( false ),
-  usedCachedPredSecondDeriv         ( false )
+  usedCachedFAndH                   ( false ),
+  usedCachedFAndH_theta             ( false )
 {
   //------------------------------------------------------------
   // Initialize quantities related to the covariance matrix.
@@ -428,6 +443,13 @@ IndPredModelBase<Scalar>::IndPredModelBase(
   etaCurr.resize( nEta );
   etaCurr = 0.0;
 
+  // Resize AD<Scalar> and AD< AD<Scalar> > versions of these
+  // parameters.
+  thetaCurrAD  .resize( nTheta );
+  etaCurrAD    .resize( nEta );
+  thetaCurrADAD.resize( nTheta );
+  etaCurrADAD  .resize( nEta );
+
 
   //------------------------------------------------------------
   // Initialize quantities related to the individual.
@@ -500,7 +522,9 @@ IndPredModelBase<Scalar>::IndPredModelBase(
 //Constructor (with inputs for block structure)
 template<class Scalar>
 IndPredModelBase<Scalar>::IndPredModelBase(
-    PredBase< CppAD::AD<Scalar> >&   predEvaluatorIn,
+    PredBase< Scalar >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<Scalar> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<Scalar> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -515,35 +539,35 @@ IndPredModelBase<Scalar>::IndPredModelBase(
   :
   nTheta                            ( nThetaIn ),
   nEta                              ( nEtaIn ),
+  nEps                              ( 0 ),
   thetaOffsetInIndPar               ( 0 ),
   omegaParOffsetInIndPar            ( nThetaIn ),
   nZ                                ( nThetaIn + nEtaIn ),
   thetaOffsetInZ                    ( 0 ),
   etaOffsetInZ                      ( nThetaIn ),
+  epsOffsetInZ                      ( nThetaIn + nEtaIn ),
   omegaParOffsetInZ                 ( nThetaIn + nEtaIn ),
-  fOffsetInW                        ( 0 ),
   pOmegaCurr                        ( 0 ),
-  pPredADFunCurr                    ( 0 ),
   predEvaluator                     ( predEvaluatorIn ),
+  predEvaluatorAD                   ( predEvaluatorADIn ),
+  predEvaluatorADAD                 ( predEvaluatorADADIn ),
   zCurr                             ( nZ ),
+  zCurrAD                           ( nZ ),
+  zCurrADAD                         ( nZ ),
   isDataMeanCurrOk                  ( false ),
   isDataMean_indParCurrOk           ( false ),
   isDataVarianceCurrOk              ( false ),
   isDataVariance_indParCurrOk       ( false ),
   isDataVarianceInvCurrOk           ( false ),
   isDataVarianceInv_indParCurrOk    ( false ),
-  isPredADFunCurrOk                 ( false ),
-  isPredFirstDerivCurrOk            ( false ),
-  isPredSecondDerivCurrOk           ( false ),
   usedCachedDataMean                ( false ),
   usedCachedDataMean_indPar         ( false ),
   usedCachedDataVariance            ( false ),
   usedCachedDataVariance_indPar     ( false ),
   usedCachedDataVarianceInv         ( false ),
   usedCachedDataVarianceInv_indPar  ( false ),
-  usedCachedPredADFun               ( false ),
-  usedCachedPredFirstDeriv          ( false ),
-  usedCachedPredSecondDeriv         ( false )
+  usedCachedFAndH                   ( false ),
+  usedCachedFAndH_theta             ( false )
 {
   //------------------------------------------------------------
   // Initialize quantities related to the covariance matrix.
@@ -643,6 +667,13 @@ IndPredModelBase<Scalar>::IndPredModelBase(
   etaCurr.resize( nEta );
   etaCurr = 0.0;
 
+  // Resize AD<Scalar> and AD< AD<Scalar> > versions of these
+  // parameters.
+  thetaCurrAD  .resize( nTheta );
+  etaCurrAD    .resize( nEta );
+  thetaCurrADAD.resize( nTheta );
+  etaCurrADAD  .resize( nEta );
+
 
   //------------------------------------------------------------
   // Initialize quantities related to the individual.
@@ -706,13 +737,6 @@ IndPredModelBase<Scalar>::~IndPredModelBase()
   {
     delete pOmegaCurr;
   }
-
-  // Free the memory allocated for the Pred block automatic
-  // differentiation function object.
-  if ( pPredADFunCurr )
-  {
-    delete pPredADFunCurr;
-  }
 }
 
 
@@ -755,29 +779,6 @@ void IndPredModelBase<Scalar>::doSelectIndividual( int iIn )
 
   // Set the number of observation records for this individual.
   nObsRecordCurr  = predEvaluator.getNObservs( iCurr );
-
-
-  //------------------------------------------------------------
-  // Update the Pred block dependent variable information.
-  //------------------------------------------------------------
-
-  // Set quantities related to the vector of dependent variables
-  // for the current individual,
-  //
-  //                 -                 -
-  //                |  f( theta )       |
-  //     w( z )  =  |                   |  .
-  //                |  y( theta, eta )  |
-  //                 -                 -
-  //
-  // This vector contains quantities that are set when the 
-  // expressions in the Pred block are evaluated.
-  nW         = 2 * nObsRecordCurr;
-  yOffsetInW = nObsRecordCurr;
-
-  // Set the size of the vector of dependent variables.
-  wCurr.resize( nW );
-
 }
 
 
@@ -912,9 +913,8 @@ void IndPredModelBase<Scalar>::invalidateCache() const
   isDataVariance_indParCurrOk    = false;
   isDataVarianceInvCurrOk        = false;
   isDataVarianceInv_indParCurrOk = false;
-  isPredADFunCurrOk              = false;
-  isPredFirstDerivCurrOk         = false;
-  isPredSecondDerivCurrOk        = false;
+  isFAndHCurrOk                  = false;
+  isFAndH_thetaCurrOk            = false;
 }
 
 
@@ -998,40 +998,27 @@ bool IndPredModelBase<Scalar>::getUsedCachedDataVarianceInv_indPar() const
 
 /*************************************************************************
  *
- * Function: getUsedCachedPredADFun
+ * Function: getUsedCachedFAndH
  *
  *************************************************************************/
 
 template<class Scalar>
-bool IndPredModelBase<Scalar>::getUsedCachedPredADFun() const
+bool IndPredModelBase<Scalar>::getUsedCachedFAndH() const
 {
-  return usedCachedPredADFun;
+  return usedCachedFAndH;
 }
 
 
 /*************************************************************************
  *
- * Function: getUsedCachedPredFirstDeriv
+ * Function: getUsedCachedFAndH_theta
  *
  *************************************************************************/
 
 template<class Scalar>
-bool IndPredModelBase<Scalar>::getUsedCachedPredFirstDeriv() const
+bool IndPredModelBase<Scalar>::getUsedCachedFAndH_theta() const
 {
-  return usedCachedPredFirstDeriv;
-}
-
-
-/*************************************************************************
- *
- * Function: getUsedCachedPredSecondDeriv
- *
- *************************************************************************/
-
-template<class Scalar>
-bool IndPredModelBase<Scalar>::getUsedCachedPredSecondDeriv() const
-{
-  return usedCachedPredSecondDeriv;
+  return usedCachedFAndH_theta;
 }
 
 
@@ -1063,43 +1050,37 @@ bool IndPredModelBase<Scalar>::getUsedCachedOmega_omegaPar() const
 
 /*************************************************************************
  *
- * Function: evalAllPred
+ * Function: evalFAndH
  *
  *//**
- * This function evaluates the predicted values for the data for
- * all of the observation records for the current individual.
- *
- * It does this by evaluating the expressions from the Pred block for
- * every data record and then setting the predicted value if the data
- * record is an observation record.
- *
- * Note that this function combines the parameters theta and eta
- * into a single vector of independent variables,
+ * This function evaluates the mean for the current individual's data
  * \f[
- *     z =
- *       \left[ 
- *         \begin{array}{c}
- *           \mbox{theta} \\
- *           \mbox{eta}
- *         \end{array}
- *       \right] .
+ *     f_i(\mbox{theta})
  * \f]
- * In addition, this function combines the model functions f and y
- * into a single vector of dependent variables,
+ * and the derivative with respect to eta of their data values
  * \f[
- *     w(z) =
- *       \left[ 
- *         \begin{array}{c}
- *           f(\mbox{theta}) \\
- *           y(\mbox{theta}, \mbox{eta})
- *         \end{array}
- *       \right] .
+ *     h_i(\mbox{theta}) =
+ *       \partial_{\mbox{eta}} \; y_i(\mbox{theta}, \mbox{eta})
+ *         \left|_{\mbox{eta}=0} \right. 
  * \f]
+ * for all of the observation records for the current individual.
+ *
+ * This function sets
+ * \f[
+ *     \mbox{fCurr} = f_i(\mbox{theta}) 
+ * \f]
+ * and
+ * \f[
+ *     \mbox{hCurr} = h_i(\mbox{theta})  .
+ * \f]
+ *
+ * Note that these quantities are functions of theta, which is a
+ * component of \f$b_i\f$.
  */
 /*************************************************************************/
 
 template<class Scalar>
-void IndPredModelBase<Scalar>::evalAllPred() const
+void IndPredModelBase<Scalar>::evalFAndH() const
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1109,31 +1090,31 @@ void IndPredModelBase<Scalar>::evalAllPred() const
 
 
   //------------------------------------------------------------
-  // Use the cached value if possible.
+  // Use the cached values if possible.
   //------------------------------------------------------------
 
-  // Don't reevaluate the expressions in the Pred block if the
-  // current version of the automatic differentiation function
-  // object is valid.
-  if ( isPredADFunCurrOk )
+  if ( isFAndHCurrOk )
   {
-    usedCachedPredADFun = true;
+    usedCachedFAndH = true;
 
     return;
   }
   else
   {
-    usedCachedPredADFun = false;
+    usedCachedFAndH = false;
   }
 
 
   //------------------------------------------------------------
-  // Prepare the independent variables.
+  // Evaluate all of the data mean values.
   //------------------------------------------------------------
 
   int k;
 
-  // Set the current independent variables,
+  // Make sure this is the proper size.
+  fCurr.resize( nObsRecordCurr );
+
+  // Set the current vector of variable values,
   //
   //            -       -
   //           |  theta  |
@@ -1143,334 +1124,163 @@ void IndPredModelBase<Scalar>::evalAllPred() const
   //
   for ( k = 0; k < nTheta; k++ )
   {
-    zCurr[k + thetaOffsetInZ] = static_cast<Scalar>( thetaCurr[k] );
+    zCurr[k + thetaOffsetInZ] = thetaCurr[k];
   }
   for ( k = 0; k < nEta; k++ )
   {
-    zCurr[k + etaOffsetInZ]   = static_cast<Scalar>( etaCurr[k] );
+    zCurr[k + etaOffsetInZ]   = etaCurr[k];
   }
 
-  // Set these to zero since there are no eps variables for
-  // individual level Pred models.
-  const int nEps         = 0;
-  const int epsOffsetInZ = 0;
-
-  // Declare the independent variables.  This specifies the
-  // domain for the differentiable function object that will
-  // be constructed after the expressions in the Pred block
-  // have been evaluated.
-  Independent( zCurr );
+  // Set all of the data mean values for this individual,
+  //
+  //     f ( theta )  .
+  //      i
+  //
+  predEvaluator.evalAllF( 
+    thetaOffsetInZ,
+    nTheta,
+    etaOffsetInZ,
+    nEta,
+    epsOffsetInZ,
+    nEps,
+    nObsRecordCurr,
+    iCurr,
+    zCurr,
+    fCurr );
 
 
   //------------------------------------------------------------
-  // Evaluate all of the predicted values for the data.
+  // Evaluate all of the data values.
   //------------------------------------------------------------
 
-  // This message will be used if an error occurs.
-  string taskMessage;
+  // Make sure these are the proper size.
+  fCurrAD.resize( nObsRecordCurr );
+  yCurrAD.resize( nObsRecordCurr );
 
-  bool isObsRecord;
-  Scalar fCurr;
-  Scalar yCurr;
-  int j;
-
-  // This will keep track of the number of predicted values
-  // that have been set for the current individual.
-  int nPredValSet = 0;
-
-  // Evaluate the expressions from the Pred block for all of
-  // the data records for the current individual.
-  for ( j = 0; j < nDataRecordCurr; j++ )
+  // Set AD<Scalar> versions of these variables.
+  for ( k = 0; k < nTheta; k++ )
   {
-    taskMessage = "during the evaluation of the predicted value for the \n" + 
-      intToOrdinalString( j, ZERO_IS_FIRST_INT ) +
-       " data record for the individual.";
-
-    // Evaluate the Pred block expressions for this data record.
-    // The predicted value will be set during the call to eval()
-    // if this data record is an observation record.
-    try
-    {
-      isObsRecord = predEvaluator.eval(
-        thetaOffsetInZ,
-        nTheta,
-        etaOffsetInZ,
-        nEta,
-        epsOffsetInZ,
-        nEps,
-        fOffsetInW,
-        nObsRecordCurr,
-        yOffsetInW,
-        nObsRecordCurr,
-        iCurr,
-        j,
-        zCurr,
-        wCurr );
-    }
-    catch( SpkException& e )
-    {
-      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-      // This error code should be replaced with one that is accurate.
-      throw e.push(
-        SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An error occurred " + taskMessage ).c_str(),
-        __LINE__,
-        __FILE__ );
-    }
-    catch( const std::exception& stde )
-    {
-      throw SpkException(
-        stde,
-        ( "A standard exception was thrown " + taskMessage ).c_str(),
-        __LINE__, 
-        __FILE__ );
-    }  
-    catch( ... )
-    {
-      throw SpkException(
-        SpkError::SPK_UNKNOWN_ERR, 
-        ( "An unknown exception was thrown " + taskMessage ).c_str(),
-        __LINE__, 
-        __FILE__ );
-    }
-
-    // If the current record is an observation record, then check the
-    // calculated predicted value to see if it is valid.
-    if ( isObsRecord )
-    {
-      // Make sure that the value is finite.
-      if ( isUnnormNumber( wCurr[ nPredValSet ] ) )
-      {
-        // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-        // This error code should be replaced with one that is accurate.
-        throw SpkException(
-          SpkError::SPK_MODEL_DATA_MEAN_ERR,
-          ( "An infinite value was generated " + taskMessage ).c_str(),
-          __LINE__,
-          __FILE__ );
-      }
-    
-      // Make sure that the value is not a NaN.
-      if ( isNotANumber( wCurr[ nPredValSet ] ) )
-      {
-        // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-        // This error code should be replaced with one that is accurate.
-        throw SpkException(
-          SpkError::SPK_MODEL_DATA_MEAN_ERR,
-          ( "A value that is Not a Number (NaN) was generated " + 
-            taskMessage ).c_str(),
-          __LINE__,
-          __FILE__ );
-      }
-
-      // Increment the counter.
-      nPredValSet++;
-    }
-
+    thetaCurrAD[k]    = static_cast<Scalar>( thetaCurr[k] );
   }
-
-  // See if there was the correct number of observation records.
-  if ( nPredValSet != nObsRecordCurr )
+  for ( k = 0; k < nEta; k++ )
   {
-    throw SpkException(
-      SpkError::SPK_USER_INPUT_ERR, 
-      "The number of data records that are observation records does not match the expected \nnumber of observation records.",
-      __LINE__, 
-      __FILE__ );
+    etaCurrAD[k]      = static_cast<Scalar>( etaCurr[k] );
   }
-
-
-  //------------------------------------------------------------
-  // Define the Pred block automatic differentiation function object.
-  //------------------------------------------------------------
-
-  // If a current version of the Pred block automatic differentiation
-  // function object already exists, then delete it.
-  if ( pPredADFunCurr )
+  for ( k = 0; k < nObsRecordCurr; k++ )
   {
-    delete pPredADFunCurr;
+    fCurrAD[k]        = static_cast<Scalar>( fCurr[k] );
   }
 
-  // Construct a differentiable function object that corresponds 
-  // to the mapping of z to w, which will be represented here as
+  // Set any values for the AD<Scalar> version of the expression
+  // evaluator that were calculated when evalAllF() was called with
+  // the Scalar version.
+  predEvaluator.initPredSubAD( &predEvaluatorAD );
+
+  // Declare the independent variable for calculating h and start the
+  // CppAD tape.
   //
-  //     w  =  pred( z )  .
+  // This is the only level of taping for this function, beyond any
+  // taping that may already be happening for the Scalar type.
+  Independent( etaCurrAD );
+
+  // Set the AD<Scalar> version of the current vector of variable
+  // values,
   //
-  // This function is defined by the relationships between z and
-  // w contained in predEvaluator.eval().
-  pPredADFunCurr = new ADFun<Scalar>( zCurr, wCurr );
-
-
-  //------------------------------------------------------------
-  // Finish up.
-  //------------------------------------------------------------
-
-  isPredADFunCurrOk = true;
-}
-
-
-/*************************************************************************
- *
- * Function: evalPredFirstDeriv
- *
- *//**
- * Evaluates first derivatives of the Pred block expressions.
- *
- * In particular, this function evaluates the following first derivatives:
- * \f[
- *     \partial_{\mbox{theta}} \; f(\mbox{theta}) ,
- * \f]
- * and
- * \f[
- *     h(\mbox{theta}) =
- *       \partial_{\mbox{eta}} \; y(\mbox{theta}, \mbox{eta})
- *         \left|_{\mbox{eta}=0} \right. .
- * \f]
- */ 
-/*************************************************************************/
-
-template<class Scalar>
-void IndPredModelBase<Scalar>::evalPredFirstDeriv() const
-{
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-
-
-  //------------------------------------------------------------
-  // Use the cached value if possible.
-  //------------------------------------------------------------
-
-  // Don't reevaluate the first derivatives of the expressions in
-  // the Pred block if the current versions are valid.
-  if ( isPredFirstDerivCurrOk )
-  {
-    usedCachedPredFirstDeriv = true;
-
-    return;
-  }
-  else
-  {
-    usedCachedPredFirstDeriv = false;
-  }
-
-
-  //------------------------------------------------------------
-  // Prepare to calculate the first derivatives.
-  //------------------------------------------------------------
-
-  // Before first derivatives can be calculated, the predicted values
-  // for all of the observation records for the current individual
-  // must be evaluated.
-  evalAllPred();
-
-  // Make sure these are the proper sizes.
-  f_thetaCurr.resize( nObsRecordCurr * nTheta );
-  hCurr      .resize( nObsRecordCurr * nEta );
-
-  // Set the lengths of the Taylor coefficient column vectors.
-  std::vector<Scalar> u1( pPredADFunCurr->Domain() );
-  std::vector<Scalar> v1( pPredADFunCurr->Range() );
-
-
-  //------------------------------------------------------------
-  // Calculate the first derivatives of the dependent variables.
-  //------------------------------------------------------------
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  //
-  // Note
-  // ----
-  //
-  // This function uses the Pred block automatic differentiation
-  // function object to evaluate the first derivatives of f and
-  // y at the current values for theta.
-  //
-  // It does that by setting 
-  //
-  //                -
-  //               |   1, if m = k,
-  //     u1     =  <
-  //       (m)     |   0, otherwise,
-  //                -
-  //
-  // for each element in u1 in sequence and then evaluating
-  //
-  //     v1  =  d  [ pred( u0 ) ]  u1
-  //             z
-  //
-  //             (k)
-  //         =  d     pred( z )  .
-  //             z
-  //
-  // Note that the value
-  //
-  //     u0  =  z  
-  //
-  // is set when the function object is constructed.
-  //
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  int j;
-  int k;
-
-  // Initialize the first order Taylor coefficients for U.
-  for ( k = 0; k < nZ; k++ )
-  {
-    u1[k] = 0.0;
-  }
-
-  // Calculate the first derivative
-  //
-  //     d       f( theta )  .
-  //      theta
+  //            -       -
+  //           |  theta  |
+  //     z  =  |         |  .
+  //           |   eta   |
+  //            -       -
   //
   for ( k = 0; k < nTheta; k++ )
   {
-    u1[k + thetaOffsetInZ] = 1.0;
-
-    // Evaluate the first order Taylor coefficients for pred(U).
-    v1 = pPredADFunCurr->Forward( 1, u1 );
-
-    // Set the elements of the first derivative:
-    //
-    //      (k)
-    //     d       f   ( theta )  .
-    //      theta   (j)
-    //
-    for ( j = 0; j < nObsRecordCurr; j++ )
-    {
-      f_thetaCurr[j + k * nObsRecordCurr] = v1[j + fOffsetInW];
-    }
-
-    u1[k + thetaOffsetInZ] = 0.0;
+    zCurrAD[k + thetaOffsetInZ] = thetaCurrAD[k];
   }
-
-  // Calculate the first derivative
-  //
-  //                                           |
-  //     h( theta )  =  d     y( theta, eta )  |          .
-  //                     eta                   | eta = 0
-  //
   for ( k = 0; k < nEta; k++ )
   {
-    u1[k + etaOffsetInZ] = 1.0;
+    zCurrAD[k + etaOffsetInZ]   = etaCurrAD[k];
+  }
 
-    // Evaluate the first order Taylor coefficients for pred(U).
-    v1 = pPredADFunCurr->Forward( 1, u1 );
+  // Set all of the data values for this individual using the
+  // AD<Scalar> expression evaluator,
+  //
+  //     y ( theta, eta )  .
+  //      i
+  //
+  predEvaluatorAD.evalAllY(
+    thetaOffsetInZ,
+    nTheta,
+    etaOffsetInZ,
+    nEta,
+    epsOffsetInZ,
+    nEps,
+    nObsRecordCurr,
+    iCurr,
+    zCurrAD,
+    fCurrAD,
+    yCurrAD );
+
+  // Stop the taping by constructing a differentiable function object
+  // that corresponds to the mapping of eta to y.  This function is
+  // defined by the relationships between eta and y that were
+  // performed during the call to predEvaluatorAD.evalAllY().
+  ADFun<Scalar> yADFunCurr( etaCurrAD, yCurrAD );
+
+
+  //------------------------------------------------------------
+  // Calculate the derivative of the data values.
+  //------------------------------------------------------------
+
+  int j;
+
+  // Make sure this is the proper size.
+  hCurr.resize( nObsRecordCurr * nEta );
+
+  // Set the lengths of the argument and result vectors for Forward.
+  std::vector<Scalar> u1( yADFunCurr.Domain() );
+  std::vector<Scalar> v1( yADFunCurr.Range() );
+
+  assert( nEta           == yADFunCurr.Domain() );
+  assert( nObsRecordCurr == yADFunCurr.Range() );
+
+  // Initialize the first order arguments.
+  for ( k = 0; k < nEta; k++ )
+  {
+    u1[k] = 0;
+  }
+
+  // Calculate the first derivative of the data values
+  //
+  //                                             |
+  //     h ( theta )  =  d     y ( theta, eta )  |          .
+  //      i               eta   i                | eta = 0
+  //
+  // Use forward mode to calculate this derivative because there is
+  // usually only one eta element and more than one y value, which
+  // means there are more dependent than independent parameters.
+  for ( k = 0; k < nEta; k++ )
+  {
+    // Evaluate
+    //
+    //             (k)
+    //     v1  =  d     y( theta, eta )  .
+    //             eta
+    //
+    u1[k] = 1;
+    v1    = yADFunCurr.Forward( 1, u1 );
+    u1[k] = 0;
 
     // Set the elements of the first derivative:
     //
-    //                          (k)                      |              
-    //     h     ( theta )  =  d     y   ( theta, eta )  |          .
-    //      (j,k)               eta   (j)                | eta = 0
+    //                (k)
+    //     h      =  d     y   ( theta, eta )  .
+    //      (j,k)     eta   (j)
     //
     for ( j = 0; j < nObsRecordCurr; j++ )
     {
-      hCurr[j + k * nObsRecordCurr] = v1[j + yOffsetInW];
+      hCurr[j + k * nObsRecordCurr] = v1[j];
     }
 
-    u1[k + etaOffsetInZ] = 0.0;
   }
 
 
@@ -1478,393 +1288,428 @@ void IndPredModelBase<Scalar>::evalPredFirstDeriv() const
   // Finish up.
   //------------------------------------------------------------
 
-  isPredFirstDerivCurrOk = true;
+  isFAndHCurrOk = true;
 }
 
 
 /*************************************************************************
  *
- * Function: evalPredSecondDeriv
+ * Function: evalFAndH_theta
  *
  *//**
- * Evaluates first and second derivatives of the Pred block expressions.
- *
- * In particular, this function evaluates the following second derivative:
+ * This function evaluates the derivative with respect to theta of the
+ * mean for the current individual's data
+ * \f[
+ *     \partial_{\mbox{theta}} \; f_i(\mbox{theta})
+ * \f]
+ * and the derivative with respect to theta of the derivative with respect 
+ * to eta of their data values
  * \f[
  *     \partial_{\mbox{theta}}
  *       \left[
- *         \partial_{\mbox{eta}} \; y(\mbox{theta}, \mbox{eta})
+ *         h_i(\mbox{theta})
+ *       \right]
+ *     =
+ *     \partial_{\mbox{theta}}
+ *       \left[
+ *         \partial_{\mbox{eta}} \; y_i(\mbox{theta}, \mbox{eta})
  *           \left|_{\mbox{eta}=0} \right. 
- *       \right] .
+ *       \right] 
  * \f]
+ * for all of the observation records for the current individual.
  *
- * In addition, this function evaluates the following first derivatives:
+ * This function sets
  * \f[
- *     \partial_{\mbox{theta}} \; f(\mbox{theta}) ,
+ *     \mbox{f_thetaCurr} = \partial_{\mbox{theta}} \; f_i(\mbox{theta})
  * \f]
  * and
  * \f[
- *     h(\mbox{theta}) =
- *       \partial_{\mbox{eta}} \; y(\mbox{theta}, \mbox{eta})
- *         \left|_{\mbox{eta}=0} \right. .
+ *     \mbox{h_thetaCurr} = \partial_{\mbox{theta}} \; h_i(\mbox{theta})  .
  * \f]
- */ 
+ *
+ * Note that these quantities are functions of theta, which is a
+ * component of \f$b_i\f$.
+ */
 /*************************************************************************/
 
 template<class Scalar>
-void IndPredModelBase<Scalar>::evalPredSecondDeriv() const
+void IndPredModelBase<Scalar>::evalFAndH_theta() const
 {
   //------------------------------------------------------------
   // Preliminaries.
   //------------------------------------------------------------
+
+  using namespace std;
 
 
   //------------------------------------------------------------
   // Use the cached values if possible.
   //------------------------------------------------------------
 
-  // Don't reevaluate the second derivatives of the expressions in
-  // the Pred block if the current versions are valid.
-  if ( isPredSecondDerivCurrOk )
+  if ( isFAndH_thetaCurrOk )
   {
-    usedCachedPredSecondDeriv = true;
+    usedCachedFAndH_theta = true;
 
     return;
   }
   else
   {
-    usedCachedPredSecondDeriv = false;
+    usedCachedFAndH_theta = false;
   }
 
 
   //------------------------------------------------------------
-  // Prepare to calculate the first and second derivatives.
+  // Evaluate all of the data mean values.
   //------------------------------------------------------------
 
-  // Before first or second derivatives can be calculated, the
-  // predicted values for all of the observation records for the
-  // current individual must be evaluated.
-  evalAllPred();
+  int k;
+
+  // Make sure these are the proper size.
+  fCurrAD.resize( nObsRecordCurr );
+  yCurrAD.resize( nObsRecordCurr );
+
+  // Set AD<Scalar> versions of these variables.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    thetaCurrAD[k]    = static_cast<Scalar>( thetaCurr[k] );
+  }
+  for ( k = 0; k < nEta; k++ )
+  {
+    etaCurrAD[k]      = static_cast<Scalar>( etaCurr[k] );
+  }
+
+  // Declare the independent variable for calculating the derivative
+  // of f and h and start the CppAD tape.
+  //
+  // This is the first level of taping for this function, beyond any
+  // taping that may already be happening for the Scalar type.
+  Independent( thetaCurrAD );
+
+  // Set the AD<Scalar> version of the current vector of variable
+  // values,
+  //
+  //            -       -
+  //           |  theta  |
+  //     z  =  |         |  .
+  //           |   eta   |
+  //            -       -
+  //
+  for ( k = 0; k < nTheta; k++ )
+  {
+    zCurrAD[k + thetaOffsetInZ] = thetaCurrAD[k];
+  }
+  for ( k = 0; k < nEta; k++ )
+  {
+    zCurrAD[k + etaOffsetInZ]   = etaCurrAD[k];
+  }
+
+  // Set all of the data mean values for this individual,
+  //
+  //     f ( theta )  .
+  //      i
+  //
+  predEvaluatorAD.evalAllF( 
+    thetaOffsetInZ,
+    nTheta,
+    etaOffsetInZ,
+    nEta,
+    epsOffsetInZ,
+    nEps,
+    nObsRecordCurr,
+    iCurr,
+    zCurrAD,
+    fCurrAD );
+
+
+  //------------------------------------------------------------
+  // Evaluate all of the data values.
+  //------------------------------------------------------------
+
+  // Make sure these are the proper size.
+  fCurrADAD.resize( nObsRecordCurr );
+  yCurrADAD.resize( nObsRecordCurr );
+
+  // Set AD<AD<Scalar>> versions of these variables.
+  for ( k = 0; k < nTheta; k++ )
+  {
+    thetaCurrADAD[k]    = static_cast< AD<Scalar> >( thetaCurrAD[k] );
+  }
+  for ( k = 0; k < nEta; k++ )
+  {
+    etaCurrADAD[k]      = static_cast< AD<Scalar> >( etaCurrAD[k] );
+  }
+  for ( k = 0; k < nObsRecordCurr; k++ )
+  {
+    fCurrADAD[k]        = static_cast< AD<Scalar> >( fCurrAD[k] );
+  }
+
+  // Set any values for the AD<AD<Scalar>> version of the expression
+  // evaluator that were calculated when evalAllF() was called with
+  // the AD<Scalar> version.
+  predEvaluatorAD.initPredSubAD( &predEvaluatorADAD );
+
+  // Declare the independent variable for calculating h and start the
+  // CppAD tape.
+  //
+  // This is the second level of taping for this function, beyond any
+  // taping that may already be happening for the Scalar type.
+  Independent( etaCurrADAD );
+
+  // Set the AD<AD<Scalar>> version of the current vector of variable
+  // values,
+  //
+  //            -       -
+  //           |  theta  |
+  //     z  =  |         |  .
+  //           |   eta   |
+  //            -       -
+  //
+  for ( k = 0; k < nTheta; k++ )
+  {
+    zCurrADAD[k + thetaOffsetInZ] = thetaCurrADAD[k];
+  }
+  for ( k = 0; k < nEta; k++ )
+  {
+    zCurrADAD[k + etaOffsetInZ]   = etaCurrADAD[k];
+  }
+
+  // Set all of the data values for this individual using the
+  // AD<AD<Scalar>> expression evaluator,
+  //
+  //     y ( theta, eta )  .
+  //      i
+  //
+  predEvaluatorADAD.evalAllY(
+    thetaOffsetInZ,
+    nTheta,
+    etaOffsetInZ,
+    nEta,
+    epsOffsetInZ,
+    nEps,
+    nObsRecordCurr,
+    iCurr,
+    zCurrADAD,
+    fCurrADAD,
+    yCurrADAD );
+
+  // Stop the taping by constructing a differentiable function object
+  // that corresponds to the mapping of eta to y.  This function is
+  // defined by the relationships between eta and y that were
+  // performed during the call to predEvaluatorADAD.evalAllY().
+  ADFun< AD<Scalar> > yADADFunCurr( etaCurrADAD, yCurrADAD );
+
+
+  //------------------------------------------------------------
+  // Calculate the derivative of the data values.
+  //------------------------------------------------------------
+
+  int j;
+
+  // Make sure this is the proper size.
+  hCurrAD.resize( nObsRecordCurr * nEta );
+
+  // Set the lengths of the argument and result vectors for Forward.
+  std::vector< AD<Scalar> > u1AD( yADADFunCurr.Domain() );
+  std::vector< AD<Scalar> > v1AD( yADADFunCurr.Range() );
+
+  assert( nEta           == yADADFunCurr.Domain() );
+  assert( nObsRecordCurr == yADADFunCurr.Range() );
+
+  // Initialize the first order arguments.
+  for ( k = 0; k < nEta; k++ )
+  {
+    u1AD[k] = 0;
+  }
+
+  // Calculate the first derivative of the data values
+  //
+  //                                             |
+  //     h ( theta )  =  d     y ( theta, eta )  |          .
+  //      i               eta   i                | eta = 0
+  //
+  // Use forward mode to calculate this derivative because there is
+  // usually only one eta element and more than one y value, which
+  // means there are more dependent than independent parameters.
+  for ( k = 0; k < nEta; k++ )
+  {
+    // Evaluate
+    //
+    //             (k)
+    //     v1  =  d     y( theta, eta )  .
+    //             eta
+    //
+    u1AD[k] = 1;
+    v1AD    = yADADFunCurr.Forward( 1, u1AD );
+    u1AD[k] = 0;
+
+    // Set the elements of the first derivative:
+    //
+    //                (k)
+    //     h      =  d     y   ( theta, eta )  .
+    //      (j,k)     eta   (j)
+    //
+    for ( j = 0; j < nObsRecordCurr; j++ )
+    {
+      hCurrAD[j + k * nObsRecordCurr] = v1AD[j];
+    }
+
+  }
+
+
+  //------------------------------------------------------------
+  // Prepare to calculate the derivative of the data mean and value derivatives.
+  //------------------------------------------------------------
+
+  int m;
+
+  // Set the number of dependent variables.
+  int nW = nObsRecordCurr * nEta + nObsRecordCurr;
+
+  // Set the position of the first element of f in w.
+  int fOffSetInW = nObsRecordCurr * nEta;
+
+  // Make sure these have the proper size.
+  wCurrAD    .resize( nW );
+  f_thetaCurr.resize( nObsRecordCurr * nTheta );
+  h_thetaCurr.resize( nObsRecordCurr * nEta * nTheta );
+
+  // In order to calculate their derivatives together, set a vector
+  // that contains the first derivative of the data values h_i and the
+  // data mean values f_i for the current individual,
+  //
+  //                      -                     -
+  //                     |  cvec[ h ( theta ) ]  |
+  //                     |         i             |
+  //     w ( theta )  =  |                       |  ,
+  //      i              |     f ( theta )       |
+  //                     |      i                |
+  //                      -                     -
+  //
+  // where the cvec function corresponds to putting the elements of
+  // h_i into w_i in column major order.
+  int p = 0;
+  for ( j = 0; j < nObsRecordCurr; j++ )
+  {
+    for ( m = 0; m < nEta; m++ )
+    {
+      // Set the elements of w_i that contain h_i,
+      //
+      //    w    ( theta )  =  h      ( theta )  .
+      //     i(p)               i(j,m)
+      //
+      wCurrAD[p++] = hCurrAD[j + m * nObsRecordCurr];
+    }
+  }
+  for ( j = 0; j < nObsRecordCurr; j++ )
+  {
+    // Set the elements of w_i that contain f_i.
+    wCurrAD[fOffSetInW + j] = fCurrAD[j];
+  }
+
+  // Stop the taping by constructing a differentiable function object
+  // that corresponds to the mapping of theta to w.
+  ADFun<Scalar> wADFunCurr( thetaCurrAD, wCurrAD );
+
+
+  //------------------------------------------------------------
+  // Calculate the derivative of the data mean and data value derivatives.
+  //------------------------------------------------------------
+
+  int q;
 
   // Set the number of rows in the second derivatives that will 
   // be calculated.  Note that before the second derivatives are
   // calculated, the first derivatives are converted to a column
   // vector that contains the derivative's elements in row major
   // order, i.e., an rvec operation is performed on them.
-  int nH_thetaRow = nObsRecordCurr * nEta;
+  int nH_thetaRow   = nObsRecordCurr * nEta;
 
-  // Make sure these are the proper sizes.
-  f_thetaCurr.resize( nObsRecordCurr * nTheta );
-  hCurr      .resize( nObsRecordCurr * nEta );
-  h_thetaCurr.resize( nObsRecordCurr * nEta * nTheta );
+  // Set the lengths of the argument and result vectors for Forward.
+  std::vector<Scalar> u1( wADFunCurr.Domain() );
+  std::vector<Scalar> v1( wADFunCurr.Range() );
 
-  // Set the lengths of the Taylor coefficient column vectors.
-  std::vector<Scalar> u1( pPredADFunCurr->Domain() );
-  std::vector<Scalar> u2( pPredADFunCurr->Domain() );
-  std::vector<Scalar> v1( pPredADFunCurr->Range() );
-  std::vector<Scalar> v2( pPredADFunCurr->Range() );
+  assert( nTheta == wADFunCurr.Domain() );
+  assert( nW     == wADFunCurr.Range() );
 
-  // These will hold one-half times the diagonal elements of
-  // the second derivatives.
-  std::vector<Scalar> y_theta_thetaDiagTerm( nTheta * nObsRecordCurr );
-  std::vector<Scalar> y_eta_etaDiagTerm    ( nEta   * nObsRecordCurr );
-
-
-  //------------------------------------------------------------
-  // Calculate the first derivatives and second derivative diagonals.
-  //------------------------------------------------------------
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  //
-  // Note
-  // ----
-  //
-  // This function uses the Pred block automatic differentiation
-  // function object to evaluate the first derivatives of f and
-  // y at the current values for theta.
-  //
-  // It does that by setting 
-  //
-  //                -
-  //               |   1, if m = k,
-  //     u1     =  <
-  //       (m)     |   0, otherwise,
-  //                -
-  //
-  // for each element in u1 in sequence and then evaluating
-  //
-  //     v1  =  d  [ pred( u0 ) ]  u1
-  //             z
-  //
-  //             (k)
-  //         =  d     pred( z )  .
-  //             z
-  //
-  // In addition, this function evaluates the diagonals of the
-  // second derivative of y at the current values for theta.
-  //
-  // It does that by setting 
-  //
-  //     u2     =   0, for all m,
-  //       (m)
-  //
-  // and then evaluating
-  //                    -                                                               -
-  //                1  |                                 T                               |
-  //     v2     =  --- |  d  [ pred   ( u0 ) ]  u2  +  u1   d  d  [ pred   ( u0 ) ]  u1  |  .
-  //       (p)      2  |   z       (p)                       z  z       (p)              |
-  //                    -                                                               -
-  //
-  //                1   (k)  (k)
-  //            =  --- d    d    pred   ( u0 )  .
-  //                2   z    z       (p)
-  //
-  // Note that the value
-  //
-  //     u0  =  z  
-  //
-  // is set when the function object is constructed.
-  //
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  int j;
-  int k;
-  int p;
-
-  // Initialize the first and second order Taylor coefficients for U.
-  for ( k = 0; k < nZ; k++ )
-  {
-    u1[k] = 0.0;
-    u2[k] = 0.0;
-  }
-
-  // Calculate the first derivative
-  //
-  //     d       f( theta )  
-  //      theta
-  //
-  // and one-half times the diagonal elements of the second derivatives,
-  //
-  //      1   (k)    (k)      
-  //     --- d      d       y   ( theta, eta )  , for all k and p.
-  //      2   theta  theta   (p)
-  //
+  // Initialize the first order arguments.
   for ( k = 0; k < nTheta; k++ )
   {
-    u1[k + thetaOffsetInZ] = 1.0;
-
-    // Evaluate the first order Taylor coefficients for pred(U).
-    v1 = pPredADFunCurr->Forward( 1, u1 );
-
-    // Set the elements of the first derivative:
-    //
-    //      (k)
-    //     d       f   ( theta )  .
-    //      theta   (j)
-    //
-    for ( j = 0; j < nObsRecordCurr; j++ )
-    {
-      f_thetaCurr[j + k * nObsRecordCurr] = v1[j + fOffsetInW];
-    }
-
-    // Evaluate the second order Taylor coefficients for pred(U).
-    v2 = pPredADFunCurr->Forward( 2, u2 );
-  
-    // Set the elements of one-half times the diagonal elements of
-    // the second derivatives:
-    //
-    //                                      1   (k)    (k)
-    //     y_theta_thetaDiagTerm        =  --- d      d       y   ( theta, eta )  .
-    //                          (k, p)      2   theta  theta   (p)
-    //
-    for ( p = 0; p < nObsRecordCurr; p++ )
-    {
-      y_theta_thetaDiagTerm[k + p * nTheta] = v2[p + yOffsetInW];
-    }
-
-    u1[k + thetaOffsetInZ] = 0.0;
+    u1[k] = 0;
   }
 
-  // Calculate the first derivative
+  // In order to calculate 
   //
-  //                                           |
-  //     h( theta )  =  d     y( theta, eta )  |
-  //                     eta                   | eta = 0
-  //
-  // and one-half times the diagonal elements of the second derivatives,
-  //
-  //      1   (k)  (k)    
-  //     --- d    d     y   ( theta, eta )  , for all k and p.
-  //      2   eta  eta   (p)
-  //
-  for ( k = 0; k < nEta; k++ )
-  {
-    u1[k + etaOffsetInZ] = 1.0;
-
-    // Evaluate the first order Taylor coefficients for pred(U).
-    v1 = pPredADFunCurr->Forward( 1, u1 );
-
-    // Set the elements of the first derivative:
-    //
-    //                          (k)                      |
-    //     h     ( theta )  =  d     y   ( theta, eta )  |          .
-    //      (j,k)               eta   (j)                | eta = 0
-    //
-    for ( j = 0; j < nObsRecordCurr; j++ )
-    {
-      hCurr[j + k * nObsRecordCurr] = v1[j + yOffsetInW];
-    }
-
-    // Evaluate the second order Taylor coefficients for pred(U).
-    v2 = pPredADFunCurr->Forward( 2, u2 );
-  
-    // Set the elements of one-half times the diagonal elements of
-    // the second derivatives:
-    //
-    //                                  1   (k)  (k)
-    //     y_eta_etaDiagTerm        =  --- d    d     y   ( theta, eta )  .
-    //                      (k, p)      2   eta  eta   (p)
-    //
-    for ( p = 0; p < nObsRecordCurr; p++ )
-    {
-      y_eta_etaDiagTerm[k + p * nEta] = v2[p + yOffsetInW];
-    }
-
-    u1[k + etaOffsetInZ] = 0.0;
-  }
-
-
-  //------------------------------------------------------------
-  // Calculate some second derivatives of some dependent variables.
-  //------------------------------------------------------------
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  //
-  // Note
-  // ----
-  //
-  // This function uses the Pred block automatic differentiation
-  // function object to evaluate some of the second derivatives 
-  // of y at the current values for theta.
-  //
-  // It does that by setting 
-  //
-  //     u2     =   0, for all m,
-  //       (m)
+  //     d       f ( theta )
+  //      theta   i
   //
   // and
-  //                -
-  //               |   1, if m = j,
-  //               |
-  //     u1     =  <   1, if m = k,
-  //       (m)     |
-  //               |   0, otherwise,
-  //                -
   //
-  // for the appropriate pairs of elements in u1 in sequence and
-  // then evaluating
+  //     d       h ( theta )  ,
+  //      theta   i
   //
-  //                    -                                                               -
-  //                1  |                                 T                               |
-  //     v2     =  --- |  d  [ pred   ( u0 ) ]  u2  +  u1   d  d  [ pred   ( u0 ) ]  u1  |  .
-  //       (p)      2  |   z       (p)                       z  z       (p)              |
-  //                    -                                                               -
+  // calculate the first derivative of the dependent variables
   //
-  //                    - 
-  //                1  |   (j)  (j)                    (j)  (k)
-  //            =  --- |  d    d    pred   ( u0 )  +  d    d    pred   ( u0 )
-  //                2  |   z    z       (p)            z    z       (p)
-  //                    -
+  //                                      -                     -
+  //                                     |  cvec[ h ( theta ) ]  |
+  //                                     |         i             |
+  //     d       w ( theta )  =  d       |                       |  .
+  //      theta   i               theta  |     f ( theta )       |
+  //                                     |      i                |
+  //                                      -                     -
   //
-  //                                                                        - 
-  //                     (k)  (j)                    (k)  (k)                |
-  //                +   d    d    pred   ( u0 )  +  d    d    pred   ( u0 )  |  .
-  //                     z    z       (p)            z    z       (p)        |
-  //                                                                        -
-  //
-  //                
-  //                 (k)  (j)
-  //            =   d    d    pred   ( u0 )
-  //                 z    z       (p)
-  //               
-  //
-  //                       -                                                      - 
-  //                   1  |    (j)  (j)                    (k)  (k)                |
-  //                + --- |   d    d    pred   ( u0 )  +  d    d    pred   ( u0 )  |  .
-  //                   2  |    z    z       (p)            z    z       (p)        |
-  //                       -                                                      -
-  // 
-  // This makes use of the fact that
-  //    
-  //      (j)  (k)                    (k)  (j)
-  //     d    d    pred   ( u0 )  =  d    d    pred   ( u0 )  .
-  //      z    z       (p)            z    z       (p)
-  //
-  // Note that the value
-  //
-  //     u0  =  z  
-  //
-  // is set when the function object is constructed.
-  //
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  int row;
-  int col;
-
-  // Calculate the second derivative
-  //              -                                   - 
-  //             |                         |           |
-  //     d       |  d     y( theta, eta )  |           |  .
-  //      theta  |   eta                   | eta = 0   |
-  //              -                                   - 
-  //
+  // Use forward mode to calculate this derivative because there are
+  // usually more y values that theta elements, which means there are
+  // more dependent than independent parameters.
   for ( k = 0; k < nTheta; k++ )
   {
-    u1[k + thetaOffsetInZ] = 1.0;
+    // Evaluate
+    //
+    //             (k)
+    //     v1  =  d       w ( theta )  .
+    //             theta   i
+    //
+    u1[k] = 1;
+    v1    = wADFunCurr.Forward( 1, u1 );
+    u1[k] = 0;
 
-    for ( j = 0; j < nEta; j++ )
+    p = 0;
+
+    for ( j = 0; j < nObsRecordCurr; j++ )
     {
-      u1[j + etaOffsetInZ] = 1.0;
-    
-      // Evaluate the first and second order Taylor coefficients
-      // for pred(U).
-      v1 = pPredADFunCurr->Forward( 1, u1 );
-      v2 = pPredADFunCurr->Forward( 2, u2 );
-
-      // Set the elements of the second derivative:
-      //
-      //                -                                      -
-      //      (k)      |   (j)                      |           |
-      //     d         |  d     y   ( theta, eta )  |           |
-      //      theta    |   eta   (p)                | eta = 0   |
-      //                -                                      -
-      //
-      //              -                                                       -
-      //             |                 -                                   -   |
-      //             |                |                         |           |  |
-      //          =  |  d       rvec  |  d     y( theta, eta )  |           |  |                 .
-      //             |   theta        |   eta                   | eta = 0   |  |
-      //             |                 -                                   -   |
-      //              -                                                       -  (p*nEta + j, k)
-      //
-      // Note that an rvec operation is performed on the first
-      // derivatives before the second derivatives are calculated.
-      for ( p = 0; p < nObsRecordCurr; p++ )
+      for ( m = 0; m < nEta; m++ )
       {
-        // Set the position of this element in the matrix of 
-        // second derivatives
-        row = p * nEta + j;
-        col = k;
+        // Note that an rvec operation is performed on h_i before its
+        // derivative is calculated.
+        //                                            -             -
+        //                                           |               |  
+        //     d       h ( theta )  =  d       rvec  |  h ( theta )  |  .
+        //      theta   i               theta        |   i           |  
+        //                                            -             -
+        //
+        // Set the position of this element in the rvec version of h_i.
+        q = m + j * nEta;
 
-        h_thetaCurr[row + col * nH_thetaRow] = v2[p + yOffsetInW]
-          - y_theta_thetaDiagTerm[k + p * nTheta] 
-          - y_eta_etaDiagTerm[j + p * nEta];
+        // Set the elements of the first derivative of h,
+        //
+        //      (k)                 (k)  
+        //     d       h        =  d       w    ( theta )  .
+        //      theta   i(j,m)      theta   i(p)
+        //
+        h_thetaCurr[q + k * nH_thetaRow] = v1[p++];
       }
-
-      u1[j + etaOffsetInZ] = 0.0;
     }
 
-    u1[k + thetaOffsetInZ] = 0.0;
+    // Set the elements of the first derivative of f,
+    //
+    //      (k)                        (k)
+    //     d       f    ( theta )  =  d       w                 ( theta )  .
+    //      theta   i(j)               theta   i(fOffSetInW + j)
+    //
+    for ( j = 0; j < nObsRecordCurr; j++ )
+    {
+      f_thetaCurr[j + k * nObsRecordCurr] = v1[fOffSetInW + j];
+    }
+
   }
 
 
@@ -1872,8 +1717,32 @@ void IndPredModelBase<Scalar>::evalPredSecondDeriv() const
   // Finish up.
   //------------------------------------------------------------
 
-  isPredFirstDerivCurrOk  = true;
-  isPredSecondDerivCurrOk = true;
+  // See if Scalar versions of f and h need to be set.
+  if ( !isFAndHCurrOk )
+  {
+    // Make sure these are the proper size.
+    fCurr.resize( nObsRecordCurr );
+    hCurr.resize( nObsRecordCurr * nEta );
+
+    // Set the Scalar version of f.
+    for ( k = 0; k < nObsRecordCurr; k++ )
+    {
+      fCurr[k] = Value( fCurrAD[k] );
+    }
+
+    // Set the Scalar version of h.
+    for ( k = 0; k < nEta; k++ )
+    {
+      for ( j = 0; j < nObsRecordCurr; j++ )
+      {
+        hCurr[j + k * nObsRecordCurr] = Value( hCurrAD[j + k * nObsRecordCurr] );
+      }
+    }
+
+    isFAndHCurrOk = true;
+  }
+
+  isFAndH_thetaCurrOk = true;
 }
 
 
@@ -1928,61 +1797,32 @@ void IndPredModelBase<Scalar>::doDataMean( SPK_VA::valarray<Scalar>& ret ) const
 
 
   //------------------------------------------------------------
-  // Prepare to calculate the value.
+  // Prepare to set the data mean.
   //------------------------------------------------------------
 
-  // Evaluate the predicted values for all of the observation 
-  // records for the current individual.
-  evalAllPred();
+  // Calculate the data mean values for the current individual,
+  //
+  //     f ( theta )  .
+  //      i
+  //
+  // This function sets the value for fCurr.
+  evalFAndH();
 
 
   //------------------------------------------------------------
-  // Calculate the value.
+  // Set the data mean.
   //------------------------------------------------------------
 
-  // This message will be used if a value is not valid.
-  string taskMessage;
   int j;
 
-  // Set the values for the mean of the data:
+  // Set
   //
-  //     f    ( b  )  =  f   ( theta )  .
-  //      i(j)   i        (j)
+  //     f    ( b  )  =  f    ( theta )  .
+  //      i(j)   i        i(j)
   //
   for ( j = 0; j < nObsRecordCurr; j++ )
   {
-    // Set this element.
-    dataMeanCurr[j] = Value( wCurr[j + fOffsetInW] );
-
-    taskMessage = "during the evaluation of the mean of the " +
-      intToOrdinalString( j, ZERO_IS_FIRST_INT ) +
-      " value for the individual's data.";
-
-    // Make sure that the value is finite.
-    if ( isUnnormNumber( dataMeanCurr[j] ) )
-    {
-      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-      // This error code should be replaced with one that is accurate.
-      throw SpkException(
-        SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An infinite value was generated " + taskMessage ).c_str(),
-        __LINE__,
-        __FILE__ );
-    }
-
-    // Make sure that the value is not a NaN.
-    if ( isNotANumber( dataMeanCurr[j] ) )
-    {
-      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-      // This error code should be replaced with one that is accurate.
-      throw SpkException(
-        SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "A value that is Not a Number (NaN) was generated " + 
-          taskMessage ).c_str(),
-        __LINE__,
-        __FILE__ );
-    }
-
+    dataMeanCurr[j] = fCurr[j];
   }
 
 
@@ -2077,18 +1917,24 @@ void IndPredModelBase<Scalar>::doDataVariance( SPK_VA::valarray<Scalar>& ret ) c
 
 
   //------------------------------------------------------------
-  // Prepare to calculate the value.
+  // Prepare to calculate the date variance.
   //------------------------------------------------------------
 
-  // Evaluate the first derivatives of the Pred block expressions.
-  evalPredFirstDeriv();
+  // Set the derivative of the data values for the current individual,
+  //
+  //                                             |
+  //     h ( theta )  =  d     y ( theta, eta )  |          .
+  //      i               eta   i                | eta = 0
+  //
+  // This function sets the value for hCurr.
+  evalFAndH();
 
-  // Save the current value for omega.
+  // Get the current value for omega.
   pOmegaCurr->cov( omegaCurr );
 
 
   //------------------------------------------------------------
-  // Calculate the value.
+  // Calculate the date variance.
   //------------------------------------------------------------
 
   int j;
@@ -2809,7 +2655,9 @@ void IndPredModelBase<Scalar>::getStandardParMask(
 
 // Declare double versions of these functions.
 template IndPredModelBase<double>::IndPredModelBase(
-    PredBase< CppAD::AD<double> >&   predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -2819,7 +2667,9 @@ template IndPredModelBase<double>::IndPredModelBase(
     const SPK_VA::valarray<double>&  omegaMinRepIn );
 
 template IndPredModelBase<double>::IndPredModelBase(
-    PredBase< CppAD::AD<double> >&       predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -2830,7 +2680,9 @@ template IndPredModelBase<double>::IndPredModelBase(
     const SPK_VA::valarray<bool>&    omegaMinRepFixedIn );
 
 template IndPredModelBase<double>::IndPredModelBase(
-    PredBase< CppAD::AD<double> >&       predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -2860,9 +2712,8 @@ template bool IndPredModelBase<double>::getUsedCachedDataVariance()           co
 template bool IndPredModelBase<double>::getUsedCachedDataVariance_indPar()    const;
 template bool IndPredModelBase<double>::getUsedCachedDataVarianceInv()        const;
 template bool IndPredModelBase<double>::getUsedCachedDataVarianceInv_indPar() const;
-template bool IndPredModelBase<double>::getUsedCachedPredADFun()              const;
-template bool IndPredModelBase<double>::getUsedCachedPredFirstDeriv()         const;
-template bool IndPredModelBase<double>::getUsedCachedPredSecondDeriv()        const;
+template bool IndPredModelBase<double>::getUsedCachedFAndH()                  const;
+template bool IndPredModelBase<double>::getUsedCachedFAndH_theta()            const;
 template bool IndPredModelBase<double>::getUsedCachedOmega()                  const;
 template bool IndPredModelBase<double>::getUsedCachedOmega_omegaPar()         const;
 
@@ -2875,10 +2726,9 @@ template bool IndPredModelBase<double>::doDataVariance_indPar   ( SPK_VA::valarr
 template void IndPredModelBase<double>::doDataVarianceInv       ( SPK_VA::valarray<double>& ret ) const;
 template bool IndPredModelBase<double>::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) const;
 
-template void IndPredModelBase<double>::evalAllPred() const;
+template void IndPredModelBase<double>::evalFAndH() const;
 
-template void IndPredModelBase<double>::evalPredFirstDeriv()  const;
-template void IndPredModelBase<double>::evalPredSecondDeriv() const;
+template void IndPredModelBase<double>::evalFAndH_theta()  const;
 
 template void IndPredModelBase<double>::getIndParLimits(
     SPK_VA::valarray<double>& indParLow,
@@ -2905,7 +2755,9 @@ template void IndPredModelBase<double>::getStandardParMask(
 
 // Declare CppAD::AD<double> versions of these functions.
 template IndPredModelBase< CppAD::AD<double> >::IndPredModelBase(
-    PredBase< CppAD::AD< CppAD::AD<double> > >&   predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&                            predEvaluatorIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD< CppAD::AD<double> > > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -2915,7 +2767,9 @@ template IndPredModelBase< CppAD::AD<double> >::IndPredModelBase(
     const SPK_VA::valarray<double>&  omegaMinRepIn );
 
 template IndPredModelBase< CppAD::AD<double> >::IndPredModelBase(
-    PredBase< CppAD::AD< CppAD::AD<double> > >&       predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&                            predEvaluatorIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD< CppAD::AD<double> > > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -2926,7 +2780,9 @@ template IndPredModelBase< CppAD::AD<double> >::IndPredModelBase(
     const SPK_VA::valarray<bool>&    omegaMinRepFixedIn );
 
 template IndPredModelBase< CppAD::AD<double> >::IndPredModelBase(
-    PredBase< CppAD::AD< CppAD::AD<double> > >&       predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&                            predEvaluatorIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD< CppAD::AD<double> > > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -2957,9 +2813,8 @@ template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedDataVariance()
 template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedDataVariance_indPar()    const;
 template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedDataVarianceInv()        const;
 template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedDataVarianceInv_indPar() const;
-template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedPredADFun()              const;
-template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedPredFirstDeriv()         const;
-template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedPredSecondDeriv()        const;
+template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedFAndH()                  const;
+template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedFAndH_theta()            const;
 template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedOmega()                  const;
 template bool IndPredModelBase< CppAD::AD<double> >::getUsedCachedOmega_omegaPar()         const;
 
@@ -2972,10 +2827,9 @@ template bool IndPredModelBase< CppAD::AD<double> >::doDataVariance_indPar   ( S
 template void IndPredModelBase< CppAD::AD<double> >::doDataVarianceInv       ( SPK_VA::valarray< CppAD::AD<double> >& ret ) const;
 template bool IndPredModelBase< CppAD::AD<double> >::doDataVarianceInv_indPar( SPK_VA::valarray<double>& ret ) const;
 
-template void IndPredModelBase< CppAD::AD<double> >::evalAllPred() const;
+template void IndPredModelBase< CppAD::AD<double> >::evalFAndH() const;
 
-template void IndPredModelBase< CppAD::AD<double> >::evalPredFirstDeriv()  const;
-template void IndPredModelBase< CppAD::AD<double> >::evalPredSecondDeriv() const;
+template void IndPredModelBase< CppAD::AD<double> >::evalFAndH_theta()  const;
 
 template void IndPredModelBase< CppAD::AD<double> >::getIndParLimits(
     SPK_VA::valarray<double>& indParLow,

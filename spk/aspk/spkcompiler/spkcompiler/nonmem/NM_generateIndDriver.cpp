@@ -121,7 +121,9 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      const int nPop = 1;" << endl;
   oIndDriver << endl;
 
-  oIndDriver << "      DataSet< CppAD::AD<double> > set;" << endl;
+  oIndDriver << "      DataSet< double > set;" << endl;
+  oIndDriver << "      DataSet< CppAD::AD<double> > setAD;" << endl;
+  oIndDriver << "      DataSet< CppAD::AD< CppAD::AD<double> > > setADAD;" << endl;
   oIndDriver << "      const int nObservs = set.getNObservs( 0 );" << endl;
   oIndDriver << "      valarray<double> y( nObservs );" << endl;
   oIndDriver << "      valarray<double> f( nObservs );" << endl;
@@ -161,24 +163,52 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      //   Model Initialization" << endl;
   if( myModelSpec == PRED )
     {
-      oIndDriver << "      Pred<CppAD::AD<double> > mPred(&set);"        << endl;
+      oIndDriver << "      Pred< double > mPred(&set);" << endl;
+      oIndDriver << "      Pred< CppAD::AD<double> > mPredAD(&setAD);" << endl;
+      oIndDriver << "      Pred< CppAD::AD< CppAD::AD<double> > > mPredADAD(&setADAD);" << endl;
     }
   else // ADVAN3
     {
-      oIndDriver << "      OdePred<CppAD::AD<double> > mPred( &set, " << endl;
-      oIndDriver << "                                         nPop, " << endl;
-      oIndDriver << "                                         NonmemPars::isPkFunctionOfT,"        << endl;
-      oIndDriver << "                                         NonmemPars::nCompartments,"          << endl;
-      oIndDriver << "                                         NonmemPars::nParameters,"            << endl;
-      oIndDriver << "                                         NonmemPars::defaultDoseComp,"        << endl;
-      oIndDriver << "                                         NonmemPars::defaultObservationComp," << endl;
-      oIndDriver << "                                         NonmemPars::initialOff,"             << endl;
-      oIndDriver << "                                         NonmemPars::noOff,"                  << endl;
-      oIndDriver << "                                         NonmemPars::noDose,"                 << endl;
-      oIndDriver << "                                         NonmemPars::relTol"                  << endl;
-      oIndDriver << "                                       );" << endl;
+      oIndDriver << "      OdePred<double > mPred( &set, " << endl;
+      oIndDriver << "                              NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                              NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                              NonmemPars::nCompartments," << endl;
+      oIndDriver << "                              NonmemPars::nParameters," << endl;
+      oIndDriver << "                              NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                              NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                              NonmemPars::initialOff," << endl;
+      oIndDriver << "                              NonmemPars::noOff," << endl;
+      oIndDriver << "                              NonmemPars::noDose," << endl;
+      oIndDriver << "                              NonmemPars::relTol" << endl;
+      oIndDriver << "                             );" << endl;
+      oIndDriver << "      OdePred<CppAD::AD<double> > mPredAD( &setAD, " << endl;
+      oIndDriver << "                                            NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                                            NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                                            NonmemPars::nCompartments," << endl;
+      oIndDriver << "                                            NonmemPars::nParameters," << endl;
+      oIndDriver << "                                            NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                                            NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                                            NonmemPars::initialOff," << endl;
+      oIndDriver << "                                            NonmemPars::noOff," << endl;
+      oIndDriver << "                                            NonmemPars::noDose," << endl;
+      oIndDriver << "                                            NonmemPars::relTol" << endl;
+      oIndDriver << "                                         );" << endl;
+      oIndDriver << "      OdePred<CppAD::AD< CppAD::AD<double> > > mPredADAD( &setADAD, " << endl;
+      oIndDriver << "                                                          NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                                                          NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                                                          NonmemPars::nCompartments," << endl;
+      oIndDriver << "                                                          NonmemPars::nParameters," << endl;
+      oIndDriver << "                                                          NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                                                          NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                                                          NonmemPars::initialOff," << endl;
+      oIndDriver << "                                                          NonmemPars::noOff," << endl;
+      oIndDriver << "                                                          NonmemPars::noDose," << endl;
+      oIndDriver << "                                                          NonmemPars::relTol" << endl;
+      oIndDriver << "                                                        );" << endl;
     }
   oIndDriver << "      IndPredModel model( mPred, "                   << endl;
+  oIndDriver << "                          mPredAD,"                  << endl;
+  oIndDriver << "                          mPredADAD,"                << endl;
   oIndDriver << "                          NonmemPars::nTheta, "      << endl;
   oIndDriver << "                          NonmemPars::thetaLow, "    << endl;
   oIndDriver << "                          NonmemPars::thetaUp, "     << endl;
@@ -196,27 +226,57 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      //////////////////////////////////////////////////////////////////////" << endl;
   oIndDriver << "      //   DataSet and Model for disposal in order to save the last values"   << endl;
   oIndDriver << "      //   from parameter estimation."                                        << endl;
-  oIndDriver << "      DataSet< CppAD::AD<double> > dataForDisposal;"                          << endl;
+  oIndDriver << "      DataSet< double > dataForDisposal;" << endl;
+  oIndDriver << "      DataSet< CppAD::AD<double> > dataForDisposalAD;" << endl;
+  oIndDriver << "      DataSet< CppAD::AD< CppAD::AD<double> > > dataForDisposalADAD;" << endl;
   if( myModelSpec == PRED )
     {
-      oIndDriver << "      Pred<CppAD::AD<double> > predForDisposal(&dataForDisposal);"        << endl;
+      oIndDriver << "      Pred< double > predForDisposal(&dataForDisposal);" << endl;
+      oIndDriver << "      Pred< CppAD::AD<double> > predForDisposalAD(&dataForDisposalAD);" << endl;
+      oIndDriver << "      Pred< CppAD::AD< CppAD::AD<double> > > predForDisposalADAD(&dataForDisposalADAD);" << endl;
     }
   else // ADVAN3
     {
-      oIndDriver << "      OdePred<CppAD::AD<double> > predForDisposal( &dataForDisposal, "                    << endl;
-      oIndDriver << "                                         nPop, "                              <<  endl;
-      oIndDriver << "                                         NonmemPars::isPkFunctionOfT,"        << endl;
-      oIndDriver << "                                         NonmemPars::nCompartments,"          << endl;
-      oIndDriver << "                                         NonmemPars::nParameters,"            << endl;
-      oIndDriver << "                                         NonmemPars::defaultDoseComp,"        << endl;
+      oIndDriver << "      OdePred< double > predForDisposal( &dataForDisposal, " << endl;
+      oIndDriver << "                                         NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                                         NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                                         NonmemPars::nCompartments," << endl;
+      oIndDriver << "                                         NonmemPars::nParameters," << endl;
+      oIndDriver << "                                         NonmemPars::defaultDoseComp," << endl;
       oIndDriver << "                                         NonmemPars::defaultObservationComp," << endl;
-      oIndDriver << "                                         NonmemPars::initialOff,"             << endl;
-      oIndDriver << "                                         NonmemPars::noOff,"                  << endl;
-      oIndDriver << "                                         NonmemPars::noDose,"                 << endl;
-      oIndDriver << "                                         NonmemPars::relTol"                  << endl;
+      oIndDriver << "                                         NonmemPars::initialOff," << endl;
+      oIndDriver << "                                         NonmemPars::noOff," << endl;
+      oIndDriver << "                                         NonmemPars::noDose," << endl;
+      oIndDriver << "                                         NonmemPars::relTol" << endl;
+      oIndDriver << "                                       );" << endl;
+      oIndDriver << "      OdePred< CppAD::AD<double> > predForDisposalAD( &dataForDisposalAD, " << endl;
+      oIndDriver << "                                         NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                                         NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                                         NonmemPars::nCompartments," << endl;
+      oIndDriver << "                                         NonmemPars::nParameters," << endl;
+      oIndDriver << "                                         NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                                         NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                                         NonmemPars::initialOff," << endl;
+      oIndDriver << "                                         NonmemPars::noOff," << endl;
+      oIndDriver << "                                         NonmemPars::noDose," << endl;
+      oIndDriver << "                                         NonmemPars::relTol" << endl;
+      oIndDriver << "                                       );" << endl;
+      oIndDriver << "      OdePred< CppAD::AD< CppAD::AD<double> > > predForDisposalADAD( &dataForDisposalADAD, " << endl;
+      oIndDriver << "                                         NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                                         NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                                         NonmemPars::nCompartments," << endl;
+      oIndDriver << "                                         NonmemPars::nParameters," << endl;
+      oIndDriver << "                                         NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                                         NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                                         NonmemPars::initialOff," << endl;
+      oIndDriver << "                                         NonmemPars::noOff," << endl;
+      oIndDriver << "                                         NonmemPars::noDose," << endl;
+      oIndDriver << "                                         NonmemPars::relTol" << endl;
       oIndDriver << "                                       );" << endl;
     }
   oIndDriver << "      IndPredModel modelForDisposal( predForDisposal, " << endl;
+  oIndDriver << "                                     predForDisposalAD,"       << endl;
+  oIndDriver << "                                     predForDisposalADAD,"     << endl;
   oIndDriver << "                          NonmemPars::nTheta, "         << endl;
   oIndDriver << "                          NonmemPars::thetaLow, "       << endl;
   oIndDriver << "                          NonmemPars::thetaUp, "        << endl;

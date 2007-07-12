@@ -386,10 +386,14 @@ void predTwoStageMethodTest::RailExampleSTS_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
-  RailExample_Pred< AD<double> > predEvaluator( nY_i );
+  RailExample_Pred< double > predEvaluator( nY_i );
+
+  RailExample_Pred< AD<double> > predEvaluatorAD( nY_i );
+
+  RailExample_Pred< AD< AD<double> > > predEvaluatorADAD( nY_i );
 
 
   //------------------------------------------------------------
@@ -462,6 +466,8 @@ void predTwoStageMethodTest::RailExampleSTS_Test()
   // Construct the population level Pred model.
   PopPredModel popModel(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -538,6 +544,8 @@ void predTwoStageMethodTest::RailExampleSTS_Test()
   // used for the individual model's eta and Omega information.
   IndPredModel indModelWithPopData(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -563,6 +571,8 @@ void predTwoStageMethodTest::RailExampleSTS_Test()
     // used for the individual model's eta and Omega information.
     pIndModelWithIndData[i] = new IndPredModel(
       predEvaluator,
+      predEvaluatorAD,
+      predEvaluatorADAD,
       nThetaPop,
       thetaPopLow,
       thetaPopUp,
@@ -900,10 +910,14 @@ void predTwoStageMethodTest::RailExampleITS_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
-  RailExample_Pred< AD<double> > predEvaluator( nY_i );
+  RailExample_Pred< double > predEvaluator( nY_i );
+
+  RailExample_Pred< AD<double> > predEvaluatorAD( nY_i );
+
+  RailExample_Pred< AD< AD<double> > > predEvaluatorADAD( nY_i );
 
 
   //------------------------------------------------------------
@@ -976,6 +990,8 @@ void predTwoStageMethodTest::RailExampleITS_Test()
   // Construct the population level Pred model.
   PopPredModel popModel(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -1052,6 +1068,8 @@ void predTwoStageMethodTest::RailExampleITS_Test()
   // used for the individual model's eta and Omega information.
   IndPredModel indModelWithPopData(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -1077,6 +1095,8 @@ void predTwoStageMethodTest::RailExampleITS_Test()
     // used for the individual model's eta and Omega information.
     pIndModelWithIndData[i] = new IndPredModel(
       predEvaluator,
+      predEvaluatorAD,
+      predEvaluatorADAD,
       nThetaPop,
       thetaPopLow,
       thetaPopUp,
@@ -1308,10 +1328,14 @@ void predTwoStageMethodTest::RailExampleGTS_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
-  RailExample_Pred< AD<double> > predEvaluator( nY_i );
+  RailExample_Pred< double > predEvaluator( nY_i );
+
+  RailExample_Pred< AD<double> > predEvaluatorAD( nY_i );
+
+  RailExample_Pred< AD< AD<double> > > predEvaluatorADAD( nY_i );
 
 
   //------------------------------------------------------------
@@ -1384,6 +1408,8 @@ void predTwoStageMethodTest::RailExampleGTS_Test()
   // Construct the population level Pred model.
   PopPredModel popModel(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -1460,6 +1486,8 @@ void predTwoStageMethodTest::RailExampleGTS_Test()
   // used for the individual model's eta and Omega information.
   IndPredModel indModelWithPopData(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -1485,6 +1513,8 @@ void predTwoStageMethodTest::RailExampleGTS_Test()
     // used for the individual model's eta and Omega information.
     pIndModelWithIndData[i] = new IndPredModel(
       predEvaluator,
+      predEvaluatorAD,
+      predEvaluatorADAD,
       nThetaPop,
       thetaPopLow,
       thetaPopUp,

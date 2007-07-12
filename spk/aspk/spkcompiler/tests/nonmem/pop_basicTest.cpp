@@ -1010,7 +1010,8 @@ void pop_basicTest::testPredClass()
   o << "         double KA = CppAD::Value( indepVar[thetaOffset+0] + indepVar[etaOffset+0] );" << endl;
   o << "         double KE = CppAD::Value( indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
   o << "         expectedF1[who][m]  = KE*KA;" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF1[who][m], actualF );" << endl;
+  o << "         // This test is not necessary because F(j) is no longer set in depVar." << endl;
+  o << "         //MY_ASSERT_EQUAL( expectedF1[who][m], actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   o << "         double actualY = CppAD::Value(depVar[ yOffset + m ]);" << endl;
   o << "         expectedY1[who][m]  = expectedF1[who][m] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
@@ -1030,7 +1031,8 @@ void pop_basicTest::testPredClass()
   o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][2] );" << endl;
   o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
   o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][1] );" << endl;
-  o << "            MY_ASSERT_EQUAL( expectedF1[who][m], set.data[who]->" << strF << "[j] );" << endl;
+  o << "            // This test is not necessary because F(j) is no longer set in depVar." << endl;
+  o << "            //MY_ASSERT_EQUAL( expectedF1[who][m], set.data[who]->" << strF << "[j] );" << endl;
   o << "            MY_ASSERT_EQUAL( expectedY1[who][m], set.data[who]->" << strY<< "[j] );" << endl;
   o << "            m++;" << endl;
   o << "         }" << endl;
@@ -1077,7 +1079,8 @@ void pop_basicTest::testPredClass()
   o << "         double KA = CppAD::Value( indepVar[thetaOffset+0] + indepVar[etaOffset+0] );" << endl;
   o << "         double KE = CppAD::Value( indepVar[thetaOffset+1] + indepVar[etaOffset+1] );" << endl;
   o << "         expectedF2[who][m]  = KE*KA;" << endl;
-  o << "         MY_ASSERT_EQUAL( expectedF2[who][m], actualF );" << endl;
+  o << "         // This test is not necessary because F(j) is no longer set in depVar." << endl;
+  o << "         //MY_ASSERT_EQUAL( expectedF2[who][m], actualF );" << endl;
   // Test if Y(j) gets placed in the proper location in the depVar vector.
   o << "         double actualY = CppAD::Value(depVar[ yOffset + m ]);" << endl;
   o << "         expectedY2[who][m]  = expectedF2[who][m] + CppAD::Value( indepVar[epsOffset+0] + indepVar[epsOffset+1] );" << endl;
@@ -1094,7 +1097,8 @@ void pop_basicTest::testPredClass()
   o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][0] );" << endl;
   o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strTHETA << "[j][1] );" << endl;
   o << "            MY_ASSERT_EQUAL( C1*j, set.data[who]->" << strETA   << "[j][0] );" << endl;
-  o << "            MY_ASSERT_EQUAL( expectedF1[who][m], set.data[who]->" << strF << "[j] );" << endl;
+  o << "            // This test is not necessary because F(j) is no longer set in depVar." << endl;
+  o << "            //MY_ASSERT_EQUAL( expectedF1[who][m], set.data[who]->" << strF << "[j] );" << endl;
   o << "            MY_ASSERT_EQUAL( expectedY1[who][m], set.data[who]->" << strY << "[j] );" << endl;
   o << "            m++;" << endl;
   o << "         }" << endl;

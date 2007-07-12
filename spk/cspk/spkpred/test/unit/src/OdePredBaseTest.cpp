@@ -374,7 +374,7 @@ namespace // [Begin: unnamed namespace]
       //
       //    y  =  f * exp[ eps(0) ]  .
       //
-      y_i_j = f_i_j * exp(indepVar[epsOffset + 0]);
+      y_i_j = f_i_j * CppAD::exp(indepVar[epsOffset + 0]);
       setY( y_i_j );
     }
 
@@ -1330,7 +1330,7 @@ namespace // [Begin: unnamed namespace]
       //
       //    y  =  [ A1(t)  +  A2(t) ] * exp[ eps(0) ]  .
       //
-      y_i_j = ( compAmount1 + compAmount2 ) * exp(indepVar[epsOffset + 0]);
+      y_i_j = ( compAmount1 + compAmount2 ) * CppAD::exp(indepVar[epsOffset + 0]);
       setY( y_i_j );
     }
 
@@ -1638,7 +1638,7 @@ namespace // [Begin: unnamed namespace]
       //
       //    y  =  [ A3(t) ] * exp[ eps(0) ]  .
       //
-      y_i_j = compAmount3 * exp(indepVar[epsOffset + 0]);
+      y_i_j = compAmount3 * CppAD::exp(indepVar[epsOffset + 0]);
       setY( y_i_j );
     }
 
@@ -1984,7 +1984,7 @@ namespace // [Begin: unnamed namespace]
       //
       //    y  =  f * exp[ eps(0) ]  .
       //
-      y_i_j = f_i_j * exp(indepVar[epsOffset + 0]);
+      y_i_j = f_i_j * CppAD::exp(indepVar[epsOffset + 0]);
       setY( y_i_j );
     }
 
@@ -2313,7 +2313,7 @@ namespace // [Begin: unnamed namespace]
       //
       //    y  =  f * exp[ eps(0) ]  .
       //
-      y_i_j = f_i_j * exp(indepVar[epsOffset + 0]);
+      y_i_j = f_i_j * CppAD::exp(indepVar[epsOffset + 0]);
       setY( y_i_j );
     }
 
@@ -2498,8 +2498,30 @@ void OdePredBaseTest::NoEta_OneExpF_OneBolus_ModelBasedExpY_Test()
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  NoEta_OneExpF_OneBolus_ModelBasedExpY_OdePred< AD<double> > predEvaluator( 
+  // Construct the ODE-based versions of the Pred block evaluator.
+  NoEta_OneExpF_OneBolus_ModelBasedExpY_OdePred< double > predEvaluator( 
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  NoEta_OneExpF_OneBolus_ModelBasedExpY_OdePred< AD<double> > predEvaluatorAD( 
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  NoEta_OneExpF_OneBolus_ModelBasedExpY_OdePred< AD< AD<double> > > predEvaluatorADAD( 
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -2567,6 +2589,8 @@ void OdePredBaseTest::NoEta_OneExpF_OneBolus_ModelBasedExpY_Test()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -3058,8 +3082,30 @@ void OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test(
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred< AD<double> > predEvaluator(
+  // Construct the ODE-based versions of the Pred block evaluator.
+  OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred< double > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred< AD< AD<double> > > predEvaluatorADAD(
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -3135,6 +3181,8 @@ void OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test(
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -3862,8 +3910,30 @@ void OdePredBaseTest::OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_T
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_OdePred< AD<double> > predEvaluator(
+  // Construct the ODE-based versions of the Pred block evaluator.
+  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_OdePred< double > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_OdePred< AD< AD<double> > > predEvaluatorADAD(
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -3939,6 +4009,8 @@ void OdePredBaseTest::OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_T
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -4674,8 +4746,30 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test(
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred< AD<double> > predEvaluator(
+  // Construct the ODE-based versions of the Pred block evaluator.
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred< double > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OdePred< AD< AD<double> > > predEvaluatorADAD(
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -4747,6 +4841,8 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Test(
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -5366,8 +5462,30 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Outpu
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred< AD<double> > predEvaluator(
+  // Construct the ODE-based versions of the Pred block evaluator.
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred< double > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_OdePred< AD< AD<double> > > predEvaluatorADAD(
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -5439,6 +5557,8 @@ void OdePredBaseTest::ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_Outpu
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -6065,8 +6185,30 @@ void OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_Additiv
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< AD<double> > predEvaluator(
+  // Construct the ODE-based versions of the Pred block evaluator.
+  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< double > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< AD< AD<double> > > predEvaluatorADAD(
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -6138,6 +6280,8 @@ void OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_Additiv
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -6774,8 +6918,30 @@ void OdePredBaseTest::FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_Addit
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< AD<double> > predEvaluator(
+  // Construct the ODE-based versions of the Pred block evaluator.
+  FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< double > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_OdePred< AD< AD<double> > > predEvaluatorADAD(
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -6847,6 +7013,8 @@ void OdePredBaseTest::FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_Addit
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,

@@ -188,10 +188,10 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w;
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + j] = ds * d / e;
-      depVar[yOffset + j] = depVar[fOffset + j] * exp(indepVar[epsOffset + 0]); 
+      depVar[yOffset + j] = depVar[fOffset + j] * CppAD::exp(indepVar[epsOffset + 0]); 
 
 
       //--------------------------------------------------------
@@ -325,7 +325,7 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w;
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + j] = ds * d / e;
       depVar[yOffset + j] = depVar[fOffset + j] + indepVar[epsOffset + 0]
@@ -462,10 +462,10 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0] + indepVar[etaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w + indepVar[etaOffset + 1];
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + j] = ds * d / e;
-      depVar[yOffset + j] = depVar[fOffset + j] * exp(indepVar[epsOffset + 0]); 
+      depVar[yOffset + j] = depVar[fOffset + j] * CppAD::exp(indepVar[epsOffset + 0]); 
 
 
       //--------------------------------------------------------
@@ -598,7 +598,7 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0] + indepVar[etaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w + indepVar[etaOffset + 1];
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + j] = ds * d / e;
       depVar[yOffset + j] = depVar[fOffset + j] + indepVar[epsOffset + 0]
@@ -759,7 +759,7 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0] + indepVar[etaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w + indepVar[etaOffset + 1];
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + m] = ds * d / e;
       depVar[yOffset + m] = depVar[fOffset + m] + indepVar[epsOffset + 0]
@@ -927,13 +927,15 @@ void PopPredModelTest::NoEta_OneExpF_ModelBasedExpY_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
   int nY_iKnown = 3;
 
-  NoEta_OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  NoEta_OneExpF_ModelBasedExpY_Pred< double > predEvaluator( nY_iKnown );
+  NoEta_OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+  NoEta_OneExpF_ModelBasedExpY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -992,6 +994,8 @@ void PopPredModelTest::NoEta_OneExpF_ModelBasedExpY_Test()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -1439,13 +1443,15 @@ void PopPredModelTest::NoEta_OneExpF_AdditivePlusThetaDepY_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  NoEta_OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  NoEta_OneExpF_AdditivePlusThetaDepY_Pred< double > predEvaluator( nY_iKnown );
+  NoEta_OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+  NoEta_OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -1508,6 +1514,8 @@ void PopPredModelTest::NoEta_OneExpF_AdditivePlusThetaDepY_Test()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -1960,13 +1968,15 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
   int nY_iKnown = 3;
 
-  OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_ModelBasedExpY_Pred< double > predEvaluator( nY_iKnown );
+  OneExpF_ModelBasedExpY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+  OneExpF_ModelBasedExpY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -2029,6 +2039,8 @@ void PopPredModelTest::OneExpF_ModelBasedExpY_Test()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -2731,13 +2743,15 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< double > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -2831,6 +2845,8 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_Test()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -3520,13 +3536,15 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< double > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -3594,6 +3612,8 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_FullSigma_Test()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -4404,13 +4424,15 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< double > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -4477,6 +4499,8 @@ void PopPredModelTest::OneExpF_AdditivePlusThetaDepY_NotAllRecAreObsRec_Test()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -5152,13 +5176,15 @@ void PopPredModelTest::isCachingProperlyTest()
 
 
   //------------------------------------------------------------
-  // Prepare the Pred block expression evaluator.
+  // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< double > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -5225,6 +5251,8 @@ void PopPredModelTest::isCachingProperlyTest()
 
   PopPredModel model(
     predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -5314,16 +5342,13 @@ void PopPredModelTest::isCachingProperlyTest()
     "The cached value for dataMean was used when it was not valid.",
     model.getUsedCachedDataMean() == false );
   CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block AD function object was used when it was not valid.",
-    model.getUsedCachedPredADFun() == false );
+    "The cached f and h value was used when it was not valid.",
+    model.getUsedCachedFAndH() == false );
 
   model.dataVariance( dataVariance );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVariance was used when it was not valid.",
     model.getUsedCachedDataVariance() == false );
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block first derivatives were used when they were not valid.",
-    model.getUsedCachedPredFirstDeriv() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for sigma was used when it was not valid.",
     model.getUsedCachedSigma() == false );
@@ -5337,19 +5362,22 @@ void PopPredModelTest::isCachingProperlyTest()
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataMean_popPar was used when it was not valid.",
     model.getUsedCachedDataMean_popPar() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached fAndH_theta value was used when it was not valid.",
+    model.getUsedCachedFAndH_theta() == false );
 
   ok = model.dataMean_indPar( dataMean_indPar );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataMean_indPar was used when it was not valid.",
     model.getUsedCachedDataMean_indPar() == false );
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The cached fAndH_eta value was used when it was not valid.",
+    model.getUsedCachedFAndH_eta() == false );
 
   ok = model.dataVariance_popPar( dataVariance_popPar );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVariance_popPar was used when it was not valid.",
     model.getUsedCachedDataVariance_popPar() == false );
-  CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block second derivatives were used when they were not valid.",
-    model.getUsedCachedPredSecondDeriv() == false );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for sigma_sigmaPar was used when it was not valid.",
     model.getUsedCachedSigma_sigmaPar() == false );
@@ -5415,16 +5443,16 @@ void PopPredModelTest::isCachingProperlyTest()
     "The cached value for dataMean was not used when it was valid.",
     model.getUsedCachedDataMean() == true );
   CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block AD function object was not used when it was valid.",
-    model.getUsedCachedPredADFun() == true );
+    "The cached f and h value was not used when it was valid.",
+    model.getUsedCachedFAndH() == true );
 
   model.dataVariance( dataVariance );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for dataVariance was not used when it was valid.",
     model.getUsedCachedDataVariance() == true );
   CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block first derivatives were not used when they were valid.",
-    model.getUsedCachedPredFirstDeriv() == true );
+    "The cached fAndH_theta were not used when they were valid.",
+    model.getUsedCachedFAndH_theta() == true );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for sigma was not used when it was valid.",
     model.getUsedCachedSigma() == true );
@@ -5449,8 +5477,8 @@ void PopPredModelTest::isCachingProperlyTest()
     "The cached value for dataVariance_popPar was not used when it was valid.",
     model.getUsedCachedDataVariance_popPar() == true );
   CPPUNIT_ASSERT_MESSAGE( 
-    "The cached Pred block second derivatives were not used when they were valid.",
-    model.getUsedCachedPredSecondDeriv() == true );
+    "The cached fAndH_eta were not used when they were valid.",
+    model.getUsedCachedFAndH_eta() == true );
   CPPUNIT_ASSERT_MESSAGE( 
     "The cached value for sigma_sigmaPar was not used when it was valid.",
     model.getUsedCachedSigma_sigmaPar() == true );
