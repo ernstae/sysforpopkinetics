@@ -89,6 +89,9 @@ $end
 // CppAD header files.
 #include <CppAD/CppAD.h>
 
+// GiNaC computer algebra library header files.
+#include <ginac/ginac.h>
+
 
 /*------------------------------------------------------------------------
  * Function definition
@@ -144,6 +147,14 @@ bool isUnnormNumber( const ValueType& value )
 
 }
 
+template<>
+bool isUnnormNumber( const GiNaC::ex& value )
+{
+  // There are no unnormalized numbers in GiNaC, so always return a
+  // value of false.
+  return false;
+}
+
 
 /*------------------------------------------------------------------------
  * Template Function Instantiations.
@@ -154,3 +165,8 @@ template bool isUnnormNumber<double>( const double& value );
 template bool isUnnormNumber< CppAD::AD<double> >( const CppAD::AD<double> & value );
 
 template bool isUnnormNumber< CppAD::AD< CppAD::AD<double> > >( const CppAD::AD< CppAD::AD<double> > & value );
+
+template bool isUnnormNumber< CppAD::AD< CppAD::AD< CppAD::AD<double> > > >( const CppAD::AD< CppAD::AD< CppAD::AD<double> > > & value );
+
+template bool isUnnormNumber<GiNaC::ex>( const GiNaC::ex& value );
+

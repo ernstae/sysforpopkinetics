@@ -39,6 +39,7 @@ AM_LDFLAGS  = \
 	-lpthread \
 	-lcppunit \
 	-lxerces-c \
+	-lginac \
 	-lm \
 	-ldl
 
