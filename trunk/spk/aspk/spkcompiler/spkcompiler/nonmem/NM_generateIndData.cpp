@@ -347,6 +347,7 @@ void NonmemTranslator::generateIndData( ) const
   //----------------------------------------
   oIndData_h << "private:" << endl;
   oIndData_h << "   const int nRecords; // the number of data records." << endl;
+  oIndData_h << "   void assign( double&, const CppAD::AD< CppAD::AD< CppAD::AD<double> > >& ) const;" << endl;
   oIndData_h << "   void assign( double&, const CppAD::AD< CppAD::AD<double> >& ) const;" << endl;
   oIndData_h << "   void assign( double&, const CppAD::AD<double>& ) const;" << endl;
   oIndData_h << "   void assign( double&, const GiNaC::ex& ) const;" << endl;
@@ -1066,6 +1067,13 @@ void NonmemTranslator::generateIndData( ) const
   // This is to make an assignment operation, a = b, transparent for situations where a is double and b is CppAD<double>
   // and a an b are both double.
   //
+  oIndData_h << "template <class spk_ValueType>" << endl;
+  oIndData_h << "void IndData<spk_ValueType>::assign( double & d, const CppAD::AD< CppAD::AD< CppAD::AD<double> > >& addd ) const" << endl;
+  oIndData_h << "{" << endl;
+  oIndData_h << "   d = CppAD::Value( CppAD::Value( CppAD::Value( addd ) ) );" << endl;
+  oIndData_h << "   return;" << endl;
+  oIndData_h << "}" << endl;
+  oIndData_h << endl;
   oIndData_h << "template <class spk_ValueType>" << endl;
   oIndData_h << "void IndData<spk_ValueType>::assign( double & d, const CppAD::AD< CppAD::AD<double> >& add ) const" << endl;
   oIndData_h << "{" << endl;

@@ -102,7 +102,9 @@ using SPK_VA::valarray;
 
 //Constructor (original)
 PopPredModel::PopPredModel(
-  PredBase< AD<double> >&          predEvaluatorIn,
+  PredBase< double >&                          predEvaluatorIn,
+  PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+  PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
   int                              nThetaIn,
   const SPK_VA::valarray<double>&  thetaLowIn,
   const SPK_VA::valarray<double>&  thetaUpIn,
@@ -117,6 +119,8 @@ PopPredModel::PopPredModel(
   :
   PopPredModelBase<double>::PopPredModelBase<double>(
     predEvaluatorIn,
+    predEvaluatorADIn,
+    predEvaluatorADADIn,
     nThetaIn,
     thetaLowIn,
     thetaUpIn,
@@ -165,7 +169,9 @@ PopPredModel::PopPredModel(
 //Constructor (with input for FIXed elements)
 //[Revisit - remove this (2nd) constructor - Dave]
 PopPredModel::PopPredModel(
-  PredBase< AD<double> >&          predEvaluatorIn,
+  PredBase< double >&                          predEvaluatorIn,
+  PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+  PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
   int                              nThetaIn,
   const SPK_VA::valarray<double>&  thetaLowIn,
   const SPK_VA::valarray<double>&  thetaUpIn,
@@ -182,6 +188,8 @@ PopPredModel::PopPredModel(
   :
   PopPredModelBase<double>::PopPredModelBase<double>(
     predEvaluatorIn,
+    predEvaluatorADIn,
+    predEvaluatorADADIn,
     nThetaIn,
     thetaLowIn,
     thetaUpIn,
@@ -231,7 +239,9 @@ PopPredModel::PopPredModel(
 
 //Constructor (3rd version - with block structure info)
 PopPredModel::PopPredModel(
-  PredBase< AD<double> >&             predEvaluatorIn,
+  PredBase< double >&                          predEvaluatorIn,
+  PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+  PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
   int                                 nThetaIn,
   const SPK_VA::valarray<double>&     thetaLowIn,
   const SPK_VA::valarray<double>&     thetaUpIn,
@@ -254,6 +264,8 @@ PopPredModel::PopPredModel(
   :
   PopPredModelBase<double>::PopPredModelBase<double>(
     predEvaluatorIn,
+    predEvaluatorADIn,
+    predEvaluatorADADIn,
     nThetaIn,
     thetaLowIn,
     thetaUpIn,
@@ -335,8 +347,14 @@ bool PopPredModel::doDataMean_popPar( SPK_VA::valarray<double>& ret ) const
   // Prepare to calculate the value.
   //------------------------------------------------------------
 
-  // Evaluate the first derivatives of the Pred block expressions.
-  evalPredFirstDeriv();
+  // Set this derivative of the data mean values for the current
+  // individual,
+  //
+  //     d       f ( theta, eta )  .
+  //      theta   i
+  //
+  // This function sets the value for f_thetaCurr.
+  evalFAndH_theta();
 
 
   //------------------------------------------------------------
@@ -478,8 +496,14 @@ bool PopPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const
   // Prepare to calculate the value.
   //------------------------------------------------------------
 
-  // Evaluate the first derivatives of the Pred block expressions.
-  evalPredFirstDeriv();
+  // Set this derivative of the data mean values for the current
+  // individual,
+  //
+  //     d     f ( theta, eta )  .
+  //      eta   i
+  //
+  // This function sets the value for f_etaCurr.
+  evalFAndH_eta();
 
 
   //------------------------------------------------------------
@@ -506,7 +530,6 @@ bool PopPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const
     {
       dataMean_indParCurr[j + k * nRow] = f_etaCurr[j + k * nRow];
     }
-
   }
 
 
@@ -582,8 +605,17 @@ bool PopPredModel::doDataVariance_popPar( SPK_VA::valarray<double>& ret ) const
   // Prepare to calculate the value.
   //------------------------------------------------------------
 
-  // Evaluate the second derivatives of the Pred block expressions.
-  evalPredSecondDeriv();
+  // Set this derivative of the derivative of the data values for the
+  // current individual,
+  //
+  //                                           -                                        - 
+  //                                          |                               |          |
+  //     d       h ( theta, eta )  =  d       |  d     y ( theta, eta, eps )  |          |  .
+  //      theta   i                    theta  |   eps   i                     | eps = 0  |
+  //                                           -                                        - 
+  //
+  // This function sets the value for h_thetaCurr.
+  evalFAndH_theta();
 
   // Save the current value for sigma and its derivative.
   pSigmaCurr->cov( sigmaCurr );
@@ -841,8 +873,17 @@ bool PopPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
   // Prepare to calculate the value.
   //------------------------------------------------------------
 
-  // Evaluate the second derivatives of the Pred block expressions.
-  evalPredSecondDeriv();
+  // Set this derivative of the derivative of the data values for the
+  // current individual,
+  //
+  //                                       -                                        - 
+  //                                      |                               |          |
+  //     d     h ( theta, eta )  =  d     |  d     y ( theta, eta, eps )  |          |  .
+  //      eta   i                    eta  |   eps   i                     | eps = 0  |
+  //                                       -                                        - 
+  //
+  // This function sets the value for h_etaCurr.
+  evalFAndH_eta();
 
   // Save the current value for sigma and its derivative.
   pSigmaCurr->cov( sigmaCurr );

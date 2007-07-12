@@ -46,6 +46,9 @@
 #include <spk/SpkValarray.h>
 #include <spk/WarningsManager.h>
 
+// CppAD header files.
+#include <CppAD/CppAD.h>
+
 // Standard library header files.
 #include <algorithm>
 #include <map>
@@ -210,6 +213,53 @@ public:
 
   /***********************************************************************
    *
+   * Function: initPredSubAD
+   *
+   *//**
+   * Initialize values for a CppAD based subclass of this abstract
+   * base class by copying the current values from this object to the
+   * CppAD version that is pointed to by pPredBaseADIn.
+   *
+   * This function assumes that the object pointed to by pPredBaseADIn
+   * is a subclass of OdePredBase.
+   */
+  /***********************************************************************/
+
+public:
+  virtual void initPredSubAD( PredBase< CppAD::AD<Value> >* pPredBaseADIn )
+  {
+    // Convert the input PredBase pointer to be of the same type as
+    // this class.
+    OdePredBase< CppAD::AD<Value> >* pOdePredBaseAD =
+      dynamic_cast< OdePredBase< CppAD::AD<Value> >* >( pPredBaseADIn );
+
+    int p;
+    int s;
+
+    // Make enough room for all of the ODE solutions.
+    pOdePredBaseAD->resizeCompAmountAllOdeSoln( nComp * nOdeSoln );
+
+    // Copy the current values from this object to the CppAD version
+    // that is pointed to by pPredBaseADIn.
+    for ( p = 0; p < nComp; p++ )
+    {
+      pOdePredBaseAD->setCompInfusRate    ( p, compInfusRate    [p] );
+      pOdePredBaseAD->setCompInfusDurat   ( p, compInfusDurat   [p] );
+      pOdePredBaseAD->setCompAbsorpLagTime( p, compAbsorpLagTime[p] );
+      pOdePredBaseAD->setCompScaleParam   ( p, compScaleParam   [p] );
+      pOdePredBaseAD->setCompBioavailFrac ( p, compBioavailFrac [p] );
+
+      for ( s = 0; s < nOdeSoln; s++ )
+      {
+        pOdePredBaseAD->setCompAmountAllOdeSoln( p, s, compAmountAllOdeSoln[p + s * nComp] );
+      }
+    }
+
+  }
+
+
+  /***********************************************************************
+   *
    * Function: initUserEnv
    *
    *//**
@@ -255,6 +305,760 @@ public:
                             const std::vector<Value>& indepVar,
                             const std::vector<Value>& depVar )
   {
+  }
+
+
+  /***********************************************************************
+   *
+   * Function: evalAllF
+   *
+   *//**
+   * This function is a specialization of the evalAllF() function for
+   * the case where the Pred block expressions are implemented by
+   * ODE-based equivalents.
+   *
+   * <code>evalAllF</code> evaluates the PK, DES, and ERROR blocks'
+   * expressions for all of the i-th individual's data records at the
+   * given values for the independent variables.
+   *
+   * If the Dependent Variable (DV) data item for the j-th data record is
+   * not missing, i.e., its Missing Dependent Variable (MDV) data item
+   * is equal to zero, then the value for fOut will be set equal to 
+   * the calculated value for y,
+   * \f[
+   *   fOut_{i(j)} = y_{i(j)}( f_{i(j)}(theta, eta), theta, eta, eps)  .
+   * \f]
+   *
+   * The variable f is the model for the expected value
+   * for the DV data item, and the variable y is the full
+   * statistical model for the DV that includes the noise in the data.
+   *
+   * This function should set the value for DV, and it should also set
+   * the values for all of the other data items that appear in the
+   * $INPUT record.
+   *
+   * @param thetaOffset     The index to the head of THETA vector within indepVar.
+   * @param thetaLen        The length of THETA vector.
+   *                        The vector elements are assumed to be placed
+   *                        from indepVar[thetaOffset] 
+   *                        to indepVar[thetaOffset + thetaLen].
+   * @param etaOffset       The index to the head of ETA vector within indepVar.
+   * @param etaLen          The length of ETA vector.  
+   *                        The vector elements are assumed to be placed
+   *                        from indepVar[etaOffset] 
+   *                        to indepVar[etaOffset + etaLen].
+   * @param epsOffset       The index to the head of EPS vector within indepVar.
+   * @param epsLen          The length of EPS vector.
+   *                        The vector elements are assumed to be placed
+   *                        from indepVar[thetaOffset] 
+   *                        to indepVar[thetaOffset + thetaLen].
+   * @param fLen            The total length of y vector.
+   * @param i               The index to the individual of interest 
+   *                        within the population (0 indicates the first
+   *                        individual.)
+   *                        first data record.)
+   * @param indepVar        The vector containing independent variables:
+   *                        THETA, ETA and EPS.
+   * @param fOut            (output) The vector whose m-th element will be 
+   *                        replaced with the calculated value for
+   *                        y if the DV data item for this data
+   *                        record is not missing, 
+   *                        \f[
+   *                          \mbox{fOut} = y(f(theta, eta), theta, eta, eps)  .
+   *                        \f]
+   *                        The number m is the position of this DV value in
+   *                        the list of DV values for this individual that
+   *                        are not missing.  Note that m is a number that
+   *                        must be determined by the implementation of
+   *                        this function, i.e., it is not an input to this 
+   *                        function.
+   */
+  /***********************************************************************/
+
+  virtual void evalAllF( int thetaOffset, int thetaLen,
+                         int etaOffset,   int etaLen,
+                         int epsOffset,   int epsLen,
+                         int fLen,
+                         int i,
+                         const std::vector<Value>& indepVar,
+                         std::vector<Value>& fOut )
+  {
+    //----------------------------------------------------------
+    // Preliminaries.
+    //----------------------------------------------------------
+
+    using namespace std;
+
+    // Set the number of records for this individual.
+    int nRecord = this->getNRecords( i );
+
+    // Set the number of observation records for this individual.
+    int nObserv = this->getNObservs( i );
+
+
+    //----------------------------------------------------------
+    // Check the inputs.
+    //----------------------------------------------------------
+
+    // See if there was the correct number of output f values.
+    if ( fOut.size() != fLen )
+    {
+      string message = "The number of output f values does not match the expected number \nfor the " + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual.";
+
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        message.c_str(),
+        __LINE__, 
+        __FILE__ );
+    }
+
+
+    //----------------------------------------------------------
+    // Calculate all of this individual's compartments' amounts.
+    //----------------------------------------------------------
+
+    int j;
+
+    // Set quantities related to the vector of dependent variables
+    // for the current individual,
+    //
+    //                 -                      -
+    //     w( z )  =  |  f( theta, eta, eps )  |  .
+    //                 -                      -
+    const int fOffset = 0;
+    const int yOffset = 0;
+    int yLen = 0;
+
+    // Perform initializations required for new values of i before
+    // calls to evalPk(), evalDes(), and evalError() will work.
+    initUserEnv(
+      thetaOffset,
+      thetaLen,
+      etaOffset,
+      etaLen,
+      epsOffset,
+      epsLen,
+      fOffset,
+      fLen,
+      yOffset,
+      yLen,
+      i,
+      j,
+      indepVar,
+      fOut );
+
+    // Calculate the amounts in all of the compartments for all of
+    // the ODE solution times for this individual.
+    evalAllAmounts(
+      thetaOffset,
+      thetaLen,
+      etaOffset,
+      etaLen,
+      i,
+      indepVar );
+
+
+    //----------------------------------------------------------
+    // Set all of the f values for this individual.
+    //----------------------------------------------------------
+
+    std::string taskMessage;
+
+    // This will be equal to the number of f values that were set.
+    int nFValueSet = 0;
+
+    // Evaluate the expressions from the PK, DES, and ERROR blocks for
+    // all of the data records for the current individual.
+    for ( j = 0; j < nRecord; j++ )
+    {
+      taskMessage = "during the evaluation of the data mean model for the \n" + 
+        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record" + 
+        " for the " + intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
+        " individual.";
+
+      // Evaluate the PK, DES, and ERROR block expressions for this
+      // data record.  The calculated value will be set if this data
+      // record is an observation record.
+      //
+      try
+      {
+        //----------------------------------------------------------
+        // Prepare to set the calculated values for the dependent variables.
+        //----------------------------------------------------------
+
+        // Get the data items for the current data record.
+        readDataRecord( i, j );
+
+        // Set current values for any variables defined in the PK block.
+        evalPk(
+          thetaOffset,
+          thetaLen,
+          etaOffset,
+          etaLen,
+          i,
+          j,
+          indepVar );
+  
+        // Set current values for any variables defined in the DES block.
+        evalDes(
+          thetaOffset,
+          thetaLen,
+          iCurr,
+          jCurr,
+          indepVar );
+
+        // If this is data record has an ODE solution, then calculate the
+        // values.
+        if ( dataRecHasOdeSoln[j] )
+        {
+          // Get the ODE solution index for this data record.
+          int s = dataRecOdeSolnIndex[ j ];
+
+          // Set the current amounts in all of the compartments equal to
+          // their amounts at the time for this data record.
+          int p;
+          for ( p = 0; p < nComp; p++ )
+          {
+            compAmount[p] = compAmountAllOdeSoln[p + s * nComp];
+          }
+
+          // Get the compartment index for this ODE solution.
+          p = compIndex( odeSolnComp[ s ] );
+
+          // Set f equal to the scaled amount in the observation
+          // compartment,
+          //
+          //                  compAmount ( theta, eta )
+          //                            p   
+          //     f_i_j  =  -------------------------------  .
+          //                compScaleParam ( theta, eta )
+          //                              p
+          //
+          f_i_j = compAmountAllOdeSoln[p + s * nComp] /
+            compScaleParam[p];
+
+          // Evaluate the intra-individual error model using the just
+          // set value for f_i_j so that y_i_j may be a function of
+          // the scaled amounts in the compartments,
+          //
+          //     y_i_j  =  y    ( f    ( theta, eta ), theta, eta, eps )  .
+          //                i(j)   i(j)
+          //
+          //                        compAmount ( theta, eta )
+          //                                  p   
+          //            =  y    ( ------------------------------- , theta, eta, eps )  .
+          //                i(j)   compScaleParam ( theta, eta )
+          //                                    p
+          //
+          evalError( 
+            thetaOffset,
+            thetaLen,
+            etaOffset,
+            etaLen,
+            epsOffset,
+            epsLen,
+            i,
+            j,
+            indepVar );
+
+          // Set f_i_j equal to the predicted value for the data,
+          //
+          //     f      =  y    ( theta, eta, eps )  .
+          //      i(j)      i(j)
+          //
+          f_i_j = y_i_j;
+
+          // If this is an observation event, then set the calculated
+          // value in the vector of output variables.
+          if ( evid == OBSERV_EVENT )
+          {
+            // Get the observation index for this data record.
+            int m = dataRecObservIndex[j];
+
+            // Set this element.
+            fOut[m] = f_i_j;
+
+            // Increment the counter.
+            nFValueSet++;
+          }
+        }
+      }
+      catch( SpkException& e )
+      {
+        throw e.push(
+          SpkError::SPK_MODEL_DATA_MEAN_ERR,
+          ( "An error occurred " + taskMessage ).c_str(),
+          __LINE__,
+          __FILE__ );
+      }
+      catch( const std::exception& stde )
+      {
+        throw SpkException(
+          stde,
+          ( "A standard exception was thrown " + taskMessage ).c_str(),
+          __LINE__, 
+          __FILE__ );
+      }  
+      catch( ... )
+      {
+        throw SpkException(
+          SpkError::SPK_UNKNOWN_ERR, 
+          ( "An unknown exception was thrown " + taskMessage ).c_str(),
+          __LINE__, 
+          __FILE__ );
+      }
+
+      // If the current record is an observation record, then check the
+      // calculated value to see if it is valid.
+      if ( evid == OBSERV_EVENT )
+      {
+        // Make sure that the value is finite.
+        if ( isUnnormNumber( f_i_j ) )
+        {
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_ERR,
+            ( "An infinite value was generated " + taskMessage ).c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+    
+        // Make sure that the value is not a NaN.
+        if ( isNotANumber( f_i_j ) )
+        {
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_ERR,
+            ( "A value that is Not a Number (NaN) was generated " + 
+              taskMessage ).c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+      }
+
+
+      //----------------------------------------------------------
+      // Finish working with this data record.
+      //----------------------------------------------------------
+    
+      // Save information for the environment for subclasses of this
+      // base class that are required for the current values of i and j.
+      saveUserEnv(
+        thetaOffset,
+        thetaLen,
+        etaOffset,
+        etaLen,
+        epsOffset,
+        epsLen,
+        fOffset,
+        fLen,
+        yOffset,
+        yLen,
+        i,
+        j,
+        indepVar,
+        fOut );
+
+    }
+
+
+    //----------------------------------------------------------
+    // Finish up.
+    //----------------------------------------------------------
+    
+    // See if there was the correct number of observation records.
+    if ( nFValueSet != nObserv )
+    {
+      string message = "The number of data records that are observation records does not match the expected \nnumber of observation records for the " + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual.";
+
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        message.c_str(),
+        __LINE__, 
+        __FILE__ );
+    }
+
+  }
+
+
+  /***********************************************************************
+   *
+   * Function: evalAllY
+   *
+   *//**
+   * This function is a specialization of the evalAllY() function for
+   * the case where the Pred block expressions are implemented by
+   * ODE-based equivalents.
+   *
+   * <code>evalAllY</code> evaluates the PK, DES, and ERROR blocks'
+   * expressions for all of the i-th individual's data records at the
+   * given values for the independent variables.
+   *
+   * If the Dependent Variable (DV) data item for the j-th data record is
+   * not missing, i.e., its Missing Dependent Variable (MDV) data item
+   * is equal to zero, then the value for yOut will be set equal to 
+   * the calculated value for y,
+   * \f[
+   *   yOut_{i(j)} = y_{i(j)}( fIn_{i(j)}(theta, eta), theta, eta, eps)  .
+   * \f]
+   *
+   * The variable f is the model for the expected value
+   * for the DV data item, and the variable y is the full
+   * statistical model for the DV that includes the noise in the data.
+   *
+   * This function should set the value for DV, and it should also set
+   * the values for all of the other data items that appear in the
+   * $INPUT record.
+   *
+   * @param thetaOffset     The index to the head of THETA vector within indepVar.
+   * @param thetaLen        The length of THETA vector.
+   *                        The vector elements are assumed to be placed
+   *                        from indepVar[thetaOffset] 
+   *                        to indepVar[thetaOffset + thetaLen].
+   * @param etaOffset       The index to the head of ETA vector within indepVar.
+   * @param etaLen          The length of ETA vector.  
+   *                        The vector elements are assumed to be placed
+   *                        from indepVar[etaOffset] 
+   *                        to indepVar[etaOffset + etaLen].
+   * @param epsOffset       The index to the head of EPS vector within indepVar.
+   * @param epsLen          The length of EPS vector.
+   *                        The vector elements are assumed to be placed
+   *                        from indepVar[thetaOffset] 
+   *                        to indepVar[thetaOffset + thetaLen].
+   * @param yLen            The total length of y vector.
+   * @param i               The index to the individual of interest 
+   *                        within the population (0 indicates the first
+   *                        individual.)
+   * @param indepVar        The vector containing independent variables:
+   *                        THETA, ETA and EPS.
+   * @param fIn             The vector containing the variable f, 
+   *                        which is the model for the expected value for the 
+   *                        DV data item,
+   *                        \f[
+   *                          \mbox{fIn} = f(theta, eta)  .
+   *                        \f]
+   *                        It must have the same length as yOut.
+   *                        This function assumes that fIn has been evaluated 
+   *                        at the same values for theta and eta as are input 
+   *                        to this function.
+   * @param yOut            (output) The vector whose m-th element will be 
+   *                        replaced with the calculated value for
+   *                        y if the DV data item for this data
+   *                        record is not missing, 
+   *                        \f[
+   *                          \mbox{yOut} = y(f(theta, eta), theta, eta, eps)  .
+   *                        \f]
+   *                        The number m is the position of this DV value in
+   *                        the list of DV values for this individual that
+   *                        are not missing.  Note that m is a number that
+   *                        must be determined by the implementation of
+   *                        this function, i.e., it is not an input to this 
+   *                        function.
+   */
+  /***********************************************************************/
+
+  virtual void evalAllY( int thetaOffset, int thetaLen,
+                         int etaOffset,   int etaLen,
+                         int epsOffset,   int epsLen,
+                         int yLen,
+                         int i,
+                         const std::vector<Value>& indepVar,
+                         const std::vector<Value>& fIn,
+                         std::vector<Value>& yOut )
+  {
+    //----------------------------------------------------------
+    // Preliminaries.
+    //----------------------------------------------------------
+
+    using namespace std;
+
+    // Set the number of records for this individual.
+    int nRecord = this->getNRecords( i );
+
+    // Set the number of observation records for this individual.
+    int nObserv = this->getNObservs( i );
+
+
+    //----------------------------------------------------------
+    // Check the inputs.
+    //----------------------------------------------------------
+
+    // See if there was the correct number of input f values.
+    if ( fIn.size() != yLen )
+    {
+      string message = "The number of input f values does not match the expected number \nfor the " + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual.";
+
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        message.c_str(),
+        __LINE__, 
+        __FILE__ );
+    }
+
+    // See if there was the correct number of output y values.
+    if ( yOut.size() != yLen )
+    {
+      string message = "The number of output y values does not match the expected number \nfor the " + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual.";
+
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        message.c_str(),
+        __LINE__, 
+        __FILE__ );
+    }
+
+
+    //----------------------------------------------------------
+    // Prepare to set all of the y values for this individual.
+    //----------------------------------------------------------
+
+    int j;
+
+    // Set quantities related to the vector of dependent variables
+    // for the current individual,
+    //
+    //                 -                      -
+    //     w( z )  =  |  y( theta, eta, eps )  |  .
+    //                 -                      -
+    const int fOffset = 0;
+    const int yOffset = 0;
+    int fLen = 0;
+
+    // Perform initializations required for new values of i before
+    // calls to evalPk(), evalDes(), and evalError() will work.
+    initUserEnv(
+      thetaOffset,
+      thetaLen,
+      etaOffset,
+      etaLen,
+      epsOffset,
+      epsLen,
+      fOffset,
+      fLen,
+      yOffset,
+      yLen,
+      i,
+      j,
+      indepVar,
+      yOut );
+
+    // Get the individual's experiment design information.
+    getExpDesign(
+      thetaOffset,
+      thetaLen,
+      etaOffset,
+      etaLen,
+      i,
+      indepVar );
+
+
+    //----------------------------------------------------------
+    // Set all of the y values for this individual.
+    //----------------------------------------------------------
+
+    std::string taskMessage;
+
+    // This will be equal to the number of y values that were set.
+    int nYValueSet = 0;
+
+    // Evaluate the expressions from the PK, DES, and ERROR blocks for
+    // all of the data records for the current individual.
+    for ( j = 0; j < nRecord; j++ )
+    {
+      taskMessage = "during the evaluation of the intra-individual error model for the \n" + 
+        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record" + 
+        " for the " + intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
+        " individual.";
+
+      // Evaluate the PK, DES, and ERROR block expressions for this
+      // data record.  The calculated value will be set if this data
+      // record is an observation record.
+      //
+      try
+      {
+        //----------------------------------------------------------
+        // Prepare to set the calculated values for the dependent variables.
+        //----------------------------------------------------------
+
+        // Get the data items for the current data record.
+        readDataRecord( i, j );
+
+        // Set current values for any variables defined in the PK block.
+        evalPk(
+          thetaOffset,
+          thetaLen,
+          etaOffset,
+          etaLen,
+          i,
+          j,
+          indepVar );
+  
+        // Set current values for any variables defined in the DES block.
+        evalDes(
+          thetaOffset,
+          thetaLen,
+          iCurr,
+          jCurr,
+          indepVar );
+
+        // If this is data record has an ODE solution, then calculate the
+        // values.
+        if ( dataRecHasOdeSoln[j] )
+        {
+          // Get the ODE solution index for this data record.
+          int s = dataRecOdeSolnIndex[ j ];
+
+          // Set the current amounts in all of the compartments equal to
+          // their amounts at the time for this data record.
+          int p;
+          for ( p = 0; p < nComp; p++ )
+          {
+            compAmount[p] = compAmountAllOdeSoln[p + s * nComp];
+          }
+
+          // If this is an observation event, then set the calculated
+          // value in the vector of output variables.
+          if ( evid == OBSERV_EVENT )
+          {
+            // Get the observation index for this data record.
+            int m = dataRecObservIndex[j];
+    
+            // Set f_i_j equal to the input f value,
+            //
+            //     f_i_j  =  fIn    (theta, eta)  .
+            //                  i(m)
+            //
+            f_i_j = fIn[m];
+    
+            // Evaluate the intra-individual error model using the just
+            // set value for f_i_j so that y_i_j may be a function of
+            // fIn_i_m,
+            //
+            //     y_i_j  =  y    ( fIn    (theta, eta), theta, eta, eps )  .
+            //                i(j)     i(m)
+            //
+            evalError( 
+              thetaOffset,
+              thetaLen,
+              etaOffset,
+              etaLen,
+              epsOffset,
+              epsLen,
+              i,
+              j,
+              indepVar );
+    
+            // Set f_i_j equal to the predicted value for the data,
+            //
+            //     f      =  y    ( fIn    (theta, eta), theta, eta, eps )  .
+            //      i(j)      i(j)     i(m)
+            //           
+            f_i_j = y_i_j;
+    
+            // Set this element.
+            yOut[m] = y_i_j;
+    
+            // Increment the counter.
+            nYValueSet++;
+          }
+        }
+      }
+      catch( SpkException& e )
+      {
+        throw e.push(
+          SpkError::SPK_MODEL_DATA_MEAN_ERR,
+          ( "An error occurred " + taskMessage ).c_str(),
+          __LINE__,
+          __FILE__ );
+      }
+      catch( const std::exception& stde )
+      {
+        throw SpkException(
+          stde,
+          ( "A standard exception was thrown " + taskMessage ).c_str(),
+          __LINE__, 
+          __FILE__ );
+      }  
+      catch( ... )
+      {
+        throw SpkException(
+          SpkError::SPK_UNKNOWN_ERR, 
+          ( "An unknown exception was thrown " + taskMessage ).c_str(),
+          __LINE__, 
+          __FILE__ );
+      }
+
+      // If the current record is an observation record, then check the
+      // calculated value to see if it is valid.
+      if ( evid == OBSERV_EVENT )
+      {
+        // Make sure that the value is finite.
+        if ( isUnnormNumber( y_i_j ) )
+        {
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_ERR,
+            ( "An infinite value was generated " + taskMessage ).c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+    
+        // Make sure that the value is not a NaN.
+        if ( isNotANumber( y_i_j ) )
+        {
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_ERR,
+            ( "A value that is Not a Number (NaN) was generated " + 
+              taskMessage ).c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+      }
+
+
+      //----------------------------------------------------------
+      // Finish working with this data record.
+      //----------------------------------------------------------
+    
+      // Save information for the environment for subclasses of this
+      // base class that are required for the current values of i and j.
+      saveUserEnv(
+        thetaOffset,
+        thetaLen,
+        etaOffset,
+        etaLen,
+        epsOffset,
+        epsLen,
+        fOffset,
+        fLen,
+        yOffset,
+        yLen,
+        i,
+        j,
+        indepVar,
+        yOut );
+
+    }
+
+
+    //----------------------------------------------------------
+    // Finish up.
+    //----------------------------------------------------------
+    
+    // See if there was the correct number of observation records.
+    if ( nYValueSet != nObserv )
+    {
+      string message = "The number of data records that are observation records does not match the expected \nnumber of observation records for the " + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual.";
+
+      throw SpkException(
+        SpkError::SPK_USER_INPUT_ERR, 
+        message.c_str(),
+        __LINE__, 
+        __FILE__ );
+    }
+
   }
 
 
@@ -362,15 +1166,8 @@ protected:
    * case where the Pred block expressions are implemented by
    * ODE-based equivalents.
    *
-   * This function evaluates the ODE-based equivalents of the Pred
-   * block expressions for the i-th individual's j-th data record at
-   * the given values for the independent variables.
-   *
-   * The return value for this function will be true if this is an
-   * observation event, i.e., if the DV data item is an observation
-   * and is not missing.
-   *
-   * See the specification for PredBase::eval() for more details.
+   * Note that this function is not used in this class and so does
+   * nothing.
    */
   /***********************************************************************/
 
@@ -385,47 +1182,7 @@ public:
              const std::vector<Value>& indepVar,
              std::vector<Value>& depVar )
   {
-    //----------------------------------------------------------
-    // Preliminaries.
-    //----------------------------------------------------------
-  
-    using namespace std;
-  
-  
-    //----------------------------------------------------------
-    // Set the calculated values for the dependent variables.
-    //----------------------------------------------------------
-  
-    // This will be true if this is an observation event, i.e., if the
-    // the DV data item is an observation and is not missing.
-    bool isObsEvent;
-  
-    // Evaluate ODE-based equivalents of the Pred block expressions
-    // for the i-th individual's j-th data record at the given values
-    // for the independent variables.
-    isObsEvent = evalOdePred(
-      thetaOffset,
-      thetaLen,
-      etaOffset,
-      etaLen,
-      epsOffset,
-      epsLen,
-      fOffset,
-      fLen,
-      yOffset,
-      yLen,
-      i,
-      j,
-      indepVar,
-      depVar);
-  
-  
-    //----------------------------------------------------------
-    // Finish up.
-    //----------------------------------------------------------
-  
-    return isObsEvent;
-  
+    return false;
   }
 
 
@@ -554,6 +1311,10 @@ protected:
   void getCompAmount( int p, Value& compAmount_pOut ) const
   { compAmount_pOut = compAmount[p]; }
 
+  ///< Gets (p,s)-th value for compAmountAllOdeSoln.
+  void getCompAmountAllOdeSoln( int p, int s, Value& compAmountAllOdeSoln_p_sOut ) const
+  { compAmountAllOdeSoln_p_sOut = compAmountAllOdeSoln[p + s * nComp]; }
+
   ///< Gets p-th value for compAmount_t.
   void getCompAmount_t( int p, Value& compAmount_t_pOut ) const
   { compAmount_t_pOut = compAmount_t[p]; }
@@ -578,9 +1339,14 @@ protected:
   void getCompBioavailFrac( int p, Value& compBioavailFrac_pOut ) const
   { compBioavailFrac_pOut = compBioavailFrac[p]; }
 
+public:
   ///< Sets the p-th value for compAmount.
   void setCompAmount( int p, const Value& compAmountIn )
   { compAmount[p] = compAmountIn; }
+
+  ///< Sets the (p,s)-th value for compAmountAllOdeSoln.
+  void setCompAmountAllOdeSoln( int p, int s, const Value& compAmountAllOdeSolnIn )
+  { compAmountAllOdeSoln[p + s * nComp] = compAmountAllOdeSolnIn; }
 
   ///< Sets the p-th value for compAmount_t.
   void setCompAmount_t( int p, const Value& compAmount_tIn )
@@ -605,6 +1371,11 @@ protected:
   ///< Sets the p-th value for compBioavailFrac.
   void setCompBioavailFrac( int p, const Value& compBioavailFracIn )
   { compBioavailFrac[p] = compBioavailFracIn; }
+
+  // Resizes the vector of amounts in each compartment for all of the
+  // ODE solution times.
+  void resizeCompAmountAllOdeSoln( int nElem )
+  { compAmountAllOdeSoln.resize( nElem ); }
 
 private:
   const int nComp;                         ///< Number of compartments (including the ouput compartment).
@@ -2420,228 +3191,6 @@ private:
       {
         compAmountAllOdeSoln[p + s * nComp] = Value( 0 );
       }
-    }
-
-  }
-
-
-  /***********************************************************************
-   *
-   * Function: evalOdePred
-   *
-   *//**
-   * Evaluates ODE-based equivalents of the Pred block expressions for
-   * the i-th individual's j-th data record at the given values for
-   * the independent variables.'
-   *
-   * Returns true if this is an observation event.
-   */
-  /***********************************************************************/
-
-protected:
-  bool evalOdePred( int thetaOffset, int thetaLen,
-                    int etaOffset,   int etaLen,
-                    int epsOffset,   int epsLen,
-                    int fOffset,     int fLen,
-                    int yOffset,     int yLen,
-                    int i,
-                    int j,
-                    const std::vector<Value>& indepVar,
-                    std::vector<Value>& depVar )
-  {
-    //----------------------------------------------------------
-    // Preliminaries.
-    //----------------------------------------------------------
-
-    using namespace std;
-
-
-    //----------------------------------------------------------
-    // Do preparations related to new individuals.
-    //----------------------------------------------------------
-
-    // If this is the first data record for this individual, then
-    // calculate all of their compartment amounts.
-    if ( j == 0 )
-    {
-      // Perform initializations required for new values of i before
-      // calls to evalPk(), evalDes(), and evalError() will work.
-      initUserEnv(
-        thetaOffset,
-        thetaLen,
-        etaOffset,
-        etaLen,
-        epsOffset,
-        epsLen,
-        fOffset,
-        fLen,
-        yOffset,
-        yLen,
-        i,
-        j,
-        indepVar,
-        depVar);
-
-      // Calculate the amounts in all of the compartments for all of
-      // the ODE solution times for this individual.
-      evalAllAmounts(
-        thetaOffset,
-        thetaLen,
-        etaOffset,
-        etaLen,
-        i,
-        indepVar );
-    }
-
-
-    //----------------------------------------------------------
-    // Prepare to set the calculated values for the dependent variables.
-    //----------------------------------------------------------
-
-    // Get the data items for the current data record.
-    readDataRecord( i, j );
-
-    // Set current values for any variables defined in the PK block.
-    evalPk(
-      thetaOffset,
-      thetaLen,
-      etaOffset,
-      etaLen,
-      i,
-      j,
-      indepVar );
-
-    // Set current values for any variables defined in the DES block.
-    evalDes(
-      thetaOffset,
-      thetaLen,
-      iCurr,
-      jCurr,
-      indepVar );
-
-
-    //----------------------------------------------------------
-    // Set the calculated values for the dependent variables.
-    //----------------------------------------------------------
-
-    bool isObsEvent = false;
-
-    // If this is data record has an ODE solution, then calculate the
-    // values for F and Y.
-    if ( dataRecHasOdeSoln[j] )
-    {
-      // Get the ODE solution index for this data record.
-      int s = dataRecOdeSolnIndex[ j ];
-
-      // Set the current amounts in all of the compartments equal to
-      // their amounts at the time for this data record.
-      int p;
-      for ( p = 0; p < nComp; p++ )
-      {
-        compAmount[p] = compAmountAllOdeSoln[p + s * nComp];
-      }
-
-      // Get the compartment index for this ODE solution.
-      p = compIndex( odeSolnComp[ s ] );
-
-      // Set F equal to the scaled amount in the observation compartment.
-      f_i_j = compAmountAllOdeSoln[p + s * nComp] /
-        compScaleParam[p];
-
-      // Evaluate the intra-individual error model.
-      evalError( 
-        thetaOffset,
-        thetaLen,
-        etaOffset,
-        etaLen,
-        epsOffset,
-        epsLen,
-        i,
-        j,
-        indepVar );
-
-      // Set F equal to the predicted value for the data,
-      //
-      //                                 |
-      //     F  =  y( theta, eta, eps )  |          .
-      //                                 | eps = 0
-      //
-      f_i_j = y_i_j;
-
-      // If this is an observation event, then set the calculated
-      // values for f_i_j and y_i_j in the vector of dependent variables.
-      if ( evid == OBSERV_EVENT )
-      {
-        // Get the observation index for this data record.
-        int m = dataRecObservIndex[ j ];
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // [Revisit - Take out Redundant y Values in Dependent Variables - Mitch]
-        // Take out the redundant y values in the vector of dependent
-        // variables, i.e., set
-        //
-        //     w( z )  =  y( theta, eta, eps )  .
-        //
-        // This would require changing the following lines from
-        // IndPredModel and PopPredmodel:
-        //
-        //     nW         = 2 * nObsRecordCurr;
-        //     yOffsetInW = nObsRecordCurr;
-        //
-        // to be
-        //
-        //     nW         = nObsRecordCurr;
-        //     yOffsetInW = 0;
-        //
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //
-        // Set the dependent variables,
-        //
-        //                 -                      -
-        //                |  y( theta, eta, eps )  |
-        //     w( z )  =  |                        |  .
-        //                |  y( theta, eta, eps )  |
-        //                 -                      -
-        //
-        depVar[ fOffset + m ] = y_i_j;
-        depVar[ yOffset + m ] = y_i_j;
-
-        isObsEvent = true;
-      }
-    }
-
-
-    //----------------------------------------------------------
-    // Finish up.
-    //----------------------------------------------------------
-
-    // Save information for the environment for subclasses of this
-    // base class that are required for the current values of i and j.
-    saveUserEnv(
-      thetaOffset,
-      thetaLen,
-      etaOffset,
-      etaLen,
-      epsOffset,
-      epsLen,
-      fOffset,
-      fLen,
-      yOffset,
-      yLen,
-      i,
-      j,
-      indepVar,
-      depVar);
-
-    // Return a value that indicates if this is an observation event
-    // or not.
-    if ( isObsEvent )
-    {
-      return true;
-    }
-    else
-    {
-      return false;
     }
 
   }

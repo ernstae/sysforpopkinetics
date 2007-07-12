@@ -93,7 +93,9 @@ using SPK_VA::valarray;
 
 //Constructor (original)
 IndPredModel::IndPredModel(
-  PredBase< AD<double> >&          predEvaluatorIn,
+  PredBase< double >&                          predEvaluatorIn,
+  PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+  PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
   int                              nThetaIn,
   const SPK_VA::valarray<double>&  thetaLowIn,
   const SPK_VA::valarray<double>&  thetaUpIn,
@@ -104,6 +106,8 @@ IndPredModel::IndPredModel(
   :
   IndPredModelBase<double>::IndPredModelBase<double> (
     predEvaluatorIn,
+    predEvaluatorADIn,
+    predEvaluatorADADIn,
     nThetaIn,
     thetaLowIn,
     thetaUpIn,
@@ -141,7 +145,9 @@ IndPredModel::IndPredModel(
 //Constructor (with inputs for FIXed elements)
 //[Revist - get rid of 2nd constructor - Dave]
 IndPredModel::IndPredModel(
-  PredBase< AD<double> >&          predEvaluatorIn,
+  PredBase< double >&                          predEvaluatorIn,
+  PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+  PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
   int                              nThetaIn,
   const SPK_VA::valarray<double>&  thetaLowIn,
   const SPK_VA::valarray<double>&  thetaUpIn,
@@ -153,6 +159,8 @@ IndPredModel::IndPredModel(
   :
   IndPredModelBase<double>::IndPredModelBase<double> (
     predEvaluatorIn,
+    predEvaluatorADIn,
+    predEvaluatorADADIn,
     nThetaIn,
     thetaLowIn,
     thetaUpIn,
@@ -190,7 +198,9 @@ IndPredModel::IndPredModel(
 
 //Constructor (with inputs for block structure)
 IndPredModel::IndPredModel(
-  PredBase< AD<double> >&             predEvaluatorIn,
+  PredBase< double >&                          predEvaluatorIn,
+  PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+  PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
   int                                 nThetaIn,
   const SPK_VA::valarray<double>&     thetaLowIn,
   const SPK_VA::valarray<double>&     thetaUpIn,
@@ -205,6 +215,8 @@ IndPredModel::IndPredModel(
   :
   IndPredModelBase<double>::IndPredModelBase<double> (
     predEvaluatorIn,
+    predEvaluatorADIn,
+    predEvaluatorADADIn,
     nThetaIn,
     thetaLowIn,
     thetaUpIn,
@@ -277,8 +289,13 @@ bool IndPredModel::doDataMean_indPar( SPK_VA::valarray<double>& ret ) const
   // Prepare to calculate the value.
   //------------------------------------------------------------
 
-  // Evaluate the first derivatives of the Pred block expressions.
-  evalPredFirstDeriv();
+  // Set the data mean values for the current individual,
+  //
+  //     d       f ( theta )  .
+  //      theta   i
+  //
+  // This function sets the value for f_thetaCurr.
+  evalFAndH_theta();
 
 
   //------------------------------------------------------------
@@ -418,8 +435,17 @@ bool IndPredModel::doDataVariance_indPar( SPK_VA::valarray<double>& ret ) const
   // Prepare to calculate the value.
   //------------------------------------------------------------
 
-  // Evaluate the second derivatives of the Pred block expressions.
-  evalPredSecondDeriv();
+  // Set the derivative of the derivative of the data values for the
+  // current individual,
+  //
+  //                                      -                                  - 
+  //                                     |                         |          |
+  //     d       h ( theta )  =  d       |  d     y ( theta eta )  |          |  .
+  //      theta   i               theta  |   eta   i               | eta = 0  |
+  //                                           -                             - 
+  //
+  // This function sets the value for h_thetaCurr.
+  evalFAndH_theta();
 
   // Save the current value for omega and its derivative.
   pOmegaCurr->cov( omegaCurr );

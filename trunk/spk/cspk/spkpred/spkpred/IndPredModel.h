@@ -290,7 +290,9 @@ class IndPredModel : public IndPredModelBase<double>
 
 public:
 IndPredModel(
-    PredBase< CppAD::AD<double> >&   predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -300,7 +302,9 @@ IndPredModel(
     const SPK_VA::valarray<double>&  omegaMinRepIn );
 
 IndPredModel(
-    PredBase< CppAD::AD<double> >&       predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -311,7 +315,9 @@ IndPredModel(
     const SPK_VA::valarray<bool>&    omegaMinRepFixedIn );
 
 IndPredModel(
-    PredBase< CppAD::AD<double> >&       predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,

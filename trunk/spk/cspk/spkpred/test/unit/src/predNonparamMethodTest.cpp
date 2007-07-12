@@ -392,9 +392,13 @@ void predNonparamMethodTest::RailExample_Test()
   // Prepare the Pred block expression evaluators.
   //------------------------------------------------------------
 
+  RailExample_Pred< double > predEvaluator( nY_i );
+
   RailExample_Pred< AD<double> > predEvaluatorAD( nY_i );
 
   RailExample_Pred< AD< AD<double> > > predEvaluatorADAD( nY_i );
+
+  RailExample_Pred< AD< AD< AD<double> > > > predEvaluatorADADAD( nY_i );
 
 
   //------------------------------------------------------------
@@ -466,7 +470,9 @@ void predNonparamMethodTest::RailExample_Test()
 
   // Construct the population level Pred model.
   PopPredModel popModel(
+    predEvaluator,
     predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -543,7 +549,9 @@ void predNonparamMethodTest::RailExample_Test()
   // Note that the population model's eps and Sigma information is
   // used for the individual model's eta and Omega information.
   IndPredModel indModelWithPopData(
+    predEvaluator,
     predEvaluatorAD,
+    predEvaluatorADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,
@@ -556,13 +564,12 @@ void predNonparamMethodTest::RailExample_Test()
   // that will be applied to the same sets of individuals' data sets
   // as for the population model.
   //
-  // Construct the individual model that will be applied to the same
-  // sets of individuals' data sets as for the population model.
-  //
   // Note that the population model's eps and Sigma information is
   // used for the individual model's eta and Omega information.
   IndPredModelBase< AD< double > > indModelWithPopDataAD(
+    predEvaluatorAD,
     predEvaluatorADAD,
+    predEvaluatorADADAD,
     nThetaPop,
     thetaPopLow,
     thetaPopUp,

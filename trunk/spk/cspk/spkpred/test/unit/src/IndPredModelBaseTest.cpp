@@ -396,7 +396,7 @@ namespace // [Begin: unnamed namespace]
       //
       ke = indepVar[thetaOffset + 0];
       cl = indepVar[thetaOffset + 1] * w;
-      d = exp(-ke * time);
+      d = CppAD::exp(-ke * time);
       e = cl;
       depVar[fOffset + j] = ds * d / e;
       depVar[yOffset + j] = depVar[fOffset + j] + indepVar[etaOffset + 0]
@@ -538,7 +538,11 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataMean_Test()
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< double > > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD< AD<double> > > > predEvaluatorADADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -586,8 +590,10 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataMean_Test()
   // Construct the individual level Pred model.
   //------------------------------------------------------------
 
-  IndPredModelBase< AD<double> > model(
-    predEvaluator,
+  IndPredModelBase< AD<double> > modelAD(
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    predEvaluatorADADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -602,11 +608,11 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataMean_Test()
   //------------------------------------------------------------
 
   // Get the number elements in the individual parameter.
-  int nIndPar = model.getNIndPar();
+  int nIndPar = modelAD.getNIndPar();
 
   // Get the number of observations for this individual.
   int iCurr = 0;
-  int nY_i = predEvaluator.getNObservs( iCurr );
+  int nY_i = predEvaluatorAD.getNObservs( iCurr );
 
 
   //------------------------------------------------------------
@@ -623,7 +629,7 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataMean_Test()
 
   // Get the current value for the individual parameter, which was set
   // when the model was constructed.
-  model.getIndPar( bCurrAD );
+  modelAD.getIndPar( bCurrAD );
 
   // Get a double version of the parameters.
   scalarToDoubleArray( bCurrAD, bCurr );
@@ -647,10 +653,10 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataMean_Test()
   // This is done so that the model function calculations are
   // performed using this function's independent variable, which will
   // allow for their derivatives to be calculated in this function.
-  model.setIndPar( bCurrAD );
+  modelAD.setIndPar( bCurrAD );
 
   // Evaluate the model function.
-  model.dataMean( dataMeanAD );
+  modelAD.dataMean( dataMeanAD );
 
   // Stop recording at this level by constructing a differentiable
   // function object for the model function.
@@ -952,7 +958,11 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVariance_Test()
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< double > > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD< AD<double> > > > predEvaluatorADADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -1000,8 +1010,10 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVariance_Test()
   // Construct the individual level Pred model.
   //------------------------------------------------------------
 
-  IndPredModelBase< AD<double> > model(
-    predEvaluator,
+  IndPredModelBase< AD<double> > modelAD(
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    predEvaluatorADADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -1016,11 +1028,11 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVariance_Test()
   //------------------------------------------------------------
 
   // Get the number elements in the individual parameter.
-  int nIndPar = model.getNIndPar();
+  int nIndPar = modelAD.getNIndPar();
 
   // Get the number of observations for this individual.
   int iCurr = 0;
-  int nY_i = predEvaluator.getNObservs( iCurr );
+  int nY_i = predEvaluatorAD.getNObservs( iCurr );
 
 
   //------------------------------------------------------------
@@ -1040,7 +1052,7 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVariance_Test()
 
   // Get the current value for the individual parameter, which was set
   // when the model was constructed.
-  model.getIndPar( bCurrAD );
+  modelAD.getIndPar( bCurrAD );
 
   // Get a double version of the parameters.
   scalarToDoubleArray( bCurrAD, bCurr );
@@ -1064,10 +1076,10 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVariance_Test()
   // This is done so that the model function calculations are
   // performed using this function's independent variable, which will
   // allow for their derivatives to be calculated in this function.
-  model.setIndPar( bCurrAD );
+  modelAD.setIndPar( bCurrAD );
 
   // Evaluate the model function.
-  model.dataVariance( dataVarianceAD );
+  modelAD.dataVariance( dataVarianceAD );
 
   // Stop recording at this level by constructing a differentiable
   // function object for the model function.
@@ -1375,7 +1387,11 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVarianceInv_Test()
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluator( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< double > > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD< AD<double> > > > predEvaluatorADADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -1423,8 +1439,10 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVarianceInv_Test()
   // Construct the individual level Pred model.
   //------------------------------------------------------------
 
-  IndPredModelBase< AD<double> > model(
-    predEvaluator,
+  IndPredModelBase< AD<double> > modelAD(
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    predEvaluatorADADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -1439,11 +1457,11 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVarianceInv_Test()
   //------------------------------------------------------------
 
   // Get the number elements in the individual parameter.
-  int nIndPar = model.getNIndPar();
+  int nIndPar = modelAD.getNIndPar();
 
   // Get the number of observations for this individual.
   int iCurr = 0;
-  int nY_i = predEvaluator.getNObservs( iCurr );
+  int nY_i = predEvaluatorAD.getNObservs( iCurr );
 
 
   //------------------------------------------------------------
@@ -1463,7 +1481,7 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVarianceInv_Test()
 
   // Get the current value for the individual parameter, which was set
   // when the model was constructed.
-  model.getIndPar( bCurrAD );
+  modelAD.getIndPar( bCurrAD );
 
   // Get a double version of the parameters.
   scalarToDoubleArray( bCurrAD, bCurr );
@@ -1487,10 +1505,10 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_dataVarianceInv_Test()
   // This is done so that the model function calculations are
   // performed using this function's independent variable, which will
   // allow for their derivatives to be calculated in this function.
-  model.setIndPar( bCurrAD );
+  modelAD.setIndPar( bCurrAD );
 
   // Evaluate the model function.
-  model.dataVarianceInv( dataVarianceInvAD );
+  modelAD.dataVarianceInv( dataVarianceInvAD );
 
   // Stop recording at this level by constructing a differentiable
   // function object for the model function.
@@ -1801,9 +1819,13 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_mapObj_Test()
   // Set the number of data values for this individual.
   int nY_iKnown = 5;
 
-  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
+  OneExpF_AdditivePlusThetaDepY_Pred< double > predEvaluator( nY_iKnown );
 
   OneExpF_AdditivePlusThetaDepY_Pred< AD<double> > predEvaluatorAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD<double> > > predEvaluatorADAD( nY_iKnown );
+
+  OneExpF_AdditivePlusThetaDepY_Pred< AD< AD< AD<double> > > > predEvaluatorADADAD( nY_iKnown );
 
 
   //------------------------------------------------------------
@@ -1855,7 +1877,9 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_mapObj_Test()
   // Bayesian objective function in order to calculate the derivative
   // of the objective.
   IndPredModelBase< AD<double> > modelAD(
+    predEvaluatorAD,
     predEvaluatorADAD,
+    predEvaluatorADADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -1869,7 +1893,9 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_mapObj_Test()
   // objective.  This involves lots of linear algebra calculations
   // using the derivatives of the model functions f, R, and D.
   IndPredModel modelKnown(
+    predEvaluator,
     predEvaluatorAD,
+    predEvaluatorADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -2089,7 +2115,7 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_mapObj_Test()
   // Compare the calculated and known values.
   //------------------------------------------------------------
 
-  double tol = 1.0e-14;
+  double tol = 1.0e-12;
 
   compareToKnown( 
     mapObjCalc,

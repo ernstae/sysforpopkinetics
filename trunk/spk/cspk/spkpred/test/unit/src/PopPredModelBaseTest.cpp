@@ -540,8 +540,30 @@ void PopPredModelBaseTest::OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaD
   // Set the relative tolerance for the ODE integration.
   double tolRel = 1.0e-6;
 
-  // Construct the ODE-based version of the Pred block evaluator.
-  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_dataMean_OdePred< AD< AD<double> > > predEvaluator(
+  // Construct the ODE-based versions of the Pred block evaluator.
+  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_dataMean_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_dataMean_OdePred< AD< AD<double> > > predEvaluatorADAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_dataMean_OdePred< AD< AD< AD<double> > > > predEvaluatorADADAD(
     nY_iKnown,
     isPkBlockAFuncOfTime,
     nComp,
@@ -616,7 +638,9 @@ void PopPredModelBaseTest::OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaD
   //------------------------------------------------------------
 
   PopPredModelBase< AD<double> > model(
-    predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    predEvaluatorADADAD,
     nTheta,
     thetaLow,
     thetaUp,
@@ -642,7 +666,7 @@ void PopPredModelBaseTest::OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaD
 
   // Get the number of observations for this individual.
   int iCurr = 0;
-  int nY_i = predEvaluator.getNObservs( iCurr );
+  int nY_i = predEvaluatorAD.getNObservs( iCurr );
 
 
   //------------------------------------------------------------

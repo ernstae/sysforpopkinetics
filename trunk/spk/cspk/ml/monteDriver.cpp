@@ -515,17 +515,51 @@ int main(int argc, const char *argv[])
 	}
 
 	// pointers to objects created inside of try block
-	std::auto_ptr< DataSet< CppAD::AD<double> > > set; 
+	std::auto_ptr< DataSet< double > > set; 
+	std::auto_ptr< DataSet< CppAD::AD<double> > > setAD; 
+	std::auto_ptr< DataSet< CppAD::AD< CppAD::AD<double> > > > setADAD; 
 #ifdef ODEPRED
-	std::auto_ptr< OdePred< CppAD::AD<double> > > mPred;
+	std::auto_ptr< OdePred< double > > mPred;
+	std::auto_ptr< OdePred< CppAD::AD<double> > > mPredAD;
+	std::auto_ptr< OdePred< CppAD::AD< CppAD::AD<double> > > > mPredADAD;
 #else
-	std::auto_ptr< Pred< CppAD::AD<double> > > mPred;
+	std::auto_ptr< Pred< double > > mPred;
+	std::auto_ptr< Pred< CppAD::AD<double> > > mPredAD;
+	std::auto_ptr< Pred< CppAD::AD< CppAD::AD<double> > > > mPredADAD;
 #endif
 	try { 
 		// data set
-		set.reset( new DataSet< CppAD::AD<double> > );
+		set.reset( new DataSet< double > );
+		setAD.reset( new DataSet< CppAD::AD<double> > );
+		setADAD.reset( new DataSet< CppAD::AD< CppAD::AD<double> > > );
 #ifdef ODEPRED
-		mPred.reset( new OdePred< CppAD::AD<double> >(set.get(),
+		mPred.reset( new OdePred< double >(set.get(),
+			NonmemPars::nIndividuals,
+			NonmemPars::isPkFunctionOfT,
+			NonmemPars::nCompartments,
+			NonmemPars::nParameters,
+			NonmemPars::defaultDoseComp,
+			NonmemPars::defaultObservationComp,
+			NonmemPars::initialOff,
+			NonmemPars::noOff,
+			NonmemPars::noDose,
+			NonmemPars::relTol 
+		) );
+
+		mPredAD.reset( new OdePred< CppAD::AD<double> >(setAD.get(),
+			NonmemPars::nIndividuals,
+			NonmemPars::isPkFunctionOfT,
+			NonmemPars::nCompartments,
+			NonmemPars::nParameters,
+			NonmemPars::defaultDoseComp,
+			NonmemPars::defaultObservationComp,
+			NonmemPars::initialOff,
+			NonmemPars::noOff,
+			NonmemPars::noDose,
+			NonmemPars::relTol 
+		) );
+
+		mPredADAD.reset( new OdePred< CppAD::AD< CppAD::AD<double> > >(setADAD.get(),
 			NonmemPars::nIndividuals,
 			NonmemPars::isPkFunctionOfT,
 			NonmemPars::nCompartments,
@@ -538,7 +572,9 @@ int main(int argc, const char *argv[])
 			NonmemPars::relTol 
 		) );
 #else
-		mPred.reset( new Pred< CppAD::AD<double> >(set.get()) );
+		mPred.reset( new Pred< double >(set.get()) );
+		mPredAD.reset( new Pred< CppAD::AD<double> >(setAD.get()) );
+		mPredADAD.reset( new Pred< CppAD::AD< CppAD::AD<double> > >(setADAD.get()) );
 #endif
 	}
 	catch( SpkException& e )
@@ -586,6 +622,8 @@ int main(int argc, const char *argv[])
 	try {   // model constructor
 		model.reset( new PopPredModel(
 			*mPred,
+			*mPredAD,
+			*mPredADAD,
 			nTheta,
 			thetaLow,
 			thetaUp,

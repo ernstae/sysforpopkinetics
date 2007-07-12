@@ -307,7 +307,9 @@ class PopPredModel : public PopPredModelBase<double>
 
 public:
 PopPredModel(
-    PredBase< CppAD::AD<double> >&   predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -321,7 +323,9 @@ PopPredModel(
     const SPK_VA::valarray<double>&  sigmaMinRepIn );
 
 PopPredModel(
-    PredBase< CppAD::AD<double> >&          predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -337,7 +341,9 @@ PopPredModel(
     const SPK_VA::valarray<bool>&    sigmaMinRepFixedIn );
 
 PopPredModel(
-    PredBase< CppAD::AD<double> >&          predEvaluatorIn,
+    PredBase< double >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<double> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<double> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,

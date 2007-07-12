@@ -308,7 +308,9 @@ class PopPredModelBase : public SpkModel<Scalar>
 
 public:
 PopPredModelBase(
-    PredBase< CppAD::AD<Scalar> >&   predEvaluatorIn,
+    PredBase< Scalar >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<Scalar> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<Scalar> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -322,7 +324,9 @@ PopPredModelBase(
     const SPK_VA::valarray<double>&  sigmaMinRepIn );
 
 PopPredModelBase(
-    PredBase< CppAD::AD<Scalar> >&   predEvaluatorIn,
+    PredBase< Scalar >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<Scalar> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<Scalar> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -338,7 +342,9 @@ PopPredModelBase(
     const SPK_VA::valarray<bool>&    sigmaMinRepFixedIn );
 
 PopPredModelBase(
-    PredBase< CppAD::AD<Scalar> >&   predEvaluatorIn,
+    PredBase< Scalar >&                          predEvaluatorIn,
+    PredBase< CppAD::AD<Scalar> >&               predEvaluatorADIn,
+    PredBase< CppAD::AD< CppAD::AD<Scalar> > >&  predEvaluatorADADIn,
     int                              nThetaIn,
     const SPK_VA::valarray<double>&  thetaLowIn,
     const SPK_VA::valarray<double>&  thetaUpIn,
@@ -435,11 +441,6 @@ protected:
   mutable SPK_VA::valarray<Scalar> sigmaCurr;             ///< Current value for the covariance of eps.
   mutable SPK_VA::valarray<double> sigma_sigmaParCurr;    ///< Current value for the derivative of the covariance of eps.
 
-  // This is not const because it is reset each time the
-  // expressions in the Pred block are evaluated for a 
-  // particular individual. 
-  mutable CppAD::ADFun<Scalar>*    pPredADFunCurr;    ///< Current Pred block automatic differentiation function object.
-
   mutable SPK_VA::valarray<Scalar> dataMeanCurr;
   mutable SPK_VA::valarray<double> dataMean_popParCurr;
   mutable SPK_VA::valarray<double> dataMean_indParCurr;
@@ -463,9 +464,9 @@ protected:
   mutable bool isDataVarianceInv_indParCurrOk;
   mutable bool isIndParVariance_popParCurrOk;
   mutable bool isIndParVarianceInv_popParCurrOk;
-  mutable bool isPredADFunCurrOk;
-  mutable bool isPredFirstDerivCurrOk;
-  mutable bool isPredSecondDerivCurrOk;
+  mutable bool isFAndHCurrOk;
+  mutable bool isFAndH_thetaCurrOk;
+  mutable bool isFAndH_etaCurrOk;
 
   mutable bool usedCachedDataMean;
   mutable bool usedCachedDataMean_popPar;
@@ -480,9 +481,9 @@ protected:
   mutable bool usedCachedIndParVariance_popPar;
   mutable bool usedCachedIndParVarianceInv;
   mutable bool usedCachedIndParVarianceInv_popPar;
-  mutable bool usedCachedPredADFun;
-  mutable bool usedCachedPredFirstDeriv;
-  mutable bool usedCachedPredSecondDeriv;
+  mutable bool usedCachedFAndH;
+  mutable bool usedCachedFAndH_theta;
+  mutable bool usedCachedFAndH_eta;
 
 public:
   bool getUsedCachedDataMean()                 const;
@@ -498,9 +499,9 @@ public:
   bool getUsedCachedIndParVariance_popPar()    const;
   bool getUsedCachedIndParVarianceInv()        const;
   bool getUsedCachedIndParVarianceInv_popPar() const;
-  bool getUsedCachedPredADFun()                const;
-  bool getUsedCachedPredFirstDeriv()           const;
-  bool getUsedCachedPredSecondDeriv()          const;
+  bool getUsedCachedFAndH()                    const;
+  bool getUsedCachedFAndH_theta()              const;
+  bool getUsedCachedFAndH_eta()                const;
   bool getUsedCachedOmega()                    const;
   bool getUsedCachedOmega_omegaPar()           const;
   bool getUsedCachedOmegaInv()                 const;
@@ -545,29 +546,42 @@ protected:
   const int omegaParOffsetInZ;                 ///< Offset for the omega parameters in the vector of independent variables.
   int       sigmaParOffsetInZ;                 ///< Offset for the sigma parameters in the vector of independent variables.
 
-  int       nW;                                ///< Number of dependent variables for current individual.
-  const int fOffsetInW;                        ///< Offset for f in the vector of dependent variables.
-  int       yOffsetInW;                        ///< Offset for y in the vector of dependent variables.
-
   int       nDataRecordCurr;                   ///< Number of data records for current individual.
   int       nObsRecordCurr;                    ///< Number of data records that are observation records for current individual.
 
-  PredBase< CppAD::AD<Scalar> >&  predEvaluator;   ///< Pred block expression evaluator.
+  PredBase< Scalar >&                         predEvaluator;     ///< Pred block expression evaluator (Scalar version).
+  PredBase< CppAD::AD<Scalar> >&              predEvaluatorAD;   ///< Pred block expression evaluator (AD<Scalar> version).
+  PredBase< CppAD::AD< CppAD::AD<Scalar> > >& predEvaluatorADAD; ///< Pred block expression evaluator (AD< AD<Scalar> > version).
 
-  mutable std::vector< CppAD::AD<Scalar> > zCurr;  ///< Current independent variables.
-  mutable std::vector< CppAD::AD<Scalar> > wCurr;  ///< Current dependent variables.
+  mutable std::vector< Scalar > zCurr;                             ///< Current vector of variables (Scalar version).
+  mutable std::vector< CppAD::AD<Scalar> > zCurrAD;                ///< Current vector of variables (AD<Scalar> version).
+  mutable std::vector< CppAD::AD< CppAD::AD<Scalar> > > zCurrADAD; ///< Current vector of variables (AD< AD<Scalar> > version).
+  mutable std::vector< CppAD::AD<Scalar> > yCurrAD;                ///< Current data values (AD<Scalar> version).
+  mutable std::vector< CppAD::AD< CppAD::AD<Scalar> > > yCurrADAD; ///< Current data values (AD< AD<Scalar> > version).
+  mutable std::vector< Scalar > fCurr;                             ///< Current data mean values (Scalar version).
+  mutable std::vector< CppAD::AD<Scalar> > fCurrAD;                ///< Current data mean values (AD<Scalar> version).
+  mutable std::vector< CppAD::AD< CppAD::AD<Scalar> > > fCurrADAD; ///< Current data mean values (AD< AD<Scalar> > version).
+  mutable std::vector< CppAD::AD<Scalar> > hCurrAD;                ///< Current data derivative values (AD<Scalar> version).
+  mutable std::vector< CppAD::AD<Scalar> > wCurrAD;                ///< Current dependent variables (AD<Scalar> version).
 
-  mutable SPK_VA::valarray<Scalar> f_thetaCurr;    ///< Current value for f_theta.
-  mutable SPK_VA::valarray<Scalar> f_etaCurr;      ///< Current value for f_eta.
-  mutable SPK_VA::valarray<Scalar> hCurr;          ///< Current value for y_eps.
-  mutable SPK_VA::valarray<Scalar> h_thetaCurr;    ///< Current value for y_eps_theta.
-  mutable SPK_VA::valarray<Scalar> h_etaCurr;      ///< Current value for y_eps_eta.
+  mutable std::vector< CppAD::AD<Scalar> >              thetaCurrAD;   ///< Current value for theta (AD<Scalar> version).
+  mutable std::vector< CppAD::AD< CppAD::AD<Scalar> > > thetaCurrADAD; ///< Current value for theta (AD< AD<Scalar> > version).
+  mutable std::vector< CppAD::AD<Scalar> >              etaCurrAD;     ///< Current value for eta (AD<Scalar> version).
+  mutable std::vector< CppAD::AD< CppAD::AD<Scalar> > > etaCurrADAD;   ///< Current value for eta (AD< AD<Scalar> > version).
+  mutable std::vector< CppAD::AD<Scalar> >              epsCurrAD;     ///< Current value for eps (AD<Scalar> version).
+  mutable std::vector< CppAD::AD< CppAD::AD<Scalar> > > epsCurrADAD;   ///< Current value for eps (AD< AD<Scalar> > version).
+
+  mutable SPK_VA::valarray<Scalar> f_thetaCurr;           ///< Current value for f_theta (Scalar version).
+  mutable SPK_VA::valarray<Scalar> f_etaCurr;             ///< Current value for f_eta (Scalar version).
+  mutable SPK_VA::valarray<Scalar> hCurr;                 ///< Current value for h = y_eps (Scalar version).
+  mutable SPK_VA::valarray<Scalar> h_thetaCurr;           ///< Current value for h_theta = y_eps_theta (Scalar version).
+  mutable SPK_VA::valarray<Scalar> h_etaCurr;             ///< Current value for h_eta = y_eps_eta (Scalar version).
 
 protected:
-  void evalAllPred() const;
+  void evalFAndH() const;
 
-  virtual void evalPredFirstDeriv()  const;
-  virtual void evalPredSecondDeriv() const;
+  virtual void evalFAndH_theta()  const;
+  virtual void evalFAndH_eta()    const;
 
 
   //------------------------------------------------------------
