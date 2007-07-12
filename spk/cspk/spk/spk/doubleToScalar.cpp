@@ -68,6 +68,12 @@ void doubleToScalar< CppAD::AD< CppAD::AD<double> > >( const double& doubleIn, C
   scalarOut = CppAD::AD<double>( CppAD::AD<double>( doubleIn ) );
 }
 
+template<>
+void doubleToScalar< CppAD::AD< CppAD::AD< CppAD::AD<double> > > >( const double& doubleIn, CppAD::AD< CppAD::AD< CppAD::AD<double> > >& scalarOut )
+{
+  scalarOut = CppAD::AD<double>( CppAD::AD<double>( CppAD::AD<double>( doubleIn ) ) );
+}
+
 
 /*------------------------------------------------------------------------
  * Template function instantiations.
@@ -78,6 +84,8 @@ template void doubleToScalar( const double& doubleIn, double& scalarOut );
 template void doubleToScalar( const double& doubleIn, CppAD::AD<double>& scalarOut );
 
 template void doubleToScalar( const double& doubleIn, CppAD::AD< CppAD::AD<double> >& scalarOut );
+
+template void doubleToScalar( const double& doubleIn, CppAD::AD< CppAD::AD< CppAD::AD<double> > >& scalarOut );
 
 template void doubleToScalar( const double& doubleIn, GiNaC::ex& scalarOut );
 

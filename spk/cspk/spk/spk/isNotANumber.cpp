@@ -84,6 +84,9 @@ $end
 // CppAD header files.
 #include <CppAD/CppAD.h>
 
+// GiNaC computer algebra library header files.
+#include <ginac/ginac.h>
+
 
 /*------------------------------------------------------------------------
  * Function definition
@@ -106,6 +109,13 @@ bool isNotANumber( const ValueType& value )
 
 }
 
+template<>
+bool isNotANumber( const GiNaC::ex& value )
+{
+  // There are no NaN's in GiNaC, so always return a value of false.
+  return false;
+}
+
 
 /*------------------------------------------------------------------------
  * Template Function Instantiations.
@@ -116,4 +126,7 @@ template bool isNotANumber<double>( const double& value );
 template bool isNotANumber< CppAD::AD<double> >( const CppAD::AD<double> & value );
 
 template bool isNotANumber< CppAD::AD< CppAD::AD<double> > >( const CppAD::AD< CppAD::AD<double> > & value );
+template bool isNotANumber< CppAD::AD< CppAD::AD< CppAD::AD<double> > > >( const CppAD::AD< CppAD::AD< CppAD::AD<double> > > & value );
+template bool isNotANumber<GiNaC::ex>( const GiNaC::ex& value );
+
 
