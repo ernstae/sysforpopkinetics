@@ -1776,6 +1776,27 @@ protected:
       // Get the data items for the current data record.
       readDataRecord( i, j );
 
+      // Check that the compartment number data item is valid.
+      if ( cmt > nComp )
+      {
+        ostringstream message;
+
+        message << "The " << intToOrdinalString( j, ZERO_IS_FIRST_INT )
+                << " data record for the "
+                << intToOrdinalString( i, ZERO_IS_FIRST_INT )
+                << " individual has a compartment number \nequal to "
+                << cmt
+                << ", which is greater than the maximum compartment number, "
+                << nComp
+                << ".";
+
+        throw SpkException(
+          SpkError::SPK_USER_INPUT_ERR, 
+          message.str().c_str(),
+          __LINE__, 
+          __FILE__ );
+      }
+
       // Evaluate the current values for the PK parameters because the
       // rates and durations of zero-order bolus doses can be set in
       // the PK block.
