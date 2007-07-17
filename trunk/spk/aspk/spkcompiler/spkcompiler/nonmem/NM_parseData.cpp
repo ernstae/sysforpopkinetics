@@ -389,8 +389,12 @@ void NonmemTranslator::parseData()
 			      "Individual analysis was requested with a population data set!", __LINE__, __FILE__ );
         }
 
-      assert( nSubjects == getPopSize() ); 
-      assert( nSubjects == tmp_ids.size() );
+      if( nSubjects != getPopSize() || nSubjects != tmp_ids.size() )
+        {
+          throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, 
+			      "The number of subjects in the data file did not match the expected number!", __LINE__, __FILE__ );
+        }
+
       N.resize( nSubjects );
 
 
