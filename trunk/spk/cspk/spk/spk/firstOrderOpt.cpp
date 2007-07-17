@@ -44,6 +44,8 @@
 /*
 
 $begin FirstOrderOpt$$
+$latex \newcommand{\B}[1]{{\bf #1}}$$
+$latex \newcommand{\R}[1]{{\rm #1}}$$
 
 $spell
         throwExcepIfMaxIter
@@ -59,7 +61,6 @@ $spell
 	dmatInd
 	drow
 	dvec
-	dvecInd
 	endl
 	Fp
 	ind
@@ -70,16 +71,13 @@ $spell
 	namespace
 	Obj
 	optimizer
-	indOptimizer
-	popOptimizer
 	paramatric
 	pd
 	pdalp
-	pdmat
-	pdmatInd
+	pmat
+	pmatInd
 	pdrow
-	pdvec
-	dvecInd
+	pvec
 	Spk
 	sqrt
 	std
@@ -88,219 +86,169 @@ $spell
 	var
 	Varbl
 	Vi
-    bool
-    Ri
-    ind
-    valarray
+	bool
+	Ri
+	ind
+	valarray
 $$
 
-$section Optimizing paramatric objective functions using first order approximation$$
-
-$index firstOrderOpt$$
-$cindex optimizing \the parametric population objective \functions \using first order approximation$$
-$index first order Optimization$$
-$index population $$
-
-$table
-$bold Prototype:$$ $cend
-$syntax/void firstOrderOpt(
-              SpkModel<double>&               /model/,
-              const DoubleMatrix&     /dvecN/,
-              const DoubleMatrix&     /dvecY/,
-              Optimizer&              /popOptimizer/,
-              const DoubleMatrix&     /dvecPopLow/,
-              const DoubleMatrix&     /dvecPopUp/,
-              const DoubleMatrix&     /dvecPopIn/,
-              DoubleMatrix*           /pdvecPopOut/,
-              const DoubleMatrix&     /dvecPopStep/,
-              Optimizer&              /indOptimizer/,
-              const DoubleMatrix&     /dvecIndLow/,
-              const DoubleMatrix&     /dvecIndUp/,
-              const DoubleMatrix&     /dmatIndIn/,
-              DoubleMatrix*           /pdmatIndOut/,
-              const DoubleMatrix&     /dvecIndStep/,
-              double*                 /pdLTildeOut/,
-              DoubleMatrix*           /pdrowLTilde_popOut/,
-              DoubleMatrix*           /pdmatLTilde_pop_popOut/
-)
-/$$
-
-$tend
-
-$fend 25$$
+$section Optimizing First Order Approximation For Population Objective$$
 
 $center
 $italic
 $include shortCopyright.txt$$
 $$
 $$
-$pre
-$$
-$head Description$$
-Minimizes the parametric population objective function using modified 
-first order approximation of the model functions. It is assumed that
-$pre 
-$$
-$math%
-    f(alp, b) = f(alp, 0) + f_b(alp, 0) * b
-    R(alp, b) = R(alp, 0)
-%$$
-$pre 
-$$
-First, an equivalent individual model is created from the user 
-provided population model based on the first order approximation of 
-the model functions with respect to the individual parameters.  
-This equivalent individual model is then used together with the data 
-measured from the population to minimize the first order objective 
-function to determine the fixed population parameters and the objective 
-as well as its first and second order derivatives with respect to the 
-fixed population parameters.  Finally, using the obtained values of the 
-fixed population parameters and the original population model, the
-objective functions for each individual are minimized to determine the 
-realized value of the random individual parameters on each individual.   
 
-$head Return Value$$
-Upon a successful completion, the function returns normally and
-set the given output value place holders if it is able to 
-obtain an acceptable estimate for $math%alpHat%$$, 
-within a specified number of iterations. 
-Acceptable sets of values must also be found for $math%bHat_i%$$ 
-that are calculated using the estimate for $math%alpHat%$$.  
-The case that too-many-iter occurred during 
-the optimization process is not a successful completion. 
-$pre
+$index firstOrderOpt$$
+$index first, order approximation$$
+$index approximation, first order$$
+$index order, first approximation$$
+$index population, fitting$$
 
-$$
-Upon the entry, the $bold universal$$ floating-point error flag set is 
-cleared.  Hence, any pending floating-point errors will be lost.
-The universal floating-point error detection bits are set to
-detect a certain set of errors (for details, see $xref/FpErrorChecker//FpErrorChecker/$$).
-The detection bits are restored upon the exit.
+$head Prototype$$
+$syntax/void firstOrderOpt(
+              SpkModel<double>&       /model/                      ,
+              SpkModel< AD<double> >& /adModel/                    ,
+              const DoubleMatrix&     /dvecN/                      ,
+              const DoubleMatrix&     /dvecY/                      ,
+              Optimizer&              /alpOptInfo/                 ,
+              const DoubleMatrix&     /dvecAlpLow/                 ,
+              const DoubleMatrix&     /dvecAlpUp/                  ,
+              const DoubleMatrix&     /dvecAlpIn/                  ,
+              DoubleMatrix*           /pvecAlpOut/                 ,
+              const DoubleMatrix&     /dvecAlpStep/                ,
+              Optimizer&              /bOptInfo/                   ,
+              const DoubleMatrix&     /dvecBLow/                   ,
+              const DoubleMatrix&     /dvecBUp/                    ,
+              const DoubleMatrix&     /dmatBIn/                    ,
+              DoubleMatrix*           /pmatBOut/                   ,
+              const DoubleMatrix&     /dvecBStep/                  ,
+              double*                 /pdLTildeOut/                ,
+              DoubleMatrix*           /pdrowLTilde_alpOut/         ,
+              DoubleMatrix*           /pmatLTilde_alp_alpOut/
+)/$$
 
-If an error is detected or failure occurs during the evaluation, a SpkException object is
-thrown.  The state at which an exception is thrown is defined in
+
+$head Purpose$$
+Minimizes the likelihood corresponding to the first order approximation
+for the parametric population model; to be specific, the
+$cref/population notation/glossary/Population Notation/$$ 
+functions $latex f_i ( \alpha , b )$$ and $latex R_i ( \alpha , b )$$ 
+are approximated as follows:
+$latex \[
+\begin{array}{rcl}
+\tilde{f}_i ( \alpha , b) & = & 
+	f_i ( \alpha , 0) + \partial_b f_i  ( \alpha , 0) * b
+\\
+\tilde{R}_i ( \alpha , b ) & = & R_i ( \alpha , 0 )
+\end{array}
+\] $$
+This simplified model is used to obtain the estimate 
+$latex \hat{\alpha}$$ for the population parameters.
+If estimates for the individual parameters are requested,
+$latex \hat{b}_i$$ is
+computed by maximizing, with respect to $latex b$$,
+the likelihood corresponding to the original model functions;
+i.e., $latex f_i ( \hat{\alpha} , b )$$ and 
+$latex R_i ( \hat{\alpha} , b )$$.
+
+$head Notation$$
+$table
+$latex b \in \B{R}^n$$ $cnext a value for the random effects for one subject
+$rnext
+$latex \alpha \in \B{R}^m$$ $cnext a for the fixed effects
+$rnext
+$latex M$$ $cnext number of subjects in the data set
+$tend 
+
+$head Exceptions$$
+If an error is detected or failure occurs during the evaluation, 
+an SpkException object is thrown.  
+The state at which an exception is thrown is defined in
 $xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
 
-$head Arguments$$
-$syntax/
-/model/
-/$$
-This function expects $italic model$$ to be a function of
-all three parameters: $math%alp%$$, $math%b%$$ and $math%i%$$.
-Refer $xref/glossary/Model Functions Depend on i - alp - b/Model Functions Depend on i - alp - b/$$
-for details.
+$head SpkModel$$
+The following $code SpkModel$$ member functions are used by 
+$italic model$$ and $italic adModel$$:
+$cref/SpkModel_selectIndividual/$$,
+$cref/SpkModel_setIndPar/$$,
+$cref/SpkModel_setPopPar/$$,
+$cref/SpkModel_dataMean/$$,
+$cref/SpkModel_dataVariance/$$,
+$cref/SpkModel_indParVariance/$$.
+The other member functions of these objects are not used.
 
-
-$syntax/
-
-/dvecN/
-/$$
-The $code DoubleMatrix$$ $italic dvecN$$ contains the column vector 
-$math%N%$$.  
-The $th i$$ element of $math%N%$$
-specifies the number of elements of $math%y%$$ that
-correspond to the $th i$$ individual.
-Note that the length of $italic dvecN$$ specifies the number of 
-individuals in the population, $math%M%$$.
-
-$syntax/
-
-/dvecY/
-/$$
-The $code DoubleMatrix$$ $italic dvecY$$ contains the column vector 
-$math%y%$$, which specifies the data for all the individuals.
-The vector $math%y%$$ has
-$math%
-    N(1) + N(2) + ... + N(M)
-%$$
-elements where $math%M%$$ is the number of rows in $math%N%$$.
-The data vector corresponding to the first individual is
-$math%
-                                         T
-    y_1 = [ y(1) , y(2) , ... , y(N(1)) ]
-%$$
-Elements $math%y(N(1) + 1)%$$ through $math%y(N(1) + N(2))%$$ 
-correspond to the second individual and so on.
-(Note that $math%y_1%$$ refers to the first subvector or $math%y%$$ while
-$math%y(1)%$$ refers to the first element of the vector $math%y%$$.)
-$syntax/
-
-/popOptimizer/
-/$$
-This $xref/Optimizer//Optimizer/$$ object contains the information 
-that controls the population level optimization process.
-$pre
-
-$$
-It has attributes for holding the optimization state information 
-that is required to perform a warm start, i.e., to start the
-optimization process using a previous set of optimization state
-information.
-If a warm start is being performed, then before this function is 
-called the optimization state information must be set.
-This information may have been set during a previous call to this
-function, or the information may be set directly using the
-Optimizer class member function, setStateInfo().
-Note that the upper and lower bounds for $math%alp%$$ must be the 
-same as they were during the earlier call to this function.
-$pre
-
-$$
+$head Optimizer$$
+These $cref/Optimizer/$$ objects 
+$italic alpOptInfo$$ and $italic bOptInfo$$ contain the information 
+that controls the fixed effects ($latex \alpha$$) 
+and random effects ($latex b$$) optimization respectively.
 Most of the optimizer information is accessible directly via public
 get functions, e.g., the value epsilon is returned by the Optimizer 
-class function $code getEpsilon()$$.  
+class function $cref/getEpsilon/$$.
 The following subsections specify how this function uses 
 some of the elements of the Optimizer object that are accessed 
 directly using get functions.
-
-$subhead popOptimizer.optInfo.epsilon$$
-This real number is used to specify the convergence criteria
-for the optimizer.
-It must be greater than $math%0.0%$$.
 $pre
 
 $$
-A population parameter value $math%alpOut%$$ is accepted as an estimate for 
-$math%alpHat%$$ if 
-$math%
-        abs( alpOut - alpHat ) \le epsilon ( alpUp - alpLow )  ,
+In the discussion below, $italic optInfo$$ is 
+$italic alpOptInfo$$ and $italic bOptInfo$$ for the fixed effects
+and random effects optimization respectively.
+
+$subhead epsilon$$
+The input value
+$syntax%
+	double %epsilon% = %optInfo%.getEpsilon()
 %$$
-where $math%abs%$$ is the element-by-element absolute value function
-and $math%alpHat%$$ is a local minimizer of the population level 
-objective function with respect to $math%alp%$$.
-Since $math%alpHat%$$ is unknown, this function estimates the left hand
+is used to specify the convergence criteria
+for the optimizer.
+It must be greater than zero.
+A population parameter value $italic alpOut$$ 
+is accepted as an estimate for $italic alpHat$$ 
+(a the local minimizer of the first order objective)
+if
+$syntax%
+        all( abs( %alpOut% - %alpHat% ) <= %epsilon% * ( %alpUp% - %alpLow% ) )
+%$$
+where $code abs$$ and $code <=$$ are defined element-by-element 
+and $code all$$ is true if an only if every element in its argument is true.
+Since $italic alpHat$$ is unknown, this function estimates the left hand
 side of this inequality in a way that is a good approximation when 
 the Hessian of the objective function is positive definite.
-$pre
 
-$$
-Note that if $italic nMaxIter$$ is set to zero, then $math%alpIn%$$ is 
-accepted as the estimate for $math%alpHat%$$.
-
-$subhead popOptimizer.optInfo.nMaxIter$$
-This integer must be greater than or equal to zero.
+$subhead nMaxIter$$
+The input value
+$syntax%
+	  int %nMaxIter% = %optInfo%.getNMaxIter();
+%$$
+must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
 If it is equal to zero, then the initial
-value for $math%alp%$$ is accepted as the final value, and any requested output
-values are evaluated at that final value.
+value $italic alpIn$$ is used for the final value $italic alpOut$$, 
+and any other requested output values are evaluated at that final value.
 
-$subhead popOptimizer.optInfo.traceLevel$$
-This integer scalar specifies the amount of tracing.
-Larger values of $italic traceLevel$$ entail more tracing, 
-with $math%4%$$ being the highest level of tracing.
-If $math%level \ge 1%$$, trace values are directed to standard output 
-(stdout).  
+$subhead traceLevel$$
+The input value
+$syntax%
+	int %level% = %optInfo%.getLevel();
+%$$
+specifies the amount of tracing.
+Larger values of $italic level$$ result in more tracing.
+Traced values are printed to standard output.
 $pre
 
 $$
 Tracing is done using a scaled version of the
-objective function.  For this scaled version the elements of
-the parameter vector are constrained to the interval $math%[0, 1]%$$. 
+argument space function.  
+For this scaled version the elements of
+the parameter vector are constrained to the interval [0, 1]. 
 $pre
 
 $$
-If $italic traceLevel$$ is equal to $math%4%$$, then the tracing 
+If $italic level$$ is greater than or equal to 4, then the tracing 
 will include the gradient of the objective and a finite difference 
 approximation for that gradient.
 These two gradients can be compared as a check on the consistency 
@@ -311,1462 +259,579 @@ $$
 For more details on the tracing see the description of the level 
 parameter for the optimizer $code QuasiNewton01Box$$.
 
-$subhead popOptimizer.optInfo.nIterCompleted$$
-This integer scalar holds the number of iteration that have been 
-completed in the optimizer.
+$subhead isWarmStart$$
+The input and output value
+$syntax%
+	 bool isWarmStart = %optInfo%.getIsWarmStart();
+%$$
+indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
+If value is true, all of the $italic optInfo$$ fields mentioned in
+$cref/setStateInfo/$$ must have been set.
 
-$subhead popOptimizer.optInfo.isTooManyIter$$
-This flag indicates whether the too-many-iteration failure has occurred.  
+$subhead nIterCompleted$$
+The input and output value
+$syntax%
+	 int nIterCompleted = %optInfo%.getNIterCompleted();
+%$$
+is the number of iteration that have been 
+completed by the optimizer.
 
-$subhead popOptimizer.optInfo.saveStateAtEndOfOpt$$
-This flag indicates if the state information required for a warm start
-should be saved at the end of the optimization process.
-This state information will not be saved if the optimization process
-results in an exception being thrown by $code quasiNewtonAnyBox$$.
+$subhead isTooManyIter$$
+The output value
+$syntax%
+	 bool isTooManyIter = %optInfo%.getIsTooManyIter();
+%$$
+indicates whether the too-many-iteration failure has occurred.
+If $italic isTooManyIter$$ is true,
+the $cref/epsilon/FirstOrderOpt/Optimizer/epsilon/$$
+convergence criteria could not be satisfied 
+with the allowable number of iteration
+(so the best value so far is returned as $italic alpOut$$).
 
-$subhead popOptimizer.optInfo.throwExcepIfMaxIter$$
-This flag indicates if the optimizer should throw an exception when
+$subhead saveStateAtEndOfOpt$$
+The input value
+$syntax%
+	 bool saveStateAtEndOfOpt = %optInfo%.getSaveStateAtEndOfOpt();
+%$$
+This $code const$$ flag indicates if the state information required 
+for a warm start should be saved at the end of the optimization process
+(just before $code firstOrderOpt$$ returns).
+This information is can be retrieved using the 
+$cref/getStateInfo/$$ function.
+If an exception is thrown,
+$code firstOrderOpt$$ does not return
+and this warm state information is not saved.
+$pre
+
+$$
+In the case where $italic optInfo$$ is $italic bOptInfo$$, 
+$italic saveStateAtEndOfOpt$$ must be false.
+
+$subhead optInfo.throwExcepIfMaxIter$$
+The input value
+$syntax%
+	 bool throwExcepIfMaxIter = %optInfo%.getThrowExcepIfMaxIter();
+%$$
+indicates if the optimizer should throw an exception when
 the maximum number of iterations is exhausted.
 If this parameter is true, then when
 the maximum number of iterations is exhausted, an exception will
 be thrown and the output values for this function will not be set.
 Otherwise, the calling program will
-need to check the parameter isTooManyIter to see if the 
-maximum number of iterations was exhausted.
+need to check 
+$cref/isTooManyIter/FirstOrderOpt/Optimizer/isTooManyIter/$$
+to see if the maximum number of iterations was exhausted.
 
-$subhead popOptimizer.optInfo.isWarmStartPossible$$
-This flag indicates whether it is possible to perform a warm start 
-using the current optimizer state information.
+$head Return$$
+If this optimizer returns, it sets all of its output values.
+If the output value 
+$syntax%
+	bool %isTooManyIter% = %optInfo%.isTooManyIter()
+%$$ 
+is true,
+convergence was not achieved.
 
-$subhead popOptimizer.optInfo.isWarmStart$$
-This flag indicates whether the optimization should run a warm start.  
+$head dvecN$$
+This is a column vector containing $latex N$$ where 
+$latex N_i$$ is the number of measurements corresponding to the
+$th i$$ individual.
+The length of $italic dvecN$$ specifies the number of 
+individuals in the population study; i.e., $latex M$$.
 
-$subhead popOptimizer.optInfo.stateInfo$$
-This $code StateInfo$$ struct contains the optimization state information
-required to perform a warm start.
-Each of its elements is accessed using the Optimizer class member
-functions, $code getStateInfo()$$ and $code setStateInfo()$$.
+$head dvecY$$
+This is a column vector containing the data set for the entire population
+(referred to as $latex y$$ below).
+We define $latex s(0) = 0$$ and
+for $latex i = 1 , \ldots , M$$ we define 
+$latex \[
+    s(i) = N_0 + N_1 + \cdots + N_i
+\] $$
+where $latex M$$ is the length of $italic dvecN$$.
+The vector $italic dvecY$$ has length $latex s(M)$$ and
+for $latex i = 0 , \ldots , M-1$$,
+the data vector corresponding to the $th i$$ individual 
+$latex y_i \in \B{R}^{N(i)}$$ is defined by
+$syntax%
+	%y%[%i%] = transpose( %
+		dvecY% [%s%(%i%)] , %
+			dvecY%[%s%(%i%)+1] , % . . . %, %
+			dvecY% [%s%(%i%)+%N%[%i%]-1] )
+%$$ 
 
-$syntax/
+$head dvecAlpLow$$
+This is a column vector of length $latex m$$
+that specifies the lower limit for 
+$latex \alpha$$ during the optimization procedure.
 
-/dvecPopLow/
-/$$
-The $code DoubleMatrix$$ $italic dvecPopLow$$ contains the column vector 
-$math%popLow%$$, which specifies the lower limit for $math%pop%$$ during 
-the optimization procedure.
-The length of $italic dvecPopLow$$ is equal to the length of 
-the fixed population parameter vector $math%pop%$$.
+$head dvecAlpUp$$
+This is a column vector of length $latex m$$ that specifies the upper limit for 
+$latex \alpha$$ during the optimization procedure.
 
-$syntax/
+$head dvecAlpIn$$
+This is a column vector of length $latex m$$ 
+that specifies the initial value for 
+$latex \alpha$$ during the optimization procedure.
 
-/dvecPopUp/
-/$$
-The $code DoubleMatrix$$ $italic dvecPopUp$$ contains the column vector 
-$math%popUp%$$, which specifies the upper limit for $math%pop%$$ during 
-the optimization procedure.
-The length of $italic dvecPopUp$$ specifies the length of 
-the fixed population parameter vector $math%pop%$$.
+$head pvecAlpOut$$
+If the pointer $italic pvecAlpOut$$ is $code NULL$$, 
+$code firstOrderOpt$$ will not return the optimal fixed effects values.
+Otherwise, the input value of $syntax%*%pvecAlpOut%$$ does not matter.
+If $code firstOrderOpt$$ returns (does not throw an exception)
+then the output value of 
+$syntax%*%pvecAlpOut%$$ is a column vector 
+of length $latex m$$ containing the 
+estimate for the minimizer of the population objective function.
 
-$syntax/
-
-/dvecPopIn/
-/$$
-The $code DoubleMatrix$$ $italic dvecPopIn$$ contains the column vector 
-$math%popIn%$$, which specifies the initial value for the fixed population 
-parameters.
-The $xref/glossary/Ordering Of Vectors/order condition/$$,
-$math%popLow \le popIn \le popUp%$$, is assumed to hold.
-Note that the length of $italic dvecPopIn$$ specifies the length of 
-the fixed population parameter vector $math%pop%$$.
-
-$syntax/
-
-/pdvecPopOut/
-/$$
-If $italic pdvecPopOut$$ is not $code NULL$$, then the 
-$code DoubleMatrix$$ pointed to by $italic pdvecPopOut$$ must 
-be declared in the function that calls this function, and it 
-must have the same dimensions as $italic dvecPopIn$$.
-If $italic pdvecPopOut$$ is not $code NULL$$, 
-and if this function completed the optimization successfully, 
-then the $code DoubleMatrix$$ pointed to by $italic pdvecPopOut$$ 
-will contain the column vector $math%popOut%$$, which is the 
-estimate for the true minimizer of the population objective function.
-Otherwise, this function will not attempt to change the contents of the 
-$code DoubleMatrix$$ pointed to by $italic pdvecPopOut$$.
-
-$syntax/
-
-/dvecPopStep/
-/$$
-The $code DoubleMatrix$$ $italic dvecPopStep$$ contains the column vector 
-$math%popStep%$$, which specifies the step size used for approximating
-the derivatives with respect to the fixed population parameters.
+$head dvecAlpStep$$
+This is a column vector of length $latex m$$
+that specifies the step size used for approximating
+the derivatives with respect to the fixed effects ($latex \alpha$$).
 The value of this parameter does not matter if
-$italic pdmatLTilde_pop_popOut$$ is $code NULL$$.
-The length of $italic dvecPopStep$$ is equal to the length of 
-the fixed population parameter vector $math%pop%$$.
+$italic pmatLTilde_alp_alpOut$$ is $code NULL$$.
 
-$syntax/
+$head dvecBLow$$
+This is a column vector of length $latex n$$ 
+that specifies the lower limit for 
+$latex b$$ during the optimization procedure.
 
-/indOptimizer/
-/$$
-This $xref/Optimizer//Optimizer/$$ object contains the information 
-that controls the individual level optimization process.
-$pre
+$head dvecBUp$$
+This is a column vector of length $latex n$$
+that specifies the upper limit for 
+$latex b$$ during the optimization procedure.
 
-$$
-Note that warm starts are not supported for the individual 
-level optimization.
-$pre
+$head dmatBIn$$
+This is a matrix with dimensions $latex n \times M$$ 
+that specifies the initial values for 
+$latex b$$ during the optimization procedure.
+Each individual can have a different initial value for $latex b$$
+and the $th i$$ column of $italic dvecBIn$$ specifies the initial
+value for individual $latex i$$ for $latex i = 0 , \ldots , M-1$$.
 
-$$
-Most of the optimizer information is accessible directly via public
-get functions, e.g., the value epsilon is returned by the Optimizer 
-class function $code getEpsilon()$$.  
-The following subsections specify how this function uses 
-some of the elements of the Optimizer object that are accessed 
-directly using get functions.
+$head pmatBOut$$
+If the pointer $italic pmatBOut$$ is $code NULL$$, 
+$code firstOrderOpt$$ will not return the optimal random effects values.
+Otherwise, the input value of $syntax%*%pmatBOut%$$ does not matter.
+Its output value is a matrix with dimensions $latex n \times M$$.
+The $th i$$ column of $italic dvecBOut$$ contains the optimal
+random effects value for individual 
+$latex i$$ for $latex i = 0 , \ldots , M-1$$.
+To be specific, the $th i$$ column 
+is the minimizer of $cref/Lambda(alpha, b)/Lambda/$$ 
+with respect to $latex b$$ where $latex \alpha$$ corresponds
+to the optimal value for the population parameters
+and $latex \Lambda$$ corresponds to the $th i$$ individual.
 
-$subhead indOptimizer.optInfo.epsilon$$
-This real number is used to specify the convergence criteria
-for the optimizer.
-It must be greater than $math%0.0%$$.
-$pre
+$head dvecBStep$$
+This column vector has length $latex n$$ and
+specifies the step size used for approximating
+the derivatives with respect to the random effects.
 
-$$
-For a particular value of $math%alp%$$ and for the $math%i%$$-th 
-individual in the population, an individual parameter value 
-$math%bOut_i%$$ is accepted as an estimate for $math%bHat_i%$$ if 
-$math%
-        abs( bOut_i - bHat_i ) \le epsilon ( bUp - bLow )  ,
-%$$
-where $math%abs%$$ is the element-by-element absolute value function
-and $math%bHat_i%$$ is a local minimizer of the individual level 
-objective function with respect to $math%b%$$.
-Since $math%bHat_i%$$ is unknown, this function estimates the left hand
-side of this inequality in a way that is a good approximation when 
-the Hessian of the objective function is positive definite.
-$pre
-
-$$
-Note that if $italic nMaxIter$$ is set to zero, then the $th i$$ 
-column of $math%bIn%$$ is accepted as the estimate for 
-$math%bHat_i%$$.
-
-$subhead indOptimizer.optInfo.nMaxIter$$
-This integer must be greater than or equal to zero.
-It specifies the maximum number of 
-iterations to attempt before giving up on convergence.
-If it is equal to zero, then the initial
-value for $math%b%$$ is accepted as the final value, and any requested output
-values are evaluated at that final value.
-
-$subhead indOptimizer.optInfo.traceLevel$$
-This integer scalar specifies the amount of tracing.
-Larger values of $italic traceLevel$$ entail more tracing, 
-with $math%4%$$ being the highest level of tracing.
-If $math%level \ge 1%$$, trace values are directed to standard output 
-(stdout).  
-$pre
-
-$$
-Tracing is done using a scaled version of the
-objective function.  For this scaled version the elements of
-the parameter vector are constrained to the interval $math%[0, 1]%$$. 
-$pre
-
-$$
-If $italic traceLevel$$ is equal to $math%4%$$, then the tracing 
-will include the gradient of the objective and a finite difference 
-approximation for that gradient.
-These two gradients can be compared as a check on the consistency 
-of the objective function and its gradient.
-$pre
-
-$$
-For more details on the tracing see the description of the level 
-parameter for the optimizer $code QuasiNewton01Box$$.
-
-$subhead indOptimizer.optInfo.nIterCompleted$$
-This integer scalar holds the number of iteration that have been 
-completed in the optimizer.
-
-$subhead indOptimizer.optInfo.isTooManyIter$$
-This flag indicates whether the too-many-iteration failure has occurred.  
-
-$subhead indOptimizer.optInfo.saveStateAtEndOfOpt$$
-This flag is not used for the individual level optimization.
-
-$subhead indOptimizer.optInfo.throwExcepIfMaxIter$$
-This flag is not used for the individual level optimization.
-
-$subhead indOptimizer.optInfo.isWarmStartPossible$$
-This flag is not used for the individual level optimization.
-
-$subhead indOptimizer.optInfo.isWarmStart$$
-This flag is not used for the individual level optimization.
-
-$subhead indOptimizer.optInfo.stateInfo$$
-This $code StateInfo$$ struct is not used for the individual 
-level optimization.
-
-$syntax/
-
-/dvecIndLow/
-/$$
-The $code DoubleMatrix$$ $italic dvecIndLow$$ contains the column vector 
-$math%bLow%$$, which specifies the lower limit for the random parameters 
-during the optimization procedure for all the individuals.
-The length of $italic dvecIndLow$$ is equal to the length of 
-the individual parameter vector $math%ind%$$.
-
-$syntax/
-
-/dvecIndUp/
-/$$
-The $code DoubleMatrix$$ $italic dvecIndUp$$ contains the column vector 
-$math%bUp%$$, which specifies the upper limit for the random parameters 
-during the optimization procedure for all the individuals.
-The length of $italic dvecIndUp$$ is equal to the length of 
-the individual parameter vector $math%ind%$$.
-
-$syntax/
-
-/dmatIndIn/
-/$$
-The $code DoubleMatrix$$ $italic dmatIndIn$$ contains the matrix 
-$math%bIn%$$.  
-The $th i$$ column of $math%bIn%$$ specifies the initial value for 
-the random parameters for the $th i$$ individual.
-If $math%ind_i%$$ is any column of $math%bIn%$$,
-it is assumed that $math%bLow \le ind_i \le bUp%$$.
-The column dimension of $math%bIn%$$ is equal to the number of 
-individuals in the population, $math%M%$$.
-Note that the number of rows in $italic dmatIndIn$$ specifies the 
-length of the individual parameter vector $math%ind%$$.
-
-$syntax/
-
-/pdmatIndOut/
-/$$
-If $italic pdmatIndOut$$ is not $code NULL$$, 
-then the $code DoubleMatrix$$ pointed to by $italic pdmatIndOut$$ must 
-be declared in the function that calls this function, 
-and it must have the same dimensions as $math%bIn%$$.
-If $italic pdmatIndOut$$ is not $code NULL$$, 
-and if this function completed the optimization successfully, 
-then the $code DoubleMatrix$$ pointed to by $italic pdmatIndOut$$ will 
-contain $math%bOut%$$, which is the matrix of estimates for the true 
-minimizers of the individual objective functions.
-Otherwise, this function will not attempt to change the contents of 
-the $code DoubleMatrix$$ pointed to by $italic pdmatIndOut$$.
-To be specific, the $th i$$ column of $math%bOut%$$ contains a column
-vector that is an estimate for $math%bHat_i%$$, the minimizer 
-of $math%Lambda_i(popOut, ind)%$$ with respect to $math%ind%$$. 
-This is under the assumption that $math%popOut%$$
-is the true value for the fixed population parameters.
-The value $math%epsilon(1)%$$ is used for accepting the minimizers with 
-respect to the individual parameters.
-
-$syntax/
-
-/dvecIndStep/
-/$$
-The $code DoubleMatrix$$ $italic dvecIndStep$$ contains the column vector 
-$math%bStep%$$, which specifies the step size used for approximating
-the derivatives with respect to the individual parameters.
-The length of $italic dvecIndStep$$ is equal to the length of 
-the individual parameter vector $math%ind%$$.
-
-$syntax/
-
-/pdLTildeOut/
-/$$
-If $italic pdLTildeOut$$ is not $code NULL$$, then the $code double$$ 
-value pointed to by $italic pdLTildeOut$$ must be declared in the 
-function that calls this function.
+$head pdLTildeOut$$
 If $italic pdLTildeOut$$ is not $code NULL$$, 
 and if this function completed the optimization successfully, 
-then the $code double$$ value pointed to by $italic pdLTildeOut$$ will 
-be equal to $math%LTilde(popOut)%$$, which is the value of the population 
-objective function evaluated at $math%popOut%$$.
-Otherwise, this function will not attempt to change the contents of the 
-$code double$$ value pointed to by $italic pdLTildeOut$$.
+then $syntax%*%pdLTildeOut%$$ is set equal to $latex \tilde{L} ( \alpha )$$
+where $latex \alpha$$ is the optimal value for the fixed effects
+and $latex \tilde{L}$$ is the likelihood corresponding to the FO approximation
+described under $cref/Purpose/FirstOrderOpt/Purpose/$$. 
+
+$head pdrowLTilde_alpOut$$
+If $italic pdrowLTilde_alpOut$$ is not $code NULL$$, 
+then $syntax%*%pdrowLTilde_alpOut%$$ 
+is a row vector of length $latex m$$.
+If this function completed the optimization successfully, 
+this row vector will contain 
+$latex \[
+	\partial_\alpha \tilde{L} ( \alpha )
+\] $$
+where $latex \alpha$$ is the optimal value for the fixed effects.
+
+$head pdrowLTilde_alp_alpOut$$
+If $italic pdrowLTilde_alp_alpOut$$ is not $code NULL$$, 
+then $syntax%*%pdrowLTilde_alp_alpOut%$$ 
+is an $latex m \times m$$ matrix.
+If this function completed the optimization successfully, 
+this matrix will contain 
+$latex \[
+	\partial_\alpha \partial_\alpha \tilde{L} ( \alpha )
+\] $$
+where $latex \alpha$$ is the optimal value for the fixed effects.
+The approximation for this second derivative is formed using central
+differences of $latex \partial_\alpha \tilde{L} ( \alpha )%$$ with
+step sizes specified by $italic dvecAlpStep$$.
 
 $syntax/
 
-/pdrowLTilde_popOut/
-/$$
-If $italic pdrowLTilde_popOut$$ is not $code NULL$$, then the 
-$code DoubleMatrix$$ pointed to by $italic pdrowLTilde_popOut$$ 
-must be declared in the function that calls this function, and it 
-must be a row vector that is the same length as
-the fixed population parameter vector $math%pop%$$.
-If $italic pdrowLTilde_popOut$$ is not $code NULL$$, 
-and if this function completed the optimization successfully, 
-then the $code DoubleMatrix$$ pointed to by $italic pdrowLTilde_popOut$$ 
-will contain the row vector $math%LTilde_pop(popOut)%$$, which is
-the derivative of the population objective function evaluated at 
-$math%popOut%$$.
-Otherwise, this function will not attempt to change the contents of the 
-$code DoubleMatrix$$ pointed to by $italic pdrowLTilde_popOut$$.
-
-$syntax/
-
-/pdmatLTilde_pop_popOut/ 
-/$$
-If $italic pdmatLTilde_pop_popOut$$ is not $code NULL$$, then the 
-$code DoubleMatrix$$ pointed to by $italic pdmatLTilde_pop_popOut$$ 
-must be declared in the function that calls this function, and it 
-must have the same number of rows and columns as the length of
-the fixed population parameter vector $math%pop%$$.
-If $italic pdmatLTilde_pop_popOut$$ is not $code NULL$$, 
-and if this function completed the optimization successfully, 
-then the $code DoubleMatrix$$ pointed to by 
-$italic pdmatLTilde_pop_popOut$$ will contain the matrix 
-$math%LTilde_pop_pop(popOut)%$$, which is an approximation 
-for the second derivative of the population objective function 
-evaluated at $math%popOut%$$. 
-Otherwise, this function will not attempt to change the contents of the 
-$code DoubleMatrix$$ pointed to by $italic pdmatLTilde_pop_popOut$$.
-The approximation for the second derivative is formed using central
-differences of the function $math%LTilde_pop(pop)%$$ with
-step sizes specified by $italic dvecPopStep$$.
-
-$syntax/
-
-/dmatLambdaTilde_popOut/
+/dmatLambdaTilde_alpOut/
 /$$
 
-If $italic dmatLambdaTilde_popOut$$ is not $code NULL$$, then the
-$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_popOut$$
+If $italic dmatLambdaTilde_alpOut$$ is not $code NULL$$, then the
+$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_alpOut$$
 must be declared in the function that calls this function, and its
 number of columns must be equal to the number of individuals and its
 number of rows must be equal to the length of the population parameter
 vector $math%pop%$$.
-If $italic dmatLambdaTilde_popOut$$ is not $code NULL$$, and if this
+If $italic dmatLambdaTilde_alpOut$$ is not $code NULL$$, and if this
 function completed the optimization successfully, then the $code
-DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_popOut$$ will
+DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_alpOut$$ will
 contain the derivatives of this individuals' contributions to
 the population objective function.
 Each column of the matrix contains the transpose of the derivative
  for a single individual.
 Otherwise, this function will not attempt to change the contents of the 
-$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_popOut$$.
+$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_alpOut$$.
 
+$children%
+	firstOrderOptTest.cpp
+%$$
 $head Example$$
-The following demonstrates running firstOrderOpt(). 
-$codep
+The file $cref/firstOrderOptTest.cpp/$$ is an example and test
+for $code firstOrderOpt$$.
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <cmath>
-#include "firstOrderOpt.h"
-#include "namespace_population_analysis.h"
-#include "identity.h"
-#include "pi.h"
-#include "SpkModel.h"
-#include "File.h"
-#include "Optimizer.h"
-#include "randNormal.h"
-
-using std::string;
-
-static DoubleMatrix funF    ( const DoubleMatrix &alp, 
-                            const DoubleMatrix &b );
-static DoubleMatrix funF_alp( const DoubleMatrix &dvecF,   
-                            const DoubleMatrix &alp, 
-                            const DoubleMatrix &b );
-static DoubleMatrix funF_b  ( const DoubleMatrix &dvecF, 
-                            const DoubleMatrix &alp,   
-                            const DoubleMatrix &b );
-static DoubleMatrix funR    ( const DoubleMatrix &alp, 
-                            const DoubleMatrix &b );
-static DoubleMatrix funR_alp( const DoubleMatrix &dmatR,   
-                            const DoubleMatrix &alp, 
-                            const DoubleMatrix &b );
-static DoubleMatrix funR_b  ( const DoubleMatrix &dmatR, 
-                            const DoubleMatrix &alp,   
-                            const DoubleMatrix &b );
-static DoubleMatrix funD    ( const DoubleMatrix &alp );
-static DoubleMatrix funD_alp( const DoubleMatrix &dmatD,   
-                            const DoubleMatrix &alp );
-
-class PopModel : public SpkModel<double>
-{
-    DoubleMatrix _a, _b;
-    int _i;
-    const int _nAlp, _nB;
-    const DoubleMatrix _N;
-
-public:
-    PopModel( int nAlp, int nB, const DoubleMatrix & dvecN )
-    : _nAlp(nAlp), _nB(nB), _N(dvecN)
-    {}
-    ~PopModel(){}
-protected:
-    void doSelectIndividual(int i)
-    {
-        _i = i;
-    }
-    void doSetPopPar(const valarray<double>& alp)
-    {
-        _a = alp.toValarray();
-    }
-    void doSetIndPar(const valarray<double>& b)
-    {
-        _b = b.toValarray();
-    }
-    void doDataMean( valarray<double>& ret ) const
-    {
-        ret = funF(_a, _b).toValarray();
-    }
-    bool dataMean_popPar( valarray<double>& ret ) const
-    {
-        valarray<double> f;
-        doDataMean(f);
-        DoubleMatrix dvecF( f, 1 );
-
-        ret = funF_alp(dvecF, _a, _b).toValarray();
-        return !allZero(ret);
-    }
-    bool doDataMean_indPar( valarray<double>& ret ) const
-    {
-        valarray<double> f;
-        doDataMean(f);
-        DoubleMatrix dvecF( f, 1 );
-
-        ret = funF_b(dvecF, _a, _b).toValarray();
-        return !allZero(ret);
-    }
-    void doDataVariance( valarray<double>& ret ) const
-    {
-        ret = funR(_a, _b);
-    }
-    bool doDataVariance_popPar( valarray<double>& ret ) const
-    {
-        valarray<double> R;
-        doDataVariance(R);
-        DoubleMatrix dmatR( R, _N[ _i ] ) ;
-        ret = funR_alp(dmatR, _a, _b).toValarray();
-        return !allZero(ret);
-    }
-    bool doDataVariance_indPar( valarray<double>& ret ) const
-    {
-        valarray<double> R;
-        doDataVariance(R);
-        DoubleMatrix dmatR( R, _N[ _i ] ) ;
-
-        ret = funR_b(dmatR, _a, _b).toValarray();
-        return !allZero(ret);
-    }
-    void doIndParVariance( valarray<double>& ret ) const
-    {
-        ret = funD(_a).toValarray();
-    }
-    bool doIndParVariance_popPar( valarray<double>& ret ) const
-    {
-        doIndParVariance(D);
-        DoubleMatrix dmatD( D, _nB );
-
-        ret = funD_alp(dmatD, _a).toValarray();
-        return !allZero(ret);
-    }
-};
-//--------------------------------------------------------------
-//
-// Function: main
-//
-//--------------------------------------------------------------
-
-void main()
-{
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-
-  using namespace std;
-  int i;
-
-
-  //------------------------------------------------------------
-  // Quantities that define the problem.
-  //------------------------------------------------------------
-
-  // Mean and variance of the true transfer rate, betaTrue.
-  double meanBetaTrue = 1.0;
-  double varBetaTrue  = 5.0;
-
-  // Number of individuals.
-  int nB = 10;
-
-
-  //------------------------------------------------------------
-  // Quantities related to the data vector, y.
-  //------------------------------------------------------------
-
-  // Number of measurements.
-  int nY = nB;
-
-  // Measurement values, y.
-  DoubleMatrix dvecY( nY, 1 );
-  double* pdYData = dvecY.data();
-
-  // Number of measurements for each individual. 
-  DoubleMatrix dvecN( nB, 1 );
-  dvecN.fill( (double) 1 );
-
-  // These will hold the generated values for the true measurement 
-  // noise, eTrue, and the true individual parameters, bTrue.
-  double eTrue;
-  double bTrue;
-
-  // Mean, variance, and standard deviation of eTrue and bTrue.
-  double meanETrue = 0.0;
-  double varETrue  = 1.0;
-  double sdETrue   = sqrt( varETrue );
-  double meanBTrue = 0.0;
-  double varBTrue  = varBetaTrue;
-  double sdBTrue   = sqrt( varBTrue );
-
-  // Compute the measurements for each individual.
-  Integer seed = 0;
-  g05cbc(seed);
-  for ( i = 0; i < nB; i++ )
-  {
-    eTrue = randNormal( meanETrue, sdETrue );
-    bTrue = randNormal( meanBTrue, sdBTrue );
-
-    pdYData[ i ] = meanBetaTrue + bTrue + eTrue;
-  }
-
-
-  //------------------------------------------------------------
-  // Quantities related to the fixed population parameter, alp.
-  //------------------------------------------------------------
-
-  int nAlp = 2;
-
-  DoubleMatrix alpTrue( nAlp, 1 );
-  DoubleMatrix alpLow ( nAlp, 1 );
-  DoubleMatrix alpUp  ( nAlp, 1 );
-  DoubleMatrix alpIn  ( nAlp, 1 );
-  DoubleMatrix alpOut ( nAlp, 1 );
-  DoubleMatrix alpStep( nAlp, 1 );
-
-  double* pdAlpTrueData = alpTrue.data();
-  double* pdAlpLowData  = alpLow .data();
-  double* pdAlpUpData   = alpUp  .data();
-  double* pdAlpInData   = alpIn  .data();
-  double* pdAlpOutData  = alpOut .data();
-  double* pdAlpStepData = alpStep.data();
-
-  // Set the values associated with alp(1).
-  pdAlpTrueData[ 0 ] = meanBetaTrue;
-  pdAlpLowData [ 0 ] = -10.0;
-  pdAlpUpData  [ 0 ] = 10.0;
-  pdAlpInData  [ 0 ] = -1.0;
-  pdAlpStepData[ 0 ] = 1.0e-2;
-
-  // Set the values associated with alp(2).
-  pdAlpTrueData[ 1 ] = varBetaTrue;
-  pdAlpLowData [ 1 ] = 1.0e-3;
-  pdAlpUpData  [ 1 ] = 100.0;
-  pdAlpInData  [ 1 ] = 0.5;
-  pdAlpStepData[ 1 ] = 1.0e-2;
-  
-
-  //------------------------------------------------------------
-  // Quantities related to the individual parameters, b.
-  //------------------------------------------------------------
-
-  int nB = 1;
-
-  DoubleMatrix bLow ( nB, 1 );
-  DoubleMatrix bUp  ( nB, 1 );
-  DoubleMatrix bStep( nB, 1 );
-
-  bLow .fill( -1.5e+1 );
-  bUp  .fill( +1.0e+1 );
-  bStep.fill(  1.0e-2 );
-
-  DoubleMatrix dmatBIn ( nB, nB );
-  DoubleMatrix dmatBOut( nB, nB );
-
-  dmatBIn.fill( 1.0 );
-
-
-  //------------------------------------------------------------
-  // Quantities related to the population objective function.
-  //------------------------------------------------------------
-
-  double dLTildeOut;
-
-  DoubleMatrix drowLTilde_alpOut    ( 1,    nAlp );
-  DoubleMatrix dmatLTilde_alp_alpOut( nAlp, nAlp );
-
-
-  //------------------------------------------------------------
-  // Remaining inputs to firstOrderOpt.
-  //------------------------------------------------------------
-
-  Optimizer indOptimizer( 1.0e-6, 40, 0 );
-  Optimizer popOptimizer( 1.0e-6, 40, 0 );
-
-
-  //------------------------------------------------------------
-  // Quantities related to the user-provided model.
-  //------------------------------------------------------------
-
-  PopModel model( nAlp, nB, dvecN );
-
-  try
-  {
-    firstOrderOpt(  
-				  model,
-				  dvecN,
-				  dvecY,
-				  popOptimizer,
-				  alpLow,
-				  alpUp,
-				  alpIn,
-				  &alpOut,
-				  alpStep,
-				  indOptimizer,
-				  bLow,
-				  bUp,
-				  dmatBIn,
-				  &dmatBOut,
-				  bStep,
-				  &dLTildeOut,
-				  &drowLTilde_alpOut,
-				  &dmatLTilde_alp_alpOut,
-				  );
-  }
-  catch(...)
-  {
-    cerr << "firstOrderOpt failed" << endl;
-    abort();
-  }
-
-
-  //------------------------------------------------------------
-  // Print the results.
-  //------------------------------------------------------------
-
-  cout << endl;
-
-  cout << "alpOut = " << endl;
-  alpOut.print(); 
-  cout << endl;
-
-  cout << "bOut = " << endl;
-  dmatBOut.print(); 
-  cout << endl;
-
-  cout << "LTildeOut   = " << dLTildeOut << endl;
-  cout << endl;
-
-  cout << "LTilde_alpOut  = " << endl;
-  drowLTilde_alpOut.print();
-  cout << endl;
-
-  cout << "LTilde_alp_alpOut  = " << endl;
-  dmatLTilde_alp_alpOut.print();
-  cout << endl;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funF
-//
-//
-// Calculates
-//
-//                 /                   \ 
-//     f(alp, b) = |  alp(1) + b(1)  |  .
-//                 \                  / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funF( const DoubleMatrix &alp, 
-                                          const DoubleMatrix &b )
-{
-  DoubleMatrix dvecF( 1, 1 );
-
-  double* pdAlpData = alp.data();
-  double* pdBData   = b  .data();
-
-  dvecF.fill( pdAlpData[ 0 ] + pdBData[ 0 ] );
-
-  return dvecF;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funF_alp
-//
-//
-// Calculates
-//
-//                     /           \ 
-//     f_alp(alp, b) = |  1     0  |  .
-//                     \           / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funF_alp( const DoubleMatrix &dvecF, 
-                                              const DoubleMatrix &alp, 
-                                              const DoubleMatrix &b )
-{
-  DoubleMatrix drowF_alp( 1, 2 );
-
-  double* pdF_alpData = drowF_alp.data();
-
-  pdF_alpData[ 0 ] = 1.0;
-  pdF_alpData[ 1 ] = 0.0;
-
-  return drowF_alp;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funF_b
-//
-//
-// Calculates
-//
-//                   /     \ 
-//     f_b(alp, b) = |  1  |  .
-//                   \     / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funF_b( const DoubleMatrix &dvecF, 
-                                            const DoubleMatrix &alp, 
-                                            const DoubleMatrix &b )
-{
-  return identity( 1 );
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funR
-//
-//
-// Calculates
-//
-//                 /     \ 
-//     R(alp, b) = |  1  |  .
-//                 \     / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funR( const DoubleMatrix &alp, 
-                                          const DoubleMatrix &b )
-{
-  return identity( 1 );
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funR_alp
-//
-//
-// Calculates
-//
-//                     /           \ 
-//     R_alp(alp, b) = |  0     0  |  .
-//                     \           / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funR_alp( const DoubleMatrix &dmatR,   
-                                              const DoubleMatrix &alp, 
-                                              const DoubleMatrix &b )
-{
-  DoubleMatrix dmatR_alp( 1, 2 );
-
-  dmatR_alp.fill(0.0);
-
-  return dmatR_alp;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funR_b
-//
-//
-// Calculates
-//
-//                   /     \ 
-//     R_b(alp, b) = |  0  |  .
-//                   \     / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funR_b( const DoubleMatrix &dmatR, 
-                                            const DoubleMatrix &alp,   
-                                            const DoubleMatrix &b )
-{
-  DoubleMatrix dmatR_b( 1, 1 );
-
-  dmatR_b.fill(0.0);
-
-  return dmatR_b;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funD
-//
-//
-// Calculates
-//
-//              /          \ 
-//     D(alp) = |  alp(2)  |  .
-//              \          / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funD( const DoubleMatrix &alp )
-{
-  DoubleMatrix dmatD( 1, 1 );
-
-  double* pdalpData = alp.data();
-
-  dmatD.fill( pdalpData[ 1 ] );
-
-  return dmatD;
-}
-
-
-//--------------------------------------------------------------
-//
-// Function: funD_alp
-//
-//
-// Calculates
-//
-//                  /           \ 
-//     D_alp(alp) = |  0     1  |  .
-//                  \           / 
-//
-//--------------------------------------------------------------
-
-static DoubleMatrix funD_alp( const DoubleMatrix &dmatD,
-                                              const DoubleMatrix &alp )
-{
-  DoubleMatrix dmatD_alp( 1, 2 );
-
-  double* pdD_alpData = dmatD_alp.data();
-
-  pdD_alpData[ 0 ] = 0.0;
-  pdD_alpData[ 1 ] = 1.0;
-
-  return dmatD_alp;
-}
-
-
-$$
-then it will display the following when it is run:
-$codep
-
-ok = True
-
-alpOut =
-[1.95115]
-[3.63406]
-
-bOut =
-[1.94171, 0.446611, -0.312347, -0.938796, -3.12919, 2.01348, 2.47441, -1.48642, -1.16138, 0.151919]
-
-LTildeOut   = 21.8566
-
-LTilde_alpOut  =
-[-2.767e-007, 1.50158e-007]
-
-LTilde_alp_alpOut  =
-[2.15793, 5.97158e-008]
-[5.97208e-008, 0.232837]
-
-$$
-  
 $end
 */
 
-/*------------------------------------------------------------------------
- *
- * Implementation Notes
- * --------------------
- *
- * None.
- *
- *------------------------------------------------------------------------*/
-#pragma warning( disable : 4006 )  
-#pragma warning( disable : 4786 )  
+# include <valarray>
+# include "quasiNewtonAnyBox.h"
+# include "SpkModel.h"
+# include "DoubleMatrix.h"
+# include "Optimizer.h"
+# include "cppad/cppad.hpp"
+# include "mapOpt.h"
 
-/*------------------------------------------------------------------------
- * Include files
- *------------------------------------------------------------------------*/
 
-#include <cassert>
-#include <iostream>
-#include <cerrno>
+# define SPK_PROGRAMMER_ERROR(msg)                \
+	throw SpkException(                       \
+		SpkError::SPK_PROGRAMMER_ERR,     \
+		msg,                              \
+		__LINE__,                         \
+		__FILE__                          \
+	);
 
-#include "EqIndModel.h"
-#include "SpkModel.h"
-#include "mapOpt.h"
-#include "mapObj.h"
-#include "replaceJth.h"
-#include "getSubblock.h"
-#include "getCol.h"
-#include "transpose.h"
-#include "isDmatEpsEqual.h"
-#include "File.h"
-#include "SpkException.h"
-#include "System.h"
-#include "Objective.h"
-
-using namespace std;
-
-/*------------------------------------------------------------------------
- * Local class definitions
- *------------------------------------------------------------------------*/
-
-namespace // [Begin: unnamed namespace]
+class FirstOrderObj : public QuasiNewtonAnyBoxObj
 {
-  //**********************************************************************
-  //
-  // Class: IndIndexFixedModel
-  //
-  //
-  // This class behaves the same as the class passed in when it is
-  // constructed except that it does not allow the individual index to
-  // be changed from the value set at construction time.
-  //
-  //**********************************************************************
+private:
+	// parameters set by constructor
+	SpkModel<double>*                 _model;
+	SpkModel< CppAD::AD<double> >*    _adModel;
+	const int                         _M;
+	const int                         _m;
+	const int                         _n;
+	const double*                     _N;
+	const double*                     _Y;
+	const double*                     _bStep;
+	// most recent value for alpha
+	std::valarray<double>             _alpha_valarray;
 
-  class IndIndexFixedModel : public SpkModel<double>
-  {
-    //----------------------------------------------------------
-    // Class members.
-    //----------------------------------------------------------
+	// private version of objective function used with double or AD<double>
+	// to evaluate the objective for one individual
+	template <class Scalar, class Model>
+	void function(int ind, 
+	const std::valarray<Scalar> &alpha, Scalar *obj, Model *model) const
+	{	typedef std::valarray<Scalar> Vector;
+		int Ni = int( _N[ind] );
+		int i, j, k, ell;
+		Vector b(_n);
+		Vector f0(Ni);
+		Vector fp(Ni);
+		Vector fm(Ni);
+		Vector f_b(Ni * _n);
+		Vector R(Ni * Ni);
+		Vector D(_n * _n);
+		Vector r(Ni);
+		Vector Rinv_r(Ni);
+		for(j = 0; j < _n; j++)
+			b[j] = Scalar(0);
+		// evaluate the model at (alpha, 0)
+		model->selectIndividual(ind);
+		model->setIndPar(b);
+		model->setPopPar(alpha);
+		model->dataMean(f0);
+		model->dataVariance(R);
+		model->indParVariance(D);
+		// compute the residual
+		for(j = 0; j < Ni; j++)
+			r[j] = _Y[j] - f0[j];
+		// compute the finite difference approximation for f_b
+		for(j = 0; j < _n; j++)
+		{	b[j] = _bStep[j];
+			model->setIndPar(b);
+			model->dataMean(fp);
+			b[j] = - _bStep[j];
+			model->setIndPar(b);
+			model->dataMean(fm);
+			for(i = 0; i < Ni; i++)
+				f_b[i + Ni * j] = .5 * (fp[i]-fm[i])/_bStep[j];
+		}
+		// R = R + f_b * D * f_b'
+		for(i = 0; i < Ni; i++);
+		for(j = i; j < Ni; j++)
+		{	Scalar sum = 0;
+			for(k = 0; k < _n; k++) 
+			for(ell = 0; ell < _n; ell++)
+			{	sum += f_b[i + Ni * k] * 
+					D[ k + _n * ell] * f_b[j + Ni * ell];
+			}
+			R[i + j * Ni] += sum;
+		}
+		// compute R^{-1} * r
+		Scalar logdet;
+		int signdet = CppAD::LuSolve(Ni, 1, R, r, Rinv_r, logdet);
+		if( signdet != 1 ) SPK_PROGRAMMER_ERROR(
+			"firstOrder: R + f_b * D * f_b' not positive definite."
+		);
+		// 1/2 * log( det( 2 * pi * R ) ) + 1/2 * r' * R^{-1} * r
+		double pi = 4. * std::atan(1.);
+		logdet = logdet + Ni * log( 2 * pi );
+		Scalar r_Rinv_r = 0;
+		for(j = 0; j < Ni; j++)
+			r_Rinv_r += r[j] * Rinv_r[j];
+		*obj = .5 * (logdet + r_Rinv_r);
+		return;
+	}
+public:
+	// constructor
+	FirstOrderObj(
+		SpkModel<double>&              model      ,
+		SpkModel< CppAD::AD<double> >& adModel    ,
+		int                            m          ,
+		int                            n          ,
+		const DoubleMatrix&            dvecN      ,
+		const DoubleMatrix&            dvecY      ,
+		const DoubleMatrix&            dvecBStep  ,
+		Optimizer&                     alpOptInfo )
+	:
+	_M(dvecN.nr()),
+	_m(m),
+	_n(n),
+	_model(&model),
+	_adModel(&adModel),
+	_N(dvecN.data()),
+	_Y(dvecY.data()),
+	_bStep(dvecBStep.data()),
+	_alpha_valarray(_m)
+	{	// give the optimizer a pointer to this objective evaluator
+		alpOptInfo.setObjFunc( this );
+	}
+	// objective function
+	virtual void function(const DoubleMatrix &alpha, double *Ltilde)
+	{	if( alpha.nr()!=_m || alpha.nc()!=1 ) SPK_PROGRAMMER_ERROR(
+		"FirstOrderObj.function: alpha does not have proper dimensions"
+		); 
+		int i, j;
+		double Ltilde_i;
+		*Ltilde = 0;
+		for(j = 0; j < _m; j++)
+			_alpha_valarray[j] = *(alpha.data() + j);
+		for(i = 0; i < _M; i++)
+		{	function(i, _alpha_valarray, &Ltilde_i, _model);
+			*Ltilde += Ltilde_i;
+		}
+		return;
+	}
+	// gradient of objective
+	virtual void gradient (DoubleMatrix *Ltilde_alp) const
+	{	typedef CppAD::AD<double> Scalar;
+		typedef std::valarray<Scalar> adVector;
+		typedef std::valarray<double> dVector;
+		if( Ltilde_alp->nr()!=1 || Ltilde_alp->nc()!=_m ) 
+		SPK_PROGRAMMER_ERROR(
+		"FirstOrderObj.gradient: alpha does not have proper dimensions"
+		); 
+		int i, j;
+		double *ptr_Ltilde_alp = Ltilde_alp->data();
+		adVector alpha_valarray(_m);
+		for(j = 0; j < _m; j++)
+		{	alpha_valarray[j] = _alpha_valarray[j];
+			ptr_Ltilde_alp[j] = 0.;
+		}
 
-  private:
-    SpkModel<double>* pModel;
+		adVector Ltilde_i(1);
+		dVector  Ltilde_alp_i(_m);
+		dVector  weight(1);
+		for(i = 0; i < _M; i++)
+		{	CppAD::Independent(alpha_valarray);
+			Scalar obj_i;
+			function(i, alpha_valarray, &obj_i, _adModel);
+			Ltilde_i[0] = obj_i;
+			CppAD::ADFun<double> F(alpha_valarray, Ltilde_i);
+			weight[0] = 1.;
+			Ltilde_alp_i = F.Reverse(1, weight);
+			for(j = 0; j < _m; j++)
+				ptr_Ltilde_alp[j] += Ltilde_alp_i[j];
+		}
+		return;
+	}
+};
 
+void firstOrderOpt(
+              SpkModel<double>&              model                      ,
+              SpkModel< CppAD::AD<double> >& adModel                    ,
+              const DoubleMatrix&            dvecN                      ,
+              const DoubleMatrix&            dvecY                      ,
+              Optimizer&                     alpOptInfo                 ,
+              const DoubleMatrix&            dvecAlpLow                 ,
+              const DoubleMatrix&            dvecAlpUp                  ,
+              const DoubleMatrix&            dvecAlpIn                  ,
+              DoubleMatrix*                  pvecAlpOut                ,
+              const DoubleMatrix&            dvecAlpStep                ,
+              Optimizer&                     bOptInfo                   ,
+              const DoubleMatrix&            dvecBLow                   ,
+              const DoubleMatrix&            dvecBUp                    ,
+              const DoubleMatrix&            dmatBIn                    ,
+              DoubleMatrix*                  pmatBOut                  ,
+              const DoubleMatrix&            dvecBStep                  ,
+              double*                        pdLTildeOut                ,
+              DoubleMatrix*                  pdrowLTilde_alpOut         ,
+              DoubleMatrix*                  pmatLTilde_alp_alpOut     )
+{	// Check for input errors
+	if( bOptInfo.getSaveStateAtEndOfOpt() ) SPK_PROGRAMMER_ERROR(
+		"fristOrderOpt: Invalid value for SaveStateAtEndOfOpt"
+	);
+	if( alpOptInfo.getThrowExcepIfMaxIter() ) SPK_PROGRAMMER_ERROR(
+		"fristOrderOpt: Invalid value for ThrowExcepIfMaxIter"
+	);
 
-    //----------------------------------------------------------
-    // Constructors.
-    //----------------------------------------------------------
+	// Special case where there is nothing to calculate
+	bool nothing_to_compute = true;
+	nothing_to_compute &= (pvecAlpOut              == 0 );
+	nothing_to_compute &= (pmatBOut                == 0 );
+	nothing_to_compute &= (pdLTildeOut              == 0 );
+	nothing_to_compute &= (pdrowLTilde_alpOut       == 0 );
+	nothing_to_compute &= (pmatLTilde_alp_alpOut   == 0 );
+	if( nothing_to_compute )
+		return;
 
-  public:
-    // This constructor sets the individual index in the model passed
-    // in to a value that will not be changed.
-    IndIndexFixedModel( SpkModel<double>* pModelIn, int iFixed )
-      :
-      pModel ( pModelIn )
-    {
-      pModel->selectIndividual( iFixed );
-    }
+	// get problem dimensions
+	const int M = dvecN.nr();
+	const int m = dvecAlpIn.nr();
+	const int n = dmatBIn.nr();
 
+	// A temporary column vector for holding the estimate for alp
+	DoubleMatrix dvecAlpOutTemp(m, 1);
 
-    //----------------------------------------------------------
-    // Functions that do nothing.
-    //----------------------------------------------------------
+	// function objective
+	FirstOrderObj objective( 
+		model      ,
+		adModel    ,
+		m          ,
+		n          ,
+		dvecN      ,
+		dvecY      ,
+		dvecBStep  ,
+		alpOptInfo 
+	);
 
-    // This function does nothing because it is not allowed to change
-    // the individual index from the value set at construction time.
-    void doSelectIndividual( int iIn )
-    {
-      assert ( iIn == 0 );
-    }
-
-
-    //----------------------------------------------------------
-    // State changing functions that just call the contained model.
-    //----------------------------------------------------------
-
-    void doSetPopPar( const valarray<double>& popParIn )
-    {
-      pModel->setPopPar( popParIn );
-    }
-
-    void doSetIndPar( const valarray<double>& indParIn )
-    {
-      pModel->setIndPar( indParIn );
-    }
-
-
-    //----------------------------------------------------------
-    // Model evaluation functions that just call the contained model.
-    //----------------------------------------------------------
-
-    void doDataMean( valarray<double>& ret ) const
-    {
-      pModel->dataMean( ret );
-    }
-
-    bool doDataMean_indPar( valarray<double>& ret ) const
-    {
-      return pModel->dataMean_indPar( ret );
-    }
-
-    bool doDataMean_popPar( valarray<double>& ret ) const
-    {
-      return pModel->dataMean_popPar( ret );
-    }
-
-    void doDataVariance( valarray<double>& ret ) const
-    {
-      pModel->dataVariance( ret );
-    }
-
-    bool doDataVariance_indPar( valarray<double>& ret ) const
-    {
-      return pModel->dataVariance_indPar( ret );
-    }
-
-    bool doDataVariance_popPar( valarray<double>& ret ) const
-    {
-      return pModel->dataVariance_popPar( ret );
-    }
-
-    void doDataVarianceInv( valarray<double>& ret ) const
-    {
-      pModel->dataVarianceInv( ret );
-    }
-
-    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
-    {
-      return pModel->dataVarianceInv_indPar( ret );
-    }
-
-    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
-    {
-      return pModel->dataVarianceInv_popPar( ret );
-    }
-
-    void doIndParVariance( valarray<double>& ret ) const
-    {
-      pModel->indParVariance( ret );
-    }
-
-    bool doIndParVariance_popPar( valarray<double>& ret ) const
-    {
-      return pModel->indParVariance_popPar( ret );
-    }
-
-    void doIndParVarianceInv( valarray<double>& ret ) const
-    {
-      pModel->indParVarianceInv( ret );
-    }
-
-    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
-    {
-      return pModel->indParVarianceInv_popPar( ret );
-    }
-
-  };
-
-} // [End: unnamed namespace]
-
-/*------------------------------------------------------------------------
- * Function definition
- *------------------------------------------------------------------------*/
-void firstOrderOpt( 
-                    SpkModel<double>&               model,
-                    const DoubleMatrix&     dvecN,
-                    const DoubleMatrix&     dvecY,
-                    Optimizer&              popOptimizer,
-                    const DoubleMatrix&     dvecAlpLow,
-                    const DoubleMatrix&     dvecAlpUp,
-                    const DoubleMatrix&     dvecAlpIn,
-                    DoubleMatrix*           pdvecAlpOut,
-                    const DoubleMatrix&     dvecAlpStep,
-                    Optimizer&              indOptimizer,
-                    const DoubleMatrix&     dvecBLow,
-                    const DoubleMatrix&     dvecBUp,
-                    const DoubleMatrix&     dmatBIn,
-                    DoubleMatrix*           pdmatBOut,
-                    const DoubleMatrix&     dvecBStep,
-                    double*                 pdLTildeOut,
-                    DoubleMatrix*           pdrowLTilde_alpOut,
-                    DoubleMatrix*           pdmatLTilde_alp_alpOut,
-                    DoubleMatrix*           pdmatLambdaTilde_alpOut
-                  )
-{  
-    //------------------------------------------------------------
-    // Preliminaries.
-    //------------------------------------------------------------
-    // Return if there are no output values to compute.
-    if( pdvecAlpOut             == 0 && 
-        pdmatBOut               == 0 && 
-        pdLTildeOut             == 0 && 
-        pdrowLTilde_alpOut      == 0 && 
-        pdmatLTilde_alp_alpOut  == 0 && 
-        pdmatLambdaTilde_alpOut == 0    )
-	{
-        return;
+	// try to optimize the FO version of Ltilde
+	const char *msg="firstOrderOpt: Invalid error message";
+	try
+	{	quasiNewtonAnyBox(
+			objective            ,
+			alpOptInfo           ,
+			dvecAlpLow           ,
+			dvecAlpUp            ,
+			dvecAlpIn            ,
+			&dvecAlpOutTemp      ,
+			pdLTildeOut          ,
+			pdrowLTilde_alpOut
+		);
+	}
+	catch( SpkException& e)
+	{	msg = "firstOrderOpt: fixed effects optimization "
+		      "known exception.";
+		throw e.push(
+			SpkError::SPK_OPT_ERR,
+			msg                  ,
+			__LINE__             ,
+			__FILE__
+		);
+	}
+	catch ( ... )
+	{	msg = "firstOrderOpt: fixed effects optimization "
+		      "unknown exception.";
+		throw SpkException(
+			SpkError::SPK_UNKNOWN_OPT_ERR,
+			msg                          ,
+			__LINE__                     ,
+			__FILE__
+		);
 	}
 
-    int nInd = dvecN    .nr();
-    int nAlp = dvecAlpIn.nr();
-    int nB   = dmatBIn  .nr();
+	// Using the FO approximation for the fixed effects alpha, 
+	// determine each individuals random effects b_i
+	// by optimizing the original model (not the FO approximation)
+	if( pmatBOut )
+	{
+		int i, j, index_Y;
+		DoubleMatrix dvecBIn(n, 1);	
+		DoubleMatrix dvecBOut(n, 1);	
 
-	const double* pdNData        = dvecN       .data();
-    const double* pdAlpLowData   = dvecAlpLow  .data();
-    const double* pdAlpUpData    = dvecAlpUp   .data();
-    const double* pdAlpInData    = dvecAlpIn   .data();
-    const double* pdBLowData     = dvecBLow    .data();
-    const double* pdBUpData      = dvecBUp     .data();
-    const double* pdBInData      = dmatBIn     .data();
+		// pointers to actual data in vectors and matrices
+		const double *N       = dvecN.data();
+		const double *Y       = dvecY.data();
+		const double *alpIn   = dvecAlpIn.data();
+		const double *bmatIn  = dmatBIn.data();
+		double *bmatOut       = pmatBOut->data();
+		double *bOut          = dvecBOut.data();
+		double *bIn           = dvecBIn.data();
 
-  //------------------------------------------------------------
-  // Set indOptimizer as a sub-level optimizer. 
-  //------------------------------------------------------------
+		// set the fixed effects value
+		model.setPopPar( dvecAlpOutTemp.toValarray() );
 
-  bool oldIndSaveState  = indOptimizer.getSaveStateAtEndOfOpt();
-  bool oldIndThrowExcep = indOptimizer.getThrowExcepIfMaxIter();
+		// include the Bayesian term in the individual objective
+		bool withD = true;
 
-  // Set these flags so that an exception is thrown if the maximum number
-  // of iterations is exceeded when optimizing an individual and so that
-  // no individual level optimizer state information is saved.
-  indOptimizer.setSaveStateAtEndOfOpt( false );
-  indOptimizer.setThrowExcepIfMaxIter( true);
-
-
-  //------------------------------------------------------------
-  // Prepare the objects to hold the output values.
-  //------------------------------------------------------------
-
-  // Instantiate a temporary column vector to hold the final alp 
-  // value that will be returned by mapOpt.
-  DoubleMatrix dvecAlpOutTemp( nAlp, 1 );
-  DoubleMatrix* pdvecAlpOutTemp = &dvecAlpOutTemp;
-
-  // Instantiate a temporary matrix to hold the optimal b values
-  // for each individual.
-  DoubleMatrix dmatBOutTemp;
-  DoubleMatrix* pdmatBOutTemp = 0;
-  if ( pdmatBOut )
-  {
-	  dmatBOutTemp.resize( nB, nInd );
-      pdmatBOutTemp = &dmatBOutTemp;
-  }
-
-  // If this function is going to return the population objective  
-  // function value, initialize the temporary value to hold it.  
-  // Otherwise, set the temporary pointer to zero so that mapOpt 
-  // will not return it either.
-  double dLTildeOutTemp;
-  double* pdLTildeOutTemp = &dLTildeOutTemp;
-  if ( pdLTildeOut )
-  {
-    dLTildeOutTemp = 0.0;
-  }
-  else
-  {
-    pdLTildeOutTemp = 0;
-  }
-
-  // If this function is going to return the derivative of the
-  // population objective function with respect to alp, or if it is
-  // going to return the derivatives with respect to alp of the
-  // individuals' contributions to the population objective function,
-  // instantiate a temporary row vector to hold it.  Otherwise, set
-  // the temporary pointer to zero so that mapOpt will not return it
-  // either.
-  DoubleMatrix drowLTilde_alpOutTemp;
-  DoubleMatrix* pdrowLTilde_alpOutTemp = &drowLTilde_alpOutTemp;
-  if ( pdrowLTilde_alpOut || pdmatLambdaTilde_alpOut )
-  {
-    drowLTilde_alpOutTemp.resize( 1, nAlp );
-  }
-  else
-  {
-    pdrowLTilde_alpOutTemp = 0;
-  }
-  
-  // If this function is going to return the second derivative of 
-  // the population objective function with respect to alp, instantiate 
-  // a temporary matrix to hold it.  Otherwise, set the temporary 
-  // pointer to zero so that mapOpt will not return it either.
-  DoubleMatrix dmatLTilde_alp_alpOutTemp;
-  DoubleMatrix* pdmatLTilde_alp_alpOutTemp = &dmatLTilde_alp_alpOutTemp;
-  if ( pdmatLTilde_alp_alpOut )
-  {
-    dmatLTilde_alp_alpOutTemp.resize( nAlp, nAlp );
-  }
-  else
-  {
-    pdmatLTilde_alp_alpOutTemp = 0;
-  }
-
-  // If this function is going to return the derivatives with respect
-  // to alp of the individuals' contributions to the population
-  // objective function, instantiate a temporary row vector to hold
-  // it.  Otherwise, set the temporary pointer to zero so that mapOpt
-  // will not return it either.
-  DoubleMatrix dmatLambdaTilde_alpOutTemp;
-  DoubleMatrix* pdmatLambdaTilde_alpOutTemp = &dmatLambdaTilde_alpOutTemp;
-  if ( pdmatLambdaTilde_alpOut )
-  {
-    dmatLambdaTilde_alpOutTemp.resize( nAlp, nInd );
-  }
-  else
-  {
-    pdmatLambdaTilde_alpOutTemp = 0;
-  }
-  
-  //----------------------------------------------------------------
-  // Construct an equivalent individual model from population model.
-  //----------------------------------------------------------------
-
-  valarray<double> bStep = dvecBStep.toValarray();
-  valarray<int> N(nInd);
-  const double * pN = dvecN.data();
-  int i;
-  for( i=0; i<nInd; i++ )
-  {
-    N[i] = (int)pN[i];
-  }
-
-  EqIndModel eqIndModel( &model, N, bStep, nAlp );
-
-  //----------------------------------------------------------------
-  // Optimize the equivalent objective function to determine Alp.
-  //----------------------------------------------------------------
-
-  try
-  {
-	  mapOpt( 
-			  eqIndModel,
-			  dvecY, 
-			  popOptimizer, 
-			  dvecAlpLow, 
-			  dvecAlpUp, 
-			  dvecAlpIn,
-			  pdvecAlpOutTemp, 
-			  dvecAlpStep, 
-			  pdLTildeOutTemp, 
-			  pdrowLTilde_alpOutTemp, 
-			  pdmatLTilde_alp_alpOutTemp,
-			  false,
-			  true,
-			  &dvecN
-			);
-  }
-  catch( SpkException& e )
-  {
-    throw e.push(
-      SpkError::SPK_OPT_ERR,
-      "Population level optimization failed. This message overrides the last message.", 
-      __LINE__, __FILE__);
-  }
-  catch( const std::exception& e )
-  {
-    throw SpkException(e,
-      "A standard exception was thrown during the population level optimization.", 
-      __LINE__, __FILE__);
-  }
-  catch( ... )
-  {
-    throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
-      "An unknown exception was thrown during the population level optimization.", 
-      __LINE__, __FILE__);
-  }
-
-  //----------------------------------------------------------------
-  // Evaluate the derivatives of each individual's contribution.
-  //----------------------------------------------------------------
-
-  valarray<int> nYi( 1 );
-  DoubleMatrix dvecYi;
-  DoubleMatrix dvecNi;
-  double* pdNull = 0;
-  int startRow;
-
-  if( pdmatLambdaTilde_alpOut && !popOptimizer.getIsTooManyIter() )
-  {
-    try
-    {
-      // In order to get the derivatives of each individual's
-      // contribution to the population objective function, an
-      // equivalent individual model that contains only a single
-      // individual will be created for each individual.
-      startRow = 0;
-      for ( i = 0; i < nInd; i++ )
-      {
-        // Get this individual's data.
-        dvecNi   =  getSubblock( dvecN, i,        0, 1,    1 );
-        dvecYi   =  getSubblock( dvecY, startRow, 0, N[i], 1 );
-        nYi[0]   =  N[i];
-        startRow += N[i];
-      
-        // Construct a population model with its individual index fixed to
-        // that of the current individual.
-        IndIndexFixedModel indIndexFixedModel( &model, i );
-      
-        // Construct an equivalent individual model that only includes the
-        // current individual.
-        EqIndModel oneIndEqIndModel( &indIndexFixedModel, nYi, bStep, nAlp );
-        
-        // Evaluate the derivative of this individual's contribution to
-        // the population objective function.
-        mapObj(
-                oneIndEqIndModel,
-                dvecYi,
-                dvecAlpOutTemp,
-                pdNull,
-                pdrowLTilde_alpOutTemp,
-                false,
-                true,
-                &dvecNi
-              );
-
-        // Save the derivative of this individual's contribution to
-        // the population objective function.
-        replaceJth(
-                    dmatLambdaTilde_alpOutTemp,
-                    i,
-                    transpose( drowLTilde_alpOutTemp )
-                   );
-      }
-    }
-    catch( SpkException& e )
-    {
-      throw e.push(
-        SpkError::SPK_OPT_ERR,
-        "Evaluation of the derivatives of the individuals' objective contributions failed.", 
-        __LINE__, __FILE__);
-    }
-    catch( const std::exception& e )
-    {
-      throw SpkException(e,
-        "A standard exception was thrown during the evaluation of the derivatives of \nthe individuals' objective contributions.", 
-        __LINE__, __FILE__);
-    }
-    catch( ... )
-    {
-      throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
-        "An unknown exception was thrown during the evaluation of the derivatives of \nthe individuals' objective contributions.",
-        __LINE__, __FILE__);
-    }
-  }
-
-  //----------------------------------------------------------------
-  // Optimize the individual objective function to determine b.
-  //---------------------------------------------------------------- 
-
-  if( pdmatBOut && !popOptimizer.getIsTooManyIter() )
-  {
-	  DoubleMatrix dvecBIn( nB, 1 );
-	  DoubleMatrix dvecBOut( nB, 1 );
-
-	  model.setPopPar( pdvecAlpOutTemp->toValarray() );
-	  startRow = 0;
-	  for( int i = 0; i < nInd; i++ )
-	  {
-		  model.selectIndividual( i );
-		  dvecYi = getSubblock( dvecY, startRow, 0, (int)pdNData[ i ], 1 );
-		  dvecBIn = getCol( dmatBIn, i );
-		  try
-		  {
-			  mapOpt( 
-					  model,
-					  dvecYi, 
-					  indOptimizer,
-					  dvecBLow, 
-					  dvecBUp, 
-					  dvecBIn,
-					  &dvecBOut, 
-					  dvecBStep, 
-					  0, 
-					  0, 
-					  0,
-					  true 
-					 );
-		  }
-		  catch( SpkException& e )
-		  {
-			throw e.push(
-			  SpkError::SPK_OPT_ERR,
-			  "Individual level optimization failed.", 
-			  __LINE__, __FILE__);
-		  }
-		  catch( const std::exception& e )
-		  {
-			throw SpkException(e,
-			  "A standard exception was thrown during the individual level optimization.", 
-			  __LINE__, __FILE__);
-		  }
-		  catch( ... )
-		  {
-		  	throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
-			  "An unknown exception was thrown during the individual level optimization.", 
-			  __LINE__, __FILE__);
-		  }
-
-		  replaceJth( dmatBOutTemp, i, dvecBOut );
-		  startRow += (int)pdNData[ i ];
-	  }
-  }
-
-  //------------------------------------------------------------
-  // Set the values to be returned.
-  //------------------------------------------------------------
-
-  // Set the final alp value, if necessary.
-  if ( pdvecAlpOut && !popOptimizer.getIsTooManyIter() )
-  {
-        *pdvecAlpOut = dvecAlpOutTemp;
-  }
-
-  // Set the matrix of final b values, if necessary.
-  if ( pdmatBOut && !popOptimizer.getIsTooManyIter() )
-  {
-    *pdmatBOut = dmatBOutTemp;
-  }
-
-  // Set the final population objective function value, if necessary.
-  if ( pdLTildeOut && !popOptimizer.getIsTooManyIter() )
-  {
-        *pdLTildeOut = dLTildeOutTemp;
-  }
-
-  // Set the first derivative of the population objective 
-  // function at the final alp value, if necessary.
-  if ( pdrowLTilde_alpOut && !popOptimizer.getIsTooManyIter() )
-  {
-    *pdrowLTilde_alpOut = drowLTilde_alpOutTemp;
-  }
-    
-  // Set the second derivative of the population objective 
-  // function at the final alp value, if necessary.
-  if ( pdmatLTilde_alp_alpOut && !popOptimizer.getIsTooManyIter() )
-  {
-    *pdmatLTilde_alp_alpOut = dmatLTilde_alp_alpOutTemp;
-  }
-
-  // Set the derivatives of the individuals' contributions to
-  // the population objective function.
-  if ( pdmatLambdaTilde_alpOut && !popOptimizer.getIsTooManyIter() )
-  {
-    *pdmatLambdaTilde_alpOut = dmatLambdaTilde_alpOutTemp;
-  }
-    
-  // Reset these individual optimizer flags to their original values.
-  indOptimizer.setSaveStateAtEndOfOpt( oldIndSaveState );
-  indOptimizer.setThrowExcepIfMaxIter( oldIndThrowExcep );
+		index_Y = 0;
+		for(i = 0; i < M; i++);
+		{	// data for this individual
+			int Ni = static_cast<int>( N[i] ); 	
+			DoubleMatrix dvecY_i(Ni, 1);
+			double *Y_i = dvecY_i.data();
+			for(j = 0; j < Ni; j++)
+				Y_i[j] = Y[index_Y++];
+			// initialize random effects to this individual
+			for(j = 0; j < n; j++)
+				bIn[j] = bmatIn[j + n];
+			// optimization for this individual
+			try
+			{	mapOpt(
+					model           ,
+					dvecY_i         ,
+					bOptInfo        ,
+					dvecBLow        ,
+					dvecBUp         ,
+					dvecBIn         ,       
+					&dvecBOut       ,
+					dvecBStep       ,
+					0               ,
+					0               ,
+					0               ,
+					withD            
+				);
+			}
+			catch( SpkException& e)
+			{	msg = "firstOrderOpt: random effects "
+				      "optimization known exception.";
+				throw e.push(
+					SpkError::SPK_OPT_ERR,
+					msg                  ,
+					__LINE__             ,
+					__FILE__
+				);
+			}
+			catch ( ... )
+			{	msg = "firstOrderOpt: random effects "
+				      "optimization unknown exception.";
+				throw SpkException(
+					SpkError::SPK_UNKNOWN_OPT_ERR,
+					msg                          ,
+					__LINE__                     ,
+					__FILE__
+				);
+			}
+			for(j = 0; j < n; j++)
+				bmatOut[j + n] = bOut[j];
+		}
+	}
+	return;
 }
