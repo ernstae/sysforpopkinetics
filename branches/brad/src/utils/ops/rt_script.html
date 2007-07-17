@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>regression_test.pl -- run the production regression test</title>
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#options_and_arguments">OPTIONS AND ARGUMENTS</a></li>
+	<li><a href="#files">FILES</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>regression_test -- run the production regression test</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>regression_test</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>
+This shell script runs regression_test.pl against the production
+regression test configuration file.
+</p>
+<p>
+Like regression_test.pl,
+<strong>regression_test</strong> must be run on the 
+<strong>aspkserver</strong>, and must be run with 
+<strong>root</strong> privilege in root's environment.  To insure 
+that this happens, log into aspkserver as an ordinary user, 
+then use <strong>su -</strong> (the minus sign is crucial) to
+gain root privilege.
+</p>
+<hr />
+<h1><a name="options_and_arguments">OPTIONS AND ARGUMENTS</a></h1>
+<dl>None.<p>
+</p>
+<hr />
+<h1><a name="files">EXIT STATUS</a></h1>
+<p>
+Returns the value 0 as exit status if all tests were successful;
+otherwise, a non-zero value is returned.
+<p>
+</p>
+<hr />
+<h1><a name="files">FILES</a></h1>
+<p>
+aspkserver:/usr/local/spk/ops/regression_test/config/regression_test.cml
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p>
+The man page for regression_test.pl, which is on the web page where
+you obtained this manual page, or can be obtained by running the
+command <strong>regression_test.pl --man</strong>
+</p>
+<hr />
+
+</body>
+
+</html>

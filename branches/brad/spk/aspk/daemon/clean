@@ -1,0 +1,9 @@
+#!/bin/sh
+
+SERVICE_ROOT=spkcmptest
+SERVICE_NAME=${SERVICE_ROOT}d
+WORKING_DIR_PREFIX=${SERVICE_ROOT}-
+
+rm -rf /tmp/${WORKING_DIR_PREFIX}*
+rm -f /tmp/lock_$SERVICE_NAME
+

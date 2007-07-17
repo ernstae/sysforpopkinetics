@@ -1,0 +1,238 @@
+/* These are my global styling rules */
+
+BODY    {
+                background-color: #FFFFFF;
+                color: #000000;
+                font-family: verdana, helvetica, arial;
+                font-size:10pt;
+                font-style:normal;
+                font-weight:500;
+        }
+
+TD	{
+		font-size:10pt;
+	}
+TH	{
+		font-size:12pt;
+	}
+
+A:link  {
+                color: #323232;
+        }
+
+A:visited {
+                color: #232323;
+        }
+
+A:active {
+                color: #FF0000;
+        }
+
+
+DIV.footer {
+        width:350;
+        border-width: 0;
+        padding: 10px;
+        background-color: #ffffff;
+        z-index:1;
+        color: #000000;
+        font-family: verdana, helvetica, arial;
+        font-size:8pt;
+        font-style:normal;
+        font-weight:300;
+        margin:0px;
+}
+
+
+DIV.main, DIV.researcher, DIV.project, DIV.dissemination, DIV.success, DIV.error, DIV.data, DIV.MS, DIV.admin, DIV.orf,
+DIV.localization, DIV.warning, DIV.y2h {
+        width:400;
+        border-width: 1;
+        border-style: solid;
+        padding: 10px;
+        z-index:1;
+        font-family: verdana, helvetica, arial;
+        font-size:10pt;
+        font-style:normal;
+        font-weight:500;
+        margin:0px;
+}
+
+DIV.main_header, DIV.researcher_header, DIV.project_header, DIV.dissemination_header, DIV.success_header,
+DIV.error_header, DIV.data_header, DIV.MS_header, DIV.admin_header, DIV.orf_header, DIV.localization_header,
+DIV.warning_header, DIV.y2h_header {
+        width:400;
+        border-width: 1;
+        border-style: solid;
+        padding: 10px;
+        z-index:1;
+        font-family: verdana, helvetica, arial;
+        font-size:12pt;
+        font-style:normal;
+        font-weight:900;
+        margin:0px;
+}
+
+DIV.main {
+        border-color: #323232;
+        background-color: #e6e6e6;
+        color: #323232;
+}
+
+DIV.main_header {
+        border-color: #323232;
+        background-color: #323232;
+        color: #e6e6e6;
+}
+
+DIV.researcher {
+        border-color: #49490a;
+        background-color: #ffffc4;
+        color: #49490a;
+}
+
+DIV.researcher_header {
+        border-color: #49490a;
+        background-color: #49490a;
+        color: #ffffc4;
+}
+DIV.project {
+        border-color: #1d0047;
+        background-color: #e5d3ff;
+        color: #1d0047;
+}
+
+DIV.project_header {
+        border-color: #1d0047;
+        background-color: #1d0047;
+        color: #e5d3ff;
+}
+
+DIV.dissemination {
+        border-color: #682c05;
+        background-color: #ffdecb;
+        color: #ffdecb;
+}
+
+DIV.dissemination_header {
+        border-color: #682c05;
+        background-color: #682c05;
+        color: #ffdecb;
+}
+
+DIV.success_header {
+        border-color: #156009;
+        background-color: #156009;
+        color: #A7E5A0;
+}
+
+DIV.success {
+        border-color: #156009;
+        background-color: #A7E5A0;
+        color: #156009;
+}
+
+DIV.warning_header {
+        border-color: #CE6600;
+        background-color: #CE6600;
+        color: #FFDEBD;
+}
+
+DIV.warning {
+        border-color: #CE6600;
+        background-color: #FFDEBD;
+        color: #CE6600;
+}
+
+DIV.error_header {
+        border-color: #B20A23;
+        background-color: #B20A23;
+        color: #FFD3DA;
+}
+DIV.error {
+        border-color: #B20A23;
+        background-color: #FFD3DA;
+        color: #B20A23;
+}
+
+DIV.data_header {
+        border-color: #264144;
+        background-color: #264144;
+        color: #c4f9ff;
+}
+DIV.data {
+        border-color: #264144;
+        background-color: #c4f9ff;
+        color: #264144;
+}
+
+DIV.MS_header {
+        border-color: #3D902A;
+        background-color: #3D902A;
+        color: #EBFFE6;
+}
+DIV.MS {
+        border-color: #3D902A;
+        background-color: #EBFFE6;
+        color: #3D902A;
+}
+DIV.admin_header {
+        border-color: #156009;
+        background-color: #156009;
+        color: #A7E5A0;
+}
+
+DIV.admin {
+        border-color: #156009;
+        background-color: #A7E5A0;
+        color: #156009;
+}
+DIV.orf_header {
+        border-color: #C0C200;
+        background-color: #C0C200;
+        color: #FFFFFF;
+}
+TR.orf_header {
+        border-color: #C0C200;
+        background-color: #C0C200;
+        color: #FFFFFF;
+}
+
+DIV.orf {
+        border-color: #C0C200;
+        background-color: #FEFFA0;
+        color: #4D4E00;
+}
+TR.orf {
+        background-color: #FDFDD8;
+        color: #4D4E00;
+}
+TR.orf_dark {
+	background-color: #FDFF54;
+        color: #4D4E00;
+}
+
+
+DIV.localization_header {
+        border-color: #3C1D37;
+        background-color: #3C1D37;
+        color: #FFDFFA;
+}
+
+DIV.localization {
+        border-color: #3C1D37;
+        background-color: #FFDFFA;
+        color: #3C1D37;
+}
+DIV.y2h_header {
+        border-color: #7F3030;
+        background-color: #7F3030;
+        color: #FFEAEA;
+}
+
+DIV.y2h {
+        border-color: #7F3030;
+        background-color: #FFEAEA;
+        color: #7F3030;
+}
+

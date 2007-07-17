@@ -1,0 +1,126 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin DirBasedParallelControls$$
+
+$spell 
+  DirBasedParallelControls 
+  subclass 
+  ParallelControls
+  iostream
+  const
+  cout
+  endl
+  std
+  exe
+  Spk
+  namespace
+  bool
+  cmd
+$$ 
+
+$section Directory Based ParallelControls Class$$
+
+$index DirBasedParallelControls$$
+$index Directory Based, ParallelControls, Parallel Controls$$
+
+$head Description$$
+This class is declared in $code DirBasedParallelControl.h$$.
+$pre
+
+$$
+$code DirBasedParallelControls$$ class is a subclass of $italic ParallelControls$$
+class.  It provides an encapsulation for the directory based controlling 
+parameters for the program running in parallel processing mode.  The class 
+provides a number of public member functions listed under contents section 
+below.
+
+$childtable/
+    DirBasedParallelControls.cpp/$$
+
+$head Example$$
+If you compile and link the following program,
+
+   $codep
+
+      #include <iostream>
+      #include "DirBasedParallelControl.h"
+
+      int main()
+      {
+         using namespace std;
+
+         //
+         // This flag indicates as to which processing mode shall be chosen.
+         // Here, it intends to run in parallel mode.
+         //
+         const bool isParallel = true;
+
+         //
+         // This string indicates a path to a shared directory for Master-Node communication.
+         // Here, the shared directory name is "Shared" and the machine on which
+         // the directory exists is "MyMachine".
+         //
+         const char dir[]      = "\\\\MyMachine\\Shared\\";
+         
+         //
+         // In this example, this is an exact string which I type in when I run a Spk application called
+         // "MyPopAnalysis.exe" as a node from the directory where this main
+         // program is run.  MyPopAnalysis.exe runs as a node when "-who node" is given
+         // at the command line.
+         //
+         const char cmdNode    = "MyPopAnalysis.exe -dir \\\\MyMachine\\Shared\\ -who node";
+
+         //
+         // Create a control object.
+         //
+         DirBasedParallelControl paraCtrl( true, dir, cmdNode );
+ 
+         //
+         // For the sake of demonstration, print out values held by the control object.
+         //
+         cout << "Directory is " << paraCtrl.getSharedDirectory() << endl;
+         cout << "Node command string is \"" << paraCtrl.getNodeCommand() << "\"" << endl;
+
+         return 0;
+      }
+   
+   $$
+
+it will display the following:
+
+   $codep
+
+   Directory is \\MyMachine\Shared\
+   Node command string is "MyPopAnalysis.exe -dir \\MyMachine\Shared\ -who node"
+   
+   $$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+    

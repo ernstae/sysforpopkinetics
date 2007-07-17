@@ -1,0 +1,98 @@
+$begin PopPredModel$$
+$spell
+	Nonmem
+	Struct
+	valarray
+	cov
+	const
+	Pred
+	Eps
+	Cpp
+	std
+	spkpred
+$$
+
+$section Constructing a Population Pred Model$$
+
+$head Notation$$
+It is assumed that a $code PopPredModel$$ object
+satisfies the assumptions for a 
+$xref/MonteSpkModel/$$ object.
+In the discussion below we use the shorthand $code AD$$ for 
+$code CppAD::AD$$ and $code valarray$$ for $code std::valarray$$.
+
+$table
+$bold Syntax$$ $cnext
+$syntax%# include <spkpred/PopPredModel.h>%$$
+$rnext $cnext
+$syntax%PopPredModel(
+	PredBase< AD<double> >&  %predEvaluator%,
+	int                      %nTheta%,
+	const valarray<double>&  %thetaLow%,
+	const valarray<double>&  %thetaUp%,
+	const valarray<double>&  %thetaIn%,
+	int                      %nEta%,
+	const valarray<double>&  %etaIn%,
+	int                      %nEps%,
+	covStruct                %omegaStruct%,
+	const valarray<double>&  %omegaIn%,
+	covStruct                %sigmaStruct%,
+	const valarray<double>&  %sigmaIn% )%$$
+$tend
+
+$head predEvaluator$$
+The argument $italic predEvaluator$$ is constructed using
+$syntax%
+	DataSet< CppAD::AD<double> > %set%;
+	Pred< CppAD::AD<double> > %predEvaluator%(&%set%);
+%$$
+where the template classes $xref/DataSet/$$ and $code Pred$$ 
+are defined in the files $code DataSet.h$$ and $code Pred,h$$ 
+respectively.
+
+$head nTheta$$
+Number of explicit fixed effects 
+(see $xref/NonmemPars/Theta/nTheta/NonmemPars::nTheta/1/$$). 
+
+$head thetaLow$$
+Lower limit for explicit fixed effects
+(see $xref/NonmemPars/Theta/thetaLow/NonmemPars::thetaLow/1/$$). 
+
+$head thetaUp$$
+Upper limit for explicit fixed effects
+(see $xref/NonmemPars/Theta/thetaUp/NonmemPars::thetaUp/1/$$). 
+
+$head thetaIn$$
+Initial value for each of the explicit fixed effects
+(see $xref/NonmemPars/Theta/thetaIn/NonmemPars::thetaIn/1/$$). 
+
+$head nEta$$
+Number of random effects 
+(see $xref/NonmemPars/Eta/nEta, n/NonmemPars::nEta/1/$$). 
+
+$head etaIn$$
+Initial value for the random effects
+(see $xref/NonmemPars/Eta/etaIn/NonmemPars::etaIn/1/$$). 
+
+$head omegaStruct$$
+Random effects covariance matrix
+(see $xref/NonmemPars/Eta/omegaStruct/NonmemPars::omegaStruct/1/$$). 
+
+$head omegaIn$$
+Initial value of the random effects covariance matrix
+(see $xref/NonmemPars/Eta/omegaIn/NonmemPars::omegaIn/1/$$). 
+
+$head nEps$$
+Number of measurement error components
+(see $xref/NonmemPars/Eps/nEps, s/NonmemPars::nEps/1/$$). 
+
+$head sigmaStruct$$
+Random effects covariance matrix
+(see $xref/NonmemPars/Eps/sigmaStruct/NonmemPars::sigmaStruct/1/$$). 
+
+$head sigmaIn$$
+Initial value of the random effects covariance matrix
+(see $xref/NonmemPars/Eps/sigmaIn/NonmemPars::sigmaIn/1/$$). 
+
+
+$end

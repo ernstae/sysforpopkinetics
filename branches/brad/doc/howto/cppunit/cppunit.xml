@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-17.2/docbookx.dtd" [
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>CppUnit Installation</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>September 14, 2004</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>CppUnit later than 1.8.0 don't work with ours.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>March 8, 2004</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+The components of SPK Library are unit-tested within the CppUnit framework.
+CppUnit is the C++ port of the famous JUnit framework for unit testing. 
+Test output is in XML or text format for automatic testing and GUI based for supervised tests.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Download and Unpack</title>
+    <para>
+Copy whitechuck:/opt/download/cppunit-1.8.0.tar.gz into /tmp on your workstation
+and unpack the tarball as follows:
+       <screen>
+cd /tmp
+tar xvzf cppunit-1.8.0.tar.gz
+       </screen>
+It will extract files into a new subdirectory, cppunit-1.8.0.
+    </para>
+    <para>
+Warning: The later versions of CppUnit have changed something that make our tests
+obsolete (ie. don't compile).
+    </para>
+  </sect1>
+  <sect1>
+    <title>Build and Install</title>
+    <orderedlist>
+      <listitem>
+        <para>
+        Change directory to /tmp/cppunit-1.8.0 by typing in:
+          <screen>
+cd cppunit-1.8.0
+          </screen>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        First, run "configure" in the directory to correct values for various system
+        dependent variables used druing compilation.  Type and run:
+          <screen>
+./configure
+          </screen> 
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Now, run Make to build the libraries.
+          <screen>
+make
+          </screen>
+        This builds
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Finally, install the libraries and header files into /usr/local/lib and /usr/local/include
+        (by default), respectively.  This requires you to login as root.
+          <screen>
+su
+make install
+          </screen>
+        </para>
+      </listitem>
+    </orderedlist>
+    <para>
+Done.
+    </para>
+  </sect1>
+</article>

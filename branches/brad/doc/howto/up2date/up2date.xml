@@ -1,0 +1,224 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Keeping Linux Up-To-Date</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>May 30, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>July 25, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Updated for systems that do not dual-boot</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	It is important to keep the Software Team's Linux workstations
+	up-to-date, with security fixes and bug fixes.  This document
+	describes the procedure for updating a workstation via
+	the Internet.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      For each of the Software Team's Linux workstations, RFPK has
+      purchased a subscription to use the RedHat Network (RHN) for keeping
+      Linux up-to-date.  This subscription also enables priority
+      downloads of any of the large number of software packages that
+      are offered by RedHat.
+    </para>
+    <para>
+      It is important to make use of RHN at frequent intervals, to
+      keep your system current.  Updating does not have to take
+      much time away from other work.  While the process is 
+      going on, most of the time is spent in data transfer.
+      During that period, you can also be using your
+      workstation for other things.  Let the files download and
+      then go back to the updating process when all the files
+      are there.
+    </para>
+    <para>
+      With the exception of a kernel update, there is no
+      need to reboot after an update is complete.  With the
+      kernel, you first need to make a new boot diskette, and
+      then use that to boot.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Using the RHN Alert Notification Tool</title>
+    <para>
+      On the panel at the bottom of your desktop screen, you
+      should have a small circle with a check-mark in it.  This
+      is the icon for the alert notification applet.  When it is red, there
+      are updates available to packages installed on your system.
+      When it is blue, all packages are up-to-date.  Green
+      means that updates are in progress.
+    </para>
+    <para>
+      Whenever you notice that the alert notification icon is red, and
+      you have a few spare moments, click on it and then click the
+      <guibutton>Launch up2date</guibutton> button. It is most
+      convenient to do this with an empty workspace
+      on the screen, so that the up2date windows do not get mixed
+      up with your other work.
+    </para>
+    <para>
+      The up2date wizard presents a list of "channels".  Select the
+      channel which corresponds to the release of Linux installed
+      on your workstation.  Generally, there will be only one 
+      choice, because up2date is smart enough to know this.
+    </para>
+    <para>
+      The wizard will then refresh its own information about any
+      updates available for your system.  It will give you a list
+      to choose from.  In the case of kernel updates, ask 
+      Alan Westhagen first whether or not that update is worth
+      performing.  For everything else, just select them all.
+    </para>
+    <para>
+      From that point on, just let up2date do its work.  
+      Occasionally check back.  Since up2date is interactive,
+      it may be waiting for an acknowledgment from you.  
+    </para>
+    <para>
+      When up2date says that it is finished, you are done, as
+      well.  You do not have to reboot, unless you updated
+      the kernel. The next section discusses what to do in 
+      that case,
+    </para>
+  </sect1>
+  <sect1>
+    <title>After a Kernel Update</title>
+    <para>
+      If you boot Linux from the hard drive, there is nothing more
+      to do.  The next time you boot, the machine will come up on
+      the new version of Linux.
+    </para>
+    <para>
+      If your machine is dual-booted and you use a diskette to
+      boot onto Linux, you will need to make a new boot diskette and
+      a new backup boot diskette.  Here is the procedure to follow.
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Determine the version number of the new kernel.
+	    The <command>rpm</command> command can be used to list 
+	    all packages installed on your workstation, and 
+	    <command>grep</command> can be used to filter out
+	    every line that does not contain the text
+	    "kernel-" followed by a digit:
+	    <screen>
+rpm -qa | grep kernel-[0-9]	    
+	    </screen>
+	    The kernel package with the largest version number
+	    is the new one. 
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    You probably have three boot diskettes.  Two of the
+	    diskettes are for the version you currently are
+	    running.  The third is for the version that you
+	    ran previously.  Take that third diskette and 
+	    insert it in your diskette drive.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    As root, execute the <command>mkbootdisk</command>
+	    command, giving the version number as argument.  For
+	    example, if you just installed the package
+	    <filename>kernel-2.4.20-13.8</filename>, you would
+	    enter the following command lines:
+	    <screen>
+su
+/sbin/mkbootdisk 2.4.20-13.8 
+	    </screen>
+	  </para>
+	  <para>
+	    Repeat the previous two steps, in order to make
+	    a backup copy of the boot diskette.  Use one of the
+	    two diskettes containing the version you are currently
+	    running.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Boot onto the new kernel, using one of the 
+	    diskettes you have just made.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Removing Redundant Kernels</title>
+    <para>
+      You only need to have two kernels installed: the
+      current kernel and the previous kernel.  To
+      reduce clutter, you can remove old kernel packages.
+      Suppose that the 
+      <command>rpm -qa | grep kernel-[0-9]</command>
+      command line returned the names of three kernel
+      packages, and that
+      <filename>kernel-2.4.14.8.0</filename> was the
+      oldest of them.  To remove that package,
+      use these commands:
+      <screen>
+su
+rpm -ev kernel-2.4.14.8.0	      
+      </screen>
+      You can get a list of all kernels installed by using the
+      rpm query function:
+      <screen>
+rpm -qa | grep kernel
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Downloading Packages from RHN</title>
+    <para>
+      When the Software Team workstations were originally
+      set up for Linux, a large number of packages were
+      installed, especially in the area of tools for software
+      development.  There are, nevertheless, many additional
+      packages available.
+    </para>
+    <para>
+      For the great number of packages that are put together by
+      RedHat, RHN is the most convenient as well as the most
+      secure source. Just go to the 
+      <ulink url="http://www.redhat.com/software/rhn/">RHN</ulink>
+      site, login, and click on the 
+      <guimenuitem>software</guimenuitem> button.  You should
+      then be able to find packages for the release of RedHat
+      Linux that you are running.
+    </para>
+    <para>
+      If RHN doesn't have it, there are a number of other 
+      sources for rpm packages.  A good place to look is
+      <ulink url="http://www.rpmfind.net/">rpmfind</ulink>,
+      which is mirrored by speakeasy.net, in Seattle.
+    </para>
+  </sect1>
+</article>
+
+<!--  LocalWords:  DOCTYPE DocBook articleinfo revhistory revnumber revremark
+ -->
+<!--  LocalWords:  authorinitials RFPK RedHat RHN guibutton Westhagen listitem
+ -->
+<!--  LocalWords:  orderedlist qa mkbootdisk su ev ulink url guimenuitem
+ -->
+<!--  LocalWords:  rpmfind
+ -->

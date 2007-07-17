@@ -1,0 +1,19 @@
+$begin SpkPred$$
+$spell
+	OMhelp
+	Spk Pred
+$$
+
+$section OMhelp Developer Documentation for Spk Pred Library$$
+
+$head Other Developer Documentation$$
+$href%
+	../doc/html/index.html%
+	Doxygen
+%$$
+
+$contents%
+	../spkpred/OdeBreak.h
+%$$
+
+$end

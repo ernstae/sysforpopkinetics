@@ -1,0 +1,12 @@
+$begin ElsqEst$$
+$spell Elsq Est$$
+
+$section Extended Least Squares Estimation Routines$$
+
+$childtable/
+	elsq.cpp/
+    elsq_x.cpp/
+	ElsqObj.oms/
+	ElsqOpt.oms/$$
+
+$end

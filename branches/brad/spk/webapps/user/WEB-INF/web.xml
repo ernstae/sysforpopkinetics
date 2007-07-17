@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee        http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <context-param>
+        <description>The driver of the db</description>
+        <param-name>bugdb_driver</param-name>
+        <param-value>com.mysql.jdbc.Driver</param-value>
+    </context-param>
+    <context-param>
+        <description>The url of the db</description>
+        <param-name>bugdb_url</param-name>
+        <param-value>jdbc:mysql:/localhost:3306/bugs</param-value>
+    </context-param>
+    <context-param>
+        <description>The name of Bugzilla db user</description>
+        <param-name>bugdb_user</param-name>
+        <param-value>bugs</param-value>
+    </context-param>
+    <context-param>
+        <description>The password of Bugzilla db user</description>
+        <param-name>bugdb_password</param-name>
+        <param-value>locust17</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>invoker</servlet-name>
+        <servlet-class>
+          org.apache.catalina.servlets.InvokerServlet
+        </servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>invoker</servlet-name>
+        <url-pattern>/servlet/*</url-pattern>
+    </servlet-mapping>
+   
+    <!-- Used by Web Start jnlp file and other temporary files -->
+    <context-param>
+        <param-name>jnlp_directory</param-name>
+        <param-value>/home/jiaji/NetBeans_projects/WebProject/build/web/jnlp/</param-value>
+        <description>The directory for the jnlp file and other temporary files</description>
+    </context-param>
+
+    <!-- Servlet database calls -->
+    <context-param>
+        <param-name>database_name</param-name>
+        <param-value>spktest</param-value>
+        <description>The name of the database</description>
+    </context-param>
+
+    <context-param>
+        <param-name>database_host</param-name>
+        <param-value>localhost</param-value>
+        <description>The host of the database</description>
+    </context-param>
+
+    <context-param>
+        <param-name>database_username</param-name>
+        <param-value>tester</param-value>
+        <description>The name of the database user</description>
+    </context-param>
+
+    <context-param>
+        <param-name>database_password</param-name>
+        <param-value>tester</param-value>
+        <description>The password of the database user</description>
+    </context-param>
+
+    <!-- Sevlet job queue server calls -->
+    <context-param>
+        <param-name>jobqs_host</param-name>
+        <param-value>localhost</param-value>
+        <description>The host of the job-queue server</description>
+    </context-param>
+
+    <context-param>
+        <param-name>jobqs_port</param-name>
+        <param-value>9001</param-value>
+        <description>The port of the job-queue server</description>
+    </context-param>
+
+    <!-- Jsp page database calls -->
+    <context-param>
+      <param-name>
+        javax.servlet.jsp.jstl.sql.dataSource
+      </param-name>
+      <param-value>
+        jdbc:mysql:/localhost:3306/spktest,com.mysql.jdbc.Driver,tester,tester
+      </param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>maxNum</param-name>
+        <param-value>60</param-value>
+        <description>The maximum number of rows</description>
+    </context-param>
+
+    <context-param>
+        <param-name>timeLimit</param-name>
+        <param-value>100</param-value>
+        <description>The time limit for running diff in seconds</description>
+    </context-param>
+
+    <context-param>
+        <param-name>bugzillaURL</param-name>
+        <param-value>http://192.168.1.101:8081/index.cgi</param-value>
+        <description>The URL of the Bugzilla main page</description>
+    </context-param>
+
+    <context-param>
+        <param-name>emailAddress</param-name>
+        <param-value>rfpksoft@u.washington.edu</param-value>
+        <description>The email address of the SPK service</description>
+    </context-param>
+
+    <context-param>
+        <param-name>emailServer</param-name>
+        <param-value>smtp.washington.edu</param-value>
+        <description>The SMTP email server</description>
+    </context-param>
+
+    <context-param>
+        <param-name>MDA_test_host</param-name>
+        <param-value>192.168.1.5</param-value>
+        <description>The host of the client for testing</description>
+    </context-param>
+
+    <context-param>
+        <param-name>perlDir</param-name>
+        <param-value>/usr/local/bin/spktest/</param-value>
+        <description>The rcs perl script directory</description>
+    </context-param>
+
+    <!-- Session expiration -->
+    <session-config>
+        <session-timeout>
+            480
+        </session-timeout>
+    </session-config>
+
+    <!-- The Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- Error page location -->
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/errorpage.jsp</location>
+    </error-page>
+</web-app>

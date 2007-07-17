@@ -1,0 +1,629 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+  <!ENTITY rhel "RedHat Enterprise Linux, Version 3 (RHEL3)">
+]>
+<article><title>PVM Administration at RFPK</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>November 19, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	The administration of the Parallel Virtual Machine (PVM) in the
+	RFPK lab is described.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      The Parallel Virtual Machine (pvm) is a software system which allows
+      spk to be distributed over any arbitrary collection of computers 
+      running the linux or unix operating system.  Each computer is a node
+      in the pvm, capable of participating in the
+      spk computation.  With the system correctly configured, nodes can
+      be added and deleted at will. 
+    </para>
+    <para>
+      This document assumes that all nodes in the pvm are running the same
+      or closely related versions of the same operating system.  In the 
+      current version of this document, that operating system is &rhel;.
+    </para>
+    <para>
+      A key feature of the configuration described
+      is that all of the software and many of the
+      configuration files are shared via the Network Files System (NFS).  This
+      greatly reduces the overall system administration required.
+    </para>
+    <para>
+      Another important feature of this configuration is that different
+      processor architectures are accommodated in the same configuration.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Network Security</title>
+    <para>
+      An important part of the pvm architecture is a set of daemons,
+      one on each host, which provide task life-cycle and inter-task
+      communications services.  In the basic configuration, these
+      daemons communicate between themselves using the 
+      <emphasis>rsh</emphasis> internet service, without passwords. 
+      This is very insecure.
+    </para>
+    <para>
+      As an alternative,
+      <emphasis>ssh</emphasis> can be used and that is the approach
+      described in this document.  With ssh, communication between
+      nodes is secure, even if they are on a subnetwork that is open
+      to the public internet.  Public key encryption is used, so that
+      a passcode is required only when the head node is booted.  When,
+      on the other hand, an ordinary node is booted, the daemon on
+      the head node discovers that it can no longer communicate with
+      the daemon on the ordinary node, and deletes it from the 
+      PVM.  After the ordinary node is back up, the pvm console program
+      can be used to add it to the pvm once again.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Shared File Hierarchy</title>
+    <para>
+      At RFPK, the pvm software is installed centrally on cspkserver.
+      Each of the other hosts accesses the software via NFS.
+      The shared file hierarchy is mounted on the directory node normally
+      referred to by the environment variable <varname>PVM_ROOT</varname>.
+      Within this hierarchy, items which differ from one supported 
+      architecture to another are differentiated by the inclusion
+      of architecture specific nodes in the pathnames.  For example,
+      pvm system executables are found in the directory
+      <filename>$PVM_ROOT/lib/$PVM_ARCH</filename>.  Substituting
+      values for environment variables in use for Pentium machines at
+      RFPK, this path resolves to 
+      <filename>/usr/share/pvm3/lib/LINUXI386</filename>.
+      Similarly, spk executables reside in the library
+      <filename>$PVM_ROOT/bin/$PVM_ARCH</filename>.
+    </para>
+  </sect1>
+  <sect1>
+    <title id="rpm-install">Software Installation</title>
+    <para>
+      All pvm software at RFPK is installed on cspkserver, which acts 
+      as the head node of the pvm.  At present, two processor architectures
+      are supported. Pvm designates the Intel Pentium architecture as
+      LINUXI386 and the Amd/Intel 64-bit architecture as LINUXX86_64.
+      The software for both of these architectures is installed on 
+      cspkserver so that both architectures are available to the
+      other hosts via NFS.  If additional architectures were to be 
+      added, their software would also be installed on cspkserver.
+    </para>
+    <para>
+      Because our systems all run &rhel;, the easiest
+      and most reliable way to install and update the software is to
+      download packages as <filename>.rpm</filename> files and to 
+      install them with the RedHat Packet Manager (rpm).
+    </para>
+    <para>
+      Here is how the software was installed on cspkserver. If, for 
+      some reason, the software had to be reinstalled from scratch,
+      this would be the procedure to follow.
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Download the most recent pvm packages from RedHat.
+	    At the time of writing (February 4, 2005), the 
+	    most recent were
+	    <filename>pvm-3.4.4-22.i386.rpm</filename> and
+	    <filename>pvm-3.4.4-22.x86_64.rpm</filename>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Install the package for the LINUXX86_64 architecture. As
+	    root, in a terminal window do the following:
+	    <screen>
+rpm -Uhv pvm-3.4.4-22.x86_64.rpm
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Install the package for the LINUXI386 architecture:
+	    <screen>
+rpm -Uhv pvm-3.4.4-22.i386.rpm
+	    </screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title id="nfs-all">NFS Configuration Required for the All Nodes</title>
+    <para>
+      As root, in a terminal window, do the following:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Start NFS, if it is not already running:o
+	    <screen>
+/etc/rc.d/init.d/nfs start
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Insure that NFS will restart automatically, each time the 
+	    system boots:
+	    <screen>
+/sbin/chkconfig nfs on
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Restart the port mapper:
+	    <screen>
+/etc/rc.d/init.d/portmap restart
+	    </screen>
+	  </para>
+ 	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Additional NFS Configuration for the Head Node</title>
+    <para>
+	As root in a terminal window, perform the following:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Each node must have an entry in the <filename>/etc/hosts</filename>
+	    file.  For any node that is not already so declared, use your
+	    favorite text editor to add a line such as the following, which
+	    relates the IP address with the name by which you wish to 
+	    refer to it:
+	    <screen>
+	      192.168.1.5          rose
+	    </screen>
+	  </para>
+	</listitem>
+      <listitem id="exports">
+	<para>
+	  Edit the <filename>/etc/exports</filename> file to list all of
+	  the nodes that will need access to the software.  For 
+	  <emphasis>each</emphasis> such node, add a line such as
+	  this:
+	  <screen>
+	    /usr/share/pvm3        rose(rw,sync,no_root_squash)
+	  </screen>
+	  Note that <filename>/usr/share/pvm3</filename> is the file
+	  hierarchy which will be shared, and <emphasis>rose</emphasis>
+	  is the host name of a node which will be allowed to 
+	  access it.
+	</para>
+      </listitem>
+      <listitem id="exportfs">
+	<para>
+	  Export the file hierarchy:
+	  <screen>
+	    /usr/sbin/exportfs -a
+	  </screen>
+	</para>
+      </listitem>
+    </orderedlist>
+    </para>
+  </sect1>
+  <sect1 id="configure-nfs">
+    <title>Additional NFS Configuration on Ordinary Nodes</title>
+    <para>
+      This section covers NFS configuration for all nodes other than
+      the head node (cspkserver).  All the following should be 
+      performed by the root user, from a terminal window.
+    </para>
+    <para>
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Hide a preexisting installation of pvm on the node, if
+	    one exists:
+	    <screen>
+mv /usr/share/pvm3 /usr/share/pvm3.hide
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The <filename>/etc/hosts</filename> file must contain an entry for
+	    <emphasis>cspkserver</emphasis>.  If such an entry is not already
+	    there, edit <filename>/etc/hosts</filename> to add the line 
+	    (or similar, if this IP address is incorrect):
+	    <screen>
+192.168.1.18     cspk cspkserver
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Create a node on which to mount <filename>PVM_ROOT</filename>:
+	    <screen>
+mkdir /usr/share/pvm3
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    All nodes other than the head node must perform an NFS mount of
+	    PVM_ROOT.  As root, edit <filename>/etc/fstab</filename>,
+	    adding the following line:
+	    <screen>
+cspkserver:/usr/share/pvm3  /usr/share/pvm3  nfs rsize=8194,wsize=8192,timeo=14,intr
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    If, on the <emphasis>head node</emphasis>, there is no entry for
+	    this ordinary node in the <filename>/etc/exports</filename> file,
+	    <link linkend="exports">
+	      add an entry now 
+	    </link>
+	    ; then 
+	    <link linkend="exportfs">export it</link>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Verify that you can mount PVM_ROOT by executing the following 
+	    command, as root:
+	    <screen>
+mount /usr/share/pvm3
+	    </screen>
+	    then use <command>ls</command> to verify that the directory
+	    contains files.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1 id="every-node">
+    <title>Configuration Required for Every Node</title>
+    <para>
+      This section covers configuration steps that must be taken
+      for <emphasis>all nodes, including the head node</emphasis>.
+    </para>
+    <sect2>
+      <title>Correct <filename>/etc/hosts</filename></title>
+      <para>
+	In linux, the host name of a system as well as its aliases can
+	be associated in the <filename>/etc/hosts</filename> file with
+	either <filename>127.0.0.1</filename>, which is the IP address
+	of the <emphasis>lo</emphasis> interface, or with the IP
+	address of a network interface, such as <emphasis>eth0</emphasis>.
+	For pvm to work correctly, only the latter choice is acceptable.
+	In other words, the host name and its aliases
+	must be associated with the IP address by which the node is
+	addressed by the other nodes. 
+      </para>
+      <para>
+	As root, edit <filename>/etc/hosts</filename> so that the 
+	localhost entry looks like this:
+	<screen>
+127.0.0.1       localhost localhost.localdomain
+	</screen>
+	and the entry for a node (<emphasis>anynode</emphasis>, for example):
+	<screen>
+192.168.1.18    anynode
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Create a home directory for pvm</title>
+      <para>
+	As part of the installation of &rhel;, a user named pvm is created.
+	It is given <filename>PVM_ROOT</filename> as its home directory. 
+	This will not work for our purposes, because we share 
+	the <filename>PVM_ROOT</filename> file hierarchy via NFS. Certain
+	configuration files are changed by the nodes during their normal
+	operation.  If these files were shared, the nodes would interfere
+	with each other.  For this reason, it is necessary to create
+	a separate home directory for every node.
+      </para>
+      <para>
+	As root:
+	<screen>
+mkdir /home/pvm
+usermod -d /home/pvm pvm
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Install keychain</title>
+      <para>
+	ssh is used for communication between nodes of the
+	pvm.  Normally, ssh requires a password every time that a
+	communications channel is established.  If a program called
+	keychain is installed on each node, however, the password
+	only needs to be provided for the first communication 
+	between two hosts after a system boot by the destination
+	host.  An <filename>.rpm</filename> package can be downloaded
+	from the keychain
+	<ulink url="http://www.gentoo.org/proj/en/keychain.xml">
+	  web site
+	</ulink>
+	or it can be copied from whitechuck (fileserver):
+	<screen>
+# as an ordinary user
+scp 'fileserver:/opt/download/keychain*.rpm' .
+	</screen>
+	Once you have the file on the node, as root you can install
+	it with the command
+	<screen>
+# as root
+rpm -Uhv keychain*.rpm
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Configuration for the Head Node</title>
+    <para>
+      In the following, it is assumed that you will be working as the
+      <emphasis>root</emphasis> user, from a terminal window, and that 
+      for convenience sake, you have defined <varname>PVM_ROOT</varname>:
+      <screen>
+PVM_ROOT=/usr/share/pvm3
+      </screen>
+    </para>
+    <sect2>
+      <title>Copy skeleton files to <filename>$PVM_ROOT</filename></title>
+      <para>
+	We will need some configuration files to enable the pvm user
+	to run the pvm console program.  The following commands will copy
+	the necessary files from the skeleton directory to 
+	<filename>PVM_ROOT</filename>.  They will later be linked into 
+	the home directory by means of symbolic links.
+	<screen>
+cp /etc/skel/.bash* $PVM_ROOT
+cat $PVM_ROOT/lib/bashrc.stub >> $PVM_ROOT/.bashrc  
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Edit <filename>/home/pvm/.bashrc</filename></title>
+      <para>
+	We can now edit <filename>$PVM_ROOT/.bashrc</filename> to define
+	several necessary environment variables. Because PVM_ROOT is 
+	NFS mounted on all nodes, these variables will be defined for the
+	pvm user on all nodes.
+      </para>
+      <para>
+	Using your favorite text editor, add the following lines to the
+	<filename>$PVM_ROOT/.bashrc</filename> just after the section at
+	the beginning which sources global definitions from
+	<filename>/etc/bashrc</filename>:
+	<screen>
+PVM_ROOT=/usr/share/pvm3
+PVM_RSH=/usr/bin/ssh
+export PVM_ROOT PVM_RSH
+	</screen>
+	Of course, if the value of your <varname>PVM_ROOT</varname> is 
+	not <filename>/usr/share/pvm3</filename>, let the command that
+	you use reflect that.
+      </para>
+      <para>
+	With your text editor, uncomment the lines that correspond to 
+	the following commands by deleting the lead # sign:
+	<screen>
+export PATH=$PATH:$PVM_ROOT/lib/$PVM_ARCH  # arch-specific
+export PATH=$PATH:$PVM_ROOT/bin/$PVM_ARCH
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Create a shared <filename>.ssh</filename> directory</title>
+      <para>
+	<screen>
+cd $PVM_ROOT
+mkdir .ssh
+chmod 775 .ssh
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Create an ssh key pair</title>
+      <para>
+	<screen>
+ssh-keygen -t dsa -f .ssh/id_dsa
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Create a shared <filename>authorized_keys</filename> file</title>
+      <para>
+cat .ssh/id_dsa.pub >> .ssh/authorized_keys
+chmod 644 .ssh/authorized_keys
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configure keychain</title>
+      <para>
+	The <emphasis>keychain</emphasis> program makes it possible to 
+	initiate multiple ssh sessions without having to enter a pass-code
+	more than once. Between reboots of the machine, the pass-code is
+	entered the first time a user logs in.  To set this up, we edit the
+	<filename>.bash_profile</filename> file for the pvm user.
+      </para>
+      <para>
+	Using your favorite text editor, append these lines to 
+	<filename>$PVM_ROOT/.bash_profile</filename>:
+	<screen>
+keychain ~/.ssh/id_dsa
+. ~/.keychain/${HOSTNAME}-sh
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="ssh-config">
+    <title>SSH Configuration for Ordinary Nodes</title>
+    <para>
+      In the following, it is assumed that you will be working as the
+      <emphasis>root</emphasis> user, from a terminal window, on the
+      ordinary node. 
+    </para>
+    <para>
+      For convenience sake, define <varname>PVM_ROOT</varname>:
+      <screen>
+PVM_ROOT=/usr/share/pvm3
+      </screen>
+    </para>
+    <para>
+      Just like the head node, each ordinary node needs a 
+      <filename>.ssh</filename> file.
+      <screen>
+cd /home/pvm
+mkdir .ssh
+chmod 755 .ssh
+      </screen>
+    </para>
+  </sect1>
+  <sect1 id="symbolic-links">
+    <title>Symbolic Links for Every Node</title>
+    <para>
+      We have placed several configuration files in <filename>$PVM_ROOT</filename>
+      rather than <filename>/home/pvm</filename> so that they can be shared by
+      all nodes.  Now we have to place symbolic links in each home directory
+      so that they can be found.
+      <screen>
+cd /home/pvm 
+ln -s $PVM_ROOT/.bash_logout         .bash_logout
+ln -s $PVM_ROOT/.bash_profile        .bash_profile
+ln -s $PVM_ROOT/.bashrc              .bashrc
+cd .ssh
+ln -s $PVM_ROOT/.ssh/id_dsa          id_dsa
+ln -s $PVM_ROOT/.ssh/id_dsa.pub      id_dsa.pub
+ln -s $PVM_ROOT/.ssh/authorized_keys authorized_keys
+chown -R pvm.pvm /home/pvm
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Adding an Ordinary Node</title>
+    <para>
+      This section contains a check list for adding an ordinary
+      node.
+    </para>
+    <para>
+      <orderedlist>
+	<listitem>
+	  <para>
+	    As root, in a terminal window, define <varname>PVM_ROOT</varname>:
+	    <screen>
+PVM_ROOT=/usr/share/pvm3
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <link linkend="nfs-all">
+	      NFS Configuration Required for All Nodes
+	    </link>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <link linkend="configure-nfs">
+	      Additional NFS Configuration on Ordinary Nodes
+	    </link>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <link linkend="every-node">Configuration Required for Every Node</link>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <link linkend="ssh-config">SSH Configuration for Ordinary Nodes</link>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <link linkend="symbolic-links">Symbolic Links for Every Node</link>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Test your configuration.  Suppose that the name of the new node
+	    is <emphasis>newnode</emphasis>.
+	    <orderedlist>
+	      <listitem>
+		<para>
+		  Start as the user <emphasis>pvm</emphasis> on 
+		  cspkserver.
+		  Use ssh to log into newnode.  
+		  <screen>
+ssh pvm@newnode
+		  </screen>
+		  You will need to supply the pvm pass<emphasis>phrase</emphasis>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Now, in the same window, log into cspkserver.
+		  <screen>
+ssh cspkserver		    
+		  </screen>
+		  You should be asked to supply the pvm pass<emphasis>phrase</emphasis>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Next, in the same window (which is now displaying a shell
+		  running on cspkserver), log into newnode:
+		  <screen>
+ssh newnode
+		  </screen>
+		  If everything is working, this time you will not be asked
+		  for either a password or a passphrase.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  Finally, from newnode and still in the same window, log into cspkserver:
+		  <screen>
+ssh cspkserver
+		  </screen>
+		  Again, you should not be asked for either a password or
+		  a passphrase.
+		</para>
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+</article>
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw rhel RedHat RHEL PVM RFPK articleinfo
+ -->
+<!--  LocalWords:  revhistory revnumber authorinitials revremark pvm spk linux
+ -->
+<!--  LocalWords:  unix cspkserver varname LINUXI Amd LINUXX orderedlist Uhv IP
+ -->
+<!--  LocalWords:  listitem nfs rw mv cspk mkdir rsize wsize timeo intr eth url
+ -->
+<!--  LocalWords:  localhost localdomain usermod keychain ulink whitechuck scp
+ -->
+<!--  LocalWords:  fileserver cp RSH cd chmod keygen dsa HOSTNAME config ln rsh
+ -->
+<!--  LocalWords:  bashrc chown linkend newnode passphrase internet passcode
+ -->
+<!--  LocalWords:  exportfs anynode
+ -->

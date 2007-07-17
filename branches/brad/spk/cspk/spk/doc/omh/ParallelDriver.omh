@@ -1,0 +1,159 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin ParallelDriver$$
+
+$spell
+	Model model
+    ppka
+    cpp
+    argc
+    argv
+    const
+    covariances
+    dir
+    strcmp
+    cstdlib
+    instantiation
+    instantiated
+    eps
+    itrs
+    laplace
+    ind
+    Spk
+$$
+
+$section Parallel-enabled Driver$$
+
+$index Parallel, driver$$
+
+$head Description$$
+The simplest way of enabling the parallel computation is
+to write a driver that can act as either Master or Node depending
+on the command line arguments.  In this way, the instantiation and initialization of
+SpkModel are done in a single program.
+$pre
+
+$$
+When User request the program to run as Master, the program executes
+$xref/fitPopulation//fitPopulation()/$$.  When Node is requested,
+the same program executes $xref/node//node()/$$ instead.  How to request
+Master or Node?  It's entirely up to you.  You can choose any string 
+as a command line argument and let the program parse it properly. 
+
+$head Example$$
+The following example demonstrates a simple driver program that runs as either
+Master or Node depending on the command line arguments.
+
+$codep
+    //
+    // MyParallelDriver.cpp
+    //
+    #include <cstdlib>
+    #include "fitPopulation.h"
+    #include "SpkModel.h"
+    #include "ParallelControls.h"
+    #include "MyModel.h"  // assuming there is a header declaring MyModel class and a cpp file defining it.
+
+    int main( int argc, const char* argv[] )
+    {
+         //
+         // "MyModel" is a user implementation of SpkModel base class.
+         // Since the model is needed by both Master and Node, it is instantiated here.
+         //
+         MyModel model;
+        
+         //
+         // Do whatever needed to initialize the model.
+         //
+          ... initializing model
+
+         //
+         // parsing the command line arguments.
+         // Usage: myProgram argv[1] argv[2]
+         //   
+         //     argv[1] --- When argv[1] is given, this argument is mandatory.
+         //                 It is a path to the shared directory for communication.
+         //                 For instance, if a director on a machine called "MyMachine"
+         //                 is set as a network shared directory, one way to
+         //                 address the directory is "\\MyMachine\Shared\".
+         //     argv[2] --- String literature, "node", to indicate this program runs as Node
+         //                 If not given, the program runs as Master by default.
+         //
+         if( argc == 3 )
+         {
+             //
+             // The fact that User provided three command line arguments indicates that
+             // this executable runs in the parallel mode.
+             //
+             
+             //
+             // This File object holds the shared directory for communication.
+             // The first argument to the File constructor is the directory path.
+             // The second argument is for a filename, in which in this case NULL.
+             //
+             File sharedDir(argv[1], "");
+
+             //
+             // If the second argument is "node", this runs as a node.
+             // 
+             if( strcmp(argv[2], "node") == 0 )
+             {
+                //
+                // User requested Node.
+                // All node() needs is an instance of SpkModel and a shared directory path.
+                //
+                node(sharedDir, model);
+
+                return 0;
+             }
+             else if( strcmp(argv[2], "master") == 0 )
+             {
+                //
+                // User requested Master.
+                // do whatever you need to do before calling ppkaOpt()
+                //
+                ... initialize the parameters to ppkaOpt()
+                
+                //
+                // Start a population analysis.  This ppkaOpt() runs solely as Master; no co-node process spawned.
+                //
+                fitPopulation(model, "Modified Laplace", N, y, eps, maxItrs, printLevels,
+                   popLow, popUp, popIn, &popOut, popStep, indLow, indUp, indIn, &indOut, 
+                   &lTilde_popOut, &lTilde_pop_popOut, true, sharedDir);
+
+                ... clean up, wrap up...
+             }
+         }
+
+         return 0;
+    }
+
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end

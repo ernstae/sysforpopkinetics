@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# deploy -- deploy the 'user' webapp to the web server
+#
+# usage: deploy app service
+#
+# where app     is 'info' or 'user'
+#       service is 'test' or 'prod'
+#
+#
+
+COMMAND=deploy
+USAGE="usage: $COMMAND app service"
+INSTANCE=webserver:/usr/local/tomcat/instance
+
+if [ $# -ne 2 ]; then
+    echo $USAGE
+    exit 1
+fi
+
+case $1 in
+info )
+	;;
+user )
+	;;
+* )
+    echo $USAGE
+    echo 'app must be "info" or "user"'
+    exit 2
+    ;;
+esac
+APP=$1
+
+case $2 in
+test )
+	;;
+prod )
+	;;
+* )
+    echo $USAGE
+    echo 'service must be "test" or "prod"'
+    exit 2
+    ;;
+esac
+SERVICE=$2
+
+cd $APP
+jar cvf ${APP}.war *
+scp ${APP}.war $INSTANCE/${SERVICE}ssl/webapps

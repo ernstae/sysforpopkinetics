@@ -1,0 +1,12 @@
+$begin MapBay$$
+$spell Bayesian$$
+
+$section Map Bayesian Estimation Routines$$
+
+$childtable/
+	mapObj.cpp/
+	MapObjDiff.cpp/
+	mapOpt.cpp/
+	mapTilde.cpp/$$
+
+$end

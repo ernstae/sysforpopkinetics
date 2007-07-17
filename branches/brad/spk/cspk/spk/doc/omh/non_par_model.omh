@@ -1,0 +1,181 @@
+$begin non_par_model$$
+$spell
+`	Cpp
+	Spk
+	const
+	valarray
+	Ind
+	var
+$$
+$latex \newcommand{\B}[1]{{\bf #1}}$$
+$latex \newcommand{\R}{{\bf R}}$$
+$latex \newcommand{\T}{{\rm T}}$$
+
+
+
+$section Non-parametric Population Analysis Spk Model Requirements$$ 
+$index SpkModel, non-parametric requirements$$
+$index non-parametric, SpkModel requirements$$
+
+$head Syntax$$
+$syntax%SpkModel<%Scalar%> %model%$$.
+
+$head Purpose$$
+This section documents the minimal requirements for an
+Spk $italic model$$ to function with the routine
+Spk non-parameter population analysis routine $cref/spk_non_par/$$.
+
+$head Notation$$
+
+$subhead Scalar$$
+The type $italic Scalar$$ can be any type that supports
+all the operations supported by $code double$$ and
+the $code CppAD::AD$$ template type.
+
+$subhead m$$
+number of fixed effects.
+
+$subhead n$$
+number of random effects per individual.
+(Each individual has it's own realization of the random
+effects vector.)
+
+$subhead M$$
+number of individuals in the population study.
+
+$subhead i$$
+the index corresponding to the current individual,
+$latex 0 \leq i < M$$
+
+$subhead alpha$$
+value of fixed effects, $latex \alpha \in \R^m$$.
+ 
+$subhead b$$
+value of random effects for one individual, $latex b \in \R^n$$     
+
+$subhead N[i]$$
+number of measurements for $th i$$ individual.
+
+$subhead y^i$$
+measurement vector for $th i$$ individual, $latex y^i \in \R^{N[i]}$$.
+
+$subhead D(alpha)$$
+covariance of random effects as a function of
+the fixed effects,
+$latex D : \R^m \rightarrow \R^{n \times n}$$.
+(These matrices are always symmetric positive definite matrix.)
+
+$subhead R(i,alpha,b)$$ 
+covariance of measurement noise as a function of
+the individual index,
+the fixed effects, and the random effects.
+$latex R : \B{Z}_+ \times \R^n \times \R^m \rightarrow \R^{N[i] \times N[i]}$$.
+(These matrices are always symmetric positive definite matrix.)
+
+$subhead f(i,alpha,b)$$
+mean of measurement as a function of
+the individual index,
+the fixed effects, and the random effects.
+given random effects, 
+$latex f : \B{Z}_+ \times \R^n \times \R^m \rightarrow \R^{N[i]}$$.
+
+
+$head Setting Model State$$
+
+$subhead setPopPar$$
+$index SpkModel, setPopPar$$
+$index setPopPar, SpkModel$$
+The syntax
+$syntax%
+	%model%.setPopPar  (%alpha%)
+%$$
+sets the value of the fixed effect vector 
+$cref/alpha/non_par_model/Notation/alpha/$$
+for subsequent usage of $italic model$$.
+The argument $italic alpha$$ must have prototype
+$syntax%
+	const valarray<%Scalar%> &%alpha%
+%$$
+and size equal to 
+$cref/m/non_par_model/Notation/m/$$.
+Calling $code setPopPar$$ 
+erases any previous setting by the $code selectIndividual$$ 
+and 
+$cref/setIndPar/non_par_model/Setting Model State/setIndPar/$$.
+
+$subhead selectIndividual$$
+$index SpkModel, selectIndividual$$
+$index selectIndividual, SpkModel$$
+The syntax
+$syntax%
+	%model%.selectIndividual  (%individual%)
+%$$
+sets the index for the individual that corresponds to subsequent 
+usage of $italic model$$; i.e.,
+$cref/i/non_par_model/Notation/i/$$.
+The argument $italic individual$$ must be an $code int$$ that is greater
+than or equal zero and less than 
+$cref/M/non_par_model/Notation/M/$$.
+Calling $code selectIndividual$$ 
+erases any previous setting by the 
+$cref/setIndPar/non_par_model/Setting Model State/setIndPar/$$.
+
+$subhead setIndPar$$
+$index SpkModel, setIndPar$$
+$index setIndPar, SpkModel$$
+The syntax
+$syntax%
+	%model%.setIndPar  (%b%)
+%$$
+sets the value of the random effects 
+$cref/b/non_par_model/Notation/b/$$
+(corresponding to the current individual as specified by 
+$cref/selectIndividual/non_par_model/Setting Model State/selectIndividual/$$)
+during subsequent usage of $italic model$$.
+The argument $italic b$$ must have prototype
+$syntax%
+	const valarray<%Scalar%> &%b%
+%$$
+and size equal to 
+$cref/n/non_par_model/Notation/n/$$.
+
+$head dataMean$$
+$index SpkModel, dataMean$$
+$index dataMean, SpkModel$$
+The syntax
+$syntax%
+	%model%.dataMean  (%f_out%) 
+%$$
+sets $italic f_out$$ equal to 
+$cref/f(i,alpha,b)/non_par_model/Notation/f(i,alpha,b)/$$.
+The argument $italic f_out$$ has prototype
+$syntax%
+	valarray<%Scalar%> &%f_out%
+%$$
+and its input and out size equal is $latex N[i]$$.
+The input values of its elements do not matter
+and the output value is the mean of
+$cref/y^i/non_par_model/Notation/y^i/$$
+given the current fixed and random effects. 
+
+
+$head dataVariance$$
+$index SpkModel, dataVariance$$
+$index dataVariance, SpkModel$$
+The syntax
+$syntax%
+	%model%.dataVariance  (%R_out%) 
+%$$
+sets $italic R_out$$ equal to 
+$cref/R(i,alpha,b)/non_par_model/Notation/R(i,alpha,b)/$$.
+The argument $italic R_out$$ has prototype
+$syntax%
+	valarray<%Scalar%> &%R_out%
+%$$
+and its input and out size equal is $latex N[i] \times N[i]$$.
+The input values of its elements do not matter
+and the output value is the variance of
+$cref/y^i/non_par_model/Notation/y^i/$$
+given the current fixed and random effects.
+
+$end

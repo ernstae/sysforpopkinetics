@@ -1,0 +1,323 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>ELECTRONIC NOTIFICATION HOWTO</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>April 21, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>December 31, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Relative to RHEL 3.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+    <para>
+	You probably receive and send your ordinary email
+	via the mail agent associated with your web browser
+	or by logging into a &uw; Unix system such
+	as <systemitem moreinfo="none" class="systemname">
+	  homer.u.washington.edu
+	</systemitem> and
+	running <command moreinfo="none">pine</command>.
+	There is another type of mail which is important for anyone
+	who writes operational software and would like to have
+	their programs or scripts send email to interested parties
+	in case something extraordinary occurs.  This document
+	explains how to set up electronic notification email
+	for a RedHat Enterprise Linux, Version 3, system,
+	and provides some examples of how to use it.
+    </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>A Few Examples</title>
+    <para>
+      Let us start with a simple example.
+      <screen format="linespecific">
+if ! mkdir dog; then
+    echo "Could not make dog" | mail -s "Dog creation failed" alan
+fi
+      </screen>
+      This script attempts to create a new directory named
+      <filename moreinfo="none">dog</filename>.  If it fails, a mail
+      message is sent to the user with name 
+      <systemitem moreinfo="none" class="username">alan</systemitem>.
+      Because the recipient address is just a username, the mail
+      will not be sent out over the Internet. Instead, it will simply
+      be sent the the user's mail file on the local machine. If user 
+      <systemitem moreinfo="none" class="username">alan</systemitem>
+      has one or more shell windows open, the shell will 
+      notify him that he has received new mail the next time that
+      he enters any command on the command-line. This is often
+      all that is needed.
+    </para>
+    <para>
+      The script could just as well have sent the notification to
+      the user's Internet email address:
+      <screen format="linespecific">
+if ! mkdir dog; then
+    echo "Could not make dog" | mail -s "Dog creation failed" afw@u.washington.edu
+fi
+      </screen>
+    </para>
+    <para>
+      If the examples above were run from the command line,
+      the email notification would normally not be required. On the
+      other hand, the scripts could be run automatically at some
+      predetermined time by the <command moreinfo="none">cron</command>
+      daemon.  
+    </para>
+    <para>
+      In fact, it is sometimes useful to utilize
+      <command moreinfo="none">cron</command> simply to send reminder
+      messages. For example, the following line inserted into a
+      <filename moreinfo="none">crontab</filename> table would 
+      generate a reminder to change the backup tape in the
+      tape drive every Friday at 3:00 PM:
+      <screen format="linespecific">
+0 15 * * 5   echo "Change the backup tape now!" | mail -s "Change tape" alan
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>System Administration</title>
+    <para>
+      The configuration of the <command moreinfo="none">sendmail</command>
+      mail transfer agent is enormously complex.  Fortunately this
+      process has been made much simpler by the use of configuration
+      macros.  We will make one small change to the arguments to
+      one of these macros.
+    </para>
+    <sect2>
+      <title>Sendmail Configuration Changes</title>
+      <para>
+	We need to install the files that will let us change the
+	<command moreinfo="none">sendmail</command> configuration.
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Download the <emphasis>sendmail_cf</emphasis> package.
+	    </para>
+	    <para>
+	      At the site
+	      <ulink url="https://rhn.redhat.com">rhn.redhat.com</ulink>,
+	      you will be presented with a pop-up dialog box that requests
+	      that you sign in.  The username is
+	      <emphasis>alanwesthagen</emphasis>.  If you do not know the
+	      password, get it from the manager of the Software Team.
+	    </para>
+	    <para>
+	      Once you have signed in, click on the 
+	      <guimenuitem>Software</guimenuitem> tab in the line of tabs
+	      to the right of the RedHat logo at the top of the page.
+	    </para>
+	    <para>
+	      On the next page, click on the link to your version of RHEL:
+	      <guimenuitem>RedHat Enterprise Linux WS (V.3 for X86)</guimenuitem>.
+	    </para>
+	    <para>
+	      Click the <guimenuitem>packages</guimenuitem> link.
+	    </para>
+	    <para>
+	      In the <guimenuitem>Filter by Name</guimenuitem> field,
+	      type <emphasis>sendmail</emphasis>, then click 
+	      <guimenuitem>Go</guimenuitem>.
+	    </para>
+	    <para>
+	      Finally, click the check box beside
+	      <guimenuitem>sendmail_cf-...</guimenuitem>
+	      and proceed to download the package.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Install the package.
+	    </para>
+	    <para>
+	      Become the 
+	      <systemitem moreinfo="none" class="username">root</systemitem>
+	      user, provide the password when asked, and run the
+	      <command moreinfo="none">rpm</command> command:
+	      <screen format="linespecific">
+cd
+tar xvf rhn-packages.tar
+su
+cd rhn-packages 
+rpm -Uhv *
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Edit the macro file, <filename>sendmail.mc</filename>
+	      process it with M4.
+	    </para>
+	    <para>
+	      In a shell window, as root, make a backup copy of 
+	      <filename>sendmail.mc</filename>:
+	      <screen>
+cd /etc/mail
+cp sendmail.mc sendmail.mc.bak
+	      </screen>
+	      Next edit <filename>sendmail.mc</filename>, using your 
+	      favorite editor.  Replace the line
+	      <screen>
+dnl define(`SMART_HOST',`smtp.your.provider')
+	      </screen>
+	      with the line
+	      <screen>
+dnl define(`SMART_HOST',`smtp.washington.edu')
+	      </screen>
+	      and then run <command>m4</command> to process the macros:
+	      <screen>
+m4 sendmail.mc > sendmail.cf
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Restart sendmail and insure that it starts automatically
+	      each time the system boots.
+	    </para>
+	    <para>
+	      In a shell window, as root:
+	      <screen>
+/etc/rc.d/init.d/sendmail restart
+/sbin/chkconfig --level 2345 sendmail on
+	      </screen>
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>TCP Wrappers Configuration</title>
+      <para>
+	TCP Wrappers is one of several layers of security which 
+	protect a Linux computer from malevolent attack via the
+	Internet.  In order to use
+	<command moreinfo="none">sendmail</command> for sending
+	notifications, we have to open up security so that
+	at least our own workstation can receive messages from itself.
+      </para>
+      <para>
+	On the Internet, the computer that we are logged into has
+	several aliases:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      An alias host name:
+	<systemitem moreinfo="none" class="systemname">localhost</systemitem>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      An alias IP address:
+	<systemitem moreinfo="none" class="resource">127.0.0.1</systemitem>.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	We will now add the alias IP address to the list of
+	hosts that are allowed to communicate with our machine.
+	First we make a copy of the file that we are about to change,
+	by putting it under the control of RCS:
+	<screen format="linespecific">
+cd /etc
+ci -l hosts.allow
+	</screen>
+      </para>
+      <para>
+	Using our favorite text editor, we add the following line to the file 
+	<filename moreinfo="none">/etc/hosts.allow</filename>
+	<screen format="linespecific">
+ALL: 127.0.0.1
+	</screen>
+	then use the <command moreinfo="none">rcsdiff</command>
+	command to verify the result.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Testing the Results</title>
+      <para>
+	You can test the results by sending yourself or anyone else an email
+	message from the command line.  For example:
+	<screen format="linespecific">
+echo "a message" | mail -s "a subject line" afw@u.washington.edu
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Notifications from Cron</title>
+    <para>
+      The <command moreinfo="none">cron</command> batch scheduling daemon
+      does not run from your desktop and is not attached to any 
+      terminal or shell window.  If you have
+      <command moreinfo="none">cron</command>
+      run a command which writes output to 
+      <emphasis>standard output</emphasis> or
+      <emphasis>standard error</emphasis>, there will be no place for
+      the output to go unless you add redirection to the command.
+      Without redirection, <command moreinfo="none">cron</command>
+      will send the output to your email in-box.  If you allow this
+      to happen, your in-box will get very large, very quickly.
+    </para>
+    <para>
+      If you do not care to ever see the output of a command run from
+      cron, simply redirect all of the output to the null file. The
+      following example shows a way (no longer the best way) to set
+      your computer's Internal clock from a time standard via the
+      Internet.  In this case, you do not care to receive email
+      each night telling you that your clock has been adjusted.  The
+      command redirects standard output to 
+      <filename moreinfo="none">/dev/null</filename> and then
+      redirects file descriptor 2, which is standard error, onto
+      file descriptor 1, which is standard input, so that both
+      of these streams are taken care of. (If this seems a bit
+      esoteric, you are right. Just remember the pattern.  It works.)
+      <screen format="linespecific">
+30 22 * * * rdate -s bigben.cac.washington.edu > /dev/null 2>&1
+      </screen>     
+    </para>
+    <para>
+      You usually do not want your <command moreinfo="none">cron</command>
+      jobs to run in complete silence.  This example will send you
+      mail telling of success or failure.
+    </para>
+    <para>
+      Here is a script to use tar to backup the home directory of a user called
+      <systemitem moreinfo="none" class="username">alan</systemitem> who wants
+      to be notified of success or failure at his emails address
+      <emphasis>afw@u.washington.edu</emphasis>:
+      <screen format="linespecific"> 
+if tar cf home.tgz /home/alan > /dev/null > 2>&1 ; then
+    echo "Tar was successful" -s | mail -s "Tar succeeded" afw@u.washington.edu
+else
+    echo "Tar had problems"   -s | mail -s "Tar failed"    afw@u.washington.edu
+fi
+      </screen>
+    </para>
+    <para>
+      The following addition to <filename moreinfo="none">crontab</filename>
+      will cause <command moreinfo="none">cron</command> to run the
+      backup script,
+      <filename moreinfo="none">/home/alan/bin/shell/backup</filename>,
+      once a week at 3:15 AM on Sunday:
+      <screen format="linespecific">
+15 3 * * 7 /home/alan/bin/shell/backup
+      </screen>
+    </para>
+  </sect1>
+</article>
