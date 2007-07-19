@@ -8,7 +8,7 @@ then
     exit 1
 fi
 
-source ../../../../../doc/webdir.sh
+source ../../../doc/webdir.sh
 
 SERVICE_ROOT=spkrun
 SERVICE_HOST=cspkserver
