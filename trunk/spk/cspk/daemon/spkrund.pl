@@ -229,11 +229,11 @@ my $sport    = shift;
 my $max_concurrent = shift;
 
 my $hostname = hostname();
-my $from = 'rfpksoft\@u.washington.edu';
+my $from = 'rfpksoft@u.washington.edu';
 my $alert = 'jjdu@u.washington.edu,ernst@u.washington.edu';
 
 my $bugzilla_production_only = 1;
-my $bugzilla_url = "http://192.168.1.101:8081/";
+my $bugzilla_url = "http://bugzilla.rfpk.washington.edu/";
 
 $max_concurrent = &getNumProcs() unless defined $max_concurrent;
 
