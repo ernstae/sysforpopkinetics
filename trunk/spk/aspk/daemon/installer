@@ -10,7 +10,7 @@ fi
 echo "You can only run this from aspkserver."
 echo "If the aspkserver login fails, that's the reason."
 
-source ../../../../../doc/webdir.sh
+source ../../../doc/webdir.sh
 
 SERVICE_ROOT=spkcmp
 SERVICE_HOST=aspkserver
