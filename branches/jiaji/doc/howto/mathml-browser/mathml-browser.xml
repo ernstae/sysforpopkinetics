@@ -1,0 +1,247 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>MathML for Gecko-Based Browsers and Linux</title>
+  <articleinfo>
+    <abstract>
+      <para>
+	The acquisition and installation of fonts sufficient to enable 
+	browsers based on the Gecko Display Engine to handle MathML
+	is described.  Mozilla and Firefox are Gecko-based.
+      </para>
+      <para>
+	The information in this document is targeted primarily toward
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the &dept; of the &uw;.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </para>
+      <para>
+	<link linkend="copyright">Copyright</link> (c) 2005, by the &uw;.
+      </para>
+    </abstract>
+    <revhistory>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>June 13, 2005</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>troubleshooting: incorrect rendering</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>February 9, 2005</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      As installed on linux systems, the Firefox and Mozilla  browsers 
+      do a poor job of displaying MathML.  The reason for this is that
+      certain fonts are missing.  RedHat and other distributors of
+      linux do not include these fonts in their installation packages
+      because the fonts are proprietary or otherwise restricted.
+      Satisfactory fonts can, however, be downloaded separately from
+      organizations that have the right to distribute them.  This
+      document describes a procedure for downloading and installing
+      these fonts.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Troubleshooting</title>
+    <sect2>
+      <title>Math Symbols: Incorrect Rendering</title>
+      <para>
+      If some symble is all the sudden displayed incorrectly in 
+      browsers although
+      it was rendered properly in the past, it may be due to
+      some recent Linux update.  In that case, repeat 
+      "Install the Type 1 Symbol Font" and reload the page containing
+      the problematic symbol(s).
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Download the Fonts and Copy to <filename>/tmp</filename></title>
+    <para>
+      Download the required fonts by clicking on these URLs:
+    </para>
+    <para>
+      <ulink url="http://mozilla.org/projects/mathml/fonts/bakoma/texcm-ttf.zip">
+	TeX Truetype fonts
+      </ulink>
+    </para>
+    <para>
+      <ulink url="http://support.wolfram.com/mathematica/systems/windows/general/MathFonts_TrueType_42.exe">
+	Mathematica Truetype fonts
+      </ulink>
+    </para>
+    <para>
+      <ulink url="http://silas.psfc.mit.edu/tth/symfontconfig.tar.gz">
+	Symbol Type 1 font
+      </ulink>
+    </para>
+    <para>
+      Copy the three downloaded archives from wherever your browser
+      put them (the default is your home directory) to the
+      <filename>/tmp</filename> directory.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Install the Truetype Fonts</title>
+    <para>
+      We will be installing two sets of TrueType fonts. One set
+      was developed for TeX, and the other for Mathematica.
+    </para>
+    <para>
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Open a terminal window, then become root by executing this 
+	    command:
+	    <screen>
+su -
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Make a directory for the fonts:
+	    <screen>
+mkdir /usr/X11R6/lib/X11/fonts/MathML
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Expand the downloaded font archives:
+	    <screen>
+cd /tmp
+unzip texcm-ttf.zip
+unzip MathFonts_TrueType_42.exe
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Copy the font files to the MathML directory:
+	    <screen>
+cp Math*.ttf   /usr/X11R6/lib/X11/fonts/MathML
+cp texcm-ttf/* /usr/X11R6/lib/X11/fonts/MathML
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Inform X-Windows about the fonts:
+	    <screen>
+cd /usr/X11R6/lib/X11/fonts/MathML
+ttmkfdir > fonts.scale
+mkfontdir
+chkfontpath -a /usr/X11R6/lib/X11/fonts/MathML
+	    </screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Make Fonts Available to Browser</title>
+    <para>
+      At this point the fonts are known to the X-Windows system.  This should
+      be good enough for Firefox and Mozilla.  For some reason it is not.
+      A simple work-around, however, is to copy the fonts to the 
+      <filename>~.fonts</filename> subdirectory of your home directory:
+      <screen>
+exit        # become an ordinary user
+cd ~
+mkdir -p .fonts
+cp /usr/X11R6/lib/X11/fonts/MathML/*.ttf .fonts
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Install the Type 1 Symbol Font</title>
+    <para>
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Open a terminal window, then become root by executing this 
+	    command:
+	    <screen>
+su -
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Expand the downloaded archive:
+	    <screen>
+cd /tmp
+tar xvzf symfontconfig.tar.gz
+cd symfontconfig
+./install.sh
+	    </screen>
+	    The script will ask you several questions.  Answer
+	    <emphasis>y</emphasis> each time.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Restart X-Windows</title>
+    <para>
+      Restart X-Windows by restarting your desktop.  This is usually
+      accomplished by logging out of the desktop, then logging back
+      in.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Try It Out</title>
+    <para>
+      You can evaluate your browser's newly acquired facility with
+      MathML by accessing the  
+      <ulink url="http://www.w3.org/Math/testsuite/testsuite/Presentation/GeneralLayout/msqrt-mroot/mrootSfonts3.xml">
+	W3C MathML TestSuite
+      </ulink>.
+      When you first click this link, a pop-up window titled
+      "Missing MathML Fonts" may appear. The pop-up contains a 
+      link to a page at Mozilla.org. If you follow the link, 
+      you will find a recommendation that linux users need to add
+      exactly the same fonts that you have just installed. 
+      You can ignore this warning.
+    </para>
+  </sect1>
+  <sect1>
+    <title id="copyright">Copyright Notice</title> 
+    <para>
+      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <ulink url="http://www.opencontent.org/openpub/">here</ulink>.
+    </para>
+    <para>
+    </para>
+  </sect1>
+</article>
+
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw articleinfo SPK RFPK RFPK's linkend
+ -->
+<!--  LocalWords:  ulink url MathML Mozilla Firefox revhistory revnumber linux
+ -->
+<!--  LocalWords:  authorinitials revremark RedHat tmp Truetype TrueType su cd
+ -->
+<!--  LocalWords:  orderedlist listitem mkdir texcm ttf MathFonts exe cp xvzf
+ -->
+<!--  LocalWords:  ttmkfdir mkfontdir chkfontpath symfontconfig TestSuite
+ -->

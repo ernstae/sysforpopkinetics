@@ -1,0 +1,62 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin population$$
+$spell namespace
+$$
+
+$section Population Parameter Estimation$$
+
+$comment	ppkaSim.oms/$$
+$comment	LMonte.oms/$$
+
+Many of the following modules may
+use identifiers defined in the $xref/namespace_population_analysis//namespace_population_analysis/$$
+namespace.
+
+$childtable/
+    estimateB.cpp/
+    expectedHessian.cpp/
+    firstOrderOpt.cpp/
+    fitPopulation.cpp/
+    EqIndModel.omh/
+    lambda.cpp/
+    lambdaDiff.cpp/
+    lambda2diff.cpp/
+    lTilde.cpp/
+    NaiveFoModel.cpp/
+    namespace_population_analysis.h/ 
+    Objective.h/   
+    ppkaOpt.cpp/
+    popResiduals.cpp/
+    popStatistics.cpp/
+    twoStageMethod.cpp/
+    spk_non_par.cpp
+/$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end

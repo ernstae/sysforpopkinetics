@@ -1,0 +1,11 @@
+            Identifiability Driver
+
+
+In order to execute the identifiability driver, use the following
+syntax:
+
+    ./check_ident input_file.xml output_file.xml
+
+
+For details on the input and output XML files, see the
+specifications for the function check_ident.

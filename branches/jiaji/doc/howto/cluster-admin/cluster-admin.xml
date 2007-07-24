@@ -1,0 +1,447 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+ <!ENTITY cspk1 '<systemitem class="systemname">cspk1</systemitem>'>
+ <!ENTITY cspk2 '<systemitem class="systemname">cspk2</systemitem>'>
+ <!ENTITY cspk3 '<systemitem class="systemname">cspk3</systemitem>'>
+ <!ENTITY cspk4 '<systemitem class="systemname">cspk4</systemitem>'>
+ <!ENTITY cspk5 '<systemitem class="systemname">cspk5</systemitem>'>
+ <!ENTITY whitechuck '<systemitem class="systemname">whitechuck</systemitem>'>
+]>
+<article><title>Cluster Administration</title>
+  <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>August 7, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>June 25, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>
+	  Updated to reflect new topology and work-around for the
+	  ethernet bug
+	</revremark>
+      </revision>
+    </revhistory>
+    <abstract>
+      <para>
+	Processes and files for administering the RFPK computational
+	cluster are presented.
+      </para>
+    </abstract>
+  </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      Among RFPK's resources is a computational cluster which was
+      purchased from Linux Labs at the end of the year 2001.
+      With clustering software added to Linux operating system, the
+      cluster has the potential of behaving towards software very much as would a 
+      distributed memory multiprocessor system, except that 
+      interprocess communication is accomplished via Ethernet
+      rather than memory
+      and, therefore, is many orders of magnitude slower. Spk, however,
+      does not require high interprocess communication bandwidth.
+    </para>
+    <para>
+      The cluster consists of five individual computers, interconnected
+      by Ethernet.  The fact that each node is an individual machine
+      increases the burden of system administration.  This document
+      describes the configuration both of hardware and software so that
+      it can be restored in case it is destroyed or degraded.
+      It also provides some processes for operating the cluster.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Hardware</title>
+    <sect2>
+      <title>Node Description</title>
+      <para>
+	Each node of the cluster contains a Matsonic
+	MS7308E mainboard, with a single 1GHz Pentium III processor,
+	ethernet, video, keyboard, mouse and IDE disk interfaces.
+      </para>
+      <para>
+	One node contains additional hardware so that it can act
+	as a frontend or gateway for the other nodes. The host name
+	of this node is &cspk1;, and it differs
+	from the other nodes 
+	the following ways:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      It has a second ethernet adapter.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      There is a combination drive, which contains both a floppy
+	      drive and a CDROM drive.  The other nodes have DVD drives
+	      capable of reading CDROMs, but no floppy.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      There are three PCI sockets, rather than the two which
+	      are found on the other boards. The second ethernet 
+	      adapter occupies one of these sockets. None of the
+	      other PCI sockets of any of the nodes are used,
+	      at present.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	The other nodes are named &cspk2;, ..., &cspk5; and
+	are identical.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="invalid">Ethernet Adapter Bug</title>
+      <para>
+	All five nodes have an ethernet adapter chip on the mother
+	board.  Each ethernet adapter should, according to IEEE
+	standards, have a unique MAC address "burned into" the 
+	hardware of the adapter.  The built-in adapters of all
+	five nodes have identical MAC addresses, however.  As
+	will be described
+	<link linkend="fix">below</link>, a non-standard linux network
+	configuration must be employed to work around this bug.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Node Interconnection</title>
+      <para>
+	At cluster is interconnected using one or the other of
+	two topologies:
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Frontend and computational nodes.  In this topology,
+	      &cspk1; is connected to the green LAN via one of its
+	      ethernet interfaces, and to the rest of the nodes
+	      via its other ethernet interface and an ethernet
+	      switch.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Each node is simply an individual computational
+	      engine, connected to the green LAN.
+	    </para>
+	  </listitem>
+	</orderedlist>
+	Sometimes, the nodes are partitioned into two subsets,
+	one set implementing the first topology and the other
+	set implementing the second.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Keyboard, Video and Mouse</title>
+      <para>
+	On each node, the video connector is near the center of
+	the back of the case.  The keyboard and mouse connectors
+	are just to the right of the mainboard Ethernet socket,
+	as viewed from the front.  These connectors are cabled
+	to a KVM switch, so that all nodes are accessible,
+	one at time, from a single keyboard, video monitor and
+	mouse.
+      </para>
+    </sect2>
+    <sect2>
+      <title>BIOS</title>
+      <para>
+	The BIOS settings are the same for all nodes.  One of the
+	quirks of these systems is that it can be difficult
+	to get to the BIOS configuration screens. At the beginning
+	of the boot sequence, the BIOS will instruct you to
+	press <keycap>DEL</keycap> if you want to enter BIOS
+	configuration.  Often you will be taken directly to the
+	Grub boot screen even though you have pressed <keycap>DEL</keycap>.
+	If this happens, press 
+	<keycap>CTRL-ALT-DEL</keycap> to reboot, then continue
+	to press <keycap>DEL</keycap> several times a second.  This 
+	usually gets the attention of the BIOS.
+      </para>
+      <para>
+	Small configuration changes need to be made at each of the
+	following BIOS menu categories on all nodes:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Standard CMOS Setup
+	    </para>
+	    <para>
+	      Use the <emphasis>Auto</emphasis> discovery 
+	      capability to set the IDE devices correctly.
+	    </para>
+	    <para>
+	      For <emphasis>Floppy Drive A</emphasis>,
+	      select the value: <emphasis>Not Installed</emphasis>.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Advanced Setup
+	    </para>
+	    <para>
+	      For <emphasis>1st Boot Device</emphasis>,
+	      select the value: <emphasis>CDROM</emphasis>.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Power Management Setup
+	    </para>
+	    <para>
+	      For <emphasis>Power Management/APM</emphasis>,
+	      select the value: <emphasis>Disabled</emphasis>.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Software</title>
+    <sect2>
+      <title>Linux Installation</title>
+      <sect3>
+	<title>Initial Installation</title>
+	<para>
+	  Using CDROMs install on each node
+	  the same version of RedHat Linux that
+	  is currently installed on the Software Team workstations.
+	  Select the <emphasis>workstation</emphasis>
+	  configuration, rather than desk-top or server.
+	</para>
+	<para>
+	  The interactive installation wizard will ask you to
+	  specify several options:
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+		Time Zone
+	      </para>
+	      <para>
+		Select the time zone of Los Angeles, USA
+	      </para>
+	      <para>
+		Check the <emphasis>System Time Uses UTC</emphasis> box.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Network Configuration
+	      </para>
+	      <para>
+		Choose to use DHCP, provide the host name 
+		(&cspk1;, &cspk2;, &cspk3;, &cspk4;, or &cspk5;),
+		but choose not to start the network when the system
+		boots.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Package Selection.  Select
+		only packages that make sense for a computational server,
+		on which software must be compiled and linked and which
+		must interact with a MySQL database.
+		<itemizedlist>
+		  <listitem>
+		    <para>
+		      X Window System
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Editors
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Engineering and Scientific
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      MySQL Database
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Development Tools
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Legacy Software Development
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      System Tools
+		    </para>
+		  </listitem>
+		</itemizedlist>
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Security.  No firewall.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Boot Options
+	      </para>
+	      <para>
+		Boot the Grub boot loader from the boot segment
+		of the hda disk volume.
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
+      </sect3>
+      <sect3>
+	<title>Boot Configuration</title>
+	<sect4>
+	  <title>Run Level</title>
+	  <para>
+	    On each node, edit
+	    <filename>/etc/inittab</filename> so that the
+	    specification for initial run level after boot looks like
+	    this:
+	    <screen>
+	      id:3:initdefault:
+	    </screen>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title>Services</title>
+	  <para>
+	    Disable the automatic start of the <emphasis>sendmail</emphasis>
+	    and <emphasis>ntp</emphasis> daemons:
+	    <screen>
+/sbin/chkconfig sendmail off
+/sbin/chkconfig ntpd off
+	    </screen>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title id="fix"><filename>/etc/rc.d/rc.local</filename></title>
+	  <para>
+	    The following lines should be appended to
+	    <filename>/etc/rc.d/rc.local</filename>, which is the last script
+	    run during the initialization of services at boot time, as a
+	    work around for 
+	    <link linkend="invalid">bug</link> in the ethernet adapters.
+	    <screen>
+/sbin/ifconfig eth0 hw ether 0E:00:01:00:00:0${HOSTNAME#cspk}
+/sbin/ifconfig eth0 up
+/sbin/dhclient
+/sbin/ifconfig lo 127.0.0.1
+/etc/rc.d/init.d/ntpd start
+	    </screen>
+	    Note that the final digit in the MAC address in the first line
+	    of the code, above, is constructed by taking the last digit
+	    from the host name of the node.
+	  </para>
+	</sect4>
+      </sect3>
+      <sect3>
+	<title>Network Configuration</title>
+	<para>
+	  Everything in this section must be performed by the root
+	  user.
+	</para>
+	<sect4>
+	  <title><filename>/etc/hosts</filename></title>
+	  <para>
+	  </para>
+	</sect4>
+	<sect4>
+	  <title><filename>/etc/sysconfig/network-scripts/ifcfg-eth0</filename></title>
+	  <para>
+	    The standard DHCP configuration created by the installation should
+	    be sufficient.  Check to make certain that the value of the
+	    <emphasis>ONBOOT</emphasis> parameter is <emphasis>no</emphasis>,
+	    because we do not want the adapter to start broadcasting its 
+	    <link linkend="invalid">invalid</link> MAC address out onto the
+	    network.  
+	  </para>
+	</sect4>
+	<sect4>
+	  <title><filename>/etc/sysconfig/network-scripts/ifcfg-eth1</filename></title>
+	  <para>
+	    This interface, present only on &cspk1;, can retain the standard
+	    DHCP configuration.  In this case, <emphasis>ONBOOT</emphasis> should
+	    be <emphasis>yes</emphasis>.
+	  </para>
+	</sect4>
+      </sect3>
+      <sect3>
+	<title>Time Server Configuration</title>
+	<para>
+	  It is important that the system clocks of the nodes be closely
+	  synchronized, since the nodes are supposed to work together as a 
+	  single computer system.
+	  See the 
+	  <emphasis>Clock Synchronization</emphasis> Howto for details.
+	</para>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Operation</title>
+    <sect2>
+      <title>Restarting the Network</title>
+      <para>
+	Because of the <link linkend="fix">work-around</link> that has
+	been installed for the ethernet <link linkend="invalid">bug</link>,
+	the single command
+	<command>/etc/rc.d/init.d/network restart</command> is insufficient
+	to restart the network.  Instead, the following two commands must
+	be input by the root user:
+	<screen>
+/etc/rc.d/init.d/network restart
+/etc/rc.d/rc.local
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+</article>
+<!--  LocalWords:  xml DOCTYPE DocBook uw riso systemitem systemname whitechuck
+ -->
+<!--  LocalWords:  articleinfo revhistory revnumber authorinitials revremark tk
+ -->
+<!--  LocalWords:  RFPK RFPK's OpenMosix towards Matsonic mainboard GHz IDE PCI
+ -->
+<!--  LocalWords:  itemizedlist listitem CDROM CDROMs Ethernet Mhz keycap CTRL
+ -->
+<!--  LocalWords:  glosslist glossentry glossterm glossdef APM RedHat UTC hda
+ -->
+<!--  LocalWords:  Mosix localhost localdomain nameserver resolv HOSTNAME eth
+ -->
+<!--  LocalWords:  BOOTPROTO ONBOOT IPADDR NETMASK dhcp Howto nomodify notrap
+ -->
+<!--  LocalWords:  mytrustedtimeserverip noquery ntpd scp RPFK instuctions eval
+ -->
+<!--  LocalWords:  lokkit iptables gui guimenu guimenuitem Keychain keychain cd
+ -->
+<!--  LocalWords:  ulink url gentoo RPMs openmosix SourceForge openmosixview IP
+ -->
+<!--  LocalWords:  OpenMosixView rhn omtest Buytaert oMFS DFSA mkdir mfs mnt
+ -->
+<!--  LocalWords:  dfsa openMosixCollector chkconfig openMosix orderedlist ntpq
+ -->
+<!--  LocalWords:  openmosixcollector ntpcheck resync datecheck powerdown tmp
+ -->
+<!--  LocalWords:  yyyy tttt config
+ -->

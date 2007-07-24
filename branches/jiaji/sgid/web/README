@@ -1,0 +1,14 @@
+SGID Identifiability Client v1.0
+================================
+
+REQUIREMENTS
+
+ - PHP capable web server
+	(www.php.net)
+
+ - PHP PEAR classes
+	XML_Serializer
+	XML_Util
+	
+
+

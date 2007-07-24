@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>SPK User</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>August 23, 2005</date>
+	<authorinitials>jiaji</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+The general SPK users are biological scientists.  There are two special users: user acount administator and librarian.
+All other users are called ordinary users.  Some of the ordinary users are SPK testers and some of the SPK testers 
+are SPK developers. An ordinary user can join a group.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+The general SPK users are biological scientists. There are two special users: user account administrator and librarian.
+The SPK user accounts are managed through an web interface which is available solely to the user account administrator.
+SPK provides a library of models, datasets and job examples to all users, which are handled solely by the librarian.
+All other users are called ordinary users.  Some of the ordinary users are SPK testers and some of the SPK testers 
+are SPK developers.  An ordinary user can join a group.  This specification describes the privileges and responsibilities 
+of each type of the users. 
+     
+    </para>
+  </sect1>
+  <sect1>
+    <title>User account administrator</title>
+    <para>
+There is a special user account with a fixed name 'useradmin'.  This user account is for the user account administrator of the 
+system.  There is only one such account in the system.  The user administrator manages all the user accounts through a web 
+inerface in the MySPK web site.  The user administrator has the privilege of entering all the uaer accounts in the system.  
+This special user is responsible of creating new user accounts, updating existing user accounts and searching for an existing 
+user account.  To enter a user account, login as useradmin, nevigate to the "All User List" page and select the user account.
+When the SPK service is temporarily unavailable, the user administrator may post a maintenance notice in the MySPK web site. 
+     </para>
+     <para>
+When the Model Design Agent is started in Test Mode, entering the useradmin's password with any user account's username into 
+the 'Logging In Dialog' enables the user to use the Model Design Agent to access the user's account.
+     </para>
+     <para>
+The password of this acount is set to 'useradmin' when this product is shipped.  It should be changed immediately when the
+user administrator enters the system for the first time.
+     </para>
+  </sect1>
+  <sect1>
+    <title>Librarian user</title>
+    <para>
+The librarian user is the special user who handles the libraries.  The username of this account is fixed as 'librarian'.   There is 
+only one such account in the system.  This special user has all the privileges as an ordinary user has except being an SPK tester.
+The librarian's responsiblility is to enter job examples to the database for other users to use.
+Each job example has an associated model version and an associated dataset version that are entered to the database as the job is
+entered.  To enter a job example, get the job's Input XML, open it in the MDA editor window and then click the Model Design Agent's 
+"Submit Job" button.  Unlike the useradmin, the librarian can not enter any other user's account. 
+    </para>
+    <para>
+The password of this acount is set to 'librarian' when this product is shipped.  It should be changed immediately when the
+librarian enters the system for the first time.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Ordinary user</title>
+    <para>
+An ordinary user account may have any unique username except 'useradmin' and 'librarian'.  There may be many ordinary user accounts.
+An ordinary user can download a Model Design Agent and use it.  An ordinary user can also access all the information of the library 
+in read-only basis and all the information in his/her account. The SPK uses Bugzilla as its bug tracking system.  An ordinary user 
+has an acoount in that system and may access it through MySPK web site.  An ordinary user may share jobs with other users and stop 
+the sharing at any time.  The receiver of the file sharing may not share that job with any other user, but may stop the sharing at 
+any time.
+    </para>
+  </sect1>
+  <sect1>
+    <title>SPK tester </title>
+    <para>
+An SPK tester user account is also an ordinary user account.  There may be many SPK tester accounts.  The user of this account 
+can access in-development features of the Model Design Agent while other users can not such as certain methods and warning/error 
+information.
+    </para>
+  </sect1>
+  <sect1>
+    <title>SPK developer</title>
+    <para>
+An SPK developer user account is also an SPK tester account.  There may be many SPK developer accounts.  The user of this account 
+can access in-development features of the Model Design Agent while other users can not such as certain methods and warning/error 
+information.  In the SPK test environment, SPK 
+developers can enter other ordinary user accounts with the account holders' permission to resolve software problems 
+    </para>
+  </sect1>
+  <sect1>
+    <title>Group users</title>
+    <para>
+An ordinary SPK user can join a group.  Each user can join only one group.  A group can have any number of members.  Users in the 
+same group can use other group member's models, datasets and jobs, but can not modify them.  The group users can not either change 
+each other's job abstract or abort each other's job.  
+    </para>
+  </sect1>
+  <sect1>
+    <title></title>
+    <para>
+An ordinary SPK user can join a group.  Each user can join only one group.  A group can have any number of members.  Users in the 
+same group can use other group member's models, datasets and jobs, but can not modify them.  The group users can not either change 
+each other's job abstract or abort each other's job.  
+    </para>
+  </sect1>
+</article>

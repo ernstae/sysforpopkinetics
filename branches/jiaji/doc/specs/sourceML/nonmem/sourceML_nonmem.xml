@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<spksource>
+   <nonmem>
+       <constraint>
+          <pop_analysis is_estimation="yes"
+                        approximation="fo"
+                        pop_size="12">
+             <description>CONTROL 4 + THEOPHYLLINE example</description>
+             <data_labels>
+                <label name="ID"/>
+                <label name="DOSE" synonym="AMT"/>
+                <label name="TIME"/>
+                <label name="CL" synonym="DV"/>
+                <label name="WT"/>
+             </data_labels>
+             <theta length="3">
+                <low>
+                   <value>0.1</value>
+                   <value>.008</value>
+                   <value>.004</value>
+                </low>
+                <in>
+                   <value>3.</value>
+                   <value>.08</value>
+                   <value>0.04</value>
+                </in>
+                <up>
+                   <value>5</value>
+                   <value>.5</value>
+                   <value>0.9</value>
+                </up>
+             </theta>
+             <omega struct="block" dimension="3">
+                <in>
+                   <value>6</value>
+                   <value>0.005</value>
+                   <value>0.0002</value>
+                   <value>.3</value>
+                   <value>.006</value>
+                   <value>.4</value>
+                </in>
+             </omega>
+             <sigma struct="diagonal" dimension="1">
+                <in>
+                   <value>.4</value>
+                </in>   
+             </sigma>
+             <eta length="3">
+                <in>
+                   <value>0.0</value>
+                   <value>0.0</value>
+                   <value>0.0</value>
+                </in>
+             </eta>
+             <pop_stat is_stderror_out="yes"
+                       is_covariance_out="yes"
+                       is_correlation_out="yes"
+                       covariance_form="r"/>
+             <ind_stat is_stderror_out="no"
+                       is_covariance_out="yes"
+                       is_correlation_out="no"/>
+          </pop_analysis>
+       </constraint>
+       <model>
+          <description>Two compartmental model</description>
+             <pred>
+;THETA(1)=MEAN ABSORPTION RATE CONSTANT (1/HR)
+;THETA(2)=MEAN ELIMINATION RATE CONSTANT (1/HR)
+;THETA(3)=SLOPE OF CLEARANCE VS WEIGHT RELATIONSHIP (LITERS/HR/kg)
+;DOSE=WT-ADJUSTED DOSE (mg/kg)
+;DS=NON-WT-ADJUSTED DOSE (mg)
+   IF (DOSE.NE.0) THEN
+      DS=DOSE*WT
+      W=WT
+   ENDIF
+   KA=THETA(1) + ETA(1)
+   KE=THETA(2) + ETA(2)
+   CL=THETA(3) * WT + ETA(3)
+   D=EXP(-KE*TIME)-EXP(-KA*TIME)
+   E=CL*(KA-KE)
+   F=DS*KE*KA/E*D
+   Y=F+EPS(1)
+            </pred>
+          </model>
+       <presentation>
+          <table header="every" process="estimation">
+             <column label="ID" appearance_order="1"/>
+             <column label="DOSE" appearance_order="2"/>
+             <column label="WT" appearance_order="3"/>
+             <column label="TIME" appearance_order="4"/>
+          </table>
+          <scatterplot process="estimation" y0_line="show" unit_slope="yes">
+             <y label="RES"/>
+             <y label="WRES"/>
+             <x label="TIME"/>
+             <by label="ID"/>
+          </scatterplot>
+       </presentation>
+   </nonmem>
+</spksource>

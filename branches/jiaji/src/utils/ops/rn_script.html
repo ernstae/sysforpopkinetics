@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>release_notes -- combine and publish SPK release notes</title>
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#options_and_arguments">OPTIONS AND ARGUMENTS</a></li>
+	<li><a href="#files">FILES</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>release_notes -- combine and publish SPK release notes</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>release_notes</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>
+Each candidate for deployment of SPK may be thought of as a minor 
+version.  For each candidate, there is a text file, called 
+notes-version, where version is a minor version number such as
+"0.1.24".  Each such file is created by the stage_candidate.pl
+shell script when a software engineer creates a candidate.
+Initially, the file contains only the skeleton of a release-notes
+document.  Subsequently, the software engineer uses a text 
+editor to flesh out the file with a description of the changes
+that the minor version embodies.
+</p>
+<p>
+The release_notes script is run as part of the deployment 
+process.  All release-notes files created since the last
+deployment are concatenated to create a combined release-notes
+file for the deployed version.
+</p>
+<hr />
+<h1><a name="options_and_arguments">OPTIONS AND ARGUMENTS</a></h1>
+<dl>None.<p>
+</p>
+<hr />
+<h1><a name="files">EXIT STATUS</a></h1>
+<p>
+Returns the value 0.
+<p>
+</p>
+<hr />
+<h1><a name="files">FILES</a></h1>
+<p>
+aspkserver:/usr/local/spk/ops/candidate/notes-*
+aspkserver:/usr/local/spk/ops/release_notes/notes-*
+webserver:/usr/local/tomcat/instance/test/webapps/soft/release_notes/release_notes_*
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p>
+The man page for stage_candidate_test.pl, which is on the web page where
+you obtained this manual page and the SPK System Deployment Guide
+</p>
+<hr />
+</body>
+</html>
