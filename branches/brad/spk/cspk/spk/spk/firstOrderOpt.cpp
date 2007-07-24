@@ -126,7 +126,7 @@ $syntax/void firstOrderOpt(
               const DoubleMatrix&     /dvecBStep/                  ,
               double*                 /pdLTildeOut/                ,
               DoubleMatrix*           /pdrowLTilde_alpOut/         ,
-              DoubleMatrix*           /pmatLTilde_alp_alpOut/
+              DoubleMatrix*           /pmatLTilde_alp_alpOut/ 
 )/$$
 
 
@@ -145,22 +145,70 @@ $latex \[
 \end{array}
 \] $$
 This simplified model is used to obtain the estimate 
-$latex \hat{\alpha}$$ for the population parameters.
+for the fixed effects (population parameters).
 If estimates for the individual parameters are requested,
-$latex \hat{b}_i$$ is
-computed by maximizing, with respect to $latex b$$,
-the likelihood corresponding to the original model functions;
-i.e., $latex f_i ( \hat{\alpha} , b )$$ and 
-$latex R_i ( \hat{\alpha} , b )$$.
+they are computed by maximizing, with respect to $latex b$$,
+the likelihood corresponding to the original model functions.
 
 $head Notation$$
 $table
-$latex b \in \B{R}^n$$ $cnext a value for the random effects for one subject
+$latex b \in \B{R}^n$$ 
+	$cnext a value for the random effects for one subject
 $rnext
-$latex \alpha \in \B{R}^m$$ $cnext a for the fixed effects
+$latex \alpha \in \B{R}^m$$ 
+	$cnext a for the fixed effects
 $rnext
-$latex M$$ $cnext number of subjects in the data set
+$latex M$$ 
+	$cnext number of subjects in the data set
+$rnext
+$latex y_i$$ 
+	$cnext data correspnding to $th i$$ individual
+$rnext
+$latex f_i ( \alpha , b )$$
+	$cnext mean of $latex y_i$$ given $latex b$$.
+$rnext
+$latex R_i ( \alpha , b )$$
+	$cnext variance of $latex y_i$$ given $latex b$$.
+$rnext
+$latex D ( \alpha )$$
+	$cnext variance of $latex b$$ prior to knowing measurements
 $tend 
+
+$subhead Population Objective$$
+The population objective function
+$latex \tilde{L} ( \alpha ) $$ is defined by
+$latex \[
+\begin{array}{rcl}
+V_i ( \alpha ) & = & R_i ( \alpha , 0 ) +  
+\partial_b f_i ( \alpha , 0 ) D( \alpha ) \partial_b f_i ( \alpha , 0 )^\R{T}
+\\
+2 \tilde{L} ( \alpha )
+& = & 
+\sum_{i=0}^{M-1}
+\R{logdet} [ 2 \pi V_i ( \alpha ) ] 
+	+ [ y_i - f_i ( \alpha , 0 ) ]^\R{T} 
+		R( \alpha , 0 )^{-1}
+			[ y_i - f_i ( \alpha , 0 ) ] 
+\end{array}
+\] $$
+
+$subhead Individual Objective$$
+For $latex i = 0 , \ldots , m-1$$,
+the function $latex \Lambda_i$$ is defined by
+$latex \[
+\begin{array}{rcl}
+2 \Lambda_i ( \alpha , b ) 
+& = &
+\R{logdet} [ 2 \pi R ( \alpha , b ) ] 
+	+ [ y_i - f_i ( \alpha , b ) ]^\R{T} 
+		R( \alpha , b)^{-1}
+			[ y_i - f_i ( \alpha , b ) ] 
+\\
+& + &
+\R{logdet} [ 2 \pi D ( \alpha ) ] 
+	+ b^\R{T} D( \alpha )^{-1} b
+\end{array}
+\] $$
 
 $head Exceptions$$
 If an error is detected or failure occurs during the evaluation, 
@@ -205,7 +253,7 @@ $syntax%
 is used to specify the convergence criteria
 for the optimizer.
 It must be greater than zero.
-A population parameter value $italic alpOut$$ 
+A fixed effects vector $italic alpOut$$ 
 is accepted as an estimate for $italic alpHat$$ 
 (a the local minimizer of the first order objective)
 if
@@ -379,9 +427,10 @@ $code firstOrderOpt$$ will not return the optimal fixed effects values.
 Otherwise, the input value of $syntax%*%pvecAlpOut%$$ does not matter.
 If $code firstOrderOpt$$ returns (does not throw an exception)
 then the output value of 
-$syntax%*%pvecAlpOut%$$ is a column vector 
+$syntax%*%pvecAlpOut%$$ is a column vector  
 of length $latex m$$ containing the 
-estimate for the minimizer of the population objective function.
+estimate for the minimizer of the population objective function
+$latex \tilde{L} ( \alpha )$$.
 
 $head dvecAlpStep$$
 This is a column vector of length $latex m$$
@@ -416,11 +465,10 @@ Its output value is a matrix with dimensions $latex n \times M$$.
 The $th i$$ column of $italic dvecBOut$$ contains the optimal
 random effects value for individual 
 $latex i$$ for $latex i = 0 , \ldots , M-1$$.
-To be specific, the $th i$$ column 
-is the minimizer of $cref/Lambda(alpha, b)/Lambda/$$ 
+To be specific, 
+the $th i$$ column is the minimizer of $latex \Lambda_i ( \alpha , b )$$
 with respect to $latex b$$ where $latex \alpha$$ corresponds
-to the optimal value for the population parameters
-and $latex \Lambda$$ corresponds to the $th i$$ individual.
+to the optimal value for the fixed effects (population parameters).
 
 $head dvecBStep$$
 This column vector has length $latex n$$ and
@@ -459,27 +507,6 @@ where $latex \alpha$$ is the optimal value for the fixed effects.
 The approximation for this second derivative is formed using central
 differences of $latex \partial_\alpha \tilde{L} ( \alpha )%$$ with
 step sizes specified by $italic dvecAlpStep$$.
-
-$syntax/
-
-/dmatLambdaTilde_alpOut/
-/$$
-
-If $italic dmatLambdaTilde_alpOut$$ is not $code NULL$$, then the
-$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_alpOut$$
-must be declared in the function that calls this function, and its
-number of columns must be equal to the number of individuals and its
-number of rows must be equal to the length of the population parameter
-vector $math%pop%$$.
-If $italic dmatLambdaTilde_alpOut$$ is not $code NULL$$, and if this
-function completed the optimization successfully, then the $code
-DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_alpOut$$ will
-contain the derivatives of this individuals' contributions to
-the population objective function.
-Each column of the matrix contains the transpose of the derivative
- for a single individual.
-Otherwise, this function will not attempt to change the contents of the 
-$code DoubleMatrix$$ pointed to by $italic dmatLambdaTilde_alpOut$$.
 
 $children%
 	firstOrderOptTest.cpp
@@ -673,17 +700,17 @@ void firstOrderOpt(
               const DoubleMatrix&            dvecAlpLow                 ,
               const DoubleMatrix&            dvecAlpUp                  ,
               const DoubleMatrix&            dvecAlpIn                  ,
-              DoubleMatrix*                  pvecAlpOut                ,
+              DoubleMatrix*                  pvecAlpOut                 ,
               const DoubleMatrix&            dvecAlpStep                ,
               Optimizer&                     bOptInfo                   ,
               const DoubleMatrix&            dvecBLow                   ,
               const DoubleMatrix&            dvecBUp                    ,
               const DoubleMatrix&            dmatBIn                    ,
-              DoubleMatrix*                  pmatBOut                  ,
+              DoubleMatrix*                  pmatBOut                   ,
               const DoubleMatrix&            dvecBStep                  ,
               double*                        pdLTildeOut                ,
               DoubleMatrix*                  pdrowLTilde_alpOut         ,
-              DoubleMatrix*                  pmatLTilde_alp_alpOut     )
+              DoubleMatrix*                  pmatLTilde_alp_alpOut      )
 {	// Check for input errors
 	if( bOptInfo.getSaveStateAtEndOfOpt() ) SPK_PROGRAMMER_ERROR(
 		"fristOrderOpt: Invalid value for SaveStateAtEndOfOpt"
@@ -782,7 +809,7 @@ void firstOrderOpt(
 		bool withD = true;
 
 		index_Y = 0;
-		for(i = 0; i < M; i++);
+		for(i = 0; i < M; i++)
 		{	// data for this individual
 			int Ni = static_cast<int>( N[i] ); 	
 			DoubleMatrix dvecY_i(Ni, 1);
@@ -792,7 +819,7 @@ void firstOrderOpt(
 			// initialize random effects to this individual
 			for(j = 0; j < n; j++)
 				bIn[j] = bmatIn[j + n];
-			// optimization for this individual
+			// optimization of Lambda_i for this individual
 			try
 			{	mapOpt(
 					model           ,

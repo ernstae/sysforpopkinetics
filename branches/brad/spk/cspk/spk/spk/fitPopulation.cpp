@@ -1234,7 +1234,6 @@ time_t SESSION_ID;
 #include "fitPopulation.h"
 #include "ppkaOpt.h"
 #include "NaiveFoModel.h"
-#include "firstOrderOpt.h"
 #include "File.h"
 #include "broadCastEndOfSpk.h"
 #include "WarningsManager.h"
@@ -1846,7 +1845,9 @@ where n is the size of population parameter. \
   // problem as a big individual problem) were specified.
   //------------------------------------------------------------
   if( objective==FIRST_ORDER )
-  {
+  {	// This case no longer handled by fitPopulation
+	assert(0);
+# if 0
     //
     // [ Comment by Sachiko, 10/09/2002 ]
     // This routine runs only in single processing mode.
@@ -1871,7 +1872,7 @@ where n is the size of population parameter. \
 				   pdrowLTilde_alpOut,
 				   pdmatLTilde_alp_alpOut,
 				   pdmatNull );
-
+# endif
   }  
   //
   // [ Comment by Sachiko, 09/25/2002 ]

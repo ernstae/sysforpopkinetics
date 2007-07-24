@@ -27,7 +27,7 @@
  * Optimizes the parametric population objective functions with first order
  * approximation.
  *
- * Author: Jiaji Du
+ * Author: Brad Bell
  *
  *************************************************************************/
 
@@ -37,26 +37,28 @@
 #include "SpkModel.h"
 #include "DoubleMatrix.h"
 #include "Optimizer.h"
+#include <cppad/cppad.hpp>
 
-void firstOrderOpt( SpkModel<double>&       model,
-                    const DoubleMatrix&     dvecN,
-                    const DoubleMatrix&     dvecY,
-                    Optimizer&              popOptimizer,
-                    const DoubleMatrix&     dvecAlpLow,
-                    const DoubleMatrix&     dvecAlpUp,
-                    const DoubleMatrix&     dvecAlpIn,
-                    DoubleMatrix*           pdvecAlpOut,
-                    const DoubleMatrix&     dvecAlpStep,
-                    Optimizer&              indOptimizer,
-                    const DoubleMatrix&     dvecBLow,
-                    const DoubleMatrix&     dvecBUp,
-                    const DoubleMatrix&     dmatBIn,
-                    DoubleMatrix*           pdmatBOut,
-                    const DoubleMatrix&     dvecBStep,
-                    double*                 pdLTildeOut,
-                    DoubleMatrix*           pdrowLTilde_alpOut,
-                    DoubleMatrix*           pdmatLTilde_alp_alpOut,
-                    DoubleMatrix*           pdmatLambdaTilde_alpOut
-                  );
+void firstOrderOpt(
+              SpkModel<double>&              model                      ,
+              SpkModel< CppAD::AD<double> >& adModel                    ,
+              const DoubleMatrix&            dvecN                      ,
+              const DoubleMatrix&            dvecY                      ,
+              Optimizer&                     alpOptInfo                 ,
+              const DoubleMatrix&            dvecAlpLow                 ,
+              const DoubleMatrix&            dvecAlpUp                  ,
+              const DoubleMatrix&            dvecAlpIn                  ,
+              DoubleMatrix*                  pvecAlpOut                 ,
+              const DoubleMatrix&            dvecAlpStep                ,
+              Optimizer&                     bOptInfo                   ,
+              const DoubleMatrix&            dvecBLow                   ,
+              const DoubleMatrix&            dvecBUp                    ,
+              const DoubleMatrix&            dmatBIn                    ,
+              DoubleMatrix*                  pmatBOut                   ,
+              const DoubleMatrix&            dvecBStep                  ,
+              double*                        pdLTildeOut                ,
+              DoubleMatrix*                  pdrowLTilde_alpOut         ,
+              DoubleMatrix*                  pmatLTilde_alp_alpOut      
+);
 
 #endif

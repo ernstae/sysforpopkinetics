@@ -194,9 +194,16 @@ const valarray<double> randNormal( const valarray<double> & V, int n )
 /*
 $begin randNormal$$
 
-$section Creates a vector of random values from a multivariate normal distribution$$
+$section Creates a valarray of values from a multivariate normal distribution$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
 
 $spell
+valarrayy
 cstdlib
 srand
 spk
@@ -211,20 +218,20 @@ cout
 endl
 $$
 
-$index Cholesky testing random number normal distribution multivariate$$
+$index normal, generate$$
+$index simulate, normal$$
+$index Gaussian, simulate$$
+$index simulate, Gaussian$$
+$index variance, simulate normal$$
 
-$table
-$bold Prototype:$$ $cend 
-$syntax/ valarray<double> randNormal( const valarray<double> &/V/, int n, int /seed/)/$$
-$tend
 
-$fend 15$$
-
-$center
-$italic
-$include shortCopyright.txt$$
-$$
-$$
+$head Prototype$$
+$syntax%void srand(int %seed%)
+%$$
+$syntax/valarray<double> randNormal(int /n/)
+/$$
+$syntax/valarray<double> randNormal(const valarray<double> &/V/, int /n/)
+/$$
 $pre
 $$
 $head Description$$
@@ -247,81 +254,25 @@ where $italic n$$ is the number of rows of $italic V$$.  Computes the product
 of the Cholesky factor and the matrix of random numbers and returns that 
 product.
 
-$head Arguments$$
-
-$syntax/
-/V/
-/$$
+$head V$$
 The $code valarray<double>$$ $italic V$$ contains a symmetric and positive-definite
 matrix in the column major order.
+If it is not present, the identity matrix is used.
 
-$syntax/
-/n/
-/$$
+$head n$$
 $italic n$$ is the order of $italic V$$.
 
-$syntax/
-/seed/
-/$$
-The $code Integer$$ (defined in nag.h) $italic seed$$ will be used as a seed to
-generate random numbers.
+$head seed$$
+A values, referred to as $italic seed$$, should be used to seed the
+random number generator (using $code srand$$) 
+before $code randNormal$$ is called.
 
-$head Example$$
-
-If you compile, link, and run the following program,
-$codep
-	
-	#include <iostream>
-        #include <cstdlib> // for srand()
-	#include <spk/SpkValarray.h>
-	#include "randNormal.h"
-
-	void main()
-	{
-		
-		using SPK_VA::valarray;
-                using cout;
-                using endl;
-
-		// Generated a seed
-		int seed = 1;
-
-		// Start the random number generator with the seed.
-		srand(1);					
-
-		valarray<double> V( 2 * 2 ), randNorm( 2 );
-
-		// Setting V to a symmetric, positive definite matrix:
-		//    [ 2  1 ]
-		//    [ 1  3 ]
-
-		V[0] = 2;
-		V[1] = 1;
-		V[2] = 1;
-		V[3] = 3;
-
-		randNorm = randNormal(V, 2, seed);
-
-		// Cholesky factor is equal to:
-		//    [ 1.41421   0       ]
-		//    [	0.707107  1.58114 ]
-
-		// Random vector with seed value = 1:
-		//    [ -0.25993  ]
-		//    [ -0.728662 ]
-
-		cout << "Product of Cholesky and random vector: " << endl;
-	        cout << randNorm << endl;
-    }
-
-$$
- 
-$math%
-Product of Cheolesky and random vector:  { -0.367596, -1.335914 }
-
+$children%
+	randNormalTest.cpp
 %$$
-will be printed.
+$head Example$$
+The file $cref/randNormalTest.cpp/$$ contains an example and test 
+of this function.
 
 $end
-
 */

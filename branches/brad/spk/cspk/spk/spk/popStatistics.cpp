@@ -43,7 +43,6 @@
 #include "transpose.h"
 #include "inverse.h"
 #include "lTilde.h"
-#include "firstOrderOpt.h"
 #include "multiply.h"
 #include "add.h"
 #include "SpkException.h"
@@ -868,6 +867,8 @@ greater than or equal to the lower bound value. \
         }
         else
         {
+            assert(0);
+# if 0
             // If the first order objective is being used, then
             // construct some tempory values that won't be used
             // because the number of population iterations is zero.
@@ -896,6 +897,7 @@ greater than or equal to the lower bound value. \
                            0, 
                            0, 
                            &dmatLambdaLTilde_alpOut );
+# endif
         }
 
         indObj_popParAll = dmatLambdaLTilde_alpOut.toValarray();}
