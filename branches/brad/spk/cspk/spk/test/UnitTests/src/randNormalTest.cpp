@@ -30,6 +30,14 @@
  * Updated by: sachiko honda
  *
  *************************************************************************/
+/*
+--------------------------------------------------------------------------
+$begin randNormalTest.cpp$$
+
+$section randNormal: Example and Test$$
+
+$nospell
+$codep */
 #include <iostream>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
@@ -186,3 +194,8 @@ void randNormalTest::test()
   
   return;
 }
+/* $$
+$$
+$end
+-------------------------------------------------------------------------------
+*/

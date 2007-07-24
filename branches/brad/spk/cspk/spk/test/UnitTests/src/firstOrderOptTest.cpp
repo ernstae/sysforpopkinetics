@@ -202,7 +202,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   // dvecN, dvecY
   DoubleMatrix dvecN(M, 1);
   double *N = dvecN.data();
-  DoubleMatrix dvecY;
+  DoubleMatrix dvecY(M, 1);
   double *Y = dvecY.data();
   for(i = 0; i < M; i++)
   {   // number of measurements for this subject
