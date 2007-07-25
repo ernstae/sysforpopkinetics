@@ -92,6 +92,10 @@ Test* firstOrderOptTest::suite()
  * This is an example and test of firstOrderOpt.cpp 
  *************************************************************************/
 
+// link so that Value works with double as well as AD<double>
+double Value(double x)
+{	return x; }
+
 template <class Scalar>
 class fo_test_model : public SpkModel<Scalar>
 {
@@ -109,65 +113,68 @@ private:
     {	alpha_ = alpha; }
     void doSetIndPar(const valarray<Scalar>& b)
     {	b_ = b; }
-    void doIndParVariance( valarray<Scalar>& D ) const
+    void doIndParVariance( valarray<Scalar>& D) const
     {	D.resize(1);
 	D[0] = alpha_[1];
+    }
+    bool doIndParVariance_popPar( valarray<double>& D_alp ) const
+    {	D_alp.resize(2);
+        D_alp[0] = 0.;
+        D_alp[1] = 1.;
+        return true;
+    }
+    void doIndParVarianceInv( valarray<double>& Dinv) const
+    {	Dinv.resize(1);
+	Dinv[0] = 1. / Value(alpha_[1]);
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& Dinv_alp ) const
+    {   Dinv_alp.resize(2);
+        Dinv_alp[0] = - 1. / Value(alpha_[1] * alpha_[1]);
+        return true;
     }
     void doDataMean( valarray<Scalar>& f ) const
     {	f.resize(1);
 	f[0] = alpha_[0] + b_[0];	
     }
+    bool doDataMean_popPar( valarray<double>& f_alp ) const
+    {   f_alp.resize(2);
+        f_alp[0] = 1.;
+        f_alp[1] = 0.;
+        return true;
+    }
+    bool doDataMean_indPar( valarray<double>& f_b ) const
+    {   f_b.resize(1);
+        f_b[0] = 1.;
+        return true;
+    }
     void doDataVariance( valarray<Scalar>& R ) const
     {	R.resize(1);
         R[0] = Scalar(1.0);
+    }
+    bool doDataVariance_popPar( valarray<double>& R_alp ) const
+    {   R_alp.resize(2);
+        R_alp[0] = 0.;
+        R_alp[1] = 0.;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& R_b ) const
+    {   R_b.resize(1);
+        R_b[0] = 0.;
+        return false;
     }
     void doDataVarianceInv( valarray<Scalar>& Rinv ) const
     {	Rinv.resize(1);
 	Rinv[0] = Scalar(1.0);
     }
-    bool doIndParVariance_popPar( valarray<double>& D ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doIndParVariance_popPar", false);
+    bool doDataVarianceInv_popPar( valarray<double>& Rinv_alp ) const
+    {   Rinv_alp.resize(2);
+        Rinv_alp[0] = 0.;
+        Rinv_alp[1] = 0.;
         return false;
     }
-    void doIndParVarianceInv( valarray<double>& ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doIndParVarianceInv", false);
-        return;
-    }
-    bool doIndParVarianceInv_popPar( valarray<double>& ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doIndParVarianceInv_popPar", false);
-        return false;
-    }
-    bool doDataMean_popPar( valarray<double>& ret ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doDataMean_popPar", false);
-        return false;
-    }
-    bool doDataMean_indPar( valarray<double>& ret ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doDataMean_indPar", false);
-        return false;
-    }
-    bool doDataVariance_popPar( valarray<double>& ret ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doDataVariance_popPar", false);
-        return false;
-    }
-    bool doDataVariance_indPar( valarray<double>& ret ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doDataVariance_indPar", false);
-        return false;
-    }
-    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doDataVarianceInv_popPar", false);
-        return false;
-    }
-    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
-    {	CPPUNIT_ASSERT_MESSAGE(
-        "firstOrderOptTest: call to doDataVarianceInv_indPar", false);
+    bool doDataVarianceInv_indPar( valarray<double>& Rinv_b ) const
+    {   Rinv_b.resize(1);
+        Rinv_b[0] = 0.;
         return false;
     }
 };
