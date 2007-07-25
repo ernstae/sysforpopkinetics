@@ -783,6 +783,8 @@ void firstOrderOpt(
 			__FILE__
 		);
 	}
+	if( pvecAlpOut )
+		*pvecAlpOut = dvecAlpOutTemp;
 
 	// Using the FO approximation for the fixed effects alpha, 
 	// determine each individuals random effects b_i
