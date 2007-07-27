@@ -69,15 +69,28 @@ $db = DB::connect($dsn);
 <fieldset>
 <p>Thank you for your interest in SPK. In order for us to issue an account, please provide us with the following information:</p>
 <legend><?= $steps[$step] ?></legend>
-<p><label for="firstname">First Name</label> <input type="text" id="firstname" name="firstname" maxlength="15" value="<?= strip_tags($_SESSION['firstname']) ?>" /></p>
-<p><label for="lastname">Last Name</label> <input type="text" id="lastname" name="lastname" maxlength="25" value="<?= strip_tags($_SESSION['lastname']) ?>" /></p>
-<p><label for="organization">Company</label> <input type="text" id="organization" name="organization" maxlength="50" value="<?= strip_tags($_SESSION['organization']) ?>"  /></p>
-<p><label for="city">City</label> <input type="text" id="city" name="city" maxlength="25" value="<?= strip_tags($_SESSION['city']) ?>"  /></p>
-<p><label for="state">State/Province</label> <input type="text" id="state" name="state" maxlength="25" value="<?= strip_tags($_SESSION['state']) ?>" /></p>
-<p><label for="country">Country</label> <select name="country" id="country"><?= country_drop($_SESSION['country']) ?></select></p>
-<p></p>
-<p><label for="email">Email</label> <input type="text" id="email" name="email" maxlength="80" value="<?= strip_tags($_SESSION['email']) ?>" /></p>
-<p><input type="submit" value="Continue" /></p>
+<label for="firstname">First Name</label>
+<input type="text" id="firstname" name="firstname" maxlength="15" style="width:200px" value="<?= strip_tags($_SESSION['firstname']) ?>" /><br>
+
+<label for="lastname">Last Name</label>
+<input type="text" id="lastname" name="lastname" maxlength="25" style="width:200px" value="<?= strip_tags($_SESSION['lastname']) ?>" /><br>
+
+<label for="organization">Company</label> 
+<input type="text" id="organization" name="organization" maxlength="50" value="<?= strip_tags($_SESSION['organization']) ?>" style="width:200px" /><br>
+
+<label for="city">City</label>
+<input type="text" id="city" name="city" maxlength="25" style="width:200px" value="<?= strip_tags($_SESSION['city']) ?>"  /><br>
+
+<label for="state">State/Province</label>
+<input type="text" id="state" name="state" style="width:200px;" maxlength="25" value="<?= strip_tags($_SESSION['state']) ?>" /><br>
+
+<label for="country">Country</label>
+<select name="country" id="country" style="width:200px;"><?= country_drop($_SESSION['country']) ?></select><br>
+
+<label for="email">Email</label>
+<input type="text" id="email" name="email" maxlength="80" value="<?= strip_tags($_SESSION['email']) ?>" /><br>
+
+<input type="submit" value="Continue" /><br>
 </fieldset>
 </form>
 
@@ -106,14 +119,14 @@ case 3:
 
 <p>Now that your username has been assigned, please set your password for the account.  Your password must be at least four (4) characters.</p>
 
-<form method="POST" action="process.php">
+<form method="POST" action="process.php" onsubmit="document.getElementById('submit-button').disabled = true;">
 <input type="hidden" name="step" value="<?= $step ?>">
 <fieldset>
 <legend><?= $steps[$step] ?></legend>
 <p><label for="username">Username:</label> <?= strip_tags($_SESSION['username']) ?></p>
 <p><label for="password">Password:</label> <input type="password" id="password" name="password" maxlength="10" value="<?= strip_tags($_SESSION['password']) ?>" /></p>
 <p><label for="password_confirm">Pasword(again):</label> <input type="password" id="password_confirm" name="password_confirm" maxlength="10" value="<?= strip_tags($_SESSION['password_confirm']) ?>" /></p>
-<p><input type="submit" value="Set Password" /></p>
+<p><input type="submit" value="Set Password" id="submit-button" /></p>
 </fieldset>
 </form>
 
