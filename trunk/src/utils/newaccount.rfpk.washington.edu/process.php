@@ -41,6 +41,10 @@ $errors = check_required($fieldlist, $_SESSION, $errors);
      $errors[sizeof($errors)] = 'The e-mail address, <em>' . $_SESSION['email'] . '</em> is not a valid e-mail address.  Please check that you have entered a valid e-mail address before continuing.<br />';
    }
 
+ if ( strlen(eregi_replace("([^A-Z]+)","",$_SESSION['organization'])) < 2 ) {
+   $errors[sizeof($errors)] = 'You must enter more information in the Organization field before continuing.<br />';
+ }
+
 
  break;
 
@@ -86,14 +90,18 @@ $fieldlist = array ( 'password' => 'Password',
 
 // ******************** Submit to the database & redirect to thank you page
 
-$query = $db->prepare("insert into spkutil.user_request (first_name, surname, password, username, company, country, state, email ) values (?,?,password(?),?,?,?,?,?)");
+  if ( sizeof($errors) <= 0 ) {
+$query = $db->prepare("insert into spkutil.user_request (first_name, surname, password, username, company, country, state, email, city ) values (?,?,?,?,?,?,?,?,?)");
 
-$data = array ( $_SESSION['firstname'], $_SESSION['lastname'], $_SESSION['password'], $_SESSION['username'], $_SESSION['organization'], $_SESSION['country'], $_SESSION['state'], $_SESSION['email'] );
+ $data = array ( $_SESSION['firstname'], $_SESSION['lastname'], $_SESSION['password'], $_SESSION['username'], $_SESSION['organization'], $_SESSION['country'], $_SESSION['state'], $_SESSION['email'], $_SESSION['city']);
 
 $db->execute($query, $data);
 
-notify_admin();
-
+ if ( ! notify_customer($_SESSION['email'], $_SESSION['firstname']) ) {
+   die("Email to customer failed");
+ }
+ notify_admin();
+  }
 break;
 
 case 4:

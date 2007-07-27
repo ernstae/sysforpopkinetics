@@ -69,7 +69,8 @@ p.strong {
     float : left;
     position : relative;
     text-align : left;
-    width : 102px;
+    width : 125px;
+    margin-right: 15px;
  }
 
 
