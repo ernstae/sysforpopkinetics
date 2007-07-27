@@ -1,0 +1,71 @@
+TERMS OF SERVICE FOR HTTP://WWW.SPK.WASHINGTON.EDU
+
+    * Acceptance of Terms
+    * Purpose of Web Site
+    * Privacy Policy
+    * Use of Web site
+    * Restrictions
+    * Links to Third Party Web Sites
+    * Modification to Terms of Service
+    * Disclaimer
+    * Limitation of Liability
+    * For Further Information
+
+Acceptance of Terms
+
+This Web site is available to you (hereafter "the User") subject to the Terms of Service described on this page. Your use of this site constitutes your agreement to these terms and conditions.
+
+Purpose of Web Site
+
+This Web site is designed to disseminate information developed through support of the National Institutes of Health and other public and private sources, and is managed by Dr. Paolo Vicini and the Resource Facility for Population Kinetics (RFPK), who can be contacted through http://www.rfpk.washington.edu. This Web site serves the University of Washington's mission to disseminate knowledge in the public interest and serves the RFPK mission to provide population kinetic analysis services to the scientific community. This information is provided on the following terms and conditions.
+
+The Web site provides simulation and estimation of mixed effects models through the System for Population Kinetics web service (hereafter the "SPK Service"). The site is subject to change without notice.
+
+Privacy Policy
+
+The access to the SPK Service requires the User to be issued an account which requires the following information: first and last name, email address, company, state and country. We are collecting user information in order to provide user demographic information to our sponsors and to improve our Web site. User email addresses are only used to track account information and contacting account holders. User email addresses are used solely for the purposes stated herein and will not be shared with third parties except as required by law.
+
+The University of Washington is an agency of the State of Washington and as such has obligations to maintain public records under RCW 42, which potentially requires us to provide web site records if requested by anyone through the proper process.
+
+Use of Web site
+
+All materials and services provided on the Web site are protected by copyright or other intellectual property rights, and owned or controlled by the University of Washington, except as noted on the documentation page.
+
+The User may download or copy the estimation or simulation results resulting from your use of the SPK Service and use of the site, provided that the User maintains all copyright notices and other notices contained therein. Other material on the Web site is subject to the conditions stated therein.
+
+The User may provide feedback on your use of the SPK Service to the RFPK as appropriate through the submission of bug or enhancement reports, including but not limited to obscure, incomplete, or incorrect documentation and performance, ease of use, and the utility of various features. The User also agrees that UW and/or RFPK may use any feedback the User provides in making changes to the SPK Service, without any obligation to the User.
+
+Restrictions
+
+Every User will be issued an account and password upon providing certain information (see "Privacy Policy" above). Please note that, while data transmission is secure and the databases related to the SPK Service are housed on secure servers, all data submitted to the Web site may become publicly accessible, and neither the University of Washington nor the RFPK guarantee confidentiality.
+
+Links to Third Party Web Sites
+
+This site may provide links to other Web sites or resources such as to other project groups or to federal grant sites. The University of Washington has no control over external sites and therefore cannot be responsible for the availability or content of these external sites.
+
+Modification to Terms of Service
+
+The University of Washington reserves the right to change these Terms of Service. The current Terms of Service will always be posted at http://spk.rfpk.washington.edu.
+
+The University of Washington reserves the right to suspend maintenance or service of Web site at any time and without notice.
+
+Disclaimer
+
+THE INFORMATION, DATA, PROTOCOLS, AND SOFTWARE AVAILABLE ON THIS WEB SITE ARE PROVIDED ON AN "AS IS" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF TITLE, NONINFRINGEMENT OF INTELLECTUAL PROPERTY, AND IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+IN NO EVENT SHALL UW OR THE RFPK AND THE AUTHORS OF THE SPK SERVICE BE HELD LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIM BY RECIPIENT OR ANY THIRD PARTY (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ON ACCOUNT OF OR ARISING IN ANY WAY OUT OF THE USE OF THE RFPK SERVICE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Limitation of Liability
+
+The entire risk for use of the Web site lies with the User. The University of Washington reserves the right to modify the Web site or reduce or discontinue service at any time.
+
+The Website is experimental in nature, and has been developed as part of research conducted at the University of Washington.
+
+For Further Information
+
+For further information, please contact Gabrielle Campbell at gvcamp@u.washington.edu.
+
+[ Terms of Service ]
+
+Copyright © 2005 University of Washington
+
