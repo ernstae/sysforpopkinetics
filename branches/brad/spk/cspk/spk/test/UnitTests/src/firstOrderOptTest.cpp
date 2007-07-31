@@ -186,12 +186,15 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   // number of inidividuals in the simulation  (can be changed)
   const size_t M = 100;
 
-  // standard deviation of the random effects
-  const double std_b = 2.;
+  // simulation value for standard deviation of the random effects
+  const double std_b =  2.;
+
+  // simulation value for mean of data
+  const double mean_y = 3.;
 
   // simulation fixed effects values 
   valarray<double> alpha_true(2);
-  alpha_true[0] = 2.;
+  alpha_true[0] = mean_y;
   alpha_true[1] = std_b * std_b;
 
   // simulation random effects values
@@ -220,8 +223,8 @@ void firstOrderOptTest::firstOrderOptLinearTest()
 
   // fixed effects optimizer (linear least squares problem)
   double epsilon = 1e-6;
-  int    max_itr = 2;
-  int    level   = 1;
+  int    max_itr = 20;
+  int    level   = 4;
   Optimizer alpOptInfo(epsilon, max_itr, level); 
   // Set these to exercise the warm start capabilities of firstOrderOpt.
   alpOptInfo.setThrowExcepIfMaxIter( false );
@@ -255,7 +258,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   // random effects optimizer (not a linear least squares problem)
   epsilon = 1e-6;
   max_itr = 50;
-  level   = 1;
+  level   = 0;
   Optimizer bOptInfo(epsilon, max_itr, level); 
   bOptInfo.setThrowExcepIfMaxIter( true );
   
@@ -335,7 +338,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   // The value for alpHat(0) and alpHat(1) are contained in
   // section 9 of the above reference.
   double alphaHat_0 = yBar;
-  double alphaHat_1 = sample_variance - 1.0;
+  double alphaHat_1 = sample_variance - std_b * std_b;
 
   // check estimates
   bool ok = true;
