@@ -539,16 +539,19 @@ class FirstOrderObj : public QuasiNewtonAnyBoxObj
 {
 private:
 	// parameters set by constructor
-	SpkModel<double>*                 _model;
-	SpkModel< CppAD::AD<double> >*    _adModel;
-	const int                         _M;
-	const int                         _m;
-	const int                         _n;
-	const double*                     _N;
-	const double*                     _Y;
-	const double*                     _bStep;
+	SpkModel<double>*                 model_;
+	SpkModel< CppAD::AD<double> >*    adModel_;
+	const int                         M_;
+	const int                         m_;
+	const int                         n_;
+	const double*                     N_;
+	const double*                     Y_;
+	const double*                     bStep_;
 	// most recent value for alpha
-	std::valarray<double>             _alpha_valarray;
+	std::valarray<double>             alpha_valarray_;
+	// offset corresponding to each individuals data
+	std::valarray<int>                offset_; 
+
 
 	// private version of objective function used with double or AD<double>
 	// to evaluate the objective for one individual
@@ -556,18 +559,18 @@ private:
 	void function(int ind, 
 	const std::valarray<Scalar> &alpha, Scalar *obj, Model *model) const
 	{	typedef std::valarray<Scalar> Vector;
-		int Ni = int( _N[ind] );
+		int Ni = int( N_[ind] );
 		int i, j, k, ell;
-		Vector b(_n);
+		Vector b(n_);
 		Vector f0(Ni);
 		Vector fp(Ni);
 		Vector fm(Ni);
-		Vector f_b(Ni * _n);
+		Vector f_b(Ni * n_);
 		Vector R(Ni * Ni);
-		Vector D(_n * _n);
+		Vector D(n_ * n_);
 		Vector r(Ni);
 		Vector Rinv_r(Ni);
-		for(j = 0; j < _n; j++)
+		for(j = 0; j < n_; j++)
 			b[j] = Scalar(0);
 		// evaluate the model at (alpha, 0)
 		model->selectIndividual(ind);
@@ -578,28 +581,30 @@ private:
 		model->indParVariance(D);
 		// compute the residual
 		for(j = 0; j < Ni; j++)
-			r[j] = _Y[j] - f0[j];
+			r[j] = Y_[offset_[ind] + j] - f0[j];
 		// compute the finite difference approximation for f_b
-		for(j = 0; j < _n; j++)
-		{	b[j] = _bStep[j];
+		for(j = 0; j < n_; j++)
+		{	b[j] = bStep_[j];
 			model->setIndPar(b);
 			model->dataMean(fp);
-			b[j] = - _bStep[j];
+			b[j] = - bStep_[j];
 			model->setIndPar(b);
 			model->dataMean(fm);
 			for(i = 0; i < Ni; i++)
-				f_b[i + Ni * j] = .5 * (fp[i]-fm[i])/_bStep[j];
+				f_b[i + Ni * j] = .5 * (fp[i]-fm[i])/bStep_[j];
 		}
 		// R = R + f_b * D * f_b'
-		for(i = 0; i < Ni; i++);
+		for(i = 0; i < Ni; i++)
 		for(j = i; j < Ni; j++)
 		{	Scalar sum = 0;
-			for(k = 0; k < _n; k++) 
-			for(ell = 0; ell < _n; ell++)
+			for(k = 0; k < n_; k++) 
+			for(ell = 0; ell < n_; ell++)
 			{	sum += f_b[i + Ni * k] * 
-					D[ k + _n * ell] * f_b[j + Ni * ell];
+					D[ k + n_ * ell] * f_b[j + Ni * ell];
 			}
 			R[i + j * Ni] += sum;
+			if( i < j )
+				R[j + i * Ni] += sum; 
 		}
 		// compute R^{-1} * r
 		Scalar logdet;
@@ -628,30 +633,35 @@ public:
 		const DoubleMatrix&            dvecBStep  ,
 		Optimizer&                     alpOptInfo )
 	:
-	_M(dvecN.nr()),
-	_m(m),
-	_n(n),
-	_model(&model),
-	_adModel(&adModel),
-	_N(dvecN.data()),
-	_Y(dvecY.data()),
-	_bStep(dvecBStep.data()),
-	_alpha_valarray(_m)
+	M_(dvecN.nr()),
+	m_(m),
+	n_(n),
+	model_(&model),
+	adModel_(&adModel),
+	N_(dvecN.data()),
+	Y_(dvecY.data()),
+	bStep_(dvecBStep.data()),
+	alpha_valarray_(m_),
+	offset_(M_)
 	{	// give the optimizer a pointer to this objective evaluator
 		alpOptInfo.setObjFunc( this );
+		int i;
+		offset_[0] = 0;
+		for(i = 1; i < M_; i++)
+			offset_[i] = offset_[i-1] + int( N_[i-1] );
 	}
 	// objective function
 	virtual void function(const DoubleMatrix &alpha, double *Ltilde)
-	{	if( alpha.nr()!=_m || alpha.nc()!=1 ) SPK_PROGRAMMER_ERROR(
+	{	if( alpha.nr()!=m_ || alpha.nc()!=1 ) SPK_PROGRAMMER_ERROR(
 		"FirstOrderObj.function: alpha does not have proper dimensions"
 		); 
 		int i, j;
 		double Ltilde_i;
 		*Ltilde = 0;
-		for(j = 0; j < _m; j++)
-			_alpha_valarray[j] = *(alpha.data() + j);
-		for(i = 0; i < _M; i++)
-		{	function(i, _alpha_valarray, &Ltilde_i, _model);
+		for(j = 0; j < m_; j++)
+			alpha_valarray_[j] = *(alpha.data() + j);
+		for(i = 0; i < M_; i++)
+		{	function(i, alpha_valarray_, &Ltilde_i, model_);
 			*Ltilde += Ltilde_i;
 		}
 		return;
@@ -661,30 +671,30 @@ public:
 	{	typedef CppAD::AD<double> Scalar;
 		typedef std::valarray<Scalar> adVector;
 		typedef std::valarray<double> dVector;
-		if( Ltilde_alp->nr()!=1 || Ltilde_alp->nc()!=_m ) 
+		if( Ltilde_alp->nr()!=1 || Ltilde_alp->nc()!=m_ ) 
 		SPK_PROGRAMMER_ERROR(
 		"FirstOrderObj.gradient: alpha does not have proper dimensions"
 		); 
 		int i, j;
 		double *ptr_Ltilde_alp = Ltilde_alp->data();
-		adVector alpha_valarray(_m);
-		for(j = 0; j < _m; j++)
-		{	alpha_valarray[j] = _alpha_valarray[j];
+		adVector alpha_valarray(m_);
+		for(j = 0; j < m_; j++)
+		{	alpha_valarray[j] = alpha_valarray_[j];
 			ptr_Ltilde_alp[j] = 0.;
 		}
 
 		adVector Ltilde_i(1);
-		dVector  Ltilde_alp_i(_m);
+		dVector  Ltilde_alp_i(m_);
 		dVector  weight(1);
-		for(i = 0; i < _M; i++)
+		for(i = 0; i < M_; i++)
 		{	CppAD::Independent(alpha_valarray);
 			Scalar obj_i;
-			function(i, alpha_valarray, &obj_i, _adModel);
+			function(i, alpha_valarray, &obj_i, adModel_);
 			Ltilde_i[0] = obj_i;
 			CppAD::ADFun<double> F(alpha_valarray, Ltilde_i);
 			weight[0] = 1.;
 			Ltilde_alp_i = F.Reverse(1, weight);
-			for(j = 0; j < _m; j++)
+			for(j = 0; j < m_; j++)
 				ptr_Ltilde_alp[j] += Ltilde_alp_i[j];
 		}
 		return;
