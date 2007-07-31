@@ -100,11 +100,12 @@ template <class Scalar>
 class fo_test_model : public SpkModel<Scalar>
 {
 private:
+    const double     std_b_; // standard deviation of measurement noise 
     valarray<Scalar> alpha_; // current fixed effects
     valarray<Scalar>     b_; // current random effects
-    int                  i_;    // current individual (does not matter)
+    int                  i_; // current individual (does not matter)
 public:
-    fo_test_model() : alpha_(2) , b_(1)  {};        
+    fo_test_model(double std_b) : std_b_(std_b),  alpha_(2) , b_(1)  {};        
     // use default destruction: ~fo_test_model() {};
 private:
     void doSelectIndividual(int i)
@@ -149,7 +150,7 @@ private:
     }
     void doDataVariance( valarray<Scalar>& R ) const
     {	R.resize(1);
-        R[0] = Scalar(1.0);
+        R[0] = Scalar(std_b_ * std_b_);
     }
     bool doDataVariance_popPar( valarray<double>& R_alp ) const
     {   R_alp.resize(2);
@@ -206,8 +207,8 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   noise = randNormal(M); 
    
   // model, adModel
-  fo_test_model<double> model;
-  fo_test_model< CppAD::AD<double> > adModel; 
+  fo_test_model<double> model( std_b );
+  fo_test_model< CppAD::AD<double> > adModel( std_b ); 
 
   // dvecN, dvecY
   DoubleMatrix dvecN(M, 1);
