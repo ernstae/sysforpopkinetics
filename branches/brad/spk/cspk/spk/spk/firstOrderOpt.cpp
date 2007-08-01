@@ -73,11 +73,10 @@ $spell
 	Obj
 	optimizer
 	paramatric
-	pd
-	pdalp
+	palp
 	pmat
 	pmatInd
-	pdrow
+	prow
 	pvec
 	Spk
 	sqrt
@@ -125,8 +124,8 @@ $syntax/void firstOrderOpt(
               const DoubleMatrix&     /dmatBIn/                    ,
               DoubleMatrix*           /pmatBOut/                   ,
               const DoubleMatrix&     /dvecBStep/                  ,
-              double*                 /pdLtildeOut/                ,
-              DoubleMatrix*           /pdrowLtilde_alpOut/         ,
+              double*                 /pLtildeOut/                 ,
+              DoubleMatrix*           /prowLtilde_alpOut/          ,
               DoubleMatrix*           /pmatLtilde_alp_alpOut/ 
 )/$$
 
@@ -476,17 +475,17 @@ This column vector has length $latex n$$ and
 specifies the step size used for approximating
 the derivatives with respect to the random effects.
 
-$head pdLtildeOut$$
-If $italic pdLtildeOut$$ is not $code NULL$$, 
+$head pLtildeOut$$
+If $italic pLtildeOut$$ is not $code NULL$$, 
 and if this function completed the optimization successfully, 
-then $syntax%*%pdLtildeOut%$$ is set equal to $latex \tilde{L} ( \alpha )$$
+then $syntax%*%pLtildeOut%$$ is set equal to $latex \tilde{L} ( \alpha )$$
 where $latex \alpha$$ is the optimal value for the fixed effects
 and $latex \tilde{L}$$ is the likelihood corresponding to the FO approximation
 described under $cref/Purpose/FirstOrderOpt/Purpose/$$. 
 
-$head pdrowLtilde_alpOut$$
-If $italic pdrowLtilde_alpOut$$ is not $code NULL$$, 
-then $syntax%*%pdrowLtilde_alpOut%$$ 
+$head prowLtilde_alpOut$$
+If $italic prowLtilde_alpOut$$ is not $code NULL$$, 
+then $syntax%*%prowLtilde_alpOut%$$ 
 is a row vector of length $latex m$$.
 If this function completed the optimization successfully, 
 this row vector will contain 
@@ -495,9 +494,9 @@ $latex \[
 \] $$
 where $latex \alpha$$ is the optimal value for the fixed effects.
 
-$head pdrowLtilde_alp_alpOut$$
-If $italic pdrowLtilde_alp_alpOut$$ is not $code NULL$$, 
-then $syntax%*%pdrowLtilde_alp_alpOut%$$ 
+$head prowLtilde_alp_alpOut$$
+If $italic prowLtilde_alp_alpOut$$ is not $code NULL$$, 
+then $syntax%*%prowLtilde_alp_alpOut%$$ 
 is an $latex m \times m$$ matrix.
 If this function completed the optimization successfully, 
 this matrix will contain 
@@ -674,7 +673,7 @@ public:
 		typedef std::valarray<double> dVector;
 		if( Ltilde_alp->nr()!=1 || Ltilde_alp->nc()!=m_ ) 
 		SPK_PROGRAMMER_ERROR(
-		"FirstOrderObj.gradient: alpha does not have proper dimensions"
+		"FirstOrderObj.gradient: argument dimensions are worng."
 		); 
 		int i, j;
 		double *ptr_Ltilde_alp = Ltilde_alp->data();
@@ -700,6 +699,45 @@ public:
 		}
 		return;
 	}
+	// Hessian of objective
+	// Revisit to make virtual so can be used by QuasiNewton01Box
+	// (instead of using Bfgs updates to approximate the Hessian).
+	void Hessian(DoubleMatrix *Ltilde_alp_alp) const
+	{	typedef CppAD::AD<double> Scalar;
+		typedef std::valarray<Scalar> adVector;
+		typedef std::valarray<double> dVector;
+		if( Ltilde_alp_alp->nr()!=m_ || Ltilde_alp_alp->nc()!=m_ ) 
+		SPK_PROGRAMMER_ERROR(
+		"FirstOrderObj.Hessian: argument dimensions are wrong."
+		); 
+		int i, j;
+
+		// value of the independent variables for taping
+		adVector alpha_valarray(m_);
+		for(j = 0; j < m_; j++)
+			alpha_valarray[j] = alpha_valarray_[j];
+
+		// initialize for summation
+		double *ptr_Ltilde_alp_alp = Ltilde_alp_alp->data();
+		for(j = 0; j < m_ * m_; j++)
+			ptr_Ltilde_alp_alp[j] = 0.;
+
+		adVector Ltilde_i(1);
+		dVector  Ltilde_alp_alp_i(m_ * m_);
+		CppAD::ADFun<double> F;
+		for(i = 0; i < M_; i++)
+		{	CppAD::Independent(alpha_valarray);
+			Scalar obj_i;
+			function(i, alpha_valarray, &obj_i, adModel_);
+			Ltilde_i[0] = obj_i;
+			F.Dependent(alpha_valarray, Ltilde_i);
+			Ltilde_alp_alp_i = F.Hessian(alpha_valarray_, 0);
+			for(j = 0; j < m_ * m_; j++)
+				ptr_Ltilde_alp_alp[j] += 
+					Ltilde_alp_alp_i[j];
+		}
+		return;
+	}
 };
 
 void firstOrderOpt(
@@ -719,8 +757,8 @@ void firstOrderOpt(
               const DoubleMatrix&            dmatBIn                    ,
               DoubleMatrix*                  pmatBOut                   ,
               const DoubleMatrix&            dvecBStep                  ,
-              double*                        pdLtildeOut                ,
-              DoubleMatrix*                  pdrowLtilde_alpOut         ,
+              double*                        pLtildeOut                 ,
+              DoubleMatrix*                  prowLtilde_alpOut          ,
               DoubleMatrix*                  pmatLtilde_alp_alpOut      )
 {	// Check for input errors
 	if( bOptInfo.getSaveStateAtEndOfOpt() ) SPK_PROGRAMMER_ERROR(
@@ -734,8 +772,8 @@ void firstOrderOpt(
 	bool nothing_to_compute = true;
 	nothing_to_compute &= (pvecAlpOut              == 0 );
 	nothing_to_compute &= (pmatBOut                == 0 );
-	nothing_to_compute &= (pdLtildeOut              == 0 );
-	nothing_to_compute &= (pdrowLtilde_alpOut       == 0 );
+	nothing_to_compute &= (pLtildeOut              == 0 );
+	nothing_to_compute &= (prowLtilde_alpOut       == 0 );
 	nothing_to_compute &= (pmatLtilde_alp_alpOut   == 0 );
 	if( nothing_to_compute )
 		return;
@@ -746,7 +784,7 @@ void firstOrderOpt(
 	const int n = dmatBIn.nr();
 
 	// A temporary column vector for holding the estimate for alp
-	DoubleMatrix dvecAlpOutTemp(m, 1);
+	DoubleMatrix dvecAlpOut(m, 1);
 
 	// function objective
 	FirstOrderObj objective( 
@@ -769,9 +807,9 @@ void firstOrderOpt(
 			dvecAlpLow           ,
 			dvecAlpUp            ,
 			dvecAlpIn            ,
-			&dvecAlpOutTemp      ,
-			pdLtildeOut          ,
-			pdrowLtilde_alpOut
+			&dvecAlpOut          ,
+			0                    ,
+			0
 		);
 	}
 	catch( SpkException& e)
@@ -794,8 +832,9 @@ void firstOrderOpt(
 			__FILE__
 		);
 	}
+	// fixed effects
 	if( pvecAlpOut )
-		*pvecAlpOut = dvecAlpOutTemp;
+		*pvecAlpOut = dvecAlpOut;
 
 	// Using the FO approximation for the fixed effects alpha, 
 	// determine each individuals random effects b_i
@@ -813,7 +852,7 @@ void firstOrderOpt(
 		double *bIn           = dvecBIn.data();
 
 		// set the fixed effects value
-		model.setPopPar( dvecAlpOutTemp.toValarray() );
+		model.setPopPar( dvecAlpOut.toValarray() );
 
 		// include the Bayesian term in the individual objective
 		bool withD = true;
@@ -872,5 +911,21 @@ void firstOrderOpt(
 				bmatOut[j + n * i] = bOut[j];
 		}
 	}
+	// objective
+	double  dLtildeOut;
+	objective.function(dvecAlpOut, &dLtildeOut);
+	if( pLtildeOut )
+		*pLtildeOut = dLtildeOut;
+	// gradient
+	DoubleMatrix drowLtilde_alpOut(1, m);
+	objective.gradient(&drowLtilde_alpOut);
+	if( prowLtilde_alpOut )
+		*prowLtilde_alpOut = drowLtilde_alpOut;
+	// Hessian
+	DoubleMatrix dmatLtilde_alp_alpOut(m, m);
+	objective.Hessian(&dmatLtilde_alp_alpOut);
+	if( pmatLtilde_alp_alpOut )
+		*pmatLtilde_alp_alpOut = dmatLtilde_alp_alpOut;
+
 	return;
 }
