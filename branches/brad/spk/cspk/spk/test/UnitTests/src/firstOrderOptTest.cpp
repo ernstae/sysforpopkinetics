@@ -186,7 +186,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   size_t i;
 
   // number of inidividuals in the simulation  (can be changed)
-  const size_t M = 100;
+  const size_t M = 10;
 
   // simulation value for standard deviation of the random effects
   const double std_b =  .5;
@@ -227,7 +227,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   }
 
   // fixed effects optimizer (linear least squares problem)
-  double epsilon = 1e-6;
+  double epsilon = 1e-5;
   int    max_itr = 20;
   int    level   = 0;
   Optimizer alpOptInfo(epsilon, max_itr, level); 
@@ -340,15 +340,15 @@ void firstOrderOptTest::firstOrderOptLinearTest()
     sample_variance += (Y[i] - yBar) * (Y[i] - yBar);
   sample_variance /= double(M);
 
-  // The value for alpHat(0) and alpHat(1) are contained in
-  // section 9 of the above reference.
-  double alphaHat_0 = yBar;
-  double alphaHat_1 = sample_variance - sigma * sigma;
-
-  // check fixed effects estimates
-  bool ok_alpha = true;
-  ok_alpha &= fabs(*(dvecAlpOut.data()+0) / alphaHat_0 - 1.) < 1e-4;
-  ok_alpha &= fabs(*(dvecAlpOut.data()+1) / alphaHat_1 - 1.) < 1e-4;
+  // check fixed effects estimates, The value for alpHat(0) and alpHat(1) 
+  // are contained in section 9 of the above reference.
+  bool ok_alpha     = true;
+  double check      = yBar;
+  double alphaHat_0 = *(dvecAlpOut.data()+0);
+  ok_alpha          &= fabs(alphaHat_0 / check - 1.) < 1e-4;
+  check              = sample_variance - sigma * sigma;
+  double alphaHat_1 = *(dvecAlpOut.data()+1);
+  ok_alpha          &= fabs(alphaHat_1 / check - 1.) < 1e-4;
   CPPUNIT_ASSERT_MESSAGE(
       "firstOrderOptLinearTest: alphaOut is not correct.",
       ok_alpha
@@ -357,18 +357,17 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   /* check random effects estimates
   mapObj = .5*b_i^2 / alp_1 + .5*[ ( y_i - alp_0 - b_i) / sigma ]^2
   0      = b_i / alp_1 - (y_i - alp_0 - b_i) / sigma^2
-  0      = b_i (1 / alp_1 - + 1 / sigma^2 ) - (y_i - alp_0 ) / sigma^2
+  0      = b_i (1 / alp_1 + 1 / sigma^2 ) - (y_i - alp_0 ) / sigma^2
   b_i    =  (y_i - alp_0 ) / ( sigma^2 / alp_1 + 1)
   */
   bool ok_b = true;
-  double check;
   for ( i = 0; i < M ; i++ )
   {   check = (Y[i] - alphaHat_0) / (sigma * sigma / alphaHat_1 + 1.);
       if( check < bLow[0] )
           check = bLow[0];
       if( check > bUp[0] )
           check = bUp[0];
-      ok_b &= fabs(*(dmatBOut.data() + i) - check) < 1e-4;
+      ok_b &= fabs(*(dmatBOut.data() + i) / check - 1.) < 1e-4;
   }
   CPPUNIT_ASSERT_MESSAGE(
       "firstOrderOptLinearTest: BOut is not correct.",
@@ -392,9 +391,11 @@ void firstOrderOptTest::firstOrderOptLinearTest()
      Ltilde_alp_1   += .5 * Vi_alp_1 / Vi - .5 * ri * ri * Vi_alp_1 / (Vi * Vi);
   }
   bool ok_L = true;
-  ok_L &= fabs(Ltilde - dLtildeOut) < 1e-4;
-  ok_L &= fabs(Ltilde_alp_0 - *(drowLtilde_alpOut.data()) ) < 1e-4;
-  ok_L &= fabs(Ltilde_alp_1 - *(drowLtilde_alpOut.data()+1) ) < 1e-4;
+  ok_L &= fabs(dLtildeOut / Ltilde - 1) < 1e-4;
+  // do not require much relative accuracy on derivatives because are zero
+  // at the true minimizer.
+  ok_L &= fabs(*(drowLtilde_alpOut.data()+0) / Ltilde_alp_0 - 1 ) < 1e-2;
+  ok_L &= fabs(*(drowLtilde_alpOut.data()+1) / Ltilde_alp_1 - 1 ) < 1e-2;
   CPPUNIT_ASSERT_MESSAGE(
       "firstOrderOptLinearTest: Ltilde or its derivative is not correct.",
       ok_L
