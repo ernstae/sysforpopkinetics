@@ -48,6 +48,7 @@ $latex \newcommand{\B}[1]{{\bf #1}}$$
 $latex \newcommand{\R}[1]{{\rm #1}}$$
 
 $spell
+	Ltilde
         throwExcepIfMaxIter
         struct
         Model model
@@ -124,9 +125,9 @@ $syntax/void firstOrderOpt(
               const DoubleMatrix&     /dmatBIn/                    ,
               DoubleMatrix*           /pmatBOut/                   ,
               const DoubleMatrix&     /dvecBStep/                  ,
-              double*                 /pdLTildeOut/                ,
-              DoubleMatrix*           /pdrowLTilde_alpOut/         ,
-              DoubleMatrix*           /pmatLTilde_alp_alpOut/ 
+              double*                 /pdLtildeOut/                ,
+              DoubleMatrix*           /pdrowLtilde_alpOut/         ,
+              DoubleMatrix*           /pmatLtilde_alp_alpOut/ 
 )/$$
 
 
@@ -437,7 +438,7 @@ This is a column vector of length $latex m$$
 that specifies the step size used for approximating
 the derivatives with respect to the fixed effects ($latex \alpha$$).
 The value of this parameter does not matter if
-$italic pmatLTilde_alp_alpOut$$ is $code NULL$$.
+$italic pmatLtilde_alp_alpOut$$ is $code NULL$$.
 
 $head dvecBLow$$
 This is a column vector of length $latex n$$ 
@@ -475,17 +476,17 @@ This column vector has length $latex n$$ and
 specifies the step size used for approximating
 the derivatives with respect to the random effects.
 
-$head pdLTildeOut$$
-If $italic pdLTildeOut$$ is not $code NULL$$, 
+$head pdLtildeOut$$
+If $italic pdLtildeOut$$ is not $code NULL$$, 
 and if this function completed the optimization successfully, 
-then $syntax%*%pdLTildeOut%$$ is set equal to $latex \tilde{L} ( \alpha )$$
+then $syntax%*%pdLtildeOut%$$ is set equal to $latex \tilde{L} ( \alpha )$$
 where $latex \alpha$$ is the optimal value for the fixed effects
 and $latex \tilde{L}$$ is the likelihood corresponding to the FO approximation
 described under $cref/Purpose/FirstOrderOpt/Purpose/$$. 
 
-$head pdrowLTilde_alpOut$$
-If $italic pdrowLTilde_alpOut$$ is not $code NULL$$, 
-then $syntax%*%pdrowLTilde_alpOut%$$ 
+$head pdrowLtilde_alpOut$$
+If $italic pdrowLtilde_alpOut$$ is not $code NULL$$, 
+then $syntax%*%pdrowLtilde_alpOut%$$ 
 is a row vector of length $latex m$$.
 If this function completed the optimization successfully, 
 this row vector will contain 
@@ -494,9 +495,9 @@ $latex \[
 \] $$
 where $latex \alpha$$ is the optimal value for the fixed effects.
 
-$head pdrowLTilde_alp_alpOut$$
-If $italic pdrowLTilde_alp_alpOut$$ is not $code NULL$$, 
-then $syntax%*%pdrowLTilde_alp_alpOut%$$ 
+$head pdrowLtilde_alp_alpOut$$
+If $italic pdrowLtilde_alp_alpOut$$ is not $code NULL$$, 
+then $syntax%*%pdrowLtilde_alp_alpOut%$$ 
 is an $latex m \times m$$ matrix.
 If this function completed the optimization successfully, 
 this matrix will contain 
@@ -718,9 +719,9 @@ void firstOrderOpt(
               const DoubleMatrix&            dmatBIn                    ,
               DoubleMatrix*                  pmatBOut                   ,
               const DoubleMatrix&            dvecBStep                  ,
-              double*                        pdLTildeOut                ,
-              DoubleMatrix*                  pdrowLTilde_alpOut         ,
-              DoubleMatrix*                  pmatLTilde_alp_alpOut      )
+              double*                        pdLtildeOut                ,
+              DoubleMatrix*                  pdrowLtilde_alpOut         ,
+              DoubleMatrix*                  pmatLtilde_alp_alpOut      )
 {	// Check for input errors
 	if( bOptInfo.getSaveStateAtEndOfOpt() ) SPK_PROGRAMMER_ERROR(
 		"fristOrderOpt: Invalid value for SaveStateAtEndOfOpt"
@@ -733,9 +734,9 @@ void firstOrderOpt(
 	bool nothing_to_compute = true;
 	nothing_to_compute &= (pvecAlpOut              == 0 );
 	nothing_to_compute &= (pmatBOut                == 0 );
-	nothing_to_compute &= (pdLTildeOut              == 0 );
-	nothing_to_compute &= (pdrowLTilde_alpOut       == 0 );
-	nothing_to_compute &= (pmatLTilde_alp_alpOut   == 0 );
+	nothing_to_compute &= (pdLtildeOut              == 0 );
+	nothing_to_compute &= (pdrowLtilde_alpOut       == 0 );
+	nothing_to_compute &= (pmatLtilde_alp_alpOut   == 0 );
 	if( nothing_to_compute )
 		return;
 
@@ -769,8 +770,8 @@ void firstOrderOpt(
 			dvecAlpUp            ,
 			dvecAlpIn            ,
 			&dvecAlpOutTemp      ,
-			pdLTildeOut          ,
-			pdrowLTilde_alpOut
+			pdLtildeOut          ,
+			pdrowLtilde_alpOut
 		);
 	}
 	catch( SpkException& e)
