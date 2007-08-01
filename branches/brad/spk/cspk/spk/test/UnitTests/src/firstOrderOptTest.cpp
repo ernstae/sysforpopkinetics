@@ -130,7 +130,8 @@ private:
     }
     bool doIndParVarianceInv_popPar( valarray<double>& Dinv_alp ) const
     {   Dinv_alp.resize(2);
-        Dinv_alp[0] = - 1. / Value(alpha_[1] * alpha_[1]);
+	Dinv_alp[0] = 0.;
+        Dinv_alp[1] = - 1. / Value(alpha_[1] * alpha_[1]);
         return true;
     }
     void doDataMean( valarray<Scalar>& f ) const
@@ -165,7 +166,7 @@ private:
     }
     void doDataVarianceInv( valarray<Scalar>& Rinv ) const
     {	Rinv.resize(1);
-	Rinv[0] = Scalar(1.0);
+	Rinv[0] = Scalar(1.0 / (std_b_ * std_b_));
     }
     bool doDataVarianceInv_popPar( valarray<double>& Rinv_alp ) const
     {   Rinv_alp.resize(2);
@@ -188,7 +189,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   const size_t M = 100;
 
   // simulation value for standard deviation of the random effects
-  const double std_b =  2.;
+  const double std_b =  .5;
 
   // simulation value for mean of data
   const double mean_y = 3.;
@@ -225,7 +226,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   // fixed effects optimizer (linear least squares problem)
   double epsilon = 1e-6;
   int    max_itr = 20;
-  int    level   = 4;
+  int    level   = 0;
   Optimizer alpOptInfo(epsilon, max_itr, level); 
   // Set these to exercise the warm start capabilities of firstOrderOpt.
   alpOptInfo.setThrowExcepIfMaxIter( false );
@@ -278,7 +279,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
 
   bLow[0]    = - 3. * std_b;
   bUp[0]     = + 3. * std_b;
-  bStep[0]   =  10e-2 * std_b; 
+  bStep[0]   =  1e-2 * std_b; 
   dmatBIn.fill( 0.0 );
 
   // objective function values
@@ -341,13 +342,34 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   double alphaHat_0 = yBar;
   double alphaHat_1 = sample_variance - std_b * std_b;
 
-  // check estimates
-  bool ok = true;
-  ok &= fabs(*(dvecAlpOut.data()+0) / alphaHat_0 - 1.) < 1e-4;
-  ok &= fabs(*(dvecAlpOut.data()+1) / alphaHat_1 - 1.) < 1e-4;
+  // check fixed effects estimates
+  bool ok_alpha = true;
+  ok_alpha &= fabs(*(dvecAlpOut.data()+0) / alphaHat_0 - 1.) < 1e-4;
+  ok_alpha &= fabs(*(dvecAlpOut.data()+1) / alphaHat_1 - 1.) < 1e-4;
   CPPUNIT_ASSERT_MESSAGE(
       "firstOrderOptLinearTest: alphaOut is not correct.",
-      ok
+      ok_alpha
+  );
+
+  /* check random effects estimates
+  obj  = .5*b_i^2 / alp_1 + .5*[ ( y_i - alp_0 - b_i) / std_b ]^2
+  0    = b_i / alp_1 - (y_i - alp_0 - b_i) / std_b^2
+  0    = b_i (1 / alp_1 - + 1 / std_b^2 ) - (y_i - alp_0 ) / std_b^2
+  b_i  =  (y_i - alp_0 ) / ( std_b^2 / alp_1 + 1)
+  */
+
+  bool ok_b = true;
+  for ( i = 0; i < M ; i++ )
+  {   double check = (Y[i] - alphaHat_0) / (std_b * std_b / alphaHat_1 + 1.);
+      if( check < bLow[0] )
+          check = bLow[0];
+      if( check > bUp[0] )
+          check = bUp[0];
+      ok_b &= fabs(*(dmatBOut.data() + i) - check) < 1e-4;
+  }
+  CPPUNIT_ASSERT_MESSAGE(
+      "firstOrderOptLinearTest: BOut is not correct.",
+      ok_b
   );
 
   return;
