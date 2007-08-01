@@ -162,7 +162,7 @@ $latex M$$
 	$cnext number of subjects in the data set
 $rnext
 $latex y_i$$ 
-	$cnext data correspnding to $th i$$ individual
+	$cnext data corresponding to $th i$$ individual
 $rnext
 $latex f_i ( \alpha , b )$$
 	$cnext mean of $latex y_i$$ given $latex b$$.
@@ -187,7 +187,7 @@ V_i ( \alpha ) & = & R_i ( \alpha , 0 ) +
 \sum_{i=0}^{M-1}
 \R{logdet} [ 2 \pi V_i ( \alpha ) ] 
 	+ [ y_i - f_i ( \alpha , 0 ) ]^\R{T} 
-		R( \alpha , 0 )^{-1}
+		V_i ( \alpha )^{-1}
 			[ y_i - f_i ( \alpha , 0 ) ] 
 \end{array}
 \] $$
@@ -275,7 +275,7 @@ must be greater than or equal to zero.
 It specifies the maximum number of 
 iterations to attempt before giving up on convergence.
 If it is equal to zero, then the initial
-value $italic alpIn$$ is used for the final value $italic alpOut$$, 
+value $italic dvecAlpIn$$ is used for the final value $italic alpOut$$, 
 and any other requested output values are evaluated at that final value.
 
 $subhead traceLevel$$
@@ -541,7 +541,7 @@ private:
 	// parameters set by constructor
 	SpkModel<double>*                 model_;
 	SpkModel< CppAD::AD<double> >*    adModel_;
-	const int                         M_;
+	 const int                         M_;
 	const int                         m_;
 	const int                         n_;
 	const double*                     N_;
@@ -808,10 +808,7 @@ void firstOrderOpt(
 		// pointers to actual data in vectors and matrices
 		const double *N       = dvecN.data();
 		const double *Y       = dvecY.data();
-		const double *alpIn   = dvecAlpIn.data();
 		const double *bmatIn  = dmatBIn.data();
-		double *bmatOut       = pmatBOut->data();
-		double *bOut          = dvecBOut.data();
 		double *bIn           = dvecBIn.data();
 
 		// set the fixed effects value
@@ -830,7 +827,7 @@ void firstOrderOpt(
 				Y_i[j] = Y[index_Y++];
 			// initialize random effects to this individual
 			for(j = 0; j < n; j++)
-				bIn[j] = bmatIn[j + n];
+				bIn[j] = bmatIn[j + n * i];
 			// optimization of Lambda_i for this individual
 			try
 			{	mapOpt(
@@ -868,8 +865,10 @@ void firstOrderOpt(
 					__FILE__
 				);
 			}
+			double *bmatOut  = pmatBOut->data();
+			double *bOut     = dvecBOut.data();
 			for(j = 0; j < n; j++)
-				bmatOut[j + n] = bOut[j];
+				bmatOut[j + n * i] = bOut[j];
 		}
 	}
 	return;
