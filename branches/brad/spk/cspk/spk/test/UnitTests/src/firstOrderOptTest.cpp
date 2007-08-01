@@ -100,12 +100,12 @@ template <class Scalar>
 class fo_test_model : public SpkModel<Scalar>
 {
 private:
-    const double     std_b_; // standard deviation of measurement noise 
+    const double     sigma_; // standard deviation of measurement noise 
     valarray<Scalar> alpha_; // current fixed effects
     valarray<Scalar>     b_; // current random effects
     int                  i_; // current individual (does not matter)
 public:
-    fo_test_model(double std_b) : std_b_(std_b),  alpha_(2) , b_(1)  {};        
+    fo_test_model(double sigma) : sigma_(sigma),  alpha_(2) , b_(1)  {};        
     // use default destruction: ~fo_test_model() {};
 private:
     void doSelectIndividual(int i)
@@ -151,7 +151,7 @@ private:
     }
     void doDataVariance( valarray<Scalar>& R ) const
     {	R.resize(1);
-        R[0] = Scalar(std_b_ * std_b_);
+        R[0] = Scalar(sigma_ * sigma_);
     }
     bool doDataVariance_popPar( valarray<double>& R_alp ) const
     {   R_alp.resize(2);
@@ -166,7 +166,7 @@ private:
     }
     void doDataVarianceInv( valarray<Scalar>& Rinv ) const
     {	Rinv.resize(1);
-	Rinv[0] = Scalar(1.0 / (std_b_ * std_b_));
+	Rinv[0] = Scalar(1.0 / (sigma_ * sigma_));
     }
     bool doDataVarianceInv_popPar( valarray<double>& Rinv_alp ) const
     {   Rinv_alp.resize(2);
@@ -191,6 +191,9 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   // simulation value for standard deviation of the random effects
   const double std_b =  .5;
 
+  // simulation value for standard deviation of measurement noise
+  const double sigma = 1.;
+
   // simulation value for mean of data
   const double mean_y = 3.;
 
@@ -208,8 +211,8 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   noise = randNormal(M); 
    
   // model, adModel
-  fo_test_model<double> model( std_b );
-  fo_test_model< CppAD::AD<double> > adModel( std_b ); 
+  fo_test_model<double> model( sigma );
+  fo_test_model< CppAD::AD<double> > adModel( sigma ); 
 
   // dvecN, dvecY
   DoubleMatrix dvecN(M, 1);
@@ -284,8 +287,8 @@ void firstOrderOptTest::firstOrderOptLinearTest()
 
   // objective function values
   double dLtildeOut;
-  DoubleMatrix drowLTilde_alpOut     ( 1, m );
-  DoubleMatrix dmatLTilde_alp_alpOut ( m, m );
+  DoubleMatrix drowLtilde_alpOut     ( 1, m );
+  DoubleMatrix dmatLtilde_alp_alpOut ( m, m );
 
   try
   {   firstOrderOpt(
@@ -306,8 +309,8 @@ void firstOrderOptTest::firstOrderOptLinearTest()
           &dmatBOut             ,
           dvecBStep             ,
           &dLtildeOut           ,
-          &drowLTilde_alpOut    ,
-          &dmatLTilde_alp_alpOut
+          &drowLtilde_alpOut    ,
+          &dmatLtilde_alp_alpOut
      );
   }
   catch(...)
@@ -340,7 +343,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   // The value for alpHat(0) and alpHat(1) are contained in
   // section 9 of the above reference.
   double alphaHat_0 = yBar;
-  double alphaHat_1 = sample_variance - std_b * std_b;
+  double alphaHat_1 = sample_variance - sigma * sigma;
 
   // check fixed effects estimates
   bool ok_alpha = true;
@@ -352,15 +355,15 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   );
 
   /* check random effects estimates
-  mapObj = .5*b_i^2 / alp_1 + .5*[ ( y_i - alp_0 - b_i) / std_b ]^2
-  0      = b_i / alp_1 - (y_i - alp_0 - b_i) / std_b^2
-  0      = b_i (1 / alp_1 - + 1 / std_b^2 ) - (y_i - alp_0 ) / std_b^2
-  b_i    =  (y_i - alp_0 ) / ( std_b^2 / alp_1 + 1)
+  mapObj = .5*b_i^2 / alp_1 + .5*[ ( y_i - alp_0 - b_i) / sigma ]^2
+  0      = b_i / alp_1 - (y_i - alp_0 - b_i) / sigma^2
+  0      = b_i (1 / alp_1 - + 1 / sigma^2 ) - (y_i - alp_0 ) / sigma^2
+  b_i    =  (y_i - alp_0 ) / ( sigma^2 / alp_1 + 1)
   */
   bool ok_b = true;
   double check;
   for ( i = 0; i < M ; i++ )
-  {   check = (Y[i] - alphaHat_0) / (std_b * std_b / alphaHat_1 + 1.);
+  {   check = (Y[i] - alphaHat_0) / (sigma * sigma / alphaHat_1 + 1.);
       if( check < bLow[0] )
           check = bLow[0];
       if( check > bUp[0] )
@@ -372,20 +375,28 @@ void firstOrderOptTest::firstOrderOptLinearTest()
       ok_b
   ); 
   /* check fixed effects objective value
-  Vi     = Ri + fi_b * D * fi_b'
+  Vi     = Ri + fi_b * D * fi_b' = Ri + D
   Ltilde = .5 * sum_i logdet(2*pi*Vi) + (yi-alp_0)' Vi^{-1} (yi-alp_0)
   */
-  double pi     = 4. * atan(1.);
-  check = 0;
+  double pi           = 4. * atan(1.);
+  double Ltilde       = 0.;
+  double Ltilde_alp_0 = 0.;
+  double Ltilde_alp_1 = 0.;
   for( i = 0; i < M; i++)
-  {  double Vi = std_b * std_b + alphaHat_1;
-     double ri = Y[i] - alphaHat_0;
-     check += .5 * ( log( 2 * pi * Vi ) + ri * ri / Vi );
+  {  double Vi       = sigma * sigma + alphaHat_1;
+     double Vi_alp_1 = 1;
+     double ri       = Y[i] - alphaHat_0;
+     double ri_alp_0 = -1;
+     Ltilde         += .5 * ( log( 2 * pi * Vi ) + ri * ri / Vi );
+     Ltilde_alp_0   += ri * ri_alp_0 / Vi;
+     Ltilde_alp_1   += .5 * Vi_alp_1 / Vi - .5 * ri * ri * Vi_alp_1 / (Vi * Vi);
   }
   bool ok_L = true;
-  ok_L &= fabs(check - dLtildeOut) < 1e-4;
+  ok_L &= fabs(Ltilde - dLtildeOut) < 1e-4;
+  ok_L &= fabs(Ltilde_alp_0 - *(drowLtilde_alpOut.data()) ) < 1e-4;
+  ok_L &= fabs(Ltilde_alp_1 - *(drowLtilde_alpOut.data()+1) ) < 1e-4;
   CPPUNIT_ASSERT_MESSAGE(
-      "firstOrderOptLinearTest: Ltilde or its derivaztive is not correct.",
+      "firstOrderOptLinearTest: Ltilde or its derivative is not correct.",
       ok_L
   ); 
   return;
