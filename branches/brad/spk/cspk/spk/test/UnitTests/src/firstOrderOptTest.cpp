@@ -35,13 +35,12 @@ $end
  *
  * Unit test for the function firstOrderOpt.
  *
- * Author: Jiaji Du based on Mitch's ppkaOptTest.cpp
+ * Author: Brad Bell
  *
  *************************************************************************/
 /*------------------------------------------------------------------------
  * Include Files
  *------------------------------------------------------------------------*/
-// BEGIN VERBATIM 
 
 #include <cppad/cppad.hpp>
 #include <valarray>
@@ -77,8 +76,8 @@ Test* firstOrderOptTest::suite()
 
   suiteOfTests->addTest(
     new TestCaller<firstOrderOptTest>(
-        "firstOrderOptLinearTest", 
-        &firstOrderOptTest::firstOrderOptLinearTest
+        "firstOrderOptAnalyticTest", 
+        &firstOrderOptTest::firstOrderOptAnalyticTest
     )
   );
 
@@ -86,15 +85,16 @@ Test* firstOrderOptTest::suite()
 }
 
 
+// BEGIN VERBATIM 
 /*************************************************************************
- * Function: firstOrderOptLinearTest
+ * Function: firstOrderOptAnalyticTest
  *
  * This is an example and test of firstOrderOpt.cpp 
  *************************************************************************/
 
 // link so that Value works with double as well as AD<double>
 double Value(double x)
-{	return x; }
+{   return x; }
 
 template <class Scalar>
 class fo_test_model : public SpkModel<Scalar>
@@ -109,34 +109,34 @@ public:
     // use default destruction: ~fo_test_model() {};
 private:
     void doSelectIndividual(int i)
-    {	i_ = i; }
+    {   i_ = i; }
     void doSetPopPar(const valarray<Scalar>& alpha)
-    {	alpha_ = alpha; }
+    {   alpha_ = alpha; }
     void doSetIndPar(const valarray<Scalar>& b)
-    {	b_ = b; }
+    {   b_ = b; }
     void doIndParVariance( valarray<Scalar>& D) const
-    {	D.resize(1);
-	D[0] = alpha_[1];
+    {   D.resize(1);
+        D[0] = alpha_[1];
     }
     bool doIndParVariance_popPar( valarray<double>& D_alp ) const
-    {	D_alp.resize(2);
+    {   D_alp.resize(2);
         D_alp[0] = 0.;
         D_alp[1] = 1.;
         return true;
     }
     void doIndParVarianceInv( valarray<double>& Dinv) const
-    {	Dinv.resize(1);
-	Dinv[0] = 1. / Value(alpha_[1]);
+    {   Dinv.resize(1);
+        Dinv[0] = 1. / Value(alpha_[1]);
     }
     bool doIndParVarianceInv_popPar( valarray<double>& Dinv_alp ) const
     {   Dinv_alp.resize(2);
-	Dinv_alp[0] = 0.;
+        Dinv_alp[0] = 0.;
         Dinv_alp[1] = - 1. / Value(alpha_[1] * alpha_[1]);
         return true;
     }
     void doDataMean( valarray<Scalar>& f ) const
-    {	f.resize(1);
-	f[0] = alpha_[0] + b_[0];	
+    {   f.resize(1);
+        f[0] = alpha_[0] + b_[0];
     }
     bool doDataMean_popPar( valarray<double>& f_alp ) const
     {   f_alp.resize(2);
@@ -150,7 +150,7 @@ private:
         return true;
     }
     void doDataVariance( valarray<Scalar>& R ) const
-    {	R.resize(1);
+    {   R.resize(1);
         R[0] = Scalar(sigma_ * sigma_);
     }
     bool doDataVariance_popPar( valarray<double>& R_alp ) const
@@ -165,8 +165,8 @@ private:
         return false;
     }
     void doDataVarianceInv( valarray<Scalar>& Rinv ) const
-    {	Rinv.resize(1);
-	Rinv[0] = Scalar(1.0 / (sigma_ * sigma_));
+    {   Rinv.resize(1);
+        Rinv[0] = Scalar(1.0 / (sigma_ * sigma_));
     }
     bool doDataVarianceInv_popPar( valarray<double>& Rinv_alp ) const
     {   Rinv_alp.resize(2);
@@ -181,7 +181,7 @@ private:
     }
 };
 
-void firstOrderOptTest::firstOrderOptLinearTest()
+void firstOrderOptTest::firstOrderOptAnalyticTest()
 { // temporary indices
   size_t i;
 
@@ -315,7 +315,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   }
   catch(...)
   {  CPPUNIT_ASSERT_MESSAGE(
-         "firstOrderOptLinearTest: an exception occurred.", 
+         "firstOrderOptAnalyticTest: an exception occurred.", 
          false
      );
   }
@@ -350,7 +350,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   double alphaHat_1 = *(dvecAlpOut.data()+1);
   ok_alpha          &= fabs(alphaHat_1 / check - 1.) < 1e-4;
   CPPUNIT_ASSERT_MESSAGE(
-      "firstOrderOptLinearTest: alphaOut is not correct.",
+      "firstOrderOptAnalyticTest: alphaOut is not correct.",
       ok_alpha
   );
 
@@ -370,7 +370,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
       ok_b &= fabs(*(dmatBOut.data() + i) / check - 1.) < 1e-4;
   }
   CPPUNIT_ASSERT_MESSAGE(
-      "firstOrderOptLinearTest: BOut is not correct.",
+      "firstOrderOptAnalyticTest: BOut is not correct.",
       ok_b
   ); 
   /* check fixed effects objective value
@@ -406,7 +406,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   ok_L &= fabs(*(drowLtilde_alpOut.data()+0) / Ltilde_alp_0 - 1 ) < 1e-2;
   ok_L &= fabs(*(drowLtilde_alpOut.data()+1) / Ltilde_alp_1 - 1 ) < 1e-2;
   CPPUNIT_ASSERT_MESSAGE(
-      "firstOrderOptLinearTest: Ltilde or its derivative is not correct.",
+      "firstOrderOptAnalyticTest: Ltilde or its derivative is not correct.",
       ok_L
   ); 
   return;
