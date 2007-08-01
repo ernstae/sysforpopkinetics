@@ -283,7 +283,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   dmatBIn.fill( 0.0 );
 
   // objective function values
-  double dLTildeOut;
+  double dLtildeOut;
   DoubleMatrix drowLTilde_alpOut     ( 1, m );
   DoubleMatrix dmatLTilde_alp_alpOut ( m, m );
 
@@ -305,7 +305,7 @@ void firstOrderOptTest::firstOrderOptLinearTest()
           dmatBIn               ,
           &dmatBOut             ,
           dvecBStep             ,
-          &dLTildeOut           ,
+          &dLtildeOut           ,
           &drowLTilde_alpOut    ,
           &dmatLTilde_alp_alpOut
      );
@@ -352,15 +352,15 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   );
 
   /* check random effects estimates
-  obj  = .5*b_i^2 / alp_1 + .5*[ ( y_i - alp_0 - b_i) / std_b ]^2
-  0    = b_i / alp_1 - (y_i - alp_0 - b_i) / std_b^2
-  0    = b_i (1 / alp_1 - + 1 / std_b^2 ) - (y_i - alp_0 ) / std_b^2
-  b_i  =  (y_i - alp_0 ) / ( std_b^2 / alp_1 + 1)
+  mapObj = .5*b_i^2 / alp_1 + .5*[ ( y_i - alp_0 - b_i) / std_b ]^2
+  0      = b_i / alp_1 - (y_i - alp_0 - b_i) / std_b^2
+  0      = b_i (1 / alp_1 - + 1 / std_b^2 ) - (y_i - alp_0 ) / std_b^2
+  b_i    =  (y_i - alp_0 ) / ( std_b^2 / alp_1 + 1)
   */
-
   bool ok_b = true;
+  double check;
   for ( i = 0; i < M ; i++ )
-  {   double check = (Y[i] - alphaHat_0) / (std_b * std_b / alphaHat_1 + 1.);
+  {   check = (Y[i] - alphaHat_0) / (std_b * std_b / alphaHat_1 + 1.);
       if( check < bLow[0] )
           check = bLow[0];
       if( check > bUp[0] )
@@ -370,8 +370,24 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   CPPUNIT_ASSERT_MESSAGE(
       "firstOrderOptLinearTest: BOut is not correct.",
       ok_b
-  );
-
+  ); 
+  /* check fixed effects objective value
+  Vi     = Ri + fi_b * D * fi_b'
+  Ltilde = .5 * sum_i logdet(2*pi*Vi) + (yi-alp_0)' Vi^{-1} (yi-alp_0)
+  */
+  double pi     = 4. * atan(1.);
+  check = 0;
+  for( i = 0; i < M; i++)
+  {  double Vi = std_b * std_b + alphaHat_1;
+     double ri = Y[i] - alphaHat_0;
+     check += .5 * ( log( 2 * pi * Vi ) + ri * ri / Vi );
+  }
+  bool ok_L = true;
+  ok_L &= fabs(check - dLtildeOut) < 1e-4;
+  CPPUNIT_ASSERT_MESSAGE(
+      "firstOrderOptLinearTest: Ltilde or its derivaztive is not correct.",
+      ok_L
+  ); 
   return;
 }
 // END VERBATIM
