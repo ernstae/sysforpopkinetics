@@ -377,10 +377,12 @@ void firstOrderOptTest::firstOrderOptLinearTest()
   Vi     = Ri + fi_b * D * fi_b' = Ri + D
   Ltilde = .5 * sum_i logdet(2*pi*Vi) + (yi-alp_0)' Vi^{-1} (yi-alp_0)
   */
-  double pi           = 4. * atan(1.);
-  double Ltilde       = 0.;
-  double Ltilde_alp_0 = 0.;
-  double Ltilde_alp_1 = 0.;
+  double pi             = 4. * atan(1.);
+  double Ltilde         = 0.;
+  double Ltilde_alp_0   = 0.;
+  double Ltilde_alp_1   = 0.;
+  double Hessian_00     = 0.;
+  double Hessian_11     = 0.;
   for( i = 0; i < M; i++)
   {  double Vi       = sigma * sigma + alphaHat_1;
      double Vi_alp_1 = 1;
@@ -388,10 +390,17 @@ void firstOrderOptTest::firstOrderOptLinearTest()
      double ri_alp_0 = -1;
      Ltilde         += .5 * ( log( 2 * pi * Vi ) + ri * ri / Vi );
      Ltilde_alp_0   += ri * ri_alp_0 / Vi;
+     Hessian_00     += ri_alp_0 * ri_alp_0 / Vi;
      Ltilde_alp_1   += .5 * Vi_alp_1 / Vi - .5 * ri * ri * Vi_alp_1 / (Vi * Vi);
+     Hessian_11     += -.5 * Vi_alp_1 * Vi_alp_1 / (Vi * Vi)
+                     + ri * ri * Vi_alp_1 * Vi_alp_1 / (Vi * Vi * Vi);
   }
   bool ok_L = true;
   ok_L &= fabs(dLtildeOut / Ltilde - 1) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+0) / Hessian_00 - 1) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+1) ) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+2) ) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+3) / Hessian_11 - 1) < 1e-4;
   // do not require much relative accuracy on derivatives because are zero
   // at the true minimizer.
   ok_L &= fabs(*(drowLtilde_alpOut.data()+0) / Ltilde_alp_0 - 1 ) < 1e-2;
