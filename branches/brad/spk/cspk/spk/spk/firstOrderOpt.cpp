@@ -126,7 +126,8 @@ $syntax/void firstOrderOpt(
               const DoubleMatrix&     /dvecBStep/                  ,
               double*                 /pLtildeOut/                 ,
               DoubleMatrix*           /prowLtilde_alpOut/          ,
-              DoubleMatrix*           /pmatLtilde_alp_alpOut/ 
+              DoubleMatrix*           /pmatLtilde_alp_alpOut/      ,
+              DoubleMatrix*           /pmatLtilde_alpOut/ 
 )/$$
 
 
@@ -175,38 +176,42 @@ $latex D ( \alpha )$$
 $tend 
 
 $subhead Population Objective$$
-The population objective function
-$latex \tilde{L} ( \alpha ) $$ is defined by
+For $latex i = 0 , \ldots , m-1$$,
+the joint data variance $latex V_i ( \alpha )$$ 
+and individual contribution to the population objective
+$latex \tilde{L}_i ( \alpha )$$,
+and the  population objective 
+$latex \tilde{L} ( \alpha ) $$ are defined by
 $latex \[
 \begin{array}{rcl}
 V_i ( \alpha ) & = & R_i ( \alpha , 0 ) +  
 \partial_b f_i ( \alpha , 0 ) D( \alpha ) \partial_b f_i ( \alpha , 0 )^\R{T}
 \\
-2 \tilde{L} ( \alpha )
-& = & 
-\sum_{i=0}^{M-1}
-\R{logdet} [ 2 \pi V_i ( \alpha ) ] 
-	+ [ y_i - f_i ( \alpha , 0 ) ]^\R{T} 
-		V_i ( \alpha )^{-1}
-			[ y_i - f_i ( \alpha , 0 ) ] 
+\tilde{L}_i ( \alpha ) & = & 
+	\frac{1}{2} \R{logdet} [ 2 \pi V_i ( \alpha ) ] 
+		+ \frac{1}{2} [ y_i - f_i ( \alpha , 0 ) ]^\R{T} 
+			V_i ( \alpha )^{-1}
+				[ y_i - f_i ( \alpha , 0 ) ] 
+\\
+\tilde{L} ( \alpha ) & = & \sum_{i=0}^{M-1} \tilde{L}_i ( \alpha ) 
 \end{array}
 \] $$
 
 $subhead Individual Objective$$
 For $latex i = 0 , \ldots , m-1$$,
-the function $latex \Lambda_i$$ is defined by
+the function $latex \Lambda_i ( \alpha , b)$$ is defined by
 $latex \[
 \begin{array}{rcl}
-2 \Lambda_i ( \alpha , b ) 
+\Lambda_i ( \alpha , b ) 
 & = &
-\R{logdet} [ 2 \pi R ( \alpha , b ) ] 
-	+ [ y_i - f_i ( \alpha , b ) ]^\R{T} 
+\frac{1}{2} \R{logdet} [ 2 \pi R ( \alpha , b ) ] 
+	+ \frac{1}{2} [ y_i - f_i ( \alpha , b ) ]^\R{T} 
 		R( \alpha , b)^{-1}
 			[ y_i - f_i ( \alpha , b ) ] 
 \\
 & + &
-\R{logdet} [ 2 \pi D ( \alpha ) ] 
-	+ b^\R{T} D( \alpha )^{-1} b
+\frac{1}{2} \R{logdet} [ 2 \pi D ( \alpha ) ] 
+	+ \frac{1}{2} b^\R{T} D( \alpha )^{-1} b
 \end{array}
 \] $$
 
@@ -504,9 +509,16 @@ $latex \[
 	\partial_\alpha \partial_\alpha \tilde{L} ( \alpha )
 \] $$
 where $latex \alpha$$ is the optimal value for the fixed effects.
-The approximation for this second derivative is formed using central
-differences of $latex \partial_\alpha \tilde{L} ( \alpha )%$$ with
-step sizes specified by $italic dvecAlpStep$$.
+
+$head pmatLtilde_alpOut$$
+If $italic pmatLtilde_alpOut$$ is not $code NULL$$,
+then $syntax%*%pmatLtilde_alpOut%$$ is an
+$latex m \times M$$ matrix. 
+For $latex i = 0 , \ldots , M-1$$,
+column $latex i$$ of the matrix contains the gradient of $th i$$
+individual's contribution to the population objective
+$latex L_i ( \alpha)$$ 
+(see $cref/population objective/FirstOrderOpt/Notation/Population Objective/$$).
 
 $children%
 	firstOrderOptTest.cpp
@@ -671,17 +683,19 @@ public:
 	{	typedef CppAD::AD<double> Scalar;
 		typedef std::valarray<Scalar> adVector;
 		typedef std::valarray<double> dVector;
-		if( Ltilde_alp->nr()!=1 || Ltilde_alp->nc()!=m_ ) 
-		SPK_PROGRAMMER_ERROR(
+		bool row = Ltilde_alp->nr() == 1 && Ltilde_alp->nc() == m_;
+		bool mat = Ltilde_alp->nr() == m_ && Ltilde_alp->nc() == M_; 
+		if( ! (row || mat) ) SPK_PROGRAMMER_ERROR(
 		"FirstOrderObj.gradient: argument dimensions are worng."
 		); 
 		int i, j;
 		double *ptr_Ltilde_alp = Ltilde_alp->data();
 		adVector alpha_valarray(m_);
 		for(j = 0; j < m_; j++)
-		{	alpha_valarray[j] = alpha_valarray_[j];
+			alpha_valarray[j] = alpha_valarray_[j];
+		if(row) 
+		for(j = 0; j < m_ ; j++)
 			ptr_Ltilde_alp[j] = 0.;
-		}
 
 		adVector Ltilde_i(1);
 		dVector  Ltilde_alp_i(m_);
@@ -694,8 +708,10 @@ public:
 			CppAD::ADFun<double> F(alpha_valarray, Ltilde_i);
 			weight[0] = 1.;
 			Ltilde_alp_i = F.Reverse(1, weight);
-			for(j = 0; j < m_; j++)
+			if(row) for(j = 0; j < m_; j++)
 				ptr_Ltilde_alp[j] += Ltilde_alp_i[j];
+			else for(j = 0; j < m_; j++)
+				ptr_Ltilde_alp[j + i * m_] = Ltilde_alp_i[j];
 		}
 		return;
 	}
@@ -759,7 +775,8 @@ void firstOrderOpt(
               const DoubleMatrix&            dvecBStep                  ,
               double*                        pLtildeOut                 ,
               DoubleMatrix*                  prowLtilde_alpOut          ,
-              DoubleMatrix*                  pmatLtilde_alp_alpOut      )
+              DoubleMatrix*                  pmatLtilde_alp_alpOut      ,
+              DoubleMatrix*                  pmatLtilde_alpOut          )
 {	// Check for input errors
 	if( bOptInfo.getSaveStateAtEndOfOpt() ) SPK_PROGRAMMER_ERROR(
 		"fristOrderOpt: Invalid value for SaveStateAtEndOfOpt"
@@ -775,6 +792,7 @@ void firstOrderOpt(
 	nothing_to_compute &= (pLtildeOut              == 0 );
 	nothing_to_compute &= (prowLtilde_alpOut       == 0 );
 	nothing_to_compute &= (pmatLtilde_alp_alpOut   == 0 );
+	nothing_to_compute &= (pmatLtilde_alpOut       == 0 );
 	if( nothing_to_compute )
 		return;
 
@@ -918,14 +936,21 @@ void firstOrderOpt(
 		*pLtildeOut = dLtildeOut;
 	// gradient
 	DoubleMatrix drowLtilde_alpOut(1, m);
-	objective.gradient(&drowLtilde_alpOut);
 	if( prowLtilde_alpOut )
+	{	objective.gradient(&drowLtilde_alpOut);
 		*prowLtilde_alpOut = drowLtilde_alpOut;
+	}
 	// Hessian
 	DoubleMatrix dmatLtilde_alp_alpOut(m, m);
-	objective.Hessian(&dmatLtilde_alp_alpOut);
 	if( pmatLtilde_alp_alpOut )
+	{	objective.Hessian(&dmatLtilde_alp_alpOut);
 		*pmatLtilde_alp_alpOut = dmatLtilde_alp_alpOut;
-
+	}
+	// matrix of individual gradients
+	DoubleMatrix dmatLtilde_alpOut(m, M);
+	if( pmatLtilde_alpOut )
+	{	objective.gradient(&dmatLtilde_alpOut);
+		*pmatLtilde_alpOut = dmatLtilde_alpOut;
+	}
 	return;
 }

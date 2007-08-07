@@ -289,28 +289,30 @@ void firstOrderOptTest::firstOrderOptAnalyticTest()
   double dLtildeOut;
   DoubleMatrix drowLtilde_alpOut     ( 1, m );
   DoubleMatrix dmatLtilde_alp_alpOut ( m, m );
+  DoubleMatrix dmatLtilde_alpOut     ( m, M );
 
   try
   {   firstOrderOpt(
-          model                 ,
-          adModel               ,
-          dvecN                 ,
-          dvecY                 ,
-          alpOptInfo            ,
-          dvecAlpLow            ,
-          dvecAlpUp             ,
-          dvecAlpIn             ,
-          &dvecAlpOut           ,
-          dvecAlpStep           ,
-          bOptInfo              ,
-          dvecBLow              ,
-          dvecBUp               ,
-          dmatBIn               ,
-          &dmatBOut             ,
-          dvecBStep             ,
-          &dLtildeOut           ,
-          &drowLtilde_alpOut    ,
-          &dmatLtilde_alp_alpOut
+          model                  ,
+          adModel                ,
+          dvecN                  ,
+          dvecY                  ,
+          alpOptInfo             ,
+          dvecAlpLow             ,
+          dvecAlpUp              ,
+          dvecAlpIn              ,
+          &dvecAlpOut            ,
+          dvecAlpStep            ,
+          bOptInfo               ,
+          dvecBLow               ,
+          dvecBUp                ,
+          dmatBIn                ,
+          &dmatBOut              ,
+          dvecBStep              ,
+          &dLtildeOut            ,
+          &drowLtilde_alpOut     ,
+          &dmatLtilde_alp_alpOut ,
+          &dmatLtilde_alpOut  
      );
   }
   catch(...)

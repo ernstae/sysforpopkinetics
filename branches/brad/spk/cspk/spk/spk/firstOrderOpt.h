@@ -56,9 +56,10 @@ void firstOrderOpt(
               const DoubleMatrix&            dmatBIn                    ,
               DoubleMatrix*                  pmatBOut                   ,
               const DoubleMatrix&            dvecBStep                  ,
-              double*                        pdLTildeOut                ,
-              DoubleMatrix*                  pdrowLTilde_alpOut         ,
-              DoubleMatrix*                  pmatLTilde_alp_alpOut      
+              double*                        pLTildeOut                 ,
+              DoubleMatrix*                  prowLTilde_alpOut          ,
+              DoubleMatrix*                  pmatLTilde_alp_alpOut      ,
+              DoubleMatrix*                  pmatLTilde_alpOut          
 );
 
 #endif
