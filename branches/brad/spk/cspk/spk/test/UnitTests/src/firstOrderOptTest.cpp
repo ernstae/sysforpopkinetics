@@ -385,19 +385,23 @@ void firstOrderOptTest::firstOrderOptAnalyticTest()
   double Ltilde_alp_1   = 0.;
   double Hessian_00     = 0.;
   double Hessian_11     = 0.;
+  bool ok_L = true;
   for( i = 0; i < M; i++)
   {  double Vi       = sigma * sigma + alphaHat_1;
      double Vi_alp_1 = 1;
      double ri       = Y[i] - alphaHat_0;
      double ri_alp_0 = -1;
      Ltilde         += .5 * ( log( 2 * pi * Vi ) + ri * ri / Vi );
-     Ltilde_alp_0   += ri * ri_alp_0 / Vi;
+     double temp     = ri * ri_alp_0 / Vi;
+     ok_L           &= fabs(*(dmatLtilde_alpOut.data()+0+2*i) - temp) < 1e-4;
+     Ltilde_alp_0   += temp;
      Hessian_00     += ri_alp_0 * ri_alp_0 / Vi;
-     Ltilde_alp_1   += .5 * Vi_alp_1 / Vi - .5 * ri * ri * Vi_alp_1 / (Vi * Vi);
+     temp            = .5 * Vi_alp_1 / Vi - .5 * ri * ri * Vi_alp_1 / (Vi * Vi);
+     ok_L           &= fabs(*(dmatLtilde_alpOut.data()+1+2*i) - temp) < 1e-4;
+     Ltilde_alp_1   += temp;
      Hessian_11     += -.5 * Vi_alp_1 * Vi_alp_1 / (Vi * Vi)
                      + ri * ri * Vi_alp_1 * Vi_alp_1 / (Vi * Vi * Vi);
   }
-  bool ok_L = true;
   ok_L &= fabs(dLtildeOut / Ltilde - 1) < 1e-4;
   ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+0) / Hessian_00 - 1) < 1e-4;
   ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+1) ) < 1e-4;
