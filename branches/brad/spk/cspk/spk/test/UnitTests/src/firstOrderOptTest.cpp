@@ -92,6 +92,12 @@ Test* firstOrderOptTest::suite()
         &firstOrderOptTest::firstOrderOptRestartTest
     )
   );
+  suiteOfTests->addTest(
+    new TestCaller<firstOrderOptTest>(
+        "firstOrderOptZeroIterationsTest", 
+        &firstOrderOptTest::firstOrderOptZeroIterationsTest
+    )
+  );
 
   return suiteOfTests;
 }
@@ -1551,5 +1557,567 @@ void firstOrderOptTest::firstOrderOptRestartTest()
   if ( remove( restartFile.c_str() ) )
   {
     CPPUNIT_ASSERT_MESSAGE( "Unable to delete the restart file.", false );
+  }
+}
+/*************************************************************************
+ * Function: firstOrderOptZeroIterationsTest
+ *
+ * This test calls firstOrdeOpt with zero iterations at the population level,
+ * with zero iterations at the individual level, and with zero iterations 
+ * at both the population and the individual levels.
+ *
+ * At the individual level this test implements the example problem from 
+ * the mapOpt specification. 
+ *************************************************************************/
+
+#include "../../../spk/EqIndModel.h"
+
+template <class Scalar>
+class UserModelFirstOrderOptZeroIterationsTest : public SpkModel<Scalar>
+{
+    valarray<Scalar> _a, _b;
+    int _i;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
+public:
+    UserModelFirstOrderOptZeroIterationsTest(int nA, int nB, int nYi)
+      : _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
+    {}; 
+    ~UserModelFirstOrderOptZeroIterationsTest(){};
+private:
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<Scalar>& aval)
+    {
+      assert(aval.size() == _nA);
+        _a = aval;
+    }
+    void doSetIndPar(const  valarray<Scalar>& bval)
+    {
+      assert(bval.size() == _nB);
+        _b = bval;
+    }
+    void doIndParVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        //              / 1    0  \ 
+        //     D(alp) = |         |  .
+        //              \ 0   1/2 /
+        //
+        ret.resize(_nB * _nB);
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        ret[3] = 0.5;
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        //                 /  0  \ 
+        //    D_alp(alp) = |  0  |  .
+        //                 |  0  | 
+        //                 \  0  / 
+        //
+        ret.resize(_nB * _nB * _nA);
+        for( int i=0; i<_nB * _nB * _nA; i++ )
+          ret[i] = 0.0;
+        return false;
+    }
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        //                 / 1    0 \ 
+        //     D^-1(alp) = |        |  .
+        //                 \ 0    2 /
+        //
+        ret.resize(_nB * _nB);
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        ret[3] = 2.0;
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        //                    /  0  \ 
+        //    D^-1_alp(alp) = |  0  |  .
+        //                    |  0  | 
+        //                    \  0  / 
+        //
+        ret.resize(_nB * _nB * _nA);
+        for( int i=0; i<_nB * _nB * _nA; i++ )
+          ret[i] = 0.0;
+        return false;
+    }
+    void doDataMean( valarray<Scalar>& ret ) const
+    {
+        //
+        //                 / b(2) \ 
+        //     f(alp, b) = |      |  .
+        //                 \ b(2) /
+        //
+        ret.resize(_nYi);
+        ret[0] = _b[1];
+        ret[1] = _b[1];
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        //                     / 0 \ 
+        //     f_alp(alp, b) = |   |  .
+        //                     \ 0 /
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        //                   / 0   1 \ 
+        //     f_b(alp, b) = |       |  .
+        //                   \ 0   1 /
+        //
+        ret.resize(_nYi * _nB);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        ret[2] = 1.0;
+        ret[3] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        //                 /  exp[b(1)]     0  \ 
+        //     R(alp, b) = |                   |  .
+        //                 \  0      exp[b(1)] / 
+        //
+        ret.resize(_nYi * _nYi);
+        ret[0] = exp( _b[0] );
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        ret[3] = exp( _b[0] );
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        //                    /  0  \ 
+        //    R_alp(alp, b) = |  0  |  .
+        //                    |  0  | 
+        //                    \  0  / 
+        //
+        ret.resize(_nYi * _nYi * _nA);
+        for( int i=0; i<_nYi *_nYi * _nA; i++ )
+          ret[i] = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        //                   /  exp[b(1)]     0  \ 
+        //     R_b(alp, b) = |  0             0  |   .
+        //                   |  0             0  | 
+        //                   \  exp[b(1)]     0  / 
+        //
+        ret.resize(_nYi * _nYi * _nB);
+        for( int i=0; i<_nYi *_nYi * _nB; i++ )
+          ret[i] = 0.0;
+        ret[0] = exp( Value(_b[0]) );
+        ret[3] = exp( Value(_b[0]) );
+        return true;
+    }   
+    void doDataVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        //                    /  1.0/exp[b(1)]     0  \ 
+        //     R(alp, b)^-1 = |                        |  .
+        //                    \  0      1.0/exp[b(1)] / 
+        //
+        ret.resize(_nYi * _nYi);
+        ret[0] = 1.0 / exp( Value(_b[0]) );
+        ret[1] = 0.0;
+        ret[2] = 0.0;
+        ret[3] = 1.0 / exp( Value(_b[0]) );
+    }
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        //                         /  0  \ 
+        //    R^(-1)_alp(alp, b) = |  0  |  .
+        //                         |  0  | 
+        //                         \  0  / 
+        //
+        ret.resize(_nYi * _nYi * _nA);
+        for( int i=0; i<_nYi *_nYi * _nA; i++ )
+          ret[i] = 0.0;
+        return false;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+        //
+        //                        /  -1.0 / exp[b(1)]     0  \ 
+        //     R^(-1)_b(alp, b) = |     0                 0  |   .
+        //                        |     0                 0  | 
+        //                        \  -1.0 / exp[b(1)]     0  / 
+        //
+        ret.resize(_nYi * _nYi * _nB);
+        for( int i=0; i<_nYi *_nYi * _nB; i++ )
+          ret[i] = 0.0;
+        ret[0] = -1.0 / exp( Value(_b[0]) );
+        ret[3] = -1.0 / exp( Value(_b[0]) );
+        return true;
+    }   
+};
+
+void firstOrderOptTest::firstOrderOptZeroIterationsTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace population_analysis;
+
+
+  // Number of individuals.
+  const int nInd = 3;
+
+  // Number of measurements for each individual. 
+  const int nYPerInd = 2;
+
+  // Number of measurements.
+  const int nY = nInd * nYPerInd;
+
+  const int nAlp = 1;
+
+  const int nB = 2;
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelFirstOrderOptZeroIterationsTest<double>
+	model( nAlp, nB, nYPerInd);
+  UserModelFirstOrderOptZeroIterationsTest< CppAD::AD<double> >
+	adModel( nAlp, nB, nYPerInd);
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individuals in the population.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) nYPerInd );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  DoubleMatrix dvecY( nY, 1 );
+  dvecY.fill( 2.0 );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecAlpLow ( nAlp, 1 );
+  DoubleMatrix dvecAlpUp  ( nAlp, 1 );
+  DoubleMatrix dvecAlpIn  ( nAlp, 1 );
+  DoubleMatrix dvecAlpOut ( nAlp, 1 );
+  DoubleMatrix dvecAlpStep( nAlp, 1 );
+
+  double* pdAlpLowData  = dvecAlpLow .data();
+  double* pdAlpUpData   = dvecAlpUp  .data();
+  double* pdAlpInData   = dvecAlpIn  .data();
+  double* pdAlpOutData  = dvecAlpOut .data();
+  double* pdAlpStepData = dvecAlpStep.data();
+
+  // Set the values associated with alp(1).
+  pdAlpLowData [ 0 ] = -10.0;
+  pdAlpUpData  [ 0 ] = 10.0;
+  pdAlpInData  [ 0 ] = 5.0;
+  pdAlpStepData[ 0 ] = 1.0e-2;
+
+  
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+
+  dvecBLow .fill( -4.0 );
+  dvecBUp  .fill(  4.0 );
+  dvecBStep.fill(  0.001 );
+
+  DoubleMatrix dmatBIn ( nB, nInd );
+  DoubleMatrix dmatBOut( nB, nInd );
+
+  dmatBIn.fill( 2.0 );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double dLTildeOut;
+
+  DoubleMatrix drowLTilde_alpOut     ( 1,    nAlp );
+  DoubleMatrix dmatLTilde_alp_alpOut ( nAlp, nAlp );
+  DoubleMatrix dmatLambdaTilde_alpOut( nAlp, nInd );
+
+  Optimizer indOptimizer( 1.0e-6, 0, 0 );
+  Optimizer popOptimizer( 1.0e-6, 0, 0 );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the known values.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecAlpHat( nAlp, 1    );
+  DoubleMatrix dmatBHat  ( nB,   nInd );
+
+  double* pdBHatData = dmatBHat.data();
+
+  // Inputs to lTilde.
+  bool withD = true;
+  double dLTildeKnown;
+  DoubleMatrix drowLTilde_alpKnown( 1, nAlp );
+  DoubleMatrix* pdmatNull = 0;
+  double* pdLTilde_alpKnownData;
+
+  // The derivatives of each individual's contribution to lTilde
+  // should be equal.
+  DoubleMatrix dmatLambdaTilde_alpKnown( nAlp, nInd );
+  double* pdLambdaTilde_alpKnownData;
+
+  // The second derivatives should all be zero.
+  DoubleMatrix dmatLTilde_alp_alpKnown( nAlp, nAlp );
+  dmatLTilde_alp_alpKnown.fill( 0.0 );
+
+
+  //------------------------------------------------------------
+  // Test zero iterations at all possible combinations of levels.
+  //------------------------------------------------------------
+
+  int j;
+
+  for ( int i = 0; i < 3; i++ )
+  {
+    switch ( i )
+    {
+
+    //----------------------------------------------------------
+    // Zero iterations at the population level.
+    //----------------------------------------------------------
+
+    case 0:
+
+      //preTestPrinting( "Zero Population Level Iterations" );
+
+      indOptimizer.setNMaxIter( 40 );     // Individual level.
+      popOptimizer.setNMaxIter(  0 );     // Population level.
+
+      // Since the number of iterations for the population level is
+      // zero, alpOut and alpHat should both be equal to alpIn.
+      dvecAlpHat = dvecAlpIn;
+
+      // For each individual, the minimum value for MapObj(b) occurs 
+      // when b(1) = 0 and b(2) = 1. 
+      for ( j = 0; j < nInd; j++ )
+      {
+        pdBHatData[ 0 + j * nB ] = 0.0;
+        pdBHatData[ 1 + j * nB ] = 1.0;
+      }
+
+      break;
+
+
+    //----------------------------------------------------------
+    // Zero iterations at the individual level.
+    //----------------------------------------------------------
+
+    case 1:
+
+      //preTestPrinting( "Zero Individual Level Iterations" );
+
+      indOptimizer.setNMaxIter(  0 );     // Individual level.
+      popOptimizer.setNMaxIter( 40 );     // Population level.
+
+      // Since f(alp, b), R(alp, b), and D(alp) are defined below
+      // such that they are all independent of alp, the optimizer
+      // will return alpIn as the value for alpOut.
+      dvecAlpHat = dvecAlpIn;
+
+      // Since the number of iterations for the individual level is
+      // zero, bOut and bHat should both be equal to bIn.
+      dmatBHat = dmatBIn;
+
+      break;
+
+
+    //----------------------------------------------------------
+    // Zero iterations at both levels.
+    //----------------------------------------------------------
+
+    case 2:
+
+      //preTestPrinting( "Zero Iterations at Both Levels" );
+
+      indOptimizer.setNMaxIter(  0 );     // Individual level.
+      popOptimizer.setNMaxIter(  0 );     // Population level.
+
+      // Since the number of iterations for the population level is
+      // zero, alpOut and alpHat should both be equal to alpIn.
+      dvecAlpHat = dvecAlpIn;
+
+      // Since the number of iterations for the individual level is
+      // zero, bOut and bHat should both be equal to bIn.
+      dmatBHat = dmatBIn;
+
+      break;
+    }
+
+
+    //----------------------------------------------------------
+    // Optimize the population objective function.
+    //----------------------------------------------------------
+
+    bool okFirstOrderOpt;
+    try
+    {
+      firstOrderOpt( 
+                     model,
+                     adModel,
+                     dvecN,
+                     dvecY,
+                     popOptimizer,
+                     dvecAlpLow,
+                     dvecAlpUp,
+                     dvecAlpIn,
+                     &dvecAlpOut,
+                     dvecAlpStep,
+                     indOptimizer,
+                     dvecBLow,
+                     dvecBUp,
+                     dmatBIn,
+                     &dmatBOut,
+                     dvecBStep,
+                     &dLTildeOut,
+                     &drowLTilde_alpOut,
+                     &dmatLTilde_alp_alpOut,
+                     &dmatLambdaTilde_alpOut 
+                   );
+      okFirstOrderOpt = true;
+    }
+    catch(...)
+    {
+        CPPUNIT_ASSERT(false);
+    }
+
+    //----------------------------------------------------------
+    // Compute the known values for LTilde and LTilde_alp.
+    //----------------------------------------------------------
+
+    bool okLTilde;
+    int k;
+    
+    //
+    // [ Comment by Sachiko, 09/18/2002 ]
+    //
+    // When FO is specified, call lTilde in such a way it
+    // exercieses the naive (straight translation of FO)
+    // method because lTilde is not in the execution
+    // path of the official FO (with EqIndModel).  
+    // To do that, feed a NaiveFoModel object
+    // as a SpkModel instance and specify NAIVE_FIRST_ORDER
+    // as the objective of choice.
+    // 
+    try{
+
+
+/*
+        lTilde(  model,
+                 NAIVE_FIRST_ORDER,
+                 dvecY,
+                 dvecN,
+                 indOptimizer,
+                 dvecAlpHat,
+                 dvecBLow,
+                 dvecBUp,
+                 dvecBStep,
+                 dmatBIn,
+                 pdmatNull,
+                 &dLTildeKnown,
+                 &drowLTilde_alpKnown);
+*/
+    std::valarray<int> N( nInd );
+	for( k = 0; k < nInd; k++ )
+		N[ k ] = (int)dvecN.data()[ k ];
+	EqIndModel FoModel( &model, N, dvecBStep.toValarray(), nAlp );
+
+    mapObj( FoModel, 
+            dvecY,
+            dvecAlpHat,
+            &dLTildeKnown,
+            &drowLTilde_alpKnown,
+            false,
+            true,
+            &dvecN );
+
+        okLTilde = true;
+    }
+    catch(...)
+    {
+      CPPUNIT_ASSERT( false );
+    }
+    
+    pdLTilde_alpKnownData      = drowLTilde_alpKnown.data();
+    pdLambdaTilde_alpKnownData = dmatLambdaTilde_alpKnown.data();
+
+    // Calculate the derivatives of each individual's contribution to
+    // lTilde, which should be equal since they all have the same data
+    // and should all have the same b values.
+    for ( j = 0; j < nAlp; j++ )
+    {
+      for ( k = 0; k < nInd; k++ )
+      {
+        pdLambdaTilde_alpKnownData[ j + k * nAlp ] = pdLTilde_alpKnownData[ j ] / nInd;
+      }
+    }
+
+
+    //----------------------------------------------------------
+    // Compare the results.
+    //----------------------------------------------------------
+
+    firstOrderOptTest_doTheTest(  okFirstOrderOpt,
+                dLTildeOut,
+                dLTildeKnown,
+                indOptimizer.getEpsilon(),
+                popOptimizer.getEpsilon(),
+                dvecAlpLow,
+                dvecAlpUp,
+                dvecAlpOut,
+                dvecAlpHat,
+                dvecBLow,
+                dvecBUp,
+                dmatBOut,
+                dmatBHat,
+                drowLTilde_alpOut,
+                drowLTilde_alpKnown,
+                dmatLambdaTilde_alpOut,
+                dmatLambdaTilde_alpKnown,
+                dmatLTilde_alp_alpOut,
+                dmatLTilde_alp_alpKnown );
+
   }
 }
