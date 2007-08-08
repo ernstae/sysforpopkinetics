@@ -5,6 +5,7 @@
 $begin OdeBreak$$
 $latex \newcommand{\R}{{\bf R}}$$
 $spell
+	enum
 	oleft
 	Bool
 	btime
@@ -26,13 +27,9 @@ $$
 
 $section Multiple Break Point and Output Point Ode Integrator$$
 
-$table
-$bold Syntax$$ $cnext
-$syntax%OdeBreak(%eval%, %xout%,
-	%method%, %btime%, %otime%, %oleft%, %eabs%, %erel%)%$$ 
-$tend
-
-$fend 20$$
+$head Syntax$$
+$syntax%%code% = OdeBreak(%
+	eval%, %xout%,%method%, %btime%, %otime%, %oleft%, %eabs%, %erel%)%$$ 
 
 $head Notation$$
 $table
@@ -232,6 +229,14 @@ $syntax%
 	const %FloatVector% &%x%
 %$$
 
+$subhead Nan$$
+If the any of the vectors $italic f$$, $italic f_ind$$ or $italic f_dep$$
+contain not a number $code nan$$,
+the corresponding ODE step size is considered to be to large and
+a smaller step size is tried.
+If the resulting step size would be to small,
+$code OdeBreak$$ returns with $italic xout$$ as a vector of $code nan$$.
+
 $head xout$$
 The argument $italic xout$$ is a vector of length $latex N * J$$
 and has prototype
@@ -349,6 +354,22 @@ eabs[i] + erel * \left| X_i ( t_j ) \right|
 \] $$
 where $latex t_j$$ is $syntax%%otime%[%j%]%$$.
 
+$head code$$
+The return value $italic code$$ has prototype
+$syntax%
+	enum Return_OdeBreak 
+		{ ok_OdeBreak, accuracy_OdeBreak, eval_nan_OdeBreak } %code%
+%$$
+If it is equal to $code ok_OdeBreak$$, 
+no errors or warnings have occurred.
+If it is equal to $code accuracy_OdeBreak$$, 
+the desired level of accuracy for $italic xout$$ could not be obtained.
+If it is equal to $code eval_nan_OdeBreak$$, 
+even taking the smallest allowable steps, the $italic eval$$
+routine returned $cref/Nan/OdeBreak/eval/Nan/$$.
+The enumeration $code Return_OdeBreak$$ is defined by the 
+$code OdeBreak.h$$ include file.
+
 
 $children%
 	../test/unit/src/OdeBreakTest.cpp
@@ -370,7 +391,7 @@ $end
 # include <CppAD/Rosen34.h>
 # include <cmath>
 # include <spk/SpkException.h>
-# include <spk/WarningsManager.h>
+# include <spk/isNotANumber.h>
 
 // Maximum number of Ode steps per time interval where the time intervals
 // are defined by the union of the break point times and output times.
@@ -428,8 +449,14 @@ public:
 	};
 };
 
+enum Return_OdeBreak {
+	ok_OdeBreak,         // no problems
+	accuracy_OdeBreak ,  // desired accuracy could not be achieved
+	nan_OdeBreak         // ODE equations evaluate to nan
+};
+
 template <class Eval, class Scalar, class FloatVector, class BoolVector>
-void OdeBreak(
+Return_OdeBreak OdeBreak(
 	Eval              &eval    , 
 	FloatVector       &xout    ,
 	const std::string &method  ,
@@ -444,8 +471,8 @@ void OdeBreak(
 	const size_t J = otime.size();
 	const size_t N = eabs.size();
 
-	// has a step size warning already been issued
-	static bool OdeBreakWarning = false; 
+	// return code for this call
+	enum Return_OdeBreak return_code = ok_OdeBreak; 
 
 	// message
 	const char *message;
@@ -611,7 +638,7 @@ void OdeBreak(
 
 			// check if we are done
 			if( j == J )
-				return;
+				return return_code;
 		}
 		// check if this is a break point
 		while( k < K && btime[k] == t )
@@ -631,7 +658,7 @@ void OdeBreak(
 
 			// check if we are done
 			if( j == J )
-				return;
+				return return_code;
 		}
 
 		// determine next integration time limit
@@ -680,6 +707,10 @@ void OdeBreak(
 				enext,
 				maxnext
 			);
+			if( isNotANumber(xnext[0]) ) 
+			{	return_code = nan_OdeBreak;
+				return return_code;
+			}
 
 			// check if error criteria is satisfied at time tnext
 			bool shrink = false;
@@ -706,14 +737,8 @@ void OdeBreak(
 
 			// check for minimum step size
 			if( !( ok | shrink ) )
-			{	ok      = true;
-				message =
-				"The ordinary differential equation (ODE) solver could not obtain the desired accuracy.";
-				if( ! OdeBreakWarning )
-				{	std::cout << message << std::endl;	
-					WarningsManager::addWarning( message, __LINE__, __FILE__);
-				}
-				OdeBreakWarning = true;
+			{	ok          = true;
+				return_code = accuracy_OdeBreak;
 			}
 
 			// only use ok steps to update maxabs
