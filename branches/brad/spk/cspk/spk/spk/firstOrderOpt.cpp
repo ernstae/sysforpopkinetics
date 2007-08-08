@@ -441,8 +441,9 @@ $head dvecAlpStep$$
 This is a column vector of length $latex m$$
 that specifies the step size used for approximating
 the derivatives with respect to the fixed effects ($latex \alpha$$).
-The value of this parameter does not matter if
-$italic pmatLtilde_alp_alpOut$$ is $code NULL$$.
+This value is no longer used (but not yet removed from the
+calling sequence) see 
+$cref/pmatLtilde_alp_alpOut/firstOrderOpt/pmatLtilde_alp_alpOut/$$.
 
 $head dvecBLow$$
 This is a column vector of length $latex n$$ 
@@ -499,16 +500,21 @@ $latex \[
 \] $$
 where $latex \alpha$$ is the optimal value for the fixed effects.
 
-$head prowLtilde_alp_alpOut$$
+$head pmatLtilde_alp_alpOut$$
 If $italic prowLtilde_alp_alpOut$$ is not $code NULL$$, 
 then $syntax%*%prowLtilde_alp_alpOut%$$ 
 is an $latex m \times m$$ matrix.
 If this function completed the optimization successfully, 
-this matrix will contain 
+this matrix will contain an approximation for
 $latex \[
 	\partial_\alpha \partial_\alpha \tilde{L} ( \alpha )
 \] $$
 where $latex \alpha$$ is the optimal value for the fixed effects.
+This used to be a central difference of 
+$latex \partial_\alpha \tilde{L} ( \alpha ) $$ with a step size
+of $cref/dvecAlpStep/firstOrderOpt/dvecAlpStep/$$. 
+Now, AD is used to compute the true Hessian instead of the
+central difference approximation.
 
 $head pmatLtilde_alpOut$$
 If $italic pmatLtilde_alpOut$$ is not $code NULL$$,
