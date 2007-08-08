@@ -39,7 +39,10 @@
 class firstOrderOptTest : public CppUnit::TestFixture
 {
 private:
-    void firstOrderOptAnalyticTest();
+    void firstOrderOptAnalyticTest(void);
+    void firstOrderOptExampleTest(void);
+    void firstOrderOptRestartTest(void);
+    void firstOrderOptZeroIterationsTest(void);
 public: 
     static CppUnit::Test* suite();
     void setUp();

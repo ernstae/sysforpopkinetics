@@ -778,12 +778,6 @@ void firstOrderOpt(
               DoubleMatrix*                  pmatLtilde_alp_alpOut      ,
               DoubleMatrix*                  pmatLtilde_alpOut          )
 {	// Check for input errors
-	if( bOptInfo.getSaveStateAtEndOfOpt() ) SPK_PROGRAMMER_ERROR(
-		"fristOrderOpt: Invalid value for SaveStateAtEndOfOpt"
-	);
-	if( alpOptInfo.getThrowExcepIfMaxIter() ) SPK_PROGRAMMER_ERROR(
-		"fristOrderOpt: Invalid value for ThrowExcepIfMaxIter"
-	);
 
 	// Special case where there is nothing to calculate
 	bool nothing_to_compute = true;

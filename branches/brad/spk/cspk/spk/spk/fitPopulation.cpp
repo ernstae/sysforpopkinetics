@@ -1846,7 +1846,8 @@ where n is the size of population parameter. \
   //------------------------------------------------------------
   if( objective==FIRST_ORDER )
   {	// This case no longer handled by fitPopulation
-	assert(0);
+	std::cout << "attempt to use first order method through fitPopulation";
+	std::cout << std::endl;
 # if 0
     //
     // [ Comment by Sachiko, 10/09/2002 ]
