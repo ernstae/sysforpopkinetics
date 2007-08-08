@@ -1,15 +1,18 @@
 #! /bin/bash
-if [ "$1" == "" ]
+if [ "$2" == "" ]
 then
-	echo "merge2trunk.sh branch [--dry-run]"
+	echo "merge2trunk.sh branch revsion [--dry-run]"
+	echo "where revsion corresponds to the start of the changes"
 	exit 1
 fi
+revision="$2"
 dry_run=""
-if [ "$2" != "" ]
+if [ "$3" != "" ]
 then
-	if [ "$2" != "--dry-run" ]
+	if [ "$3" != "--dry-run" ]
 	then
-		echo "merge2trunk.sh branch [--dry-run]"
+		echo "merge2trunk.sh branch revsion [--dry-run]"
+		echo "where revsion corresponds to the start of the changes"
 		exit 1
 	else
 		dry_run="--dry-run"
@@ -36,5 +39,5 @@ then
 fi
 echo "pwd"
 pwd
-echo "svn merge $dry_run -r2419:HEAD $repository/branches/brad"
-svn merge $dry_run -r2419:HEAD "$repository/branches/brad"
+echo "svn merge $dry_run -r$revsion:HEAD $repository/branches/brad"
+svn merge $dry_run -r$revsion:HEAD "$repository/branches/brad"
