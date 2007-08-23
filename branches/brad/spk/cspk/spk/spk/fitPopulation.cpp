@@ -143,7 +143,8 @@ fitPopulation.h $rend
 
 $bold Prototype:$$ $cend
 $syntax/void fitPopulation(
-				SpkModel<double>&               /popModel/,
+				SpkModel<double>&               /model/,
+				SpkModel< CppAD::AD<double> >&  /modelAD/,
 				enum Objective                  /objective/,
 				const SPK_VA::valarray<int>&    /nMeasurementsAll/,
 				const SPK_VA::valarray<double>& /measurementsAll/,
@@ -182,8 +183,7 @@ $pre
 $$
 $head Description$$
 Minimizes one of the parametric population objective functions:  
-the modified Laplace, the modified Expected Hessian, or the 
-modified First Order.
+the modified Laplace or the modified Expected Hessian.
 $pre
 
 $$
@@ -263,16 +263,6 @@ by their finite difference approximations.
 $pre
 
 $$
-For the case of the modified First-order objective function,
-$math%HTilde_i(alp, b)%$$ is the same approximation used in the modified
-laplace objective (described above) but with 
-$math%f_i(alp, b)%$$ replaced by a linear approximation in $math%b%$$ and 
-ignoring the dependence of $math%R_i(alp, b)%$$ on $math%b%$$.
-In addition, we use finite differences in place of derivatives in the objective.
-
-$pre
-
-$$
 (The above equations use
 $xref/glossary/Population Notation/population notation/$$.)
 
@@ -322,23 +312,30 @@ $xref/glossary/Exception Handling Policy/Exception Handling Policy/$$.
 
 $head Arguments$$
 $syntax/
-/popModel/
+/model/
 /$$
 This function expects $italic model$$ to be a function of
 all three parameters: $math%alp%$$, $math%b%$$ and $math%i%$$.
 Refer $xref/glossary/Model Functions Depend on i - alp - b/Model Functions Depend on i - alp - b/$$
 for details.
 
+$syntax/
+/modelAD/
+/$$
+This should be the same model as $italic model$$ only instantiated 
+with type CppAD::<Scalar>, where Scalar is the type used to instantiate 
+$italic model$$.
 
 $syntax/
 
 /objective/
 /$$
 This enumerated type variable specifies which parametric population objective 
-function will be minimized:  the modified Laplace, the modified 
-Expected Hessian, or the modified First Order.
+function will be minimized:  the modified Laplace or the modified 
+Expected Hessian.
 The permissible values for $italic objective$$ are defined in 
 the $xref/Objective//Objective/$$ enumerated type definition.
+Note that this function may not be used with the modified First Order objective.
 
 $syntax/
 
@@ -1232,6 +1229,7 @@ time_t SESSION_ID;
 
 #include "SpkValarray.h"
 #include "fitPopulation.h"
+#include "firstOrderOpt.h"
 #include "ppkaOpt.h"
 #include "NaiveFoModel.h"
 #include "File.h"
@@ -1266,28 +1264,27 @@ namespace // [Begin: unnamed namespace]
  * Function definition
  *------------------------------------------------------------------------*/
 
-void fitPopulation( 
-				    SpkModel<double>&               model,
-					enum Objective              objective,
-                    const valarray<int>&        nMeasurementsAll,
-                    const valarray<double>&     measurementsAll,
-                    Optimizer&                  popOptimizer,
-                    const valarray<double>&     popParLow,
-                    const valarray<double>&     popParUp,
-					const valarray<double>&     popParIn,
-					const valarray<double>&     popParStep,
-                    valarray<double>*           popParOut,
-					Optimizer&                  indOptimizer,
-					const valarray<double>&     indParLow,
-                    const valarray<double>&     indParUp,
-					const valarray<double>&     indParAllIn,
-					const valarray<double>&     indParStep,
-					valarray<double>*           indParAllOut,
-					double*                     popObjOut,
-					valarray<double>*           popObj_popParOut,
-					valarray<double>*           popObj_popPar_popParOut,
-					const DirBasedParallelControls& dirBasedParallelControls
-				  )
+void fitPopulation( SpkModel<double>&               model,
+                    SpkModel< CppAD::AD<double> >&  modelAD,
+                    enum Objective                  objective,
+                    const valarray<int>&            nMeasurementsAll,
+                    const valarray<double>&         measurementsAll,
+                    Optimizer&                      popOptimizer,
+                    const valarray<double>&         popParLow,
+                    const valarray<double>&         popParUp,
+                    const valarray<double>&         popParIn,
+                    const valarray<double>&         popParStep,
+                    valarray<double>*               popParOut,
+                    Optimizer&                      indOptimizer,
+                    const valarray<double>&         indParLow,
+                    const valarray<double>&         indParUp,
+                    const valarray<double>&         indParAllIn,
+                    const valarray<double>&         indParStep,
+                    valarray<double>*               indParAllOut,
+                    double*                         popObjOut,
+                    valarray<double>*               popObj_popParOut,
+                    valarray<double>*               popObj_popPar_popParOut,
+                    const DirBasedParallelControls& dirBasedParallelControls )
 {
   using std::endl;
   using std::ends;
@@ -1840,40 +1837,35 @@ where n is the size of population parameter. \
   File sharedDirectory;
 
   //------------------------------------------------------------
-  // Direct the execution path to firstOrderOpt() if
-  // FIRST_ORDER (the version of FO that treats a population
-  // problem as a big individual problem) were specified.
+  // Optimize the population objective function.
   //------------------------------------------------------------
+
+  // Optimize the population objective function using the chosen
+  // method.
   if( objective==FIRST_ORDER )
-  {	// This case no longer handled by fitPopulation
-	std::cout << "attempt to use first order method through fitPopulation";
-	std::cout << std::endl;
-# if 0
-    //
-    // [ Comment by Sachiko, 10/09/2002 ]
-    // This routine runs only in single processing mode.
-    //
+  {
     DoubleMatrix* pdmatNull = 0;
+
     firstOrderOpt( model,
+                   modelAD,
                    dvecN,
-   	   		       dvecY,
-				   popOptimizer,
-				   dvecAlpLow,
-				   dvecAlpUp,
-				   dvecAlpIn,
-				   pdvecAlpOut,
-				   dvecAlpStep,
+                   dvecY,
+                   popOptimizer,
+                   dvecAlpLow,
+                   dvecAlpUp,
+                   dvecAlpIn,
+                   pdvecAlpOut,
+                   dvecAlpStep,
                    indOptimizer,
-				   dvecBLow,
-				   dvecBUp,
-				   dmatBIn,
-				   pdmatBOut,
-				   dvecBStep,
-				   popObjOut,
-				   pdrowLTilde_alpOut,
-				   pdmatLTilde_alp_alpOut,
-				   pdmatNull );
-# endif
+                   dvecBLow,
+                   dvecBUp,
+                   dmatBIn,
+                   pdmatBOut,
+                   dvecBStep,
+                   popObjOut,
+                   pdrowLTilde_alpOut,
+                   pdmatLTilde_alp_alpOut,
+                   pdmatNull );
   }  
   //
   // [ Comment by Sachiko, 09/25/2002 ]

@@ -441,9 +441,8 @@ $head dvecAlpStep$$
 This is a column vector of length $latex m$$
 that specifies the step size used for approximating
 the derivatives with respect to the fixed effects ($latex \alpha$$).
-This value is no longer used (but not yet removed from the
-calling sequence) see 
-$cref/pmatLtilde_alp_alpOut/firstOrderOpt/pmatLtilde_alp_alpOut/$$.
+The value of this parameter does not matter if
+$italic pmatLtilde_alp_alpOut$$ is $code NULL$$.
 
 $head dvecBLow$$
 This is a column vector of length $latex n$$ 
@@ -500,21 +499,16 @@ $latex \[
 \] $$
 where $latex \alpha$$ is the optimal value for the fixed effects.
 
-$head pmatLtilde_alp_alpOut$$
+$head prowLtilde_alp_alpOut$$
 If $italic prowLtilde_alp_alpOut$$ is not $code NULL$$, 
 then $syntax%*%prowLtilde_alp_alpOut%$$ 
 is an $latex m \times m$$ matrix.
 If this function completed the optimization successfully, 
-this matrix will contain an approximation for
+this matrix will contain 
 $latex \[
 	\partial_\alpha \partial_\alpha \tilde{L} ( \alpha )
 \] $$
 where $latex \alpha$$ is the optimal value for the fixed effects.
-This used to be a central difference of 
-$latex \partial_\alpha \tilde{L} ( \alpha ) $$ with a step size
-of $cref/dvecAlpStep/firstOrderOpt/dvecAlpStep/$$. 
-Now, AD is used to compute the true Hessian instead of the
-central difference approximation.
 
 $head pmatLtilde_alpOut$$
 If $italic pmatLtilde_alpOut$$ is not $code NULL$$,
@@ -877,7 +871,10 @@ void firstOrderOpt(
 
 		index_Y = 0;
 		for(i = 0; i < M; i++)
-		{	// data for this individual
+		{	// set the individual's index
+			model.selectIndividual( i );
+
+			// data for this individual
 			int Ni = static_cast<int>( N[i] ); 	
 			DoubleMatrix dvecY_i(Ni, 1);
 			double *Y_i = dvecY_i.data();
@@ -886,6 +883,7 @@ void firstOrderOpt(
 			// initialize random effects to this individual
 			for(j = 0; j < n; j++)
 				bIn[j] = bmatIn[j + n * i];
+
 			// optimization of Lambda_i for this individual
 			try
 			{	mapOpt(
