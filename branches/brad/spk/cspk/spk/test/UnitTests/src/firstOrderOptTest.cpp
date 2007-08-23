@@ -367,6 +367,10 @@ void firstOrderOptTest::firstOrderOptAnalyticTest()
   double alphaHat_0 = *(dvecAlpOut.data()+0);
   ok_alpha          &= fabs(alphaHat_0 / check - 1.) < 1e-4;
   check              = sample_variance - sigma * sigma;
+  if( check < alpLow[1] )
+      check = alpLow[1];
+  if( check > alpUp[1] )
+      check = alpUp[1];
   double alphaHat_1 = *(dvecAlpOut.data()+1);
   ok_alpha          &= fabs(alphaHat_1 / check - 1.) < 1e-4;
   CPPUNIT_ASSERT_MESSAGE(

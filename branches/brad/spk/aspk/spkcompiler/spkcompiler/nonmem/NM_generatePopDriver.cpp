@@ -172,6 +172,8 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      DataSet< double > set;" << endl;
   oPopDriver << "      DataSet< CppAD::AD<double> > setAD;" << endl;
   oPopDriver << "      DataSet< CppAD::AD< CppAD::AD<double> > > setADAD;" << endl;
+  oPopDriver << "      DataSet< CppAD::AD< CppAD::AD< CppAD::AD<double> > > > setADADAD;" << endl;
+  oPopDriver << endl;
   oPopDriver << "      const int           nPop      = NonmemPars::nIndividuals;" << endl;
   oPopDriver << "      const valarray<int> NObservs  = set.getNObservs();" << endl;
   oPopDriver << "      const valarray<int> NRecords  = set.getNRecords();" << endl;
@@ -194,6 +196,7 @@ void NonmemTranslator::generatePopDriver() const
       oPopDriver << "      Pred< double > mPred(&set);" << endl;
       oPopDriver << "      Pred< CppAD::AD<double> > mPredAD(&setAD);" << endl;
       oPopDriver << "      Pred< CppAD::AD< CppAD::AD<double> > > mPredADAD(&setADAD);" << endl;
+      oPopDriver << "      Pred< CppAD::AD< CppAD::AD< CppAD::AD<double> > > > mPredADADAD(&setADADAD);" << endl;
     }
   else // ADVAN
     {
@@ -233,10 +236,46 @@ void NonmemTranslator::generatePopDriver() const
       oPopDriver << "                                                          NonmemPars::noDose," << endl;
       oPopDriver << "                                                          NonmemPars::relTol" << endl;
       oPopDriver << "                                                        );" << endl;
+      oPopDriver << "      OdePred<CppAD::AD< CppAD::AD< CppAD::AD<double> > > > mPredADADAD( &setADADAD, " << endl;
+      oPopDriver << "                                                          NonmemPars::nIndividuals, " << endl;
+      oPopDriver << "                                                          NonmemPars::isPkFunctionOfT," << endl;
+      oPopDriver << "                                                          NonmemPars::nCompartments," << endl;
+      oPopDriver << "                                                          NonmemPars::nParameters," << endl;
+      oPopDriver << "                                                          NonmemPars::defaultDoseComp," << endl;
+      oPopDriver << "                                                          NonmemPars::defaultObservationComp," << endl;
+      oPopDriver << "                                                          NonmemPars::initialOff," << endl;
+      oPopDriver << "                                                          NonmemPars::noOff," << endl;
+      oPopDriver << "                                                          NonmemPars::noDose," << endl;
+      oPopDriver << "                                                          NonmemPars::relTol" << endl;
+      oPopDriver << "                                                        );" << endl;
     }
+  oPopDriver << endl;
   oPopDriver << "      PopPredModel model( mPred,"                   << endl;
   oPopDriver << "                          mPredAD,"                 << endl;
   oPopDriver << "                          mPredADAD,"               << endl;
+  oPopDriver << "                          NonmemPars::nTheta,"      << endl;
+  oPopDriver << "                          NonmemPars::thetaLow,"    << endl;
+  oPopDriver << "                          NonmemPars::thetaUp,"     << endl;
+  oPopDriver << "                          NonmemPars::thetaIn,"     << endl;
+  oPopDriver << "                          NonmemPars::nEta,"        << endl;
+  oPopDriver << "                          NonmemPars::etaIn,"       << endl;
+  oPopDriver << "                          NonmemPars::nEps,"        << endl;
+  oPopDriver << "                          NonmemPars::omegaStruct," << endl;
+  oPopDriver << "                          NonmemPars::omegaIn,"     << endl;
+  oPopDriver << "                          NonmemPars::omegaFixed,"  << endl;
+  oPopDriver << "                          NonmemPars::omegaBlockStruct,"      << endl;
+  oPopDriver << "                          NonmemPars::omegaBlockDims,"        << endl;
+  oPopDriver << "                          NonmemPars::omegaBlockSameAsPrev,"  << endl;
+  oPopDriver << "                          NonmemPars::sigmaStruct," << endl;
+  oPopDriver << "                          NonmemPars::sigmaIn,"     << endl;
+  oPopDriver << "                          NonmemPars::sigmaFixed,"  << endl;
+  oPopDriver << "                          NonmemPars::sigmaBlockStruct,"      << endl;
+  oPopDriver << "                          NonmemPars::sigmaBlockDims,"        << endl;
+  oPopDriver << "                          NonmemPars::sigmaBlockSameAsPrev );"<< endl;
+  oPopDriver << endl;
+  oPopDriver << "      PopPredModelBase< CppAD::AD<double> > modelAD( mPredAD,"  << endl;
+  oPopDriver << "                          mPredADAD,"               << endl;
+  oPopDriver << "                          mPredADADAD,"             << endl;
   oPopDriver << "                          NonmemPars::nTheta,"      << endl;
   oPopDriver << "                          NonmemPars::thetaLow,"    << endl;
   oPopDriver << "                          NonmemPars::thetaUp,"     << endl;
@@ -768,6 +807,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               {" << endl;
   oPopDriver << "                  // Perform the parametric population analysis." << endl;
   oPopDriver << "                  fitPopulation( model," << endl;
+  oPopDriver << "                                 modelAD, " << endl;
   oPopDriver << "                                 objective, " << endl;
   oPopDriver << "                                 NObservs," << endl;
   oPopDriver << "                                 y," << endl;
@@ -1325,7 +1365,8 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "               model.getStandardParMask( alpMask, stdParMask );" << endl;
   oPopDriver << "               model.getStandardPar( stdPar );" << endl;
   oPopDriver << "               model.getStandardPar_popPar( stdPar_alp );" << endl;
-  oPopDriver << "               popStatistics(    modelForDisposal, "                  << endl;
+  oPopDriver << "               popStatistics(    modelForDisposal, "       << endl;
+  oPopDriver << "                                 modelAD, "                << endl;
   oPopDriver << "                                 objective,"               << endl;
   oPopDriver << "                                 NObservs,"                << endl;
   oPopDriver << "                                 y,"                       << endl;
