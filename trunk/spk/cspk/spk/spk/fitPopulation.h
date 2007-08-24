@@ -43,28 +43,29 @@
 #include "Optimizer.h"
 #include "DirBasedParallelControls.h"
 
-void fitPopulation( 
-  SpkModel<double>&                       popModel,
-  enum Objective                  objective,
-  const SPK_VA::valarray<int>&    nMeasurementsAll,
-  const SPK_VA::valarray<double>& measurementsAll,
-  Optimizer&                      popOptimizer,
-  const SPK_VA::valarray<double>& popParLow,
-  const SPK_VA::valarray<double>& popParUp,
-  const SPK_VA::valarray<double>& popParIn,
-  const SPK_VA::valarray<double>& popParStep,
-  SPK_VA::valarray<double>*       popParOut,
-  Optimizer&                      indOptimizer,
-  const SPK_VA::valarray<double>& indParLow,
-  const SPK_VA::valarray<double>& indParUp,
-  const SPK_VA::valarray<double>& indParAllIn,
-  const SPK_VA::valarray<double>& indParStep,
-  SPK_VA::valarray<double>*       indParAllOut,
-  double*                         popObjOut,
-  SPK_VA::valarray<double>*       popObj_popParOut,
-  SPK_VA::valarray<double>*       popObj_popPar_popParOut,
-  const DirBasedParallelControls& dirBasedParallelControls = DirBasedParallelControls(false, NULL, NULL)
-  );
+#include <CppAD/CppAD.h>
+
+void fitPopulation( SpkModel<double>&                model,
+                    SpkModel< CppAD::AD<double> >&   modelAD,
+                    enum Objective                   objective,
+                    const SPK_VA::valarray<int>&     nMeasurementsAll,
+                    const SPK_VA::valarray<double>&  measurementsAll,
+                    Optimizer&                       popOptimizer,
+                    const SPK_VA::valarray<double>&  popParLow,
+                    const SPK_VA::valarray<double>&  popParUp,
+                    const SPK_VA::valarray<double>&  popParIn,
+                    const SPK_VA::valarray<double>&  popParStep,
+                    SPK_VA::valarray<double>*        popParOut,
+                    Optimizer&                       indOptimizer,
+                    const SPK_VA::valarray<double>&  indParLow,
+                    const SPK_VA::valarray<double>&  indParUp,
+                    const SPK_VA::valarray<double>&  indParAllIn,
+                    const SPK_VA::valarray<double>&  indParStep,
+                    SPK_VA::valarray<double>*        indParAllOut,
+                    double*                          popObjOut,
+                    SPK_VA::valarray<double>*        popObj_popParOut,
+                    SPK_VA::valarray<double>*        popObj_popPar_popParOut,
+                    const DirBasedParallelControls&  dirBasedParallelControls = DirBasedParallelControls(false, NULL, NULL) );
 
 //
 // Headers that are not necessary for fitPopulation() but
