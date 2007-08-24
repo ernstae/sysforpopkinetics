@@ -35,40 +35,19 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/Test.h>
-#include "../../../spk/DoubleMatrix.h"
 
 class firstOrderOptTest : public CppUnit::TestFixture
 {
-    void firstOrderOptExampleTest();
-    void firstOrderOptRestartTest();
-    void firstOrderOptZeroIterationsTest();
-    void doTheTest( bool ok,
-                       double dLTildeOut,
-                       double dLTildeKnown,
-                       const double espB,
-                       const double espAlp,
-                       const DoubleMatrix& dvecAlpLow,
-                       const DoubleMatrix& dvecAlpUp,
-                       const DoubleMatrix& dvecAlpOut,
-                       const DoubleMatrix& dvecAlpHat,
-                       const DoubleMatrix& dvecBLow,
-                       const DoubleMatrix& dvecBUp,
-                       const DoubleMatrix& dmatBOut,
-                       const DoubleMatrix& dmatBHat,
-                       const DoubleMatrix& drowLTilde_alpOut,
-                       const DoubleMatrix& drowLTilde_alpKnown,
-                       const DoubleMatrix& dmatLambdaTilde_alpOut,
-                       const DoubleMatrix& dmatLambdaTilde_alpKnown,
-                       const DoubleMatrix& dmatLTilde_alp_alpOut,
-                       const DoubleMatrix& dmatLTilde_alp_alpKnown );
+private:
+    void firstOrderOptAnalyticTest(void);
+    void firstOrderOptExampleTest(void);
+    void firstOrderOptRestartTest(void);
+    void firstOrderOptZeroIterationsTest(void);
 public: 
     static CppUnit::Test* suite();
-
     void setUp();
     void tearDown();
-
-	void firstOrderTest();
-
+    void firstOrderTest();
 };
 
 #endif

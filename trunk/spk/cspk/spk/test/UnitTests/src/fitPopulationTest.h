@@ -71,7 +71,6 @@ public:
 
     void modifiedLaplaceTest();
     void expectedHessianTest();
-    void firstOrderTest();
     void naiveFirstOrderTest();
 
     };
