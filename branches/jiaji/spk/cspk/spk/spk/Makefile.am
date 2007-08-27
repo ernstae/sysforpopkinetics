@@ -9,7 +9,8 @@ pkgincludedir = $(INST_BASE)/include/spktest/spk
 AM_CPPFLAGS = \
 	-I. \
 	-I$(top_builddir) \
-	-I$(INST_BASE)/include/spktest
+	-I$(INST_BASE)/include/spktest \
+	-I/usr/share/pvm3/include
 
 # Set C++ compiler flags
 if SPK_RELEASE
@@ -76,6 +77,7 @@ libspk_a_SOURCES = \
 	identity.cpp \
 	IkronBtimesC.cpp \
 	IndInputDataPackage.cpp \
+	indOptPvm.cpp \
 	IndOutputDataPackage.cpp \
 	indResiduals.cpp \
 	IndResults.cpp \
@@ -95,6 +97,7 @@ libspk_a_SOURCES = \
 	lambdaDiff.cpp \
 	lambda2diff.cpp \
 	lTilde.cpp \
+	lTildePvm.cpp \
 	mapObj.cpp \
 	mapObjDiff.cpp \
 	mapOpt.cpp \
@@ -126,6 +129,7 @@ libspk_a_SOURCES = \
 	scalarToDouble.cpp \
 	scalarToDoubleArray.cpp \
 	simulate.cpp \
+	spkpvm.cpp \
 	spk_non_par.cpp \
 	SpkError.cpp \
 	SpkException.cpp \
@@ -195,6 +199,7 @@ libspk_a_SOURCES = \
 	IkronBtimesC.h \
 	identity.h \
 	IndDataPackage.h \
+	indOptPvm.h \
 	indResiduals.h \
 	IndResults.h \
 	indStatistics.h \
@@ -230,6 +235,7 @@ libspk_a_SOURCES = \
 	Optimizer.h \
 	Objective.h \
 	lTilde.h \
+	lTildePvm.h \
 	ParallelControls.h \
 	PARALLEL_FILE_CONSTS.h \
 	pi.h \
@@ -257,6 +263,7 @@ libspk_a_SOURCES = \
 	SpkError.h \
 	SpkException.h \
 	SpkModel.h \
+	spkpvm.h \
 	SpkValarray.h \
 	SpkWarning.h \
 	statistics.h \
@@ -327,6 +334,7 @@ pkginclude_HEADERS = \
 	identity.h \
 	IkronBtimesC.h \
 	IndDataPackage.h \
+	indOptPvm.h \
 	indResiduals.h \
 	IndResults.h \
 	indStatistics.h \
@@ -343,6 +351,7 @@ pkginclude_HEADERS = \
 	isSymmetric.h \
 	isUnnormNumber.h \
 	lTilde.h \
+	lTildePvm.h \
 	lambda.h \
 	lambdaDiff.h \
 	lambda2diff.h \
@@ -389,6 +398,7 @@ pkginclude_HEADERS = \
 	SpkError.h \
 	SpkException.h \
 	SpkModel.h \
+	spkpvm.h \
 	SpkValarray.h \
 	SpkWarning.h \
 	statistics.h \
