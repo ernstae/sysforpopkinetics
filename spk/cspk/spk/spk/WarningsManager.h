@@ -62,6 +62,8 @@ class WarningsManager
     unsigned int       lineNumberIn,
     const char*        fileNameIn );
 
+  static void addWarningList( const std::string& warningList,
+                              unsigned int wainings );
   static void clearAllWarnings();
 
 
@@ -70,8 +72,9 @@ class WarningsManager
   //------------------------------------------------------------
 
   static bool anyWarnings();
+  static int getWarningList( std::string& warningList );
   static void getAllWarnings( std::string& allWarningsOut );
-
+  
 
   //------------------------------------------------------------
   // Static members.

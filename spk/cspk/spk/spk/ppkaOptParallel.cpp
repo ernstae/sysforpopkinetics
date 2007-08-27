@@ -73,6 +73,7 @@ $spell
   pdrow  
   pdvec  
   ppka
+  PVM
   th  
   sd  
   sqrt  
@@ -145,7 +146,8 @@ $syntax/void ppkaOpt(
               DoubleMatrix*           /pdmatLTilde_pop_popOut/,
               bool                    /isMultiple/,
               const char*             /sharedDirectory/,
-              const char*             /nodeCommand/
+              const char*             /nodeCommand/,
+              bool                    /isPvmParallel/
 )
 /$$
 
@@ -737,7 +739,6 @@ $syntax/
 A directory on SPK Parallel Network that has been set to be $bold shared$$ by all
 Participants and where Participants have both read and write access.  The string
 can be terminated by a path delimiter.
-
 $syntax/
 
 /nodeCommand/
@@ -755,6 +756,12 @@ It ensures that Master keeps going even if no remote nodes participates; for
 example, the entire network goes down.
 The string should represent exactly what is typed to start a node process on the Master machine.  
 If NULL is given, Master does not spawn a co-node process.
+$syntax/
+
+/isPvmParallel/
+/$$
+When this is specified $math%true%$$, $italic SPK$$ runs on the parallel-process mode via PVM.
+Otherwise, $italic SPK$$ runs in the ordinary single-process mode.
 
 $head Example$$
 The following demonstrates running ppkaOpt() in the parallel mode, 
@@ -1321,6 +1328,7 @@ $end
 #include "firstOrderOpt.h"
 #include "ppkaOpt.h"
 #include "lTilde.h"
+#include "lTildePvm.h"
 #include "Optimizer.h"
 #include "quasiNewtonAnyBox.h"
 #include "QuasiNewtonAnyBoxObj.h"
@@ -1345,7 +1353,8 @@ $end
 #include <cerrno>
 #include <string>
 #include <vector>
-
+#include <iostream>
+#include <pvm3.h>
 
 /*------------------------------------------------------------------------
  * Local function declarations
@@ -1374,6 +1383,27 @@ namespace // [Begin: unnamed namespace]
     // Force a deep copy by multiplying the input matrix elements by one.
     dmatOut = mulByScalar( dmatIn, 1.0 );
   };
+
+  //**********************************************************************
+  //
+  // Function: checkParent
+  //
+  // In the case of using PVM, check the midDriver before calling lTilde.
+  //
+  //**********************************************************************
+
+  void checkParent()
+  {
+    int bufid = 0;
+    if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
+    {
+        std::cerr << "midDriver exited unexpectedly" << std::endl;
+        pvm_exit();
+        fclose( stdout );
+        fclose( stderr );
+        exit(2);
+    }
+  }
 
 } // [End: unnamed namespace]
 
@@ -1413,7 +1443,9 @@ namespace // [Begin: unnamed namespace]
       const DoubleMatrix*  pdvecBStepIn,
       Optimizer*           pPopOptInfoIn,
       Optimizer*           pIndOptInfoIn,
-      bool                 isMultiProcessedIn )
+      bool                 isMultiProcessedIn,
+      bool                 isUsingPvmIn,
+      bool                 isPvmParallelIn )
       :
       nInd              ( dmatBBestIn.nc() ),
       nAlp              ( nAlpIn ),
@@ -1433,7 +1465,9 @@ namespace // [Begin: unnamed namespace]
       pdvecBStep        ( pdvecBStepIn ),       
       pPopOptInfo       ( pPopOptInfoIn ),      
       pIndOptInfo       ( pIndOptInfoIn ),      
-      isMultiProcessed  ( isMultiProcessedIn ) 
+      isMultiProcessed  ( isMultiProcessedIn ),
+      isUsingPvm        ( isUsingPvmIn ),
+      isPvmParallel     ( isPvmParallelIn )
     {
       // Give the optimizer controller a pointer to this objective.
       pPopOptInfo->setObjFunc( this );
@@ -1496,6 +1530,8 @@ namespace // [Begin: unnamed namespace]
     Optimizer*  pPopOptInfo;
     Optimizer*  pIndOptInfo;
     bool        isMultiProcessed;
+    bool        isUsingPvm;
+    bool        isPvmParallel;
 
 
     //----------------------------------------------------------
@@ -1580,9 +1616,26 @@ namespace // [Begin: unnamed namespace]
       // Use the best matrix of b values as the initial guess for b.
       try
       {
+        if(isUsingPvm) checkParent();
+        if(!isPvmParallel)
         lTilde(
           isMultiProcessed,
           *pSharedDirectory,
+          *pModel,
+          objective,
+          *pdvecY,
+          *pdvecN,
+          *pIndOptInfo,
+          dvecAlpCurr,
+          *pdvecBLow,
+          *pdvecBUp,
+          *pdvecBStep,
+          dmatBBest,
+          &dmatBCurr,
+          &dLTildeCurr,
+          pdmatNull );
+        else
+        lTildePvm(
           *pModel,
           objective,
           *pdvecY,
@@ -1713,6 +1766,8 @@ namespace // [Begin: unnamed namespace]
       // Use the current matrix of b values as the initial values for b.
       try
       {
+        if(isUsingPvm) checkParent();
+        if(!isPvmParallel)
         lTilde(
           isMultiProcessed,
           *pSharedDirectory,
@@ -1729,7 +1784,22 @@ namespace // [Begin: unnamed namespace]
           pdmatNull,
           pdNull,
           &drowLTilde_alpCurr );
-        }
+        else
+        lTildePvm(
+          *pModel,
+          objective,
+          *pdvecY,
+          *pdvecN,
+          *pIndOptInfo,
+          dvecAlpCurr,
+          *pdvecBLow,
+          *pdvecBUp,
+          *pdvecBStep,
+          dmatBCurr,
+          pdmatNull,
+          pdNull,
+          &drowLTilde_alpCurr);
+      }
       catch( SpkException& e )
       {
         throw e.push(
@@ -1832,6 +1902,8 @@ namespace ltildetrancendiff{
 
   static DoubleMatrix trancendiff(
           LTILDE_PROTOTYPE,
+          bool               isUsingPvm,
+          bool               isPvmParallel,
           bool               isMultiple,
           const File         &sharedDirectory,
           SpkModel<double>   &model,
@@ -1877,6 +1949,8 @@ void ppkaOpt(
               double*                 pdLTildeOut,
               DoubleMatrix*           pdrowLTilde_alpOut,
               DoubleMatrix*           pdmatLTilde_alp_alpOut,
+              bool                    isUsingPvm,
+              bool                    isPvmParallel,
               bool                    isMultiple,
               const char*             c_sharedDirectory,
               const char*             nodeCommand
@@ -2011,7 +2085,9 @@ void ppkaOpt(
                          &dvecBStep,
                          &popOptInfo,
                          &indOptInfo,
-                         isMultiple );
+                         isMultiple,
+                         isUsingPvm,
+                         isPvmParallel );
 
 
   //------------------------------------------------------------
@@ -2084,9 +2160,25 @@ void ppkaOpt(
           // and mapTilde() somehow cached the values they calculated for 
           // previous values of the parameters, then it would prevent this
           // extra work.
+        if(isUsingPvm) checkParent();
+        if(!isPvmParallel)
           lTilde( isMultiple,
                   sharedDirectory,
                   model,
+                  objective,
+                  dvecY,
+                  dvecN,
+                  indOptInfo,
+                  dvecAlpOutTemp,
+                  dvecBLow,
+                  dvecBUp,
+                  dvecBStep,
+                  ppkaOptObj.getBBest(),
+                  &dmatBOutTemp,
+                  pdNull,
+                  0 );
+        else
+          lTildePvm( model,
                   objective,
                   dvecY,
                   dvecN,
@@ -2119,7 +2211,9 @@ void ppkaOpt(
     
     // The individual objective functions must still be computed
     // in order to evaluate lTilde(alpOut).
-    lTilde( isMultiple,
+    if(isUsingPvm) checkParent();
+    if(!isPvmParallel)    
+      lTilde(isMultiple,
           sharedDirectory,
           model,
           objective,
@@ -2134,6 +2228,20 @@ void ppkaOpt(
           &dmatBOutTemp,
           pdLTildeOutTemp,
           pdrowLTilde_alpOutTemp );
+    else
+      lTildePvm(model,
+          objective,
+          dvecY,
+          dvecN,
+          indOptInfo,
+          dvecAlpOutTemp,
+          dvecBLow,
+          dvecBUp,
+          dvecBStep,
+          dmatBIn,
+          &dmatBOutTemp,
+          pdLTildeOutTemp,
+          pdrowLTilde_alpOutTemp );             
   }
   
   //------------------------------------------------------------
@@ -2161,6 +2269,8 @@ void ppkaOpt(
     //
       try{
           dmatLTilde_alp_alpOutTemp = trancendiff(  &lTilde,
+                                              isUsingPvm,
+                                              isPvmParallel,
                                               isMultiple,
                                               sharedDirectory,
                                               model,
@@ -2313,6 +2423,8 @@ void ppkaOpt(
 
 static DoubleMatrix ltildetrancendiff::trancendiff(
         LTILDE_PROTOTYPE pfLTilde,
+        bool               isUsingPvm,
+        bool               isPvmParallel,
         bool               isMultiple,
         const File         &sharedDirectory,
         SpkModel<double>   &model,
@@ -2378,7 +2490,14 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
     //
     // This call may throw an exception but let it propagate.
     //
+    if(isUsingPvm) checkParent();
+    if(!isPvmParallel)
     lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
+        indOptInfo,
+        dvecAlp, dvecBlow, dvecBup, dvecBstep, dmatBin_forAll,
+        0,0,&drowTempLTilde_alp );
+    else
+    lTildePvm( model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
         indOptInfo,
         dvecAlp, dvecBlow, dvecBup, dvecBstep, dmatBin_forAll,
         0,0,&drowTempLTilde_alp );
@@ -2413,7 +2532,13 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
         //
         // This call may throw an exception but let it propagate.
         //
+        if(isUsingPvm) checkParent();
+        if(!isPvmParallel)
         lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
+            indOptInfo, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
+            '\0','\0',&drowPlusLTilde_alpOut );
+        else
+        lTildePvm( model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
             indOptInfo, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
             '\0','\0',&drowPlusLTilde_alpOut );
 
@@ -2431,7 +2556,13 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
         //
         // This call may throw an exception but let it propagate.
         //
+        if(isUsingPvm) checkParent();
+        if(!isPvmParallel)
         lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
+            indOptInfo, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
+            '\0','\0',&drowMinusLTilde_alpOut );
+        else
+        lTildePvm( model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
             indOptInfo, dvecTempAlp, dvecBlow,dvecBup,dvecBstep,dmatTempBin_forAll,
             '\0','\0',&drowMinusLTilde_alpOut );
 
@@ -2454,10 +2585,17 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
 
     // Compute LTilde again at the original alp value to restore
     // any model state variables to their original values.
+    if(isUsingPvm) checkParent();
+    if(!isPvmParallel)
     lTilde( isMultiple, sharedDirectory, model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
         indOptInfo,
         dvecAlp, dvecBlow, dvecBup, dvecBstep, dmatBin_forAll,
         0,0,&drowTempLTilde_alp );
+    else
+    lTildePvm( model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
+        indOptInfo,
+        dvecAlp, dvecBlow, dvecBup, dvecBstep, dmatBin_forAll,
+        0,0,&drowTempLTilde_alp, 0, true );
 
     return dmatJ;
 }
