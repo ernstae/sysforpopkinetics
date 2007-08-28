@@ -675,6 +675,8 @@ public class XMLWriter
         spkjob.setAttribute("submission_time", spkOutput.getProperty("startTime"));
         spkjob.setAttribute("completion_time", spkOutput.getProperty("eventTime"));
         spkjob.setAttribute("method_code", spkOutput.getProperty("methodCode"));
+        String computationMode = spkOutput.getProperty("parallel").equals("1") ? "parallel" : "single";
+        spkjob.setAttribute("computation_mode", computationMode);
         Element model = docJob.createElement("model");
         Element data = docJob.createElement("data");
         model.setAttribute("name", replaceCharacter(spkOutput.getProperty("modelName")));

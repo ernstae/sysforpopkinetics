@@ -58,6 +58,7 @@ const char* NonmemTranslator::fErrorEqn_cpp                ( "errorEqn.cpp" );
 const char* NonmemTranslator::fNonmemPars_h                ( "NonmemPars.h" );
 const char* NonmemTranslator::fMontePars_h                 ( "MontePars.h" );
 const char* NonmemTranslator::fFitDriver_cpp               ( "fitDriver.cpp" );
+const char* NonmemTranslator::fIndDriver_cpp               ( "indDriver.cpp" );
 const char* NonmemTranslator::fMonteDriver_cpp             ( "monteDriver.cpp" );
 const char* NonmemTranslator::fSpkRuntimeLongError_tmp     ( "scratch.tmp" );
 const char* NonmemTranslator::fResult_xml                  ( "result.xml" );
@@ -139,6 +140,7 @@ NonmemTranslator::NonmemTranslator( DOMDocument* sourceIn, DOMDocument* dataIn )
   remove( fNonmemPars_h );
   remove( fMontePars_h );
   remove( fFitDriver_cpp );
+  remove( fIndDriver_cpp );
   remove( fMonteDriver_cpp );
   remove( fSpkRuntimeLongError_tmp );
   remove( fResult_xml );

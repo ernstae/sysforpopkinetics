@@ -835,6 +835,8 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
             {
                 jRadioButton6.setSelected(true);
                 jRadioButton2.setSelected(true);
+                jRadioButton5.setSelected(false);
+                jRadioButton5.setEnabled(false);
             }
             if(method.equals("identifiability"))
                 jRadioButton7.setSelected(true);
@@ -1218,6 +1220,11 @@ public class GettingStarted extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             Properties records = object.getRecords();

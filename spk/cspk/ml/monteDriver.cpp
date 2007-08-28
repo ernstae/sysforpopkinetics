@@ -167,6 +167,10 @@ $tref Subroutine$$
 $end
 */
 
+# include <stdio.h>
+# include <fstream>
+# include <pvm3.h>
+# include <unistd.h>
 # include <memory>
 # include <cassert>
 # include <fstream>
@@ -177,9 +181,10 @@ $end
 # include <CppAD/CppAD.h>
 # include <sys/time.h>
 # include <spk/SpkException.h>
+# include <spk/spkpvm.h>
 # include <cstdlib>
 # include <gsl/gsl_errno.h>
-
+# include <pthread.h>
 # include "GridIntegral.h"
 # include "AdaptIntegral.h"
 # include "MapMonte.h"
@@ -201,13 +206,21 @@ $end
 enum { SUCCESSFUL             = 0,
 	OTHER_KNOWN_ERROR      = 1,
 	UNKNOWN_FAILURE        = 2,
-	SYSTEM_ERROR           = 10,
+	PVM_FAILURE            = 3,
+        USER_ABORT             = 4,
 	USER_INPUT_ERROR       = 14,
-	SYSTEM_FAILURE         = 100,
-	POST_OPT_ERROR         = 200,
-	POST_OPT_FAILURE       = 300
+	FILE_ACCESS_FAILURE    = 100
 };
 
+using namespace std;
+static ofstream fout;
+static char task[100];
+static int ntasks = 0;
+static int parent_tid = 0;
+static int* exit_val;
+static int* alp_tid;
+static int* host_tid;
+static const char* working_dir;
 
 // locally defined functions
 namespace {
@@ -223,16 +236,14 @@ namespace {
 	}
 	void Indent(size_t indent)
 	{	while(indent--)
-			std::cout << " ";
+			fout << " ";
 	}
 	template <typename Type>
 	void OutputValue(size_t indent, Type value)
-	{	using std::cout;
-		using std::endl;
-
-		Indent(indent);     cout <<  "<value>" << endl; 
-		Indent(indent + 4); cout <<    value   << endl;
-		Indent(indent);     cout << "</value>" << endl; 
+	{	
+		Indent(indent);     fout <<  "<value>" << endl; 
+		Indent(indent + 4); fout <<    value   << endl;
+		Indent(indent);     fout << "</value>" << endl; 
 	}
 	void OutputColumnMajor(
 		size_t                 indent,
@@ -241,28 +252,26 @@ namespace {
 		size_t                  nrows,
 		size_t                  ncols 
 	)
-	{	using std::cout;
-		using std::endl;
-
+	{	
 		Indent(indent); 
-		cout << "<column_major ";
-		cout << "name=\"" << name << "\" " ;
-		cout << "nrows=\"" << nrows << "\" " ;
-		cout << "ncols=\"" << ncols << "\" " ;
-		cout << ">" << endl;
+		fout << "<column_major ";
+		fout << "name=\"" << name << "\" " ;
+		fout << "nrows=\"" << nrows << "\" " ;
+		fout << "ncols=\"" << ncols << "\" " ;
+		fout << ">" << endl;
 
 		size_t i;
 		size_t j;
 		for(j = 0; j < ncols; j++)
 		{	Indent(indent + 4); 
-			cout << "<column>" << endl;
+			fout << "<column>" << endl;
 			for(i = 0; i < nrows; i++)
 				OutputValue(indent + 8, value[i * ncols + j]);
 			Indent(indent + 4); 
-			cout << "</column>" << endl;
+			fout << "</column>" << endl;
 		}
 		Indent(indent); 
-		cout << "</column_major>" << endl;;
+		fout << "</column_major>" << endl;;
 	}
 	void OutputRowMajor(
 		size_t                 indent,
@@ -271,28 +280,26 @@ namespace {
 		size_t                  nrows,
 		size_t                  ncols 
 	)
-	{	using std::cout;
-		using std::endl;
-
+	{	
 		Indent(indent); 
-		cout << "<row_major ";
-		cout << "name=\"" << name << "\" " ;
-		cout << "nrows=\"" << nrows << "\" " ;
-		cout << "ncols=\"" << ncols << "\" " ;
-		cout << ">" << endl;
+		fout << "<row_major ";
+		fout << "name=\"" << name << "\" " ;
+		fout << "nrows=\"" << nrows << "\" " ;
+		fout << "ncols=\"" << ncols << "\" " ;
+		fout << ">" << endl;
 
 		size_t i;
 		size_t j;
 		for(i = 0; i < nrows; i++)
 		{	Indent(indent + 4);
-			cout << "<row>" << endl;
+			fout << "<row>" << endl;
 			for(j = 0; j < ncols; j++)
 				OutputValue(indent + 8, value[i * ncols + j]);
 			Indent(indent + 4);
-			cout << "</row>" << endl;
+			fout << "</row>" << endl;
 		}
 		Indent(indent);
-		cout << "</row_major>" << endl;;
+		fout << "</row_major>" << endl;;
 	}
 	// Numerical approximation of integral for entire data
 	void NumericIntegralAll(
@@ -379,6 +386,14 @@ namespace {
 			else	assert(0);
 			pop_obj_estimate -= log( estimate ),
 			pop_obj_stderror += error / estimate;
+
+			// Check parent
+                        int bufid = 0;
+                        if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
+                        {
+                            pvm_exit();
+                            exit(UNKNOWN_FAILURE);
+                        }
 		}
 	}
 	// Monte Carlo approximation for negative log marginal likelihood 
@@ -418,43 +433,169 @@ namespace {
 			pop_obj_estimate -= log( estimate ),
 			pop_obj_stderror += error * error 
 			                  / (estimate * estimate);
+
+                        // Check parent
+                        int bufid = 0;
+                        if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
+                        {
+                            pvm_exit();
+                            exit(UNKNOWN_FAILURE);
+                        }
 		}
 		pop_obj_stderror = sqrt( pop_obj_stderror);
 	}
 
 	void OutputErrorMsg(const char *msg)
-	{	using std::cout;
-		using std::endl;
-		cout << "<error_list>"  << endl;
-		cout << msg             << endl;
-		cout << "</error_list>" << endl;
-		cout << "</spkreport>"  << endl;
+	{	
+		fout << "<error_list>"  << endl;
+		fout << msg             << endl;
+		fout << "</error_list>" << endl;
+		fout << "</spkreport>"  << endl;
 	}
 
 	void OutputSpkException(const SpkException &e)
-	{	using std::cout;
-		using std::endl;
-		cout << "<error_list>"  << endl;
-		cout << e               << endl;
-		cout << "</error_list>" << endl;
-		cout << "</spkreport>"  << endl;
+	{	
+		fout << "<error_list>"  << endl;
+		fout << e               << endl;
+		fout << "</error_list>" << endl;
+		fout << "</spkreport>"  << endl;
+	}
+
+	void clean()
+	{
+		delete [] alp_tid;
+		delete [] host_tid;
+		delete [] exit_val;
+	}
+
+	void finish(int exit_value)               // for using pvm
+	{
+		fout.close();
+		pvm_initsend(PvmDataDefault);
+		pvm_pkint(&exit_value, 1, 1);
+		pvm_send(parent_tid, SpkPvmExitValue);
+		pvm_exit();
+	}
+
+	void stop(char* message, int exit_value)  // for parallel
+	{
+		OutputErrorMsg(message);
+		clean();
+		for(int i = 0; i < ntasks; i++)
+			pvm_kill(alp_tid[i]);
+		finish(exit_value);
+	}
+
+	void spawnAlp(int j)
+	{
+		int i = 0;
+                int m = 0;
+		if(j == 1) m = 1;
+		if(j > 1)
+		{
+			i = (j - 1) / 2;
+			m = (j - 1) % 2 * 2;
+		}
+		char* arg[4];
+		int tid;
+		int rval;
+		arg[0] = const_cast<char*>(working_dir); 
+		char ibuf[100];
+		char mbuf[100];
+		sprintf(ibuf, "%d", i);
+		sprintf(mbuf, "%d", m);
+		arg[1] = ibuf;
+		arg[2] = mbuf;
+		arg[3] = NULL;
+		rval = pvm_spawn(task, arg, 0, NULL, 1, &tid);
+		if(rval != 1)
+		{
+			stop("could not spawn alpha level", PVM_FAILURE);
+                        exit(PVM_FAILURE);
+		}
+		alp_tid[j]        = tid;
+		host_tid[j]       = pvm_tidtohost(tid);
+		exit_val[j]       = SpkPvmUnreported;
+
+		// Establish notification of deletion of the host of the task we have just
+		// spawned, if we haven't already asked to be notified for this host.
+		// WARNING! Do not change the order of these notifications.
+		bool host_notified = false;
+                for(int k = 0; k < ntasks; k++)
+		{
+			if(k != j && host_tid[k] == host_tid[j])
+			{
+				host_notified = true;
+				break;
+			}
+		}
+		if(!host_notified && pvm_notify(PvmHostDelete, PvmHostDelete, 1, host_tid + j) < 0)
+		{
+			stop("pvm_notify failed for PvmHostDelete", PVM_FAILURE);
+                        exit(PVM_FAILURE);
+		}
+
+		// Establish notification for task exit of the task we have just spawned
+		if(pvm_notify(PvmTaskExit, PvmTaskExit, 1, alp_tid + j) < 0)
+		{
+			stop("pvm_notify failed for PvmTaskExit", PVM_FAILURE);
+                        exit(PVM_FAILURE);
+		}
+	}
+
+	int respawn(int host)
+	{
+		int n = 0;
+		for(int i = 0; i < ntasks; i++)
+			if(host_tid[i] == host && exit_val[i] == SpkPvmUnreported)
+			{
+				host_tid[i] = 0;
+				spawnAlp(i);
+                                n++;
+			}
+		return n;		
+	}
+
+	int tid2aid(int tid)
+	{
+		for(int i = 0; i < ntasks; i++)
+			if(alp_tid[i] == tid)
+				return i;
+		return -1;
 	}
 }
 
 int main(int argc, const char *argv[])
 {
-	using std::string;
-	using std::cerr;
-	using std::cout;
-	using std::endl;
-	using std::valarray;
+	bool isUsingPvm = false;
+	if(argc > 1)
+	{
+		isUsingPvm = true;
+                working_dir = argv[1];
+		pvm_mytid();
+		parent_tid = pvm_parent();
+		pvm_setopt(PvmRoute, PvmDontRoute);
+		pvm_notify(PvmTaskExit, PvmTaskExit, 1, &parent_tid);
+     
+		if(chdir(working_dir) != 0)
+		{
+			OutputErrorMsg( "could not change working directory" );
+			finish(FILE_ACCESS_FAILURE );
+			return FILE_ACCESS_FAILURE;
+		}
+	}
+	bool isPvmParallel = argc > 2 && strcmp(argv[2], "parallel") == 0;
+	const char* stderrFileName = "software_error";
+	freopen( stderrFileName, "a", stderr );
+
 	using namespace NonmemPars;
 
 	const char *msg;
 
 	// start the output file
-	cout << "<?xml version=\"1.0\"?>" << endl;
-	cout << "<spkreport>" << endl;
+        fout.open("result.xml");
+	fout << "<?xml version=\"1.0\"?>" << endl;
+	fout << "<spkreport>" << endl;
 
 	// number_eval
 	valarray<int>  number_eval = MontePars::numberEval;
@@ -470,8 +611,11 @@ int main(int argc, const char *argv[])
 		MethodName = "adapt";
 		if( NonmemPars::nEta < 2 )
 		{	msg = "monteDriver\n"
-		      	"Method is adapt and nEta < 2"; 
-			OutputErrorMsg(msg);
+		      	"Method is adapt and nEta < 2";
+			OutputErrorMsg( msg );
+			if(isUsingPvm) finish( USER_INPUT_ERROR );
+			fout.close();
+			fclose(stderr);
 			return USER_INPUT_ERROR;
 		}
 		break;
@@ -500,7 +644,10 @@ int main(int argc, const char *argv[])
 		msg = "monteDriver\n"
 		      "Method is not one of the following:\n"
 		      "grid, adapt, plain, miser, or vegas";
-		OutputErrorMsg(msg);
+		OutputErrorMsg( msg );
+		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		fout.close();
+		fclose( stderr );
 		return USER_INPUT_ERROR;
 	}
 
@@ -509,7 +656,10 @@ int main(int argc, const char *argv[])
 	{	if( number_eval[i] <= 0 )
 		{	msg = "monteDriver\n"
 			       "number_eval is not greater than zero";
-			OutputErrorMsg(msg);
+			OutputErrorMsg( msg );
+			if(isUsingPvm) finish( USER_INPUT_ERROR );
+			fout.close();
+			fclose(stderr);
 			return USER_INPUT_ERROR;
 		}
 	}
@@ -584,11 +734,17 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
+		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		fout.close();
+		fclose(stderr);
 		return USER_INPUT_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("DataSet or Pred constructor");
-		return   UNKNOWN_FAILURE;
+		if(isUsingPvm) finish( UNKNOWN_FAILURE );
+		fout.close();
+		fclose( stderr );
+		return UNKNOWN_FAILURE;
 	}
 
 	const int nPop = set->getPopSize();
@@ -596,6 +752,9 @@ int main(int argc, const char *argv[])
 	{	msg = "monteDriver\n"
 		      "DataSet.getPopSize() is less than or equal 0";
 		OutputErrorMsg(msg);
+		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		fout.close();
+		fclose(stderr);
 		return USER_INPUT_ERROR;
 	}
 	valarray<int> N = set->getN();
@@ -604,6 +763,9 @@ int main(int argc, const char *argv[])
 		{	msg = "monteDriver\n"
 			      "DataSet.getN() is less than or equal 0";
 			OutputErrorMsg(msg);
+			if(isUsingPvm) finish( USER_INPUT_ERROR );
+			fout.close();
+			fclose(stderr);
 			return USER_INPUT_ERROR;
 		}
 	}
@@ -613,6 +775,9 @@ int main(int argc, const char *argv[])
 	{	msg = "monteDriver\n"
 		      "y.size != N[0] + ... + N[M-1]";
 		OutputErrorMsg(msg);
+		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		fout.close();
+		fclose(stderr);
 		return USER_INPUT_ERROR;
 	}
 
@@ -644,11 +809,17 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
+		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		fout.close();
+		fclose(stderr);
 		return USER_INPUT_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("Model constructor");
-		return   UNKNOWN_FAILURE;
+		if(isUsingPvm) finish( UNKNOWN_FAILURE );
+		fout.close();
+		fclose(stderr);
+		return UNKNOWN_FAILURE;
 	}
 
 	// get the input value for the fixed effects as a single vector
@@ -683,6 +854,93 @@ int main(int argc, const char *argv[])
 	double pop_obj_stderror;
 	valarray<double> obj_value(nAlp * 3);
 	valarray<double> obj_std(nAlp * 3);
+
+    if(isPvmParallel)
+    {
+        // loop over indices in fixed effects vector
+        size_t index;
+        sprintf(task, "%s/alpDriver", argv[1]);
+        ntasks = nAlp * 2 + 1;
+
+        alp_tid = new int[ntasks];
+        host_tid = new int[ntasks];
+        exit_val = new int[ntasks];
+
+        for(int j = 0; j < ntasks; j++)
+        {
+            // spawn a PVM task
+            spawnAlp(j);
+        }
+
+        // receive results
+        int ndone = 0;
+        int ip[2];
+        double dp[2];
+        int i, m, bufid, bytes, msgtag, source, exit_tid, aid, exit_value;
+        while(ndone < ntasks && (bufid = pvm_recv(-1, -1)) > 0)
+        {
+            pvm_bufinfo(bufid, &bytes, &msgtag, &source);
+            if(msgtag == PvmHostDelete)
+            {
+                pvm_upkint(&exit_tid, 1, 1);
+                respawn(exit_tid);
+            }
+            if(msgtag == PvmTaskExit)
+            {
+                pvm_upkint(&exit_tid, 1, 1);
+                if(exit_tid == parent_tid)
+                {
+                    stop("user abort job", USER_ABORT);
+                    fclose(stderr);
+                    return USER_ABORT;
+                }
+                if((aid = tid2aid(exit_tid)) >= 0)
+                {
+                    if(exit_val[aid] == SpkPvmUnreported)
+                    {
+                        stop("an alpha task exited without an exit value", UNKNOWN_FAILURE);
+                        fclose(stderr);
+                        return UNKNOWN_FAILURE;
+                    }
+                    ndone++;
+                }
+            }
+            if(msgtag == SpkPvmResult)
+            {
+                pvm_upkint(ip, 2, 1);
+                i = ip[0];
+                m = ip[1];
+                index = i * 3 + m;
+                pvm_upkdouble(dp, 2, 1);
+	        obj_value[index] = dp[0];
+	        obj_std[index]   = dp[1];
+            }
+            if(msgtag == SpkPvmExitValue)
+            {
+                if((aid = tid2aid(source)) >= 0)
+                {
+                    pvm_upkint(&exit_value, 1, 1);
+                    if((exit_val[aid] = exit_value) != SUCCESSFUL)
+                    {
+                        char* error = new char[bytes];
+                        pvm_upkstr(error);
+                        stop(error, exit_value);
+                        delete [] error;
+                        fclose(stderr);
+                        return exit_value;
+                    }
+                }
+            }
+        }
+        for(i = 0; i < nAlp; i++)
+        {
+            index = i * 3 + 1;
+            obj_value[index] = obj_value[1];
+            obj_std[index]   = obj_std[1]; 
+        }
+    }
+    else
+    {
 	try
 	{	// loop over indices in fixed effects vector
 		size_t index;
@@ -736,28 +994,35 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
+		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		fout.close();
+		fclose(stderr);
 		return USER_INPUT_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("Monte Carlo or numericall integration");
-		return   UNKNOWN_FAILURE;
+		if(isUsingPvm) finish( UNKNOWN_FAILURE );
+		fout.close();
+		fclose(stderr);
+		return UNKNOWN_FAILURE;
 	}
+    }
 
 	// Estimates completed successfully.  Print out emtpy <error_list>.
-	cout << "<error_list>"  << endl;
-	cout << "</error_list>" << endl;
+	fout << "<error_list>"  << endl;
+	fout << "</error_list>" << endl;
 
 	timeval timeEnd;
 	gettimeofday( &timeEnd, NULL );
 
 	// report the time in seconds that Monte Carlo integration required
 	double pop_obj_seconds = difftime(timeEnd.tv_sec, timeBegin.tv_sec );
-	cout << "<pop_monte_result elapsedtime=\"" << pop_obj_seconds 
+	fout << "<pop_monte_result elapsedtime=\"" << pop_obj_seconds 
 	     << "\" method=\"" << MethodName 
 	     << "\" number_eval=\"" << number_eval[0];
 	for(i = 1; i < number_eval.size(); i++)
-		cout << ", " << number_eval[i];
-	cout << "\" >" << endl;
+		fout << ", " << number_eval[i];
+	fout << "\" >" << endl;
 
 	size_t indent = 4;
 	size_t nrows = nAlp;
@@ -769,11 +1034,13 @@ int main(int argc, const char *argv[])
 	OutputRowMajor(indent, obj_value,   "obj_value",  nrows, ncols);
 	OutputRowMajor(indent, obj_std,     "obj_std",    nrows, ncols);
 
-
 	// return from main program
-	cout << "</pop_monte_result>" << endl;
-	cout << "</spkreport>" << endl; 
+	fout << "</pop_monte_result>" << endl;
+	fout << "</spkreport>" << endl;
+	fout.close();
 
+	if(isUsingPvm) finish( SUCCESSFUL );
+	fclose(stderr);
 	// automatic cleanup by auto_ptr
 	return SUCCESSFUL;
 }

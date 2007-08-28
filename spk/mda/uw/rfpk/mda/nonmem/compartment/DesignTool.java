@@ -87,7 +87,7 @@ public class DesignTool extends javax.swing.JFrame {
         this.panel = panel;
         initComponents();
         helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
-        CSH.setHelpIDString(helpButton, "Prepare_Input_Model_Parameters");
+        CSH.setHelpIDString(helpButton, "Compartment_Model_Design_Tool");
         jTextField1.setText("0");
         jTextField2.setText(String.valueOf(subjects.length));
         compButton.add(new ButtonPanel("Compartment"));
@@ -718,12 +718,6 @@ public class DesignTool extends javax.swing.JFrame {
         helpButton.setText("Help");
         helpButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         helpButton.setPreferredSize(new java.awt.Dimension(60, 25));
-        helpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpButtonActionPerformed(evt);
-            }
-        });
-
         jPanel6.add(helpButton);
 
         jPanel5.add(jPanel6);
@@ -781,10 +775,6 @@ public class DesignTool extends javax.swing.JFrame {
         pickedElement = "";
         diagram.setCursor(null);
     }//GEN-LAST:event_jToggleButton2ActionPerformed
-
-    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
-    }//GEN-LAST:event_helpButtonActionPerformed
 
     private void subjectDialogWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_subjectDialogWindowClosing
         subjectDialog.toFront();
@@ -1124,7 +1114,7 @@ public class DesignTool extends javax.swing.JFrame {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         list.removeAllElements();
         Model.parameterList.clear();
-//        Model.equationList.clear();
+        Model.desEqns = "";
         Model.errorEqns = "";
         models.removeAllElements();
         modelId = 0;
@@ -1279,6 +1269,7 @@ public class DesignTool extends javax.swing.JFrame {
         {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             selectedButton = (ModelButton)evt.getSource();
+            diagram.tempElement = null;
             if(selectedModel != null) selectedModel.isSelected = false;
             for(int i = 0; i < models.size(); i++)
             {

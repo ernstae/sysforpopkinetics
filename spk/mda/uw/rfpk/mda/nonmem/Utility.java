@@ -1235,7 +1235,7 @@ public class Utility {
      * @param start starting index to pick data.
      * @param end ending index to pick data.
      * @param isLogX true for log scale, false for uniform scale in x.
-     * @param isLogX true for log scale, false for uniform scale in y.
+     * @param isLogY true for log scale, false for uniform scale in y.
      * @return the two resulted data arrays or null if there is no data in the original arrays.
      *         The two returned arrays are bundled in an array: first for dataX, last for dataY.
      */

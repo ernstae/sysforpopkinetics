@@ -228,7 +228,8 @@ sub death {
 	my $mail_from = 'rfpk@spk.washington.edu';
 	my $mail_subject = "spkcmpd shut down: $mode";
 	my $mail_body = "$msg\n\n$level\n\n$mode";
-	
+	my $alert = 'jjdu@u.washington.edu,ernst@u.washington.edu';
+
 	use MIME::Lite;
 	$msg = MIME::Lite->new(
 			       From     => $mail_from,

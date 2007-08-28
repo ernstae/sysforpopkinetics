@@ -47,6 +47,7 @@ public class JobInfo extends javax.swing.JFrame {
         this.frame = frame;
         isFirst = true;
         initComponents();
+        jCheckBox1.setEnabled(frame.myName.equals("jiaji"));
         Properties jobInfo = frame.server.getJobInfo(id);
         if(jobInfo == null)
             return;
@@ -112,7 +113,7 @@ public class JobInfo extends javax.swing.JFrame {
         jTextField9.setText(jobAbstract);
         jTextField9.setCaretPosition(0);
         jButton11.setEnabled(isJobOwner);
-        ok = id != 0 && (endCode.equals("srun") || endCode.equals("staf")) &&
+        ok = id != 0 && (endCode.equals("srun") || endCode.equals("staf") || endCode.equals("opte")) &&
              (methodCode.equals("fo") || methodCode.equals("eh") || methodCode.equals("la"));
         jButton14.setEnabled(ok);
         jTextArea8.setEnabled(ok);
@@ -153,6 +154,7 @@ public class JobInfo extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea7 = new javax.swing.JTextArea();
+        jCheckBox1 = new javax.swing.JCheckBox();
         populationDialog = new javax.swing.JDialog();
         jLabel12 = new javax.swing.JLabel();
         jRadioButton1 = new javax.swing.JRadioButton();
@@ -242,7 +244,6 @@ public class JobInfo extends javax.swing.JFrame {
 
         warmStartDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         warmStartDialog.setTitle("Warm Start Job Settings");
-        warmStartDialog.setLocationRelativeTo(this);
         warmStartDialog.setModal(true);
         jLabel8.setFont(new java.awt.Font("Default", 0, 12));
         jLabel8.setText("\nJob short description (<=100 characters)   ");
@@ -312,7 +313,7 @@ public class JobInfo extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         warmStartDialog.getContentPane().add(jPanel2, gridBagConstraints);
@@ -320,10 +321,10 @@ public class JobInfo extends javax.swing.JFrame {
         jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
         jComboBox1.setFont(new java.awt.Font("Dialog", 0, 12));
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8" }));
+        jComboBox1.setEnabled(false);
         jComboBox1.setMaximumSize(new java.awt.Dimension(32767, 20));
         jComboBox1.setMinimumSize(new java.awt.Dimension(36, 20));
         jComboBox1.setPreferredSize(new java.awt.Dimension(36, 20));
-        jComboBox1.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
@@ -349,6 +350,18 @@ public class JobInfo extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
         warmStartDialog.getContentPane().add(jScrollPane2, gridBagConstraints);
+
+        jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
+        jCheckBox1.setText("Run the job in parallel mode");
+        jCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 0, 12);
+        warmStartDialog.getContentPane().add(jCheckBox1, gridBagConstraints);
 
         populationDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -451,8 +464,8 @@ public class JobInfo extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 6, 12);
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.insets = new java.awt.Insets(3, 12, 6, 12);
         populationDialog.getContentPane().add(jPanel4, gridBagConstraints);
 
         buttonGroup2.add(jRadioButton7);
@@ -1286,7 +1299,8 @@ public class JobInfo extends javax.swing.JFrame {
             isMailNotice = true;
         
         // submit the warm start job
-        frame.server.submitJob(source, jobAbstract, modelArchive, dataArchive, methodCode, id, true, isMailNotice);
+        frame.server.submitJob(source, jobAbstract, modelArchive, dataArchive, methodCode, id, true, isMailNotice,
+                               jCheckBox1.isSelected());
 
         // Close the dialog
         warmStartDialog.dispose();
@@ -1316,7 +1330,7 @@ public class JobInfo extends javax.swing.JFrame {
             endIndex = Math.min(model.indexOf(" ", beginIndex), (model + "\n").indexOf("\n", beginIndex));
             sigDigit = model.substring(beginIndex, endIndex);
             jComboBox1.setSelectedItem(sigDigit);
-            warmStartDialog.setSize(290, 230);
+            warmStartDialog.setSize(290, 290);
             warmStartDialog.setVisible(true);
         }
         setCursor(null);
@@ -1666,6 +1680,7 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;

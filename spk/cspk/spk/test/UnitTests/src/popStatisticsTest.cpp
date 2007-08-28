@@ -106,6 +106,8 @@ void popStatisticsTest::naiveFirstOrderTest()
 #include <iomanip>
 #include <cmath>
 #include <spk/printInMatrix.h>
+#include <spk/scalarToDouble.h>
+
 
 /*------------------------------------------------------------------------
  * Namespace Declarations
@@ -123,151 +125,158 @@ using namespace std;
  *
  *************************************************************************/
 
-class UserModelStatisticsExampleTest : public SpkModel<double>
+template <class Scalar>
+class UserModelPopStatisticsExampleTest : public SpkModel<Scalar>
 {
-  valarray<double> _a, _b;
-  const int _nA;
-  const int _nB;
-  const int _nYi;
-  int _i;
+    valarray<Scalar> _a, _b;
+    int _i;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
 public:
-  UserModelStatisticsExampleTest(int nA, int nB, int nYi)
-    :_nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
-  {};    
-  ~UserModelStatisticsExampleTest(){};
+    UserModelPopStatisticsExampleTest(int nA, int nB, int nYi)
+      :
+      _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
+    {};    
+    ~UserModelPopStatisticsExampleTest(){};
 private:
-  void doSelectIndividual(int inx)
-  {
-    _i = inx;
-  }
-  void doSetPopPar(const valarray<double>& aval)
-  {
-    _a = aval;
-  }
-  void doSetIndPar(const valarray<double>& bval)
-  {
-    _b = bval;
-  }
-  void doIndParVariance( valarray<double>& ret ) const
-  {
-    //
-    // D = [ alp[1] ]
-    //
-    ret.resize(_nYi);
-    ret[0] = _a[1];
-  }
-  bool doIndParVariance_popPar( valarray<double>& ret ) const
-  {
-    //
-    // D_alp = [ 0  1 ]
-    //
-    ret.resize(_nYi * _nA);
-    ret[0] = 0.0;
-    ret[1] = 1.0;
-    return true;
-  }
-  void doIndParVarianceInv( valarray<double>& ret ) const
-  {
-    //
-    // Dinv = [ 1.0 / alp[1] ]
-    //
-    assert(_a[1] != 0.0);
-    ret.resize(_nB * _nB);
-    ret[0] = ( 1.0 / _a[1] );
-  }
-  bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
-  {
-    //
-    // Dinv_alp = [ 0    -alp[1]^(-2) ]
-    //
-    ret.resize(_nB * _nA);
-    ret[0] = 0.0;
-    ret[1] = -1.0 / (_a[1]*_a[1]);
-    return true;
-  }
-  void doDataMean( valarray<double>& ret ) const
-  {
-    //
-    // f = [ alp[0]+b[0] ]
-    //
-    ret.resize(_nYi);
-    ret[0] = ( _a[0] + _b[0] );
-  }
-  bool doDataMean_popPar( valarray<double>& ret ) const
-  {
-    //
-    // f_alp = [ 1   0 ]
-    //
-    ret.resize(_nYi * _nA);
-    ret[0] = 1.0;
-    ret[1] = 0.0;
-    return true;
-  }
-  bool doDataMean_indPar( valarray<double>& ret ) const
-  {
-    //
-    // f_b = [ 1 ]
-    //
-    ret.resize(_nYi * _nB);
-    ret[0] = 1.0;
-    return true;
-  }
-  void doDataVariance( valarray<double>& ret ) const
-  {
-    //
-    // R = [ 1 ]
-    //
-    ret.resize(_nB*_nB);
-    ret[0] = 1.0;
-  }
-  bool doDataVariance_popPar( valarray<double>& ret ) const
-  {
-    //
-    // R_alp = [ 0   0 ]
-    //
-    ret.resize(_nB * _nA);
-    ret[0] = 0.0;
-    ret[1] = 0.0;
-    return false;
-  }
-  bool doDataVariance_indPar( valarray<double>& ret ) const
-  {
-    //
-    // R_b = [ 0 ]
-    //
-    ret.resize(_nB *_nB);
-    ret[0] = 0.0;
-    return false;
-  }
-  void doDataVarianceInv( valarray<double>& ret ) const
-  {
-    //
-    // Rinv = [ 1 ]
-    //
-    ret.resize(_nB * _nB);
-    ret[0] = 1.0;
-  }
-  bool doDataVarianceInv_popPar( valarray<double>& ret ) const
-  {
-    //
-    // Rinv_alp = [ 0  0 ]
-    //
-    ret.resize(_nB * _nA);
-    ret[0] = 0.0;
-    ret[1] = 0.0;
-    return false;
-  }
-  bool doDataVarianceInv_indPar( valarray<double>& ret ) const
-  {
-    //
-    // Rinv_b = [ 0 ]
-    //
-    ret.resize(_nB * _nB * _nB);
-    ret[0] = 0.0;
-    return false;
-  }   
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<Scalar>& aval)
+    {
+        _a = aval;
+    }
+    void doSetIndPar(const valarray<Scalar>& bval)
+    {
+        _b = bval;
+    }
+    void doIndParVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        // D = [ alp[1] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = _a[1];
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // D_alp = [ 0  1 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 0.0;
+        ret[1] = 1.0;
+        return true;
+    }
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        // Dinv = [ 1.0 / alp[1] ]
+        //
+        assert(_a[1] != 0.0);
+        ret.resize(_nB * _nB);
+        double a1Double;
+        scalarToDouble( _a[1], a1Double );
+        ret[0] = 1.0 / a1Double;
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Dinv_alp = [ 0    -alp[1]^(-2) ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        double a1Double;
+        scalarToDouble( _a[1], a1Double );
+        ret[1] = -1.0 / ( a1Double * a1Double );
+        return true;
+    }
+    void doDataMean( valarray<Scalar>& ret ) const
+    {
+        //
+        // f = [ alp[0]+b[0] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = ( _a[0] + _b[0] );
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        // f_alp = [ 1   0 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        return true;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        // f_b = [ 1 ]
+        //
+        ret.resize(_nYi * _nB);
+        ret[0] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        // R = [ 1 ]
+        //
+        ret.resize(_nB*_nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // R_alp = [ 0   0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        // R_b = [ 0 ]
+        //
+        ret.resize(_nB *_nB);
+        ret[0] = 0.0;
+        return false;
+    }
+    void doDataVarianceInv( valarray<Scalar>& ret ) const
+    {
+        //
+        // Rinv = [ 1 ]
+        //
+        ret.resize(_nB * _nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_alp = [ 0  0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_b = [ 0 ]
+        //
+        ret.resize(_nB * _nB * _nB);
+        ret[0] = 0.0;
+        return false;
+    }   
 
 };
+
 #include <spk/multiply.h>
 void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 {
@@ -297,7 +306,9 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelStatisticsExampleTest model( nAlp, nB, nYi );
+  UserModelPopStatisticsExampleTest<double> model( nAlp, nB, nYi );
+
+  UserModelPopStatisticsExampleTest< CppAD::AD<double> > modelAD( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -383,7 +394,7 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 
   // Set the values associated with alp(2).
   alpTrue[ 1 ] = varBetaTrue;
-  alpLow [ 1 ] = 1.0e-3;
+  alpLow [ 1 ] = 0.1;
   alpUp  [ 1 ] = 100.0;
   alpIn  [ 1 ] = 0.5;
   alpStep[ 1 ] = 1.0e-2;
@@ -436,6 +447,7 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
   try{
     fitPopulation(
 		  model, 
+		  modelAD, 
 		  whichObjective,
 		  N,
 		  Y,
@@ -453,8 +465,13 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 		  &bOut,
 		  &dLTildeOut,
 		  &lTilde_alpOut,
-		  &lTilde_alp_alpOut, 
+<<<<<<< .mine
+		  &lTilde_alp_alpOut,
+                  false,
 		  parallelControls 
+=======
+		  &lTilde_alp_alpOut
+>>>>>>> .r2471
 		  );
     ok = true;
   }
@@ -462,6 +479,19 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
     {
       CPPUNIT_ASSERT(false);
     }
+
+  // Set the mask equal to false for any parameter elements that are
+  // at their bounds to indicate these elements should not be included
+  // in the statistics calculation.
+  for ( i = 0; i < nAlp; i++ )
+  {
+    alpMask[i] = !( alpLow[i] == alpUp[i]
+                    ||
+                    ( fabs( ( alpOut[i] - alpLow[i] ) / alpLow[i] ) <  popOptimizer.getEpsilon() )
+                    ||
+                    ( fabs( ( alpUp[i]  - alpOut[i] ) / alpUp[i]  ) <  popOptimizer.getEpsilon() ) );
+  }
+
   /*
     cout << endl;
     cout << endl;
@@ -489,6 +519,7 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 	
 	popStatistics(
 		      model,
+		      modelAD,
 		      whichObjective,
 		      N,
 		      Y,
@@ -552,25 +583,26 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 	  for( int i=0; i<nInd; i++ )
 	    pN[i] = N[i];
 	  DoubleMatrix dvecY( Y );
-	  DoubleMatrix dvecAlp( alpOut );
+	  DoubleMatrix dvecAlpLow( alpLow );
+	  DoubleMatrix dvecAlpUp( alpUp );
+	  DoubleMatrix dvecAlpIn( alpOut );
+	  DoubleMatrix dvecAlpStep( alpStep );
 	  DoubleMatrix dvecBLow( bLow );
 	  DoubleMatrix dvecBUp( bUp );
 	  DoubleMatrix dmatBIn( bOut, nInd );
 	  DoubleMatrix dvecBStep( bStep );
-	  DoubleMatrix dmatLTilde_alpOut( 1, nAlp );
+	  DoubleMatrix dmatLambdaTilde_alpOut( nAlp, nInd );
 	  
           // Calculate the derivatives of each individual's
-          // contribution to the population objective function
-          if( whichObjective != FIRST_ORDER )
+          // contribution to the population objective function.
+	  if( whichObjective != FIRST_ORDER )
 	    {
-	      // If the first order objective is not being used, then
-	      // calculate the derivatives in the normal way.
 	      lTilde( model, 
 		      whichObjective, 
 		      dvecY, 
 		      dvecN,
 		      indOptimizer,
-		      dvecAlp,
+		      dvecAlpIn,
 		      dvecBLow,
 		      dvecBUp,
 		      dvecBStep,
@@ -578,42 +610,43 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 		      0,
 		      0, 
 		      0, 
-		      &dmatLTilde_alpOut );
+		      &dmatLambdaTilde_alpOut );
 	    }
-          else
+	  else
 	    {
-	      // If the first order objective is being used, then
-	      // use the naive first order model to calculate the
-	      // derivatives.
-	      NaiveFoModel naiveFoModel( &model, bStep );
-	      enum Objective naiveFoObjective = NAIVE_FIRST_ORDER;
-      
-	      lTilde( naiveFoModel,
-		      naiveFoObjective, 
-		      dvecY, 
-		      dvecN,
-		      indOptimizer,
-		      dvecAlp,
-		      dvecBLow,
-		      dvecBUp,
-		      dvecBStep,
-		      dmatBIn,
-		      0,
-		      0, 
-		      0, 
-		      &dmatLTilde_alpOut );
+	      firstOrderOpt(
+			    model,
+			    modelAD,
+			    dvecN,
+			    dvecY,
+			    popOptimizer,
+			    dvecAlpLow,
+			    dvecAlpUp,
+			    dvecAlpIn,
+			    0,
+			    dvecAlpStep,
+			    indOptimizer,
+			    dvecBLow,
+			    dvecBUp,
+			    dmatBIn,
+			    0,
+			    dvecBStep,
+			    0,
+			    0,
+			    0,
+			    &dmatLambdaTilde_alpOut );
 	    }
-	  valarray<double> lambdaTilde_alpOut = dmatLTilde_alpOut.toValarray();
+	  valarray<double> lambdaTilde_alpOut = dmatLambdaTilde_alpOut.toValarray();
 
 	  valarray<double> s( 0.0, nAlp * nAlp );
-	  double* pdmatLTilde_alpOut = dmatLTilde_alpOut.data();
+	  double* pdmatLambdaTilde_alpOut = dmatLambdaTilde_alpOut.data();
           for( int j=0; j<nInd; j++ )
           {
              for( int i=0; i<nAlp; i++ )
              {
                 for( int k=0; k<nAlp; k++ )
                 {
-                   s[ k+i*nAlp ] += pdmatLTilde_alpOut[ i+j*nAlp ] * pdmatLTilde_alpOut[ k + j*nAlp ];
+                   s[ k+i*nAlp ] += pdmatLambdaTilde_alpOut[ i+j*nAlp ] * pdmatLambdaTilde_alpOut[ k + j*nAlp ];
                 }
              }
           }
@@ -725,7 +758,9 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelStatisticsExampleTest model( nAlp, nB, nYi );
+  UserModelPopStatisticsExampleTest<double> model( nAlp, nB, nYi );
+
+  UserModelPopStatisticsExampleTest< CppAD::AD<double> > modelAD( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -816,6 +851,9 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
   alpIn  [ 1 ] = 0.5;
   alpStep[ 1 ] = 1.0e-2;
   
+  // Set the mask for trancating the alp vector.
+  valarray<bool> alpMask( true, nAlp );
+
 
   //------------------------------------------------------------
   // Quantities related to the random population parameters, b.
@@ -857,6 +895,7 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
   try{
     fitPopulation(
 		  model, 
+		  modelAD, 
 		  whichObjective,
 		  N,
 		  Y,
@@ -874,7 +913,8 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
 		  &bOut,
 		  &dLTildeOut,
 		  &lTilde_alpOut,
-		  &lTilde_alp_alpOut
+		  &lTilde_alp_alpOut,
+                  false
 		  );
     ok = true;
   }
@@ -882,6 +922,19 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
     {
       CPPUNIT_ASSERT(false);
     }
+
+  // Set the mask equal to false for any parameter elements that are
+  // at their bounds to indicate these elements should not be included
+  // in the statistics calculation.
+  for ( i = 0; i < nAlp; i++ )
+  {
+    alpMask[i] = !( alpLow[i] == alpUp[i]
+                    ||
+                    ( fabs( ( alpOut[i] - alpLow[i] ) / alpLow[i] ) <  popOptimizer.getEpsilon() )
+                    ||
+                    ( fabs( ( alpUp[i]  - alpOut[i] ) / alpUp[i]  ) <  popOptimizer.getEpsilon() ) );
+  }
+
 
   //------------------------------------------------------------
   // Obtain the partial derivative of the individual
@@ -891,19 +944,21 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
   for( int i=0; i<nInd; i++ )
     dvecN.data()[i] = N[i];
   DoubleMatrix dvecY      ( Y,       1 );
-  DoubleMatrix dmatBOut   ( bOut,    nInd );
+  DoubleMatrix dmatBIn   ( bOut,    nInd );
   DoubleMatrix dvecBLow   ( bLow,    1 );
   DoubleMatrix dvecBUp    ( bUp,     1 );
   DoubleMatrix dvecBStep  ( bStep,   1 );
-  DoubleMatrix dvecLambdaTilde_alpOut( nAlp, nInd );
-  DoubleMatrix dvecAlpOut ( alpOut,  1 );
+  DoubleMatrix dvecAlpIn  ( alpOut,  1 );
   DoubleMatrix dvecAlpUp  ( alpUp,   1 );
   DoubleMatrix dvecAlpLow ( alpLow,  1 );
   DoubleMatrix dvecAlpStep( alpStep, 1 );
+  DoubleMatrix dmatLambdaTilde_alpOut( nAlp, nInd );
 
   valarray<double> lambdaTilde_alpOut( nAlp*nInd );
 
   try{
+    // Calculate the derivatives of each individual's
+    // contribution to the population objective function.
     if( whichObjective != FIRST_ORDER )
       {
 	lTilde( model,
@@ -911,37 +966,39 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
 		dvecY,
 		dvecN,
 		indOptimizer,
-		dvecAlpOut,
+		dvecAlpIn,
 		dvecBLow,
 		dvecBUp,
 		dvecBStep,
-		dmatBOut,
+		dmatBIn,
 		0,
 		0,
 		0,
-		&dvecLambdaTilde_alpOut );
+		&dmatLambdaTilde_alpOut );
       }
     else
       {	
- 
-	// Calculate the derivatives in a more efficient way.
-	NaiveFoModel naiveFoModel( &model, bStep );
-	enum Objective naiveFoObjective = NAIVE_FIRST_ORDER;
-	
-	lTilde( naiveFoModel,
-		naiveFoObjective, 
-		dvecY, 
-		dvecN,
-		indOptimizer,
-		dvecAlpOut,
-		dvecBLow,
-		dvecBUp,
-		dvecBStep,
-		dmatBOut,
-		0,
-		0, 
-		0, 
-		&dvecLambdaTilde_alpOut );
+	firstOrderOpt(
+		      model,
+		      modelAD,
+		      dvecN,
+		      dvecY,
+		      popOptimizer,
+		      dvecAlpLow,
+		      dvecAlpUp,
+		      dvecAlpIn,
+		      0,
+		      dvecAlpStep,
+		      indOptimizer,
+		      dvecBLow,
+		      dvecBUp,
+		      dmatBIn,
+		      0,
+		      dvecBStep,
+		      0,
+		      0,
+		      0,
+		      &dmatLambdaTilde_alpOut );
       }
   }
   catch( ... )
@@ -949,7 +1006,7 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
       CPPUNIT_ASSERT(false);
     }
 
-  lambdaTilde_alpOut = dvecLambdaTilde_alpOut.toValarray();
+  lambdaTilde_alpOut = dmatLambdaTilde_alpOut.toValarray();
 
   //------------------------------------------------------------
   // Compute statistics of population parameter estimates.
@@ -964,7 +1021,8 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
     {
       try{
 	
-	popStatistics(Y,
+	popStatistics(alpMask,
+		      Y,
 		      alpOut,
                       lambdaTilde_alpOut,
 		      lTilde_alp_alpOut,
@@ -1099,149 +1157,155 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
 #include <spk/lTilde.h>
 #include <spk/randNormal.h>
 
-class PopStatWrapperTestModel : public SpkModel<double>
+template <class Scalar>
+class PopStatWrapperTestModel : public SpkModel<Scalar>
 {
-  valarray<double> _a, _b;
-  const int _nA;
-  const int _nB;
-  const int _nYi;
-  int _i;
+    valarray<Scalar> _a, _b;
+    int _i;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
 public:
-  PopStatWrapperTestModel(int nA, int nB, int nYi)
-    :_nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
-  {};    
-  ~PopStatWrapperTestModel(){};
+    PopStatWrapperTestModel(int nA, int nB, int nYi)
+      :
+      _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
+    {};    
+    ~PopStatWrapperTestModel(){};
 private:
-  void doSelectIndividual(int inx)
-  {
-    _i = inx;
-  }
-  void doSetPopPar(const valarray<double>& aval)
-  {
-    _a = aval;
-  }
-  void doSetIndPar(const valarray<double>& bval)
-  {
-    _b = bval;
-  }
-  void doIndParVariance( valarray<double>& ret ) const
-  {
-    //
-    // D = [ alp[1] ]
-    //
-    ret.resize(_nYi);
-    ret[0] = _a[1];
-  }
-  bool doIndParVariance_popPar( valarray<double>& ret ) const
-  {
-    //
-    // D_alp = [ 0  1 ]
-    //
-    ret.resize(_nYi * _nA);
-    ret[0] = 0.0;
-    ret[1] = 1.0;
-    return true;
-  }
-  void doIndParVarianceInv( valarray<double>& ret ) const
-  {
-    //
-    // Dinv = [ 1.0 / alp[1] ]
-    //
-    assert(_a[1] != 0.0);
-    ret.resize(_nB * _nB);
-    ret[0] = ( 1.0 / _a[1] );
-  }
-  bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
-  {
-    //
-    // Dinv_alp = [ 0    -alp[1]^(-2) ]
-    //
-    ret.resize(_nB * _nA);
-    ret[0] = 0.0;
-    ret[1] = -1.0 / (_a[1]*_a[1]);
-    return true;
-  }
-  void doDataMean( valarray<double>& ret ) const
-  {
-    //
-    // f = [ alp[0]+b[0] ]
-    //
-    ret.resize(_nYi);
-    ret[0] = ( _a[0] + _b[0] );
-  }
-  bool doDataMean_popPar( valarray<double>& ret ) const
-  {
-    //
-    // f_alp = [ 1   0 ]
-    //
-    ret.resize(_nYi * _nA);
-    ret[0] = 1.0;
-    ret[1] = 0.0;
-    return true;
-  }
-  bool doDataMean_indPar( valarray<double>& ret ) const
-  {
-    //
-    // f_b = [ 1 ]
-    //
-    ret.resize(_nYi * _nB);
-    ret[0] = 1.0;
-    return true;
-  }
-  void doDataVariance( valarray<double>& ret ) const
-  {
-    //
-    // R = [ 1 ]
-    //
-    ret.resize(_nB*_nB);
-    ret[0] = 1.0;
-  }
-  bool doDataVariance_popPar( valarray<double>& ret ) const
-  {
-    //
-    // R_alp = [ 0   0 ]
-    //
-    ret.resize(_nB * _nA);
-    ret[0] = 0.0;
-    ret[1] = 0.0;
-    return false;
-  }
-  bool doDataVariance_indPar( valarray<double>& ret ) const
-  {
-    //
-    // R_b = [ 0 ]
-    //
-    ret.resize(_nB *_nB);
-    ret[0] = 0.0;
-    return false;
-  }
-  void doDataVarianceInv( valarray<double>& ret ) const
-  {
-    //
-    // Rinv = [ 1 ]
-    //
-    ret.resize(_nB * _nB);
-    ret[0] = 1.0;
-  }
-  bool doDataVarianceInv_popPar( valarray<double>& ret ) const
-  {
-    //
-    // Rinv_alp = [ 0  0 ]
-    //
-    ret.resize(_nB * _nA);
-    ret[0] = 0.0;
-    ret[1] = 0.0;
-    return false;
-  }
-  bool doDataVarianceInv_indPar( valarray<double>& ret ) const
-  {
-    //
-    // Rinv_b = [ 0 ]
-    //
-    ret.resize(_nB * _nB * _nB);
-    ret[0] = 0.0;
-    return false;
-  }   
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<Scalar>& aval)
+    {
+        _a = aval;
+    }
+    void doSetIndPar(const valarray<Scalar>& bval)
+    {
+        _b = bval;
+    }
+    void doIndParVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        // D = [ alp[1] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = _a[1];
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // D_alp = [ 0  1 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 0.0;
+        ret[1] = 1.0;
+        return true;
+    }
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        // Dinv = [ 1.0 / alp[1] ]
+        //
+        assert(_a[1] != 0.0);
+        ret.resize(_nB * _nB);
+        double a1Double;
+        scalarToDouble( _a[1], a1Double );
+        ret[0] = 1.0 / a1Double;
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Dinv_alp = [ 0    -alp[1]^(-2) ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        double a1Double;
+        scalarToDouble( _a[1], a1Double );
+        ret[1] = -1.0 / ( a1Double * a1Double );
+        return true;
+    }
+    void doDataMean( valarray<Scalar>& ret ) const
+    {
+        //
+        // f = [ alp[0]+b[0] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = ( _a[0] + _b[0] );
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        // f_alp = [ 1   0 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        return true;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        // f_b = [ 1 ]
+        //
+        ret.resize(_nYi * _nB);
+        ret[0] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        // R = [ 1 ]
+        //
+        ret.resize(_nB*_nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // R_alp = [ 0   0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        // R_b = [ 0 ]
+        //
+        ret.resize(_nB *_nB);
+        ret[0] = 0.0;
+        return false;
+    }
+    void doDataVarianceInv( valarray<Scalar>& ret ) const
+    {
+        //
+        // Rinv = [ 1 ]
+        //
+        ret.resize(_nB * _nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_alp = [ 0  0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_b = [ 0 ]
+        //
+        ret.resize(_nB * _nB * _nB);
+        ret[0] = 0.0;
+        return false;
+    }   
 
 };
 
@@ -1275,7 +1339,9 @@ void popStatisticsTest::popMaskTest()
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  PopStatWrapperTestModel model( nAlp, nB, nYi );
+  PopStatWrapperTestModel<double> model( nAlp, nB, nYi );
+
+  PopStatWrapperTestModel< CppAD::AD<double> > modelAD( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -1419,6 +1485,7 @@ void popStatisticsTest::popMaskTest()
   try{
     fitPopulation(
 		  model, 
+		  modelAD, 
 		  method,
 		  N,
 		  Y,
@@ -1436,7 +1503,8 @@ void popStatisticsTest::popMaskTest()
 		  &bOut,
 		  &dLTildeOut,
 		  &lTilde_alpOut,
-		  &lTilde_alp_alpOut
+		  &lTilde_alp_alpOut,
+                  false
 		  );
     ok = true;
   }
@@ -1444,6 +1512,7 @@ void popStatisticsTest::popMaskTest()
     {
       CPPUNIT_ASSERT(false);
     }
+
 
   //------------------------------------------------------------
   // Obtain the partial derivative of the individual
@@ -1453,15 +1522,15 @@ void popStatisticsTest::popMaskTest()
   for( int i=0; i<nInd; i++ )
     dvecN.data()[i] = N[i];
   DoubleMatrix dvecY      ( Y,       1 );
-  DoubleMatrix dmatBOut   ( bOut,    nInd );
+  DoubleMatrix dmatBIn   ( bOut,    nInd );
   DoubleMatrix dvecBLow   ( bLow,    1 );
   DoubleMatrix dvecBUp    ( bUp,     1 );
   DoubleMatrix dvecBStep  ( bStep,   1 );
-  DoubleMatrix dvecLambdaTilde_alpOut( nAlp, nInd );
-  DoubleMatrix dvecAlpOut ( alpOut,  1 );
+  DoubleMatrix dvecAlpIn ( alpOut,  1 );
   DoubleMatrix dvecAlpUp  ( alpUp,   1 );
   DoubleMatrix dvecAlpLow ( alpLow,  1 );
   DoubleMatrix dvecAlpStep( alpStep, 1 );
+  DoubleMatrix dmatLambdaTilde_alpOut( nAlp, nInd );
 
   valarray<double> lambdaTilde_alpOut( nAlp*nInd );
 
@@ -1471,22 +1540,22 @@ void popStatisticsTest::popMaskTest()
 		dvecY,
 		dvecN,
 		indOptimizer,
-		dvecAlpOut,
+		dvecAlpIn,
 		dvecBLow,
 		dvecBUp,
 		dvecBStep,
-		dmatBOut,
+		dmatBIn,
 		0,
 		0,
 		0,
-		&dvecLambdaTilde_alpOut );
+		&dmatLambdaTilde_alpOut );
   }
   catch( ... )
     {
       CPPUNIT_ASSERT(false);
     }
 
-  lambdaTilde_alpOut = dvecLambdaTilde_alpOut.toValarray();
+  lambdaTilde_alpOut = dmatLambdaTilde_alpOut.toValarray();
 
   //------------------------------------------------------------
   // Compute statistics of population parameter estimates.

@@ -640,15 +640,15 @@ public class Input extends javax.swing.JPanel implements WizardStep {
             Vector indData;
             int j;
             int indSize;
-            String mdv;
+            double mdv;
             for(int i = 0; i < data.size(); i++)
             {
                 indData = data.get(i);
                 indSize = indData.size();
                 for(j = 0; j < indSize; j++)
                 {
-                    mdv = ((String[])indData.get(j))[indexMDV];   
-                    if(mdv.equals("0")) 
+                    mdv = Double.parseDouble(((String[])indData.get(j))[indexMDV]);   
+                    if(mdv == 0)
                         break;
                 }
                 if(j == indSize)
@@ -810,6 +810,11 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             if(!iterator.getIsNewData())
                 return;
                         
@@ -863,11 +868,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String inputs = "";
             for(int i = 0; i < nDataCol - 1; i++)

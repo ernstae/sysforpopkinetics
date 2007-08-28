@@ -1087,6 +1087,11 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             Vector data = ((MDAObject)wizard.getCustomizedObject()).getData();
@@ -1318,11 +1323,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             int size = model.getSize();
             MDAObject object = (MDAObject)wizard.getCustomizedObject(); 
             // Create and save record

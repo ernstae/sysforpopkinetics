@@ -45,6 +45,8 @@ public class MixedModelDialog extends javax.swing.JDialog {
         this.checkError = checkError;
         this.isOK = isOK;
         initComponents();
+        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
+        CSH.setHelpIDString(helpButton, "Mixed_Effects_Model_Graphical_Editor_");
         nameLabel.setText("Name: " + parameter.name);
         for(int i = 0; i < dataLabels.length; i++)
         {
@@ -485,12 +487,6 @@ public class MixedModelDialog extends javax.swing.JDialog {
 
         helpButton.setText("Help");
         helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        helpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpButtonActionPerformed(evt);
-            }
-        });
-
         jPanel1.add(helpButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -654,10 +650,6 @@ public class MixedModelDialog extends javax.swing.JDialog {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         jDialog1.setVisible(false);
     }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
-    }//GEN-LAST:event_helpButtonActionPerformed
 
     private void dataNameComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataNameComboBoxActionPerformed
         String data = (String)dataNameComboBox.getSelectedItem();

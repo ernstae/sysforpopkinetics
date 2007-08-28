@@ -23,6 +23,8 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
+import javax.help.*;
+import uw.rfpk.mda.nonmem.MDAFrame;
 
 /** This class defines default model dialog.
  *
@@ -40,6 +42,8 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
         super(parent, false);
         tool = parent;
         initComponents();
+        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
+        CSH.setHelpIDString(helpButton, "Defaults");
         
         // Count number of parameters excluding FF
         int rows = 0;
@@ -137,6 +141,8 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 12));
+
         OKButton.setText("OK");
         OKButton.setPreferredSize(new java.awt.Dimension(75, 25));
         OKButton.addActionListener(new java.awt.event.ActionListener() {
@@ -149,12 +155,6 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
 
         helpButton.setText("Help");
         helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        helpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpButtonActionPerformed(evt);
-            }
-        });
-
         jPanel1.add(helpButton);
 
         cancelButton.setText("Cancel");
@@ -171,10 +171,6 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
-    }//GEN-LAST:event_helpButtonActionPerformed
-
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
@@ -187,6 +183,7 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
         int nParam = Model.parameterList.size();
         if(tool.iterator.analysis.equals("population"))
         {
+            int l = 0;
             for(int i = 0; i < nParam; i++)
             {
                 parameter = Model.parameterList.get(i);
@@ -195,11 +192,11 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
                 if(data[j][2].toString().equals("true"))
                     parameter.value = parameter.name + "=THETA(" + ++k + ")";
                 if(data[j][3].toString().equals("true"))
-                    parameter.value = parameter.name + "=THETA(" + ++k + ")+ETA(" + k + ")";
+                    parameter.value = parameter.name + "=THETA(" + ++k + ")+ETA(" + ++l + ")";
                 if(data[j][4].toString().equals("true"))
-                    parameter.value = parameter.name + "=THETA(" + ++k + ")+THETA(" + k + ")*ETA(" + k + ")";
+                    parameter.value = parameter.name + "=THETA(" + ++k + ")+THETA(" + k + ")*ETA(" + ++l + ")";
                 if(data[j][5].toString().equals("true"))
-                    parameter.value = parameter.name + "=THETA(" + ++k + ")*EXP(ETA(" + k + "))";
+                    parameter.value = parameter.name + "=THETA(" + ++k + ")*EXP(ETA(" + ++l + "))";
                 j++;
             }
         }

@@ -10,7 +10,8 @@ pkgincludedir = $(INST_BASE)/include/spktest/spkpred
 AM_CPPFLAGS = \
 	-I. \
 	-I$(top_builddir) \
-	-I$(INST_BASE)/include/spktest
+	-I$(INST_BASE)/include/spktest \
+	-I/usr/share/pvm3/include
                      
 # Set C++ compiler flages to build a 64-bit version
 CXX_FLAGS_64_BIT = 

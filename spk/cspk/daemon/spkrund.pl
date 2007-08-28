@@ -226,6 +226,7 @@ my $dbpasswd = shift;
 my $mode     = shift;
 my $shost    = shift;
 my $sport    = shift;
+my $pvm      = shift;
 my $max_concurrent = shift;
 
 my $hostname = hostname();
@@ -255,6 +256,8 @@ my $server_open = 0;
 my $filename_checkpoint = "checkpoint.xml";
 my $filename_data = "data.xml";
 my $filename_driver = "driver";
+my $pathname_driver_pvm = "/usr/local/bin/spkprod/jobDriver";
+my $pathname_mid_driver_pvm = "/usr/local/bin/spkprod/midDriver";
 my $filename_job_id = "job_id";
 my %jobid_pid = ();
 my $filename_makefile = "Makefile.SPK";
@@ -273,6 +276,8 @@ if ($mode =~ m/test/i ) {
     $retain_working_dir = 1;
     $spk_library_path = "/usr/local/lib/spktest";
     $cpath = "/usr/local/include/spktest";
+    $pathname_driver_pvm = "/usr/local/bin/spktest/jobDriver";
+    $pathname_mid_driver_pvm = "/usr/local/bin/spktest/midDriver";
 }
 my $service_name = "$service_root" . "d";
 my $prefix_working_dir = $service_root;
@@ -342,11 +347,13 @@ sub fork_driver {
     my $warmstart = shift;
     my $cpp_source = $jrow->{'cpp_source'};
     my $checkpoint = $jrow->{'checkpoint'};
+    my $parallel = $jrow->{'parallel'};
     my $pid;
 
     # Create a working directory
     my $unique_name = $prefix_working_dir . "-job-" . $job_id;
-    my $working_dir = "$tmp_dir/$unique_name";
+#    my $working_dir = "$tmp_dir/$unique_name";
+    my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$job_id";
     if (-d $working_dir) {
 	File::Path::rmtree($working_dir, 0, 0);
     }
@@ -419,22 +426,43 @@ sub fork_driver {
 	  # Compile and link the runner
 
           if ($mode =~ "test"){
-	     @args = ($pathname_make, "-f", $filename_makefile, "test");
+              if($pvm eq "on" && $parallel == 1) {
+                  @args = ($pathname_make, "-f", $filename_makefile, "debug_parallel");
+              }
+              else {
+	          @args = ($pathname_make, "-f", $filename_makefile, "debug");
+              }
           }
           else{
-             @args = ($pathname_make, "-f", $filename_makefile);
+              if($pvm eq "on" && $parallel == 1) {
+                  @args = ($pathname_make, "-f", $filename_makefile, "prod_parallel");
+              }
+              else {
+	          @args = ($pathname_make, "-f", $filename_makefile, "prod");
+              }
           }
 	  unless (system(@args) == 0)  {
 	      $! = 101;
 	      die;
 	  }
 	  # Redirect Standard output to a file
-	  open STDOUT, ">$filename_optimizer_trace";
+#          open STDOUT, ">$filename_optimizer_trace";
 
 	  # Redirect Standard Error to a file
-	  open STDERR, ">$filename_serr";
+#          open STDERR, ">$filename_serr";
+
 	  # execute the job driver
-	  @args = ("./$filename_driver", $warmstart);
+          if($pvm eq "on") {
+              if($parallel == 1) {
+	          @args = ("$pathname_driver_pvm");
+              }
+              else {
+                  @args = ("$pathname_driver_pvm", "$pathname_mid_driver_pvm");
+              }
+          }
+          else {
+              @args = ("./$filename_driver");
+          }
 	  my $e = exec(@args);
 
 	  # this statement will never be reached, unless the exec failed
@@ -608,6 +636,11 @@ sub reaper {
     elsif($child_exit_value == 2 ) {
         $end_code = "othf"; #unknown failure
         $err_msg .= "an unknown error(s) occured at a un-identified location; ";
+        $submit_to_bugzilla &= 1;
+    }
+    elsif($child_exit_value == 3 ) {
+        $end_code = "pvmf"; #pvm failure
+        $err_msg .= "an unknown pvm failure occured at a un-identified location; ";
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  10) {

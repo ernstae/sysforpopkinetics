@@ -73,17 +73,24 @@ author: Jiaji Du
               <table border="0" cellspacing = "5">
                 <tr>
                   <th align="right">User Name:</th>
-                  <th align="left"><input type="text" name="userName" ></th>
+                  <th align="left"><input type="text" name="userName" 
+                                    value="${fn:escapeXml(cookie.userName.value)}"></th>
                 </tr>
                 <tr>
                   <th align="right">Password:</th>
-                  <th align="left"><input type="password" name="password" ></th>
+                  <th align="left"><input type="password" name="password" 
+                                    value="${fn:escapeXml(cookie.password.value)}"></th>
                 </tr>
                 <tr>
                   <th align="right"><input type="Submit" value="Log In"></th>
                   <th align="left"><input type="Reset"></th>
                 </tr>
               </table>
+              <p>
+                Remember my username and password for 8 hours:
+                <input type="checkbox" name="remember" ${!empty cookie.userName ? 'checked' : ''}><br>
+                (This feature requires cookies enabled in your browser)
+              </p>
             </form>
 	    <p>
               <c:choose>
