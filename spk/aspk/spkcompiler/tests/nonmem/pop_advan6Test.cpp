@@ -1563,6 +1563,12 @@ void pop_advan6Test::testReportML()
       DOMNodeList * value_list = invcov->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       inv_cov_val.resize( n );
+
+      // Because the inverse covariance elements are all greater than
+      // 1 but of varying size, set the tolerance to be 1/1000 of
+      // the first known diagonal value.
+      double inv_cov_tol = fabs( nm_invCov[0] ) / 1000.0;
+
       for( int i=0; i<n; i++ )
       {
 	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
@@ -1570,7 +1576,7 @@ void pop_advan6Test::testReportML()
 	if( x_val != NULL )
 	  inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
 	//printf( "inv_cov[%d] = %f\n", i, inv_cov_val[i] );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_invCov[i], inv_cov_val[i], tol );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_invCov[i], inv_cov_val[i], inv_cov_tol );
       }
     }
 
