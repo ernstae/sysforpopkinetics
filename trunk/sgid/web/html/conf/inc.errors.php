@@ -13,7 +13,7 @@ $errors =
 	    'parse_in_U1missing'
 	    => 'With multiple inputs, U or U1 must be present.',
 	    'parse_in_Umissing'
-	    => 'With one input, U must be your parameter name. I found',
+	    => 'Your system-experiment model has only a single input. When there is only a single input, it must be named U.   Try this model again with U for your input.  I found',
 	    'parse_illegal'
 	    => 'The following illegal character was found',
 	    'parse'
