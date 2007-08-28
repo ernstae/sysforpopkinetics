@@ -555,23 +555,25 @@ function  SGID_replaceEquivalent( &$TDATA ) {
 
   $blocks = array ( "input_eq", "out_eq" );
   
+
   foreach ( $blocks as $block )
     {
         foreach ( $TDATA[$block] as $eq_key => &$equation ) 
 	{
-	  //	  echo "EQ_KEY: " . $eq_key . "\n";
+	  //	  	  echo "EQ_KEY: " . $eq_key . "\n";
 	  unset ($src);
 	  $src = explode ("=", $equation );
-	  //	  echo $equation . "\n";
+	  
 	  foreach ( $TDATA['alg_eq'] as $t_key => $t_val )
 	    {
 	      $target = explode( "=", $t_val );
 	      $regexp = "/(^|[^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/";
-	      $src[1] = preg_replace($regexp, "\\1" . $target[1] . "\\2",  $src[1]);
+	      $src[1] = preg_replace($regexp, "\\1[" . $target[1] . "]\\2",  $src[1]);
 	      //$TDATA[$block] = $src[0] . "=" . preg_replace("/" . $target[0] . "/", $target[1], $src[1] );
 	      //$TDATA['ernst'][] = $src[0] . "=" . preg_replace("/" . $target[0] . "/", $target[1], $src[1] );
 	    }
-	  $equation = $src[0] . "=" . $src[1];
+	  // preg_replace was to fix bug #754
+	  $equation = $src[0] . "=" . preg_replace("/[\[\]]/", "", $src[1]);
 	}
 
     }
