@@ -68,7 +68,8 @@ public abstract class Spkdb {
      * @param methodCode key to a row in the method table
      * @param parent the job_id of the job that is the parent; otherwise 0
      * @param isWarmStart true for being a warm start job; false for otherwise
-     * @param isMailNotice true for requesting end-job mail notice; false for otherwise
+     * @param isMailNotice true for requesting end-job mail notice, false for otherwise
+     * @param isParallel true for running the job in parallel mode, false for otherwise
      * @throws SQLException a SQL exception.
      * @throws SpkdbException a Spkdb exception.
      * @throws FileNotFoundException a file not found exception
@@ -84,7 +85,8 @@ public abstract class Spkdb {
 			      String methodCode,
 			      long parent,
                               boolean isWarmStart,
-                              boolean isMailNotice)
+                              boolean isMailNotice,
+                              boolean isParallel)
 	throws SQLException, SpkdbException, FileNotFoundException
     {
 	long jobId = 0;
@@ -95,6 +97,7 @@ public abstract class Spkdb {
         String sql;
         Blob checkpoint = null;
         int mail = isMailNotice ? 1 : 0;
+        int parallel = isParallel ? 1 : 0;
         if(isWarmStart)
         {
             sql = "select checkpoint from job where job_id=" + parent + ";";
@@ -109,21 +112,21 @@ public abstract class Spkdb {
 	        throw new SpkdbException("This job cannot restart because the\ncheckpoint file does not exist.");
 	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
-                                    + "xml_source, method_code, parent, start_time, event_time, checkpoint, mail)"
+                                    + "xml_source, method_code, parent, start_time, event_time, checkpoint, mail, parallel)"
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
                               + "', ?,'" + methodCode + "'," + parent + "," 
-	                      + startTime + "," + eventTime + ", ?," + mail + ");";
+	                      + startTime + "," + eventTime + ", ?," + mail + "," + parallel + ");";
         }
         else
         {
 	    sql = "insert into job (state_code, user_id, abstract, dataset_id, "
                                     + "dataset_version, model_id, model_version, "
-                                    + "xml_source, method_code, parent, start_time, event_time, mail)"
+                                    + "xml_source, method_code, parent, start_time, event_time, mail, parallel)"
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
                               + "', ?,'" + methodCode + "'," + parent + "," 
-	                      + startTime + "," + eventTime + "," + mail + ");";
+	                      + startTime + "," + eventTime + "," + mail + "," + parallel + ");";
         }
 	PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, abstraction);

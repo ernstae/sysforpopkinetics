@@ -902,12 +902,6 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
     }//GEN-LAST:event_downButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        if(model.size() > 0 && !iterator.getIsDeveloper())
-        {
-            JOptionPane.showMessageDialog(null, "The current SPK only supports single-block covariance matrix.");
-            return;
-        }
-        
         // Add the element into the selected position
         index++;
         if(jRadioButton4.isSelected())
@@ -1097,6 +1091,11 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             jTextPane1.setText("Enter residual unknown variability covariance initial estimate." + 
                                "\nBounds on residual unknown variability covariance set internally" +
@@ -1159,6 +1158,13 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
                 isValid = false;
                 wizardPane.setLeftOptions(wizardPane.getUpdatedLeftOptions().toArray()); 
             }
+            if(iterator.analysis.equals("two-stage"))
+            {
+                jCheckBox1.setSelected(false);
+                jCheckBox1.setEnabled(false);
+            }
+            else
+                jCheckBox1.setEnabled(true);
 	}
 
         public boolean checkingStep(JWizardPane wizard){
@@ -1171,11 +1177,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             int size = model.getSize();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = (String)model.get(0); 

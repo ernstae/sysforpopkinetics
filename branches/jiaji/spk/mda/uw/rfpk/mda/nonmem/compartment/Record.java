@@ -283,17 +283,20 @@ public class Record {
             Model model = (Model)models.get(i);
             Vector samples = model.samples;
             Vector inputs = model.inputs;
-            sb.append("\n;" + model.name);
-            for(int j = 0; j < inputs.size(); j++)
+            if(inputs.size() > 0 || samples.size() > 0)
             {
-                Element.Input input = (Element.Input)inputs.get(j);
-                sb.append(";" + input.name + ":" + input.xCenter + "," + input.yCenter + 
-                          "(" + ((Element)input.compartments.get(0)).number + ")");
-            }
-            for(int j = 0; j < samples.size(); j++)
-            {
-                Element sample = (Element)samples.get(j);
-                sb.append(";" + sample.name + ":" + sample.xCenter + "," + sample.yCenter);
+                sb.append("\n;" + model.name);
+                for(int j = 0; j < inputs.size(); j++)
+                {
+                    Element.Input input = (Element.Input)inputs.get(j);
+                    sb.append(";" + input.name + ":" + input.xCenter + "," + input.yCenter + 
+                              "(" + ((Element)input.compartments.get(0)).number + ")");
+                }
+                for(int j = 0; j < samples.size(); j++)
+                {
+                    Element sample = (Element)samples.get(j);
+                    sb.append(";" + sample.name + ":" + sample.xCenter + "," + sample.yCenter);
+                }
             }
         }
         errorText += sb.toString();

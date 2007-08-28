@@ -9,8 +9,6 @@ INSTALL_DIR = \
 	/usr/local/src/spktest/ml
 
 install : \
-	driver \
-	\
 	adapt.h \
 	AdaptIntegral.h \
 	f2c.h \
@@ -27,6 +25,7 @@ install : \
 	MapBay.cpp \
 	MapMonte.cpp \
 	monteDriver.cpp \
+        monteAlpDriver.cpp \
 	MontePopObj.cpp \
 	pow_ii.c
 

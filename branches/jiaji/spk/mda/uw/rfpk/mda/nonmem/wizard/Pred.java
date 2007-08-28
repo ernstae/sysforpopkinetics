@@ -186,6 +186,11 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             if(iterator.getIsReload())
             {
@@ -331,11 +336,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
         }
             
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }
+            if(iterator.getIsBack()) return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Pred", "$PRED \n" + record);
             object.getSource().pred = "\n" + code.trim() + "\n";

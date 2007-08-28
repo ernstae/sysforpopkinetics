@@ -41,6 +41,8 @@ public class Output {
     public String completionTime = null;    
     /** The computing times (estimation, statistics). */
     public String[] computingTimes = null;
+    /** The computation mode (single, parallel). */
+    public String computationMode = null;
     /** The sub-problem number. */
     public String subProblem = null;
     /** The simulation seed. */

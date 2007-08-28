@@ -63,8 +63,6 @@ Test* fitPopulationTest::suite()
              "modifiedLaplaceTest", &fitPopulationTest::modifiedLaplaceTest));
     suiteOfTests->addTest(new TestCaller<fitPopulationTest>(
              "expectedHessianTest", &fitPopulationTest::expectedHessianTest));
-    suiteOfTests->addTest(new TestCaller<fitPopulationTest>(
-             "firstOrderTest", &fitPopulationTest::firstOrderTest));
 
     return suiteOfTests;
 }
@@ -87,24 +85,8 @@ void fitPopulationTest::expectedHessianTest()
 
     // Only perform this test for the Expected Hessian objective
     // because it is not necessary to run in for both this objective
-    // and for the Laplace objective, which is slower.  Also, the
-    // first order objective restart capabilities are tested in
-    // firstOrderOptTest.
+    // and for the Laplace objective, which is slower.
     fitPopulationRestartTest(EXPECTED_HESSIAN);
-}
-void fitPopulationTest::firstOrderTest()
-{
-    fitPopulationExampleTest(FIRST_ORDER);
-    fitPopulationZeroIterationsTest(FIRST_ORDER);
-    fitPopulationLimitsWarningsTest(FIRST_ORDER);
-
-    // Skip this test for the first order method since it doesn't
-    // optimize the individual level objectives.
-    /*
-    fitPopulationIndOptErrorTest(FIRST_ORDER);
-    */
-
-    fitPopulationPopOptErrorTest(FIRST_ORDER);
 }
 void fitPopulationTest::naiveFirstOrderTest()
 {
@@ -127,8 +109,13 @@ void fitPopulationTest::naiveFirstOrderTest()
 #include <spk/EqIndModel.h>
 #include <spk/mapObj.h>
 #include <spk/randNormal.h>
+#include <spk/scalarToDouble.h>
+
+#include <CppAD/CppAD.h>
+
 #include <iomanip>
 #include <cmath>
+#include <cstdio>
 
 
 /*------------------------------------------------------------------------
@@ -169,37 +156,39 @@ static void doTheTest( bool ok,
  *
  *************************************************************************/
 
-class UserModelFitPopulationExampleTest : public SpkModel<double>
+template <class Scalar>
+class UserModelFitPopulationExampleTest : public SpkModel<Scalar>
 {
-    valarray<double> _a, _b;
-	const int _nA;
+    valarray<Scalar> _a, _b;
+    int _i;
+    const int _nA;
     const int _nB;
     const int _nYi;
-    int _i;
 public:
     UserModelFitPopulationExampleTest(int nA, int nB, int nYi)
-      :_nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
-	{};    
+      :
+      _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
+    {};    
     ~UserModelFitPopulationExampleTest(){};
 private:
     void doSelectIndividual(int inx)
     {
         _i = inx;
     }
-    void doSetPopPar(const valarray<double>& aval)
+    void doSetPopPar(const valarray<Scalar>& aval)
     {
         _a = aval;
     }
-    void doSetIndPar(const valarray<double>& bval)
+    void doSetIndPar(const valarray<Scalar>& bval)
     {
         _b = bval;
     }
-    void doIndParVariance( valarray<double>& ret ) const
+    void doIndParVariance( valarray<Scalar>& ret ) const
     {
         //
         // D = [ alp[1] ]
         //
-        ret.resize(_nB);
+        ret.resize(_nYi);
         ret[0] = _a[1];
     }
     bool doIndParVariance_popPar( valarray<double>& ret ) const
@@ -207,7 +196,7 @@ private:
         //
         // D_alp = [ 0  1 ]
         //
-        ret.resize(_nB * _nB * _nA);
+        ret.resize(_nYi * _nA);
         ret[0] = 0.0;
         ret[1] = 1.0;
         return true;
@@ -219,19 +208,23 @@ private:
         //
         assert(_a[1] != 0.0);
         ret.resize(_nB * _nB);
-        ret[0] = ( 1.0 / _a[1] );
+        double a1Double;
+        scalarToDouble( _a[1], a1Double );
+        ret[0] = 1.0 / a1Double;
     }
     bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
     {
         //
         // Dinv_alp = [ 0    -alp[1]^(-2) ]
         //
-        ret.resize(_nB * _nB * _nA);
+        ret.resize(_nB * _nA);
         ret[0] = 0.0;
-        ret[1] = -1.0 / (_a[1]*_a[1]);
+        double a1Double;
+        scalarToDouble( _a[1], a1Double );
+        ret[1] = -1.0 / ( a1Double * a1Double );
         return true;
     }
-    void doDataMean( valarray<double>& ret ) const
+    void doDataMean( valarray<Scalar>& ret ) const
     {
         //
         // f = [ alp[0]+b[0] ]
@@ -258,12 +251,12 @@ private:
         ret[0] = 1.0;
         return true;
     }
-    void doDataVariance( valarray<double>& ret ) const
+    void doDataVariance( valarray<Scalar>& ret ) const
     {
         //
         // R = [ 1 ]
         //
-        ret.resize(_nYi*_nYi);
+        ret.resize(_nB*_nB);
         ret[0] = 1.0;
     }
     bool doDataVariance_popPar( valarray<double>& ret ) const
@@ -271,7 +264,7 @@ private:
         //
         // R_alp = [ 0   0 ]
         //
-        ret.resize(_nYi * _nYi * _nA);
+        ret.resize(_nB * _nA);
         ret[0] = 0.0;
         ret[1] = 0.0;
         return false;
@@ -281,16 +274,16 @@ private:
         //
         // R_b = [ 0 ]
         //
-        ret.resize(_nYi *_nYi * _nB);
+        ret.resize(_nB *_nB);
         ret[0] = 0.0;
         return false;
     }
-    void doDataVarianceInv( valarray<double>& ret ) const
+    void doDataVarianceInv( valarray<Scalar>& ret ) const
     {
         //
         // Rinv = [ 1 ]
         //
-        ret.resize(_nYi * _nYi );
+        ret.resize(_nB * _nB);
         ret[0] = 1.0;
     }
     bool doDataVarianceInv_popPar( valarray<double>& ret ) const
@@ -298,7 +291,7 @@ private:
         //
         // Rinv_alp = [ 0  0 ]
         //
-        ret.resize(_nYi * _nYi * _nA);
+        ret.resize(_nB * _nA);
         ret[0] = 0.0;
         ret[1] = 0.0;
         return false;
@@ -308,7 +301,7 @@ private:
         //
         // Rinv_b = [ 0 ]
         //
-        ret.resize(_nYi * _nYi * _nB);
+        ret.resize(_nB * _nB * _nB);
         ret[0] = 0.0;
         return false;
     }   
@@ -345,7 +338,9 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFitPopulationExampleTest model( nAlp, nB, nYi );
+  UserModelFitPopulationExampleTest<double> model( nAlp, nB, nYi );
+
+  UserModelFitPopulationExampleTest< CppAD::AD<double> > modelAD( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -487,6 +482,7 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
     while( true )
     {
       fitPopulation( model,
+                     modelAD,
                      whichObjective,
                      N,
                      Y,
@@ -504,7 +500,8 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
                      &bOut,
                      &dLTildeOut,
                      &lTilde_alpOut,
-                     &lTilde_alp_alpOut, 
+                     &lTilde_alp_alpOut,
+                     false,
                      parallelControls );
 
       // Exit this loop if the maximum number of iterations was
@@ -665,36 +662,37 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
  *
  *************************************************************************/
 
-class UserModelFitPopulationZeroIterationsTest : public SpkModel<double>
+template <class Scalar>
+class UserModelFitPopulationZeroIterationsTest : public SpkModel<Scalar>
 {
-    valarray<double> _a, _b;
+    valarray<Scalar> _a, _b;
     int _i;
-	const int _nA;
+    const int _nA;
     const int _nB;
     const int _nYi;
 public:
     UserModelFitPopulationZeroIterationsTest(int nA, int nB, int nYi)
       : _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
-	{}; 
+    {}; 
     ~UserModelFitPopulationZeroIterationsTest(){};
 private:
     void doSelectIndividual(int inx)
     {
         _i = inx;
     }
-    void doSetPopPar(const valarray<double>& aval)
+    void doSetPopPar(const valarray<Scalar>& aval)
     {
-		assert(aval.size() == _nA);
+      assert(aval.size() == _nA);
         _a = aval;
     }
-    void doSetIndPar(const valarray<double>& bval)
+    void doSetIndPar(const  valarray<Scalar>& bval)
     {
-		assert(bval.size() == _nB);
+      assert(bval.size() == _nB);
         _b = bval;
     }
-    void doIndParVariance( valarray<double>& ret ) const
+    void doIndParVariance( valarray<Scalar>& ret ) const
     {
-		        //
+        //
         //              / 1    0  \ 
         //     D(alp) = |         |  .
         //              \ 0   1/2 /
@@ -707,7 +705,7 @@ private:
     }
     bool doIndParVariance_popPar( valarray<double>& ret ) const
     {
-		        //
+        //
         //                 /  0  \ 
         //    D_alp(alp) = |  0  |  .
         //                 |  0  | 
@@ -720,10 +718,10 @@ private:
     }
     void doIndParVarianceInv( valarray<double>& ret ) const
     {
-		        //
-        //              / 1    0 \ 
-        //     D(alp) = |        |  .
-        //              \ 0    2 /
+        //
+        //                 / 1    0 \ 
+        //     D^-1(alp) = |        |  .
+        //                 \ 0    2 /
         //
         ret.resize(_nB * _nB);
         ret[0] = 1.0;
@@ -744,7 +742,7 @@ private:
           ret[i] = 0.0;
         return false;
     }
-    void doDataMean( valarray<double>& ret ) const
+    void doDataMean( valarray<Scalar>& ret ) const
     {
         //
         //                 / b(2) \ 
@@ -781,7 +779,7 @@ private:
         ret[3] = 1.0;
         return true;
     }
-    void doDataVariance( valarray<double>& ret ) const
+    void doDataVariance( valarray<Scalar>& ret ) const
     {
         //
         //                 /  exp[b(1)]     0  \ 
@@ -818,8 +816,10 @@ private:
         ret.resize(_nYi * _nYi * _nB);
         for( int i=0; i<_nYi *_nYi * _nB; i++ )
           ret[i] = 0.0;
-        ret[0] = exp( _b[0] );
-        ret[3] = exp( _b[0] );
+        double b0Double;
+        scalarToDouble( _b[0], b0Double );
+        ret[0] = exp( b0Double );
+        ret[3] = exp( b0Double );
         return true;
     }   
     void doDataVarianceInv( valarray<double>& ret ) const
@@ -830,10 +830,12 @@ private:
         //                    \  0      1.0/exp[b(1)] / 
         //
         ret.resize(_nYi * _nYi);
-        ret[0] = 1.0 / exp( _b[0] );
+        double b0Double;
+        scalarToDouble( _b[0], b0Double );
+        ret[0] = 1.0 / exp( b0Double );
         ret[1] = 0.0;
         ret[2] = 0.0;
-        ret[3] = 1.0 / exp( _b[0] );
+        ret[3] = 1.0 / exp( b0Double );
     }
     bool doDataVarianceInv_popPar( valarray<double>& ret ) const
     {
@@ -859,8 +861,10 @@ private:
         ret.resize(_nYi * _nYi * _nB);
         for( int i=0; i<_nYi *_nYi * _nB; i++ )
           ret[i] = 0.0;
-		ret[0] = -1.0 / exp( _b[0] );
-        ret[3] = -1.0 / exp( _b[0] );
+        double b0Double;
+        scalarToDouble( _b[0], b0Double );
+        ret[0] = -1.0 / exp( b0Double );
+        ret[3] = -1.0 / exp( b0Double );
         return true;
     }   
 };
@@ -892,7 +896,9 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFitPopulationZeroIterationsTest model(nAlp, nB, nYPerInd);
+  UserModelFitPopulationZeroIterationsTest<double> model(nAlp, nB, nYPerInd);
+
+  UserModelFitPopulationZeroIterationsTest< CppAD::AD<double> > modelAD(nAlp, nB, nYPerInd);
 
 
   //------------------------------------------------------------
@@ -1066,6 +1072,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
     try{
         fitPopulation( 
 					  model,
+					  modelAD,
 					  whichObjective,
 					  N,
 					  Y,
@@ -1083,7 +1090,8 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 					  &bOut,
 					  &dLTildeOut,
 					  &lTilde_alpOut,
-					  &lTilde_alp_alpOut, 
+					  &lTilde_alp_alpOut,
+                                          false,
 					  parallelControls 
 			        );
         okFitPopulation = true;
@@ -1127,81 +1135,27 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 
     bool okLTilde;
 
-    //
-    // [ Comment by Sachiko, 09/18/2002 ]
-    //
-    // When FO is specified, call lTilde in such a way it
-    // exercieses the naive (straight translation of FO)
-    // method because lTilde is not in the execution
-    // path of the official FO (with EqIndModel).  
-    // To do that, feed a NaiveFoModel object
-    // as a SpkModel instance and specify NAIVE_FIRST_ORDER
-    // as the objective of choice.
-    // 
-    if( whichObjective == FIRST_ORDER )
-    {
-//      NaiveFoModel foModel( &model, dvecBStep.toValarray() );
-      try{
-/*
-          lTilde(  foModel,
-                   NAIVE_FIRST_ORDER,
-                   dvecY,
-                   dvecN,
-                   indOptimizer,
-                   dvecAlpHat,
-                   dvecBLow,
-                   dvecBUp,
-                   dvecBStep,
-                   dmatBIn,
-                   pNull,
-                   &dLTildeKnown,
-                   &drowLTilde_alpKnown);
-*/
-        std::valarray<int> N( nInd );
-	    for( int k = 0; k < nInd; k++ )
-		    N[ k ] = (int)dvecN.data()[ k ];
-	    EqIndModel FoModel( &model, N, dvecBStep.toValarray(), nAlp );
-
-        mapObj( FoModel, 
-                dvecY,
-                dvecAlpHat,
-                &dLTildeKnown,
-                &drowLTilde_alpKnown,
-                false,
-                true,
-                &dvecN );
-
-
-          okLTilde = true;
-      }
-      catch(...)
-      {
-          CPPUNIT_ASSERT_MESSAGE( "ltilde failed", false );
-      }
+    try{
+        lTilde(  model,
+                 whichObjective,
+                 dvecY,
+                 dvecN,
+                 indOptimizer,
+                 dvecAlpHat,
+                 dvecBLow,
+                 dvecBUp,
+                 dvecBStep,
+                 dmatBIn,
+                 pNull,
+                 &dLTildeKnown,
+                 &drowLTilde_alpKnown);
+        okLTilde = true;
     }
-    else
+    catch(...)
     {
-      try{
-          lTilde(  model,
-                   whichObjective,
-                   dvecY,
-                   dvecN,
-                   indOptimizer,
-                   dvecAlpHat,
-                   dvecBLow,
-                   dvecBUp,
-                   dvecBStep,
-                   dmatBIn,
-                   pNull,
-                   &dLTildeKnown,
-                   &drowLTilde_alpKnown);
-          okLTilde = true;
-      }
-      catch(...)
-      {
-          CPPUNIT_ASSERT_MESSAGE( "ltilde failed", false );
-      }
+        CPPUNIT_ASSERT_MESSAGE( "ltilde failed", false );
     }
+
 
     //----------------------------------------------------------
     // Convert back to valarray<double>.
@@ -1250,9 +1204,10 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
  *
  *************************************************************************/
 
-class UserModelPpkaLimitsWarningsTest : public SpkModel<double>
+template <class Scalar>
+class UserModelPpkaLimitsWarningsTest : public SpkModel<Scalar>
 {
-    valarray<double> _a, _b;
+    valarray<Scalar> _a, _b;
     int _i;
     const int _nA;
     const int _nB;
@@ -1267,23 +1222,30 @@ private:
     {
         _i = inx;
     }
-    void doSetPopPar(const valarray<double>& aval)
+    void doSetPopPar(const valarray<Scalar>& aval)
     {
       assert(aval.size() == _nA);
         _a = aval;
     }
-    void doSetIndPar(const  valarray<double>& bval)
+    void doSetIndPar(const  valarray<Scalar>& bval)
     {
       assert(bval.size() == _nB);
         _b = bval;
     }
-    void doIndParVariance( valarray<double>& ret ) const
+    void doIndParVariance( valarray<Scalar>& ret ) const
     {
         //
-        //     D(alp) = I  .
+        //     D(alp) = I   .
+        //               5
         //
+        assert(_nB == 5);
         ret.resize(_nB * _nB);
-        identity( _nB, ret );
+        ret = 0.0;
+        ret[0 + 5 * 0] = 1.0;
+        ret[1 + 5 * 1] = 1.0;
+        ret[2 + 5 * 2] = 1.0;
+        ret[3 + 5 * 3] = 1.0;
+        ret[4 + 5 * 4] = 1.0;
     }
     bool doIndParVariance_popPar( valarray<double>& ret ) const
     {
@@ -1294,7 +1256,7 @@ private:
         ret = 0.0;
         return false;
     }
-    void doDataMean( valarray<double>& ret ) const
+    void doDataMean( valarray<Scalar>& ret ) const
     {
         //
         //                 / b(2) \ 
@@ -1327,7 +1289,7 @@ private:
         ret[3] = 1.0;
         return true;
     }
-    void doDataVariance( valarray<double>& ret ) const
+    void doDataVariance( valarray<Scalar>& ret ) const
     {
         //
         //                 /  exp[b(1)]     0  \ 
@@ -1359,8 +1321,10 @@ private:
         //
         ret.resize(_nYi * _nYi * _nB);
         ret = 0.0;
-        ret[0] = exp( _b[0] );
-        ret[3] = exp( _b[0] );
+        double b0Double;
+        scalarToDouble( _b[0], b0Double );
+        ret[0] = exp( b0Double );
+        ret[3] = exp( b0Double );
         return true;
     }   
 };
@@ -1395,7 +1359,9 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelPpkaLimitsWarningsTest model( nAlp, nB, nYPerInd );
+  UserModelPpkaLimitsWarningsTest<double> model( nAlp, nB, nYPerInd );
+
+  UserModelPpkaLimitsWarningsTest< CppAD::AD<double> > modelAD( nAlp, nB, nYPerInd );
 
 
   //------------------------------------------------------------
@@ -1569,6 +1535,7 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
   try{
     fitPopulation( 
               model,
+              modelAD,
               whichObjective,
               N,
               Y,
@@ -1587,6 +1554,7 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
               pdNull,
               pdmatNull,
               pdmatNull,
+              false,
               parallelControls );
     }
     catch( ... )
@@ -1650,7 +1618,9 @@ void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjecti
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFitPopulationExampleTest model( nAlp, nB, nYi );
+  UserModelFitPopulationExampleTest<double> model( nAlp, nB, nYi );
+
+  UserModelFitPopulationExampleTest< CppAD::AD<double> > modelAD( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -1787,6 +1757,7 @@ void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjecti
   try
   {
     fitPopulation( model,
+                   modelAD,
                    whichObjective,
                    N,
                    Y,
@@ -1804,7 +1775,8 @@ void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjecti
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
-                   &lTilde_alp_alpOut, 
+                   &lTilde_alp_alpOut,
+                   false,
                    parallelControls );
   }
   catch( SpkException& e )
@@ -1950,7 +1922,9 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFitPopulationExampleTest model( nAlp, nB, nYi );
+  UserModelFitPopulationExampleTest<double> model( nAlp, nB, nYi );
+
+  UserModelFitPopulationExampleTest< CppAD::AD<double> > modelAD( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -2087,6 +2061,7 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
   try
   {
     fitPopulation( model,
+                   modelAD,
                    whichObjective,
                    N,
                    Y,
@@ -2104,7 +2079,8 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
-                   &lTilde_alp_alpOut, 
+                   &lTilde_alp_alpOut,
+                   false,
                    parallelControls );
   }
   catch( SpkException& e )
@@ -2127,26 +2103,21 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
   // Check to see if an error occurred at the individual level.
   //------------------------------------------------------------
 
-  // Skip these checks for the first order method since it doesn't
-  // optimize the individual level objectives.
-  if ( whichObjective != FIRST_ORDER )
-  {
-    CPPUNIT_ASSERT_MESSAGE(
-      "The individual level optimizer did not finish without an error.",
-      indOptimizer.getDidOptFinishOk() == true );
-    
-    CPPUNIT_ASSERT_MESSAGE(
-      "The individual level optimizer state information was not from the beginning of the iteration.",
-      indOptimizer.getIsBeginOfIterStateInfo() );
-    
-    CPPUNIT_ASSERT_MESSAGE(
-      "There was individual level optizer error information.",
-      indOptimizer.isThereErrorInfo() == false );
-    
-    CPPUNIT_ASSERT_MESSAGE(
-      "The maximum number of iterations was exceeded at the individual level.",
-      indOptimizer.getIsTooManyIter() == false );
-  }
+  CPPUNIT_ASSERT_MESSAGE(
+    "The individual level optimizer did not finish without an error.",
+    indOptimizer.getDidOptFinishOk() == true );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "The individual level optimizer state information was not from the beginning of the iteration.",
+    indOptimizer.getIsBeginOfIterStateInfo() );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "There was individual level optizer error information.",
+    indOptimizer.isThereErrorInfo() == false );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "The maximum number of iterations was exceeded at the individual level.",
+    indOptimizer.getIsTooManyIter() == false );
 
 
   //------------------------------------------------------------
@@ -2255,7 +2226,9 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFitPopulationExampleTest model( nAlp, nB, nYi );
+  UserModelFitPopulationExampleTest<double> model( nAlp, nB, nYi );
+
+  UserModelFitPopulationExampleTest< CppAD::AD<double> > modelAD( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -2376,7 +2349,7 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
   //------------------------------------------------------------
 
   // This file will hold the restart information.
-  const string restartFile = "firstOrderTest_restart_info.xml";
+  const string restartFile = "fitPopulationTest_restart_info.xml";
 
   // Set these flags so that the restart information will not be read
   // from the restart file, but it will be saved to the file.
@@ -2422,6 +2395,7 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
   try
   {
     fitPopulation( model,
+                   modelAD,
                    whichObjective,
                    N,
                    Y,
@@ -2439,7 +2413,8 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
-                   &lTilde_alp_alpOut, 
+                   &lTilde_alp_alpOut,
+                   false,
                    parallelControls );
   }
   catch(...)
@@ -2484,6 +2459,7 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
   try
   {
     fitPopulation( model,
+                   modelAD,
                    whichObjective,
                    N,
                    Y,
@@ -2501,13 +2477,22 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    &bOut,
                    &dLTildeOut,
                    &lTilde_alpOut,
-                   &lTilde_alp_alpOut, 
+                   &lTilde_alp_alpOut,
+                   false,
                    parallelControls );
   }
   catch(...)
   {
+    // Delete the restart file here if fitPopulation raised an
+    // exception.
+    int removeReturnValue = remove( restartFile.c_str() );
+
     CPPUNIT_ASSERT(false);
   }
+
+  // Delete the restart file here if fitPopulation did not raise an
+  // exception.
+  int removeReturnValue = remove( restartFile.c_str() );
 
   bool ok = true;
 

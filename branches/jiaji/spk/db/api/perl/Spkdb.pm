@@ -993,7 +993,7 @@ sub get_q2r_job() {
     
     $dbh->begin_work;
 
-    my $sql = "select cpp_source, checkpoint from job "
+    my $sql = "select cpp_source, checkpoint, parallel from job "
 	      . "where job_id='$job_id' for update;";
 
     my $sth = $dbh->prepare($sql);

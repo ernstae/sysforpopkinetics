@@ -235,6 +235,7 @@ public class MDAFrame extends JFrame
         jRadioButton12 = new javax.swing.JRadioButton();
         jScrollPane10 = new javax.swing.JScrollPane();
         jTextArea10 = new javax.swing.JTextArea();
+        jCheckBox2 = new javax.swing.JCheckBox();
         jCheckBox1 = new javax.swing.JCheckBox();
         buttonGroup1 = new javax.swing.ButtonGroup();
         errorMessageDialog = new javax.swing.JDialog();
@@ -881,12 +882,28 @@ public class MDAFrame extends JFrame
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel5.add(jScrollPane10, gridBagConstraints);
 
+        jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 12));
+        jCheckBox2.setText("Run the job in parallel computation mode");
+        jCheckBox2.setActionCommand("Run the job in parallel computation mode");
+        jCheckBox2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBox2.setEnabled(false);
+        jCheckBox2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
+        jPanel5.add(jCheckBox2, gridBagConstraints);
+
         jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 12));
         jCheckBox1.setText("Email me when the job has finished");
+        jCheckBox1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBox1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
         jPanel5.add(jCheckBox1, gridBagConstraints);
 
         jTabbedPane1.addTab("Job", jPanel5);
@@ -4210,8 +4227,12 @@ public class MDAFrame extends JFrame
                 jobMethodCode = "ad";
             }
         }
+        
         if(jobId != 0) jTextArea10.setText(jobInfo.jobAbstract); 
         jCheckBox1.setSelected(false);
+        jCheckBox2.setSelected(false);
+        jCheckBox2.setEnabled(jobMethodCode.equals("eh") || jobMethodCode.equals("la") || jobMethodClass.equals("le"));
+        if(!isDeveloper) jCheckBox2.setEnabled(false);
         jRadioButton12.setEnabled(false);
         archiveDialog.setSize(300, 380);
         archiveDialog.setVisible(true);    
@@ -4677,8 +4698,8 @@ public class MDAFrame extends JFrame
         }
 
         // Submit the job
-        boolean ok = server.submitJob(source, jobAbstract, modelArchive, dataArchive,
-                                      jobMethodCode, jobParent, false, jCheckBox1.isSelected());
+        boolean ok = server.submitJob(source, jobAbstract, modelArchive, dataArchive, jobMethodCode,
+                                      jobParent, false, jCheckBox1.isSelected(), jCheckBox2.isSelected());
         
         // Close the dialog
         if(ok) archiveDialog.dispose();
@@ -4850,7 +4871,7 @@ public class MDAFrame extends JFrame
      */    
     protected void readOutput(String text)
     { 
-        if(text.indexOf("<spkreport>") == -1 || text.indexOf("<spksource>") == -1)
+        if(text.indexOf("<spkreport") == -1 || text.indexOf("<spksource") == -1)
         {
             JOptionPane.showMessageDialog(null, "SPK output file is not loaded",  
                                           "File Error",            
@@ -5430,6 +5451,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;

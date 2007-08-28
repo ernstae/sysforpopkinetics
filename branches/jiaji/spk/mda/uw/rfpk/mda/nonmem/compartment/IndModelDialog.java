@@ -32,10 +32,9 @@ import uw.rfpk.mda.nonmem.MDAFrame;
  */
 public class IndModelDialog extends javax.swing.JDialog {
     
-    /** Creates new form IndModelDialog.     
+    /** Creates new form IndModelDialog.
      * @param parent parent of this dialog.
      * @param parameter a parameter object containing model name and value.
-     * @param dataLabels a String array containing data labels of the dataset.
      * @param dataLabels a String array containing data labels of the dataset.
      * @param isOK true if the OK button is clicked, false otherwise.
      */

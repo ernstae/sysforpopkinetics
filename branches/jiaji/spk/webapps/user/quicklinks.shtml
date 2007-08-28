@@ -45,7 +45,7 @@ distribution.
     <a class=quick href="WebHelp/spkstart.htm" target="_blank">Getting Started</a>
 </p>
 <p>
-    <a class=quick href="SPK_Manual.pdf">User Manual</a>
+    <a class=quick href="SPK_User_Manual.pdf">User Manual</a>
 </p>
 <p>
     <a class=quick href="userjobs.jsp">My Jobs</a>
@@ -67,5 +67,8 @@ distribution.
 </p>
 <p>
     <a class=quick href="userinfo.jsp">My Account</a>
+</p>
+<p>
+    <a class=quick href="http://bugzilla.rfpk.washington.edu">Bug Report</a>
 </p>
 </font>

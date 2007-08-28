@@ -321,12 +321,12 @@ public class Reload {
         Model.errorEqns = Model.errorEqns.replaceAll(";\n", "\n").trim();
         subjectModel = new Properties();
         compErrorModels = new Vector<String[]>();
+        int indexY = errorText.indexOf("Y=");
+        if(indexY == -1) return;
         int index1 = errorText.indexOf("IF(ID ");
         if(index1 != -1)
         {
-//            if(index1 != 0) Model.errorEqns = errorText.substring(0, index1).trim();
             int index2 = errorText.indexOf("\nENDIF\nIF(ID ");
-//            int index2 = errorText.indexOf("\nELSE IF(ID ");
             int index3;  
             int i = 1;
             String code;
@@ -355,7 +355,6 @@ public class Reload {
             
                 index1 = index2;
                 index2 = errorText.indexOf("\nENDIF\nIF(ID ", index1 + 5);
-//                index2 = errorText.indexOf("\nELSE IF(ID ", index1 + 5);
                 if(index2 == -1) index2 = errorText.indexOf("\nENDIF", index1 + 5);
                 i++;
             }
@@ -363,13 +362,6 @@ public class Reload {
         }
         else
         {
-            int indexY = errorText.indexOf("Y=");
-            if(indexY == -1) return;
-            if(indexY != 0)
-            {
-//                Model.errorEqns = errorText.substring(0, indexY).trim();
-                errorText = errorText.substring(indexY);
-            }
             parseCmp(errorText);
         }
         

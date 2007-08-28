@@ -22,6 +22,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.nio.*;
+import java.nio.channels.FileChannel;
 
 /** This servlet compares two text files and sends back the differences in unix format.  
  * The servlet receives a String array containing three String objects from the client.
@@ -78,13 +79,16 @@ public class DiffFiles extends HttpServlet
             {                        
  	        String text1 = messageIn[1]; 
                 String text2 = messageIn[2];
+                String perlDir = getServletContext().getInitParameter("perlDir");
+                String workingDir = "/tmp/";
                 
                 // Get Runtime object
                 Runtime runtime = Runtime.getRuntime();
 
                 // Save passed in Strings into files
-                file1 = new File("/tmp/" + secret + "_1.diff");
-                file2 = new File("/tmp/" + secret + "_2.diff");
+                file1 = new File(workingDir + secret + "_1.diff");
+                file2 = new File(workingDir + secret + "_2.diff");
+                file3 = new File(workingDir + secret + "_3.diff");
                 if(file1.exists() || file2.exists())
                 {
                     messageOut = "Server is comparing the other pair of files for you.";
@@ -102,42 +106,22 @@ public class DiffFiles extends HttpServlet
                     (new Thread(new Timer(timeLimit))).start(); 
 
                     // Create a subprocess
-                    String[] c = new String[]{"diff", file1.getPath(), file2.getPath()}; 
+                    String[] c = new String[]{"perl", perlDir + "diff.pl", workingDir, file1.getPath(), file2.getPath(), file3.getPath()}; 
                     process = runtime.exec(c);
                     process.waitFor();
                     if(process.exitValue() > 1)
                     {
                         file1.delete();
                         file2.delete();
+                        file3.delete();
                         messageOut = "Time out.  The time limit is " + timeLimit + " second(s)";
                     }
                     else
                     {
-                        // Get stdout and stderr of the subprocess
-                        BufferedInputStream in1 = new BufferedInputStream(process.getInputStream());
-                        BufferedInputStream er1 = new BufferedInputStream(process.getErrorStream());
-                        while(true)
-                        {
-                            int i = in1.read();
-                            if(i == -1)
-                            break;
-                            revision += (char)i;
-                        }
-                        String error = "";
-                        while(true)
-                        {
-                            int i = er1.read();
-                            if(i == -1)
-                                break;
-                            error += (char)i;
-                        }
-                        in1.close();
-                        er1.close();
+                        revision = openFile(file3);
 
                         // Destroy the subprocess
                         process.destroy(); 
-                
-                        messageOut = error;
                     }
                 }
             }
@@ -159,8 +143,10 @@ public class DiffFiles extends HttpServlet
         {
             file1.delete();
             file2.delete();
+            file3.delete();
             file1 = null;
             file2 = null;
+            file3 = null;
             process = null;
         }
         
@@ -184,6 +170,25 @@ public class DiffFiles extends HttpServlet
         // Wrap up
         servletOut.write(buf);
         servletOut.close();
+    }
+       
+    private static String openFile(File file)
+    {
+        String text = null;
+        try
+	{
+            StringBuffer buffer = new StringBuffer();
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            String line;
+            while((line = in.readLine()) != null)
+                buffer.append(line).append("\n");
+            in.close();
+            text = buffer.toString();
+        }
+        catch(IOException e)
+	{
+        }
+        return text;
     }
     
     private class Timer implements Runnable
@@ -210,6 +215,7 @@ public class DiffFiles extends HttpServlet
     // Declare File objects
     File file1 = null;
     File file2 = null;
+    File file3 = null;
     
     // Sub process
     private Process process = null;

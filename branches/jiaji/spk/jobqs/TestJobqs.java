@@ -63,7 +63,7 @@ public class TestJobqs
 	    conn = Spkdb.connect(dbName, host, dbUser, dbPassword);
             long[] jobs = new long[8];
             for(int j = 0; j < 8; j++)
-                jobs[j] = Spkdb.newJob(conn, 1L, "", 1L, "", 1L, "", "", "", 0L, false, false);
+                jobs[j] = Spkdb.newJob(conn, 1L, "", 1L, "", 1L, "", "", "", 0L, false, false, false);
 
             Spkdb.setStateCode(conn, jobs[1], "cmp");
             Spkdb.setStateCode(conn, jobs[2], "q2r");
