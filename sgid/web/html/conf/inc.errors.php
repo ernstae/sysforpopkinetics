@@ -17,7 +17,7 @@ $errors =
 	    'parse_illegal'
 	    => 'The following illegal character was found',
 	    'parse_out_Ymissing'
-	    => 'Your system-experiment model has only a single output.  When ther eis only a single output, it must be named Y.',
+	    => 'Your system-experiment model has only a single output.  When there is only a single output, it must be named Y.',
 	    'parse_out_Ymulti'
 	    => 'Your system-experiment model has multiple outputs.  When there are multiple outputs, they must be named {Y1, Y2, Y3, .., Yn}.',
 	    'parse_out'
