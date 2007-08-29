@@ -54,7 +54,8 @@ $TDATA = array( 'input_eq' => array(),
 		'out_eq' => array(),
 		'alg_eq' => array(),
 		'parameter_list' => array(),
-		'inputs' => array()
+		'inputs' => array(),
+		'outputs' => array()
 		);
 
  $operators = "*/+-";
@@ -118,6 +119,8 @@ $TDATA = array( 'input_eq' => array(),
       // if the equation starts with Y it is an output equation.
       $ae = $regs[2];
       $not_params[] = $regs[1];
+      $TDATA['outputs'][] = $regs[1];
+
 
       isolate_elements( $ae, $I_elements, $not_params);
 
@@ -285,6 +288,31 @@ function error_check( &$TDATA ) {
     { add_error('parse_in', "You have not defined any inputs."); }
   
 
+  // validate the outputs (bug 756)
+  if ( sizeof($TDATA['outputs']) == 1 ) {
+    if ( array_search ( "Y", $TDATA['outputs'] ) == FALSE ) {
+      add_error('parse_out_Ymissing');
+    }
+  }
+  elseif ( sizeof($TDATA['outputs']) > 1 ) {
+    if ( array_search ( "Y", $TDATA['outputs'] ) !== FALSE ) {
+      add_error('parse_out_Ymulti');
+    }
+    
+    for ( $count = 1; $count <= sizeof($TDATA['outputs']); $count++ ) {
+      $regex = "^Y" . $count;
+      if ( !eregi ( $regex, $TDATA['outputs'][$count-1] ) ) {
+	if ( $count == 1 )
+	  { add_error('parse_out_Ymulti', "I was expecting 'Y1' and found '" . $TDATA['outputs'][$count-1] . " listed as your first output."); }
+	else 
+	  { add_error('parse_out_Ymulti', "Output " . $TDATA['outputs'][$count-1] . " is not consecutive with " . $TDATA['outputs'][$count-2]); }
+      }
+    }
+  }
+  else
+    { add_error('parse_out', "You have not defined any outputs."); }
+    
+    
   // look for illegal characters
   foreach ( $TDATA['elements'] as $key => $val )
     {
