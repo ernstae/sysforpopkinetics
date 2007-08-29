@@ -28,7 +28,7 @@
 #    (3.) the HTML files should be created in the htm directory.
 #
 # -----------------------------------------------------------------
-include ../../../../../../doc/webdir.mk
+include ../../../../doc/webdir.mk
 T = spkLib
 HTML_DIR = htm
 DEST_HTML_DIR =  
