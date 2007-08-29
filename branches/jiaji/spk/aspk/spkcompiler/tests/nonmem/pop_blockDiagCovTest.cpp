@@ -1019,16 +1019,27 @@ void pop_blockDiagCovTest::testReportML()
       DOMNodeList* value_list1 = omegaOut1->getElementsByTagName( XML.X_VALUE );
       int n1 = value_list1->getLength();
 
+      double omega_scale;
+
       CPPUNIT_ASSERT_EQUAL( 3, n0+n1 );
       for( int i=0; i<+n0; i++ )
 	{
 	  omega_out[i] = atof( XMLString::transcode( value_list0->item(i)->getFirstChild()->getNodeValue() ) );
-	  CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], scale );
+	  // Because the covariance elements are all greater than 1
+	  // but of varying size, set the tolerance to be 1/100 of
+	  // the known value.
+	  omega_scale = fabs( nm_omega[i] ) / 100.0;
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i], omega_out[i], omega_scale );
 	}
      for( int i=0; i<+n1; i++ )
 	{
 	  omega_out[i+n0] = atof( XMLString::transcode( value_list1->item(i)->getFirstChild()->getNodeValue() ) );
-	  CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i+n0], omega_out[i+n0], scale );
+
+	  // Because the covariance elements are all greater than 1
+	  // but of varying size, set the tolerance to be 1/100 of
+	  // the known value.
+	  omega_scale = fabs( nm_omega[i+n0] ) / 100.0;
+	  CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_omega[i+n0], omega_out[i+n0], omega_scale );
 	}
     }
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1069,13 +1080,21 @@ void pop_blockDiagCovTest::testReportML()
       DOMNodeList * value_list = se->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       se_val.resize( n );
+
+      double se_scale;
+
       for( int i=0; i<n; i++ )
       {
 	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
 	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
 	if( x_val != NULL )
 	  se_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_stderr[i], se_val[i], scale );
+
+	// Because the standard error elements are all greater than 1
+	// but of varying size, set the tolerance to be 1/100 of the
+	// known value.
+	se_scale = fabs( nm_stderr[i] ) / 100.0;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_stderr[i], se_val[i], se_scale );
       }
     }
 
@@ -1134,13 +1153,21 @@ void pop_blockDiagCovTest::testReportML()
       DOMNodeList * value_list = ci->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       ci_val.resize( n );
+
+      double ci_scale;
+
       for( int i=0; i<n; i++ )
       {
 	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
 	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
 	if( x_val != NULL )
 	  ci_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_ci[i], ci_val[i], scale );
+
+	// Because the confidence interval elements are all greater
+	// than 1 but of varying size, set the tolerance to be 1/100
+	// of the known value.
+	ci_scale = fabs( nm_ci[i] ) / 100.0;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_ci[i], ci_val[i], ci_scale );
       }
     }
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1155,13 +1182,21 @@ void pop_blockDiagCovTest::testReportML()
       DOMNodeList * value_list = cv->getElementsByTagName( XML.X_VALUE );
       int n = value_list->getLength();
       cv_val.resize( n );
+
+      double cv_scale;
+
       for( int i=0; i<n; i++ )
       {
 	DOMElement * value =  dynamic_cast<DOMElement*>( value_list->item(i) );
 	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
 	if( x_val != NULL )
 	  cv_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cv[i], cv_val[i], scale );
+
+	// Because the coefficent of variation elements are all
+	// greater than 1 but of varying size, set the tolerance to be
+	// 1/100 of the known value.
+	cv_scale = fabs( nm_cv[i] ) / 100.0;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cv[i], cv_val[i], cv_scale );
       }
     }
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
