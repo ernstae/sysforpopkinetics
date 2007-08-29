@@ -121,7 +121,6 @@ $TDATA = array( 'input_eq' => array(),
       $not_params[] = $regs[1];
       $TDATA['outputs'][] = $regs[1];
 
-
       isolate_elements( $ae, $I_elements, $not_params);
 
       $TDATA['out_eq'][] = $toks[$i];
@@ -290,7 +289,7 @@ function error_check( &$TDATA ) {
 
   // validate the outputs (bug 756)
   if ( sizeof($TDATA['outputs']) == 1 ) {
-    if ( array_search ( "Y", $TDATA['outputs'] ) == FALSE ) {
+    if ( array_search ( "Y", $TDATA['outputs'] ) === FALSE ) {
       add_error('parse_out_Ymissing');
     }
   }
