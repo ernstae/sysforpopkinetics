@@ -465,13 +465,10 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 		  &bOut,
 		  &dLTildeOut,
 		  &lTilde_alpOut,
-<<<<<<< .mine
 		  &lTilde_alp_alpOut,
                   false,
+                  false,
 		  parallelControls 
-=======
-		  &lTilde_alp_alpOut
->>>>>>> .r2471
 		  );
     ok = true;
   }
@@ -914,6 +911,7 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
 		  &dLTildeOut,
 		  &lTilde_alpOut,
 		  &lTilde_alp_alpOut,
+                  false,
                   false
 		  );
     ok = true;
@@ -1504,6 +1502,7 @@ void popStatisticsTest::popMaskTest()
 		  &dLTildeOut,
 		  &lTilde_alpOut,
 		  &lTilde_alp_alpOut,
+                  false,
                   false
 		  );
     ok = true;

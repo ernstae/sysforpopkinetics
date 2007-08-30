@@ -17,6 +17,15 @@
 %  http://www.rfpk.washington.edu                                       *
 %                                                                       *
 %************************************************************************
+$begin firstOrderOptTest.cpp$$
+
+$section firstOrderOpt: Example and Test$$
+
+$code
+$verbatim%firstOrderOptTest.cpp%0%// BEGIN VERBATIM%// END VERBATIM%1%$$
+$$
+
+$end
 
 */
 /*************************************************************************
@@ -26,38 +35,22 @@
  *
  * Unit test for the function firstOrderOpt.
  *
- * Author: Jiaji Du based on Mitch's ppkaOptTest.cpp
+ * Author: Brad Bell
  *
  *************************************************************************/
 /*------------------------------------------------------------------------
  * Include Files
  *------------------------------------------------------------------------*/
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <cmath>
-#include <iostream>
-#include <fstream>
-#include <string>
 
-extern "C"{
-  #include <atlas/clapack.h>
-  #include <atlas/cblas.h>
-}
-
+#include <cppad/cppad.hpp>
+#include <valarray>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 
 #include "../../../spk/DoubleMatrix.h"
 #include "../../../spk/firstOrderOpt.h"
-#include "../../../spk/namespace_population_analysis.h"
 #include "../../../spk/SpkException.h"
-#include "../../../spk/SpkValarray.h"
-#include "../../../spk/Objective.h"
-#include "../../../spk/lTilde.h"
-#include "../../../spk/pi.h"
 #include "../../../spk/SpkModel.h"
-#include "../../../spk/EqIndModel.h"
 #include "../../../spk/mapObj.h"
 #include "../../../spk/randNormal.h"
 
@@ -67,47 +60,508 @@ extern "C"{
  * Namespace Declarations
  *------------------------------------------------------------------------*/
 
-using SPK_VA::valarray;
+using std::valarray;
 using namespace CppUnit;
-using namespace std;
 
 void firstOrderOptTest::setUp()
-{
-    // initializations
+{ // initializations
 }
 void firstOrderOptTest::tearDown()
-{
-    // clean up
+{ // clean up
 }
 
 Test* firstOrderOptTest::suite()
 {
   TestSuite *suiteOfTests = new TestSuite("firstOrderOptTest");
 
-  suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderOptExampleTest", 
-							  &firstOrderOptTest::firstOrderOptExampleTest));
+  suiteOfTests->addTest(
+    new TestCaller<firstOrderOptTest>(
+        "firstOrderOptAnalyticTest", 
+        &firstOrderOptTest::firstOrderOptAnalyticTest
+    )
+  );
+  suiteOfTests->addTest(
+    new TestCaller<firstOrderOptTest>(
+        "firstOrderOptExampleTest", 
+        &firstOrderOptTest::firstOrderOptExampleTest
+    )
+  );
+  suiteOfTests->addTest(
+    new TestCaller<firstOrderOptTest>(
+        "firstOrderOptRestartTest", 
+        &firstOrderOptTest::firstOrderOptRestartTest
+    )
+  );
+  suiteOfTests->addTest(
+    new TestCaller<firstOrderOptTest>(
+        "firstOrderOptZeroIterationsTest", 
+        &firstOrderOptTest::firstOrderOptZeroIterationsTest
+    )
+  );
 
-  suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderOptRestartTest", 
-							  &firstOrderOptTest::firstOrderOptRestartTest));
-
-  suiteOfTests->addTest(new TestCaller<firstOrderOptTest>("firstOrderOptZeroIterationsTest",
-							  &firstOrderOptTest::firstOrderOptZeroIterationsTest));
   return suiteOfTests;
 }
 
 
+// BEGIN VERBATIM 
 /*************************************************************************
+ * Function: firstOrderOptAnalyticTest
  *
+ * This is an example and test of firstOrderOpt.cpp  written by Brad Bell
+ *************************************************************************/
+
+// link so that Value works with double as well as AD<double>
+double Value(double x)
+{   return x; }
+
+template <class Scalar>
+class fo_test_model : public SpkModel<Scalar>
+{
+private:
+    const double     sigma_; // standard deviation of measurement noise 
+    valarray<Scalar> alpha_; // current fixed effects
+    valarray<Scalar>     b_; // current random effects
+    int                  i_; // current individual (does not matter)
+public:
+    fo_test_model(double sigma) : sigma_(sigma),  alpha_(2) , b_(1)  {};        
+    // use default destruction: ~fo_test_model() {};
+private:
+    void doSelectIndividual(int i)
+    {   i_ = i; }
+    void doSetPopPar(const valarray<Scalar>& alpha)
+    {   alpha_ = alpha; }
+    void doSetIndPar(const valarray<Scalar>& b)
+    {   b_ = b; }
+    void doIndParVariance( valarray<Scalar>& D) const
+    {   D.resize(1);
+        D[0] = alpha_[1];
+    }
+    bool doIndParVariance_popPar( valarray<double>& D_alp ) const
+    {   D_alp.resize(2);
+        D_alp[0] = 0.;
+        D_alp[1] = 1.;
+        return true;
+    }
+    void doIndParVarianceInv( valarray<double>& Dinv) const
+    {   Dinv.resize(1);
+        Dinv[0] = 1. / Value(alpha_[1]);
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& Dinv_alp ) const
+    {   Dinv_alp.resize(2);
+        Dinv_alp[0] = 0.;
+        Dinv_alp[1] = - 1. / Value(alpha_[1] * alpha_[1]);
+        return true;
+    }
+    void doDataMean( valarray<Scalar>& f ) const
+    {   f.resize(1);
+        f[0] = alpha_[0] + b_[0];
+    }
+    bool doDataMean_popPar( valarray<double>& f_alp ) const
+    {   f_alp.resize(2);
+        f_alp[0] = 1.;
+        f_alp[1] = 0.;
+        return true;
+    }
+    bool doDataMean_indPar( valarray<double>& f_b ) const
+    {   f_b.resize(1);
+        f_b[0] = 1.;
+        return true;
+    }
+    void doDataVariance( valarray<Scalar>& R ) const
+    {   R.resize(1);
+        R[0] = Scalar(sigma_ * sigma_);
+    }
+    bool doDataVariance_popPar( valarray<double>& R_alp ) const
+    {   R_alp.resize(2);
+        R_alp[0] = 0.;
+        R_alp[1] = 0.;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& R_b ) const
+    {   R_b.resize(1);
+        R_b[0] = 0.;
+        return false;
+    }
+    void doDataVarianceInv( valarray<Scalar>& Rinv ) const
+    {   Rinv.resize(1);
+        Rinv[0] = Scalar(1.0 / (sigma_ * sigma_));
+    }
+    bool doDataVarianceInv_popPar( valarray<double>& Rinv_alp ) const
+    {   Rinv_alp.resize(2);
+        Rinv_alp[0] = 0.;
+        Rinv_alp[1] = 0.;
+        return false;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& Rinv_b ) const
+    {   Rinv_b.resize(1);
+        Rinv_b[0] = 0.;
+        return false;
+    }
+};
+
+void firstOrderOptTest::firstOrderOptAnalyticTest()
+{ // temporary indices
+  size_t i;
+
+  // number of inidividuals in the simulation  (can be changed)
+  const size_t M = 10;
+
+  // simulation value for standard deviation of the random effects
+  const double std_b =  .5;
+
+  // simulation value for standard deviation of measurement noise
+  const double sigma = 1.;
+
+  // simulation value for mean of data
+  const double mean_y = 3.;
+
+  // simulation fixed effects values 
+  valarray<double> alpha_true(2);
+  alpha_true[0] = mean_y;
+  alpha_true[1] = std_b * std_b;
+
+  // simulation random effects values
+  valarray<double> b_all_true(M);
+  b_all_true = std_b * randNormal(M);
+
+  // simulation measurement noise values
+  valarray<double> noise(M);
+  noise = randNormal(M); 
+   
+  // model, adModel
+  fo_test_model<double> model( sigma );
+  fo_test_model< CppAD::AD<double> > adModel( sigma ); 
+
+  // dvecN, dvecY
+  DoubleMatrix dvecN(M, 1);
+  double *N = dvecN.data();
+  DoubleMatrix dvecY(M, 1);
+  double *Y = dvecY.data();
+  for(i = 0; i < M; i++)
+  {   // number of measurements for this subject
+      N[i] = 1.;
+      // value of measurement for this subject 
+      Y[i] = alpha_true[0] + b_all_true[i] + noise[i];
+  }
+
+  // fixed effects optimizer (linear least squares problem)
+  double epsilon = 1e-5;
+  int    max_itr = 20;
+  int    level   = 0;
+  Optimizer alpOptInfo(epsilon, max_itr, level); 
+  // Set these to exercise the warm start capabilities of firstOrderOpt.
+  alpOptInfo.setThrowExcepIfMaxIter( false );
+  alpOptInfo.setSaveStateAtEndOfOpt( true );
+
+  // fixed effects arguements to firstOrderOpt
+  size_t m = 2; // number of fixed effects
+  DoubleMatrix dvecAlpLow ( m, 1 );
+  DoubleMatrix dvecAlpUp  ( m, 1 );
+  DoubleMatrix dvecAlpIn  ( m, 1 );
+  DoubleMatrix dvecAlpOut ( m, 1 );
+  DoubleMatrix dvecAlpStep( m, 1 );
+
+  double* alpLow  = dvecAlpLow .data();
+  double* alpUp   = dvecAlpUp  .data();
+  double* alpIn   = dvecAlpIn  .data();
+  double* alpStep = dvecAlpStep.data();
+
+  // Set the values associated with first fixed effect
+  alpLow [ 0 ] = alpha_true[0] - 10.0;
+  alpUp  [ 0 ] = alpha_true[0] + 10.0;
+  alpIn  [ 0 ] = alpha_true[0] - 2.;
+  alpStep[ 0 ] = 1.0e-2;
+
+  // Set the values associated with second firxed effect
+  alpLow [ 1 ] = alpha_true[1] / 10.;
+  alpUp  [ 1 ] = alpha_true[1] * 10.;
+  alpIn  [ 1 ] = alpha_true[1] / 2.;
+  alpStep[ 1 ] = alpha_true[1] / 100.;
+
+  // random effects optimizer (not a linear least squares problem)
+  epsilon = 1e-6;
+  max_itr = 50;
+  level   = 0;
+  Optimizer bOptInfo(epsilon, max_itr, level); 
+  bOptInfo.setThrowExcepIfMaxIter( true );
+  
+  // random effects arguments to firstOrderOpt
+  size_t n = 1;   // number of random effects per individual
+  DoubleMatrix dvecBLow ( n, 1 );
+  DoubleMatrix dvecBUp  ( n, 1 );
+  DoubleMatrix dvecBStep( n, 1 );
+  DoubleMatrix dmatBIn  ( n, M );
+  DoubleMatrix dmatBOut ( n, M );
+
+  double *bLow  = dvecBLow.data();
+  double *bUp   = dvecBUp .data();
+  double *bStep = dvecBStep.data();
+  double *bIn   = dmatBIn.data();
+
+  bLow[0]    = - 3. * std_b;
+  bUp[0]     = + 3. * std_b;
+  bStep[0]   =  1e-2 * std_b; 
+  dmatBIn.fill( 0.0 );
+
+  // objective function values
+  double dLtildeOut;
+  DoubleMatrix drowLtilde_alpOut     ( 1, m );
+  DoubleMatrix dmatLtilde_alp_alpOut ( m, m );
+  DoubleMatrix dmatLtilde_alpOut     ( m, M );
+
+  try
+  {   firstOrderOpt(
+          model                  ,
+          adModel                ,
+          dvecN                  ,
+          dvecY                  ,
+          alpOptInfo             ,
+          dvecAlpLow             ,
+          dvecAlpUp              ,
+          dvecAlpIn              ,
+          &dvecAlpOut            ,
+          dvecAlpStep            ,
+          bOptInfo               ,
+          dvecBLow               ,
+          dvecBUp                ,
+          dmatBIn                ,
+          &dmatBOut              ,
+          dvecBStep              ,
+          &dLtildeOut            ,
+          &drowLtilde_alpOut     ,
+          &dmatLtilde_alp_alpOut ,
+          &dmatLtilde_alpOut  
+     );
+  }
+  catch(...)
+  {  CPPUNIT_ASSERT_MESSAGE(
+         "firstOrderOptAnalyticTest: an exception occurred.", 
+         false
+     );
+  }
+
+  //************************************************************
+  // Note: equations for the known (analytic) values computed 
+  // here are derived in "An Introduction to Mixed Effects
+  // Modeling and Marginal Likelihood Estimation with a 
+  // Pharmacokinetic Example", B. M. Bell, Applied Physics
+  // Laboratory, University of Washington, May 25, 2000.
+  //************************************************************
+
+  // Compute the mean of the data, yBar.
+  double yBar = 0.0;
+  for( i = 0; i < M; i++ )
+    yBar += Y[ i ];
+  yBar /= double(M);
+
+  // Compute the sample variance
+  double sample_variance = 0.0;
+  for ( i = 0; i < M; i++ )
+    sample_variance += (Y[i] - yBar) * (Y[i] - yBar);
+  sample_variance /= double(M);
+
+  // check fixed effects estimates, The value for alpHat(0) and alpHat(1) 
+  // are contained in section 9 of the above reference.
+  bool ok_alpha     = true;
+  double check      = yBar;
+  double alphaHat_0 = *(dvecAlpOut.data()+0);
+  ok_alpha          &= fabs(alphaHat_0 / check - 1.) < 1e-4;
+  check              = sample_variance - sigma * sigma;
+  if( check < alpLow[1] )
+      check = alpLow[1];
+  if( check > alpUp[1] )
+      check = alpUp[1];
+  double alphaHat_1 = *(dvecAlpOut.data()+1);
+  ok_alpha          &= fabs(alphaHat_1 / check - 1.) < 1e-4;
+  CPPUNIT_ASSERT_MESSAGE(
+      "firstOrderOptAnalyticTest: alphaOut is not correct.",
+      ok_alpha
+  );
+
+  /* check random effects estimates
+  mapObj = .5*b_i^2 / alp_1 + .5*[ ( y_i - alp_0 - b_i) / sigma ]^2
+  0      = b_i / alp_1 - (y_i - alp_0 - b_i) / sigma^2
+  0      = b_i (1 / alp_1 + 1 / sigma^2 ) - (y_i - alp_0 ) / sigma^2
+  b_i    =  (y_i - alp_0 ) / ( sigma^2 / alp_1 + 1)
+  */
+  bool ok_b = true;
+  for ( i = 0; i < M ; i++ )
+  {   check = (Y[i] - alphaHat_0) / (sigma * sigma / alphaHat_1 + 1.);
+      if( check < bLow[0] )
+          check = bLow[0];
+      if( check > bUp[0] )
+          check = bUp[0];
+      ok_b &= fabs(*(dmatBOut.data() + i) / check - 1.) < 1e-4;
+  }
+  CPPUNIT_ASSERT_MESSAGE(
+      "firstOrderOptAnalyticTest: BOut is not correct.",
+      ok_b
+  ); 
+  /* check fixed effects objective value
+  Vi     = Ri + fi_b * D * fi_b' = Ri + D
+  Ltilde = .5 * sum_i logdet(2*pi*Vi) + (yi-alp_0)' Vi^{-1} (yi-alp_0)
+  */
+  double pi             = 4. * atan(1.);
+  double Ltilde         = 0.;
+  double Ltilde_alp_0   = 0.;
+  double Ltilde_alp_1   = 0.;
+  double Hessian_00     = 0.;
+  double Hessian_11     = 0.;
+  bool ok_L = true;
+  for( i = 0; i < M; i++)
+  {  double Vi       = sigma * sigma + alphaHat_1;
+     double Vi_alp_1 = 1;
+     double ri       = Y[i] - alphaHat_0;
+     double ri_alp_0 = -1;
+     Ltilde         += .5 * ( log( 2 * pi * Vi ) + ri * ri / Vi );
+     double temp     = ri * ri_alp_0 / Vi;
+     ok_L           &= fabs(*(dmatLtilde_alpOut.data()+0+2*i) - temp) < 1e-4;
+     Ltilde_alp_0   += temp;
+     Hessian_00     += ri_alp_0 * ri_alp_0 / Vi;
+     temp            = .5 * Vi_alp_1 / Vi - .5 * ri * ri * Vi_alp_1 / (Vi * Vi);
+     ok_L           &= fabs(*(dmatLtilde_alpOut.data()+1+2*i) - temp) < 1e-4;
+     Ltilde_alp_1   += temp;
+     Hessian_11     += -.5 * Vi_alp_1 * Vi_alp_1 / (Vi * Vi)
+                     + ri * ri * Vi_alp_1 * Vi_alp_1 / (Vi * Vi * Vi);
+  }
+  ok_L &= fabs(dLtildeOut / Ltilde - 1) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+0) / Hessian_00 - 1) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+1) ) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+2) ) < 1e-4;
+  ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+3) / Hessian_11 - 1) < 1e-4;
+  // do not require much relative accuracy on derivatives because are zero
+  // at the true minimizer.
+  ok_L &= fabs(*(drowLtilde_alpOut.data()+0) / Ltilde_alp_0 - 1 ) < 1e-2;
+  ok_L &= fabs(*(drowLtilde_alpOut.data()+1) / Ltilde_alp_1 - 1 ) < 1e-2;
+  CPPUNIT_ASSERT_MESSAGE(
+      "firstOrderOptAnalyticTest: Ltilde or its derivative is not correct.",
+      ok_L
+  ); 
+  return;
+}
+// END VERBATIM
+#include "../../../spk/namespace_population_analysis.h"
+
+/*************************************************************************
+ * Function: doTheTest
+ *************************************************************************/
+void firstOrderOptTest_doTheTest( 
+     bool ok,
+     double dLTildeOut,
+     double dLTildeKnown,
+     const double        epsB,
+     const double        epsAlp,
+     const DoubleMatrix& dvecAlpLow,
+     const DoubleMatrix& dvecAlpUp,
+     const DoubleMatrix& dvecAlpOut,
+     const DoubleMatrix& dvecAlpHat,
+     const DoubleMatrix& dvecBLow,
+     const DoubleMatrix& dvecBUp,
+     const DoubleMatrix& dmatBOut,
+     const DoubleMatrix& dmatBHat,
+     const DoubleMatrix& drowLTilde_alpOut,
+     const DoubleMatrix& drowLTilde_alpKnown,
+     const DoubleMatrix& dmatLambdaTilde_alpOut,
+     const DoubleMatrix& dmatLambdaTilde_alpKnown,
+     const DoubleMatrix& dmatLTilde_alp_alpOut,
+     const DoubleMatrix& dmatLTilde_alp_alpKnown )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i, k;
+
+  string line = "----------------------------------------------------";
+
+  int nAlp = dvecAlpOut.nr();
+  int nB   = dmatBOut  .nr();
+  int nInd = dmatBOut  .nc();
+
+  // Updated 1-8-01 Alyssa
+  // fixed for const correctness
+  const double* pdAlpLowData = dvecAlpLow.data();
+  const double* pdAlpUpData  = dvecAlpUp .data();
+  const double* pdAlpOutData = dvecAlpOut.data();
+  const double* pdAlpHatData = dvecAlpHat.data();
+
+  const double* pdBLowData = dvecBLow.data();
+  const double* pdBUpData  = dvecBUp .data();
+  const double* pdBOutData = dmatBOut.data();
+  const double* pdBHatData = dmatBHat.data();
+
+
+  //------------------------------------------------------------
+  // Check to see if the optimization completed sucessfully.
+  //------------------------------------------------------------
+
+  CPPUNIT_ASSERT(ok);
+
+  //------------------------------------------------------------
+  // Check the final fixed population parameter vector, alpOut.
+  //------------------------------------------------------------
+
+  // Check to see if any elements of alpOut fail to satisfy 
+  // the convergence criteria:
+  // 
+  //      abs(alpOut - alpHat) <= epsAlp (alpUp - alpLow)
+  //
+  bool isConverged = true;
+  for ( i = 0; i < nAlp; i++ )
+  {
+    if ( fabs(pdAlpOutData[ i ] - pdAlpHatData[ i ]) > 
+            epsAlp * (pdAlpUpData[ i ] - pdAlpLowData[ i ]) )
+    {
+      isConverged = false;
+    }
+  }
+
+  CPPUNIT_ASSERT(ok);
+  CPPUNIT_ASSERT(isConverged);
+
+
+  //------------------------------------------------------------
+  // Check the matrix of final random population parameter vectors, bOut.
+  //------------------------------------------------------------
+
+  // For each pair of vectors bOut_i and bHat_i, i.e., for each column 
+  // of bOut and bHat, check to see that the convergence criteria,
+  // 
+  //      abs(bOut_i - bHat_i) <= epsB (bUp - bLow)  ,
+  //
+  // is satisfied.
+  //
+  isConverged = true;
+  for ( i = 0; i < nInd; i++ )
+  {
+    for ( k = 0; k < nB; k++ )
+    {
+      if ( fabs(pdBOutData[ k + i * nB ] - pdBHatData[ k + i * nB  ]) > 
+        epsB * (pdBUpData[ k ] - pdBLowData[ k ]) )
+      {
+        isConverged = false;
+      }
+    }
+  }
+  
+  CPPUNIT_ASSERT(ok);
+  CPPUNIT_ASSERT(isConverged);
+}
+
+
+/*************************************************************************
  * Function: firstOrderOptExampleTest
  *
  *
- * This test implements the example problem from the firstOrderOpt specification. 
- *
+ * example problem from the firstOrderOpt specification. 
  *************************************************************************/
 
-class UserModelFirstOrderOptExampleTest : public SpkModel<double>
+template <class Scalar>
+class UserModelFirstOrderOptExampleTest : public SpkModel<Scalar>
 {
-    valarray<double> _a, _b;
+    valarray<Scalar> _a, _b;
     int _i;
     const int _nA;
     const int _nB;
@@ -123,15 +577,15 @@ private:
     {
         _i = inx;
     }
-    void doSetPopPar(const valarray<double>& aval)
+    void doSetPopPar(const valarray<Scalar>& aval)
     {
         _a = aval;
     }
-    void doSetIndPar(const valarray<double>& bval)
+    void doSetIndPar(const valarray<Scalar>& bval)
     {
         _b = bval;
     }
-    void doIndParVariance( valarray<double>& ret ) const
+    void doIndParVariance( valarray<Scalar>& ret ) const
     {
         //
         // D = [ alp[1] ]
@@ -156,7 +610,7 @@ private:
         //
         assert(_a[1] != 0.0);
         ret.resize(_nB * _nB);
-        ret[0] = ( 1.0 / _a[1] );
+        ret[0] = ( 1.0 / Value(_a[1]) );
     }
     bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
     {
@@ -165,10 +619,10 @@ private:
         //
         ret.resize(_nB * _nA);
         ret[0] = 0.0;
-        ret[1] = -1.0 / (_a[1]*_a[1]);
+        ret[1] = -1.0 / Value(_a[1]*_a[1]);
         return true;
     }
-    void doDataMean( valarray<double>& ret ) const
+    void doDataMean( valarray<Scalar>& ret ) const
     {
         //
         // f = [ alp[0]+b[0] ]
@@ -195,7 +649,7 @@ private:
         ret[0] = 1.0;
         return true;
     }
-    void doDataVariance( valarray<double>& ret ) const
+    void doDataVariance( valarray<Scalar>& ret ) const
     {
         //
         // R = [ 1 ]
@@ -222,7 +676,7 @@ private:
         ret[0] = 0.0;
         return false;
     }
-    void doDataVarianceInv( valarray<double>& ret ) const
+    void doDataVarianceInv( valarray<Scalar>& ret ) const
     {
         //
         // Rinv = [ 1 ]
@@ -286,7 +740,10 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFirstOrderOptExampleTest model( nAlp, nB, nYi );
+  UserModelFirstOrderOptExampleTest<double>  
+	model( nAlp, nB, nYi );
+  UserModelFirstOrderOptExampleTest< CppAD::AD<double> >  
+	adModel( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -443,6 +900,7 @@ void firstOrderOptTest::firstOrderOptExampleTest()
     {
       firstOrderOpt(
                      model,
+                     adModel,
                      dvecN,
                      dvecY,
                      popOptimizer,
@@ -547,8 +1005,9 @@ void firstOrderOptTest::firstOrderOptExampleTest()
 
   // Compute the known value for LTilde(alp) = -log[p(y|alp)]
   // using equation (17) of the above reference.
+  double pi = 4. * atan(1.);
   double dLTildeKnown = sumYMinAlp1Sqd / ( 2.0 * ( onePlusAlp2 ) ) 
-    + nInd / 2.0 * log( 2.0 * PI * ( onePlusAlp2 ) );
+    + nInd / 2.0 * log( 2.0 * pi * ( onePlusAlp2 ) );
 
   // The value for LTilde_alp(alp) was determined by taking the  
   // derivative of equation (17) of the above reference, i.e.,
@@ -606,7 +1065,7 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   // Do the test.
   //------------------------------------------------------------
 
-  doTheTest(  ok,
+  firstOrderOptTest_doTheTest(  ok,
               dLTildeOut,
               dLTildeKnown,
               indOptimizer.getEpsilon(),
@@ -628,16 +1087,12 @@ void firstOrderOptTest::firstOrderOptExampleTest()
   
 }
 
-
 /*************************************************************************
- *
  * Function: firstOrderOptRestartTest
- *
  *
  * This test re-uses the example problem from the firstOrderOpt
  * specification to check that the restart file machinery works for
  * the firstOrderOpt objective function.
- *
  *************************************************************************/
 
 void firstOrderOptTest::firstOrderOptRestartTest()
@@ -674,7 +1129,10 @@ void firstOrderOptTest::firstOrderOptRestartTest()
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFirstOrderOptExampleTest model( nAlp, nB, nYi );
+  UserModelFirstOrderOptExampleTest<double>
+	 model( nAlp, nB, nYi );
+  UserModelFirstOrderOptExampleTest< CppAD::AD<double> >
+	 adModel( nAlp, nB, nYi );
 
 
   //------------------------------------------------------------
@@ -856,6 +1314,7 @@ void firstOrderOptTest::firstOrderOptRestartTest()
   {
     firstOrderOpt(
                    model,
+                   adModel,
                    dvecN,
                    dvecY,
                    firstPopOptimizer,
@@ -918,6 +1377,7 @@ void firstOrderOptTest::firstOrderOptRestartTest()
   {
     firstOrderOpt(
                    model,
+                   adModel,
                    dvecN,
                    dvecY,
                    secondPopOptimizer,
@@ -1012,8 +1472,9 @@ void firstOrderOptTest::firstOrderOptRestartTest()
 
   // Compute the known value for LTilde(alp) = -log[p(y|alp)]
   // using equation (17) of the above reference.
+  double pi             = 4. * atan(1.);
   double dLTildeKnown = sumYMinAlp1Sqd / ( 2.0 * ( onePlusAlp2 ) ) 
-    + nInd / 2.0 * log( 2.0 * PI * ( onePlusAlp2 ) );
+    + nInd / 2.0 * log( 2.0 * pi * ( onePlusAlp2 ) );
 
   // The value for LTilde_alp(alp) was determined by taking the  
   // derivative of equation (17) of the above reference, i.e.,
@@ -1071,7 +1532,7 @@ void firstOrderOptTest::firstOrderOptRestartTest()
   // Do the test.
   //------------------------------------------------------------
 
-  doTheTest(  ok,
+  firstOrderOptTest_doTheTest(  ok,
               dLTildeOut,
               dLTildeKnown,
               indOptimizer.getEpsilon(),
@@ -1102,12 +1563,8 @@ void firstOrderOptTest::firstOrderOptRestartTest()
     CPPUNIT_ASSERT_MESSAGE( "Unable to delete the restart file.", false );
   }
 }
-
-
 /*************************************************************************
- *
  * Function: firstOrderOptZeroIterationsTest
- *
  *
  * This test calls firstOrdeOpt with zero iterations at the population level,
  * with zero iterations at the individual level, and with zero iterations 
@@ -1115,12 +1572,14 @@ void firstOrderOptTest::firstOrderOptRestartTest()
  *
  * At the individual level this test implements the example problem from 
  * the mapOpt specification. 
- *
  *************************************************************************/
 
-class UserModelFirstOrderOptZeroIterationsTest : public SpkModel<double>
+#include "../../../spk/EqIndModel.h"
+
+template <class Scalar>
+class UserModelFirstOrderOptZeroIterationsTest : public SpkModel<Scalar>
 {
-    valarray<double> _a, _b;
+    valarray<Scalar> _a, _b;
     int _i;
     const int _nA;
     const int _nB;
@@ -1135,17 +1594,17 @@ private:
     {
         _i = inx;
     }
-    void doSetPopPar(const valarray<double>& aval)
+    void doSetPopPar(const valarray<Scalar>& aval)
     {
       assert(aval.size() == _nA);
         _a = aval;
     }
-    void doSetIndPar(const  valarray<double>& bval)
+    void doSetIndPar(const  valarray<Scalar>& bval)
     {
       assert(bval.size() == _nB);
         _b = bval;
     }
-    void doIndParVariance( valarray<double>& ret ) const
+    void doIndParVariance( valarray<Scalar>& ret ) const
     {
         //
         //              / 1    0  \ 
@@ -1197,7 +1656,7 @@ private:
           ret[i] = 0.0;
         return false;
     }
-    void doDataMean( valarray<double>& ret ) const
+    void doDataMean( valarray<Scalar>& ret ) const
     {
         //
         //                 / b(2) \ 
@@ -1234,7 +1693,7 @@ private:
         ret[3] = 1.0;
         return true;
     }
-    void doDataVariance( valarray<double>& ret ) const
+    void doDataVariance( valarray<Scalar>& ret ) const
     {
         //
         //                 /  exp[b(1)]     0  \ 
@@ -1271,8 +1730,8 @@ private:
         ret.resize(_nYi * _nYi * _nB);
         for( int i=0; i<_nYi *_nYi * _nB; i++ )
           ret[i] = 0.0;
-        ret[0] = exp( _b[0] );
-        ret[3] = exp( _b[0] );
+        ret[0] = exp( Value(_b[0]) );
+        ret[3] = exp( Value(_b[0]) );
         return true;
     }   
     void doDataVarianceInv( valarray<double>& ret ) const
@@ -1283,10 +1742,10 @@ private:
         //                    \  0      1.0/exp[b(1)] / 
         //
         ret.resize(_nYi * _nYi);
-        ret[0] = 1.0 / exp( _b[0] );
+        ret[0] = 1.0 / exp( Value(_b[0]) );
         ret[1] = 0.0;
         ret[2] = 0.0;
-        ret[3] = 1.0 / exp( _b[0] );
+        ret[3] = 1.0 / exp( Value(_b[0]) );
     }
     bool doDataVarianceInv_popPar( valarray<double>& ret ) const
     {
@@ -1312,8 +1771,8 @@ private:
         ret.resize(_nYi * _nYi * _nB);
         for( int i=0; i<_nYi *_nYi * _nB; i++ )
           ret[i] = 0.0;
-        ret[0] = -1.0 / exp( _b[0] );
-        ret[3] = -1.0 / exp( _b[0] );
+        ret[0] = -1.0 / exp( Value(_b[0]) );
+        ret[3] = -1.0 / exp( Value(_b[0]) );
         return true;
     }   
 };
@@ -1345,7 +1804,10 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
   // Quantities related to the user-provided model.
   //------------------------------------------------------------
 
-  UserModelFirstOrderOptZeroIterationsTest model( nAlp, nB, nYPerInd);
+  UserModelFirstOrderOptZeroIterationsTest<double>
+	model( nAlp, nB, nYPerInd);
+  UserModelFirstOrderOptZeroIterationsTest< CppAD::AD<double> >
+	adModel( nAlp, nB, nYPerInd);
 
 
   //------------------------------------------------------------
@@ -1538,6 +2000,7 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
     {
       firstOrderOpt( 
                      model,
+                     adModel,
                      dvecN,
                      dvecY,
                      popOptimizer,
@@ -1640,7 +2103,7 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
     // Compare the results.
     //----------------------------------------------------------
 
-    doTheTest(  okFirstOrderOpt,
+    firstOrderOptTest_doTheTest(  okFirstOrderOpt,
                 dLTildeOut,
                 dLTildeKnown,
                 indOptimizer.getEpsilon(),
@@ -1662,175 +2125,3 @@ void firstOrderOptTest::firstOrderOptZeroIterationsTest()
 
   }
 }
-
-
-
-/*************************************************************************
- *
- * Function: doTheTest
- *
- *************************************************************************/
-
-void firstOrderOptTest::doTheTest( bool ok,
-				     double dLTildeOut,
-				     double dLTildeKnown,
-				     const double        epsB,
-				     const double        epsAlp,
-				     const DoubleMatrix& dvecAlpLow,
-				     const DoubleMatrix& dvecAlpUp,
-				     const DoubleMatrix& dvecAlpOut,
-				     const DoubleMatrix& dvecAlpHat,
-				     const DoubleMatrix& dvecBLow,
-				     const DoubleMatrix& dvecBUp,
-				     const DoubleMatrix& dmatBOut,
-				     const DoubleMatrix& dmatBHat,
-				     const DoubleMatrix& drowLTilde_alpOut,
-				     const DoubleMatrix& drowLTilde_alpKnown,
-				     const DoubleMatrix& dmatLambdaTilde_alpOut,
-				     const DoubleMatrix& dmatLambdaTilde_alpKnown,
-				     const DoubleMatrix& dmatLTilde_alp_alpOut,
-				     const DoubleMatrix& dmatLTilde_alp_alpKnown )
-{
-  //------------------------------------------------------------
-  // Preliminaries.
-  //------------------------------------------------------------
-
-  using namespace std;
-
-  int i, k;
-
-  string line = "----------------------------------------------------";
-
-  int nAlp = dvecAlpOut.nr();
-  int nB   = dmatBOut  .nr();
-  int nInd = dmatBOut  .nc();
-
-  // Updated 1-8-01 Alyssa
-  // fixed for const correctness
-  const double* pdAlpLowData = dvecAlpLow.data();
-  const double* pdAlpUpData  = dvecAlpUp .data();
-  const double* pdAlpOutData = dvecAlpOut.data();
-  const double* pdAlpHatData = dvecAlpHat.data();
-
-  const double* pdBLowData = dvecBLow.data();
-  const double* pdBUpData  = dvecBUp .data();
-  const double* pdBOutData = dmatBOut.data();
-  const double* pdBHatData = dmatBHat.data();
-
-
-  //------------------------------------------------------------
-  // Print the results.
-  //------------------------------------------------------------
-
-  /*
-  cout << endl;
-
-  cout << "ok = " << ( ok ? "True" : "False" ) << endl;
-  cout << endl;
-
-  cout << "alpOut = " << endl;
-  dvecAlpOut.print(); 
-  cout << "alpHat = " << endl;
-  dvecAlpHat.print(); 
-  cout << endl;
-  cout << "epsilon (for alphaOut) = " << epsAlp  << endl;
-  cout << endl;
-
-  if ( nInd <= 10 )
-  {
-    cout << "bOut = " << endl;
-    dmatBOut.print(); 
-    cout << "bHat = " << endl;
-    dmatBHat.print(); 
-    cout << endl;
-    cout << "epsilon (for bOut)     = " << epsB  << endl;
-    cout << endl;
-  }
-
-  cout << "LTildeOut   = " << dLTildeOut << endl;
-  cout << "LTildeKnown = " << dLTildeKnown << endl;
-  cout << endl;
-
-  cout << "LTilde_alpOut  = " << endl;
-  drowLTilde_alpOut.print();
-  cout << "LTilde_alpKnown  = " << endl;
-  drowLTilde_alpKnown.print();
-  cout << endl;
-
-  cout << "LambdaTilde_alpOut  = " << endl;
-  dmatLambdaTilde_alpOut.print();
-  cout << "LambdaTilde_alpKnown  = " << endl;
-  dmatLambdaTilde_alpKnown.print();
-  cout << endl;
-
-  if ( nAlp <= 5 )
-  {
-    cout << "LTilde_alp_alpOut  = " << endl;
-    dmatLTilde_alp_alpOut.print();
-    cout << "LTilde_alp_alpKnown  = " << endl;
-    dmatLTilde_alp_alpKnown.print();
-    cout << endl;
-  }
-  */
-
-  
-  //------------------------------------------------------------
-  // Check to see if the optimization completed sucessfully.
-  //------------------------------------------------------------
-
-  CPPUNIT_ASSERT(ok);
-
-  //------------------------------------------------------------
-  // Check the final fixed population parameter vector, alpOut.
-  //------------------------------------------------------------
-
-  // Check to see if any elements of alpOut fail to satisfy 
-  // the convergence criteria:
-  // 
-  //      abs(alpOut - alpHat) <= epsAlp (alpUp - alpLow)
-  //
-  bool isConverged = true;
-  for ( i = 0; i < nAlp; i++ )
-  {
-    if ( fabs(pdAlpOutData[ i ] - pdAlpHatData[ i ]) > 
-            epsAlp * (pdAlpUpData[ i ] - pdAlpLowData[ i ]) )
-    {
-      isConverged = false;
-    }
-  }
-
-  CPPUNIT_ASSERT(ok);
-  CPPUNIT_ASSERT(isConverged);
-
-
-  //------------------------------------------------------------
-  // Check the matrix of final random population parameter vectors, bOut.
-  //------------------------------------------------------------
-
-  // For each pair of vectors bOut_i and bHat_i, i.e., for each column 
-  // of bOut and bHat, check to see that the convergence criteria,
-  // 
-  //      abs(bOut_i - bHat_i) <= epsB (bUp - bLow)  ,
-  //
-  // is satisfied.
-  //
-  isConverged = true;
-  for ( i = 0; i < nInd; i++ )
-  {
-    for ( k = 0; k < nB; k++ )
-    {
-      if ( fabs(pdBOutData[ k + i * nB ] - pdBHatData[ k + i * nB  ]) > 
-        epsB * (pdBUpData[ k ] - pdBLowData[ k ]) )
-      {
-        isConverged = false;
-      }
-    }
-  }
-  
-  CPPUNIT_ASSERT(ok);
-  CPPUNIT_ASSERT(isConverged);
-
-  
-}
-
-
