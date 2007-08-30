@@ -139,10 +139,20 @@ void WarningsManagerTest::basicTest()
   string warnings;
   WarningsManager::addWarning( warning1, __LINE__, __FILE__);
   WarningsManager::addWarning( warning2, __LINE__, __FILE__);
+  
+
+  // Get the added warning list
+  string warningList;
+  int nWarnings = WarningsManager::getWarningList( warningList );
+
+  // Add the warning list to the original list of warnings.
+  WarningsManager::addWarningList( warningList, nWarnings );
+
+  // Get all the warnings
   WarningsManager::getAllWarnings( warnings );
 
   // Uncomment these statements to see the warnings.
-  /*
+  /* 
   cout << "########################################" << endl;
   cout << warnings;
   cout << "########################################" << endl;
