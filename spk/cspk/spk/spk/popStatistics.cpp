@@ -390,6 +390,13 @@ Refer $xref/glossary/Model Functions Depend on i - alp - b/Model Functions
 Depend on i - alp - b/$$ for details.
 
 $syntax/
+/popModelAD/
+/$$
+This should be the same model as $italic popModel$$ only instantiated 
+with type CppAD::<Scalar>, where Scalar is the type used to instantiate 
+$italic popModel$$.
+
+$syntax/
 
 /objective/
 /$$
@@ -624,23 +631,24 @@ will be replaced by NaN if $code popParMask[i]$$ is $math%false%$$.
 $end
 */
 
-void popStatistics( SpkModel<double>&        popModel,
-                    enum Objective           objective,
-                    const valarray<int>&     nMeasurementsAll,
-                    const valarray<double>&  measurementsAll,
-                    const valarray<double>&  popPar,
-                    const valarray<bool>&    popParMask,
-                    const valarray<double>&  popObj_popPar_popPar,
-                    const valarray<double>&  indParAll,
-                    const valarray<double>&  indParLow,
-                    const valarray<double>&  indParUp,
-                    const valarray<double>&  indParStep,
-                    enum PopCovForm          formulation,
-                    valarray<double>*        popParCovOut,
-                    valarray<double>*        popParSEOut,                          
-                    valarray<double>*        popParCorOut,
-                    valarray<double>*        popParCVOut,                          
-                    valarray<double>*        popParCIOut )
+void popStatistics( SpkModel<double>&               popModel,
+                    SpkModel< CppAD::AD<double> >&  popModelAD,
+                    enum Objective                  objective,
+                    const valarray<int>&            nMeasurementsAll,
+                    const valarray<double>&         measurementsAll,
+                    const valarray<double>&         popPar,
+                    const valarray<bool>&           popParMask,
+                    const valarray<double>&         popObj_popPar_popPar,
+                    const valarray<double>&         indParAll,
+                    const valarray<double>&         indParLow,
+                    const valarray<double>&         indParUp,
+                    const valarray<double>&         indParStep,
+                    enum PopCovForm                 formulation,
+                    valarray<double>*               popParCovOut,
+                    valarray<double>*               popParSEOut,                          
+                    valarray<double>*               popParCorOut,
+                    valarray<double>*               popParCVOut,                          
+                    valarray<double>*               popParCIOut )
 {
     using std::endl;
     using std::ends;
@@ -878,6 +886,7 @@ greater than or equal to the lower bound value. \
 
             // Calculate the derivatives in a more efficient way.
             firstOrderOpt( popModel, 
+                           popModelAD,
                            dvecN,
                            dvecY, 
                            popOptimizer,
