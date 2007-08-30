@@ -502,6 +502,7 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
                      &lTilde_alpOut,
                      &lTilde_alp_alpOut,
                      false,
+                     false,
                      parallelControls );
 
       // Exit this loop if the maximum number of iterations was
@@ -1092,6 +1093,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 					  &lTilde_alpOut,
 					  &lTilde_alp_alpOut,
                                           false,
+                                          false,
 					  parallelControls 
 			        );
         okFitPopulation = true;
@@ -1555,6 +1557,7 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
               pdmatNull,
               pdmatNull,
               false,
+              false,
               parallelControls );
     }
     catch( ... )
@@ -1776,6 +1779,7 @@ void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjecti
                    &dLTildeOut,
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
+                   false,
                    false,
                    parallelControls );
   }
@@ -2080,6 +2084,7 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
                    &dLTildeOut,
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
+                   false,
                    false,
                    parallelControls );
   }
@@ -2415,6 +2420,7 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
                    false,
+                   false,
                    parallelControls );
   }
   catch(...)
@@ -2478,6 +2484,7 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    &dLTildeOut,
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
+                   false,
                    false,
                    parallelControls );
   }
