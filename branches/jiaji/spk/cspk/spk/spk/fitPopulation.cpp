@@ -796,10 +796,19 @@ with step sizes specified by $italic popParStep$$.
 
 $syntax/
 
+/isUsingPvm/
+/$$
+When this is specified $math%true%$$, $italic SPK$$ runs on the parallel virtual machine (PVM).
+Otherwise, $italic SPK$$ runs in the ordinary single-process mode without the PVM.
+
+$syntax/
+
 /isPvmParallel/
 /$$
-When this is specified $math%true%$$, $italic SPK$$ runs on the parallel-process mode via PVM.
-Otherwise, $italic SPK$$ runs in the ordinary single-process mode.
+If the isUsingPvm is specified $math%true%$$ and this is specified $math%true%$$, $italic SPK$$ 
+runs in the parallel-process mode via PVM. If the isUsingPvm is specified $math%true%$$ and this 
+is specified $math%false%$$, $italic SPK$$ runs in the single-process mode via PVM.  Otherwise, 
+$italic SPK$$ runs in the ordinary single-process mode without the PVM.
 
 $syntax/
 
@@ -1136,9 +1145,10 @@ int main()
 					  &dmatBOut,
 					  &dLTildeOut,
 					  &drowLTilde_alpOut,
-					  &dmatLTilde_alp_alpOut, 
-					  parallelControls,
-                                          false
+					  &dmatLTilde_alp_alpOut,
+                                          false,
+                                          false,
+					  parallelControls
 			        );
        ok = true;
   }
@@ -1313,6 +1323,7 @@ void fitPopulation( SpkModel<double>&               model,
     return;
   }
 
+  if( !isUsingPvm ) isPvmParallel = false;
 
   const int nInd = nMeasurementsAll.size();
   const int nAlp = popParIn.size();
