@@ -63,7 +63,7 @@ class WarningsManager
     const char*        fileNameIn );
 
   static void addWarningList( const std::string& warningList,
-                              unsigned int wainings );
+                              unsigned int warnings );
   static void clearAllWarnings();
 
 
