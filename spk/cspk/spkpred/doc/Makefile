@@ -1,6 +1,6 @@
 #!/bin/bash
 
-include ../../../../../../doc/webdir.mk
+include ../../../../doc/webdir.mk
 
 T        = spkpredLib
 HTML_DIR = html
