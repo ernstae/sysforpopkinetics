@@ -144,10 +144,11 @@ $syntax/void ppkaOpt(
               double*                 /pdLTildeOut/,
               DoubleMatrix*           /pdrowLTilde_popOut/,
               DoubleMatrix*           /pdmatLTilde_pop_popOut/,
+              bool                    /isUsingPvm/,
+              bool                    /isPvmParallel/,
               bool                    /isMultiple/,
               const char*             /sharedDirectory/,
-              const char*             /nodeCommand/,
-              bool                    /isPvmParallel/
+              const char*             /nodeCommand/
 )
 /$$
 
@@ -1048,6 +1049,8 @@ void main()
               &dLTildeOut,
               &drowLTilde_alpOut,
               &dmatLTilde_alp_alpOut,
+              false,
+              false,
               isMultiple,
               sharedDirectory,
               nodeCommand);
@@ -2595,7 +2598,7 @@ static DoubleMatrix ltildetrancendiff::trancendiff(
     lTildePvm( model, whichObjective, dvecY_forAll, dvecNumsOfDataforEachSubject,
         indOptInfo,
         dvecAlp, dvecBlow, dvecBup, dvecBstep, dmatBin_forAll,
-        0,0,&drowTempLTilde_alp, 0, true );
+        0,0,&drowTempLTilde_alp, 0 );
 
     return dmatJ;
 }
