@@ -47,8 +47,7 @@ void lTildePvm(
                DoubleMatrix       *dmatBout,
                double             *dLTildeOut,
                DoubleMatrix       *drowLTilde_alpOut,
-               DoubleMatrix       *dmatLTilde_alpOut = 0,
-               bool               isLast = false
+               DoubleMatrix       *dmatLTilde_alpOut = 0
                );
 
 #endif

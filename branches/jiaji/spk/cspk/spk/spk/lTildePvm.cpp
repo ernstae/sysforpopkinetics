@@ -62,7 +62,7 @@
   $$
 
   $index lTildePvm$$
-  $cindex parametric population objective function$$
+  $cindex parametric population objective function using PVM$$
 
   $table
   $bold Headers::$$     $cend
@@ -468,8 +468,7 @@ void lTildePvm(
 	    DoubleMatrix       *dmatBout_forAll,
 	    double             *dLTildeOut,
 	    DoubleMatrix       *drowLTilde_alpOut,
-	    DoubleMatrix       *dmatLambdaTilde_alpOut,
-            bool               isLast
+	    DoubleMatrix       *dmatLambdaTilde_alpOut
 	    )
 {
     using namespace std;
