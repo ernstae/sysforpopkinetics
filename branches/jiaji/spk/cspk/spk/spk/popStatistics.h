@@ -42,25 +42,28 @@
 #include "SpkModel.h"
 #include "Objective.h"
 
+#include <CppAD/CppAD.h>
+
 enum PopCovForm { RSR=1, R, S, HSH, H };
 
-void popStatistics( SpkModel<double>&               popModel,
-                    enum Objective                  objective,
-                    const SPK_VA::valarray<int>&    nMeasurementsAll,
-                    const SPK_VA::valarray<double>& measurementsAll,
-                    const SPK_VA::valarray<double>& popPar,
-                    const SPK_VA::valarray<bool>&   popParMask,
-                    const SPK_VA::valarray<double>& popObj_popPar_popPar,
-                    const SPK_VA::valarray<double>& indParAll,
-                    const SPK_VA::valarray<double>& indParLow,
-                    const SPK_VA::valarray<double>& indParUp,
-                    const SPK_VA::valarray<double>& indParStep,
-                    enum PopCovForm                 formulation,
-                    SPK_VA::valarray<double>*       popParCovOut,
-                    SPK_VA::valarray<double>*       popParSEOut,                          
-                    SPK_VA::valarray<double>*       popParCorOut,
-                    SPK_VA::valarray<double>*       popParCVOut,                          
-                    SPK_VA::valarray<double>*       popParCIOut );
+void popStatistics( SpkModel<double>&                popModel,
+                    SpkModel< CppAD::AD<double> >&   popModelAD,
+                    enum Objective                   objective,
+                    const SPK_VA::valarray<int>&     nMeasurementsAll,
+                    const SPK_VA::valarray<double>&  measurementsAll,
+                    const SPK_VA::valarray<double>&  popPar,
+                    const SPK_VA::valarray<bool>&    popParMask,
+                    const SPK_VA::valarray<double>&  popObj_popPar_popPar,
+                    const SPK_VA::valarray<double>&  indParAll,
+                    const SPK_VA::valarray<double>&  indParLow,
+                    const SPK_VA::valarray<double>&  indParUp,
+                    const SPK_VA::valarray<double>&  indParStep,
+                    enum PopCovForm                  formulation,
+                    SPK_VA::valarray<double>*        popParCovOut,
+                    SPK_VA::valarray<double>*        popParSEOut,                          
+                    SPK_VA::valarray<double>*        popParCorOut,
+                    SPK_VA::valarray<double>*        popParCVOut,                          
+                    SPK_VA::valarray<double>*        popParCIOut );
 
 void popStatistics( const SPK_VA::valarray<bool>   & mask,
                     const SPK_VA::valarray<double> & y,

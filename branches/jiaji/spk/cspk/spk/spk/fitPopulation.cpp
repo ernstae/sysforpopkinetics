@@ -1272,32 +1272,6 @@ namespace // [Begin: unnamed namespace]
  * Function definition
  *------------------------------------------------------------------------*/
 
-<<<<<<< .mine
-void fitPopulation( 
-                    SpkModel<double>&           model,
-                    enum Objective              objective,
-                    const valarray<int>&        nMeasurementsAll,
-                    const valarray<double>&     measurementsAll,
-                    Optimizer&                  popOptimizer,
-                    const valarray<double>&     popParLow,
-                    const valarray<double>&     popParUp,
-                    const valarray<double>&     popParIn,
-                    const valarray<double>&     popParStep,
-                    valarray<double>*           popParOut,
-                    Optimizer&                  indOptimizer,
-                    const valarray<double>&     indParLow,
-                    const valarray<double>&     indParUp,
-                    const valarray<double>&     indParAllIn,
-                    const valarray<double>&     indParStep,
-                    valarray<double>*           indParAllOut,
-                    double*                     popObjOut,
-                    valarray<double>*           popObj_popParOut,
-		    valarray<double>*           popObj_popPar_popParOut,
-                    bool                        isUsingPvm,
-                    bool                        isPvmParallel,
-                    const DirBasedParallelControls& dirBasedParallelControls
-                  )
-=======
 void fitPopulation( SpkModel<double>&               model,
                     SpkModel< CppAD::AD<double> >&  modelAD,
                     enum Objective                  objective,
@@ -1318,8 +1292,9 @@ void fitPopulation( SpkModel<double>&               model,
                     double*                         popObjOut,
                     valarray<double>*               popObj_popParOut,
                     valarray<double>*               popObj_popPar_popParOut,
+                    bool                            isUsingPvm,
+                    bool                            isPvmParallel,
                     const DirBasedParallelControls& dirBasedParallelControls )
->>>>>>> .r2471
 {
   using std::endl;
   using std::ends;
