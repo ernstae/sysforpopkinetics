@@ -162,6 +162,8 @@ testall_SOURCES = \
 	linearInterpolateTest.h \
 	lTildeTest.cpp \
 	lTildeTest.h \
+	lTildePvmTest.cpp \
+	lTildePvmTest.h \
 	mapObjDiffTest.cpp \
 	mapObjDiffTest.h \
 	mapObjTest.cpp \
@@ -305,6 +307,7 @@ pkginclude_HEADERS = \
 	lambdaTest.h \
 	linearInterpolateTest.h \
 	lTildeTest.h \
+	lTildePvmTest.h \
 	mapObjDiffTest.h \
 	mapObjTest.h \
 	mapOptTest.h \
