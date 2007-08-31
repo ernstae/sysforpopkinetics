@@ -76,6 +76,7 @@ CREATE TABLE job (
   checkpoint longblob,
   mail tinyint(1) default '0',
   share_with int(10) unsigned NOT NULL default '0',
+  parallel tinyint(1) default '0',
   PRIMARY KEY  (job_id)
 ) TYPE=InnoDB;
 
