@@ -10,7 +10,7 @@ use Getopt::Long qw(:config no_auto_abbrev);
 use Pod::Usage;
 use IO::Socket;
 
-use Spkdb ('connect', 'disconnect', 'job_status');
+use Spkdb ('connect', 'disconnect', 'job_status', 'set_parallel');
 
 my $cluster = "cspkserver";
 my $base_dir = "/usr/local/spk/ops/regression_test";
@@ -20,7 +20,7 @@ my %file_to_compare = ( 'cerr' => 'compilation_error.xml',
 my $config_file = "regression_test.xml";
 
 my %opt = ();
-GetOptions (\%opt, 'help', 'man', 'dump-config', 'ignore-candidate', 'config-file=s') 
+GetOptions (\%opt, 'help', 'man', 'parallel', 'dump-config', 'ignore-candidate', 'config-file=s') 
     or pod2usage(-verbose => 0);
 pod2usage(-verbose => 1)  if (defined $opt{'help'});
 pod2usage(-verbose => 2)  if (defined $opt{'man'});
@@ -31,7 +31,8 @@ $EFFECTIVE_USER_ID == 0
 $ENV{'LOGNAME'} eq 'root' 
     or die "You must execute $ENV{'HOME'}/.bash_profile before running this program.\n"
     .  "If you become root with the command 'su -', that will happen automatically.\n";
- 
+
+$config_file = "regression_test_parallel.xml" if (defined $opt{'parallel'});
 $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
 my $config = XMLin($config_file, ForceArray => 1);
@@ -88,6 +89,12 @@ $cmd = "load_spktest.pl";
 $bit_bucket = `$cmd`;
 print "\t\t\t\t\tOK\n";
 
+my $dbh = &connect("spktest", "localhost", "tester", "tester");
+for my $job_id (@alljobs) {
+    &set_parallel($dbh, $job_id, 1);
+}
+&disconnect($dbh);
+
 print "starting the job-queue server test daemon";
 $bit_bucket = `ssh webserver '/etc/rc.d/init.d/jobqtestd start'`;
 $? == 0
@@ -124,7 +131,7 @@ for my $job_id (@alljobs) {
 
 print "waiting for jobs to complete -- (this will take a while) ";
 
-my $dbh = &connect("spktest", "localhost", "reader", "reader");
+$dbh = &connect("spktest", "localhost", "reader", "reader");
 
 my $active_jobs = @alljobs;
 
@@ -180,7 +187,7 @@ for ('cerr', 'srun') {
 #		push @args, ("--ignore-matching-lines", "\"$regexp\"");
 #	    }
 	    push @args, "$base_dir/$_/spkcmptest-job-$job_id/compilation_error.xml";
-	    push @args, "/tmp/spkcmptest-job-$job_id/compilation_error.xml";
+	    push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/compilation_error.xml";
 	    push @args, "1e-3","1e-4";
 	    if (system(@args) == 0) {
 		print "\t\t\t\t\t\t\tOK";
@@ -207,7 +214,7 @@ for ('cerr', 'srun') {
 #		push @args, ("--ignore-matching-lines", "\"$regexp\"");
 #	    }
 	    push @args, "$base_dir/$_/spkruntest-job-$job_id/result.xml";
-	    push @args, "/tmp/spkruntest-job-$job_id/result.xml";
+	    push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/result.xml";
 	    push @args, "1e-3", "1e-4";
 	    system(@args);
 	    if (system(@args) == 0) {
@@ -241,7 +248,7 @@ regression_test.pl -- test a candidate before deployment
 
 =head1 SYNOPSIS
 
-regression_test.pl [--help] [--man] [--dump-config] [--ignore-candidate] [--config-file=file]
+regression_test.pl [--help] [--man] [--parallel] [--dump-config] [--ignore-candidate] [--config-file=file]
 
 =head1 ABSTRACT
 
@@ -296,6 +303,10 @@ Print a brief help message and exit.
 =item B<--man>
 
 Print the manual page and exit.
+
+=item B<--parallel>
+
+Run in parallel-process mode.
 
 =item B<--dump-config>
 
