@@ -28,7 +28,7 @@ AM_LDFLAGS  = \
 	-L/usr/local/lib \
 	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
-	-L/usr/share/pvm3/lib/LINUX \
+	-L/usr/share/pvm3/lib/LINUX64 \
 	$(top_builddir)/spk/libspk.a \
 	-lnon_par \
 	-lmat2cpp \
