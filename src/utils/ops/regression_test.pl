@@ -20,7 +20,7 @@ my %file_to_compare = ( 'cerr' => 'compilation_error.xml',
 my $config_file = "regression_test.xml";
 
 my %opt = ();
-GetOptions (\%opt, 'help', 'man', 'parallel', 'dump-config', 'ignore-candidate', 'config-file=s') 
+GetOptions (\%opt, 'help', 'man', 'pvm', 'parallel', 'dump-config', 'ignore-candidate', 'config-file=s') 
     or pod2usage(-verbose => 0);
 pod2usage(-verbose => 1)  if (defined $opt{'help'});
 pod2usage(-verbose => 2)  if (defined $opt{'man'});
@@ -89,11 +89,13 @@ $cmd = "load_spktest.pl";
 $bit_bucket = `$cmd`;
 print "\t\t\t\t\tOK\n";
 
-my $dbh = &connect("spktest", "localhost", "tester", "tester");
-for my $job_id (@alljobs) {
-    &set_parallel($dbh, $job_id, 1);
+if (defined $opt{'parallel'}) {
+    my $dbh = &connect("spktest", "localhost", "tester", "tester");
+    for my $job_id (@alljobs) {
+        &set_parallel($dbh, $job_id, 1);
+    }
+    &disconnect($dbh);
 }
-&disconnect($dbh);
 
 print "starting the job-queue server test daemon";
 $bit_bucket = `ssh webserver '/etc/rc.d/init.d/jobqtestd start'`;
@@ -118,7 +120,12 @@ $? == 0
 print "\t\t\t\t\tOK\n";
 
 print "starting the cspkserver test daemon:";
-$bit_bucket = `ssh cspkserver '/etc/rc.d/init.d/spkruntestd start'`;
+if (defined $opt{'pvm'}) {
+    $bit_bucket = `ssh cspkserver '/etc/rc.d/init.d/spkruntestd start pvm'`;
+}
+else {
+    $bit_bucket = `ssh cspkserver '/etc/rc.d/init.d/spkruntestd start'`;
+}
 $? == 0
     or die "could not execute '/etc/rc.d/init.d/spkruntestd stop'\n";
 print "\t\t\t\t\tOK\n";
@@ -304,9 +311,13 @@ Print a brief help message and exit.
 
 Print the manual page and exit.
 
+=item B<--pvm>
+
+Run in single-process mode on PVM.
+
 =item B<--parallel>
 
-Run in parallel-process mode.
+Run in parallel-process mode on PVM.
 
 =item B<--dump-config>
 
