@@ -1997,11 +1997,11 @@ void PopPredModelBase<Scalar>::evalFAndH() const
  *
  * This function sets
  * \f[
- *     \mbox{f_thetaCurr} = \partial_{\mbox{theta}} \; f_i(\mbox{theta}, \mbox{eta})
+ *     \mbox{f\_thetaCurr} = \partial_{\mbox{theta}} \; f_i(\mbox{theta}, \mbox{eta})
  * \f]
  * and
  * \f[
- *     \mbox{h_thetaCurr} = \partial_{\mbox{theta}} \; h_i(\mbox{theta}, \mbox{eta})  .
+ *     \mbox{h\_thetaCurr} = \partial_{\mbox{theta}} \; h_i(\mbox{theta}, \mbox{eta})  .
  * \f]
  *
  * Note that these quantities are functions of theta and eta, which
@@ -2471,11 +2471,11 @@ void PopPredModelBase<Scalar>::evalFAndH_theta() const
  *
  * This function sets
  * \f[
- *     \mbox{f_etaCurr} = \partial_{\mbox{eta}} \; f_i(\mbox{theta}, \mbox{eta})
+ *     \mbox{f\_etaCurr} = \partial_{\mbox{eta}} \; f_i(\mbox{theta}, \mbox{eta})
  * \f]
  * and
  * \f[
- *     \mbox{h_etaCurr} = \partial_{\mbox{eta}} \; h_i(\mbox{theta}, \mbox{eta})  .
+ *     \mbox{h\_etaCurr} = \partial_{\mbox{eta}} \; h_i(\mbox{theta}, \mbox{eta})  .
  * \f]
  *
  * Note that these quantities are functions of theta and eta, which
