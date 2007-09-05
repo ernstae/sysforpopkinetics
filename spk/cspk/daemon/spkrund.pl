@@ -280,7 +280,7 @@ if ($mode =~ m/test/i ) {
     $pathname_mid_driver_pvm = "/usr/local/bin/spktest/midDriver";
 }
 my $service_name = "$service_root" . "d";
-my $prefix_working_dir = $service_root;
+#my $prefix_working_dir = $service_root;
 
 my $pathname_bugzilla_submit = "/usr/local/bin/bugzilla-submit";
 my $pathname_make = "/usr/bin/make";
@@ -351,7 +351,7 @@ sub fork_driver {
     my $pid;
 
     # Create a working directory
-    my $unique_name = $prefix_working_dir . "-job-" . $job_id;
+#    my $unique_name = $prefix_working_dir . "-job-" . $job_id;
 #    my $working_dir = "$tmp_dir/$unique_name";
     my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$job_id";
     if (-d $working_dir) {
@@ -594,8 +594,10 @@ sub reaper {
     $job_id = $pid_jobid{$child_pid};
 
     # Change to working directory
-    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
-    my $working_dir = "$tmp_dir/$unique_name";
+#    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
+#    my $working_dir = "$tmp_dir/$unique_name";
+    my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$job_id";    
+
     chdir $working_dir;
 
     # Get optimizer trace 
@@ -967,8 +969,9 @@ sub abort_job {
     my $jobid = shift;
 
     # Form the working directory path of the job
-    my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
-    my $working_dir = "$tmp_dir/$unique_name";
+#    my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
+#    my $working_dir = "$tmp_dir/$unique_name";
+    my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$jobid";
     my $checkpoint;
     if ( -e $working_dir ) {
         # Change to the working directory
@@ -1095,7 +1098,7 @@ my $time = 0;
 syslog('info', "processing new computational runs");
 
 while(1) {
-    eval {
+#    eval {
     # if there is a job queued-to-run, fork the driver
     if ($concurrent < $max_concurrent) {
         print $sh "get-q2r\n";
@@ -1163,5 +1166,5 @@ while(1) {
         &job_status($dbh, 1);
         $time = 0;
     }
-}
+#}
 };
