@@ -49,8 +49,6 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << "# C++ compiler flages to build a 64-bit version." << endl;
   oMakefile << "CXX_FLAGS_64_BIT = " << endl;
   oMakefile << "if [ `uname -i` = \"x86_64\" ]; then  CXX_FLAGS_64_BIT = -DBA0_64BITS; fi" << endl;
-  oMakefile << "BIT = " << endl;
-  oMakefile << "if [ `uname -i` = \"x86_64\" ]; then  BIT = 64; fi" << endl;
   oMakefile << endl;                                   
 
   oMakefile << "# C++ compiler flags to build a production version." << endl;
@@ -107,7 +105,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
       oMakefile << " -I/usr/share/pvm3/include ";
-      oMakefile << " -L/usr/share/pvm3/lib/LINUX$(BIT) ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
       
@@ -121,7 +120,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
       oMakefile << " -I/usr/share/pvm3/include ";
-      oMakefile << " -L/usr/share/pvm3/lib/LINUX$(BIT) ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
@@ -135,7 +135,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << " -I/usr/share/pvm3/include ";
-      oMakefile << " -L/usr/share/pvm3/lib/LINUX$(BIT) ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
@@ -149,7 +150,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << " -I/usr/share/pvm3/include ";
-      oMakefile << " -L/usr/share/pvm3/lib/LINUX$(BIT) ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
@@ -163,7 +165,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << " -I/usr/share/pvm3/include ";
-      oMakefile << " -L/usr/share/pvm3/lib/LINUX$(BIT) ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
@@ -177,7 +180,8 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << " -I/usr/share/pvm3/include ";
-      oMakefile << " -L/usr/share/pvm3/lib/LINUX$(BIT) ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
