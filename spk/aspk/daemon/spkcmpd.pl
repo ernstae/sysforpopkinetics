@@ -211,7 +211,7 @@ if ($mode =~ "test") {
 }
 
 my $service_name = "$service_root" . "d";
-my $prefix_working_dir = $service_root;
+#my $prefix_working_dir = $service_root;
 my $lockfile_path = "/tmp/lock_$service_name";
 
 sub death {
@@ -299,8 +299,9 @@ sub fork_compiler {
     #    removed when the child terminates.
 
     # Create a working directory
-    my $unique_name = $prefix_working_dir . "-job-" . $job_id;
-    my $working_dir = "$tmp_dir/$unique_name";
+#    my $unique_name = $prefix_working_dir . "-job-" . $job_id;
+#    my $working_dir = "$tmp_dir/$unique_name";
+    my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$job_id";
     if (-d $working_dir) {
 	File::Path::rmtree($working_dir, 0, 0);
     }
@@ -486,8 +487,9 @@ sub reaper {
     $job_id = $pid_jobid{$child_pid};
 
     # Change to working directory
-    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
-    my $working_dir = "$tmp_dir/$unique_name";
+#    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
+#    my $working_dir = "$tmp_dir/$unique_name";
+    my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$job_id";
     chdir $working_dir;
 
     # Normal termination
@@ -763,8 +765,9 @@ sub abort_job {
     my $jobid = shift;
 
     # Form the working directory path of the job
-    my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
-    my $working_dir = "$tmp_dir/$unique_name";
+#    my $unique_name = "$prefix_working_dir" . "-job-" . $jobid;
+#    my $working_dir = "$tmp_dir/$unique_name";
+    my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$jobid";
     if ( -e $working_dir ) {
         # Remove working directory if it is not needed
         if (!$retain_working_dir) {
