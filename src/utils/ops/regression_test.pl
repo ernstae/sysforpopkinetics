@@ -32,7 +32,12 @@ $ENV{'LOGNAME'} eq 'root'
     or die "You must execute $ENV{'HOME'}/.bash_profile before running this program.\n"
     .  "If you become root with the command 'su -', that will happen automatically.\n";
 
-$config_file = "regression_test_parallel.xml" if (defined $opt{'parallel'});
+my $parallel = 0;
+$parallel = 1 if (defined $opt{'parallel'});
+if ($parallel == 1) {
+    $config_file = "regression_test_parallel.xml";
+}
+
 $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
 my $config = XMLin($config_file, ForceArray => 1);
@@ -89,7 +94,8 @@ $cmd = "load_spktest.pl";
 $bit_bucket = `$cmd`;
 print "\t\t\t\t\tOK\n";
 
-if (defined $opt{'parallel'}) {
+if ($parallel == 1) {
+    print "setting jobs to run in parallel process mode\n";
     my $dbh = &connect("spktest", "localhost", "tester", "tester");
     for my $job_id (@alljobs) {
         &set_parallel($dbh, $job_id, 1);
