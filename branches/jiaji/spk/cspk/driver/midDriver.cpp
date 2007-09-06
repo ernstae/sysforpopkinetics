@@ -19,7 +19,7 @@ static int exit_value = SpkPvmUnreported;
 static void finish(int exit_value, char* msg)
 {
     // Append error message to stderr
-    cerr << msg << endl;
+    cerr << "midDriver: " << msg << endl;
 
     // Send error message to jobDriver
     pvm_initsend(PvmDataDefault);
