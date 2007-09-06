@@ -17,7 +17,7 @@ enum { SUCCESSFUL             = 0,
 static int exit_value = SpkPvmUnreported;
 static void stop(const char* msg, int exit_value)
 {
-    cerr << msg << endl;
+    cerr << "jobDriver: " << msg << endl;
     pvm_exit();
     fclose( stderr );
     cout << "exit_value: " << exit_value << endl;
