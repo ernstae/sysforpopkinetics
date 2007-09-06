@@ -374,7 +374,7 @@ namespace {
 	void OutputErrorMsg(const char *msg, int exit_value)
 	{	
                 // Append message to stderr
-		cerr << msg << endl;
+		cerr << "monteAlpDriver: " << msg << endl;
 
 		// Send exit_value to monteDriver
 		pvm_initsend(PvmDataDefault);
@@ -392,7 +392,7 @@ namespace {
 		string std_e = stream.str();
 
 		// Append message to stderr
-		cerr << std_e << endl;
+		cerr << "monteAlpDriver: " std_e << endl;
 
 		// send exit_value to monteDriver
 		pvm_initsend(PvmDataDefault);
