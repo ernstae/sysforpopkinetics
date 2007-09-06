@@ -240,15 +240,14 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                 };"       << endl;
   oPopDriver << endl;
 
-oPopDriver << "static void finish(int exit_value)"  << endl;
-oPopDriver << "{"  << endl;
-oPopDriver << "   int parent_tid = pvm_parent();"  << endl;
-oPopDriver << "   pvm_initsend(PvmDataDefault);"  << endl;
-oPopDriver << "   pvm_pkint(&exit_value, 1, 1);"  << endl;
-oPopDriver << "   pvm_pkstr(\"\");"  << endl;
-oPopDriver << "   pvm_send(parent_tid, SpkPvmExitValue);"  << endl;
-oPopDriver << "   pvm_exit();"  << endl;
-oPopDriver << "}"  << endl;
+  oPopDriver << "static void finish(int exit_value)"  << endl;
+  oPopDriver << "{"  << endl;
+  oPopDriver << "   int parent_tid = pvm_parent();"  << endl;
+  oPopDriver << "   pvm_initsend(PvmDataDefault);"  << endl;
+  oPopDriver << "   pvm_pkint(&exit_value, 1, 1);"  << endl;
+  oPopDriver << "   pvm_send(parent_tid, SpkPvmExitValue);"  << endl;
+  oPopDriver << "   pvm_exit();"  << endl;
+  oPopDriver << "}"  << endl;
   oPopDriver << endl;
 
   oPopDriver << "int main( int argc, const char* argv[] )" << endl;
