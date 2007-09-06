@@ -448,7 +448,7 @@ namespace {
 	void OutputErrorMsg(const char *msg)
 	{	
 		fout << "<error_list>"  << endl;
-		fout << msg             << endl;
+		fout << "monteDriver: " << msg << endl;
 		fout << "</error_list>" << endl;
 		fout << "</spkreport>"  << endl;
 	}

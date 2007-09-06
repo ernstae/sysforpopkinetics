@@ -392,7 +392,7 @@ namespace {
 		string std_e = stream.str();
 
 		// Append message to stderr
-		cerr << "monteAlpDriver: " std_e << endl;
+		cerr << "monteAlpDriver: " << std_e << endl;
 
 		// send exit_value to monteDriver
 		pvm_initsend(PvmDataDefault);

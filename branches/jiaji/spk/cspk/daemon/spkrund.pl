@@ -427,10 +427,10 @@ sub fork_driver {
 
           if ($mode =~ "test"){
               if($pvm eq "on" && $parallel == 1) {
-                  @args = ($pathname_make, "-f", $filename_makefile, "debug_parallel");
+                  @args = ($pathname_make, "-f", $filename_makefile, "test_parallel");
               }
               else {
-	          @args = ($pathname_make, "-f", $filename_makefile, "debug");
+	          @args = ($pathname_make, "-f", $filename_makefile, "test");
               }
           }
           else{
