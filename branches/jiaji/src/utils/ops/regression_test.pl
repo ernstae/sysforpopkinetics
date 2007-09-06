@@ -138,7 +138,7 @@ for my $job_id (@alljobs) {
 
 print "waiting for jobs to complete -- (this will take a while) ";
 
-$dbh = &connect("spktest", "localhost", "reader", "reader");
+my $dbh = &connect("spktest", "localhost", "reader", "reader");
 
 my $active_jobs = @alljobs;
 
