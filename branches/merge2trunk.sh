@@ -39,5 +39,5 @@ then
 fi
 echo "pwd"
 pwd
-echo "svn merge $dry_run -r$revision:HEAD $repository/branches/brad"
-svn merge $dry_run -r$revision:HEAD "$repository/branches/brad"
+echo "svn merge $dry_run -r$revision:HEAD $repository/branches/$branch"
+svn merge $dry_run -r$revision:HEAD "$repository/branches/$branch"
