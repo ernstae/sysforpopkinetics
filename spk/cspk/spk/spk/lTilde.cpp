@@ -769,9 +769,7 @@ void lTilde(
     const IndInputDataPackage inpack(cntPopItrs, popconsts, popvars, initvals);
 
     try{
-
       outpack = indAnalysis(model, inpack);
-
     }
     catch( SpkException& e )
       {         
@@ -1109,7 +1107,9 @@ void lTilde(
 
       IndInputDataPackage inpack(cntPopItrs, popconsts, popvars, initvals);
       try{ 
+
 	handle = channel.post(inpack, false);
+
       }
       catch( SpkException& e )
         {
