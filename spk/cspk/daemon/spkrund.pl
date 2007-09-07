@@ -52,7 +52,11 @@ The program expects the following arguments:
     $shost
         The host on which the job-queue server resides
     $sport
-        The port number of the job-queue server uses 
+        The port number of the job-queue server uses
+    $pvm
+        'on' specifying using PVM, 'off' otherwise
+    $$max_concurrent
+        Maximum number of concurrent running jobs
 
 =head2 OPERATION
 
