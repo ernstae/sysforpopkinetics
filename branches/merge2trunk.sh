@@ -18,7 +18,7 @@ then
 		dry_run="--dry-run"
 	fi
 fi
-branch="brad"
+branch="$1"
 repository="svn+ssh://toronto/u01/local/rfpk_r2" 
 #
 check=`pwd | sed -e 's|.*r2/branches||'`
