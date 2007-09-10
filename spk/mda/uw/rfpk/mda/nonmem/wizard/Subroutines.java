@@ -286,6 +286,11 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             object = (MDAObject)wizard.getCustomizedObject();
             wizardPane = wizard;
             isValid = !(iterator.isGraphic && object.getSource().model == null);
@@ -411,11 +416,7 @@ public class Subroutines extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             String record = jTextArea1.getText();           
             object.getRecords().setProperty("Subroutines", record);
             String[] subroutines = new String[3];

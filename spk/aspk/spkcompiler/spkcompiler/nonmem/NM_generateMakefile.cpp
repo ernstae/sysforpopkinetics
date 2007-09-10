@@ -78,7 +78,7 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << endl;                                        
 
   oMakefile << "LIBS      = -lspkpred -lspk -lnon_par -lmat2cpp -lQN01Box";
-  oMakefile << " -lgsl -llapack -llapack_atlas -lcblas -latlas -lpthread -lm -lxerces-c -lcln -lginac" << (myIsIdent? " -lbad -lbap -lbav -lba0 -lgslcblas" : "" ) << endl;
+  oMakefile << " -lgsl -llapack -llapack_atlas -lcblas -latlas -lm -lxerces-c -lcln -lginac -lpvm3" << (myIsIdent? " -lbad -lbap -lbav -lba0 -lgslcblas" : "" ) << endl;
   oMakefile << endl;
 
   oMakefile << "COMMON_INCLUDE = \\" << endl;
@@ -104,9 +104,27 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
       
+      oMakefile << "prod_parallel : prod indDriver.cpp $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) indDriver.cpp -o indDriver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR)/CppAD ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
       oMakefile << "test : fitDriver.cpp $(COMMON_INCLUDE)" << endl;
       oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) fitDriver.cpp -o driver ";
       oMakefile << "-L/usr/local/lib ";
@@ -116,6 +134,24 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "test_parallel : test indDriver.cpp $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) indDriver.cpp -o indDriver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
@@ -128,23 +164,42 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "debug_parallel : debug indDriver.cpp $(COMMON_INCLUDE)" << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) indDriver.cpp -o indDriver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
       oMakefile << "clean : " << endl;
       oMakefile << "\trm -f $(COMMON_INCLUDE) \\" << endl;
-      oMakefile << "\tspkDriver.cpp \\" << endl;
+      oMakefile << "\tfitDriver.cpp \\" << endl;
+      oMakefile << "\tindDriver.cpp \\" << endl;
       oMakefile << "\tdriver \\" << endl;
+      oMakefile << "\tindDriver \\" << endl;
       oMakefile << "\tsoftware_error \\" << endl;
       oMakefile << "\tresult.xml \\" << endl;
       oMakefile << "\tpredEqn.cpp \\" << endl;
       oMakefile << "\tspk_error.tmp \\" << endl;
-      oMakefile << "*.o" << endl;    
+      oMakefile << "*.o" << endl;
     }
   else
     {
       oMakefile << "MONTE_CPP = \\" << endl;
-      oMakefile << "\tmonteDriver.cpp \\" << endl; 
       oMakefile << "\tAdaptIntegral.cpp \\" << endl;
       oMakefile << "\tGridIntegral.cpp \\" << endl;
       oMakefile << "\tMontePopObj.cpp \\" << endl;
@@ -167,7 +222,7 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "prod : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
+      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
@@ -175,13 +230,34 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-I/usr/local/include/$(PROD_DIR)/CppAD ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
       
-      oMakefile << "test : adapt.o pow_ii.o "           << endl;
+      oMakefile << "prod_parallel : prod "           << endl;
+      oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
+      oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
+      oMakefile << "\tmake -f Makefile.SPK prod" << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o alpDriver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR) ";
+      oMakefile << "-I/usr/local/include/$(PROD_DIR)/CppAD ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(PROD_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "test : adapt.o pow_ii.o"           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
+      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
@@ -189,13 +265,34 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "test_parallel : test"           << endl;
+      oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
+      oMakefile << "\tmake -f Makefile.SPK test" << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o alpDriver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
       oMakefile << "debug : adapt.o pow_ii.o "           << endl;
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
-      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) $(MONTE_CPP) adapt.o pow_ii.o -o monteDriver ";
+      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o driver ";
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
@@ -203,6 +300,27 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
       oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
+      oMakefile << "$(LIBS)" << endl;
+      oMakefile << endl;
+
+      oMakefile << "debug_parallel : debug"           << endl;
+      oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
+      oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
+      oMakefile << "\tmake -f Makefile.SPK debug" << endl;
+      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o alpDriver ";
+      oMakefile << "-L/usr/local/lib ";
+      oMakefile << "-L/usr/lib/atlas ";
+      oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR) ";
+      oMakefile << "-I/usr/local/include/$(TEST_DIR)/CppAD ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib/$(TEST_DIR) ";
+      oMakefile << "-Wl,--rpath -Wl,/usr/local/lib ";
+      oMakefile << " -I/usr/share/pvm3/include ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX ";
+      oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
@@ -219,14 +337,17 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << endl;
   
       oMakefile << "monte_clean : " << endl;
-      oMakefile << "\trm -f $(MONTE_SRC) $(MONTE_INCLUDE)" << endl;
+      oMakefile << "\trm -f $(MONTE_SRC) $(MONTE_INCLUDE) monteDriver.cpp monteAlpDriver.cpp" << endl;
       oMakefile << endl;
 
       oMakefile << "clean : " << endl;
       oMakefile << "\trm -f $(COMMON_INCLUDE) \\" << endl;
       oMakefile << "\t$(MONTE_SRC) \\" << endl;
+      oMakefile << "\tmonteDriver.cpp \\" << endl;
+      oMakefile << "\tmonteAlpDriver.cpp \\" << endl;
       oMakefile << "\t$(MONTE_INCLUDE) \\" << endl;
       oMakefile << "\tdriver \\" << endl;
+      oMakefile << "\talpDriver \\" << endl;
       oMakefile << "\tsoftware_error \\" << endl;
       oMakefile << "\tresult.xml \\" << endl;
       oMakefile << "\tpredEqn.cpp \\" << endl;

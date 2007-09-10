@@ -22,7 +22,7 @@ import uw.rfpk.mda.nonmem.Utility;
 
 /**
  * This class opens a browser to display an url.
- * @author  jiaji Du
+ * @author  Jiaji Du
  */
 public class OpenBrowser extends javax.swing.JButton
 {

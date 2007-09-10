@@ -302,6 +302,7 @@ public class Summary {
                .append("\n\nTime of Job Submission: ").append(submissionTime) 
                .append("\nTime of Job Completion: ").append(completionTime)
                .append("\nSPK Computing Time: ").append(computingTime)
+               .append("\nComputation Mode: ").append(output.computationMode)
                .append("\n\nAnalysis Type: ").append(analysis)
                .append("\n\nAnalysis Method: ").append(jobMethod)                      
                .append("\n\nModel Name: ").append(modelName).append("   Model Version: ").append(modelVersion)

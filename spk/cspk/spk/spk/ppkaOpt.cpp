@@ -1390,7 +1390,7 @@ void ppkaOpt( SpkModel<double>&       model,
         dvecAlpIn,
         pdvecAlpOut,
         dvecAlpStep,
-		indOptimizer,
+        indOptimizer,
         dvecBLow,
         dvecBUp,
         dmatBIn,
@@ -1399,6 +1399,8 @@ void ppkaOpt( SpkModel<double>&       model,
         pdLTildeOut,
         pdrowLTilde_alpOut,
         pdmatLTilde_alp_alpOut,
+        false,
+        false,
         false
         );
     return;

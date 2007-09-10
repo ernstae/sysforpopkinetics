@@ -8,7 +8,8 @@ libdir = $(INST_BASE)/lib/spktest
 AM_CPPFLAGS = \
 	-I. \
 	-I$(INST_BASE)/include/spktest \
-	-I$(INST_BASE)/cppunit/include 
+	-I$(INST_BASE)/cppunit/include \
+	-I/usr/share/pvm3/include
 
 # Set C++ compiler flages to build a 64-bit version
 CXX_FLAGS_64_BIT = 
@@ -28,6 +29,8 @@ AM_LDFLAGS  = \
 	-L/usr/local/lib \
 	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
+	-L/usr/share/pvm3/lib/LINUX \
+	-L/usr/share/pvm3/lib/LINUX64 \
 	$(top_builddir)/spkpred/libspkpred.a \
 	-lspk \
 	-lQN01Box \
@@ -49,7 +52,8 @@ AM_LDFLAGS  = \
 	-lgsl \
 	-lgslcblas \
 	-lnon_par \
-	-lmat2cpp
+	-lmat2cpp \
+	-lpvm3
 
 testall_SOURCES = \
 	calcGroebnerBasisTest.cpp \

@@ -13,15 +13,15 @@ using namespace xercesc;
 void NonmemTranslator::generatePopDriver() const
 {
   //==================================================================
-  // Generate the driver
+  // Generate the drivers
   //==================================================================
   ofstream oPopDriver ( fFitDriver_cpp );
-  if( !oPopDriver.good() )
+  if( !oPopDriver.good())
     {
       char mess[ SpkCompilerError::maxMessageLen() ];
       snprintf( mess, SpkCompilerError::maxMessageLen(),
 		"Failed to create %s file.",
-	       fFitDriver_cpp );
+	        fFitDriver_cpp );
       SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
       throw e;
     }
@@ -30,20 +30,147 @@ void NonmemTranslator::generatePopDriver() const
   const Symbol* pOmega = table->find(nonmem::OMEGA);
   const Symbol* pSigma = table->find(nonmem::SIGMA);
   const Symbol* pEta   = table->find(nonmem::ETA);
-  
+
+  // Generate indDriver.cpp
+  if( getApproximation() == FOCE || getApproximation() == LAPLACE )
+  {
+    ofstream oIndDriver ( fIndDriver_cpp );
+    if( !oIndDriver.good())
+    {
+      char mess[ SpkCompilerError::maxMessageLen() ];
+      snprintf( mess, SpkCompilerError::maxMessageLen(),
+		"Failed to create %s file.",
+	        fIndDriver_cpp );
+      SpkCompilerException e( SpkCompilerError::ASPK_STD_ERR, mess, __LINE__, __FILE__ );
+      throw e;
+    }
+    oIndDriver << "#include <CppAD/CppAD.h>" << endl;
+    oIndDriver << "#include <spk/spkpvm.h>" << endl;
+    oIndDriver << "#include <spk/indOptPvm.h>" << endl;
+    oIndDriver << "#include <spkpred/PopPredModel.h>" << endl;
+    oIndDriver << "#include <pvm3.h>" << endl;
+    oIndDriver << "#include \"DataSet.h\"" << endl;
+    if( myModelSpec == PRED )
+      oIndDriver << "#include \"Pred.h\""  << endl;
+    else
+      oIndDriver << "#include \"OdePred.h\"" << endl;
+    oIndDriver << "#include \"NonmemPars.h\"" << endl;
+    oIndDriver << endl;
+
+    oIndDriver << "int main( int argc, const char* argv[] )" << endl;
+    oIndDriver << "{" << endl;
+    oIndDriver << "    if(chdir(argv[2]) != 0)" << endl;
+    oIndDriver << "    {" << endl;
+    oIndDriver << "        int ptid = pvm_parent();" << endl;
+    oIndDriver << "        pvm_pkstr(\"could not change working directory\");" << endl;
+    oIndDriver << "        pvm_send(ptid, SpkPvmErrorMessage);" << endl;
+    oIndDriver << "        pvm_exit();" << endl;
+    oIndDriver << "        return 100;  // FILE_ACCESS_FAILURE" << endl;
+    oIndDriver << "    }" << endl;
+    oIndDriver << endl;
+
+    oIndDriver << "    const char* stderrFileName = \"software_error\";" << endl;
+    oIndDriver << "    freopen( stderrFileName, \"w\", stderr );" << endl;
+    oIndDriver << endl;
+
+    oIndDriver << "    DataSet< double > set;" << endl;
+    oIndDriver << "    DataSet< CppAD::AD<double> > setAD;" << endl;
+    oIndDriver << "    DataSet< CppAD::AD< CppAD::AD<double> > > setADAD;" << endl;
+    oIndDriver << endl;
+
+    if( myModelSpec == PRED )
+    {
+      oIndDriver << "    Pred< double > mPred(&set);" << endl;
+      oIndDriver << "    Pred< CppAD::AD<double> > mPredAD(&setAD);" << endl;
+      oIndDriver << "    Pred< CppAD::AD< CppAD::AD<double> > > mPredADAD(&setADAD);" << endl;
+    }
+  else // ADVAN
+    {
+      oIndDriver << "    OdePred<double > mPred( &set, " << endl;
+      oIndDriver << "                            NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                            NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                            NonmemPars::nCompartments," << endl;
+      oIndDriver << "                            NonmemPars::nParameters," << endl;
+      oIndDriver << "                            NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                            NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                            NonmemPars::initialOff," << endl;
+      oIndDriver << "                            NonmemPars::noOff," << endl;
+      oIndDriver << "                            NonmemPars::noDose," << endl;
+      oIndDriver << "                            NonmemPars::relTol" << endl;
+      oIndDriver << "                           );" << endl;
+      oIndDriver << "    OdePred<CppAD::AD<double> > mPredAD( &setAD, " << endl;
+      oIndDriver << "                                          NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                                          NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                                          NonmemPars::nCompartments," << endl;
+      oIndDriver << "                                          NonmemPars::nParameters," << endl;
+      oIndDriver << "                                          NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                                          NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                                          NonmemPars::initialOff," << endl;
+      oIndDriver << "                                          NonmemPars::noOff," << endl;
+      oIndDriver << "                                          NonmemPars::noDose," << endl;
+      oIndDriver << "                                          NonmemPars::relTol" << endl;
+      oIndDriver << "                                       );" << endl;
+      oIndDriver << "    OdePred<CppAD::AD< CppAD::AD<double> > > mPredADAD( &setADAD, " << endl;
+      oIndDriver << "                                                        NonmemPars::nIndividuals, " << endl;
+      oIndDriver << "                                                        NonmemPars::isPkFunctionOfT," << endl;
+      oIndDriver << "                                                        NonmemPars::nCompartments," << endl;
+      oIndDriver << "                                                        NonmemPars::nParameters," << endl;
+      oIndDriver << "                                                        NonmemPars::defaultDoseComp," << endl;
+      oIndDriver << "                                                        NonmemPars::defaultObservationComp," << endl;
+      oIndDriver << "                                                        NonmemPars::initialOff," << endl;
+      oIndDriver << "                                                        NonmemPars::noOff," << endl;
+      oIndDriver << "                                                        NonmemPars::noDose," << endl;
+      oIndDriver << "                                                        NonmemPars::relTol" << endl;
+      oIndDriver << "                                                      );" << endl;
+    }
+    
+    oIndDriver << "    PopPredModel model( mPred,"  << endl;
+    oIndDriver << "                        mPredAD," << endl;
+    oIndDriver << "                        mPredADAD," << endl;
+    oIndDriver << "                        NonmemPars::nTheta," << endl;
+    oIndDriver << "                        NonmemPars::thetaLow," << endl;
+    oIndDriver << "                        NonmemPars::thetaUp," << endl;
+    oIndDriver << "                        NonmemPars::thetaIn," << endl;
+    oIndDriver << "                        NonmemPars::nEta," << endl;
+    oIndDriver << "                        NonmemPars::etaIn," << endl;
+    oIndDriver << "                        NonmemPars::nEps," << endl;
+    oIndDriver << "                        NonmemPars::omegaStruct," << endl;
+    oIndDriver << "                        NonmemPars::omegaIn," << endl;
+    oIndDriver << "                        NonmemPars::omegaFixed," << endl;
+    oIndDriver << "                        NonmemPars::omegaBlockStruct," << endl;
+    oIndDriver << "                        NonmemPars::omegaBlockDims," << endl;
+    oIndDriver << "                        NonmemPars::omegaBlockSameAsPrev," << endl;
+    oIndDriver << "                        NonmemPars::sigmaStruct," << endl;
+    oIndDriver << "                        NonmemPars::sigmaIn," << endl;
+    oIndDriver << "                        NonmemPars::sigmaFixed," << endl;
+    oIndDriver << "                        NonmemPars::sigmaBlockStruct," << endl;
+    oIndDriver << "                        NonmemPars::sigmaBlockDims," << endl;
+    oIndDriver << "                        NonmemPars::sigmaBlockSameAsPrev );" << endl;
+    oIndDriver << endl;
+
+    oIndDriver << "    int exit_value = indOptPvm(argv[1], model);" << endl;
+    oIndDriver << "    fclose( stderr );" << endl;
+    oIndDriver << "    return exit_value;" << endl;
+    oIndDriver << "}" << endl;
+    oIndDriver.close();
+  }
+
+  // Generate fitDriver.cpp
   oPopDriver << "// " << myDescription << endl;
 
-  oPopDriver << "#include <iostream>"                   << endl;
-  oPopDriver << "#include <fstream>"                    << endl;
-  oPopDriver << "#include <cmath>"                      << endl;
-  oPopDriver << "#include <sys/time.h>"                 << endl;
+  oPopDriver << "#include <iostream>"               << endl;
+  oPopDriver << "#include <fstream>"                << endl;
+  oPopDriver << "#include <cmath>"                  << endl;
+  oPopDriver << "#include <sys/time.h>"             << endl;
+  oPopDriver << "#include <pvm3.h>"                 << endl;
   oPopDriver << endl;
 
-  oPopDriver << "#include <spk/scalarToDouble.h>"          << endl;
-  oPopDriver << "#include <spk/SpkValarray.h>"          << endl;
-  oPopDriver << "#include <spk/SpkException.h>"         << endl;
-  oPopDriver << "#include <spk/WarningsManager.h>"      << endl;
-  oPopDriver << "#include <CppAD/CppAD.h>"              << endl;
+  oPopDriver << "#include <spk/spkpvm.h>"           << endl;
+  oPopDriver << "#include <spk/scalarToDouble.h>"   << endl;
+  oPopDriver << "#include <spk/SpkValarray.h>"      << endl;
+  oPopDriver << "#include <spk/SpkException.h>"     << endl;
+  oPopDriver << "#include <spk/WarningsManager.h>"  << endl;
+  oPopDriver << "#include <CppAD/CppAD.h>"          << endl;
   oPopDriver << endl;
   oPopDriver << "// For generating nonparametric initial grids " << endl;
   oPopDriver << "# include <gsl/gsl_rng.h>" << endl;
@@ -96,6 +223,8 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "enum RETURN_CODE { SUCCESS              = 0,"   << endl;
   oPopDriver << "                   UNKNOWN_ERROR        = 1,"   << endl;
   oPopDriver << "                   UNKNOWN_FAILURE      = 2,"   << endl;
+  oPopDriver << "                   PVM_FAILURE          = 3,"   << endl;
+  oPopDriver << "                   USER_ABORT           = 4,"   << endl;
   oPopDriver << "                   FILE_ACCESS_ERROR    = 10,"  << endl;
   oPopDriver << "                   OPTIMIZATION_ERROR   = 12,"  << endl;
   oPopDriver << "                   STATISTICS_ERROR     = 13,"  << endl;
@@ -111,7 +240,17 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                 };"       << endl;
   oPopDriver << endl;
 
-  oPopDriver << "int main( int argc, const char argv[] )" << endl;
+  oPopDriver << "static void finish(int exit_value)"  << endl;
+  oPopDriver << "{"  << endl;
+  oPopDriver << "   int parent_tid = pvm_parent();"  << endl;
+  oPopDriver << "   pvm_initsend(PvmDataDefault);"  << endl;
+  oPopDriver << "   pvm_pkint(&exit_value, 1, 1);"  << endl;
+  oPopDriver << "   pvm_send(parent_tid, SpkPvmExitValue);"  << endl;
+  oPopDriver << "   pvm_exit();"  << endl;
+  oPopDriver << "}"  << endl;
+  oPopDriver << endl;
+
+  oPopDriver << "int main( int argc, const char* argv[] )" << endl;
   oPopDriver << "{" << endl;
   oPopDriver << "   /*******************************************************************/" << endl;
   oPopDriver << "   /*                                                                 */" << endl;
@@ -119,6 +258,37 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "   /*                                                                 */" << endl;
   oPopDriver << "   /*******************************************************************/" << endl;
   oPopDriver << "   enum RETURN_CODE ret = SUCCESS;" << endl;
+  oPopDriver << endl;
+
+  oPopDriver << "   bool isUsingPvm = false;" << endl;
+  oPopDriver << "   if(argc > 1)" << endl;
+  oPopDriver << "   {" << endl;
+  oPopDriver << "      isUsingPvm = true;"<< endl;
+  oPopDriver << "      pvm_mytid();" << endl;
+  oPopDriver << "      int parent_tid = pvm_parent();" << endl;
+  oPopDriver << endl;
+
+  oPopDriver << "      // Disallow direct routing of messages between tasks; otherwise" << endl;
+  oPopDriver << "      // messages will arrive out of sequence." << endl;
+  oPopDriver << "      pvm_setopt(PvmRoute, PvmDontRoute);" << endl;
+
+  oPopDriver << "      pvm_notify(PvmTaskExit, PvmTaskExit, 1, &parent_tid);" << endl;
+  oPopDriver << endl;
+
+  oPopDriver << "      if(chdir(argv[1]) != 0)" << endl;
+  oPopDriver << "      {" << endl;
+  oPopDriver << "         finish(FILE_ACCESS_FAILURE);" << endl;
+  oPopDriver << "         return FILE_ACCESS_FAILURE;" << endl;
+  oPopDriver << "      }" << endl;
+  oPopDriver << "   }" << endl;
+  oPopDriver << "   bool isPvmParallel = argc > 2 && strcmp(argv[2], \"parallel\") == 0;" << endl;
+  oPopDriver << endl;
+
+  oPopDriver << "   // Redirect stdout and stderr to files" << endl;
+  oPopDriver << "   const char* stdoutFileName = \"optimizer_trace.txt\";" << endl;
+  oPopDriver << "   const char* stderrFileName = \"software_error\";" << endl;
+  oPopDriver << "   freopen( stdoutFileName, \"w\", stdout );" << endl;
+  oPopDriver << "   freopen( stderrFileName, \"w\", stderr );" << endl;
   oPopDriver << endl;
 
   oPopDriver << "   SpkException errors;" << endl;
@@ -825,7 +995,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                                &bOut," << endl;
   oPopDriver << "                                &alpObjOut," << endl;
   oPopDriver << "                                &alpObj_alpOut," << endl;
-  oPopDriver << "                                &alpObj_alp_alpOut );" << endl;
+  oPopDriver << "                                &alpObj_alp_alpOut," << endl;
+  oPopDriver << "                                 isUsingPvm," << endl;
+  oPopDriver << "                                 isPvmParallel );" << endl;
+  oPopDriver << "                  if( isPvmParallel ) model.setPopPar( alpOut );" << endl;
   oPopDriver << "               }" << endl;
   oPopDriver << "               isOptSuccess = true;"          << endl;
   oPopDriver << "            }" << endl;
@@ -2176,7 +2349,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         fprintf( stderr, \"Failed to open a file, %s, for writing output.\"," << endl;
   oPopDriver << "\"" << fResult_xml << "\" );" << endl;
   oPopDriver << "         ret = FILE_ACCESS_FAILURE;" << endl;
-  oPopDriver << "         cout << \"exit code = \" << ret << endl;" << endl;
+  oPopDriver << "         if(isUsingPvm)" << endl;
+  oPopDriver << "            finish(ret);" << endl;
+  oPopDriver << "         else" << endl;
+  oPopDriver << "            cout << \"exit code: \" << ret << endl;" << endl;
+  oPopDriver << "         fclose( stdout );" << endl;
+  oPopDriver << "         fclose( stderr );" << endl;
   oPopDriver << "         return ret;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
@@ -2196,7 +2374,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         fprintf( stderr, \"Failed to open a file, %s, for writing output.\"," << endl;
   oPopDriver << "\"" << fResult_xml << "\" );" << endl;
   oPopDriver << "         ret = FILE_ACCESS_FAILURE;" << endl;
-  oPopDriver << "         cout << \"exit code = \" << ret << endl;" << endl;
+  oPopDriver << "         if(isUsingPvm)" << endl;
+  oPopDriver << "            finish(ret);" << endl;
+  oPopDriver << "         else" << endl;
+  oPopDriver << "            cout << \"exit code: \" << ret << endl;" << endl;
+  oPopDriver << "         fclose( stdout );" << endl;
+  oPopDriver << "         fclose( stderr );" << endl;
   oPopDriver << "         return ret;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "      oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
@@ -2208,7 +2391,12 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      ret = UNKNOWN_FAILURE;" << endl;
   oPopDriver << "   }" << endl;
   oPopDriver << endl;
-  oPopDriver << "   cout << \"exit code: \" << ret << endl;" << endl;
+  oPopDriver << "   if(isUsingPvm)" << endl;
+  oPopDriver << "      finish(ret);" << endl;
+  oPopDriver << "   else" << endl;
+  oPopDriver << "      cout << \"exit code: \" << ret << endl;" << endl;
+  oPopDriver << "   fclose( stdout );" << endl;
+  oPopDriver << "   fclose( stderr );" << endl;
   oPopDriver << "   return ret;" << endl;
   oPopDriver << "}" << endl;
   oPopDriver.close();

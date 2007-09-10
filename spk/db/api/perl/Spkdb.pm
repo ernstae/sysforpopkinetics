@@ -29,7 +29,7 @@ use Sys::Hostname;
 use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = (
-    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 'set_state_code',
+    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 'set_state_code', 'set_parallel',
     'de_q2c', 'de_q2ac', 'get_q2c_job', 'get_job_ids', 'get_cmp_jobs', 'get_run_jobs', 'en_q2r', 
     'de_q2r', 'de_q2ar', 'get_q2r_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
@@ -993,7 +993,7 @@ sub get_q2r_job() {
     
     $dbh->begin_work;
 
-    my $sql = "select cpp_source, checkpoint from job "
+    my $sql = "select cpp_source, checkpoint, parallel from job "
 	      . "where job_id='$job_id' for update;";
 
     my $sth = $dbh->prepare($sql);
@@ -2055,6 +2055,50 @@ sub get_user() {
     return $sth->fetchrow_hashref();
 }
 
+=head2 set_parallel -- set a job to run in parallel process mode 
+Given a job_id, set the parallel process mode option for the job.
+    
+    $r = &Spkdb::set_parallel($dbh, $job_id, $parallel);
+
+$dbh is the handle to an open database connection
+
+$job_id is the key to a row in the job table
+
+$parallel is true if parallel process mode is specified, false if otherwise
+
+Returns
+
+  success: true if parallel process mode option is set, false if otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED
+
+=cut
+
+sub set_parallel() {
+    my $dbh = shift;
+    my $job_id = shift;
+    my $parallel = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "update job set parallel=$parallel where job_id='$job_id';";
+
+    my $nrows = $dbh->do($sql);
+    unless ($nrows)
+    {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+        return undef;
+    }
+    unless ($nrows == 1)
+    {
+        return 0;
+    }
+    return 1;
+}
+
+
 =head2 set_mail_notice -- set end-job email notice request option
 Given a job_id, set end-job email notice request option for the job.
     
@@ -2082,7 +2126,7 @@ sub set_mail_notice() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "update job set mail='$email' where job_id='$job_id';";
+    my $sql = "update job set mail=$email where job_id='$job_id';";
 
     my $nrows = $dbh->do($sql);
     unless ($nrows)

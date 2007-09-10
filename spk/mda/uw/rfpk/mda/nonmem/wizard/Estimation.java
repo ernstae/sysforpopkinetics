@@ -1155,6 +1155,11 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             if(!iterator.analysis.equals(analysis))
                 isFirst = true;
@@ -1392,11 +1397,7 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             if(method.equals("METHOD=1 ") || posthoc.equals("POSTHOC "))
                 iterator.setIsMethod1OrPosthoc(true);
             MDAObject object = (MDAObject)wizard.getCustomizedObject();

@@ -1320,11 +1320,11 @@ void IndPredModelBase<Scalar>::evalFAndH() const
  *
  * This function sets
  * \f[
- *     \mbox{f_thetaCurr} = \partial_{\mbox{theta}} \; f_i(\mbox{theta})
+ *     \mbox{f\_thetaCurr} = \partial_{\mbox{theta}} \; f_i(\mbox{theta})
  * \f]
  * and
  * \f[
- *     \mbox{h_thetaCurr} = \partial_{\mbox{theta}} \; h_i(\mbox{theta})  .
+ *     \mbox{h\_thetaCurr} = \partial_{\mbox{theta}} \; h_i(\mbox{theta})  .
  * \f]
  *
  * Note that these quantities are functions of theta, which is a

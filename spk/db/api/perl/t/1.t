@@ -2,11 +2,11 @@
 
 use strict;
 
-use Test::Simple tests => 65;  # number of ok() tests
+use Test::Simple tests => 66;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
-    'de_q2c', 'set_state_code', 'de_q2ac', 'de_q2ar', 'get_q2c_job', 'get_q2r_job', 'get_job_ids',
+    'de_q2c', 'set_state_code', 'set_parallel', 'de_q2ac', 'de_q2ar', 'get_q2c_job', 'get_q2r_job', 'get_job_ids',
     'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
     'new_model', 'get_model', 'update_model', 'user_models',
@@ -167,8 +167,10 @@ $row = &de_q2r($dbh);
 ok($row && $row->{"job_id"} == $job_id + 1, "de_q2r");
 $row = &de_q2r($dbh);
 ok($row && $row->{"job_id"} == $job_id, "de_q2r");
+&set_parallel($dbh, $job_id + 1, 1);
 $row = &get_q2r_job($dbh, $job_id + 1);
-ok($row && $row->{"cpp_source"} eq "1st compiled",       "get_q2r_job");
+ok($row && $row->{"cpp_source"} eq "1st compiled", "get_q2r_job, source");
+ok($row && $row->{"parallel"} == 1, "get_q2r_job, parallel");
 $row_array = &Spkdb::get_run_jobs($dbh);
 $j_id = $job_id;
 $flag = 1;

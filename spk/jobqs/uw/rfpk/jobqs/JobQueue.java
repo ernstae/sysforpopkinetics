@@ -181,6 +181,10 @@ import java.text.SimpleDateFormat;
  *  Request:   "Hi"<br>
  *  Handling:  Do nothing.<br>
  *  Response:  "Hi"
+ *  <p>
+ *  Request:   "close"<br>
+ *  Handling:  Close the connection socket.<br>
+ *  Response:  "closing"
  *
  * @author  Jiaji Du
  */
@@ -725,6 +729,11 @@ class ThreadedHandler extends Thread
                     else if(message[0].equals("Hi"))
                     {
                         out.println("Hi");
+                    }
+                    else if(message[0].equals("close"))
+                    {
+                        out.println("closing");
+                        socket.close();
                     }
                     else
                     {

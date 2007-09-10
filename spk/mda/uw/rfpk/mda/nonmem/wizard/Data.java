@@ -564,6 +564,11 @@ public class Data extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             if(iterator.getIsReload())
@@ -689,11 +694,7 @@ public class Data extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }             
+            if(iterator.getIsBack()) return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             String record = "$DATA " + fileName.replaceAll("\r", "");
             object.getRecords().setProperty("Data", record); 

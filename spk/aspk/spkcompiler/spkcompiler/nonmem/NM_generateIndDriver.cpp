@@ -34,8 +34,10 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "#include <fstream>"                << endl;
   oIndDriver << "#include <sys/time.h>"             << endl;
   oIndDriver << "#include <vector>"                 << endl;
+  oIndDriver << "#include <pvm3.h>"                 << endl;
   oIndDriver << endl;
 
+  oIndDriver << "#include <spk/spkpvm.h>"           << endl;
   oIndDriver << "#include <spk/scalarToDouble.h>"      << endl;
   oIndDriver << "#include <spk/SpkValarray.h>"      << endl;
   oIndDriver << "#include <spk/SpkException.h>"     << endl;
@@ -87,6 +89,8 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "enum RETURN_CODE { SUCCESS              = 0,"   << endl;
   oIndDriver << "                   UNKNOWN_ERROR        = 1,"   << endl;
   oIndDriver << "                   UNKNOWN_FAILURE      = 2,"   << endl;
+  oIndDriver << "                   PVM_FAILURE          = 3,"   << endl;
+  oIndDriver << "                   USER_ABORT           = 4,"   << endl;
   oIndDriver << "                   FILE_ACCESS_ERROR    = 10,"  << endl;
   oIndDriver << "                   OPTIMIZATION_ERROR   = 12,"  << endl;
   oIndDriver << "                   STATISTICS_ERROR     = 13,"  << endl;
@@ -101,7 +105,17 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "                   SIMULATION_FAILURE   = 106"  << endl;
   oIndDriver << "                 };"       << endl;
   oIndDriver << endl;
-  oIndDriver << "int main( int argc, const char argv[] )" << endl;
+
+  oIndDriver << "static void finish(int exit_value)"  << endl;
+  oIndDriver << "{"  << endl;
+  oIndDriver << "   int parent_tid = pvm_parent();"  << endl;
+  oIndDriver << "   pvm_initsend(PvmDataDefault);"  << endl;
+  oIndDriver << "   pvm_pkint(&exit_value, 1, 1);"  << endl;
+  oIndDriver << "   pvm_send(parent_tid, SpkPvmExitValue);"  << endl;
+  oIndDriver << "   pvm_exit();"  << endl;
+  oIndDriver << "}"  << endl;
+
+  oIndDriver << "int main( int argc, const char* argv[] )" << endl;
   oIndDriver << "{" << endl;
 
   oIndDriver << "   /*******************************************************************/" << endl;
@@ -110,6 +124,35 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "   /*                                                                 */" << endl;
   oIndDriver << "   /*******************************************************************/" << endl;
   oIndDriver << "   enum RETURN_CODE ret = SUCCESS;" << endl;
+  oIndDriver << endl;
+
+  oIndDriver << "   bool isUsingPvm = false;" << endl;
+  oIndDriver << "   if(argc > 1)" << endl;
+  oIndDriver << "   {" << endl;
+  oIndDriver << "      isUsingPvm = true;"<< endl;
+  oIndDriver << "      pvm_mytid();" << endl;
+  oIndDriver << "      int parent_tid = pvm_parent();" << endl;
+  oIndDriver << endl;
+
+  oIndDriver << "      // Disallow direct routing of messages between tasks; otherwise" << endl;
+  oIndDriver << "      // messages will arrive out of sequence." << endl;
+  oIndDriver << "      pvm_setopt(PvmRoute, PvmDontRoute);" << endl;
+
+  oIndDriver << "      pvm_notify(PvmTaskExit, PvmTaskExit, 1, &parent_tid);" << endl;
+  oIndDriver << endl;
+
+  oIndDriver << "      if(chdir(argv[1]) != 0)" << endl;
+  oIndDriver << "      {" << endl;
+  oIndDriver << "         finish(FILE_ACCESS_FAILURE);" << endl;
+  oIndDriver << "         return FILE_ACCESS_FAILURE;" << endl;
+  oIndDriver << "      }" << endl;
+  oIndDriver << "   }" << endl;
+
+  oIndDriver << "   // Redirect stdout and stderr to files" << endl;
+  oIndDriver << "   const char* stdoutFileName = \"optimizer_trace.txt\";" << endl;
+  oIndDriver << "   const char* stderrFileName = \"software_error\";" << endl;
+  oIndDriver << "   freopen( stdoutFileName, \"w\", stdout );" << endl;
+  oIndDriver << "   freopen( stderrFileName, \"w\", stderr );" << endl;
   oIndDriver << endl;
 
   oIndDriver << "   SpkException errors;" << endl;
@@ -923,7 +966,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         fprintf( stderr, \"Failed to open a file, %s, for writing output!!!\"," << endl;
   oIndDriver << "\"" << fResult_xml << "\" );" << endl;
   oIndDriver << "         ret = FILE_ACCESS_FAILURE;" << endl;
-  oIndDriver << "         cout << \"exit code = \" << ret << endl;" << endl;
+  oIndDriver << "         if(isUsingPvm)" << endl;
+  oIndDriver << "            finish(ret);" << endl;
+  oIndDriver << "         else" << endl;
+  oIndDriver << "            cout << \"exit code = \" << ret << endl;" << endl;
+  oIndDriver << "         fclose( stdout );" << endl;
+  oIndDriver << "         fclose( stderr );" << endl;
   oIndDriver << "         return ret;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
@@ -943,7 +991,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "         fprintf( stderr, \"Failed to open a file, %s, for writing output!!!\"," << endl;
   oIndDriver << "\"" << fResult_xml << "\" );" << endl;
   oIndDriver << "         ret = FILE_ACCESS_FAILURE;" << endl;
-  oIndDriver << "         cout << \"exit code = \" << ret << endl;" << endl;
+  oIndDriver << "         if(isUsingPvm)" << endl;
+  oIndDriver << "            finish(ret);" << endl;
+  oIndDriver << "         else" << endl;
+  oIndDriver << "            cout << \"exit code = \" << ret << endl;" << endl;
+  oIndDriver << "         fclose( stdout );" << endl;
+  oIndDriver << "         fclose( stderr );" << endl;
   oIndDriver << "         return ret;" << endl;
   oIndDriver << "      }" << endl;
   oIndDriver << "      oResults << \"<?xml version=\\\"1.0\\\"?>\" << endl;" << endl;
@@ -955,7 +1008,12 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "      ret = UNKNOWN_FAILURE;" << endl;
   oIndDriver << "   }" << endl;
   oIndDriver << endl;
-  oIndDriver << "   cout << \"exit code = \" << ret << endl;" << endl;
+  oIndDriver << "   if(isUsingPvm)" << endl;
+  oIndDriver << "      finish(ret);" << endl;
+  oIndDriver << "   else" << endl;
+  oIndDriver << "      cout << \"exit code = \" << ret << endl;" << endl;
+  oIndDriver << "   fclose( stdout );" << endl;
+  oIndDriver << "   fclose( stderr );" << endl;
   oIndDriver << "   return ret;" << endl;
 
   oIndDriver << "}" << endl;

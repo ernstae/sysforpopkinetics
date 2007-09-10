@@ -116,22 +116,22 @@ public class JobState {
     }
     
     /** Compiler queue */
-    protected Vector cmpQueue = new Vector();
+    protected Vector<String> cmpQueue = new Vector<String>();
    
     /** Run queue */
-    protected Vector runQueue = new Vector();
+    protected Vector<String> runQueue = new Vector<String>();
     
     /** Aborting compiler queue */
-    protected Vector abortCmpQueue = new Vector();
+    protected Vector<String> abortCmpQueue = new Vector<String>();
     
     /** Aborting run queue */
-    protected Vector abortRunQueue = new Vector();
+    protected Vector<String> abortRunQueue = new Vector<String>();
     
     /** Job state list */
     protected Properties jobList = new Properties();
             
     /** Restart job set */
-    protected HashSet restartJobs = new HashSet();
+    protected HashSet<String> restartJobs = new HashSet<String>();
     
     /** Compiler daemon visiting flag */
     protected boolean cmpd = false;

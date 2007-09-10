@@ -465,7 +465,10 @@ void popStatisticsTest::statisticsExampleTest(enum Objective whichObjective)
 		  &bOut,
 		  &dLTildeOut,
 		  &lTilde_alpOut,
-		  &lTilde_alp_alpOut
+		  &lTilde_alp_alpOut,
+                  false,
+                  false,
+		  parallelControls 
 		  );
     ok = true;
   }
@@ -907,7 +910,9 @@ void popStatisticsTest::coreStatTest(enum Objective whichObjective)
 		  &bOut,
 		  &dLTildeOut,
 		  &lTilde_alpOut,
-		  &lTilde_alp_alpOut
+		  &lTilde_alp_alpOut,
+                  false,
+                  false
 		  );
     ok = true;
   }
@@ -1496,7 +1501,9 @@ void popStatisticsTest::popMaskTest()
 		  &bOut,
 		  &dLTildeOut,
 		  &lTilde_alpOut,
-		  &lTilde_alp_alpOut
+		  &lTilde_alp_alpOut,
+                  false,
+                  false
 		  );
     ok = true;
   }

@@ -18,11 +18,13 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.compartment;
 
+import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.JTable;
 import javax.swing.table.*;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Cursor;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Vector;
 
@@ -289,7 +291,10 @@ public class DataEditorDialog extends javax.swing.JDialog {
         }
         public void setValueAt(Object value,int r, int c)
         {
-            data.get(r)[c] = (String)value;
+            if(Utility.isFloatNumber((String)value))
+                data.get(r)[c] = (String)value;
+            else
+                JOptionPane.showMessageDialog(null, "The data entry must be a number.", "Input Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -316,6 +321,8 @@ public class DataEditorDialog extends javax.swing.JDialog {
         {
             super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,col);
             setHorizontalAlignment(SwingConstants.CENTER);
+            if(col == indexID || col == indexCMT)
+                setBackground(Color.LIGHT_GRAY);
             return this;
 	}
     }

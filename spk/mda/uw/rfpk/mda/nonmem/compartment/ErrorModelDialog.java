@@ -42,8 +42,8 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         this.modelExpression = modelExpression;
         this.isPopulation = isPopulation;
         initComponents();
-//        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
-//        CSH.setHelpIDString(helpButton, "Prepare_Input_Residual_Unknown_Variability_Model");
+        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
+        CSH.setHelpIDString(helpButton, "Residual_Unknown_Variability_Model_Graphical_Editor_");
         if(!isPopulation)
             jTextArea1.setText("Select a residual unknown variability (RUV) model:\n  - F denotes the model function vector\n  - DV denotes the observed data vector\n  - Y, a random variable, represents the predcted observation\n  - Model must contain RUV parameter ETA\n  - Enter appropriate number in () following ETA (e.g. ETA(1))");
         if(isPopulation)
@@ -297,12 +297,6 @@ public class ErrorModelDialog extends javax.swing.JDialog {
 
         helpButton.setText("Help");
         helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        helpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpButtonActionPerformed(evt);
-            }
-        });
-
         jPanel1.add(helpButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -375,10 +369,6 @@ public class ErrorModelDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
-    }//GEN-LAST:event_helpButtonActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
         if(isPopulation) userDefinedTextField.setText("Y=F+F*EPS()+EPS()");

@@ -61,6 +61,7 @@
 #include "lambdaTest.h"
 #include "linearInterpolateTest.h"
 #include "lTildeTest.h"
+#include "lTildePvmTest.h"
 #include "mapObjDiffTest.h"
 #include "mapObjTest.h"
 #include "mapOptTest.h"
@@ -182,6 +183,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "lambdaTest" ]                       = lambdaTest::suite();
   master_list_of_tests[ "linearInterpolateTest" ]            = linearInterpolateTest::suite();
   master_list_of_tests[ "lTildeTest" ]                       = lTildeTest::suite();
+  master_list_of_tests[ "lTildePvmTest" ]                    = lTildePvmTest::suite();
   master_list_of_tests[ "mapObjDiffTest" ]                   = mapObjDiffTest::suite();
   master_list_of_tests[ "mapObjTest" ]                       = mapObjTest::suite();
   master_list_of_tests[ "mapOptTest" ]                       = mapOptTest::suite();

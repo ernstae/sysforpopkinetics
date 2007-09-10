@@ -224,6 +224,96 @@ void WarningsManager::addWarning(
   nWarnings++;
 }
 
+/*************************************************************************
+ *
+ * Function: addWarningList
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+
+/*
+$begin WarningsManager_addWarningList$$
+$spell
+  const
+  bool
+$$
+
+$section Add a List of Warnings to the List of Warnings$$
+
+$index addWarning$$
+$cindex \Add \a \List \of \Warnings \to \the \List \of Warnings$$
+
+$table
+$bold Prototype:$$   $cend  
+$syntax/void WarningsManager::addWarningList(
+  const string& warningList, 
+  unsigned int warnings )/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+
+$head Description$$
+
+Adds a new list of warnings to the list of warnings.
+
+$head Arguments$$
+$syntax/
+
+/warningList/
+/$$
+This string is the new list of warnings to add to the list of warnings.
+
+$syntax/
+
+/warnings/
+/$$
+This is the number of warnings in the new list of warnings.
+
+$end
+*/
+
+
+/*------------------------------------------------------------------------
+ * Function Definition
+ *------------------------------------------------------------------------*/
+
+void WarningsManager::addWarningList( const std::string& warningList,
+                                      unsigned int warnings )
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+
+  //------------------------------------------------------------
+  // Add this list of warnings to the list of warnings.
+  //------------------------------------------------------------
+
+  allWarnings << warningList;
+  
+
+  //------------------------------------------------------------
+  // Finish up.
+  //------------------------------------------------------------
+
+  nWarnings += warnings;
+}
+
+
+
 
 /*************************************************************************
  *
@@ -341,6 +431,73 @@ bool WarningsManager::anyWarnings()
   {
     return false;
   }
+}
+
+
+/*************************************************************************
+ *
+ * Function: getWarningList
+ *
+ *************************************************************************/
+
+/*------------------------------------------------------------------------
+ * Function Specification
+ *------------------------------------------------------------------------*/
+
+/*
+$begin WarningsManager_getWarningList$$
+$spell
+$$
+
+$section Get the Current Warning List$$
+
+$index getAllWarnings$$
+$cindex \Get \the \Current \Warning \List$$
+
+$table
+$bold Prototype:$$   $cend  
+$syntax/int WarningsManager::getWarningList( string& /warningList/ )
+/$$
+$tend
+
+$fend 25$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+
+$head Description$$
+
+Gets a string that contains all of the warnings messages that have been 
+added to the list and the number of warnings.
+
+Returns the number of warnings of the warning list.
+
+$head Arguments$$
+$syntax/
+
+/warningList/ 
+/$$
+This string will be set equal to a list of the warnings.
+
+$end
+*/
+
+
+/*------------------------------------------------------------------------
+ * Function Definition
+ *------------------------------------------------------------------------*/
+
+int WarningsManager::getWarningList( string& warningList )
+{
+  // Set the output value.
+  warningList = allWarnings.str();
+
+  return nWarnings;
 }
 
 

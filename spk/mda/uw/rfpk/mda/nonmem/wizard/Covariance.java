@@ -253,6 +253,11 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             jRadioButton4.setEnabled(!iterator.analysis.equals("population"));
             jRadioButton5.setEnabled(!iterator.analysis.equals("population"));
             if(iterator.getIsReload())
@@ -284,11 +289,7 @@ public class Covariance extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             String record = jTextArea1.getText().trim();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Covariance", record);
