@@ -23,6 +23,7 @@ author: Jiaji Du
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="ora" uri="orataglib" %>
 
 <%-- Remove the validUser session bean, if any. --%>
 <c:remove var="validUser" />
@@ -76,6 +77,18 @@ author: Jiaji Du
   <c:set target="${validUser}" property="teamId" value="${dbValues.team_id}" />
 </jsp:useBean>
  
+<c:choose>
+  <c:when test="${!empty param.remember}">
+    <ora:addCookie name="userName" value="${param.userName}" maxAge="28800" />
+    <ora:addCookie name="password" value="${param.password}" maxAge="28800" />
+  </c:when>
+  <c:otherwise>
+    <ora:addCookie name="userName" value="${param.userName}" maxAge="0" />
+    <ora:addCookie name="password" value="${param.password}" maxAge="0" /> 
+  </c:otherwise>
+</c:choose>
+
+
 <c:choose>
   <c:when test="${!empty param.origURL}">
     <c:redirect url="${param.origURL}" />

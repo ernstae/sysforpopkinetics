@@ -358,8 +358,11 @@ public:
   /** The halfCvec template function definition. */
   static const char * fHalfCvec_h;
 
-  /** The SPK optimization driver definition. */
+  /** The SPK population level optimization driver definition. */
   static const char * fFitDriver_cpp;
+
+  /** The SPK individual level optimization driver definition. */
+  static const char * fIndDriver_cpp;
 
   /** The Monte Carlo driver definition. */
   static const char * fMonteDriver_cpp;

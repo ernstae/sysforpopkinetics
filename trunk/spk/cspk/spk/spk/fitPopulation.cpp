@@ -796,6 +796,22 @@ with step sizes specified by $italic popParStep$$.
 
 $syntax/
 
+/isUsingPvm/
+/$$
+When this is specified $math%true%$$, $italic SPK$$ runs on the parallel virtual machine (PVM).
+Otherwise, $italic SPK$$ runs in the ordinary single-process mode without the PVM.
+
+$syntax/
+
+/isPvmParallel/
+/$$
+If the isUsingPvm is specified $math%true%$$ and this is specified $math%true%$$, $italic SPK$$ 
+runs in the parallel-process mode via PVM. If the isUsingPvm is specified $math%true%$$ and this 
+is specified $math%false%$$, $italic SPK$$ runs in the single-process mode via PVM.  Otherwise, 
+$italic SPK$$ runs in the ordinary single-process mode without the PVM.
+
+$syntax/
+
 /dirBasedParallelControls/ (optional)
 /$$
 This option is disabled.
@@ -1129,8 +1145,10 @@ int main()
 					  &dmatBOut,
 					  &dLTildeOut,
 					  &drowLTilde_alpOut,
-					  &dmatLTilde_alp_alpOut, 
-					  parallelControls 
+					  &dmatLTilde_alp_alpOut,
+                                          false,
+                                          false,
+					  parallelControls
 			        );
        ok = true;
   }
@@ -1284,6 +1302,8 @@ void fitPopulation( SpkModel<double>&               model,
                     double*                         popObjOut,
                     valarray<double>*               popObj_popParOut,
                     valarray<double>*               popObj_popPar_popParOut,
+                    bool                            isUsingPvm,
+                    bool                            isPvmParallel,
                     const DirBasedParallelControls& dirBasedParallelControls )
 {
   using std::endl;
@@ -1303,6 +1323,7 @@ void fitPopulation( SpkModel<double>&               model,
     return;
   }
 
+  if( !isUsingPvm ) isPvmParallel = false;
 
   const int nInd = nMeasurementsAll.size();
   const int nAlp = popParIn.size();
@@ -1957,7 +1978,7 @@ where n is the size of population parameter. \
             dvecAlpIn,
             pdvecAlpOut,
             dvecAlpStep,
-		    indOptimizer,
+            indOptimizer,
             dvecBLow,
             dvecBUp,
             dmatBIn,
@@ -1966,6 +1987,8 @@ where n is the size of population parameter. \
             popObjOut,
             pdrowLTilde_alpOut,
             pdmatLTilde_alp_alpOut,
+            isUsingPvm,
+            isPvmParallel,
             isMultiple,
             c_sharedDirectory,
             coNodeCommand
@@ -1984,7 +2007,7 @@ where n is the size of population parameter. \
             dvecAlpIn,
             pdvecAlpOut,
             dvecAlpStep,
-		    indOptimizer,
+            indOptimizer,
             dvecBLow,
             dvecBUp,
             dmatBIn,
@@ -1993,6 +2016,8 @@ where n is the size of population parameter. \
             popObjOut,
             pdrowLTilde_alpOut,
             pdmatLTilde_alp_alpOut,
+            isUsingPvm,
+            isPvmParallel,
             isMultiple,
             c_sharedDirectory,
             coNodeCommand

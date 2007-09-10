@@ -162,6 +162,7 @@ public class TestSpkdb {
 				         "fo",
 					 0,
 					 false,
+                                         false,
                                          false);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
@@ -195,6 +196,7 @@ public class TestSpkdb {
 					      "la",
 					      0,
 					      false,
+                                              false,
                                               false);
 		    b = newerJobId != 0;
 		    s += ": job number " + newerJobId;
@@ -214,6 +216,7 @@ public class TestSpkdb {
 					       xmlSource,
 					       "eh",
 					       0,
+                                               false,
                                                false,
                                                false);
 		    b = newestJobId != 0;
@@ -611,7 +614,8 @@ public class TestSpkdb {
 					 "fo",
 					 2,
 					 true,
-                                         true);
+                                         true,
+                                         false);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;

@@ -191,6 +191,7 @@ public class Database {
                          "",
                          0L,
                          false,
+                         false,
                          false);
             JOptionPane.showMessageDialog(null, "A new job, " + jobAbstract +
                                           ", has been added to the database.",  

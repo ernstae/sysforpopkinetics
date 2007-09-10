@@ -118,6 +118,7 @@ public class XMLReader
         output.jobId = spkjob.getAttribute("id");
         output.jobAbstract = spkjob.getAttribute("abstract");        
         output.methodCode = spkjob.getAttribute("method_code");
+        output.computationMode = spkjob.getAttribute("computation_mode");
         NodeList modelList = spkjob.getElementsByTagName("model");
         if(modelList.getLength() > 0)
         {

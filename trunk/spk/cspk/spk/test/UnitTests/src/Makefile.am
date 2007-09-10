@@ -10,7 +10,8 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	-I$(top_builddir)/spk \
 	-I$(INST_BASE)/include/spktest \
-	-I/$(INST_BASE)/cppunit/include 
+	-I/$(INST_BASE)/cppunit/include \
+	-I/usr/share/pvm3/include
 
 # Set C++ compiler flags
 if SPK_RELEASE 
@@ -27,6 +28,8 @@ AM_LDFLAGS  = \
 	-L/usr/local/lib \
 	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
+	-L/usr/share/pvm3/lib/LINUX \
+	-L/usr/share/pvm3/lib/LINUX64 \
 	$(top_builddir)/spk/libspk.a \
 	-lnon_par \
 	-lmat2cpp \
@@ -41,7 +44,8 @@ AM_LDFLAGS  = \
 	-lxerces-c \
 	-lginac \
 	-lm \
-	-ldl
+	-ldl \
+	-lpvm3
 
 testall_SOURCES = \
 	$(top_builddir)/config.h \
@@ -159,6 +163,8 @@ testall_SOURCES = \
 	linearInterpolateTest.h \
 	lTildeTest.cpp \
 	lTildeTest.h \
+	lTildePvmTest.cpp \
+	lTildePvmTest.h \
 	mapObjDiffTest.cpp \
 	mapObjDiffTest.h \
 	mapObjTest.cpp \
@@ -302,6 +308,7 @@ pkginclude_HEADERS = \
 	lambdaTest.h \
 	linearInterpolateTest.h \
 	lTildeTest.h \
+	lTildePvmTest.h \
 	mapObjDiffTest.h \
 	mapObjTest.h \
 	mapOptTest.h \

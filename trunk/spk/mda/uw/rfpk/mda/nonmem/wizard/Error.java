@@ -161,6 +161,11 @@ public class Error extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             if(iterator.getIsReload())
             {
@@ -305,11 +310,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             // Find number of EPSs for population analysis or Etas for individual analysis                    
             if(iterator.analysis.equals("population"))

@@ -25,6 +25,8 @@ author: Jiaji Du
 <%@ taglib prefix="ora" uri="orataglib"%>
 
 <%-- Terminate the session and redirect to the login page --%>
-<ora:invalidateSession/>
 
+<ora:invalidateSession/>
+<ora:addCookie name="userName" value="${param.userName}" maxAge="0" />
+<ora:addCookie name="password" value="${param.password}" maxAge="0" />
 <c:redirect url="index.jsp" />

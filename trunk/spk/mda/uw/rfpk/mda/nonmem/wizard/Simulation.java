@@ -284,7 +284,12 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
 	    return "Simulation";
 	}
 
-	public void showingStep(JWizardPane wizard){        
+	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             if(iterator.getIsReload())
             {
                 String text = iterator.getReload().getProperty("SIMULATION");
@@ -306,11 +311,7 @@ public class Simulation extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             String record = jTextArea1.getText();
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Simulation", record);

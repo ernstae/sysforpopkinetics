@@ -161,6 +161,11 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
 	}
 
 	public void showingStep(JWizardPane wizard){
+            if(iterator.getIsBack())
+            {
+                iterator.setIsBack(false);
+                return;
+            }
             wizardPane = wizard;
             if(iterator.getIsReload())
             {
@@ -266,11 +271,7 @@ public class Aesinitial extends javax.swing.JPanel implements WizardStep {
         }
         
 	public void hidingStep(JWizardPane wizard){
-            if(iterator.getIsBack())
-            {
-                iterator.setIsBack(false);
-                return;
-            }            
+            if(iterator.getIsBack()) return;
             MDAObject object = (MDAObject)wizard.getCustomizedObject();
             object.getRecords().setProperty("Aesinitial", "$AESINITIAL \n" + record);
             object.getSource().error = "\n" + code + "\n";

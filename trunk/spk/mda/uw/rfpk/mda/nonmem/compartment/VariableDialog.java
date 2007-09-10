@@ -18,6 +18,7 @@ distribution.
 **********************************************************************/
 package uw.rfpk.mda.nonmem.compartment;
 
+import uw.rfpk.mda.nonmem.MDAFrame;
 import uw.rfpk.mda.nonmem.Utility;
 import javax.swing.DefaultListModel;
 import java.awt.Cursor;
@@ -31,6 +32,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Dimension;
+import javax.help.*;
 
 /** This class defines variable dialog.
  *
@@ -48,6 +50,8 @@ public class VariableDialog extends javax.swing.JDialog {
         super(parent, false);
         tool = parent;
         initComponents();
+        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
+        CSH.setHelpIDString(helpButton, "Parameters");
         jList1.setModel(listModel);
         setVariableList();
         jList1.setCellRenderer(new MyCellRenderer());
@@ -131,12 +135,6 @@ public class VariableDialog extends javax.swing.JDialog {
 
         helpButton.setText("Help");
         helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        helpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpButtonActionPerformed(evt);
-            }
-        });
-
         jPanel1.add(helpButton);
 
         jButton1.setText("Close");
@@ -153,10 +151,6 @@ public class VariableDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        JOptionPane.showMessageDialog(null, "Help is not currently available for this topic.");
-    }//GEN-LAST:event_helpButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         setVisible(false);
