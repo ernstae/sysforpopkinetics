@@ -5,10 +5,10 @@ any argument for building the debug version (i.e. debug info and
 no code optimization) or with "--enable-release-build" for the release version.
 
   For debug...
-   > .autogen.sh
+   > ./autogen.sh
 
   For release...
-   > .autogen.sh --enable-release-build
+   > ./autogen.sh --enable-release-build
 
 This is a bootstrap script that generates and run "configure".
 By the end, all necessary Makefile's are generated in subsequent
@@ -28,7 +28,11 @@ an (executable) searching path (e.x. /usr/local/bin).
 1. Change directory to ./test/UnitTest/src and run "testall":
 
    > cd test/UnitTest/src
+   > pvm
+   > quit
    > ./testall
+   > pvm
+   > halt
 
 This should display a number of dots and some matrices.  If something
 goes wrong, it should display messages containing a text "fail".
