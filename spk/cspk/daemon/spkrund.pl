@@ -24,7 +24,7 @@ spkrund.pl -- the SPK Run Time Daemon
 
 =head1 SYNOPSIS
 
-spkrund.pl database dbhost dbuser dbpasswd shost sport
+spkrund.pl database dbhost dbuser dbpasswd mode shost sport pvm max_concurrent
 
 =head1 ABSTRACT
 
@@ -40,22 +40,21 @@ The program expects the following arguments:
 
     $database
         The name of the SPK database
-    $host
+    $dbhost
         The host on which the SPK database resides
     $dbuser
-        A database username which has read/write access to the 
-        job table
+        A database username which has read/write access to the job table
     $dbpasswd
         The password associated with the username
     $mode
-        The test mode indicator being "test" for test mode
+        The test mode indicator being "test" for test mode, "prod" for production mode 
     $shost
         The host on which the job-queue server resides
     $sport
-        The port number of the job-queue server uses
+        The port of the job-queue server
     $pvm
-        'on' specifying using PVM, 'off' otherwise
-    $$max_concurrent
+        The using PVM indicator being "on" for using PVM, 'off' otherwise
+    $max_concurrent
         Maximum number of concurrent running jobs
 
 =head2 OPERATION
