@@ -263,6 +263,12 @@ deploy_candidate.pl --test
            Continuing on <emphasis>aspkserver</emphasis>:
           <screen>
 regression_test --ignore-candidate
+pvm
+quit
+regression_test --ignore-candidate --pvm
+regression_test --ignore-candidate --pvm --parallel
+pvm
+halt
           </screen>
           </para>
           
@@ -521,6 +527,12 @@ tail -n40 /var/log/messages
                 On <emphasis>dbserver</emphasis> as a root (i.e. 'su -')
                 <screen>
 regression_test --ignore-candidate
+pvm
+quit
+regression_test --ignore-candidate --pvm
+regression_test --ignore-candidate --pvm --parallel
+pvm
+halt
                 </screen>
                 The option "--ignore-candidate" forces the system to retain
                 the installation of your modifications.
