@@ -25,8 +25,8 @@ use Spkdb ('connect', 'disconnect', 'set_parallel');
 
 =cut
 
-my $dbh = &connect("spktest", "dbserver", "tester", "tester");
-for my $job_id (@alljobs) {
+my $dbh = &connect("spktest", "localhost", "tester", "tester");
+for my $job_id (@ARGV) {
     &set_parallel($dbh, $job_id, 1);
 }
 &disconnect($dbh);
