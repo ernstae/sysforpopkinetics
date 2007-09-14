@@ -886,13 +886,20 @@ $end
  * Include files
  *------------------------------------------------------------------------*/
 
-#include <cmath>
-#include <cassert>
+// SPK library header files.
 #include "mapOpt.h"
 #include "mapObj.h"
 #include "mapObjDiff.h"
 #include "quasiNewtonAnyBox.h"
 #include "SpkException.h"
+#include "WarningsManager.h"
+
+// SPK optimizer header files.
+#include <QN01Box/PlusInfinity.h>
+
+// Standard library header files.
+#include <cmath>
+#include <cassert>
 
 
 /*------------------------------------------------------------------------
@@ -959,6 +966,9 @@ namespace // [Begin: unnamed namespace]
 
     Optimizer*  pOptInfo;
 
+  public:
+    static int  nBackupMessage;
+
 
     //----------------------------------------------------------
     // Functions required by quasiNewtonAnyBox.
@@ -999,11 +1009,39 @@ namespace // [Begin: unnamed namespace]
       }
       catch( SpkException& e )
       {
-        throw e.push(
-          SpkError::SPK_OPT_ERR, 
-          "The individual's objective function could not be calculated.",
-          __LINE__, 
-          __FILE__ );
+        // See if the model for the individual's data mean was equal
+        // to a Not a Number (NaN) or infinity and that there were no
+        // standard errors.
+        if ( e.find( SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR ) >= 0 &&
+             e.find( SpkError::SPK_STD_ERR                        ) <  0    )
+        {
+          // Issue a warning message if one hasn't been issued.
+          if ( nBackupMessage == 0 )
+          {
+            // Set the message.
+              WarningsManager::addWarning(
+                "Backed up individual optimization because an individual's data mean could \nnot be calculated for a particular value of the individual parameters.",
+                __LINE__,
+                __FILE__ );
+          }
+
+          // Set the individual objective value that indicates
+          // to the individual optimizer that it should back up.
+          *pdMapObjOut = QN01Box::PlusInfinity( double( 0 ) );
+
+          // Increment this to indicate this objective has backed up.
+          nBackupMessage++;
+
+          return;
+        }
+        else
+        {
+          throw e.push(
+            SpkError::SPK_OPT_ERR, 
+            "The individual's objective function could not be calculated.",
+            __LINE__, 
+            __FILE__ );
+        }
       }
 
       // Set the objective function value.
@@ -1056,7 +1094,10 @@ namespace // [Begin: unnamed namespace]
 
   };
 
+  int MapOptObj::nBackupMessage = 0;
+
 } // [End: unnamed namespace]
+
 
 
 /*------------------------------------------------------------------------

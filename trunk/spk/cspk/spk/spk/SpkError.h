@@ -69,7 +69,7 @@ public:
       SPK_OPT_ERR,
       SPK_OPT_WARNING,
       SPK_UNKNOWN_OPT_ERR,
-	  SPK_NOT_READY_WARM_START_ERR,
+      SPK_NOT_READY_WARM_START_ERR,
 
       // Errors occured during differentiation
       SPK_DIFF_ERR,
@@ -79,6 +79,9 @@ public:
       SPK_NOT_POS_DEF_ERR,
       SPK_NOT_SYMMETRIC_ERR,
 
+      // Ordinary Differential Equation (ODE) errors
+      SPK_ODE_SOLN_ERR,
+
       // Errors occured during evaluation of User-provided models
       SPK_MODEL_NOT_IMPLEMENTED_ERR,
 
@@ -87,6 +90,7 @@ public:
       SPK_MODEL_SET_INDEX_ERR,
 
       SPK_MODEL_DATA_MEAN_ERR,
+      SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
       SPK_MODEL_DATA_MEAN_POP_ERR,
       SPK_MODEL_DATA_MEAN_IND_ERR,
 
@@ -208,7 +212,7 @@ public:
 
   // assignment operator which performs deep copy
   const SpkError& operator=(const SpkError&) throw();
-	
+
   // method that returns the error code
   enum ErrorCode code() const throw();    
 

@@ -53,6 +53,7 @@ $end
 #include "../../../spk/SpkModel.h"
 #include "../../../spk/mapObj.h"
 #include "../../../spk/randNormal.h"
+#include "../../../spk/WarningsManager.h"
 
 #include "firstOrderOptTest.h"
 
@@ -84,6 +85,12 @@ Test* firstOrderOptTest::suite()
     new TestCaller<firstOrderOptTest>(
         "firstOrderOptExampleTest", 
         &firstOrderOptTest::firstOrderOptExampleTest
+    )
+  );
+  suiteOfTests->addTest(
+    new TestCaller<firstOrderOptTest>(
+        "firstOrderOptBackupTest", 
+        &firstOrderOptTest::firstOrderOptBackupTest
     )
   );
   suiteOfTests->addTest(
@@ -1085,6 +1092,431 @@ void firstOrderOptTest::firstOrderOptExampleTest()
               dmatLTilde_alp_alpOut,
               dmatLTilde_alp_alpKnown );
   
+}
+
+/*************************************************************************
+ * Function: firstOrderOptBackupTest
+ *
+ *
+ * This test causes the optimizer to back up by setting the values for
+ * the data mean f equal to infinity the tenth time that eval() is
+ * called.
+ *
+ * This test re-uses the example problem from the firstOrderOpt
+ * specification to check that the backup file machinery works for
+ * the firstOrderOpt objective function.
+ *************************************************************************/
+
+template <class Scalar>
+class UserModelFirstOrderOptBackupTest : public SpkModel<Scalar>
+{
+    valarray<Scalar> _a, _b;
+    int _i;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
+    mutable int _nEvalCall;
+public:
+    UserModelFirstOrderOptBackupTest(int nA, int nB, int nYi)
+      :
+      _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB), _nEvalCall(0)
+    {};    
+    ~UserModelFirstOrderOptBackupTest(){};
+private:
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<Scalar>& aval)
+    {
+        _a = aval;
+    }
+    void doSetIndPar(const valarray<Scalar>& bval)
+    {
+        _b = bval;
+    }
+    void doIndParVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        // D = [ alp[1] ]
+        //
+        ret.resize(_nYi);
+        ret[0] = _a[1];
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // D_alp = [ 0  1 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 0.0;
+        ret[1] = 1.0;
+        return true;
+    }
+    void doIndParVarianceInv( valarray<double>& ret ) const
+    {
+        //
+        // Dinv = [ 1.0 / alp[1] ]
+        //
+        assert(_a[1] != 0.0);
+        ret.resize(_nB * _nB);
+        ret[0] = ( 1.0 / Value(_a[1]) );
+    }
+    bool doIndParVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Dinv_alp = [ 0    -alp[1]^(-2) ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = -1.0 / Value(_a[1]*_a[1]);
+        return true;
+    }
+    void doDataMean( valarray<Scalar>& ret ) const
+    {
+        ret.resize(_nYi);
+
+        // If this is not the tenth time this function has
+        // been called, then set
+        //
+        // f = [ alp[0]+b[0] ] .
+        //
+        _nEvalCall++;
+        if ( _nEvalCall != 100 )
+        {
+          ret[0] = ( _a[0] + _b[0] );
+        }
+        else
+        {
+          // If this is the tenth time this function has been called,
+          // then throw an exception that looks like f was equal to a
+          // NaN or infinite in order to make the optimizer back up.
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            "The data mean was infinite.",
+            __LINE__,
+            __FILE__ );
+        }
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        // f_alp = [ 1   0 ]
+        //
+        ret.resize(_nYi * _nA);
+        ret[0] = 1.0;
+        ret[1] = 0.0;
+        return true;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        // f_b = [ 1 ]
+        //
+        ret.resize(_nYi * _nB);
+        ret[0] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<Scalar>& ret ) const
+    {
+        //
+        // R = [ 1 ]
+        //
+        ret.resize(_nB*_nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        // R_alp = [ 0   0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        // R_b = [ 0 ]
+        //
+        ret.resize(_nB *_nB);
+        ret[0] = 0.0;
+        return false;
+    }
+    void doDataVarianceInv( valarray<Scalar>& ret ) const
+    {
+        //
+        // Rinv = [ 1 ]
+        //
+        ret.resize(_nB * _nB);
+        ret[0] = 1.0;
+    }
+    bool doDataVarianceInv_popPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_alp = [ 0  0 ]
+        //
+        ret.resize(_nB * _nA);
+        ret[0] = 0.0;
+        ret[1] = 0.0;
+        return false;
+    }
+    bool doDataVarianceInv_indPar( valarray<double>& ret ) const
+    {
+        //
+        // Rinv_b = [ 0 ]
+        //
+        ret.resize(_nB * _nB * _nB);
+        ret[0] = 0.0;
+        return false;
+    }   
+
+};
+
+void firstOrderOptTest::firstOrderOptBackupTest()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace population_analysis;
+
+  int i, k;
+
+  //preTestPrinting( "Specification Example" );
+
+  // Number of individuals.
+  const int nInd = 10;
+
+  // Number of measurements per individual (same for all)
+  const int nYi = 1;
+
+  // Number of measurements for all individuals
+  const int nY = nInd * nYi;
+
+  // Number of pop parameter
+  const int nAlp = 2;
+
+  // Number of ind parameter
+  const int nB = 1;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the user-provided model.
+  //------------------------------------------------------------
+
+  UserModelFirstOrderOptBackupTest<double>  
+	model( nAlp, nB, nYi );
+  UserModelFirstOrderOptBackupTest< CppAD::AD<double> >  
+	adModel( nAlp, nB, nYi );
+
+
+  //------------------------------------------------------------
+  // Quantities that define the problem.
+  //------------------------------------------------------------
+
+  // Mean and variance of the true transfer rate, betaTrue.
+  double meanBetaTrue = 1.0;
+  double varBetaTrue  = 5.0;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Measurement values, y.
+  DoubleMatrix dvecY( nY, 1 );
+  double* pdYData = dvecY.data();
+
+  // Number of measurements for each individual. 
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) 1 );
+
+  // These will hold the generated values for the true measurement 
+  // noise, eTrue, and the true random population parameters, bTrue.
+  double eTrue;
+  double bTrue;
+
+  // Mean, variance, and standard deviation of eTrue and bTrue.
+  double meanETrue = 0.0;
+  double varETrue  = 1.0;
+  double sdETrue   = sqrt( varETrue );
+  double meanBTrue = 0.0;
+  double varBTrue  = varBetaTrue;
+  double sdBTrue   = sqrt( varBTrue );
+
+  // Set the measurements for each individual.
+  //
+  // Note: these values were generated on a 32-bit Pentium machine
+  // using the following code.
+  //
+  //     int seed = 2;
+  //     srand(seed);
+  //
+  //     valarray<double> sdECov(nY*nY);
+  //     sdECov[ slice( 0, nY, nY+1 ) ] = sdETrue;
+  //
+  //     valarray<double> sdBCov(nY*nY);
+  //     sdBCov[ slice( 0, nY, nY+1 ) ] = sdBTrue;
+  //
+  //     y = meanBTrue + randNormal( sdBCov, nY ) + randNormal( sdECov, nY );
+  //
+  // The values generated on a 64-bit Athalon machine were different
+  // and their optimal paramter values could not be calculated.  So,
+  // these values have been set explicitly here to ensure they're the
+  // same on all machines.
+  //
+  valarray<double> y( nY );
+  y[0] = 1.88758;
+  y[1] = -1.03471;
+  y[2] = 1.18851;
+  y[3] = -0.476253;
+  y[4] = -1.45167;
+  y[5] = -0.797979;
+  y[6] = -0.0825739;
+  y[7] = 3.04214;
+  y[8] = 1.48168;
+  y[9] = -1.29312;
+
+  copy( &(y[0]), &(y[0])+nY, pdYData );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the fixed population parameter, alp.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecAlpTrue( nAlp, 1 );
+  DoubleMatrix dvecAlpLow ( nAlp, 1 );
+  DoubleMatrix dvecAlpUp  ( nAlp, 1 );
+  DoubleMatrix dvecAlpIn  ( nAlp, 1 );
+  DoubleMatrix dvecAlpOut ( nAlp, 1 );
+  DoubleMatrix dvecAlpStep( nAlp, 1 );
+
+  double* pdAlpTrueData = dvecAlpTrue.data();
+  double* pdAlpLowData  = dvecAlpLow .data();
+  double* pdAlpUpData   = dvecAlpUp  .data();
+  double* pdAlpInData   = dvecAlpIn  .data();
+  double* pdAlpStepData = dvecAlpStep.data();
+
+  // Set the values associated with alp(1).
+  pdAlpTrueData[ 0 ] = meanBetaTrue;
+  pdAlpLowData [ 0 ] = -10.0;
+  pdAlpUpData  [ 0 ] = 10.0;
+  pdAlpInData  [ 0 ] = -1.0;
+  pdAlpStepData[ 0 ] = 1.0e-2;
+
+  // Set the values associated with alp(2).
+  pdAlpTrueData[ 1 ] = varBetaTrue;
+  pdAlpLowData [ 1 ] = 1.0e-3;
+  pdAlpUpData  [ 1 ] = 100.0;
+  pdAlpInData  [ 1 ] = 0.5;
+  pdAlpStepData[ 1 ] = 1.0e-2;
+  
+
+  //------------------------------------------------------------
+  // Quantities related to the random population parameters, b.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+
+  dvecBLow .fill( -1.5e+1 );
+  dvecBUp  .fill( +1.0e+1 );
+  dvecBStep.fill(  1.0e-2 );
+
+  DoubleMatrix dmatBIn ( nB, nInd );
+  DoubleMatrix dmatBOut( nB, nInd );
+
+  dmatBIn.fill( 1.0 );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population objective function.
+  //------------------------------------------------------------
+
+  double dLTildeOut;
+
+  DoubleMatrix drowLTilde_alpOut     ( 1,    nAlp );
+  DoubleMatrix dmatLTilde_alp_alpOut ( nAlp, nAlp );
+  DoubleMatrix dmatLambdaTilde_alpOut( nAlp, nInd );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to ppkaOpt.
+  //------------------------------------------------------------
+
+  Optimizer indOptimizer( 1.0e-6, 40, 0 );
+  Optimizer popOptimizer( 1.0e-6, 5, 0 );
+
+  // Set these to exercise the warm start capabilities of firstOrderOpt.
+  popOptimizer.setThrowExcepIfMaxIter( false );
+  popOptimizer.setSaveStateAtEndOfOpt( true );
+
+
+  //------------------------------------------------------------
+  // Optimize the population objective function.
+  //------------------------------------------------------------
+
+  try
+  {
+    firstOrderOpt(
+                   model,
+                   adModel,
+                   dvecN,
+                   dvecY,
+                   popOptimizer,
+                   dvecAlpLow,
+                   dvecAlpUp,
+                   dvecAlpIn,
+                   &dvecAlpOut,
+                   dvecAlpStep,
+                   indOptimizer,
+                   dvecBLow,
+                   dvecBUp,
+                   dmatBIn,
+                   &dmatBOut,
+                   dvecBStep,
+                   &dLTildeOut,
+                   &drowLTilde_alpOut,
+                   &dmatLTilde_alp_alpOut,
+                   &dmatLambdaTilde_alpOut );
+  }
+  catch( const SpkException& e )
+  {
+    // Uncomment this line to see the list of exceptions.
+    //cout << "e = " << e << endl;
+
+    string warnings;
+    WarningsManager::getAllWarnings( warnings );
+
+    // Uncomment these statements to see the warnings.
+    /*
+    cout << "########################################" << endl;
+    cout << warnings;
+    cout << "########################################" << endl;
+    */
+
+    // See if the population optimizer backed up warning message was
+    // issued.
+    string::size_type msgPos = warnings.find( "Backed up population optimization", 0 );
+    if( msgPos == string::npos )
+    {
+      CPPUNIT_ASSERT_MESSAGE( 
+        "The population level optimizer did not back up.",
+        false );
+    }
+  }
+  catch( ... )
+  {
+    CPPUNIT_ASSERT_MESSAGE( 
+      "An unexpected exception occurred during the evaluation of the data mean.",
+      false );
+  }
+
 }
 
 /*************************************************************************

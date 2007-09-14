@@ -1536,6 +1536,9 @@ namespace // [Begin: unnamed namespace]
     bool        isUsingPvm;
     bool        isPvmParallel;
 
+  public:
+    static int  nBackupMessage;
+
 
     //----------------------------------------------------------
     // Public helper functions.
@@ -1656,21 +1659,39 @@ namespace // [Begin: unnamed namespace]
       catch( SpkException& e )
       {
         // See if there was a problem with the Hessian of an
-        // individual's objective function.
-        if ( e.find( SpkError::SPK_IND_OBJ_HESS_ERR ) >= 0 )
+        // individual's objective function or with the individual
+        // level optimization and if there were no standard errors.
+        if ( ( e.find( SpkError::SPK_IND_OBJ_HESS_ERR ) >= 0 || 
+               e.find( SpkError::SPK_OPT_ERR          ) >= 0    )
+             &&
+             e.find( SpkError::SPK_STD_ERR ) < 0 )
         {
-          const int max = SpkError::maxMessageLen();
-          char mess[max];
-          snprintf( mess, max,
-            "Backed up population optimization at iteration %d because the population \nobjective could not be calculated.",
-            pPopOptInfo->getNIterCompleted() + 1 );
-
-          // Issue a warning.
-          WarningsManager::addWarning( mess, __LINE__, __FILE__ );
+          // Issue a warning message if one hasn't been issued.
+          if ( nBackupMessage == 0 )
+          {
+            // Set the appropriate message.
+            if ( e.find( SpkError::SPK_IND_OBJ_HESS_ERR ) >= 0 )
+            {
+              WarningsManager::addWarning(
+                "Backed up population optimization because the population objective function \ncould not be calculated.",
+                __LINE__,
+                __FILE__ );
+            }
+            else
+            {
+              WarningsManager::addWarning(
+                "Backed up population optimization because the individual optimization failed.",
+                __LINE__,
+                __FILE__ );
+            }
+          }
 
           // Set the population objective value that indicates
           // to the population optimizer that it should back up.
           *pdLTildeOut = QN01Box::PlusInfinity( double( 0 ) );
+
+          // Increment this to indicate this objective has backed up.
+          nBackupMessage++;
 
           return;
         }
@@ -1868,6 +1889,8 @@ namespace // [Begin: unnamed namespace]
     }
 
   };
+
+  int PpkaOptObj::nBackupMessage = 0;
 
 } // [End: unnamed namespace]
 

@@ -2030,6 +2030,348 @@ namespace // [Begin: unnamed namespace]
 
   //**********************************************************************
   //
+  // Class:  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred
+  //
+  //
+  // The evalDes function for this class has been modified so that the
+  // amount in each compartment and its time derivative are either Not
+  // a Number (NaN) or infinite.
+  //
+  // This class provides an ODE-based version of the Pred block
+  // expression evaluator.
+  //
+  // For this test, compartments 1, 2, and 3 all receive infusion
+  // doses that start at time zero (t = 0).
+  //
+  // In particular, it evaluates PK, DES, and ERROR block expressions
+  // that correspond to the following model for the mean of the
+  // individuals' data,
+  //
+  //                            A   (t)  *  bioavailability   (theta, eta)
+  //                             (p)                       (p)
+  //     f    (theta, eta)  =  --------------------------------------------  ,
+  //      i(j)                         scaleFactor   (theta, eta)
+  //                                              (p)
+  //
+  // where
+  //                -
+  //               |  1,   if 0 < t <= 1,
+  //               |
+  //     comp  =  <   2,   if 1 < t <= 2,
+  //               |
+  //               |  3,   if 2 < t <= 3,
+  //                -
+  //
+  //     t  =  ( j + 1 ) * timeStep  ,
+  //
+  //     p  =  comp - 1 ,
+  //
+  // and that correspond to model based weighting of the data using
+  // an exponential parameterization,
+  //
+  //    y  =  f * exp[ eps(0) ]  .
+  //
+  //**********************************************************************
+
+  template<class Value>
+  class FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred : public OdePredBase<Value>
+  {
+
+    //------------------------------------------------------------
+    // Constructor.
+    //------------------------------------------------------------
+
+  public:
+    FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred(
+      int                        nY_iIn,
+      bool                       isPkBlockAFuncOfTIn,
+      int                        nCompIn,
+      int                        defaultDoseCompIn,
+      int                        defaultObservCompIn,
+      const std::valarray<bool>& compInitialOffIn,
+      const std::valarray<bool>& compNoOffIn,
+      const std::valarray<bool>& compNoDoseIn,
+      double                     tolRelIn )
+    :
+    OdePredBase<Value> ( isPkBlockAFuncOfTIn,
+                         nCompIn,
+                         defaultDoseCompIn,
+                         defaultObservCompIn,
+                         compInitialOffIn,
+                         compNoOffIn,
+                         compNoDoseIn,
+                         tolRelIn ),
+    nY_i               ( nY_iIn ),
+    nComp              ( nCompIn )
+    {}
+
+    ~FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred(){}
+
+
+    //------------------------------------------------------------
+    // Model related quantities.
+    //------------------------------------------------------------
+
+  private:
+    const int nY_i;
+    const int nComp;
+
+  public:
+    Value ds;
+    Value w;
+    Value ke;
+
+
+    //**********************************************************
+    // 
+    // Function: readDataRecord
+    //
+    //**********************************************************
+
+  protected:
+    void readDataRecord( int i, int j )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace fourcomp_multinfus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the predefined data items.
+      //--------------------------------------------------------
+
+      // Set an arbitrary value for the observed value.
+      this->setDV( 123456789.0 );
+
+      // Set the compartment number so that it rotates among the first
+      // 3 compartments.
+      int comp = j % 3 + 1;
+      this->setCMT( comp );
+
+      // For this test there are no events for the output compartment.
+      assert( comp < nComp );
+
+      // Set the type of event.
+      if ( j < 3 && comp < 4  )
+      {
+        //------------------------------------------------------
+        // Regular infusion dose events.
+        //------------------------------------------------------
+
+        // If this is one of the first 3 data records, and if this is
+        // not the output compartment (number 4), which cannot receive
+        // doses, then set these flags to indicate this is a dose
+        // event.
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
+
+        // Set the rate for this regular infusion dose.
+        this->setRATE( rate);
+
+        // Set the amount for this regular infusion dose so that the
+        // infusions turn off at different times which are out of
+        // order and have to be sorted by OdePredBase::getExpDesign().
+        if ( comp == 1  )
+        {
+          // Compartment 1 should turn off at T = 2.0.
+          this->setAMT( 2.0 * rate );
+        }
+        else if ( comp == 2  )
+        {
+          // Compartment 2 should turn off at T = 3.0.
+          this->setAMT( 3.0 * rate );
+        }
+        else
+        {
+          // Compartment 3 should turn off at T = 1.0.
+          this->setAMT( 1.0 * rate );
+        }
+
+        // Set the time for all of the infusions to be time zero.
+        this->setTIME( 0.0 );
+      }
+      else
+      {
+        //------------------------------------------------------
+        // Observation events.
+        //------------------------------------------------------
+
+        // Set these flags to indicate this is an observation event.
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
+
+        // Set the time to be greater than zero.
+        this->setTIME( ( j - 2 ) * timeStep );
+      }
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalPk
+    //
+    //**********************************************************
+
+    void evalPk(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace fourcomp_multinfus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the Pk block parameters.
+      //--------------------------------------------------------
+
+      Value compScaleParam_p;
+      Value compBioavailFrac_p;
+
+      // Calculate the PK parameters,
+      //
+      //     scaleFactor  (theta, eta)  =  ( theta    + eta    ) ,
+      //                (p)                       (0)      (0)
+      //
+      //     bioavailability   (theta, eta)  = (p + 1) * ( theta    + eta    ) .
+      //                    (p)                                 (1)      (1)
+      //
+      int p;
+      for ( p = 0; p < nComp;  p++ )
+      {
+        compScaleParam_p   = indepVar[thetaOffset + 0] + indepVar[etaOffset + 0];
+        compBioavailFrac_p = ( p + 1 ) * ( indepVar[thetaOffset + 1] + indepVar[etaOffset + 1] );
+
+        setCompScaleParam  ( p, compScaleParam_p );
+        setCompBioavailFrac( p, compBioavailFrac_p );
+      }
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalDes
+    //
+    //**********************************************************
+
+    void evalDes(
+      int thetaOffset, int thetaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace fourcomp_multinfus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Evaluate the differential equations.
+      //--------------------------------------------------------
+
+      Value zero = Value( 0 );
+      Value one  = Value( 1 );
+
+      // Set these compartments' time derivative to be Not a
+      // Number (NaN).
+      this->setCompAmount_t( 0, zero / zero );
+      this->setCompAmount_t( 1, zero / zero );
+
+      // Set these compartments' time derivative to be infinite.
+      this->setCompAmount_t( 2, one / zero );
+      this->setCompAmount_t( 3, one / zero );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalError
+    //
+    //**********************************************************
+
+    void evalError(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int epsOffset,   int epsLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace fourcomp_multinfus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the intra-individual error.
+      //--------------------------------------------------------
+
+      Value f_i_j;
+      Value y_i_j;
+
+      getF( f_i_j );
+
+      // Set
+      //
+      //    y  =  f * exp[ eps(0) ]  .
+      //
+      y_i_j = f_i_j * CppAD::exp(indepVar[epsOffset + 0]);
+      setY( y_i_j );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNRecords
+    //
+    //**********************************************************
+
+  public:
+    virtual int getNRecords( int i ) const
+    {
+      // For this test there is one infusion for every compartment
+      // except the output compartment.
+      return nComp - 1 +   // Regular infusion dose records.
+             nY_i;         // Observation records.
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNObservs
+    //
+    //**********************************************************
+
+    int getNObservs( int i ) const
+    {
+      return nY_i;     // Observation records.
+    }
+
+
+    //------------------------------------------------------------
+    // Disallowed, implicitly generated member functions.
+    //------------------------------------------------------------
+
+  protected:
+    FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred(){}
+    FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred( const FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred& ){}
+    FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred & operator=( const FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred& ){}
+  };
+
+
+  //**********************************************************************
+  //
   // Class:  FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_OdePred
   //
   //
@@ -2426,6 +2768,10 @@ Test* OdePredBaseTest::suite()
   suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
     "FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_Test", 
     &OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_Test ));
+
+  suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
+    "FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_Test", 
+    &OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_Test ));
 
   suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
     "FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_Test", 
@@ -6841,6 +7187,254 @@ void OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_Additiv
     dataVarianceInv_indParKnown,
     "dataVarianceInv_indPar",
     tol );
+}
+
+
+/*************************************************************************
+ *
+ * Function: FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_Test
+ *
+ *
+ * The evalDes function for this tests OdePredBase subclass has been
+ * modified so that the amount in each compartment and its time
+ * derivative are either Not a Number (NaN) or infinite.
+ *
+ * The goal of this test is to check that the ODE-based version of the
+ * Pred block expression evaluator works for the case of
+ *
+ *     FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred. 
+ *
+ *************************************************************************/
+
+void OdePredBaseTest::FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace fourcomp_multinfus_odepredbasetest;
+
+  int j;
+  int k;
+
+
+  //------------------------------------------------------------
+  // Prepare the Pred block expression evaluator.
+  //------------------------------------------------------------
+
+  // Set the number of compartments, including the output compartment.
+  int nComp = 4;
+
+  // Set the number of data values for this individual.  For this test
+  // there are nComp - 1 intervals each with nComp - 1 observations.
+  int nY_iKnown = ( nComp - 1 ) * ( nComp - 1 );
+
+  // Set this equal to false since the PK block expressions are not
+  // functions of T.
+  bool isPkBlockAFuncOfTime = false;
+
+  // Set the default compartments for doses and observations.
+  int defaultDoseComp   = 1;
+  int defaultObservComp = 1;
+
+  // These flags indicate which compartments are initially off, cannot
+  // be turned off, and cannot receive a dose.
+  std::valarray<bool> compInitialOff( nComp );
+  std::valarray<bool> compNoOff     ( nComp );
+  std::valarray<bool> compNoDose    ( nComp );
+
+  // Set the flags for compartment 1.
+  compInitialOff[1 - 1] = false;
+  compNoOff     [1 - 1] = false;
+  compNoDose    [1 - 1] = false;
+
+  // Set the flags for compartment 2.
+  compInitialOff[2 - 1] = false;
+  compNoOff     [2 - 1] = false;
+  compNoDose    [2 - 1] = false;
+
+  // Set the flags for compartment 3.
+  compInitialOff[3 - 1] = false;
+  compNoOff     [3 - 1] = false;
+  compNoDose    [3 - 1] = false;
+
+  // Set the flags for compartment 4 (the output compartment).
+  compInitialOff[4 - 1] = true;
+  compNoOff     [4 - 1] = false;
+  compNoDose    [4 - 1] = true;
+
+  // Set the relative tolerance for the ODE integration.
+  double tolRel = 1.0e-6;
+
+  // Construct the ODE-based versions of the Pred block evaluator.
+  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred< double > predEvaluator(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred< AD<double> > predEvaluatorAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_OdePred< AD< AD<double> > > predEvaluatorADAD(
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+
+  //------------------------------------------------------------
+  // Prepare the variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of independent variables.
+  const int nTheta = 2;
+  const int nEta   = 2;
+  const int nEps   = 1;
+
+  // Set the current value for theta.
+  valarray<double> thetaCurr( nTheta );
+  thetaCurr[0] = 10.1;
+  thetaCurr[1] = 1.2;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = -100.0;
+  thetaUp [0] = +100.0;
+  thetaLow[1] = -100.0;
+  thetaUp [1] = +100.0;
+
+  // Set the current value for eta.
+  valarray<double> etaCurr( nEta );
+  etaCurr[0] = 10.0 - thetaCurr[0];
+  etaCurr[1] = 1.0  - thetaCurr[1];
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the covariance matrices.
+  //------------------------------------------------------------
+
+  // Set the structure of omega, the covariance matrix for eta.
+  covStruct omegaStruct = DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nOmegaPar = nEta;
+
+  // Set the diagonal elements for the current value for omega.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 0.0001;
+  omegaMinRep[1] = 0.02;
+
+  // Set the structure of sigma, the covariance matrix for eps.
+  covStruct sigmaStruct = DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nSigmaPar = nEps;
+
+  // Set the diagonal elements for the current value for sigma.
+  valarray<double> sigmaMinRep( nSigmaPar );
+  sigmaMinRep[0] = 0.25;
+
+
+  //------------------------------------------------------------
+  // Construct the population level Pred model.
+  //------------------------------------------------------------
+
+  PopPredModel model(
+    predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    nTheta,
+    thetaLow,
+    thetaUp,
+    thetaCurr,
+    nEta,
+    etaCurr,
+    nEps,
+    omegaStruct,
+    omegaMinRep,
+    sigmaStruct,
+    sigmaMinRep );
+
+
+  //------------------------------------------------------------
+  // Get information related to the individual.
+  //------------------------------------------------------------
+
+  // Get the number elements in the population parameter.
+  int nPopPar = model.getNPopPar();
+
+  // Get the number elements in the individual parameter.
+  int nIndPar = model.getNIndPar();
+
+  // Get the number of observations for this individual.
+  int iCurr = 0;
+  int nY_i = predEvaluator.getNObservs( iCurr );
+
+
+  //------------------------------------------------------------
+  // Prepare various quantities for the test.
+  //------------------------------------------------------------
+
+  valarray<double> dataMean( nY_i );
+
+  // Evaluate the data mean, which will cause the ODE's to be solved
+  // and an exception to occur due to the compartment time derivatives
+  // all being set equal to either Not a Number (NaN) or infinite.
+  try
+  {
+    model.dataMean( dataMean );
+  }
+  catch( SpkException& e )
+  {
+    // Uncomment this line to see the list of exceptions.
+    // cout << "e = " << e << endl;
+
+    // See if there was an error during the solution of the ODE's.
+    if ( e.find( SpkError::SPK_ODE_SOLN_ERR ) < 0 )
+    {
+      CPPUNIT_ASSERT_MESSAGE( 
+        "An expected SPK exception(SPK_ODE_SOLN_ERR) did not occur during the evaluation of the data mean.",
+        false );
+    }
+
+    // See if the error involved NaN's or infinities in the mean
+    // model.
+    if ( e.find( SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR ) < 0 )
+    {
+      CPPUNIT_ASSERT_MESSAGE( 
+        "An expected SPK exception (SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR) did not occur during the evaluation of the data mean.",
+        false );
+    }
+  }
+  catch( ... )
+  {
+    CPPUNIT_ASSERT_MESSAGE( 
+      "An unexpected exception occurred during the evaluation of the data mean.",
+      false );
+  }
+
 }
 
 

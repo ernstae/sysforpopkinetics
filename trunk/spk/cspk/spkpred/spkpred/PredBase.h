@@ -50,6 +50,7 @@
 #include <CppAD/CppAD.h>
 
 #include <vector>
+#include <string>
 
 
 /*************************************************************************
@@ -295,10 +296,9 @@ public:
     // the data records for the current individual.
     for ( j = 0; j < nRecord; j++ )
     {
-      taskMessage = "during the evaluation of the predicted value for the \n" + 
-        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record" + 
-        " for the " + intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
-        " individual.";
+      taskMessage = "during the evaluation of the mean for the \n" + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record.";
 
       // Evaluate the Pred block expressions for this data record.
       // The predicted value will be set during the call to eval()
@@ -356,27 +356,37 @@ public:
       // calculated predicted value to see if it is valid.
       if ( isObsRecord )
       {
-        // Make sure that the value is finite.
-        if ( isUnnormNumber( fOut[ nFValueSet ] ) )
-        {
-          throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "An infinite value was generated " + taskMessage ).c_str(),
-            __LINE__,
-            __FILE__ );
-        }
-    
         // Make sure that the value is not a NaN.
         if ( isNotANumber( fOut[ nFValueSet ] ) )
         {
+          std::string message = "The mean of the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record was Not a Number (NaN).";
+    
           throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "A value that is Not a Number (NaN) was generated " + 
-              taskMessage ).c_str(),
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
             __LINE__,
             __FILE__ );
         }
 
+        // Make sure that the value is finite.
+        //
+        // Note that this check is done after the NaN check because
+        // NaN's are unnormalized.
+        if ( isUnnormNumber( fOut[ nFValueSet ] ) )
+        {
+          std::string message = "The mean of the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record was infinite.";
+    
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+    
         // Increment the counter.
         nFValueSet++;
       }
@@ -548,10 +558,9 @@ public:
     // the data records for the current individual.
     for ( j = 0; j < nRecord; j++ )
     {
-      taskMessage = "during the evaluation of the predicted value for the \n" + 
-        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record" + 
-        " for the " + intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
-        " individual.";
+      taskMessage = "during the evaluation of the intra-individual error \nfor the " + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record.";
 
       // Evaluate the Pred block expressions for this data record.
       // The predicted value will be set during the call to eval()
@@ -609,27 +618,37 @@ public:
       // calculated predicted value to see if it is valid.
       if ( isObsRecord )
       {
-        // Make sure that the value is finite.
-        if ( isUnnormNumber( yOut[ nYValueSet ] ) )
-        {
-          throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "An infinite value was generated " + taskMessage ).c_str(),
-            __LINE__,
-            __FILE__ );
-        }
-    
         // Make sure that the value is not a NaN.
         if ( isNotANumber( yOut[ nYValueSet ] ) )
         {
+          std::string message = "The intra-individual error for the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record \nwas Not a Number (NaN).";
+    
           throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "A value that is Not a Number (NaN) was generated " + 
-              taskMessage ).c_str(),
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
             __LINE__,
             __FILE__ );
         }
 
+        // Make sure that the value is finite.
+        //
+        // Note that this check is done after the NaN check because
+        // NaN's are unnormalized.
+        if ( isUnnormNumber( yOut[ nYValueSet ] ) )
+        {
+          std::string message = "The intra-individual error for the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record \nwas infinite.";
+    
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+    
         // Increment the counter.
         nYValueSet++;
       }
