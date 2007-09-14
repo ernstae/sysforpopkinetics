@@ -5,12 +5,12 @@ use Spkdb ('connect', 'disconnect', 'set_parallel');
 
 =head1 NAME
 
-    set_parallel.pl -- set flags in spktest database to make the jobs 
+    set_job_parallel.pl -- set flags in spktest database to make the jobs 
     run in parallel processing mode
 
 =head1 SYNOPSIS
 
-    set_parallel.pl job_id ...
+    set_job_parallel.pl job_id ...
 
     =head1 DESCRIPTION
 
