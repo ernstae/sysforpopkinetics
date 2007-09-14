@@ -1884,18 +1884,32 @@ void PopPredModelBase<Scalar>::evalFAndH() const
   //     y ( theta, eta, eps )  .
   //      i
   //
-  predEvaluatorAD.evalAllY(
-    thetaOffsetInZ,
-    nTheta,
-    etaOffsetInZ,
-    nEta,
-    epsOffsetInZ,
-    nEps,
-    nObsRecordCurr,
-    iCurr,
-    zCurrAD,
-    fCurrAD,
-    yCurrAD );
+  try
+  {
+    predEvaluatorAD.evalAllY(
+      thetaOffsetInZ,
+      nTheta,
+      etaOffsetInZ,
+      nEta,
+      epsOffsetInZ,
+      nEps,
+      nObsRecordCurr,
+      iCurr,
+      zCurrAD,
+      fCurrAD,
+      yCurrAD );
+  }
+  catch( ... )
+  {
+    // If any exceptions occur, then stop the taping by calling
+    // Dependent, which is faster in this case than using the ADFun
+    // constructor as is done below.
+    ADFun<Scalar> yADFunTemp;
+    yADFunTemp.Dependent( epsCurrAD, yCurrAD );
+
+    // Rethrow the exception that was originally thrown.
+    throw;
+  }
 
   // Stop the taping by constructing a differentiable function object
   // that corresponds to the mapping of eps to y.  This function is
@@ -2095,17 +2109,31 @@ void PopPredModelBase<Scalar>::evalFAndH_theta() const
   //     f ( theta, eta )  .
   //      i
   //
-  predEvaluatorAD.evalAllF( 
-    thetaOffsetInZ,
-    nTheta,
-    etaOffsetInZ,
-    nEta,
-    epsOffsetInZ,
-    nEps,
-    nObsRecordCurr,
-    iCurr,
-    zCurrAD,
-    fCurrAD );
+  try
+  {
+    predEvaluatorAD.evalAllF( 
+      thetaOffsetInZ,
+      nTheta,
+      etaOffsetInZ,
+      nEta,
+      epsOffsetInZ,
+      nEps,
+      nObsRecordCurr,
+      iCurr,
+      zCurrAD,
+      fCurrAD );
+  }
+  catch( ... )
+  {
+    // If any exceptions occur, then stop the taping by calling
+    // Dependent, which is faster in this case than using the ADFun
+    // constructor as is done below.
+    ADFun<Scalar> fADFunTemp;
+    fADFunTemp.Dependent( thetaCurrAD, fCurrAD );
+
+    // Rethrow the exception that was originally thrown.
+    throw;
+  }
 
 
   //------------------------------------------------------------
@@ -2176,18 +2204,34 @@ void PopPredModelBase<Scalar>::evalFAndH_theta() const
   //     y ( theta, eta, eps )  .
   //      i
   //
-  predEvaluatorADAD.evalAllY(
-    thetaOffsetInZ,
-    nTheta,
-    etaOffsetInZ,
-    nEta,
-    epsOffsetInZ,
-    nEps,
-    nObsRecordCurr,
-    iCurr,
-    zCurrADAD,
-    fCurrADAD,
-    yCurrADAD );
+  try
+  {
+    predEvaluatorADAD.evalAllY(
+      thetaOffsetInZ,
+      nTheta,
+      etaOffsetInZ,
+      nEta,
+      epsOffsetInZ,
+      nEps,
+      nObsRecordCurr,
+      iCurr,
+      zCurrADAD,
+      fCurrADAD,
+      yCurrADAD );
+  }
+  catch( ... )
+  {
+    // If any exceptions occur, then stop the taping by calling
+    // Dependent, which is faster in this case than using the ADFun
+    // constructor as is done below.
+    ADFun< AD<Scalar> > yADADFunTemp;
+    yADADFunTemp.Dependent( epsCurrADAD, yCurrADAD );
+    ADFun<Scalar> fADFunTemp;
+    fADFunTemp.Dependent( thetaCurrAD, fCurrAD );
+
+    // Rethrow the exception that was originally thrown.
+    throw;
+  }
 
   // Stop the taping by constructing a differentiable function object
   // that corresponds to the mapping of eps to y.  This function is
@@ -2569,17 +2613,31 @@ void PopPredModelBase<Scalar>::evalFAndH_eta() const
   //     f ( theta, eta )  .
   //      i
   //
-  predEvaluatorAD.evalAllF( 
-    thetaOffsetInZ,
-    nTheta,
-    etaOffsetInZ,
-    nEta,
-    epsOffsetInZ,
-    nEps,
-    nObsRecordCurr,
-    iCurr,
-    zCurrAD,
-    fCurrAD );
+  try
+  {
+    predEvaluatorAD.evalAllF( 
+      thetaOffsetInZ,
+      nTheta,
+      etaOffsetInZ,
+      nEta,
+      epsOffsetInZ,
+      nEps,
+      nObsRecordCurr,
+      iCurr,
+      zCurrAD,
+      fCurrAD );
+  }
+  catch( ... )
+  {
+    // If any exceptions occur, then stop the taping by calling
+    // Dependent, which is faster in this case than using the ADFun
+    // constructor as is done below.
+    ADFun<Scalar> fADFunTemp;
+    fADFunTemp.Dependent( etaCurrAD, fCurrAD );
+
+    // Rethrow the exception that was originally thrown.
+    throw;
+  }
 
 
   //------------------------------------------------------------
@@ -2650,18 +2708,34 @@ void PopPredModelBase<Scalar>::evalFAndH_eta() const
   //     y ( theta, eta, eps )  .
   //      i
   //
-  predEvaluatorADAD.evalAllY(
-    thetaOffsetInZ,
-    nTheta,
-    etaOffsetInZ,
-    nEta,
-    epsOffsetInZ,
-    nEps,
-    nObsRecordCurr,
-    iCurr,
-    zCurrADAD,
-    fCurrADAD,
-    yCurrADAD );
+  try
+  {
+    predEvaluatorADAD.evalAllY(
+      thetaOffsetInZ,
+      nTheta,
+      etaOffsetInZ,
+      nEta,
+      epsOffsetInZ,
+      nEps,
+      nObsRecordCurr,
+      iCurr,
+      zCurrADAD,
+      fCurrADAD,
+      yCurrADAD );
+  }
+  catch( ... )
+  {
+    // If any exceptions occur, then stop the taping by calling
+    // Dependent, which is faster in this case than using the ADFun
+    // constructor as is done below.
+    ADFun< AD<Scalar> > yADADFunTemp;
+    yADADFunTemp.Dependent( epsCurrADAD, yCurrADAD );
+    ADFun<Scalar> fADFunTemp;
+    fADFunTemp.Dependent( etaCurrAD, fCurrAD );
+
+    // Rethrow the exception that was originally thrown.
+    throw;
+  }
 
   // Stop the taping by constructing a differentiable function object
   // that corresponds to the mapping of eps to y.  This function is
@@ -3188,18 +3262,6 @@ void PopPredModelBase<Scalar>::doDataVariance( SPK_VA::valarray<Scalar>& ret ) c
   //
   for ( j = 0; j < nObsRecordCurr; j++ )
   {
-    // Make sure that the value is finite.
-    if ( isUnnormNumber( dataVarianceCurr[j + j * nObsRecordCurr] ) )
-    {
-      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
-      // This error code should be replaced with one that is accurate.
-      throw SpkException(
-        SpkError::SPK_MODEL_DATA_MEAN_ERR,
-        ( "An infinite value was generated " + taskMessage ).c_str(),
-        __LINE__,
-        __FILE__ );
-    }
-
     // Make sure that the value is not a NaN.
     if ( isNotANumber( dataVarianceCurr[j + j * nObsRecordCurr] ) )
     {
@@ -3209,6 +3271,21 @@ void PopPredModelBase<Scalar>::doDataVariance( SPK_VA::valarray<Scalar>& ret ) c
         SpkError::SPK_MODEL_DATA_MEAN_ERR,
         ( "A value that is Not a Number (NaN) was generated " + 
           taskMessage ).c_str(),
+        __LINE__,
+        __FILE__ );
+    }
+
+    // Make sure that the value is finite.
+    //
+    // Note that this check is done after the NaN check because
+    // NaN's are unnormalized.
+    if ( isUnnormNumber( dataVarianceCurr[j + j * nObsRecordCurr] ) )
+    {
+      // [Revisit - SPK Error Codes Don't Really Apply - Mitch]
+      // This error code should be replaced with one that is accurate.
+      throw SpkException(
+        SpkError::SPK_MODEL_DATA_MEAN_ERR,
+        ( "An infinite value was generated " + taskMessage ).c_str(),
         __LINE__,
         __FILE__ );
     }

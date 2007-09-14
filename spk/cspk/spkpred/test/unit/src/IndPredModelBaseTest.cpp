@@ -40,12 +40,14 @@
 
 // SPK Pred library header files.
 #include "../../../spkpred/DiagCov.h"
+#include "../../../spkpred/FullCov.h"
 #include "../../../spkpred/IndPredModel.h"
 #include "../../../spkpred/IndPredModelBase.h"
 
 // SPK library header files.
 #include <spk/AkronBtimesC.h>
 #include <spk/doubleToScalarArray.h>
+#include <spk/fitIndividual.h>
 #include <spk/identity.h>
 #include <spk/inverse.h>
 #include <spk/mapObj.h>
@@ -56,6 +58,7 @@
 #include <spk/simulate.h>
 #include <spk/SpkValarray.h>
 #include <spk/transpose.h>
+#include <spk/WarningsManager.h>
 
 // CppAD header files.
 #include <CppAD/CppAD.h>
@@ -284,6 +287,55 @@ namespace oneexpfpred_indpredmodelbasetest
   double wt       = 79.6;
 }
 
+namespace railexample_indpredmodelbasetest
+{
+  //------------------------------------------------------------
+  // Quantities related to the population.
+  //------------------------------------------------------------
+
+  // Set the number of individuals.
+  const int nInd = 6;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Set the number of data values per individual.
+  const int nY_i = 3;
+
+  // Set the number of data values for all of the individuals. 
+  valarray<int> N( nY_i, nInd );
+
+  // Create a C style array with the data values for all of the
+  // individuals.
+  double YCArray[nInd * nY_i] = {
+      5.5000E+01,
+      5.3000E+01,
+      5.4000E+01,
+      2.6000E+01,
+      3.7000E+01,
+      3.2000E+01,
+      7.8000E+01,
+      9.1000E+01,
+      8.5000E+01,
+      9.2000E+01,
+      1.0000E+02,
+      9.6000E+01,
+      4.9000E+01,
+      5.1000E+01,
+      5.0000E+01,
+      8.0000E+01,
+      8.5000E+01,
+      8.3000E+01 };
+
+  // Set the data values for all of the individuals.
+  valarray<double> Y( YCArray, nY_i * nInd  );
+
+  // This will contain the data values for a particular individual.
+  valarray<double> Y_i( nY_i );
+}
+
 
 /*------------------------------------------------------------------------
  * Local class declarations
@@ -400,7 +452,7 @@ namespace // [Begin: unnamed namespace]
       e = cl;
       depVar[fOffset + j] = ds * d / e;
       depVar[yOffset + j] = depVar[fOffset + j] + indepVar[etaOffset + 0]
-        + indepVar[thetaOffset + 2] * indepVar[etaOffset + 1]; 
+        + indepVar[thetaOffset + 2] * indepVar[etaOffset + 1];
 
 
       //--------------------------------------------------------
@@ -433,6 +485,137 @@ namespace // [Begin: unnamed namespace]
     OneExpF_AdditivePlusThetaDepY_Pred(){}
     OneExpF_AdditivePlusThetaDepY_Pred( const OneExpF_AdditivePlusThetaDepY_Pred& ){}
     OneExpF_AdditivePlusThetaDepY_Pred & operator=( const OneExpF_AdditivePlusThetaDepY_Pred& ){}
+  };
+
+
+  //**********************************************************************
+  //
+  // Class:  RailExample_Pred
+  //
+  //
+  // This test causes the optimizer to back up by setting the values for F
+  // equal to NaN or infinity the tenth time that eval() is called.
+  //
+  // This class evaluates Pred block expressions that correspond to
+  // the Rail Example that is included in the NLME distribution.
+  //
+  // The PRED block for the Rail Example after it has been converted
+  // to individual notation is
+  //
+  //     $PRED 
+  //     F = THETA(1)
+  //     Y = F + ETA(1)
+  //
+  //**********************************************************************
+
+  template<class Value>
+  class RailExample_Pred : public PredBase<Value>
+  {
+    //------------------------------------------------------------
+    // Constructor.
+    //------------------------------------------------------------
+
+  public:
+    RailExample_Pred( int nY_iIn )
+    :
+    nY_i      ( nY_iIn ),
+    nEvalCall ( 0 )
+    {}
+
+    ~RailExample_Pred(){}
+
+
+    //------------------------------------------------------------
+    // Model related quantities.
+    //------------------------------------------------------------
+
+  private:
+    const int nY_i;
+    int nEvalCall;
+
+
+    //**********************************************************
+    // 
+    // Function: eval
+    //
+    //**********************************************************
+
+    bool eval(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int epsOffset,   int epsLen,
+      int fOffset,     int fLen,
+      int yOffset,     int yLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar,
+      std::vector<Value>& depVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace railexample_indpredmodelbasetest;
+
+
+      //--------------------------------------------------------
+      // Evaluate the mean of the data and its predicted value.
+      //--------------------------------------------------------
+
+      // If this is not the tenth time this function has
+      // been called, then set
+      //           
+      //    f  =  theta(0)  ,
+      //
+      // and
+      //
+      //    y  =  f + eta(0)  .
+      //
+      nEvalCall++;
+      if ( nEvalCall != 10 )
+      {
+        depVar[fOffset + j] = indepVar[thetaOffset + 0];
+      }
+      else
+      {
+        // If this is the tenth time this function has been called,
+        // then set f to be NaN to make the optimizer back up.
+        Value zero = Value( 0 );
+        depVar[fOffset + j] = zero / zero;
+      }
+      depVar[yOffset + j] = depVar[fOffset + j] + indepVar[etaOffset + 0];
+
+
+      //--------------------------------------------------------
+      // Finish up.
+      //--------------------------------------------------------
+
+      // Return true to indicate that this is not a Missing Data 
+      // Variable (MDV).
+      return true;
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNObservs
+    //
+    //**********************************************************
+
+    int getNObservs( int i ) const
+    {
+      return nY_i;
+    }
+
+
+    //------------------------------------------------------------
+    // Disallowed, implicitly generated member functions.
+    //------------------------------------------------------------
+
+  protected:
+    RailExample_Pred(){}
+    RailExample_Pred( const RailExample_Pred& ){}
+    RailExample_Pred & operator=( const RailExample_Pred& ){}
   };
 
 
@@ -497,6 +680,10 @@ Test* IndPredModelBaseTest::suite()
   suiteOfTests->addTest(new TestCaller<IndPredModelBaseTest>(
     "OneExpF_AdditivePlusThetaDepY_mapObj_Test", 
     &IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_mapObj_Test ));
+
+  suiteOfTests->addTest(new TestCaller<IndPredModelBaseTest>(
+    "RailExample_OptimizerBackup_Test", 
+    &IndPredModelBaseTest::RailExample_OptimizerBackup_Test ));
 
   return suiteOfTests;
 }
@@ -2128,6 +2315,219 @@ void IndPredModelBaseTest::OneExpF_AdditivePlusThetaDepY_mapObj_Test()
     mapObj_indParKnown,
     "mapObj_indPar",
     tol );
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: RailExample_OptimizerBackup_Test
+ *
+ *
+ * This test causes the optimizer to back up by setting the values for F
+ * equal to NaN or infinity the tenth time that eval() is called.
+ *
+ * This test uses a Pred block expression evaluator that corresponds
+ * to the Rail Example that is included in the NLME distribution.
+ *
+ * The PRED block for the Rail Example after it has been converted
+ * to individual notation is
+ *
+ *     $PRED 
+ *     F = THETA(1)
+ *     Y = F + ETA(1)
+ *
+ *************************************************************************/
+
+void IndPredModelBaseTest::RailExample_OptimizerBackup_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace railexample_indpredmodelbasetest;
+
+  int i;
+  int j;
+
+
+  //------------------------------------------------------------
+  // Prepare the Pred block expression evaluators.
+  //------------------------------------------------------------
+
+  RailExample_Pred< double > predEvaluator( nY_i );
+
+  RailExample_Pred< AD<double> > predEvaluatorAD( nY_i );
+
+  RailExample_Pred< AD< AD<double> > > predEvaluatorADAD( nY_i );
+
+
+  //------------------------------------------------------------
+  // Prepare the model variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of model independent variables.
+  const int nTheta = 1;
+  const int nEta   = nTheta;
+  const int nEps   = 0;
+
+  // Set the initial value for theta.
+  valarray<double> thetaIn( nTheta );
+  thetaIn[0] = 72.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = 7.2;
+  thetaUp[0]  = 720.0;
+
+  // Set the initial value for eta equal to all zeros.
+  valarray<double> etaIn( 0.0, nEta );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the covariance matrices.
+  //------------------------------------------------------------
+
+  // Set the structure of omega, the covariance matrix for eta.
+  covStruct omegaStruct = FULL;
+
+  // Construct omega.
+  FullCov omega( nEta );
+
+  // Set the number elements for this parameterization.
+  int nOmegaPar = omega.getNPar();
+
+  // Set the initial lower triangle elements for the initial value for
+  // omega equal to those for an identity matrix.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 1.0;
+  assert( nOmegaPar == 1 );
+
+
+  //------------------------------------------------------------
+  // Construct the individual level Pred model.
+  //------------------------------------------------------------
+
+  // Construct the individual model.
+  IndPredModel indModel(
+    predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    nTheta,
+    thetaLow,
+    thetaUp,
+    thetaIn,
+    nEta,
+    omegaStruct,
+    omegaMinRep );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters, b.
+  //------------------------------------------------------------
+
+  // Get the number of individual parameters.
+  const int nB = indModel.getNIndPar();
+  assert( nB == nTheta + nOmegaPar );
+
+  valarray<double> bLow ( nB );
+  valarray<double> bUp  ( nB );
+  valarray<double> bStep( nB );
+  valarray<double> bIn  ( nB );
+  valarray<double> bOut ( nB );
+
+  // Get the current value for the individual parameters.
+  indModel.getIndPar( bIn );
+
+  // Get the limits for the individual parameters.
+  indModel.getIndParLimits( bLow, bUp );
+
+  // Get the step sizes for the individual parameters.
+  indModel.getIndParStep( bStep );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitIndividual.
+  //------------------------------------------------------------
+
+  // Set the values for optimization of the individual objective
+  // functions.
+  double indEpsilon = 1.e-3; 
+  int indNMaxIter   = 50; 
+  int indLevel      = 0;
+
+  Optimizer indOptInfo( indEpsilon, indNMaxIter, indLevel ); 
+
+
+  //------------------------------------------------------------
+  // Perform the individual estimation.
+  //------------------------------------------------------------
+
+  // Set the flag that indicates that the Map Bayesian terms should
+  // not be included in the individual objective function MapObj(b).
+  bool withD =false;
+
+  double* pdNull = 0;
+  valarray<double>* pVANull = 0;
+
+  // Get the first individual's data values.
+  i = 0;
+  Y_i = Y[ slice( i * nY_i, nY_i, 1 ) ];
+
+  // Clear all of the warnings so that only the ones from this test
+  // will appear in the list of warnings.
+  WarningsManager::clearAllWarnings();
+
+  try
+  {
+    // Calculate this individual's optimal parameter value.
+    fitIndividual(
+      indModel,
+      Y_i,
+      indOptInfo,
+      bLow,
+      bUp,
+      bIn,
+      bStep,
+      &bOut,
+      pdNull,
+      pVANull,
+      pVANull,
+      withD );
+  }
+  catch( const SpkException& e )
+  {
+    // Uncomment this line to see the list of exceptions.
+    // cout << "e = " << e << endl;
+
+    string warnings;
+    WarningsManager::getAllWarnings( warnings );
+
+    // Uncomment these statements to see the warnings.
+    /*
+    cout << "########################################" << endl;
+    cout << warnings;
+    cout << "########################################" << endl;
+    */
+
+    // See if the individual optimizer backed up warning message was issued.
+    string::size_type msgPos = warnings.find( "Backed up individual optimization", 0 );
+    if( msgPos == string::npos )
+    {
+      CPPUNIT_ASSERT_MESSAGE( 
+        "The individual level optimizer did not back up.",
+        false );
+    }
+  }
+  catch( ... )
+  {
+    CPPUNIT_ASSERT_MESSAGE( 
+      "An unexpected exception occurred during the evaluation of the data mean.",
+      false );
+  }
 
 }
 

@@ -40,6 +40,7 @@
 
 // SPK Pred library header files.
 #include "../../../spkpred/DiagCov.h"
+#include "../../../spkpred/FullCov.h"
 #include "../../../spkpred/OdePredBase.h"
 #include "../../../spkpred/PopPredModel.h"
 #include "../../../spkpred/PopPredModelBase.h"
@@ -47,10 +48,13 @@
 // SPK library header files.
 #include <spk/AkronBtimesC.h>
 #include <spk/doubleToScalarArray.h>
+#include <spk/fitPopulation.h>
 #include <spk/identity.h>
 #include <spk/inverse.h>
 #include <spk/mapObj.h>
 #include <spk/multiply.h>
+#include <spk/Objective.h>
+#include <spk/Optimizer.h>
 #include <spk/pi.h>
 #include <spk/replaceSubblock.h>
 #include <spk/scalarToDoubleArray.h>
@@ -88,6 +92,55 @@ namespace oneexpf_onebolus_poppredmodelbasetest
   double timeStep = 0.25;
   double dose     = 320.0;
   double wt       = 79.6;
+}
+
+namespace railexample_poppredmodelbasetest
+{
+  //------------------------------------------------------------
+  // Quantities related to the population.
+  //------------------------------------------------------------
+
+  // Set the number of individuals.
+  const int nInd = 6;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Set the number of data values per individual.
+  const int nY_i = 3;
+
+  // Set the number of data values for all of the individuals. 
+  valarray<int> N( nY_i, nInd );
+
+  // Create a C style array with the data values for all of the
+  // individuals.
+  double YCArray[nInd * nY_i] = {
+      5.5000E+01,
+      5.3000E+01,
+      5.4000E+01,
+      2.6000E+01,
+      3.7000E+01,
+      3.2000E+01,
+      7.8000E+01,
+      9.1000E+01,
+      8.5000E+01,
+      9.2000E+01,
+      1.0000E+02,
+      9.6000E+01,
+      4.9000E+01,
+      5.1000E+01,
+      5.0000E+01,
+      8.0000E+01,
+      8.5000E+01,
+      8.3000E+01 };
+
+  // Set the data values for all of the individuals.
+  valarray<double> Y( YCArray, nY_i * nInd  );
+
+  // This will contain the data values for a particular individual.
+  valarray<double> Y_i( nY_i );
 }
 
 
@@ -423,6 +476,137 @@ namespace // [Begin: unnamed namespace]
   };
 
 
+  //**********************************************************************
+  //
+  // Class:  RailExample_Pred
+  //
+  //
+  // This test causes the optimizer to back up by setting the values for F
+  // equal to NaN or infinity the tenth time that eval() is called.
+  //
+  // This class evaluates Pred block expressions that correspond to
+  // the Rail Example that is included in the NLME distribution.
+  //
+  // The PRED block for the Rail Example after it has been converted
+  // to population notation is
+  //
+  //     $PRED 
+  //     F = THETA(1) + ETA(1)
+  //     Y = F + EPS(1)
+  //
+  //**********************************************************************
+
+  template<class Value>
+  class RailExample_Pred : public PredBase<Value>
+  {
+    //------------------------------------------------------------
+    // Constructor.
+    //------------------------------------------------------------
+
+  public:
+    RailExample_Pred( int nY_iIn )
+    :
+    nY_i      ( nY_iIn ),
+    nEvalCall ( 0 )
+    {}
+
+    ~RailExample_Pred(){}
+
+
+    //------------------------------------------------------------
+    // Model related quantities.
+    //------------------------------------------------------------
+
+  private:
+    const int nY_i;
+    int nEvalCall;
+
+
+    //**********************************************************
+    // 
+    // Function: eval
+    //
+    //**********************************************************
+
+    bool eval(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int epsOffset,   int epsLen,
+      int fOffset,     int fLen,
+      int yOffset,     int yLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar,
+      std::vector<Value>& depVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace railexample_poppredmodelbasetest;
+
+
+      //--------------------------------------------------------
+      // Evaluate the mean of the data and its predicted value.
+      //--------------------------------------------------------
+
+      // If this is not the tenth time this function has
+      // been called, then set
+      //           
+      //    f  =  theta(0) + eta(0)  ,
+      //
+      // and
+      //
+      //    y  =  f + eps(0)  .
+      //
+      nEvalCall++;
+      if ( nEvalCall != 10 )
+      {
+        depVar[fOffset + j] = indepVar[thetaOffset + 0] + indepVar[etaOffset + 0];
+      }
+      else
+      {
+        // If this is the tenth time this function has been called,
+        // then set f to be NaN to make the optimizer back up.
+        Value zero = Value( 0 );
+        depVar[fOffset + j] = zero / zero;
+      }
+      depVar[yOffset + j] = depVar[fOffset + j] + indepVar[epsOffset + 0]; 
+
+
+      //--------------------------------------------------------
+      // Finish up.
+      //--------------------------------------------------------
+
+      // Return true to indicate that this is not a Missing Data 
+      // Variable (MDV).
+      return true;
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNObservs
+    //
+    //**********************************************************
+
+    int getNObservs( int i ) const
+    {
+      return nY_i;
+    }
+
+
+    //------------------------------------------------------------
+    // Disallowed, implicitly generated member functions.
+    //------------------------------------------------------------
+
+  protected:
+    RailExample_Pred(){}
+    RailExample_Pred( const RailExample_Pred& ){}
+    RailExample_Pred & operator=( const RailExample_Pred& ){}
+  };
+
+
 } // [End: unnamed namespace]
 
 
@@ -472,6 +656,10 @@ Test* PopPredModelBaseTest::suite()
   suiteOfTests->addTest(new TestCaller<PopPredModelBaseTest>(
     "OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_dataMean_Test", 
     &PopPredModelBaseTest::OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_dataMean_Test ));
+
+  suiteOfTests->addTest(new TestCaller<PopPredModelBaseTest>(
+    "RailExample_OptimizerBackup_Test", 
+    &PopPredModelBaseTest::RailExample_OptimizerBackup_Test ));
 
   return suiteOfTests;
 }
@@ -1191,4 +1379,307 @@ void PopPredModelBaseTest::OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaD
 
 }
 
+
+/*************************************************************************
+ *
+ * Function: RailExample_OptimizerBackup_Test
+ *
+ *
+ * This test causes the optimizer to back up by setting the values for F
+ * equal to NaN or infinity the tenth time that eval() is called.
+ *
+ * This test uses a Pred block expression evaluator that corresponds
+ * to the Rail Example that is included in the NLME distribution.
+ *
+ * The PRED block for the Rail Example after it has been converted
+ * to population notation is
+ *
+ *     $PRED 
+ *     F = THETA(1) + ETA(1)
+ *     Y = F + EPS(1)
+ *
+ *************************************************************************/
+
+void PopPredModelBaseTest::RailExample_OptimizerBackup_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace railexample_poppredmodelbasetest;
+
+  int i;
+  int j;
+
+
+  //------------------------------------------------------------
+  // Prepare the Pred block expression evaluators.
+  //------------------------------------------------------------
+
+  RailExample_Pred< double > predEvaluator( nY_i );
+
+  RailExample_Pred< AD<double> > predEvaluatorAD( nY_i );
+
+  RailExample_Pred< AD< AD<double> > > predEvaluatorADAD( nY_i );
+
+  RailExample_Pred< AD< AD< AD<double> > > > predEvaluatorADADAD( nY_i );
+
+
+  //------------------------------------------------------------
+  // Prepare the population model variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of population model independent variables.
+  const int nTheta = 1;
+  const int nEta   = nTheta;
+  const int nEps   = 1;
+
+  // Set the initial value for theta.
+  valarray<double> thetaIn( nTheta );
+  thetaIn[0] = 72.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = 7.2;
+  thetaUp[0]  = 720.0;
+
+  // Set the initial value for eta equal to all zeros.
+  valarray<double> etaIn( 0.0, nEta );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the population covariance matrices.
+  //------------------------------------------------------------
+
+  // Set the structure of omega, the covariance matrix for eta.
+  covStruct omegaStruct = FULL;
+
+  // Construct omega.
+  FullCov omega( nEta );
+
+  // Set the number elements for this parameterization.
+  int nOmegaPar = omega.getNPar();
+
+  // Set the initial lower triangle elements for the initial value for
+  // omega equal to those for an identity matrix.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 1.0;
+  assert( nOmegaPar == 1 );
+
+  // Set the structure of sigma, the covariance matrix for eps.
+  covStruct sigmaStruct = DIAGONAL;
+
+  // Construct sigma.
+  DiagCov sigma( nEps );
+
+  // Set the number elements for this parameterization.
+  int nSigmaPar = sigma.getNPar();
+
+  // Set the diagonal elements for the initial value for Sigma.
+  valarray<double> sigmaMinRep( nSigmaPar );
+  sigmaMinRep[0] = 32.0;
+  assert( nSigmaPar == 1 );
+
+
+  //------------------------------------------------------------
+  // Prepare the population level Pred models.
+  //------------------------------------------------------------
+
+  PopPredModel popModel(
+    predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    nTheta,
+    thetaLow,
+    thetaUp,
+    thetaIn,
+    nEta,
+    etaIn,
+    nEps,
+    omegaStruct,
+    omegaMinRep,
+    sigmaStruct,
+    sigmaMinRep );
+
+  PopPredModelBase< AD< double > > popModelAD(
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    predEvaluatorADADAD,
+    nTheta,
+    thetaLow,
+    thetaUp,
+    thetaIn,
+    nEta,
+    etaIn,
+    nEps,
+    omegaStruct,
+    omegaMinRep,
+    sigmaStruct,
+    sigmaMinRep );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population parameter, alp.
+  //------------------------------------------------------------
+
+  // Get the number of population parameters.
+  const int nAlp = popModel.getNPopPar();
+
+  assert( nAlp == nTheta + nOmegaPar + nSigmaPar );
+
+  valarray<double> alpLow ( nAlp );
+  valarray<double> alpUp  ( nAlp );
+  valarray<double> alpStep( nAlp );
+  valarray<double> alpIn  ( nAlp );
+
+  // Get the current value for the population parameters.
+  popModel.getPopPar( alpIn );
+
+  // Get the limits for the population parameters.
+  popModel.getPopParLimits( alpLow, alpUp );
+
+  // Get the step sizes for the population parameters.
+  popModel.getPopParStep( alpStep );
+
+  // This will hold all of the populations' parameter values.  
+  valarray<double> alpOut( nAlp );
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters, b.
+  //------------------------------------------------------------
+
+  // Get the number of individual parameters.
+  const int nB = popModel.getNIndPar();
+  assert( nB == nEta );
+
+  valarray<double> bLow ( nB );
+  valarray<double> bUp  ( nB );
+  valarray<double> bStep( nB );
+  valarray<double> bIn_i( nB );
+  valarray<double> bAllIn( nB * nInd );
+
+  // Get the current value for the individual parameters.
+  popModel.getIndPar( bIn_i );
+
+  // Set all of the individuals' initial parameter values.
+  for ( i = 0; i < nInd; i++ )
+  {
+    bAllIn[ slice( i * nB, nB, 1 ) ] = bIn_i;
+  }
+
+  // Get the limits for the individual parameters.
+  popModel.getIndParLimits( bLow, bUp );
+
+  // Get the step sizes for the individual parameters.
+  popModel.getIndParStep( bStep );
+
+  // This will hold all of the individuals' parameter values.  
+  valarray<double> bAllOut( nB * nInd );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to fitPopulation.
+  //------------------------------------------------------------
+
+  // Choose the population method to use.
+  enum Objective method = MODIFIED_LAPLACE;
+
+  // Set the values for optimization of the individual objective
+  // functions.
+  double indEpsilon = 1.e-3; 
+  int indNMaxIter   = 50; 
+  int indLevel      = 0;
+  Optimizer indOptInfo( indEpsilon, indNMaxIter, indLevel ); 
+
+  // Set the values for optimization of the population objective
+  // function.
+  double popEpsilon = 1.e-3; 
+  int popNMaxIter   = 50; 
+  int popLevel      = 0;
+  Optimizer popOptInfo( popEpsilon, popNMaxIter, popLevel ); 
+
+
+  //------------------------------------------------------------
+  // Perform the population estimation method.
+  //------------------------------------------------------------
+
+  double* pdNull = 0;
+  valarray<double>* pVANull = 0;
+
+  // Set the parallel controls object
+  bool isUsingPvm    = false;
+  bool isPvmParallel = false;
+  DirBasedParallelControls parallelControls( false, 0, 0 );
+
+  try
+  {
+    fitPopulation( popModel,
+                   popModelAD,
+                   method,
+                   N,
+                   Y,
+                   popOptInfo,
+                   alpLow,
+                   alpUp,
+                   alpIn,
+                   alpStep,
+                   &alpOut,
+                   indOptInfo,
+                   bLow,
+                   bUp,
+                   bAllIn,            
+                   bStep,
+                   &bAllOut,
+                   pdNull,
+                   pVANull,
+                   pVANull,
+                   isUsingPvm,
+                   isPvmParallel,
+                   parallelControls );
+  }
+  catch( const SpkException& e )
+  {
+    // Uncomment this line to see the list of exceptions.
+    // cout << "e = " << e << endl;
+
+    string warnings;
+    WarningsManager::getAllWarnings( warnings );
+
+    // Uncomment these statements to see the warnings.
+    /*
+    cout << "########################################" << endl;
+    cout << warnings;
+    cout << "########################################" << endl;
+    */
+
+    // See if the individual optimizer backed up warning message was issued.
+    string::size_type msgPos = warnings.find( "Backed up individual optimization", 0 );
+    if( msgPos == string::npos )
+    {
+      CPPUNIT_ASSERT_MESSAGE( 
+        "The individual level optimizer did not back up.",
+        false );
+    }
+
+    // See if the population optimizer backed up warning message was issued.
+    msgPos = warnings.find( "Backed up population optimization", 0 );
+    if( msgPos == string::npos )
+    {
+      CPPUNIT_ASSERT_MESSAGE( 
+        "The population level optimizer did not back up.",
+        false );
+    }
+  }
+  catch( ... )
+  {
+    CPPUNIT_ASSERT_MESSAGE( 
+      "An unexpected exception occurred during the evaluation of the data mean.",
+      false );
+  }
+
+}
 

@@ -68,6 +68,7 @@ private:
   void ThreeComp_OneBolus_ErrorBlockHasSumOfComps_AdditiveY_OutputCompUsed_Test();
 
   void FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_Test();
+  void FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_Test();
   void FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_Test();
 };
 

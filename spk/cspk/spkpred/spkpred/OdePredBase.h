@@ -52,6 +52,7 @@
 // Standard library header files.
 #include <algorithm>
 #include <map>
+#include <sstream>
 #include <vector>
 
 
@@ -154,6 +155,10 @@ public:
     compAbsorpLagTime         ( nCompIn ),
     compScaleParam            ( nCompIn ),
     compBioavailFrac          ( nCompIn ),
+    compIsAmountInf           ( nCompIn ),
+    compIsAmountNan           ( nCompIn ),
+    compIsAmount_tInf         ( nCompIn ),
+    compIsAmount_tNan         ( nCompIn ),
     compInitialOff            ( nCompIn ),
     compNoOff                 ( nCompIn ),
     compNoDose                ( nCompIn ),
@@ -178,6 +183,11 @@ public:
 
       compScaleParam   [p] = Value( 1 );
       compBioavailFrac [p] = Value( 1 );
+
+      compIsAmountInf  [p] = false;
+      compIsAmountNan  [p] = false;
+      compIsAmount_tInf[p] = false;
+      compIsAmount_tNan[p] = false;
 
       compInitialOff   [p] = compInitialOffIn[p];
       compNoOff        [p] = compNoOffIn     [p];
@@ -472,10 +482,9 @@ public:
     // all of the data records for the current individual.
     for ( j = 0; j < nRecord; j++ )
     {
-      taskMessage = "during the evaluation of the data mean model for the \n" + 
-        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record" + 
-        " for the " + intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
-        " individual.";
+      taskMessage = "during the evaluation of the mean for the \n" + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record.";
 
       // Evaluate the PK, DES, and ERROR block expressions for this
       // data record.  The calculated value will be set if this data
@@ -613,23 +622,33 @@ public:
       // calculated value to see if it is valid.
       if ( evid == OBSERV_EVENT )
       {
-        // Make sure that the value is finite.
-        if ( isUnnormNumber( f_i_j ) )
+        // Make sure that the value is not a NaN.
+        if ( isNotANumber( f_i_j ) )
         {
+          string message = "The mean of the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record was Not a Number (NaN).";
+    
           throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "An infinite value was generated " + taskMessage ).c_str(),
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
             __LINE__,
             __FILE__ );
         }
     
-        // Make sure that the value is not a NaN.
-        if ( isNotANumber( f_i_j ) )
+        // Make sure that the value is finite.
+        //
+        // Note that this check is done after the NaN check because
+        // NaN's are unnormalized.
+        if ( isUnnormNumber( f_i_j ) )
         {
+          string message = "The mean of the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record was infinite.";
+    
           throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "A value that is Not a Number (NaN) was generated " + 
-              taskMessage ).c_str(),
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
             __LINE__,
             __FILE__ );
         }
@@ -867,10 +886,9 @@ public:
     // all of the data records for the current individual.
     for ( j = 0; j < nRecord; j++ )
     {
-      taskMessage = "during the evaluation of the intra-individual error model for the \n" + 
-        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record" + 
-        " for the " + intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
-        " individual.";
+      taskMessage = "during the evaluation of the intra-individual error for the \n" + 
+        intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+        intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record.";
 
       // Evaluate the PK, DES, and ERROR block expressions for this
       // data record.  The calculated value will be set if this data
@@ -994,23 +1012,33 @@ public:
       // calculated value to see if it is valid.
       if ( evid == OBSERV_EVENT )
       {
-        // Make sure that the value is finite.
-        if ( isUnnormNumber( y_i_j ) )
-        {
-          throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "An infinite value was generated " + taskMessage ).c_str(),
-            __LINE__,
-            __FILE__ );
-        }
-    
         // Make sure that the value is not a NaN.
         if ( isNotANumber( y_i_j ) )
         {
+          string message = "The intra-individual error for the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record \nwas Not a Number (NaN).";
+    
           throw SpkException(
-            SpkError::SPK_MODEL_DATA_MEAN_ERR,
-            ( "A value that is Not a Number (NaN) was generated " + 
-              taskMessage ).c_str(),
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+
+        // Make sure that the value is finite.
+        //
+        // Note that this check is done after the NaN check because
+        // NaN's are unnormalized.
+        if ( isUnnormNumber( y_i_j ) )
+        {
+          string message = "The intra-individual error for the " +
+            intToOrdinalString( i, ZERO_IS_FIRST_INT ) + " individual's " +
+            intToOrdinalString( j, ZERO_IS_FIRST_INT ) + " data record \nwas infinite.";
+    
+          throw SpkException(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            message.c_str(),
             __LINE__,
             __FILE__ );
         }
@@ -1392,6 +1420,13 @@ private:
   std::vector<Value> compAbsorpLagTime;    ///< Current absorption lag time for each compartment.
   std::vector<Value> compScaleParam;       ///< Current scale parameter for each compartment.
   std::vector<Value> compBioavailFrac;     ///< Current bio-availability for each compartment.
+
+  Value tNanOrInf;                         ///< Time for which an amount or time derivative is Not a Number (NaN) or infinite.
+
+  std::vector<bool> compIsAmountInf;       ///< Indicates if current compartment amount is infinite.
+  std::vector<bool> compIsAmountNan;       ///< Indicates if current compartment amount is Not a Number (NaN).
+  std::vector<bool> compIsAmount_tInf;     ///< Indicates if current compartment time derivative is infinite.
+  std::vector<bool> compIsAmount_tNan;     ///< Indicates if current compartment time derivative is Not a Number (NaN). 
 
   SPK_VA::valarray<bool> compInitialOff;   ///< Indicates which compartments are initially off.
   SPK_VA::valarray<bool> compNoOff;        ///< Indicates which compartments may not be turned on or off.
@@ -3043,6 +3078,45 @@ public:
       compAmount_tOut[m] *= fo;
     }
 
+
+    //----------------------------------------------------------
+    // Check for invalid compartment amounts or time derivatives.
+    //----------------------------------------------------------
+
+    bool isThereANanOrInf = false;
+
+    // Check the compartment amounts and time derivatives for elements
+    // that are infinite or are Not a Number (NaN).
+    for ( p = 0; p < nCompToSolve; p++ )
+    {
+      compIsAmountNan[p]   = isNotANumber( compAmount[p] );
+      compIsAmount_tNan[p] = isNotANumber( compAmount_t[p] );
+
+      // NaN's are also unnormalized, so only set the flags for
+      // infinite values when the values are not NaN.
+      compIsAmountInf[p]   = !compIsAmountNan[p]   && isUnnormNumber( compAmount[p] );
+      compIsAmount_tInf[p] = !compIsAmount_tNan[p] && isUnnormNumber( compAmount_t[p] );
+
+      isThereANanOrInf = isThereANanOrInf            ||  
+        compIsAmountInf[p]   || compIsAmountNan[p]   ||
+        compIsAmount_tInf[p] || compIsAmount_tNan[p];
+    }
+
+    // If an invalid value is found, then set the derivative's
+    // elements equal to 0/0, which evaluates to NaN, and which 
+    // will make the ODE integrator decrease its step size.
+    if ( isThereANanOrInf )
+    {
+      tNanOrInf = tCurr;
+
+      Value zero = Value( 0 );
+
+      for ( p = 0; p < nCompToSolve; p++ )
+      {
+        compAmount_tOut[p] = zero / zero;
+      }
+    }
+
   }
 
 
@@ -3092,6 +3166,16 @@ private:
       etaLen,
       iCurr,
       indepVar );
+
+    // Zero the compartment amounts and their derivatives to make sure
+    // there are no left over NaN's or infinite values from previous
+    // individuals' integrations.
+    int p;
+    for ( p = 0; p < nCompToSolve; p++ )
+    {
+      compAmount  [p] = Value( 0 );
+      compAmount_t[p] = Value( 0 );
+    }
 
 
     //----------------------------------------------------------
@@ -3159,11 +3243,125 @@ private:
     }
     catch( SpkException& e )
     {
-      throw e.push(
-        SpkError::SPK_UNKNOWN_ERR, 
-        ( "An error occurred " + message ).c_str(),
-        __LINE__,
-        __FILE__ );
+      // See if there was an error during the solution of the
+      // ODE's and that there were no standard errors.
+      if ( e.find( SpkError::SPK_ODE_SOLN_ERR ) >= 0 &&
+           e.find( SpkError::SPK_STD_ERR      ) <  0    )
+      {
+        ostringstream messageOSS;
+        int commaCounter;
+        int nCompBad;
+
+        // See if any amounts were infinite.
+        nCompBad = count( compIsAmountInf.begin(), compIsAmountInf.end(), true );
+        if ( nCompBad > 0 )
+        {
+          messageOSS.str( "" );
+          messageOSS << "The following compartments' amounts were infinite at time "
+                     << tNanOrInf << ": \n";
+          commaCounter = 0;
+          for ( p = 0; p < nCompToSolve; p++ )
+          {
+            if ( compIsAmountInf[p] )
+            {
+              messageOSS << p + 1 << ( commaCounter++ < nCompBad - 1 ? ", " : "" );
+            }
+          }
+          messageOSS << ".";
+
+          e.push(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            messageOSS.str().c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+
+        // See if any amounts were Nan's.
+        nCompBad = count( compIsAmountNan.begin(), compIsAmountNan.end(), true );
+        if ( nCompBad > 0 )
+        {
+          messageOSS.str( "" );
+          messageOSS << "The following compartments' amounts were Not a Number (NaN) at time "
+                     << tNanOrInf << ": \n";
+          commaCounter = 0;
+          for ( p = 0; p < nCompToSolve; p++ )
+          {
+            if ( compIsAmountNan[p] )
+            {
+              messageOSS << p + 1 << ( commaCounter++ < nCompBad - 1 ? ", " : "" );
+            }
+          }
+          messageOSS << ".";
+
+          e.push(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            messageOSS.str().c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+
+        // See if any time derivatives were infinite.
+        nCompBad = count( compIsAmount_tInf.begin(), compIsAmount_tInf.end(), true );
+        if ( nCompBad > 0 )
+        {
+          messageOSS.str( "" );
+          messageOSS << "The following compartments' time derivatives were infinite at time "
+                     << tNanOrInf << ": \n";
+          commaCounter = 0;
+          for ( p = 0; p < nCompToSolve; p++ )
+          {
+            if ( compIsAmount_tInf[p] )
+            {
+              messageOSS << p + 1 << ( commaCounter++ < nCompBad - 1 ? ", " : "" );
+            }
+          }
+          messageOSS << ".";
+
+          e.push(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            messageOSS.str().c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+
+        // See if any time derivatives were Nan's.
+        nCompBad = count( compIsAmount_tNan.begin(), compIsAmount_tNan.end(), true );
+        if ( nCompBad > 0 )
+        {
+          messageOSS.str( "" );
+          messageOSS << "The following compartments' time derivatives were Not a Number (NaN) \nat time "
+                     << tNanOrInf << ":  ";
+          commaCounter = 0;
+          for ( p = 0; p < nCompToSolve; p++ )
+          {
+            if ( compIsAmount_tNan[p] )
+            {
+              messageOSS << p + 1 << ( commaCounter++ < nCompBad - 1 ? ", " : "" );
+            }
+          }
+          messageOSS << ".";
+
+          e.push(
+            SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR,
+            messageOSS.str().c_str(),
+            __LINE__,
+            __FILE__ );
+        }
+
+        throw e.push(
+          SpkError::SPK_UNKNOWN_ERR, 
+          ( "An error occurred " + message ).c_str(),
+          __LINE__,
+          __FILE__ );
+      }
+      else
+      {
+        throw e.push(
+          SpkError::SPK_UNKNOWN_ERR, 
+          ( "An error occurred " + message ).c_str(),
+          __LINE__,
+          __FILE__ );
+      }
     }
     catch( const std::exception& stde )
     {
@@ -3192,7 +3390,6 @@ private:
     // to be set.
     if ( !isOutputCompUsed )
     {
-      int p;
       int s;
 
       // Copy all of the compartment values except the output

@@ -66,6 +66,8 @@ private:
   void OneExpF_AdditivePlusThetaDepY_dataVariance_Test();
   void OneExpF_AdditivePlusThetaDepY_dataVarianceInv_Test();
   void OneExpF_AdditivePlusThetaDepY_mapObj_Test();
+
+  void RailExample_OptimizerBackup_Test();
 };
 
 #endif

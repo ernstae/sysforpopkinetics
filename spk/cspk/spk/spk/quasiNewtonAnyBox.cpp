@@ -769,21 +769,15 @@ namespace // [Begin: unnamed namespace]
       }
 
       // Make sure that the objective function value is not a Nan.
+      //
+      // Note that infinite objective function values are allowed
+      // because they can be returned by the objective function to
+      // indicate that QuasiNewton01Box should back up.
       if ( isNotANumber( fScaledOut ) )
       {
         throw SpkException(
           SpkError::SPK_OPT_ERR, 
           "A value that is Not a Number (NaN) was generated for the objective function.",
-          __LINE__,
-          __FILE__ );
-      }
-
-      // Make sure that the objective function value is finite.
-      if ( isUnnormNumber( fScaledOut ) )
-      {
-        throw SpkException(
-          SpkError::SPK_OPT_ERR, 
-          "An infinite value was generated for the objective function.",
           __LINE__,
           __FILE__ );
       }
@@ -1153,13 +1147,13 @@ void quasiNewtonAnyBox(
   }
 
   // Throw an exception if the initial value for the objective
-  // function is equal to positive infinity, which is a special value
-  // used to indicate to the optimizer that it should try to back up.
+  // function is equal to infinity because QuasiNewtonAnyBox cannot
+  // back up in this case.
   if ( fScaled == QN01Box::PlusInfinity( double( 0 ) ) )
   {
     throw SpkException(
       SpkError::SPK_OPT_ERR, 
-      "The initial value for the objective function was equal to plus infinity.",
+      "The initial value for the objective function was equal to infinity.",
       __LINE__,
       __FILE__ );
   }

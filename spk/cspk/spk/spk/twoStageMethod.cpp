@@ -234,8 +234,6 @@ $syntax/
 /$$
 This function expects $italic model$$ to be a function of
 two parameters: $math%b%$$ and $math%i%$$.
-Refer $xref/glossary/Model Functions Depend on i - b/Model Functions Depend on i - b/$$
-for details.
 
 $syntax/
 

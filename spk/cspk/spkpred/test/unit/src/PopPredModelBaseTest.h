@@ -63,6 +63,8 @@ public:
 private:
   // Test cases for this unit test.
   void OneExpF_OneBolus_ObservAtBolusTime_AdditivePlusThetaDepY_dataMean_Test();
+
+  void RailExample_OptimizerBackup_Test();
 };
 
 #endif

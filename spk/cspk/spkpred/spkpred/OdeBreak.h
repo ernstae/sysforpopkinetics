@@ -368,7 +368,9 @@ $end
 # include <CppAD/OdeErrControl.h>
 # include <CppAD/Runge45.h>
 # include <CppAD/Rosen34.h>
+# include <sstream>
 # include <cmath>
+# include <spk/isNotANumber.h>
 # include <spk/SpkException.h>
 # include <spk/WarningsManager.h>
 
@@ -681,6 +683,22 @@ void OdeBreak(
 				maxnext
 			);
 
+			// check first element of xnext to see if it's Not a 
+			// Number (NaN) since OdeErrControl will set xnext and
+			// enext equal to NaN's if it cannot find a step size
+			// that will allow the ODE's to be integrated successfully
+			if( isNotANumber( xnext[0] ) )
+			  {	std::ostringstream messageOSS;
+				messageOSS << "The ordinary differential equations (ODE's) could not be solved for \ntime values from " 
+					   << t << " to " << tnext << ".";
+				throw SpkException(
+					SpkError::SPK_ODE_SOLN_ERR,
+					messageOSS.str().c_str(),
+					__LINE__,
+					__FILE__
+				);
+			}
+
 			// check if error criteria is satisfied at time tnext
 			bool shrink = false;
 			ok          = true;
@@ -708,7 +726,7 @@ void OdeBreak(
 			if( !( ok | shrink ) )
 			{	ok      = true;
 				message =
-				"The ordinary differential equation (ODE) solver could not obtain the desired accuracy.";
+				"The ordinary differential equations (ODE's) were solved but not to the desired accuracy.";
 				if( ! OdeBreakWarning )
 				{	std::cout << message << std::endl;	
 					WarningsManager::addWarning( message, __LINE__, __FILE__);

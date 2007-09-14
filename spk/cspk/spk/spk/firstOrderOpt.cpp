@@ -537,7 +537,10 @@ $end
 # include "Optimizer.h"
 # include "cppad/cppad.hpp"
 # include "mapOpt.h"
+# include "WarningsManager.h"
 
+// SPK optimizer header files.
+#include <QN01Box/QuasiNewton01Box.h>
 
 # define SPK_PROGRAMMER_ERROR(msg)                \
 	throw SpkException(                       \
@@ -563,6 +566,10 @@ private:
 	std::valarray<double>             alpha_valarray_;
 	// offset corresponding to each individuals data
 	std::valarray<int>                offset_; 
+	Optimizer*                        pAlpOptInfo_;
+public:
+	static int                        nBackupMessage_;
+private:
 
 
 	// private version of objective function used with double or AD<double>
@@ -654,13 +661,15 @@ public:
 	Y_(dvecY.data()),
 	bStep_(dvecBStep.data()),
 	alpha_valarray_(m_),
-	offset_(M_)
+	offset_(M_),
+	pAlpOptInfo_( &alpOptInfo )
 	{	// give the optimizer a pointer to this objective evaluator
 		alpOptInfo.setObjFunc( this );
 		int i;
 		offset_[0] = 0;
 		for(i = 1; i < M_; i++)
 			offset_[i] = offset_[i-1] + int( N_[i-1] );
+
 	}
 	// objective function
 	virtual void function(const DoubleMatrix &alpha, double *Ltilde)
@@ -672,9 +681,47 @@ public:
 		*Ltilde = 0;
 		for(j = 0; j < m_; j++)
 			alpha_valarray_[j] = *(alpha.data() + j);
-		for(i = 0; i < M_; i++)
-		{	function(i, alpha_valarray_, &Ltilde_i, model_);
-			*Ltilde += Ltilde_i;
+		try
+		{
+			for(i = 0; i < M_; i++)
+			{	function(i, alpha_valarray_, &Ltilde_i, model_);
+				*Ltilde += Ltilde_i;
+			}
+		}
+		catch( SpkException& e )
+		{
+			// See if the evaluation of the data mean
+			// resulted in Not a Number (NaN) or infinity
+			// and if there were no standard errors.
+			if ( e.find( SpkError::SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR ) >= 0  &&
+			     e.find( SpkError::SPK_STD_ERR )                        <  0 )
+			{
+				// Issue a warning message if one hasn't been issued.
+				if ( nBackupMessage_ == 0 )
+				{
+					WarningsManager::addWarning(
+					"Backed up population optimization because an individual's data mean could \nnot be calculated for a particular value of the population parameters.",
+					__LINE__,
+					__FILE__ );
+				}
+
+				// Set the population objective value that indicates
+				// to the population optimizer that it should back up.
+				*Ltilde = QN01Box::PlusInfinity( double( 0 ) );
+
+				// Increment this to indicate this objective has backed up.
+				nBackupMessage_++;
+
+				return;
+			}
+			else
+			{
+				throw e.push(
+					SpkError::SPK_OPT_ERR, 
+					"The population objective function could not be calculated.",
+					__LINE__, 
+					__FILE__ );
+			}
 		}
 		return;
 	}
@@ -703,7 +750,22 @@ public:
 		for(i = 0; i < M_; i++)
 		{	CppAD::Independent(alpha_valarray);
 			Scalar obj_i;
-			function(i, alpha_valarray, &obj_i, adModel_);
+			try
+			{
+				function(i, alpha_valarray, &obj_i, adModel_);
+			}
+			catch( ... )
+			{
+				// If any exceptions occur, then stop the taping by calling
+				// Dependent, which is faster in this case than using the ADFun
+				// constructor as is done below.
+				Ltilde_i[0] = obj_i;
+				CppAD::ADFun<double> FTemp;
+				FTemp.Dependent(alpha_valarray, Ltilde_i);
+
+				// Rethrow the exception that was originally thrown.
+				throw;
+			}
 			Ltilde_i[0] = obj_i;
 			CppAD::ADFun<double> F(alpha_valarray, Ltilde_i);
 			weight[0] = 1.;
@@ -744,7 +806,22 @@ public:
 		for(i = 0; i < M_; i++)
 		{	CppAD::Independent(alpha_valarray);
 			Scalar obj_i;
-			function(i, alpha_valarray, &obj_i, adModel_);
+			try
+			{
+				function(i, alpha_valarray, &obj_i, adModel_);
+			}
+			catch( ... )
+			{
+				// If any exceptions occur, then stop the taping by calling
+				// Dependent, which is faster in this case than using the ADFun
+				// constructor as is done below.
+				Ltilde_i[0] = obj_i;
+				CppAD::ADFun<double> FTemp;
+				FTemp.Dependent(alpha_valarray, Ltilde_i);
+
+				// Rethrow the exception that was originally thrown.
+				throw;
+			}
 			Ltilde_i[0] = obj_i;
 			F.Dependent(alpha_valarray, Ltilde_i);
 			Ltilde_alp_alp_i = F.Hessian(alpha_valarray_, 0);
@@ -755,6 +832,8 @@ public:
 		return;
 	}
 };
+
+int FirstOrderObj::nBackupMessage_ = 0;
 
 void firstOrderOpt(
               SpkModel<double>&              model                      ,
@@ -798,6 +877,8 @@ void firstOrderOpt(
 	// A temporary column vector for holding the estimate for alp
 	DoubleMatrix dvecAlpOut(m, 1);
 
+	FirstOrderObj::nBackupMessage_ = 0;
+
 	// function objective
 	FirstOrderObj objective( 
 		model      ,
@@ -824,25 +905,24 @@ void firstOrderOpt(
 			0
 		);
 	}
-	catch( SpkException& e)
-	{	msg = "firstOrderOpt: fixed effects optimization "
-		      "known exception.";
+	catch( SpkException& e )
+	{
 		throw e.push(
 			SpkError::SPK_OPT_ERR,
-			msg                  ,
-			__LINE__             ,
-			__FILE__
-		);
+			"Population level optimization failed.", 
+			__LINE__, __FILE__);
 	}
-	catch ( ... )
-	{	msg = "firstOrderOpt: fixed effects optimization "
-		      "unknown exception.";
-		throw SpkException(
-			SpkError::SPK_UNKNOWN_OPT_ERR,
-			msg                          ,
-			__LINE__                     ,
-			__FILE__
-		);
+	catch( const std::exception& e )
+	{
+		throw SpkException(e,
+			"A standard exception was thrown during the population level optimization.", 
+			__LINE__, __FILE__);
+	}
+	catch( ... )
+	{
+		throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
+			"An exception of unknown type was thrown during the population level optimization.", 
+			__LINE__, __FILE__);
 	}
 	// fixed effects
 	if( pvecAlpOut )
@@ -901,25 +981,24 @@ void firstOrderOpt(
 					withD            
 				);
 			}
-			catch( SpkException& e)
-			{	msg = "firstOrderOpt: random effects "
-				      "optimization known exception.";
+			catch( SpkException& e )
+			{
 				throw e.push(
 					SpkError::SPK_OPT_ERR,
-					msg                  ,
-					__LINE__             ,
-					__FILE__
-				);
+					"Individual level optimization failed.",
+					__LINE__, __FILE__);
 			}
-			catch ( ... )
-			{	msg = "firstOrderOpt: random effects "
-				      "optimization unknown exception.";
-				throw SpkException(
-					SpkError::SPK_UNKNOWN_OPT_ERR,
-					msg                          ,
-					__LINE__                     ,
-					__FILE__
-				);
+			catch( const std::exception& e )
+			{
+				throw SpkException(e,
+					"A standard exception was thrown during the individual level optimization.", 
+					__LINE__, __FILE__);
+			}
+			catch( ... )
+			{
+				throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
+					"An exception of unknown type was thrown during the individual level optimization.", 
+					__LINE__, __FILE__);
 			}
 			double *bmatOut  = pmatBOut->data();
 			double *bOut     = dvecBOut.data();
