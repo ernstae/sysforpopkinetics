@@ -25,10 +25,8 @@ genericDriver_SOURCES = \
 genericDriver_LDFLAGS = \
 	-L/usr/local/lib/spktest \
 	-L$(top_builddir)/spk \
-	-L$(INST_BASE)/include/spktest/CppAD \
 	-lspk \
 	-lQN01Box \
- 	-lCppAD \
 	-llapack \
 	-latlas_lapack \
 	-lcblas \
