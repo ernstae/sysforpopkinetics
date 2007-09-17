@@ -1,0 +1,109 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin ParallelExecution$$
+
+$spell
+   spk exe sachiko ok dir ie ind
+   invokation
+   cpp
+$$
+
+$section Running Master/Node$$
+
+$index Parallel, Running SPK in Parallel Mode$$
+$index Parallel, How to run master$$
+$index Parallel, How to run Node$$
+$index Parallel, Which master or Node should go first$$
+
+$head Description$$
+First you need a driver that can run as both Master and Node, depending on the user's request.
+See $xref/ParallelDriver//Parallel-enabled Driver/$$ for details on how to write such a driver.
+$pre
+
+$$
+The basic idea is to run the same executable as Master or Node(s) on different machines
+on SPK Parallel Network.  You may copy the executable for each Participant or
+place the executable in a directory where all Participants can access (read).
+This directory 
+must be absolutely different from Shared Directory used for Master - Node(s) communication;
+otherwise the driver or any other contents may be erased immediately after the Master-Node communication begins!
+$pre
+
+$$
+The order in which Master and Node(s) can be arbitrary.  If a Node is started first, 
+the Node sits and waits until Master starts (i.e. placing a unique file in Shared Directory).
+In fact, the Node may jump in or drop out of computation anytime during the computation. 
+Master would be running with a sub-process started by Master itself on Master machine behind the scene
+in order to assure the computation makes progress even if no explicit Node participates and
+to handle sudden Node drops (therefore computational result losses) properly.
+$pre
+
+$$
+At the end of a parallel computation, Mater puts a special file indicating the end of communication
+in order to terminate all Nodes.  Master does not clean up this file during its current execution life cycle.
+
+$head Example$$
+Using the example ($italic MyParallelDriver.cpp$$) in $xref/ParallelDriver/Example/Parallel-enabled Driver/$$, this is how you 
+do:
+$pre
+
+$$
+1. Share a directory on a machine $italic MyMachine$$ on the network as $italic MyShared$$.
+$pre
+
+$$
+2. Share another directory on $italic MyMachine$$ as $italic DriverPlace$$.
+$pre
+
+$$
+3. Build $italic MyParallelDriver.exe$$ off $italic MyParallelDriver.cpp$$.
+$pre
+
+$$
+4. Place $italic MyParallelDriver.exe$$ in $italic MyShared$$.
+$pre
+
+$$
+5. Type from DOS on $italic MyMachine$$:
+$codep      
+        MyParallelDriver \\MyMachine\MyShared\ master
+$$
+6. Walk to another machine, say $italic YourMachine$$.  Locate $italic MyShared$$ on $italic MyMachine$$ in
+Windows Explorer.  Map a network drive, say $italic Z:$$ to the shared directory.
+$pre
+
+$$
+7. Open a DOS prompt on $italic YourMachine$$.  Change directory to $italic Z:\$$ and type:
+$codep
+        MyParallelDriver \\MyMachine\MyShared\ node
+$$
+8. The communication begins.  At the end of computation, the Node displays a message
+indicating it has detected the end of the transaction.  Master displays something similar.
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end

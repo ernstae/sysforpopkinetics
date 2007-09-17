@@ -1,0 +1,178 @@
+$begin NonmemPars$$
+$spell
+	Eps
+	enum
+	Spk
+	cov
+	Nonmem
+	namespace
+	valarray
+	std
+	const
+	Struct
+$$
+
+$section The Nonmem Parameter Include File$$
+
+$table
+$bold Syntax$$
+$cnext 
+$code # include "NonmemPars.h"$$
+$rnext $cnext 
+$code using namespace NonmemPars;$$
+$tend
+
+$fend 20$$
+
+$head Name Space$$
+All of the variables listed below are in the $code NonmemPars$$ namespace
+and are defined by including the file $code NonmemPars.h$$.
+In addition, the template class $code valarray$$ is a shorthand notation
+used for $code std::valarray$$. 
+
+$head Theta$$
+
+$subhead nTheta$$
+$index nTheta$$
+The variable 
+$codep
+	const int nTheta
+$$
+specifies the number of explicit fixed effects in the model.
+
+$subhead thetaLow$$
+The variable 
+$codep
+	const valarray<double> thetaLow
+$$
+has size equal to $code nTheta$$
+and specifies the lower limit for each of the explicit fixed effects.
+
+$subhead thetaUp$$
+The variable 
+$codep
+	const valarray<double> thetaUp
+$$
+has size equal to $code nTheta$$
+and specifies the upper limit for each of the explicit fixed effects.
+
+$subhead thetaIn$$
+The variable 
+$codep
+	const valarray<double> thetaIn
+$$
+has size equal to $code nTheta$$
+and specifies the value for the explicit fixed effects.
+
+$head Eta$$
+
+$subhead nEta, n$$
+The variable
+$codep
+	const int nEta
+$$
+specifies $latex n$$, the number of random effects in the model.
+
+$subhead etaIn$$
+The variable
+$codep
+	const valarray<double> etaIn;
+$$
+has size equal to $latex n$$
+and specifies an initial value for the random effects.
+
+$subhead omegaStruct$$
+The variable
+$syntax%
+	const enum %MonteSpkModel%::covStruct omegaStruct
+%$$
+specifies if the random effects the covariance matrix is diagonal.
+It is either equal to
+$syntax%%MonteSpkModel%::DIAGONAL%$$,
+or
+$syntax%%MonteSpkModel%::FULL%$$.
+
+$subhead omegaIn$$
+The variable
+$codep
+	const valarray<double> omegaIn;
+$$
+specifies the value of the random effects covariance matrix 
+$latex \Omega \in \R^{n \times n}$$.
+If the random effects covariance is diagonal, this is a vector
+with size equal to $code n$$ and its components are
+$latex \Omega_{1,1}$$,  
+... ,
+$latex \Omega_{n,n}$$ in that order.
+If the random effects covariance is full, this is a vector with
+size equal to $latex n * (n + 1) / 2$$ and 
+its components are
+$latex \Omega_{1,1}$$,  
+$latex \Omega_{2,1}$$,  
+$latex \Omega_{2,2}$$,  
+$latex \Omega_{3,1}$$,  
+... ,
+$latex \Omega_{n,n}$$ in that order.
+
+$subhead omegaOrder$$
+The variable
+$codep
+	const int omegaOrder;
+$$
+is equal to $code omegaIn.size()$$; i.e.,
+the number of elements necessary to represent the 
+Omega matrix.
+
+$head Eps$$
+
+$subhead nEps, s$$
+The variable
+$codep
+	const int nEps
+$$
+specifies $latex s$$
+the number of components in the measurement error covariance.
+
+$subhead sigmaStruct$$
+The variable
+$syntax%
+	const enum %MonteSpkModel%::covStruct sigmaStruct
+%$$
+specifies if the measurement error covariance matrix is diagonal.
+It is either equal to
+$syntax%%MonteSpkModel%::DIAGONAL%$$,
+or
+$syntax%%MonteSpkModel%::FULL%$$.
+
+$subhead sigmaIn$$
+The variable
+$codep
+	const valarray<double> sigmaIn;
+$$
+specifies the value of the measurement error covariance matrix 
+$latex \Sigma \in \R^{s \times s}$$.
+If the covariance is diagonal, this is a vector
+with size equal to $latex s$$ and its components are
+$latex \Sigma_{1,1}$$,  
+... ,
+$latex \Sigma_{s,s}$$ in that order.
+If the random effects covariance is full, this is a vector with
+size equal to $latex s * (s + 1) / 2$$ and 
+its components are
+$latex \Sigma_{1,1}$$,  
+$latex \Sigma_{2,1}$$,  
+$latex \Sigma_{2,2}$$,  
+$latex \Sigma_{3,1}$$,  
+... ,
+$latex \Sigma_{s,s}$$ in that order.
+
+$subhead sigmaOrder$$
+The variable
+$codep
+	const int sigmaOrder;
+$$
+is equal to $code sigmaIn.size()$$; i.e.,
+the number of elements necessary to represent the 
+Sigma matrix.
+
+$end

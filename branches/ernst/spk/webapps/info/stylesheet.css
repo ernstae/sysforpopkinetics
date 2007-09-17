@@ -1,0 +1,37 @@
+.quick {
+	font-style: italic; font-weight: 600
+}	
+a:active {
+	color: #cc3333;
+}
+a:link {
+	color: #336699;
+}
+a:visited {
+	color: #336699;
+}		
+h1 {
+	font-family: Arial, Helvitica, sans-serif;
+	font-size: 20pt
+}
+h2 {
+	font-family: Arial, Helvitica, sans-serif;
+	font-size: 18pt
+}
+h3 {
+	font-family: Arial, Helvitica, sans-serif;
+	font-size: 16pt
+}
+h4 {
+	font-family: Arial, Helvitica, sans-serif;
+	font-size: 14pt
+}
+p { 
+	font-family: "Times New Roman", Times, serif
+	font-size: 12pt
+}
+}
+p.strong {
+	color: #336699 
+	fontweight: 500
+}

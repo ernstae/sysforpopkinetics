@@ -1,0 +1,21 @@
+The notices directory contains the licensing "boiler-plate" that
+should start each source file.  It contains the following:
+
+notice.c	: preamble for source file in c
+notice.cpp	: preamble for source file in c++
+notice.java	: preamble for source file in java
+notice.pl	: preamble for source file in perl
+notice.sh	: preamble for source file in Bourne/Bash shell
+
+Do not edit any of the files listed above.
+
+Instead, edit notice.txt, then run the shell script,
+mknotices.sh to generate the others.
+
+Similarly, only 
+
+	README
+	notice.txt
+	mknotices.sh
+
+should be in CVS.

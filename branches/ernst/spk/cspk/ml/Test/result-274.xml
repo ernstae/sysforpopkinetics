@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<spkreport>
+<error_list>
+</error_list>
+<pop_monte_result elapsedtime="28" method="miser" number_eval="1000" >
+    <column_major name="alpha_center" nrows="3" ncols="1" >
+        <column>
+            <value>
+                0.977013
+            </value>
+            <value>
+                0.0560881
+            </value>
+            <value>
+                -2.23376
+            </value>
+        </column>
+    </column_major>
+    <column_major name="alpha_step" nrows="3" ncols="1" >
+        <column>
+            <value>
+                0.4
+            </value>
+            <value>
+                0.0921034
+            </value>
+            <value>
+                0.0921034
+            </value>
+        </column>
+    </column_major>
+    <row_major name="obj_value" nrows="3" ncols="3" >
+        <row>
+            <value>
+                73.2578
+            </value>
+            <value>
+                66.289
+            </value>
+            <value>
+                74.7
+            </value>
+        </row>
+        <row>
+            <value>
+                67.1561
+            </value>
+            <value>
+                66.289
+            </value>
+            <value>
+                67.0805
+            </value>
+        </row>
+        <row>
+            <value>
+                67.1229
+            </value>
+            <value>
+                66.289
+            </value>
+            <value>
+                67.0718
+            </value>
+        </row>
+    </row_major>
+    <row_major name="obj_std" nrows="3" ncols="3" >
+        <row>
+            <value>
+                0.0755688
+            </value>
+            <value>
+                0.0685814
+            </value>
+            <value>
+                0.080264
+            </value>
+        </row>
+        <row>
+            <value>
+                0.0680528
+            </value>
+            <value>
+                0.0685814
+            </value>
+            <value>
+                0.068215
+            </value>
+        </row>
+        <row>
+            <value>
+                0.0779206
+            </value>
+            <value>
+                0.0685814
+            </value>
+            <value>
+                0.0698434
+            </value>
+        </row>
+    </row_major>
+</pop_monte_result>
+</spkreport>

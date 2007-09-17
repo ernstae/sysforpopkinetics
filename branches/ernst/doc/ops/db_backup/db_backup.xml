@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>SPK Operations Procedure: Database Backup</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>May 27, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	The operations of SPK depends on three relational databases, only two
+	of which need to be backed up on a regular basis.
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      spkdb -- the production SPK database, which resides on 
+	      the aspkserver..
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      bugs -- the bugzilla database, which resides on the 
+	      bugserver.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      spktest -- the SPK test database, which resides on aspkserver.
+	      This database is not backup up, because it is used only for 
+	      test.
+	    </para>
+	  </listitem>
+	</orderedlist>
+	This document describes the procedure currently in use to backup 
+	these databases.  Whenever there is a change in practice, 
+	it is imperative that this document be updated. 
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Spkdb</title>
+    <para>
+      Spkdb resides on aspkserver (see server 
+      <link linkend="server-ip">IP address assignments</link>). This database
+      contains the tables which make SPK work together as a system. In managing
+      this database, we have the following principal goals:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    Consistency. If there is a failure, the database must be restore
+	    to a consistent state with respect to all relationships between
+	    tables.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Transactions must not be lost. In this regard, the tranaction which
+	    will have the greatest affect upon the user is that which creates
+	    a new job.  Other transactions are committed by daemons, which are
+	    programs which 
+	  </para>
+	</listitem>
+      </itemizedlist>
+      
+    </para>
+  </sect1>
+  <sect1>
+    <title id="server-ip">Server IP Address Assignments</title>
+    <para>
+      192.168.1.2 -- aspkserver (hostname whitechuck)
+    </para>
+    <para>
+      192.168.2.3 -- bugserver  (hostname bugserver)
+    </para>
+  </sect1>
+</article>

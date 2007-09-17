@@ -1,0 +1,400 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" 
+[ <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Backup</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>April 22, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>January 2, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Relative to RHEL Version 3</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>May 11, 2005</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Added new sections on tape backup and restore.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+    <para>
+	The installation of a simple method to back up 
+	workstations to a remote server (the host whitechuck)
+	is described.
+    </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Weekly Full Backup of Whitechuck</title>
+    <sect2>
+      <title>Introduction</title>
+      <para>
+	Late each Saturday night, a full tape backup of whitechuck is initiated.
+	It takes at least six hours. This section describes the process.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Tape Cycle</title>
+      <para>
+	At present (May, 2005), a cycle of four tapes is used.  One tape 
+	should always be in the tape drive.  Two tapes should always be 
+	at an off-site location.  The fourth tape is usually brought to
+	the lab sometime during the week, so that it can replace the
+	tape in the drive the following Monday.
+      </para>
+      <para>
+	Use only DLT IV tapes.  There are some DLT III tapes in the 
+	server area, but they do not have sufficient capacity.
+      </para>
+      <para>
+	The tapes are numbered one through four.  They are used in the
+	normal cyclic order.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Tape Drive Maintenance</title>
+      <para>
+	The only maintenance that we can perform on the tape drive is
+	the occasional use of a cleaning tape.  We do not have a DLT IV
+	cleaning tape.  Use the one that is marked DLT III.  Simply
+	insert the cleaning tape in the drive.  The drive will sense it,
+	use it for a few seconds to clean its heads, then eject it.
+      </para>
+      <para>
+	Use the cleaning tape about once a quarter, or if a lot of errors
+	are reported during backup.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Tape Backup Software</title>
+      <para>
+	We use a proprietary software package, called the
+	<emphasis>backup & restore utility</emphasis> (bru) to back up 
+	whitechuck to tape. We use the desktop version 17.0, because it is
+	both inexpensive and adequate for our purposes.
+	The more expensive versions can back up multiple
+	computers over the network.  We accomplish the same thing by
+	having file systems on webserver and cspkserver mounted on 
+	whitechuck, using NFS.
+      </para>
+      <para>
+	Bru can be easily reinstalled from CDROM, if necessary.  The 
+	installation wizard will ask for the <emphasis>license data</emphasis>
+	and the <emphasis>license key</emphasis>.  These are printed on a
+	label in the license brochure which should be kept in the box
+	that contains the CDROM.  Be sure to install both bru and the
+	graphical interface, called xbru.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Scheduling the Backup</title>
+      <para>
+	After reinstallation, or if it becomes necessary to change
+	the schedule, the graphical interface, xbru, can be used to
+	schedule a full backup, either one time or recurring.
+	At present (May, 2005), we choose to full backup once a week,
+	on Saturday at 10 PM.
+      </para>
+      <para>
+	Select the option which overwrites any data already on the tape.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Switch Tapes and Examine the Execution Log</title>
+      <para>
+	Early in the week, preferably Monday morning, the backup administrator
+	should remove the tape from the drive and replace it with the next in 
+	the cycle.  To remove the tape, log into whitechuck from the 
+	shared keyboard, video monitor and mouse in the server area, then
+	input the following in a terminal window:
+	<screen>
+su -
+mt -f /dev/nst0 eject
+	</screen>
+      </para>
+      <para>
+	After the tape ejects, remove it from the drive and replace it
+	with the next tape.  The drive will take a minute or two to
+	read the header information and position the tape.
+      </para>
+      <para>
+	During the time that the new tape is settling in, run xbru and
+	use it to examine the execution log.  You should see three entries,
+	each of which will include a count of errors and warnings.  There
+	should be no errors and at most a few warnings.  If this is not
+	the case, you will need to initiate a one-time full backup.
+      </para>
+      <para>
+	In addition to checking for errors, verify that the total elapsed
+	time for the backup is not becoming excessive.  At present
+	(May 2005), the backup takes about six hours.  If this time
+	becomes longer, it probably means that there is more data being
+	backed up.  At some point, the amount of data may exceed the 
+	capacity of the tape.  One reason for a rapidly growing amount
+	of data is the inclusion in one of the developer home directories
+	of a file hierarchy which does not really need to be backed up,
+	because it is not changing. If that is the case, ask the developer
+	to move that data out of his or her home directory.
+      </para>
+      <para>
+	After the tapes have been switched and the backup log verified, 
+	the tape that was removed should be taken off site.  It has
+	been recent practice for the backup administrator to simply take
+	the tape home at night, and to bring the tape that precedes it
+	in the cycle to work in the morning.  For example, if the recent
+	backup was on tape one, then tape four precedes it in the cycle,
+	and is the one that should be taken back to work so that it is
+	available on the following Monday.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Restoring Files from a Backup Tape</title>
+    <para>
+      Occasionally it becomes necessary to restore one or more files.
+      This is easy to do, with the assistance of xbru.
+      Here are some steps to follow:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Cause the tape currently in the drive to eject:
+	<screen>
+su -
+mt -f /dev/nst0 eject
+	</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Insert into the drive the tape most likely to contain a copy of the file
+	    to be restored.  Wait until repositioning activity stops.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Start xbru in your root terminal window:
+	    <screen>
+xbru &
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Click the <guibutton>Restore</guibutton> button.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Xbru will read a hierarchical list of all directories and files on
+	    the tape.  This can take quite a while.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Eventually the hierarchy will appear in the left half of the
+	    window.  From that hierarchy, highlight directories and files
+	    that you want to restore and click the <guibutton>Add</guibutton>
+	    button to copy their names to the right half of the screen.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Open up the <guimenuitem>options</guimenuitem> screen,
+	    and decide whether you want data
+	    from the tape to always overwrite data on disk, or only if the data
+	    on the tape is the same age or newer than that on disk.  Also
+	    decide whether you want the data to be copied right into
+	    its old place on disk, or just copied into a subdirectory 
+	    for later disposition.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Click the <guibutton>Restore</guibutton> button, to start the
+	    copying from tape to disk.  This may take quite a while.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    When the copying is complete, a <guibutton>Done</guibutton>
+	    button will appear.  Click it.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Before closing the xbru window, verify that you have what you
+	    want.  You can press <guibutton>Restore</guibutton> again,
+	    and this time you will not have to wait for the hierarchy list to
+	    be created.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    When you are satisfied, or resigned to the fact that the
+	    files that you want are not on the tape, close the Xbru 
+	    window.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Cause the tape to eject, and replace it with the tape to be
+	    used for the next scheduled backup.  <emphasis>This
+	    is important!</emphasis>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Daily Backup of Software Developers' Home Directories</title>
+    <sect2>
+      <title>Introduction</title>
+      <para>
+	This section shows how to set up a process which automatically copies
+	a developer's home directory on her workstation to a subdirectory of her
+	home directory on whitechuck, after each work day.  The copies on 
+	whitechuck are retained for eight days.  Everything on whitechuck, 
+	including these workstation backup files, is backed up to tape once a
+	week.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Prerequisites</title>
+      <para>
+	Before attempting this installation, you should already have
+	followed the installation processes in the following RFPK
+	HOWTO documents:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      SSH Configuration HOWTO
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Electronic Notification HOWTO
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Install the Shell Scripts</title>
+      <para>
+	In a shell window, issue the following commands:
+	<screen format="linespecific">
+	  cd
+	  mkdir bin
+	  cd bin
+	  scp whitechuck:/opt/download/shell.tgz .
+	  tar xvzf shell.tgz
+	  rm shell.tgz
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Set Up get-agent-data To Run at Startup</title>
+      <para>
+	One of the scripts that you installed in the previous section
+	must be run by the Gnome desktop at startup, after the running
+	of <command moreinfo="none">ssh-add</command>.  The script,
+	named <command moreinfo="none">get-agent-data</command>, 
+	writes variable assignment statements (in shell script language) for
+	the environment variables that have just been set by 
+	<command moreinfo="none">ssh-agent</command> to a file, so that
+	they can later be read by other shell scripts running under the
+	cron batch scheduler.  
+      </para>
+      <para>
+	Perform the following menu sequence:
+	<screen format="linespecific">
+	  <guimenu moreinfo="none">Main</guimenu> => <guimenu moreinfo="none">Extras</guimenu> => <guimenu moreinfo="none">Preferences</guimenu> => <guimenuitem moreinfo="none">Sessions</guimenuitem> => left-click
+	</screen>
+	This will open the <interface moreinfo="none">Sessions</interface>
+	window.  Press the 
+	<guibutton moreinfo="none">Startup Programs</guibutton> button
+	followed by
+	the <guibutton moreinfo="none">Add</guibutton> button.  Then
+	set the following variables:
+	<screen format="linespecific">
+	  Startup Command: /home/<emphasis>username</emphasis>/bin/shell/get-agent-data
+	  Priority: 75
+	</screen>
+	where <emphasis>username</emphasis> is your username.
+	Close the window by pressing the
+	<guibutton moreinfo="none">OK</guibutton> button.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Edit Your Crontab</title>
+      <para>
+	The <command moreinfo="none">crontab -e</command> command will
+	open up an editor window, so that you can edit your 
+	<filename moreinfo="none">crontab</filename> file.  The default
+	editor is <command moreinfo="none">vi</command>.  If you prefer
+	<command moreinfo="none">emacs</command>, add the following
+	two lines to your
+	<filename moreinfo="none">~/.bash_profile</filename> file
+	<screen format="linespecific">
+	  EDITOR=emacs
+	  export EDITOR
+	</screen>
+	and then restart your desktop.
+      </para>
+      <para>
+	Execute the following command:
+	<screen format="linespecific">
+	  crontab -e
+	</screen>
+	and an <command moreinfo="none">emacs</command> window should
+	appear, displaying the <filename moreinfo="none">crontab</filename>
+	file, ready for editing.
+      </para>
+      <para>
+	Add the following line:
+	<screen format="linespecific">
+	  30 2 * * 2-6 ~/bin/shell/backup-home-full
+	</screen>
+	close the file, 
+	and your home directory will be backed up to
+	<systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
+	at 2:30 AM of each morning that follows a weekday.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Check Your Work</title>
+      <para>
+	If everything goes well, you should be able to log into
+	<systemitem moreinfo="none" class="systemname">whitechuck</systemitem>
+	the next morning and see the new file in the directory
+	<filename moreinfo="none">~/backup</filename>.
+	If errors occur, they will be sent to the mail box on your
+	workstation, which you can read using
+	<command moreinfo="none">pine</command>.
+      </para>
+    </sect2>
+  </sect1>
+</article>
+
+<!--  LocalWords:  HOWTO cd mkdir scp xvzf tgz cron Crontab crontab xml DOCTYPE
+ -->
+<!--  LocalWords:  DocBook uw articleinfo revhistory authorinitials revremark
+ -->
+<!--  LocalWords:  RHEL whitechuck DLT bru webserver cspkserver CDROM xbru su
+ -->
+<!--  LocalWords:  reinstallation orderedlist listitem guibutton guimenuitem
+ -->
+<!--  LocalWords:  RFPK itemizedlist linespecific moreinfo guimenu username
+ -->
+<!--  LocalWords:  systemitem systemname
+ -->

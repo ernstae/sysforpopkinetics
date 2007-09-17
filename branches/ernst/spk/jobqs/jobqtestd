@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# chkconfig 2345 62 38
+# description: Starts and stops the job queue server
+#
+
+DATABASE=spktest
+DBHOST=dbserver
+DBUSER=tester
+DBPASSWD=tester
+BIN=/usr/local/bin/spktest
+MODE=test
+
+SERVICE_ROOT=jobq
+SERVICE_NAME=${SERVICE_ROOT}testd
+LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
+
+ulimit -c 10000000  # this enables a core dump if the server crashes
+
+start() {
+    $BIN/${SERVICE_ROOT}d.pl $DBHOST $DATABASE $DBUSER $DBPASSWD $MODE
+    echo "started"
+}
+stop() {
+    if [ -f $LOCKFILE_PATH ]; then
+       PID=`cat $LOCKFILE_PATH`
+       kill $PID
+       sleep 1 
+       rm -f $LOCKFILE_PATH
+       echo "stopped"
+    else
+	echo "$SERVICE_NAME is not running"
+    fi
+}
+
+case $1 in
+    restart)
+	stop
+	start
+	;;
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+esac

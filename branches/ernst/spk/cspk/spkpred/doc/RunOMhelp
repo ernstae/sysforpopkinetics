@@ -1,0 +1,11 @@
+# !/bin/bash
+#
+# Create an empty directory for OMhelp output files
+if [ -e htm ]
+then
+	rm -r htm
+fi
+mkdir htm
+#
+cd htm
+omhelp ../SpkPred.omh -xml -debug

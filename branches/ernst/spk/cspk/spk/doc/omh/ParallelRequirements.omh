@@ -1,0 +1,119 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin ParallelRequirements$$
+
+$spell
+   NT
+   Linux
+   dialogbox
+   login
+$$
+
+$section Requirements$$
+
+$index Parallel, Requirements$$
+$index Parallel, Shared Directory$$
+
+$head Shared Directory$$
+The Shared Directory version requires a shared directory on SPK Parallel Network
+in which Master and Node read, write and delete files 
+in order to communicate.  The directory, therefore, must be read/write-able by
+all Participants.  You should dedicate a directory for this: Master or Node may
+delete or overwrite other existing files in the directory.  
+You may map the directory to a network-mapped drive
+for convenience.  The following is a step by step instruction of how
+to create and setup a directory as a valid Shared Directory through Windows 2000 user interface.
+
+$list number$$
+Create a directory called $italic shared$$ under $code C:\$$ or anywhere else of your convenience.  
+
+$lnext
+To simplify the following discussion, we assume you created the directory under $code C:\$$ on the machine named $italic MyMachine$$.
+
+$lnext
+Run Windows Explorer and locate the directory $code C:\shared\$$.
+
+$lnext
+Right click on the directory from Windows Explorer.  A pull-down list will appear.
+
+$lnext
+Select $italic Sharing...$$ from the menu.  The directory property dialogbox will appear.
+
+$lnext
+Select $italic Shared this folder$$.  This will deselect $italic Do not share this folder$$ if that had been selected and
+will activate a combo box within the dialogbox.
+
+$lnext
+Click $italic Permissions$$ button.  $italic Permission for shared$$ dialogbox will appear.
+
+$lnext
+Click $italic Add...$$ button.  $italic Select Users or Groups$$ dialogbox will appear.
+
+$lnext
+Choose the network where you belong to from $italic Look in$$ pull-down list.
+
+$lnext
+Locate your network login name from the network users list and click on it.
+
+$lnext
+Click $italic OK$$ button.  The control returns to $italic Permission for shared$$ dialogbox.
+
+$lnext
+Check (select) $italic Change$$ and $italic Read$$ and $bold deselect$$ $italic Full Control$$ in
+$italic Allow$$ column in $italic Permissions:$$ table.
+
+$lnext
+Click $italic OK$$.  The control returns to the directory property dialogbox.
+
+$lnext 
+Click $italic OK$$ to apply the change.
+
+$lnext
+Close Windows Explorer at your choice.
+
+$lend
+$pre
+
+$$
+When both Windows NT and 2000 (or later) are used, the shared directory may NOT
+reside on the NT machine.  The Windows NT's file access system seems to run exclusive
+checks on access attempts from Windows 2000 machines and as a result
+the Master-Node communication can get stuck in dead lock.  Whenever available,
+use a directory on Linux or Unix system.  Their file access is significantly
+faster than WindowsXXX.
+
+$head Arbitrary Parallel-enabled Driver$$
+A parallel-enabled driver requires it to be able to run as either Master
+or Node depending on the user's request (e.x. through command line arguments).
+$pre
+
+$$
+See $xref/ParallelDriver//Parallel-enabled Driver/$$ for details.
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end

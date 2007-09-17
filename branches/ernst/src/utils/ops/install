@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if [ $UID -ne 0 ];
+then
+    echo "You must be root to run this program"
+    exit 1
+fi
+
+source ../../../doc/webdir.sh
+
+for f in *.pl; 
+do
+  doc=${f%.pl}
+  pod2html $doc.pl > ${doc}.html
+  scp ${doc}.html $WEBHOST:$WEBDIR/ops/utils/${doc}.html
+done
+
+for prog in *.p[lm]
+do 
+  chmod +x $prog
+  cp $prog /usr/local/bin
+done
+
+for prog in *.sh
+do
+  chmod +x $prog
+  cp $prog /usr/local/bin
+done
+
+chmod +x regression_test
+cp regression_test /usr/local/bin
+
+chmod +x release_notes
+cp release_notes /usr/local/bin
+
+cp regression_test.xml /usr/local/spk/ops/regression_test/config
+cp regression_test_parallel.xml /usr/local/spk/ops/regression_test/config
+
+scp rt_script.html $WEBHOST:$WEBDIR/ops/utils/rt_script.html
+scp rn_script.html $WEBHOST:$WEBDIR/ops/utils/rn_script.html
+
+
+exit 0

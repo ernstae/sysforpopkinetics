@@ -1,0 +1,50 @@
+<?xml version = "1.0"?>
+<CompareSpkToNonmemInput>
+<title>METHOD: Laplace, PK: proportional, ERROR: model based, OMEGA: diagonal, SIGMA: diagonal, COV: R^-1</title>
+<subroutines>
+	<anon>ADVAN2</anon>
+</subroutines>
+<base_data>Simulated_Data_ModelBased_04.dat</base_data>
+<nonmem_outfile>Laplace_pkProp_errModel_omegaDiag_sigmaDiagExp_covR.nmo</nonmem_outfile>
+<spk_outfile>Laplace_pkProp_errModel_omegaDiag_sigmaDiagExp_covR.spk</spk_outfile>
+<pk_model>proportional</pk_model>
+<error_model>model_based</error_model>
+<approximation>laplace</approximation>
+<theta>
+	<nonmem_param><anon>direct</anon><anon>direct</anon><anon>direct</anon></nonmem_param>
+	<low><anon>.1</anon><anon>.008</anon><anon>.004</anon></low>
+	<in><anon>3</anon><anon>.08</anon><anon>.04</anon></in>
+	<up><anon>5</anon><anon>.5</anon><anon>.9</anon></up>
+	<relTol>0.01</relTol>
+</theta>
+<Omega>
+	<structure>diagonal</structure>
+	<nonmem_param><anon>exponential</anon></nonmem_param>
+	<nonmem_param><anon>exponential</anon></nonmem_param>
+	<nonmem_param><anon>exponential</anon></nonmem_param>
+	<in><anon>0.3</anon></in>
+	<in><anon>0.03</anon></in>
+	<in><anon>0.05</anon></in>
+	<relTol>0.01</relTol>
+</Omega>
+<Sigma>
+	<structure>diagonal</structure>
+	<nonmem_param><anon>exponential</anon></nonmem_param>
+	<in><anon>0.04</anon></in>
+	<relTol>0.01</relTol>
+</Sigma>
+<eta>
+	<low><anon>-10.0</anon><anon>-10.0</anon><anon>-10.0</anon></low>
+	<in><anon>0.0</anon><anon>0.0</anon><anon>0.0</anon></in>
+	<up><anon>10.0</anon><anon>10.0</anon><anon>10.0</anon></up>
+</eta>
+<statistics>
+	<population>
+		<covariance>2</covariance>
+	</population>
+</statistics>
+<max_iterations>
+	<population>500</population>
+	<individual>500</individual>
+</max_iterations>
+</CompareSpkToNonmemInput>
