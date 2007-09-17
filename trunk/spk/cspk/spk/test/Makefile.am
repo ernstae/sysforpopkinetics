@@ -1,3 +1,3 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = UnitTests PopulationUser 
+SUBDIRS = UnitTests
 pkginclude_HEADERS = ../config.h
