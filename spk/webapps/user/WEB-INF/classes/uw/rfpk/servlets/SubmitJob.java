@@ -36,7 +36,7 @@ import uw.rfpk.rcs.Archive;
  * Strings are source, dataset, model archive, job_abstract, model_abstract, model_log, 
  * model_name, model_version, model_id, is_new_model, is_new_model_version, dataset_abstract, 
  * dataset_log, dataset_name, dataset_version, dataset_id, is_new_dataset, is_new_dataset_version,
- * job_method_code, job_parent, is_warm_start and isMailNotice.
+ * job_method_code, job_parent, is_warm_start, isMailNotice and isParallel.
  * If the model is new the servlet calls database API method, newModle, to get model_id.
  * If the model is old but the version is new the servlet calls database API methods, getModel
  * and updateModel, to update the model archive.  The servlet does the same operations for the
@@ -122,17 +122,18 @@ public class SubmitJob extends HttpServlet
                 String isWarmStart = messageIn[21];
                 String author = messageIn[22];
                 String isMailNotice = messageIn[23];
+                String isParallel = messageIn[24]; 
                 String perlDir = getServletContext().getInitParameter("perlDir");
                 if(modelLog != null && modelLog.equals("")) modelLog = "None";
                 if(datasetLog != null && datasetLog.equals("")) datasetLog = "None";
-                                
+
                 // Connect to the database
                 ServletContext context = getServletContext();
                 con = Spkdb.connect(context.getInitParameter("database_name"),
                                     context.getInitParameter("database_host"),
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
- 
+
                 // Get model archive information
                 if(isNewModel.equals("true"))
                 {
@@ -256,7 +257,9 @@ public class SubmitJob extends HttpServlet
                                               jobMethodCode,
                                               jobParent,
                                               isWarmStart.equals("true"),
-                                              isMailNotice.equals("true"));
+                                              isMailNotice.equals("true"),
+                                              isParallel.equals("true"));
+
                     
                     if(jobId > 0)
                     {
@@ -325,12 +328,12 @@ public class SubmitJob extends HttpServlet
             }
             catch(SQLException e){messageOut += "\n" + e.getMessage();}
         }
-        
+
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))
             out.writeObject(messages);
-      
+
         // Flush the contents of the output stream to the byte array
         out.flush();
         
@@ -339,10 +342,10 @@ public class SubmitJob extends HttpServlet
         
         // Notify the client how much data is being sent
         resp.setContentLength(buf.length);
-       
+
         // Send the buffer to the client
         ServletOutputStream servletOut = resp.getOutputStream();
-        
+
         // Wrap up
         servletOut.write(buf);
         servletOut.close();

@@ -146,7 +146,8 @@ public class GetOutput extends HttpServlet
 	                Blob blobSource = jobRS.getBlob("xml_source");
 	                length = blobSource.length(); 
 	                String source = new String(blobSource.getBytes(1L, (int)length));
-             
+                        int parallel = jobRS.getInt("parallel");
+                        
                         // Get model information
                         ResultSet modelRS = Spkdb.getModel(con, modelId);
                         modelStmt = modelRS.getStatement();
@@ -185,6 +186,7 @@ public class GetOutput extends HttpServlet
                         spkOutput.setProperty("jobAbstract", jobAbstract);
                         spkOutput.setProperty("parent", String.valueOf(parent));
                         spkOutput.setProperty("methodCode", methodCode);
+                        spkOutput.setProperty("parallel", String.valueOf(parallel));
                     }
                     else
                     {
