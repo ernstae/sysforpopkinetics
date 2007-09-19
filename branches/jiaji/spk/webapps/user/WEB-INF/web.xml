@@ -117,12 +117,6 @@
     </context-param>
 
     <context-param>
-        <param-name>emailServer</param-name>
-        <param-value>smtp.washington.edu</param-value>
-        <description>The SMTP email server</description>
-    </context-param>
-
-    <context-param>
         <param-name>MDA_test_host</param-name>
         <param-value>192.168.1.5</param-value>
         <description>The host of the client for testing</description>
@@ -132,6 +126,81 @@
         <param-name>perlDir</param-name>
         <param-value>/usr/local/bin/spktest/</param-value>
         <description>The rcs perl script directory</description>
+    </context-param>
+
+    <!-- Supporting team -->
+    <context-param>
+        <param-name>project_PI</param-name>
+        <param-value>Paolo Vicini</param-value>
+        <description>The principal investigator of the project</description>
+    </context-param>
+
+    <context-param>
+        <param-name>project_PI_email</param-name>
+        <param-value>vicini@u.washington.edu</param-value>
+        <description>The email address of the project PI</description>
+    </context-param>
+
+    <context-param>
+        <param-name>project_PI_info</param-name>
+        <param-value>Paolo Vicini, Ph.D.
+Associate Professor of Bioengineering
+
+Mailing Address:
+Resource Facility for Population Kinetics
+Department of Bioengineering, Box 355061
+University of Washington
+Seattle, WA 98195-5061
+
+Courier Address:
+William H. Foege Building
+1705 NE Pacific Street, Room N410G
+University of Washington
+Seattle, WA 98195-5061
+
+Phone (206)616-1133
+
+Fax (206)685-3300 (shared)
+
+http://depts.washington.edu/bioe/people/core/vicini/vicini.html</param-value>
+        <description>The information of the project PI</description>
+    </context-param>
+
+    <context-param>
+        <param-name>software_engineer</param-name>
+        <param-value>Jiaji Du</param-value>
+        <description>The software engineer of the project</description>
+    </context-param>
+
+    <context-param>
+        <param-name>software_engineer_email</param-name>
+        <param-value>jjdu@u.washington.edu</param-value>
+        <description>The email address of the software engineer</description>
+    </context-param>
+
+    <context-param>
+        <param-name>research_scientist</param-name>
+        <param-value>David Salinger</param-value>
+        <description>The research_scientist of the project</description>
+    </context-param>
+
+    <context-param>
+        <param-name>research_scientist_email</param-name>
+        <param-value>salinger@u.washington.edu</param-value>
+        <description>The email address of the research scientist</description>
+    </context-param>
+
+    <!-- SPK website -->
+    <context-param>
+        <param-name>SPK_website</param-name>
+        <param-value>http://spk.rfpk.washington.edu</param-value>
+        <description>The website of the SPK web service</description>
+    </context-param>
+
+    <context-param>
+        <param-name>SPK_terms_of_service_url</param-name>
+        <param-value>https://spk.rfpk.washington.edu/user/RFPK_SPK_TERMS_OF_SERVICE.html</param-value>
+        <description>The RFPK SPK TERMS OF SERVICE url</description>
     </context-param>
 
     <!-- Session expiration -->
