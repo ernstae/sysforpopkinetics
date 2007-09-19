@@ -98,7 +98,17 @@ author: Jiaji Du
           <c:if test="${param.enter == 'Send Email'}" >
             <%  Process process = null;
                 String perlDir = getServletContext().getInitParameter("perlDir");
-                String from = "vicini@u.washington.edu";
+                String pi_name = getServletContext().getInitParameter("project_PI");
+                String pi_info = getServletContext().getInitParameter("project_PI_info");
+                String pi_email = getServletContext().getInitParameter("project_PI_email");
+                String engineer_name = getServletContext().getInitParameter("software_engineer");
+                String engineer_email = getServletContext().getInitParameter("software_engineer_email");
+                String scientist_name = getServletContext().getInitParameter("research_scientist");
+                String scientist_email = getServletContext().getInitParameter("research_scientist_email");
+                String spk_website = getServletContext().getInitParameter("SPK_website");
+                String terms_of_service_url = getServletContext().getInitParameter("SPK_terms_of_service_url");
+                String bugzilla_url = getServletContext().getInitParameter("bugzillaURL");
+                String from = getServletContext().getInitParameter("project_PI_email");;
                 String to = request.getParameter("email");
                 String subject = "Account Request at SPK";
                 String name = request.getParameter("firstName") + " " + request.getParameter("lastName");
@@ -106,18 +116,17 @@ author: Jiaji Du
                 String password = request.getParameter("password");
                 StringBuffer buffer = new StringBuffer();
                 buffer.append("Dear ").append(name).append(":\n\nGreetings. Thank you for your interest in SPK. As per your request, we have established a user account for you.")
-                      .append("\n\nTo access SPK, please direct your browser to the URL\n\nhttp://spk.rfpk.washington.edu\n\nto get to the SPK web site.  Then select the\n\nMySPK\n\nlink and you will be asked to log in.  Enter the following to authenticate yourself:\n\nUser Name: ")
+                      .append("\n\nTo access SPK, please direct your browser to the URL\n\n" + spk_website + "\n\nto get to the SPK web site.  Then select the\n\nMySPK\n\nlink and you will be asked to log in.  Enter the following to authenticate yourself:\n\nUser Name: ")
                       .append(username).append("\nPassword: ").append(password).append("\n\nAfter logging in successfully for the first time, please change your password.\n\n") 
                       .append("You have also been installed as a user of our Bugzilla system. Please use it to report bugs in the software or the documentation, or to suggest enhancements.  ")
-                      .append("The URL for Bugzilla is\n\nhttp://bugzilla.rfpk.washington.edu/index.cgi\n\nYour authentication parameters are:\n\nLogin: ").append(to).append("\nPassword: ").append(password)
+                      .append("The URL for Bugzilla is\n\n" + bugzilla_url + "\n\nYour authentication parameters are:\n\nLogin: ").append(to).append("\nPassword: ").append(password)
                       .append("\n\nPlease also change your password for your Bugzilla account.  ")
                       .append("If any of this does not work, please let me know, either by email or by phone. Please also make sure to familiarize yourself with our Terms of Service, available as a hyperlink on the left column of the MySPK page, at")
-                      .append("\n\nhttps://spk.rfpk.washington.edu/user/RFPK_SPK_TERMS_OF_SERVICE.html.\n\nQuestions about the user interface (the MDA), should be directed to Jiaji Du\n\nemail: jjdu@u.washington.edu\n\n")
-                      .append("Please direct questions of a scientific or mathematical nature to David Salinger\n\nemail: salinger@u.washington.edu\n\nWe have developed a Getting Started document that should help you to develop your own models in SPK. It is available as a hyperlink on the login page.")
-                      .append("\n\nAt RFPK, we are all very excited about having \"outside\" users, and stand ready to assist you in any way that we can.\n\nBest regards,\n\nPaolo Vicini, Ph.D.\nAssociate Professor of Bioengineering\n\nMailing Address:\nResource Facility for Population Kinetics Department of ")
-                      .append("Bioengineering, Box 355061 University of Washington Seattle, WA 98195-5061\n\nCourier Address:\nWilliam H. Foege Building\n1705 NE Pacific Street, Room N410G\nUniversity of Washington\nSeattle, WA 98195-5061\n\nPhone (206)616-1133\n\nFax (206)685-3300 (shared)\n\nhttp://depts.washington.edu/bioe/people/core/vicini/vicini.html");
+                      .append("\n\n" + terms_of_service_url + ".\n\nQuestions about the user interface (the MDA), should be directed to " + engineer_name + "\n\nemail: " + engineer_email + "\n\n")
+                      .append("Please direct questions of a scientific or mathematical nature to " + scientist_name + "\n\nemail: " + scientist_email + "\n\nWe have developed a Getting Started document that should help you to develop your own models in SPK. It is available as a hyperlink on the login page.")
+                      .append("\n\nAt RFPK, we are all very excited about having \"outside\" users, and stand ready to assist you in any way that we can.\n\nBest regards,\n\n" + pi_info);
                 String message = buffer.toString();
-                String[] command = {"perl", perlDir + "email.pl", from, to, subject, message};
+                String[] command = {"perl", perlDir + "email.pl", from, from, to, subject, message};
                 try
                 {
                     process = Runtime.getRuntime().exec(command);
