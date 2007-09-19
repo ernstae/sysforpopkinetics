@@ -103,6 +103,8 @@ author: Jiaji Du
                 </c:otherwise>
               </c:choose>
             <br></p>
+            <% String project_pi = getServletContext().getInitParameter("project_PI");
+               String pi_email = getServletContext().getInitParameter("project_PI_email"); %>
             <h3>Obtaining an Account</h3>
             <p>
                 MySPK provides the ability to create population kinetic models using the interactive
@@ -110,7 +112,7 @@ author: Jiaji Du
                 machine code, and to run them on a computational cluster (according to our <a href="RFPK_SPK_TERMS_OF_SERVICE.html" target="_blank">Terms of Service</a>). 
                 To obtain an account, please go to the 
                 <a href="https://newaccount.rfpk.washington.edu">new user account page</a>.  For more information, please contact 
-                <a href="mailto:vicini@u.washington.edu">Dr. Paolo Vicini</a>, 
+                <a href="mailto:<%=pi_email%>">Dr. <%=project_pi%></a>, 
                 the RFPK Principal Investigator.  </font>            
 	  </td>
 	</tr>
