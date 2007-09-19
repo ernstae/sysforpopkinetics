@@ -40,16 +40,16 @@ cp ~/r2/trunk/spk/webapps/user/*.jsp Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/*.shtml Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/*.css Build/webapps/user
 cp ~/r2/trunk/spk/mda/lib/*.jar Build/webapps/user
-cp ~/resource/JavaHelp.jar Build/webapps/user
-cp ~/resource/SPK_User_Manual.pdf Build/webapps/user
-cp ~/resource/RFPK_SPK_TERMS_OF_SERVICE.html Build/webapps/user
-cp -R ~/resource/WebHelp Build/webapps/user
+cp ~/r2/trunk/spk/webapps/user/JavaHelp.jar Build/webapps/user
+cp ~/r2/trunk/spk/webapps/user/SPK_User_Manual.pdf Build/webapps/user
+cp ~/r2/trunk/spk/webapps/user/RFPK_SPK_TERMS_OF_SERVICE.html Build/webapps/user
+cp -R ~/r2/trunk/spk/webapps/user/WebHelp Build/webapps/user
 mkdir -p Build/webapps/user/images
 cp ~/r2/trunk/spk/webapps/user/images/*.gif Build/webapps/user/images
 cp ~/r2/trunk/spk/webapps/user/images/*.psd Build/webapps/user/images
 mkdir -p Build/webapps/user/jnlp
 mkdir -p Build/webapps/user/WEB-INF
-cp ~/resource/web.xml Build/webapps/user/WEB-INF
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/web.xml_release Build/webapps/user/WEB-INF/web.xml
 mkdir -p Build/webapps/src/uw/rfpk/servlets
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/servlets/*.java Build/webapps/src/uw/rfpk/servlets
 mkdir -p Build/webapps/src/uw/rfpk/beans
