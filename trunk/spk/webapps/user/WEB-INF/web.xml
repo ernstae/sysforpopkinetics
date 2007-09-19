@@ -128,7 +128,7 @@
         <description>The rcs perl script directory</description>
     </context-param>
 
-    <!-- Supporting team -->
+    <!-- Contact information -->
     <context-param>
         <param-name>project_PI</param-name>
         <param-value>Paolo Vicini</param-value>
@@ -181,7 +181,7 @@ http://depts.washington.edu/bioe/people/core/vicini/vicini.html</param-value>
     <context-param>
         <param-name>research_scientist</param-name>
         <param-value>David Salinger</param-value>
-        <description>The research_scientist of the project</description>
+        <description>The research scientist of the project</description>
     </context-param>
 
     <context-param>

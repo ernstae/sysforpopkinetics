@@ -20,8 +20,8 @@ distribution.
 author: Jiaji Du
 -->
 
-<project name="mda" default="all" basedir=".">
-<description>Build MDA of SPK</description>
+<project name="dbapi" default="all" basedir=".">
+<description>Build job queue server of SPK</description>
 
   <target name="init">
     <delete dir="classes"/>
@@ -29,20 +29,24 @@ author: Jiaji Du
   </target>
 
 <!-- ALL BUILDING -->
-  <target name="all" depends="compile, javadoc, jar" />
+  <target name="all" depends="compile, javadoc, jar, test" />
 
 <!-- COMPILE BUILDING -->
-  <target name="compile" depends="init" description="Compile MDA">
-    <javac srcdir="src" destdir="classes" compiler="javac1.5" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
+  <target name="compile" depends="init" description="Database API">
+    <javac srcdir="src" destdir="classes" compiler="javac1.4" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
       <classpath>
         <pathelement location="classes" />
-        <pathelement location="lib/jnlp.jar" />
-        <pathelement location="lib/jhall.jar" />
       </classpath>
     </javac>
-    <copy todir="classes">
-      <fileset dir="src" includes="**/*.gif,**/*.properties,**/*.png,**/*.jpg" />
-    </copy>
+  </target>
+
+<!-- TEST BUILDING -->
+  <target name="test" depends="init" description="Database API test">
+    <javac srcdir="test" destdir="test" compiler="javac1.4" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
+      <classpath>
+        <pathelement location="classes" />
+      </classpath>
+    </javac>
   </target>
 
 <!-- JAVADOC BUILDING -->
@@ -59,27 +63,26 @@ author: Jiaji Du
     <javadoc packagenames="*"
        sourcepath="javadoc-tmp"
        destdir="javadoc"
-       windowTitle="Model Design Agent"
+       windowTitle="Database API"
        public="true">
       <classpath>
         <pathelement location="classes" />
-        <pathelement location="../webapps/user/jnlp.jar" />
-        <pathelement location="../webapps/user/jhall.jar" />
       </classpath>
        <link href="${jdk-docs-location}"
              offline="true"
              packagelistLoc="${local-package-list}" />
     </javadoc>
+    <copy todir="classes">
+      <fileset dir="src" includes="**/*.gif,**/*.properties"/>
+    </copy>
     <delete dir="javadoc-tmp"/>
   </target>
 
 <!-- JAR BUILDING -->
   <target name="jar" depends="compile">
-    <jar jarfile="MDAn.jar" basedir="classes" compress="false">
+    <jar jarfile="dbAPI.jar" basedir="classes" compress="false">
       <include name="**/*.class" />
       <include name="**/*.gif" />
-      <include name="**/*.png" />
-      <include name="**/*.jpg" />
       <include name="**/*.html" />
       <include name="**/*.properties" />
     </jar>
