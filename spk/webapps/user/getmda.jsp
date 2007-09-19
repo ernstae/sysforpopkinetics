@@ -101,7 +101,7 @@ author: Jiaji Du
               "<all-permissions/>\n"+
               "</security>\n"+
               "<resources>\n"+
-              "<j2se version=\"1.4+\" initial-heap-size=\"64m\" max-heap-size =\"128m\"/>\n"+
+              "<j2se version=\"1.6+\" initial-heap-size=\"128m\" max-heap-size =\"256m\"/>\n"+
               "<jar href=\"MDAn.jar\"/>\n"+
         //      "<jar href=\"xercesImpl.jar\"/>\n"+
         //      "<jar href=\"xmlParserAPIs.jar\"/>\n"+
