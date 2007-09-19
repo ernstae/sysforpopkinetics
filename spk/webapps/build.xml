@@ -20,33 +20,35 @@ distribution.
 author: Jiaji Du
 -->
 
-<project name="mda" default="all" basedir=".">
-<description>Build MDA of SPK</description>
+<project name="webapps" default="all" basedir=".">
+  <description>Build web server of SPK</description>
 
   <target name="init">
-    <delete dir="classes"/>
-    <mkdir dir="classes" />
+    <delete dir="user/WEB-INF/classes"/>
+    <mkdir dir="user/WEB-INF/classes" />
+    <copy todir="user">
+      <fileset dir="../mda" includes="MDAn.jar" />
+    </copy>
   </target>
 
 <!-- ALL BUILDING -->
-  <target name="all" depends="compile, javadoc, jar" />
+  <target name="all" depends="compile, javadoc" />
 
 <!-- COMPILE BUILDING -->
-  <target name="compile" depends="init" description="Compile MDA">
-    <javac srcdir="src" destdir="classes" compiler="javac1.5" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
+  <target name="compile" depends="init" description="Compile web application">
+    <javac srcdir="src" destdir="user/WEB-INF/classes" compiler="javac1.4">
       <classpath>
         <pathelement location="classes" />
-        <pathelement location="lib/jnlp.jar" />
-        <pathelement location="lib/jhall.jar" />
+        <pathelement location="../dbapi/dbAPI.jar" />
+        <pathelement location="user/WEB-INF/lib/servlet-api.jar" />
+        <pathelement location="user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar" />
       </classpath>
     </javac>
-    <copy todir="classes">
-      <fileset dir="src" includes="**/*.gif,**/*.properties,**/*.png,**/*.jpg" />
-    </copy>
   </target>
 
 <!-- JAVADOC BUILDING -->
   <target name="javadoc">
+
     <property name="jdk-docs-location" value="http://java.sun.com/j2se/1.4/docs/api"/>
     <property name="local-package-list" value="file:////opt/jdk1.4/docs/api"/>
     <delete dir="javadoc-tmp"/>
@@ -59,30 +61,19 @@ author: Jiaji Du
     <javadoc packagenames="*"
        sourcepath="javadoc-tmp"
        destdir="javadoc"
-       windowTitle="Model Design Agent"
+       windowTitle="Web Application"
        public="true">
       <classpath>
         <pathelement location="classes" />
-        <pathelement location="../webapps/user/jnlp.jar" />
-        <pathelement location="../webapps/user/jhall.jar" />
+        <pathelement location="../dbapi/dbAPI.jar" />
+        <pathelement location="user/WEB-INF/lib/servlet-api.jar" />
+        <pathelement location="user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar" />
       </classpath>
        <link href="${jdk-docs-location}"
              offline="true"
              packagelistLoc="${local-package-list}" />
     </javadoc>
     <delete dir="javadoc-tmp"/>
-  </target>
-
-<!-- JAR BUILDING -->
-  <target name="jar" depends="compile">
-    <jar jarfile="MDAn.jar" basedir="classes" compress="false">
-      <include name="**/*.class" />
-      <include name="**/*.gif" />
-      <include name="**/*.png" />
-      <include name="**/*.jpg" />
-      <include name="**/*.html" />
-      <include name="**/*.properties" />
-    </jar>
   </target>
 
 <!-- CLEAN ALL -->
