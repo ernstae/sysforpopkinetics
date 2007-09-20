@@ -150,6 +150,7 @@ public class GetJobInfo extends HttpServlet
                         userRS.next();
                         shareWithName = userRS.getString("username");
                     }
+                    int parallel = jobRS.getInt("parallel");
              
                     // Put returning objects into the Properties
                     jobInfo.setProperty("jobAbstract", jobAbstract);
@@ -167,6 +168,7 @@ public class GetJobInfo extends HttpServlet
                     jobInfo.setProperty("stateCode", stateCode);
                     jobInfo.setProperty("endCode", endCode);
                     jobInfo.setProperty("username", username);
+                    jobInfo.setProperty("parallel", String.valueOf(parallel));
                 }
                 else
                 {
