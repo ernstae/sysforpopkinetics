@@ -13,7 +13,7 @@ mkdir -p Build/mda/src/uw/rfpk/mda/nonmem
 cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/*.java Build/mda/src/uw/rfpk/mda/nonmem/
 mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/wizard
 cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/*.java Build/mda/src/uw/rfpk/mda/nonmem/wizard
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons/*.* Build/mda/src/uw/rfpk/mda/nonmem/wizard
+cp -R ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons Build/mda/src/uw/rfpk/mda/nonmem/wizard
 mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/display
 cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/display/*.java Build/mda/src/uw/rfpk/mda/nonmem/display
 mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/compartment
@@ -39,14 +39,14 @@ mkdir -p Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/*.jsp Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/*.shtml Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/*.css Build/webapps/user
+cp ~/r2/trunk/spk/webapps/user/*.java Build/webapps/user
+cp ~/r2/trunk/spk/webapps/user/*.class Build/webapps/user
 cp ~/r2/trunk/spk/mda/lib/*.jar Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/JavaHelp.jar Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/SPK_User_Manual.pdf Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/RFPK_SPK_TERMS_OF_SERVICE.html Build/webapps/user
 cp -R ~/r2/trunk/spk/webapps/user/WebHelp Build/webapps/user
-mkdir -p Build/webapps/user/images
-cp ~/r2/trunk/spk/webapps/user/images/*.gif Build/webapps/user/images
-cp ~/r2/trunk/spk/webapps/user/images/*.psd Build/webapps/user/images
+cp -R ~/r2/trunk/spk/webapps/user/images Build/webapps/user
 mkdir -p Build/webapps/user/jnlp
 mkdir -p Build/webapps/user/WEB-INF
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/web.xml_release Build/webapps/user/WEB-INF/web.xml
@@ -63,6 +63,7 @@ cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/servlet-api.jar Build/webapps/user/WE
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/standard.jar Build/webapps/user/WEB-INF/lib
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/oraclasses_3_0.jar Build/webapps/user/WEB-INF/lib
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/orataglib_3_0.jar Build/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar Build/webapps/user/WEB-INF/lib
 
 # rcs
 mkdir -p Build/rcs
