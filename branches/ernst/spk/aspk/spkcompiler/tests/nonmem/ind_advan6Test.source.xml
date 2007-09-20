@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spksource>
+   <nonmem version="0.1">
+      <constraint>
+         <ind_analysis abort="yes" is_estimation="yes" mitr="450" sig_digits="3">
+            <description>TWO COMPARTMENT MODEL</description>
+            <data_labels>
+               <label name="TIME"/>
+               <label name="DV"/>
+               <label name="AMT"/>
+            </data_labels>
+            <theta length="4">
+               <low>
+                  <value fixed="no">.001</value>
+                  <value fixed="no">.001</value>
+                  <value fixed="no">.001</value>
+                  <value fixed="no">1.0</value>
+               </low>
+               <in>
+                  <value fixed="no">0.01</value>
+                  <value fixed="no">0.01</value>
+                  <value fixed="no">0.01</value>
+                  <value fixed="no">10</value>
+               </in>
+               <up>
+                  <value fixed="no">0.1</value>
+                  <value fixed="no">0.1</value>
+                  <value fixed="no">0.1</value>
+                  <value fixed="no">100</value>
+               </up>
+            </theta>
+            <omega dimension="1" same_as_previous="no" struct="diagonal">
+               <in>
+                  <value fixed="no">0.01</value>
+               </in>
+            </omega>
+            <ind_stat covariance_form="rsr"/>
+         </ind_analysis>
+      </constraint>
+      <model advan="6" tolerance="5">
+         <comp_model ncompartments="2" nequilibriums="0" nparameters="0">
+            <compartment default_dose="yes" default_observation="yes" initial_off="no" name="COMP1" no_dose="no" no_off="no"/>
+            <compartment default_dose="no" default_observation="no" initial_off="no" name="COMP2" no_dose="no" no_off="no"/>
+         </comp_model>
+         <diffeqn>
+DADT(1) = -K21*A(1) + K12*A(2) - K01*A(1)
+DADT(2) = K21*A(1) - K12*A(2)
+         </diffeqn>
+         <pk>
+K01 = THETA(1)
+K12 = THETA(2)
+K21 = THETA(3)
+VOL = THETA(4)
+F1 = 1.1800000e+006
+S1 = VOL
+         </pk>
+         <error>
+Y=F*(1+ETA(1))
+         </error>
+      </model>
+   </nonmem>
+</spksource>

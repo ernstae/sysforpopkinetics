@@ -1,0 +1,1 @@
+/usr/java/j2sdk1.4.2_03/bin/java -cp /usr/local/bin/spkprod/:. uw/rfpk/jobqs/Ping localhost 9000

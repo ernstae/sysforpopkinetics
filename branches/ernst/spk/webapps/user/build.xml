@@ -1,0 +1,118 @@
+<!--
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
+author: Jiaji Du
+-->
+<!--
+  This is a build file that precompiles all JSP pages and copy files to the
+  appropriate directory of the web server including web.xml, quicklinks.xhtml,
+  stylesheet.css, help files and image files.
+  To run this program enter the following command in a terminal window.
+
+  ant -Dtomcat.home=$CATALINA_HOME -Dwebapp.path=$CATALINA_HOME/webapps/user
+
+  Then, copy the text in the generated file generated_web.xml located in 
+  $CATALINA_HOME/webapps/user/WEB-INF into the file web.xml and remove all
+  jsp files in the directory $CATALINA_HOME/webapps/user. 
+-->
+<project name="Precompile" default="all" basedir=".">
+  <description>Precompile jsp for SPK</description>
+
+  <target name="all" depends="clean,jspc,compile">
+  </target>
+
+  <target name="clean">
+    <delete dir="${webapp.path}/WEB-INF/src" />
+    <delete dir="${webapp.path}/WEB-INF/classes/org" />
+    <delete file="${webapp.path}/WEB-INF/generated_web.xml" />
+  </target>
+
+  <target name="init">
+    <copy todir="${webapp.path}">
+      <fileset dir="src">
+        <include name="*.jsp"/>
+        <include name="*.shtml"/>
+        <include name="*.css"/>
+      </fileset>
+    </copy>
+    <copy file="web.xml" todir="${webapp.path}/WEB-INF"/>
+    <mkdir dir="${webapp.path}/help"/>
+    <copy todir="${webapp.path}/help">
+      <fileset dir="help">
+        <include name="*.jsp"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${webapp.path}/images"/>
+    <copy todir="${webapp.path}/images">
+      <fileset dir="images">
+        <include name="*.*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jspc" depends="init"> 
+    <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
+      <classpath id="jspc.classpath"> 
+        <pathelement location="${java.home}/../lib/tools.jar"/> 
+        <fileset dir="${tomcat.home}/bin"> 
+          <include name="*.jar"/> 
+        </fileset> 
+        <fileset dir="${tomcat.home}/server/lib"> 
+          <include name="*.jar"/> 
+        </fileset> 
+        <fileset dir="${tomcat.home}/common/lib"> 
+          <include name="*.jar"/> 
+        </fileset> 
+      </classpath> 
+    </taskdef> 
+
+    <jasper2 validateXml="false" 
+             uriroot="${webapp.path}" 
+             webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" 
+             outputDir="${webapp.path}/WEB-INF/src" /> 
+  </target> 
+
+  <target name="compile">
+    <mkdir dir="${webapp.path}/WEB-INF/classes"/>
+    <javac destdir="${webapp.path}/WEB-INF/classes"
+           optimize="off"
+           debug="on" 
+           failonerror="false"
+           srcdir="${webapp.path}/WEB-INF/src" 
+	   excludes="**/*.smap">
+      <classpath>
+        <pathelement location="${webapp.path}/WEB-INF/classes"/>
+        <fileset dir="${webapp.path}/WEB-INF/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${tomcat.home}/common/classes"/>
+        <fileset dir="${tomcat.home}/common/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${tomcat.home}/shared/classes"/>
+        <fileset dir="${tomcat.home}/shared/lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+      <include name="**" />
+      <exclude name="tags/**" />
+    </javac>
+  </target>
+
+</project>

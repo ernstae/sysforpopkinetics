@@ -1,0 +1,12 @@
+To build the PVM/SPK Driver programs, you must run
+
+./configure --prefix=/usr/local/spk
+
+make
+
+and then
+
+make install
+
+The binary files will be installed in /usr/local/spk/bin
+

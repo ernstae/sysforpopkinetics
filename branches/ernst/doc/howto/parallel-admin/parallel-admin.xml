@@ -1,0 +1,713 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Administration of SPK for Parallel Computation</title>
+  <articleinfo>
+    <abstract>
+      <para>
+	SPK is designed to be executed on a cluster of computers
+	loosely linked together by software known as the Parallel
+	Virtual Machine (pvm). This document describes the system
+	administration of SPK in the pvm environment. It is a 
+	companion to the document
+	<ulink url="../pvm-admin/pvm-admin.html">
+	  PVM Administration at RFPK
+	</ulink>
+      </para>
+      <para>
+	The information in this document is targeted primarily toward
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the &dept; of the &uw;.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </para>
+      <para>
+	<link linkend="copyright">Copyright</link> (c) 2005, by the &uw;.
+      </para>
+    </abstract>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>February 9, 2005</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  </articleinfo>
+  <sect1>
+    <title>Overview</title>
+    <para>
+      The principal unit of work in SPK is called a job.  It is created by
+      a user when, with the help of a graphical tool called the MDA, she
+      combines a model with data and various parameters and submits it
+      via the internet for processing.
+    </para>
+    <para>
+      Before the job can begin its 
+      computational phase, it first travels to a server known as
+      the Application Server for Population Kinetics
+      <emphasis>(aspkserver)</emphasis>, where it is compiled 
+      by the ASPK compiler to create three C++ programs, called 
+      <emphasis>spkjob</emphasis>, 
+      <emphasis>spkpop</emphasis> and <emphasis>spkind</emphasis>.
+      The job is then queued for execution.
+    </para>
+    <para>
+      The next step in the history of the job is to be selected for
+      processing on a group of computers harnessed for 
+      parallel computation by software called the Parallel Virtual
+      Machine (pvm). We refer to each of these computers as
+      a <emphasis>node</emphasis> or a <emphasis>host</emphasis>
+      and to the collection of computers as the 
+      <emphasis>cluster</emphasis> or the <emphasis>pvm</emphasis>.
+    </para>
+    <para>
+      One node of the pvm is distinguished as the 
+      <emphasis>head node</emphasis>.  In terms of the SPK architecture,
+      this is the Computational Server for Population Kinetics
+      <emphasis>(cspkserver)</emphasis>.
+    </para>
+    <para>
+      On cspkserver, the three programs output by the ASPK
+      compiler are further compiled and linked to the SPK library
+      to create an executable binary for spkjob, for spkpop and
+      for spkind.
+    </para>
+    <para>
+      Spkjob is then executed on cspkserver itself. It utilizes pvm
+      functions to spawn spkpop as a subtask.  Which node spkpop actually
+      runs on is determined by load distribution algorithms in pvm.
+    </para>
+    <para>
+      Spkpop then performs an iterative computation with the goal of
+      generating the results specified by the user. With each 
+      iteration, spkpop spawns <emphasis>n</emphasis> instances of
+      spkind, where <emphasis>n</emphasis> is the number of individuals
+      in the population being modeled. Which node a particular 
+      spkind runs on is determined by pvm.
+    </para>
+    <para>
+      Spkjob, spkpop, and the <emphasis>n</emphasis> instances of 
+      spkind all run as independent processes, under the linux or
+      unix operating system.  The parent process of spkjob is the
+      SPK runtime daemon, which executes continuously on 
+      cspkserver.  The parent process of spkpop is a pvm daemon
+      running on the node to which it was assigned.  Similarly,
+      each instance of spkind is the child of a pvm daemon running
+      on its node.  
+    </para>
+    <para>
+      On every unix or linux host, parent/child relationships
+      create a single process hierarchy.  This hierarchy does not
+      extend beyond that host, however, to other hosts in the cluster.
+      With pvm, there is a second hierarchy, maintained by 
+      communication between daemons, which does span the 
+      boundaries between hosts. In pvm parlance the
+      programs running in the hierarchy are referred to as
+      <emphasis>tasks</emphasis> to distinguish these
+      relationships from those between linux/unix
+      <emphasis>processes</emphasis> and the hierarchy is the
+      <emphasis>pvm task hierarchy</emphasis>.
+    </para>
+    <para>
+      SPK uses two channels for inter-task communications:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    <emphasis>PVM message passing</emphasis>, using functions provided by a
+	    pvm. This communication channel is used for pvm event messages
+	    and application log messages.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Shared file hierarchy</emphasis>. The ubiquitous 
+	    Network File System (NFS) works well for this purpose,
+	    although nearly any other distributed file system 
+	    can be used in its place. This communication channel is used
+	    for the communication of application inputs and outputs.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+    <para>
+      There is no system administration required for pvm message passing, beyond
+      installation and configuration of pvm as described in
+      <ulink url="../pvm-admin/pvm-admin.html">
+	PVM Administration at RFPK
+      </ulink>.  Spkjob and spkpop set up the message channels and pvm does the
+      rest automatically.
+    </para>
+    <para>
+      The shared file hierarchy is created and maintain entirely by linux/unix
+      system administration functions.  Here are some of the features of the
+      file hierarchy:
+      <orderedlist>
+	<listitem>
+	  <para>
+	    The files actually reside on aspkserver, both because of its large
+	    disk capacity and its tape backup system.  The aspkserver
+	    uses NFS to <emphasis>export</emphasis> this hierarchy.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    All the nodes of the pvm <emphasis>mount</emphasis>
+	    the file hierarchy as a filesystem
+	    of type <emphasis>nfs</emphasis>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The directory tree looks like this:
+	    <screen>
+	      /usr/local/spk/share/working/spkprod
+	      ............................/spktest
+	      ..................../log/spkprod
+	      ......................../spktest
+	      ..................../include/spkprod
+	      ............................/spktest
+	      ..................../arch/LINUXI386/lib/spkprod
+	      ......................................./spktest
+	      ........................./LINUXX86_64/lib/spkprod
+	      ........................................./spktest
+	      ..................../arch/LINUXI386/bin/spkprod
+	      ......................................./spktest
+	      ........................./LINUXX86_64/bin/spkprod
+	      ........................................./spktest
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The purpose of the key directory nodes is as follows:
+	    <orderedlist>
+	      <listitem>
+		<para>
+		  <emphasis>working:</emphasis> the hierarchy of working directories 
+		  goes here.  Spkjob creates a directory for the job and spkpop
+		  creates a subdirectory for each instance.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <emphasis>log:</emphasis> message log files go here.  A message log
+		  file consists of a sequence of messages in the order that they
+		  were created by spkjob or received by spkjob from spkpop or
+		  spkind.  Each message has a header containing a timestamp,
+		  job-id number, program name and, in the case of instances of
+		  spkind, instance number.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <emphasis>include:</emphasis> <filename>.h</filename> files to be
+		  included with the source generated by the ASPK compiler.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <emphasis>arch:</emphasis> binary executables and libraries for each
+		  of the processor architectures present in the pvm.
+		</para>
+	      </listitem>
+	    </orderedlist>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Group Configuration for Aspkserver and All PVM Nodes</title>
+    <para>
+      The following configuration must be done to all nodes, including the head node,
+      as well as for aspkserver.
+      As the root user on each node execute the following commands:
+      <screen>
+/usr/sbin/groupadd -g 444 -r spkshare
+/usr/bin/gpasswd -a pvm spkshare
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Additional Group Configuration to Selected Nodes</title>
+    <para>
+      It will be convenient to add developers to the spkshare group on 
+      aspkserver and cspkserver.  As root, on each of these servers,
+      execute the following commands:
+      <screen>
+/usr/bin/gpasswd -a alan spkshare
+/usr/bin/gpasswd -a honda spkshare
+/usr/bin/gpasswd -a jiaji spkshare
+/usr/bin/gpasswd -a watrous spkshare
+      </screen>/usr/bin/gpasswd -a alan spkshare
+    </para>
+  </sect1>
+  <sect1>
+    <title>NFS Configuration of aspkserver</title>
+    <para>
+      In the following, it is assumed that the <emphasis>nfs</emphasis>
+      and <emphasis>portmap</emphasis> services are running.
+    </para>
+    <para>
+      <orderedlist>
+	<listitem>
+	  <para>
+	    <emphasis>
+	      Open a terminal window on aspkserver and become root.
+	    </emphasis>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <emphasis>Make the directory hierarchy:</emphasis>
+	    <screen>
+mkdir -p /usr/local/spk/share/working/spkprod
+mkdir -p /usr/local/spk/share/working/spktest
+mkdir -p /usr/local/spk/share/log/spkprod
+mkdir -p /usr/local/spk/share/log/spktest
+mkdir -p /usr/local/spk/share/include/spkprod
+mkdir -p /usr/local/spk/share/include/spktest
+mkdir -p /usr/local/spk/share/arch/lib/LINUXI386/spkprod
+mkdir -p /usr/local/spk/share/arch/lib/LINUXI386/spktest
+mkdir -p /usr/local/spk/share/arch/lib/LINUXX86_64/spkprod
+mkdir -p /usr/local/spk/share/arch/lib/LINUXX86_64/spktest
+mkdir -p /usr/local/spk/share/arch/bin/LINUXI386/spkprod
+mkdir -p /usr/local/spk/share/arch/bin/LINUXI386/spktest
+mkdir -p /usr/local/spk/share/arch/bin/LINUXX86_64/spkprod
+mkdir -p /usr/local/spk/share/arch/bin/LINUXX86_64/spktest
+cd /usr/local/spk/share
+chgrp -R spkshare .
+chmod -R 2775 .
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem id="exports">
+	  <para>
+	    <emphasis>Export the directory hierarchy.</emphasis>
+	  </para>
+	  <para>
+	    Edit the file /etc/exports, appending a line
+	    <emphasis>for each node in the pvm</emphasis>:
+	    <screen>
+/usr/local/spk/share   cspk(rw, sync, no_root_squash)
+/usr/local/spk/share   jambutty(rw, sync, no_root_squash)
+	      .
+	      .
+	      .
+/usr/local/spk/share   rose(rw, sync, no_root_squash)
+	    </screen>
+	  </para>
+	  <para>
+	    Activate the list by executing the following command:
+	    <screen>
+/usr/sbin/exportfs -a
+	    </screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title>NFS Configuration of the PVM Nodes</title>
+    <para>
+      Apply the following procedure to each node of the pvm, including
+      the head node.
+    </para>
+    <orderedlist>
+      <listitem>
+	<para>
+	  <emphasis>
+	    Open a terminal window on the node and become root.
+	  </emphasis>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  <emphasis>Edit the hosts table.</emphasis>
+	  Make sure that there is a line in the 
+	  <filename>/etc/hosts</filename> file for the IP address of
+	  aspkserver.  If such a line is already there, but the 
+	  name <emphasis>aspkserver</emphasis> is not among the 
+	  aliases for the address, add it to the line.
+	  <screen>
+192.168.1.2      aspkserver
+	  </screen>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  <emphasis>Edit the filesystem table</emphasis>.  Add the following
+	  line to <filename>/etc/fstab</filename>:
+	  <screen>
+aspkserver:/usr/local/spk/share  /usr/local/spk/share  nfs rsize=8194,wsize=8192,timeo=14,intr
+	  </screen>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  <emphasis>Create a node on which to mount the filesystem:</emphasis>
+	  <screen>
+mkdir -p /usr/local/spk/share
+	  </screen>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  If <emphasis>aspkserver</emphasis> has not yet been configured to 
+	  export the directory hierarchy to this node, 
+	  <link linkend="exports">
+	    do it now
+	  </link>.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Mount the filesystem in order to check your work.  Normally, the
+	  filesystem will be mount automatically, each time that the node
+	  reboots.
+	  <screen>
+mount /usr/local/spk/share
+ls -l /usr/local/spk/share
+	  </screen>
+	</para>
+      </listitem>
+    </orderedlist>
+  </sect1>
+  <sect1>
+    <title>Environment Variables and File Creation Mask</title>
+    <para>
+      As root on cspkserver, add the following lines to the end
+      of <filename>~pvm/.bashrc</filename>:
+      <screen>
+SPK_SHARE=/usr/local/spk/share
+PVMHOSTFILE=$SPK_SHARE/pvmhosts
+export SPK_SHARE PVMHOSTFILE
+PATH=$PATH:$SPK_SHARE/arch/bin/$PVM_ARCH/spktest
+umask 0002
+      </screen>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Building and Installing the Prototype</title>
+    <para>
+      The prototype must be built and installed both for the 
+      LINUXI386 architecture and the LINUXX86_64 architecture.
+    </para>
+    <sect2>
+      <title>LINUXI386 architecture</title>
+      <para>
+	In the following, all of the steps except the last one are concerned
+	with configuration and verification of the configuration.
+	The first time through, you should go through all the steps.
+	Subsequently, you can just skip to the last step.
+      </para>
+      <para>
+	For this procedure to work, you must be logged in under your normal
+	ordinary user name to a 
+	workstation with LINUXI386 architecture (Intel or AMD 32-bit architecture)
+	and must have a cvs workspace.
+      </para>
+      <para>
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      If the workstation is not already configured to be part of the
+	      pvm, follow the instructions in
+	      <ulink url="../pvm-admin/pvm-admin.html">
+		PVM Administration at RFPK
+	      </ulink>
+	      and in this document to make it so.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      If the command
+	      <screen>
+set | egrep '(PVM)|(SPK)'
+	      </screen>
+	      shows that PVM_ROOT, PVM_ARCH and SPK_SHARE are all defined,
+	      <emphasis>skip to the next step</emphasis>.
+	    </para>
+	    <para>
+	      Otherwise, edit <filename>~/.bashrc</filename> to add the following lines:
+	      <screen>
+PVM_ROOT=/usr/share/pvm3
+SPK_SHARE=/usr/local/spk/share
+export PVM_ROOT SPK_SHARE
+PVM_ARCH=$($PVM_ROOT/lib/pvmgetarch)
+export PVM_ARCH
+	      </screen>
+	      then exit the terminal window and open a new one, in order to 
+	      activate the definitions.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Make sure that your user name is a member of the <emphasis>spkshare</emphasis>
+	      group.  You can determine this by executing the command
+	      <screen>
+grep spkshare /etc/group
+	      </screen>
+	      and seeing whether or not
+	      your user name is in the list at the end of the entry that is displayed.
+	      If not, execute the following from a terminal window owned by your ordinary
+	      user name:
+	      <screen>
+su
+gpasswd -a $USER spkshare
+exit
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      In your cvs workspace, go to the directory
+	      <filename>r2/src/misc/parallel</filename> and execute the following 
+	      commands:
+	      <screen>
+make
+make install
+	      </screen>
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+    <sect2>
+      <title>LINUXX86_64 architecture</title>
+      <para>
+	In the following, several steps are concerned with configuration.
+	The first time through, you should go through all the steps.
+	Subsequently, you can skip the configuration steps.
+      </para>
+      <para>
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      This process starts on your 32-bit workstation, where it is assumed
+	      that your cvs workspace resides, then continues on the 64-bit
+	      cspkserver.
+	    </para>
+	    <para>
+	      Starting in the source code directory,
+	      <filename>r2/src/misc/parallel</filename>,
+	      make a tarball, then copy it to your home directory on cspkserver:
+	      <screen>
+cd ..                          # go one directory above the source directory
+tar cvzf parallel.tgz parallel # make a tarball
+scp parallel.tgz cspkserver:   # copy it to cspkserver
+rm parallel.tgz                # clean up
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Go to cspkserver.
+	      <screen>
+ssh cspkserver
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      If the command
+	      <screen>
+set | egrep '(PVM)|(SPK)'
+	      </screen>
+	      shows that PVM_ROOT, PVM_ARCH and SPK_SHARE are all defined,
+	      <emphasis>skip to the next step</emphasis>.
+	    </para>
+	    <para>
+	      Otherwise, edit <filename>~/.bashrc</filename> to add the following lines:
+	      <screen>
+PVM_ROOT=/usr/share/pvm3
+SPK_SHARE=/usr/local/spk/share
+export PVM_ROOT SPK_SHARE
+PVM_ARCH=$($PVM_ROOT/lib/pvmgetarch)
+export PVM_ARCH
+	      </screen>
+	      then log in again, to activate the new definitions:
+	      <screen>
+exit
+ssh cspkserver
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Make sure that your user name is a member of the <emphasis>spkshare</emphasis>
+	      group.  You can determine this by executing the command
+	      <screen>
+grep spkshare /etc/group
+	      </screen>
+	      and seeing whether or not
+	      your user name is in the list at the end of the entry that is displayed.
+	      If not, execute the following from a terminal window owned by your ordinary
+	      user name:
+	      <emphasis>root</emphasis> user:
+	      <screen>
+su
+gpasswd -a $USER spkshare
+exit
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Now you are ready to build and install the prototype.
+	      <screen>
+tar xvzf parallel.tgz
+cd parallel
+make clean
+make
+make install
+	      </screen>
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Running the Parallel SPK Prototype</title>
+    <para>
+      <orderedlist>
+	<listitem>
+	  <para>
+	    Log into cspkserver as pvm in three separate windows:
+	    <screen>
+ssh pvm@cspkserver
+ssh pvm@cspkserver
+ssh pvm@cspkserver
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Start a real-time display of the log in one of the windows:
+	    <screen>
+tail -f $SPK_SHARE/log/spktest/messages
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Start the pvm console in the second window.
+	    This will also start the master pvm daemon on cspkserver and
+	    add cspkserver to the pvm
+	    <screen>
+pvm
+	    </screen>
+	  </para>
+	  <para>
+	    At the pvm console command prompt, add additional hosts to
+	    the pvm:
+	    <screen>
+add rose
+add azalea
+add pasta
+add jambutty
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Query the console for a list of hosts:
+	    <screen>
+conf
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In the third window, start a job.  The parameter specifies
+	    the number of instances (in this case 10 instances).
+	    <screen>
+newjob.sh 10
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Query the console for a list of the tasks that are running:
+	    <screen>
+ps -a
+	    </screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Observer messages as they are added to the log.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    When the first job completes, try another job.  This time
+	    delete a node on which several instances of spkind are running
+	    <screen>
+delete jambutty
+	    </screen>
+	    and see what happens.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Run another job.  This time delete the node that spkpop is
+	    running on.  (If the node is cspkserver, don't delete it.
+	    Wait until the job is done and then start another.)
+	    Suppose that spkpop is running on rose.  Delete that node
+	    <screen>
+delete rose
+	    </screen>
+	    and see what happens.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    When you are tired of running jobs, halt the pvm by 
+	    entering the following at the console prompt:
+	    <screen>
+halt
+	    </screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </para>
+  </sect1>
+  <sect1>
+    <title id="copyright">Copyright Notice</title>
+    <para>
+      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <ulink url="http://www.opencontent.org/openpub/">here</ulink>.
+    </para>
+    <para>
+    </para>
+  </sect1>
+</article>
+
+
+<!--  LocalWords:  xml DOCTYPE DocBook uw articleinfo SPK RFPK RFPK's linkend
+ -->
+<!--  LocalWords:  ulink url pvm revhistory revnumber authorinitials revremark
+ -->
+<!--  LocalWords:  MDA internet aspkserver ASPK spkjob spkpop spkind cspkserver
+ -->
+<!--  LocalWords:  linux unix orderedlist listitem filesystem nfs timestamp cd
+ -->
+<!--  LocalWords:  spkshare alan honda jiaji watrous portmap mkdir chgrp chmod
+ -->
+<!--  LocalWords:  cspk rw jambutty IP rsize wsize timeo intr PVMHOSTFILE umask
+ -->
+<!--  LocalWords:  pvmhosts LINUXI LINUXX AMD cvs egrep su gpasswd cvzf tgz scp
+ -->
+<!--  LocalWords:  xvzf conf newjob ps
+ -->

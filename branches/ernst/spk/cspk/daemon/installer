@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ $UID -ne 0 ];
+then
+    echo "You must be root to run this program."
+    echo "It is best to be on aspkserver."
+    echo "Use su - (not just su) to become root."
+    exit 1
+fi
+
+source ../../../doc/webdir.sh
+
+SERVICE_ROOT=spkrun
+SERVICE_HOST=cspkserver
+
+scp ${SERVICE_ROOT}d     ${SERVICE_HOST}:/etc/rc.d/init.d
+scp ${SERVICE_ROOT}testd ${SERVICE_HOST}:/etc/rc.d/init.d
+ssh ${SERVICE_HOST} mkdir -p /usr/local/bin/spktest
+scp ${SERVICE_ROOT}d.pl  ${SERVICE_HOST}:/usr/local/bin/spktest
+echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}d "
+echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}testd "
+echo "installed ${SERVICE_HOST}:/usr/local/bin/spktest/${SERVICE_ROOT}d.pl"
+echo "Note: installation of ${SERVICE_ROOT}d.pl must be completed by the deployment process."
+
+D=${SERVICE_ROOT}d
+
+scp $D.pl.html $WEBHOST:/$WEBDIR/man/$D.pl.html

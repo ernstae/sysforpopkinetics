@@ -1,0 +1,447 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Cygwin Installation for Developers</title>
+ <articleinfo>
+  <abstract>
+    <para>
+	This tutorial briefly discusses the use of the 
+	Cygwin environment by the RFPK Software Team and
+	then describes a procedure for obtaining and
+	installing it.
+    </para>
+  </abstract>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>January 17, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      Cygwin is a Unix-like environment that runs within a Microsoft
+      Windows system.  It is free, open source software.
+      Cygwin consists primarily of shell commands and
+      applications from the GNU/Linux environment.  Because it 
+      supports the complete GNU suite of software development tools,
+      including compilers for C, C++ and Fortran, many applications 
+      for the Linux environment can simply be transferred to 
+      Cygwin in source code form, compiled, linked and run. 
+      Because Cygwin supports 
+      <command>sh</command>,
+      <command moreinfo="none">perl</command>,
+      <command moreinfo="none">python</command>
+      and the 
+      <command>cron</command> batch scheduling system, it is
+      an excellent environment for batch production on
+      a windows system.
+      Most applications developed to run 
+      in the Cygwin environment can be transferred to Linux or Unix
+      with almost no changes.
+    </para>
+    <para>
+      The first major application for the Cygwin environment by 
+      the RFPK Software Team is a platform for testing SPK.
+      Key portions of this application are written in the
+      <command>perl</command> and
+      <command>sh</command> scripting languages.  This tutorial
+      describes the process of installing Cygwin on a Windows 
+      machine for developing or running this or similar applications.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Downloading and Installation</title>
+    <para>
+      The software can be downloaded for free over the Internet, from
+      the
+      <ulink url="http://www.cygwin.com/">
+	<emphasis>Cygwin</emphasis>
+      </ulink>
+      web site.
+    </para>
+    <orderedlist inheritnum="ignore" continuation="restarts">
+      <listitem>
+	<para>
+	  On the Cygwin home page, press the
+	  <command><guilabel>Install Now</guilabel></command> icon.
+	</para>
+	<para>
+	  A window will appear, asking you to provide the path to
+	  a directory into which to download 
+	  <filename moreinfo="none">setup.exe</filename>, the
+	  Cygwin downloading and installation wizard.  The
+	  path of a temporary directory is recommended.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Execute the Cygwin <command moreinfo="none">setup</command>
+	  program.  You can use the Windows filesystem explorer to
+	  find the file you just downloaded, then double-click its
+	  icon.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  The wizard will ask you to provide some information.
+	  <orderedlist inheritnum="ignore" continuation="restarts">
+	    <listitem>
+	      <para>
+		Choose a download source. Select 
+		<command><guimenuitem moreinfo="none">
+		  Install from Internet
+		</guimenuitem></command>.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Select Root Install Directory.
+		Provide the name of a directory that will be large enough
+		to contain your Cygwin environment.  You may need quite
+		a bit of space, depending on what optional components
+		you select in the steps that follow.  For example, the
+		Cygwin installation on the author's workstation
+		occupies about one gigabyte of space, and is contained
+		in the directory 
+		<filename moreinfo="none">f:\cygwin</filename>
+		.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Select Local Package Directory.  Provide the path
+		of a directory with temporary storage for the 
+		downloaded files used in the installation process.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Select Your Internet Connection.  The choice
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Direct Connection
+		  </guimenuitem></command>  
+		seems to work fine at RFPK.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Choose A Download Site.  A list of mirror sites
+		is provided.  Pick one that seems like it would
+		be relatively close and might have good bandwidth.
+		Universities are a good choice.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		Select Packages.  A list of all available packages
+		is displayed in a scrollable window as a multi-level
+		hierarchy.  The top level category is named
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    All
+		  </guimenuitem></command>.
+		This top category name, and all of the subcategory names,
+		are followed by a directive which, initially, is
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Default
+		  </guimenuitem></command>.
+		By clicking repeatedly on a directive, you can change
+		it from
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Default
+		  </guimenuitem></command> to
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Install
+		  </guimenuitem></command> to
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Reinstall
+		  </guimenuitem></command> and finally to
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Uninstall
+		  </guimenuitem></command> before the sequence repeats itself.
+	      </para>
+	      <para>
+		If you want everything, all you have to do is change
+		the directive for 
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    All
+		  </guimenuitem></command> to
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Install
+		  </guimenuitem></command> and then press the
+                  <command moreinfo="none"><guibutton moreinfo="none">
+		    Next
+		  </guibutton></command> button to start the download.
+ 	      </para>
+	      <para>
+		If you want less than everything, you will need to 
+		go to the individual categories and specify what 
+		you want in addition to the defaults.  In general,
+		a software developer will want at least the following:
+		<glosslist>
+		  <glossentry>
+		    <glossterm>Devel</glossterm>
+		    <glossdef>
+		      <para>
+			cvs
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			expat
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			expat
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			gcc
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			gdb
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			make
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			rcs
+		      </para>
+		    </glossdef>
+		  </glossentry>
+		  <glossentry>
+		    <glossterm>Doc</glossterm>
+		    <glossdef>
+		      <para>
+			cygwin-doc
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			expat
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			perl-manpages
+		      </para>
+		    </glossdef>
+		  </glossentry>
+		  <glossentry>
+		    <glossterm>Editors</glossterm>
+		    <glossdef>
+		      <para>
+			vim
+		      </para>
+		    </glossdef>
+		  </glossentry>
+		  <glossentry>
+		    <glossterm>Interpreters</glossterm>
+		    <glossdef>
+		      <para>
+			perl
+		      </para>
+		    </glossdef>
+		    <glossdef>
+		      <para>
+			python
+		      </para>
+		    </glossdef>
+		  </glossentry>
+		  <glossentry>
+		    <glossterm>Net</glossterm>
+		    <glossdef>
+		      <para>
+			openssh
+		      </para>
+		    </glossdef>
+		  </glossentry>
+		</glosslist>
+	      </para>
+	      <para>
+		Note that in the above list, the 
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    Editors
+		  </guimenuitem></command>
+		category does not include 
+		  <command moreinfo="none"><guimenuitem moreinfo="none">
+		    emacs
+		  </guimenuitem></command>
+		.  This tutorial recommends downloading the gui version of
+		<command moreinfo="none">emacs</command> directly from
+		Gnu rather than using the version available from Cygwin.
+	      </para>
+	    </listitem>
+	  </orderedlist>
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Proceed with the downloading.  If, for some reason, the
+	  connection fails in the middle of this process, you can
+	  restart it with the same mirror or a different mirror and
+	  the process is supposed to resume where it left off.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Follow the wizard to completion.  Allow it to create
+	  shortcuts on the desktop and in the 
+	  <guimenuitem moreinfo="none">Start</guimenuitem> menu.
+	</para>
+      </listitem>
+    </orderedlist>
+  </sect1>
+  <sect1>
+    <title>Post Installation</title>
+    <para>
+      After the installation completes, start up a terminal 
+      window by double-clicking the icon on the desktop.  You 
+      should be started in your Cygwin home directory.  To 
+      verify this, enter the following command after the 
+      shell prompt:
+      <screen format="linespecific">
+	pwd
+      </screen>
+      The response should be
+      <screen format="linespecific">
+	/home/<emphasis>your-user-name</emphasis>
+      </screen>
+    </para>
+    <para>
+      The default shell for Cygwin is
+      <command moreinfo="none">sh</command>,
+      the Bash shell, which is a 
+      version of the original Bourne shell enhanced in
+      several ways, including the addition of command-line
+      history and editing.  For portability, it is
+      important to always write shell scripts for
+      <command moreinfo="none">sh</command> rather than for
+      <command moreinfo="none">csh</command>,
+      <command moreinfo="none">tcsh</command>,
+      <command moreinfo="none">ksh</command>,
+      or any other shell.  It is recommended that RFPK developers
+      use <command moreinfo="none">sh</command> for all editing.
+      including command-line editing, in order to eliminate
+      confusion and because the current version has incorporated
+      nearly all of the useful features that were pioneered by
+      one or another of the above-named alternatives.
+    </para>
+    <para>
+      The Bash shell uses several configuration files, that it
+      will read when it starts up, if they are located in your
+      home directory.  A brief description of these files
+      follows.
+      <glosslist>
+	<glossentry>
+	  <glossterm>.bash_profile</glossterm>
+	  <glossdef>
+	    <para>
+	      <anchor id="login"></anchor>
+	      Bash reads this file when you "log in."  With
+	      Cygwin, you are, in effect, logging
+	      in when you double-click the 
+	      <guilabel moreinfo="none">Cygwin</guilabel> icon
+	      on the desktop or in the 
+	      <guimenuitem moreinfo="none">Start</guimenuitem> menu.
+	    </para>
+	    <para>
+	      The primary use of this file is to define environment
+	      variables.  For example, the 
+	      <varname>PAGER</varname> environment variable tells
+	      programs which paging command to use.  The default
+	      is usually the <command moreinfo="none">more</command>
+	      command.  Most people find, however, that the
+	      <command moreinfo="none">less</command> command is superior.
+	      You can instruct <command moreinfo="none">sh</command>
+	      and other programs that query the 
+	      <varname>PAGER</varname> variable
+	      to use <command moreinfo="none">less</command> by
+	      placing the following commands in your
+	      <filename moreinfo="none">.bash_profile</filename>
+	      <screen format="linespecific">
+		PAGER=less
+		export PAGER
+	      </screen>
+	    </para>
+	    <para>
+	      Note that you should not depend on your
+	      <filename moreinfo="none">.bash_profile</filename>
+	      being read prior to execution of a shell script,
+	      because the shell script might not be run from 
+	      a log-in shell.  For example, there is no login
+	      shell for scripts run by 
+	      <command moreinfo="none">cron</command>.
+	    </para>
+	  </glossdef>
+	</glossentry>
+	<glossentry>
+	  <glossterm>.inputrc</glossterm>
+	  <glossdef>
+	    <para>
+	      This file is used to specify that you would like to
+	      have the command-line editing feature enabled and
+	      which mode of editing, either 
+	      <command moreinfo="none">vi</command> or
+	      <command moreinfo="none">emacs</command> you prefer.
+	      For example, the following entry will provide
+	      command-line editing that behaves like
+	      <command moreinfo="none">vi</command>:
+	      <screen format="linespecific">
+		set editing-mode vi
+	      </screen>
+	    </para>
+	  </glossdef>
+	</glossentry>
+	<glossentry>
+	  <glossterm>.bashrc</glossterm>
+	  <glossdef>
+	    <para>
+	      Bash reads this file whenever it is started interactively.
+	      This occurs when you log in, as explained 
+	      <link linkend="login">above</link>, or when an 
+	      additional bash shell is spawned by a shell that is
+	      already running interactively.
+	    </para>
+	    <para>
+	      The primary use of this file is to define aliases.
+	      For example, the printer interface command,
+	      <command moreinfo="none">lpr</command>,
+	      may need a number of arguments to specify exactly
+	      which printer to use.  If you always use the
+	      same printer, you can redefine
+	      <command moreinfo="none">lpr</command> with the
+	      following alias:
+	      <screen format="linespecific">
+		alias lpr='lpr -P'\''Xerox DocuPrint N32 PS'\'''
+	      </screen>
+	    </para>
+	    <para>
+	      Note that you should not depend on your
+	      <filename moreinfo="none">.bashrc</filename>
+	      file being read prior to execution of a shell script,
+	      because the shell script might not be run from 
+	      an interactive shell.  For example, there is no
+	      interactive shell for scripts run by 
+	      <command moreinfo="none">cron</command>.
+	    </para>
+	  </glossdef>
+	</glossentry>
+      </glosslist>
+    </para>
+  </sect1>
+</article>

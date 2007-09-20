@@ -1,0 +1,662 @@
+<!-- <> <html:h2>SpkReportML : MDA -&gt; ASPK Information Package</html:h2>
+<html:p>
+This documentation specifies the information passed back from CSPK to MDA.
+</html:p>
+-->
+
+<!-- =============================================================================== -->
+<!--                                  REPORT                                          -->
+<!-- =============================================================================== -->
+<!-- <spkreport> For CSPK, this contains everything needed for returning the requested values back to the user.  For MDA, it is for presenting them before the user.  The values reported in this document are expressed in the scientific notation with 2 significant digits: ex. 0.12E01, 3.20E00, -0.12E01, 0.12E-01, -0.12E-01.
+-->
+
+<!ELEMENT spkreport ( error_list |  warning_list | ( ( simulation? | (pop_analysis_result | ind_analysis_result) | presentation_data | opt_trace_out? )? | pop_monte_result ) ) >
+
+<!-- <spkreport version="0.1"> The version number of the SpkReportML document.  For the initial version, it is "0.1".-->
+<!ATTLIST spkreport version (0.1|0.2) #REQUIRED>
+
+<!-- ===================================== -->
+<!--                 MESSAGE               -->
+<!-- ===================================== -->
+<!-- <error_list> A list of (fatal) errors caught by the driver of ASPK and/or CSPK. 
+
+Note that errors that are directly directed to the standard error or output and cause an immediate
+program termination are ignored by the drivers and are not reported as an <error>. -->
+<!ELEMENT error_list (error)*>
+
+<!-- <error> An error is a message or diagnosis for a problem encountered during the execution on ASPK/CSPK.
+A problem of this nature is considered fatal and results in an abnormal termination of the program. -->
+<!ELEMENT error ( message | file_name | line_number )>
+
+<!-- <warning_list> A list of warning messages generated from ASPK and/or CSPK. -->
+<!ELEMENT warning_list (warning)* >
+
+<!-- <warning> A warning is a message or diagnosis for a problem encountered during the execution on ASPK/CSPK.  
+A problem of this nature is considered not fatal or does not 
+alter the normal execution flow.-->
+<!ELEMENT warning ( message | file_name | line_number )>
+
+<!-- <message> A diagonosis for the problem encountered.-->
+<!ELEMENT message (#PCDATA)>
+
+<!-- <file_name> The name of the file the problem was detected.-->
+<!ELEMENT file_name (#PCDATA)>
+
+<!-- <line_number> The line number in <file_name> at which the problem was detected.-->
+<!ELEMENT line_number (#PCDATA)>
+
+<!-- ===================================== -->
+<!--                 REPORTS               -->
+<!-- ===================================== -->
+<!-- <simulation> This element appears only if data simulation is requested.  It is empty but carries a few attribute values such as the seed used to simulate a data set.
+-->
+<!ELEMENT simulation EMPTY>
+<!-- <simulation seed="1">  The seed value used to simulate the data set.
+-->
+<!ATTLIST simulation seed #CDATA #REQUIRED>
+<!-- <simulation subproblem="1"> The iteration number during which this particular simulation was done.  The value, 1, indicates the first iteration.
+-->
+<!ATTLIST simulation subproblem #CDATA #REQUIRED>
+
+<!-- <pop_analysis_result> This element appears only if the population parameter estimation is requested.  It contains the estimation results and may contain the statistics if it is requested. -->
+<!ELEMENT pop_analysis_result ( pop_opt_result | pop_stat_result? )>
+
+<!-- <pop_opt_result> Final values from the population parameter estimation.-->
+<!ELEMENT pop_opt_result (pop_obj_out | (theta_in | theta_out) | (omega_in | omega_out) | (sigma_in | sigma_out) )>
+
+<!-- <pop_opt_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
+<!ATTLIST pop_opt_result elapsedtime CDATA #REQUIRED>
+
+<!-- <ind_analysis_result> This element appears only if the individual parameters estimation is requested.  It contains the estimation results and may contain the statistics if it is requested. -->
+<!ELEMENT ind_analysis_result ( ind_opt_result | ind_stat_result? )>
+
+<!-- <ind_analysis_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
+<!ATTLIST ind_analysis_result elapsedtime CDATA #REQUIRED>
+
+<!-- <ind_opt_result> Final values from the individual parameter estimation.-->
+<!ELEMENT ind_opt_result (ind_obj_out | (theta_in | theta_out) | (omega_in | omega_out) )>
+
+<!-- <ind_opt_result elapsedtime="500"> The number of seconds it took to complete the parameter estimation. -->
+<!ATTLIST ind_opt_result elapsedtime CDATA #REQUIRED>
+
+<!-- <pop_monte_result> The estimate for the integral.  -->
+<!ELEMENT pop_monte_result ( row_major | column_major )* >
+
+<!-- <pop_monte_result elapsedtime="500"> The number of seconds it took to complete both estimation and statistics computation.-->
+<!ATTLIST pop_monte_result elapsedtime CDATA #REQUIRED>
+
+<!-- <pop_monte_result method="plain"> The estimation method.  Legal values are "plain", "miser", "grid" and "analytic".
+-->
+<!ATTLIST pop_monte_result method CDATA #REQUIRED>
+
+<!-- <pop_monte_result number_eval="1000"> The user's original request for the number of evaluations.  -->
+<!ATTLIST pop_monte_result number_eval CDATA #REQUIRED>
+
+<!-- <theta_in> Initial value for theta.  -->
+<!ELEMENT theta_in (value)+>
+
+<!-- <theta_in length="0"> The length of the theta vector. -->
+<!ATTLIST theta_in length CDATA #REQUIRED>
+
+<!-- <omega_in> A minimal representation of the initial value of Omega matrix
+
+For full (ie. "block") matrix, <omega_in> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_in> lists only the diagonal elements from the upper left corner.  For block diagonal, each <omega_in> block is listed individually using full or diagonal specifications as appropriate.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <omega_in> specifies as follows:
+<html:pre>
+    &lt;omega_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_in&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <omega_in> specifies as follows:
+<html:pre>
+    &lt;omega_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_in&gt;
+</html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <omega_in> specifies as two blocks as follows:
+<html:pre>
+    &lt;omega_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/omega_in&gt;
+    &lt;omega_in&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_in&gt;
+</html:pre>
+-->
+<!ELEMENT omega_in (value)+>
+
+<!-- <omega_in struct="block"> The structure of the Omega matrix: "block" or "diagonal". -->
+<!ATTLIST omega_in struct (block|diagonal) #REQUIRED>
+
+<!-- <omega_in dimension=""> The dimension of the Omega matrix. -->
+<!ATTLIST omega_in dimension CDATA #REQUIRED>
+
+<!-- <omega_in same_as_previous=""> If "yes", constrains the block equal to the previous block of a block diagaonal Omega matrix. -->
+<!ATTLIST omega_in same_as_previous (yes|no) #IMPLIED>
+
+<!-- <sigma_in> A minimal representation of the initial value for Omega matrix.
+
+For full (ie. "block") matrix, <sigma_in> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_in> lists only the diagonal elements from the upper left corner.  For block diagonal, each <sigma_in> block is listed individually using full or diagonal specifications as appropriate.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <sigma_in> specifies as follows:
+<html:pre>
+    &lt;sigma_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_in&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <sigma_in> specifies as follows:
+<html:pre>
+    &lt;sigma_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_in&gt;
+</html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <sigma_in> specifies as two blocks as follows:
+<html:pre>
+    &lt;sigma_in&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/sigma_in&gt;
+    &lt;sigma_in&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_in&gt;
+</html:pre>
+-->
+<!ELEMENT sigma_in (value)+>
+
+<!-- <sigma_in struct="block"> The structure of the Sigma matrix: "block" or "diagonal". -->
+<!ATTLIST sigma_in struct (block|diagonal) #REQUIRED>
+
+<!-- <sigma_in dimension=""> The dimension of the Simga matrix. -->
+<!ATTLIST sigma_in dimension CDATA #REQUIRED>
+
+<!-- <sigma_in same_as_previous=""> If "yes", constrains the block equal to the previous block of a block diagaonal Sigma matrix. -->
+<!ATTLIST sigma_in same_as_previous (yes|no) #IMPLIED>
+
+<!-- <theta_out> Final value for theta when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.-->
+<!ELEMENT theta_out (value)+>
+
+<!-- <theta_out length="0"> The length of the theta vector. -->
+<!ATTLIST theta_out length CDATA #REQUIRED>
+
+<!-- <omega_out> A minimal representation of the final value of Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
+
+For full (ie. "block") matrix, <omega_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <omega_out> lists only the diagonal elements from the upper left corner.  For block diagonal, each <omega_out> block is listed individually using full or diagonal specifications as appropriate.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <omega_out> specifies as follows:
+<html:pre>
+    &lt;omega_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_out&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <omega_out> specifies as follows:
+<html:pre>
+    &lt;omega_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_out&gt;
+</html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <omega_out> specifies as two blocks as follows:
+<html:pre>
+    &lt;omega_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/omega_out&gt;
+    &lt;omega_out&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/omega_out&gt;
+</html:pre>
+-->
+<!ELEMENT omega_out (value)+>
+
+<!-- <omega_out struct="block"> The structure of the Omega matrix: "block" or "diagonal". -->
+<!ATTLIST omega_out struct (block|diagonal) #REQUIRED>
+
+<!-- <omega_out dimension=""> The dimension of the Omega matrix. -->
+<!ATTLIST omega_out dimension CDATA #REQUIRED>
+
+<!-- <sigma_out> A minimal representation of NONMEM Omega matrix when optimization completes (ie. converges) successfully.  If fails, this entry contains the value from the last successfully completed iteration.
+
+For full (ie. "block") matrix, <sigma_out> lists the <html:font color='red'>lower</html:font> triangle elements in the <html:font color='red'>row-major</html:font> order.  For diagonal, <sigma_out> lists only the diagonal elements from the upper left corner.  For block diagonal, each <sigma_out> block is listed individually using full or diagonal specifications as appropriate.
+
+Given a 3 by 3 matrix, A:
+<html:pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</html:pre>
+
+If A were <html:font color='red'>full</html:font> (ie. block) symmetric, <sigma_out> specifies as follows:
+<html:pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</html:pre>
+If A were <html:font color='red'>diagonal</html:font>, <sigma_out> specifies as follows:
+<html:pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</html:pre>
+If A were <html:font color='red'>block diagonal</html:font> symmetric with a 2x2 full block and a 1x1 diagonal block, <sigma_out> specifies as two blocks as follows:
+<html:pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/sigma_out&gt;
+    &lt;sigma_out&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</html:pre>
+-->
+<!ELEMENT sigma_out (value)+>
+
+<!-- <sigma_out struct="block"> The structure of the Sigma matrix: "block" or "diagonal". -->
+<!ATTLIST sigma_out struct (block|diagonal) #REQUIRED>
+
+<!-- <sigma_out dimension=""> The dimension of the Simga matrix. -->
+<!ATTLIST sigma_out dimension CDATA #REQUIRED>
+
+
+<!-- <pop_obj_out> Final objective value for the SPK population parameter which is a composite of NONMEM's theta and function values of Omega and Sigma. -->
+<!ELEMENT pop_obj_out (value)+>
+
+<!-- <ind_obj_out> Final objective value for the SPK individual parameter which is a composite of NONMEM's theta and function value of Omega. -->
+<!ELEMENT ind_obj_out (value)+>
+
+<!-- <pop_stat_result> Statistical analysis results on the final estimate for the population parameter.  The NONMEM fixed effect parameters are mapped to the SPK population parameter in the oder of {THETA, OMEGA, SIGMA}.
+
+For example, given the following (full) covariance matrix:
+<html:pre>
+   /           \
+   |  <font color="red">1</font>  2  3  |
+   |  <font color="red">2</font>  <font color="red">4</font>  5  |
+   |  <font color="red">3</font>  <font color="red">5</font>  <font color="red">6</font>  |
+   \           /
+</html:pre>
+
+the following is returned:
+<html:pre>
+   &lt;<pop_covariance_out> dimension="3" struct="block"&gt;
+      &lt;<value>&gt;1&lt;/<value>&gt;
+      &lt;<value>&gt;2&lt;/<value>&gt;&lt;<value>&gt;4&lt;/<value>&gt;
+      &lt;<value>&gt;3&lt;/<value>&gt;&lt;<value>&gt;5&lt;/<value>&gt;&lt;<value>&gt;6&lt;/<value>&gt;
+   &lt;/<pop_covariance_out>&gt;
+</html:/pre>
+-->
+<!ELEMENT pop_stat_result ( pop_stderror_out? | pop_covariance_out? | pop_inverse_covariance_out? | pop_correlation_out?  | pop_coefficient_out? | pop_confidence_out? )>
+
+<!-- <pop_stat_result elapsedtime="120"> The number of seconds it took to complete computing the requested statistics values. -->
+<!ATTLIST pop_stat_result elapsedtime CDATA #REQUIRED>
+
+<!-- <pop_stderror_out> Standard error for the final estimate of population parameter.
+ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+ -->
+<!ELEMENT pop_stderror_out (value)*>
+
+<!-- <pop_stderror_out length="0"> The length of the standard error vector, which is equal to the length of the parameter vector. -->
+<!ATTLIST pop_stderror_out length CDATA #REQUIRED>
+
+<!-- <pop_covariance_out> Covariance matrix for the final estimate of population parameter.
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<pop_stat_result>&gt;.
+-->
+<!ELEMENT pop_covariance_out (value)*>
+
+<!-- <pop_covariance_out dimension="0"> The dimension of the covariance matrix. -->
+<!ATTLIST pop_covariance_out dimension CDATA #REQUIRED>
+
+<!-- <pop_inverse_covariance_out> Inverse of the covariance matrix for the final estimate of population parameter.  
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<pop_stat_result>&gt;.
+-->
+<!ELEMENT pop_inverse_covariance_out (value)*>
+
+<!-- <pop_inverse_covariance_out dimension="0"> The dimension of the covariance matrix. -->
+<!ATTLIST pop_inverse_covariance_out dimension CDATA #REQUIRED>
+
+<!-- <pop_correlation_out> Correlation matrix for the final estimate of population parameter.
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<pop_stat_result>&gt;.
+-->
+<!ELEMENT pop_correlation_out (value)*>
+
+<!-- <pop_correlation_out dimension="0"> The dimension of the correlation matrix. -->
+<!ATTLIST pop_correlation_out dimension CDATA #REQUIRED>
+
+<!-- <pop_confidence_out>  The confidence interval for the final estimate of population parameter. 
+The first n &lt;<value>&gt;s are the lower bounds and the remaining n
+&lt;<value>&gt;s are the upper bounds, where n is the length of parameter vector.
+Thus, the lower bound for the i-th element of the parameter vector is found at (0 * n + i)-th in 
+the &lt;<value>&gt;s sequence and the upper bound for the same parameter is found at (1 * n + i)-th.
+-->
+<!ELEMENT pop_confidence_out (value)*>
+
+<!-- <pop_confidence_out length="0"> The length of the vector containing
+the confidence intervals.
+-->
+<!ATTLIST pop_confidence_out length CDATA #REQUIRED>
+
+<!-- <pop_coefficient_out> The coefficient of variation for the final estimate of population parameter, which is twice long as the length of the parameter vector.
+The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+-->
+<!ELEMENT pop_coefficient_out (value)*>
+
+<!-- <pop_coefficient_out length="0"> The length of the vector containing
+the coefficient of variation, which is equal to the length of the parameter vector.
+-->
+<!ATTLIST pop_coefficient_out length CDATA #REQUIRED>
+
+<!-- <ind_stat_result> Statistical analysis results on the final estimate for the individual parameter.  The NONMEM random effect parameter, ETA, is mapped to the SPK individual parameter, one-to-one.
+
+For the symmetric matrices (ex. the covariance and the correlation matrices), the <value>s are arranged so that the lower triangle of the symmetric matrix is read in the row-major order.
+For example, given the following (full) covariance matrix:
+<html:pre>
+   /           \
+   |  <font color="red">1</font>  2  3  |
+   |  <font color="red">2</font>  <font color="red">4</font>  5  |
+   |  <font color="red">3</font>  <font color="red">5</font>  <font color="red">6</font>  |
+   \           /
+</html:pre>
+the following is returned:
+<html:pre>
+   &lt;<ind_covariance_out> dimension="3" struct="block"&gt;
+      &lt;<value>&gt;1&lt;/<value>&gt;
+      &lt;<value>&gt;2&lt;/<value>&gt;&lt;<value>&gt;4&lt;/<value>&gt;
+      &lt;<value>&gt;3&lt;/<value>&gt;&lt;<value>&gt;5&lt;/<value>&gt;&lt;<value>&gt;6&lt;/<value>&gt;
+   &lt;/<ind_covariance_out>&gt;
+</html:/pre>
+-->
+<!ELEMENT ind_stat_result (ind_stderror_out? | ind_covariance_out? | ind_inverse_covariance_out? | ind_correlation_out? | ind_coefficient_out? | ind_confidence_out?)>
+
+<!-- <ind_stat_result elapsedtime="60"> The number of seconds it took to complete computing the requested statistics values.-->
+<!ATTLIST ind_stat_result elapsedtime CDATA #REQUIRED>
+
+<!-- <ind_stderror_out> Standard error for the final estimate(s) of individual parameter(s).
+ The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+ -->
+<!ELEMENT ind_stderror_out (value)*>
+
+<!-- <ind_stderror_out length="0"> The length of the standar error vector, which is equal to the length of the parameter vector.
+-->
+<!ATTLIST ind_stderror_out length CDATA #REQUIRED>
+
+<!-- <ind_covariance_out> Covariance matrix for the final estimate(s) of individual parameter(s).
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<ind_stat_result>&gt;.
+-->
+<!ELEMENT ind_covariance_out (value)*>
+
+<!-- <ind_covariance_out dimension="0"> The dimension of the covariance matrix. -->
+<!ATTLIST ind_covariance_out dimension CDATA #REQUIRED>
+
+<!-- <ind_covariance_out struct="block"> The structure of the covariance matrix: "block" or "diagonal". -->
+<!ATTLIST ind_covariance_out struct (block|diagonal) #REQUIRED>
+
+<!-- <ind_inverse_covariance_out> Inverse of the covariance matrix for the final estimate(s) of individual parameter(s).  For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<ind_stat_result>&gt;.
+-->
+<!ELEMENT ind_inverse_covariance_out (value)*>
+
+<!-- <ind_inverse_covariance_out dimension="0"> The dimension of the covariance matrix. -->
+<!ATTLIST ind_inverse_covariance_out dimension CDATA #REQUIRED>
+
+<!-- <ind_inverse_covariance_out struct="block"> The structure of the inverse of covariance matrix: "block" or "diagonal". -->
+<!ATTLIST ind_inverse_covariance_out struct (block|diagonal) #REQUIRED>
+
+<!-- <ind_correlation_out> Correlation matrix for the final estimate(s) of individual parameter(s). 
+For the arrangement of &lt;<value>&gt;s under this tag, refer to &lt;<ind_stat_result>&gt;.
+-->
+<!ELEMENT ind_correlation_out (value)*>
+
+<!-- <ind_correlation_out dimension="0"> The dimension of the correlation matrix. -->
+<!ATTLIST ind_correlation_out dimension CDATA #REQUIRED>
+
+<!-- <ind_correlation_out struct="block"> The structure of the correlation matrix: "block" or "diagonal". -->
+<!ATTLIST ind_correlation_out struct (block|diagonal) #REQUIRED>
+
+<!-- <ind_confidence_out> Confidence interval for the final estimate(s) of
+individual parameter(s).  
+The first n &lt;<value>&gt;s are the lower bounds and the remaining n
+&lt;<value>&gt;s are the upper bounds, where n is the length of parameter vector.
+Thus, the lower bound for the i-th element of the parameter vector is found at (0 * n + i)-th in 
+the &lt;<value>&gt;s sequence and the upper bound for the same parameter is found at (1 * n + i)-th.
+-->
+<!ELEMENT ind_confidence_out (value)*>
+
+<!-- <ind_confidence_out length="0"> The length of the vector containing the confidence intervals, which is twice as long as of the parameter vector.
+-->
+<!ATTLIST ind_confidence_out length="0">
+
+<!-- <ind_coefficient_out> Coefficient of variation for the final estimate(s) of
+individual parameters(s).  
+The i-th &lt;<value>&gt; corresponds to the i-th element of the parameter vector.
+-->
+<!ELEMENT ind_coefficient_out (value)*>
+
+<!-- <ind_coefficient_out length="0"> The length of the vector containing the coefficient of variation, which is equal to the length of the parameter vector.
+-->
+<!ATTLIST ind_coefficient_out length CDATA #REQUIRED>
+
+
+<!-- <presentation_data> An augmented data set: a set of all values associated with or evaluated at each individual's sampling points.
+        
+The first <label> value in <data_labels> will be always a label for ID.  If ID was not given for an individual data set,
+the field would be populated with a value "1".  For a population data set, sequencial numbers (beginning with 1)
+would be assigned.
+
+<presentation_data> is composed of three kinds of data sets:
+<html:ul>
+   <html:li>
+   the exact original data set
+   or the original data with DV replaced by a newly simulated data set when simulation was requested.
+   Also, the ID data item may be present if no ID value was given in the original set.
+   </html:li>
+   <html:li>
+   the quantities computed and stored in the variables that appear on the left hand side 
+   of the equations in the model definition, 
+   </html:li>
+   <html:li>
+   the following extra items:
+
+      <html:dl>
+         <html:dt>MDV</html:dt>
+         <html:dd>Missing Dependent Variable if the data set did not have this data item in the first place.</html:dd>
+         <html:dt>PRED</html:dt>
+         <html:dd>Prediction.</html:dd>
+         <html:dt>RES</html:dt>
+         <html:dd>Residual for the prediction, where RES = DV - PRED.</html:dd>
+         <html:dt>WRES</html:dt>
+         <html:dd>Weighted residual for the prediction
+         </html:dd>
+         <html:dt>ETARES</html:dt>
+         <html:dd>Residual for eta (only available for population analaysis)</html:dd>
+         <html:dt>WETARES</html:dt>
+         <html:dd>Weighted residual for eta (only available for population analysis)</html:dd>
+         <html:dt>ORGDV</html:dt>
+         <html:dd>The original DV value when a new data set is simulated.  The new data set populates DV.
+      </html:ul>
+
+with THETA set to:
+
+      <html:ul>
+         <html:li>
+         initial values if no parameter estimation is requested.
+         </html:li>
+         <html:li>
+         final values or values from the last successful & complete iteration if parameter estimation is requested.
+         </html:li>
+      </html:ul>
+   </html:li>
+</html:ul>
+
+Conceptual Example:
+<html:pre>
+      [ Model Defintion ]
+
+      F = EXP( TIME * (THETA(1) + ETA(1)) ) + DOSE
+      Y = F + EPS(1)
+
+      [ Original Data Set ]                     
+	ID	TIME	DV	DOSE
+	1	0	8	10
+	1	0.1	1	0
+	1	0.2	2	0
+	2	0	10	8.5
+	2	0.1	1	0
+	3	0	10	12
+	3	0.5	5	0
+	3	1	9.5	0
+	3	2	20	0
+
+      [ Presentation Data Set ]
+	ID	TIME	DV	DOSE	PRED	RES    WRES   ETARES   WETARES    MDV     F     Y
+	1	0	8	10	10	-2      ...      ...       ...    ...   ...   ...
+	1	0.1	1	0	1	0       ...      ...       ...    ...   ...   ...
+	1	0.2	2	0	2	0       ...      ...       ...    ...   ...   ...
+	2	0	10	8.5	8.5	1.5     ...      ...       ...    ...   ...   ...
+	2	0.1	1	0	1	0	...      ...       ...    ...   ...   ...
+	3	0	10	12	12	-2      ...      ...       ...    ...   ...   ...
+	3	0.5	5	0	5	0       ...      ...       ...    ...   ...   ...
+	3	1	9.5	0	10	-0.5    ...      ...       ...    ...   ...   ...
+	3	2	20	0	20	0       ...      ...       ...    ...   ...   ...
+</html:pre>
+
+-->
+<!ELEMENT presentation_data (data_labels | row*) > 
+
+<!-- <data_labels> Sequence of data lables.  The <label>s are matched to the columns of data values from left to rigth, in the order of appearance.
+-->
+<!ELEMENT data_labels (label)+>
+
+<!-- <label> The name/label of the item. -->
+<!ELEMENT label EMPTY>
+                                                                                
+<!-- <label name=""> A string begining with an alphabet followed by any combination of alphabets, numbers, _ (underscore) that serves as the label.  Case-sensitive.  -->
+<!ATTLIST label name CDATA #REQUIRED>
+                                                                                
+<!-- <label synonym=""> [optional] Similar to "name" but this serves as an alias/synonym that references the same entity as "name" does, default to "" (none).
+-->
+<!ATTLIST label synonym CDATA #IMPLIED>
+                                                                                
+<!-- <presentation_data columns="0"> The number of colums in the table, >=0. -->
+<!ATTLIST presentation_data columns CDATA #REQUIRED>
+
+<!-- <presentation_data rows="0"> The number of rows in the table, >=0. -->
+<!ATTLIST presentation_data rows CDATA #REQUIRED>
+
+<!-- <row> A row in the table/matrix.  -->
+<!ELEMENT row (value)*>
+
+<!-- <row position="1"> The position of the <row> in the table/matrix, >= 1.  "1" means the row is the first row in the table/matrix.  If any <row> in the table/matrix had this attribute setting, all other <row>s must have the setting consistently.  If no <row> had this setting, the order of appearance of <row>s is taken as the order of rows.-->
+<!ATTLIST row position CDATA #IMPLIED>
+
+<!-- <opt_trace_out> The optimizer's tracing information produced to the standard output during the parameter estimation.  This element may be empty if no parameter estimation were attempted or the optimizer did not produce any information for some reason.
+
+One or more lines of comma seperated values is produced per iteration.
+The number of values per line may vary depending on the level of 
+trace requested by the user. 
+
+The following is an example of such output.  The leading k=1 or k=2 implies the first or the second iteration, respectively:
+
+<html:pre>
+k   = 1, r   = 0.073787, f   = 422.826, |s| = 2.45434e-06, |p| = 1.04589, |H| = 1.10108e+09, det(H) = 4.47192e+37, Bfgs = 197,
+k   = 1, dq  = 2.04964e-06, df  = 2.04967e-06, eta = 0, Herr = 0.0489146
+k   = 2, r   = 0.0147574, f   = 422.826, |s| = 2.49693e-06, |p| = 1.04589, |H| = 1.11676e+09, det(H) = 4.48602e+37, Bfgs = 199,
+k   = 2, dq  = 1.5254e-06, df  = 1.5254e-06, eta = 0, Herr = 0.00219536
+</html:pre>
+-->
+<!ELEMENT opt_trace_out (#PCDATA)>
+
+<!-- ================================================================================ -->
+<!--                                                                                  -->
+<!--                                 end of REPORT                                    -->
+<!--                                                                                  -->
+<!-- ================================================================================ -->
+
+
+<!-- ================================================================================ -->
+<!--                                                                                  -->
+<!--                                 GENERAL/COMMON                                   -->
+<!--                                                                                  -->
+<!-- ================================================================================ -->
+
+<!-- <value> A value of arbitrary type: floating point number, integer, string or text.  
+
+For numbers, you can use the decimal format (ex. 0.1) or scientific notation (ex. 1E-1).  The leading zeros before the decimal point or the trailing zeros after the decimal point may be omitted (ex. ".1", "1.") as long as there is one significant digit on either side (ex. "." by itself is illegal).
+-->
+<!ELEMENT value (#PCDATA)>
+
+<!-- <value type="numeric">The type of the value: "numeric" or "string", default to "numeric". -->
+<!ATTLIST value type (numeric|string) #IMPLIED>
+
+<!-- <value ref="xxx">The string associated with the value.  The label here is only to provide you a visual guide though the list of <value>s.  The label values in <data_labels> superceed the values here.-->
+<!ATTLIST value ref CDATA #IMPLIED>
+
+<!-- <row_major> A structure that contains a matrix in row-major order. -->
+<!ELEMENT row_major (row)*>
+
+<!-- <row_major name="ABC"> The name of the matrix.  -->
+<!ATTLIST row_major name CDATA #REQUIRED>
+
+<!-- <row_major nrows="3"> The number of rows in the matrix -->
+<!ATTLIST row_major nrows CDATA #REQUIRED>
+
+<!-- <row_major ncols="3"> The number of columns in the matrix -->
+<!ATTLIST row_major ncols CDATA #REQUIRED>
+
+<!-- <column_major> A structure that contains a matrix in column-major order.
+-->
+<!ELEMENT column_major (column)*>
+
+<!-- <column> A column in matrix. -->
+<!ELEMENT column (value)*>
+
+<!-- <column_major name="ABC"> The name of the matrix.  -->
+<!ATTLIST column_major name CDATA #REQUIRED>
+
+<!-- <column_major nrows="3"> The number of rows in the matrix -->
+<!ATTLIST column_major nrows CDATA #REQUIRED>
+
+<!-- <column_major ncols="3"> The number of columns in the matrix -->
+<!ATTLIST column_major ncols CDATA #REQUIRED>
