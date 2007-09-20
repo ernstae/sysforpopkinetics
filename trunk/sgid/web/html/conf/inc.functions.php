@@ -84,7 +84,7 @@ $TDATA = array( 'input_eq' => array(),
   $i = 0;
   while ( each ($toks) ) {
     
-    echo "Found: $toks[$i] <br />\n";
+    #echo "Found: $toks[$i] <br />\n";
 
     // first determine whether there are any function calls within the code
     // and add the function names to the not_parameters array.
