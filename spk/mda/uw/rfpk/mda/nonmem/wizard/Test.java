@@ -23,6 +23,8 @@ import java.awt.event.*;
 import java.util.Properties;
 import java.util.*;
 import java.text.SimpleDateFormat;
+import javax.swing.JOptionPane;
+import org.netbeans.ui.wizard.*;
 
 /** Unit tests of the wizard steps.
  * @author  Jiaji Du
@@ -43,6 +45,7 @@ public class Test{
     /** The initialization method.
      */
     public void init(){
+
         TestFrame window = new TestFrame();
         Toolkit theKit = window.getToolkit();           // Get the window toolkit
         Dimension wndSize = theKit.getScreenSize();     // Get screen size
@@ -53,11 +56,11 @@ public class Test{
 
         window.addWindowListener(new WindowHandler());  // Add window listener
         window.setVisible(true);
-
+/*
         GregorianCalendar calendar = new GregorianCalendar();
-//        calendar.setTimeInMillis(Long.parseLong("1140633044000"));
+        calendar.setTimeInMillis(Long.parseLong("1140633044000"));
         calendar.setTimeInMillis(Long.parseLong("1072994943356"));
-//        calendar.setTimeInMillis(Long.parseLong("1086299943000"));
+        calendar.setTimeInMillis(Long.parseLong("1086299943000"));
         System.out.println("day = " + calendar.get(Calendar.DAY_OF_MONTH));
         System.out.println("month = " + calendar.get(Calendar.MONTH));
         System.out.println("year = " + calendar.get(Calendar.YEAR));        
@@ -69,7 +72,7 @@ public class Test{
         calendar = new GregorianCalendar();
         calendar.set(2006, 1, 1);
         System.out.println("time = " + calendar.getTimeInMillis());
-/*        
+        
         Date date = new Date(Long.parseLong("1075029317964"));
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM, d yyyy 'at' HH:mm:ss z");
         System.out.println("date = " + formatter.format(date));
@@ -87,27 +90,6 @@ public class Test{
     }
     private class TestFrame extends javax.swing.JFrame{
         public TestFrame(){
-            Iterator i = new Iterator();
-//            Aesinitial step = new Aesinitial(i);
-//            Aes step = new Aes(i);
-//            Covariance step = new Covariance(i);
-//            Data step = new Data(i);
-//            Des step = new Des(i);
-//            Error step = new Error(i);
-            Estimation step = new Estimation(i);
-//            GettingStarted step = new GettingStarted(i);          
-//            Input step = new Input(i);
-//            Model step = new Model(i);
-//            Omega step = new Omega(i);
-//            PK step = new PK(i);
-//            Pred step = new Pred(i);
-//            Problem step = new Problem(i);
-//            Sigma step = new Sigma(i);
-//            ScatterPlot step = new ScatterPlot(i); 
-//            Simulation step = new Simulation(i);
-//            Subroutines step = new Subroutines(i);
-//            Table step = new Table(i);
-//            Theta step = new Theta(i);
             MDAObject object = new MDAObject();
             Properties records = object.getRecords();
             object.setData(new Vector<Vector<String[]>>());
@@ -118,9 +100,135 @@ public class Test{
             records.setProperty("Input", "$INPUT ID AMT=DOSE TIME DV=CP WT"); 
             records.setProperty("PK", "$PK \nK\nV=\nS1=1\nS2=1\nF1=1\nF0=1\nALAG1=0"); 
             records.setProperty("Pred", "");
-            String[] input = object.getRecords().getProperty("Input").split(" ");
-            step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
-            getContentPane().add(step); 
+            String[] dataLabels = {"ID", "AMT=DOSE", "TIME", "DV=CP", "WT"};
+            object.setDataLabels(dataLabels);
+            Object[] possibleValues = {"Aesinitial", "Aes", "Covariance", "Data", "Des", "Error", "Estimation",
+                                       "GettingStarted", "Input", "Model", "Omega", "PK", "Pred", "Problem",
+                                       "Sigma", "ScatterPlot", "Simulation", "Subroutines", "Table", "Theta"};
+            String test = (String)JOptionPane.showInputDialog(null, "Select a test:", "Test Selection",
+                                                  JOptionPane.INFORMATION_MESSAGE, null,
+                                                  possibleValues, possibleValues[0]);
+            Iterator i = new Iterator();
+            if(test.equals("Aesinitial")) 
+            {
+                Aesinitial step = new Aesinitial(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Aes")) 
+            {
+                Aes step = new Aes(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Covariance")) 
+            {
+                Covariance step = new Covariance(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Data")) 
+            {
+                Data step = new Data(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Des")) 
+            {
+                Des step = new Des(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Error")) 
+            {
+                Error step = new Error(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Estimation")) 
+            {
+                Estimation step = new Estimation(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("GettingStarted")) 
+            {
+                GettingStarted step = new GettingStarted(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Input")) 
+            {
+                Input step = new Input(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Model")) 
+            {
+                Model step = new Model(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Omega")) 
+            {
+                Omega step = new Omega(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("PK")) 
+            {
+                PK step = new PK(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Pred")) 
+            {
+                Pred step = new Pred(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Problem")) 
+            {
+                Problem step = new Problem(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Sigma")) 
+            {
+                Sigma step = new Sigma(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("ScatterPlot")) 
+            {
+                ScatterPlot step = new ScatterPlot(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Simulation")) 
+            {
+                Simulation step = new Simulation(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Subroutines")) 
+            {
+                Subroutines step = new Subroutines(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Table")) 
+            {
+                Table step = new Table(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
+            if(test.equals("Theta")) 
+            {
+                Theta step = new Theta(i);
+                step.getStepDescription().showingStep(new org.netbeans.ui.wizard.JWizardPane(i, object));
+                getContentPane().add(step);
+            }
         }
         /**
          * Handles window events.
@@ -150,5 +258,5 @@ public class Test{
     }
     
     private static TestFrame window;                     // The application window
-    private static Test theApp;       
+    private static Test theApp;
 }
