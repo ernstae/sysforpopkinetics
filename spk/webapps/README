@@ -2,10 +2,6 @@ Build mda and dbapi.
 
 > ant
 
-Generate a key pair to sign to following files.
-
-  user/MDAn.jar, /user/jhall.jar, user/JavaHelp.jar
-
 Modify user/WEB-INF/web.xml to configure the web application.
 
 > cd user
