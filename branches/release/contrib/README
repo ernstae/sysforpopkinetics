@@ -7,3 +7,8 @@ OMHelp (author:  Brad Bell)
  make; sudo make install
 ==================================================
 
+QN01Box (author:  Brad Bell)
+ tar xvfz qn01box-07-09-21.tar.gz
+ ./configure --prefix=/usr/local/spk
+ make; sudo make install
+
