@@ -1,0 +1,9 @@
+The following packages are helpful for the successful operation of SPK.
+
+==================================================
+OMHelp (author:  Brad Bell)    
+ tar xvfz OMHelp.unix.tar.gz
+ ./configure --prefix=/usr/local
+ make; sudo make install
+==================================================
+
