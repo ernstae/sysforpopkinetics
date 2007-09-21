@@ -13,7 +13,9 @@ mkdir -p Build/mda/src/uw/rfpk/mda/nonmem
 cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/*.java Build/mda/src/uw/rfpk/mda/nonmem/
 mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/wizard
 cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/*.java Build/mda/src/uw/rfpk/mda/nonmem/wizard
-cp -R ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons Build/mda/src/uw/rfpk/mda/nonmem/wizard
+mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/wizard/icons
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons/*.gif Build/mda/src/uw/rfpk/mda/nonmem/wizard/icons
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons/*.png Build/mda/src/uw/rfpk/mda/nonmem/wizard/icons
 mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/display
 cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/display/*.java Build/mda/src/uw/rfpk/mda/nonmem/display
 mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/compartment
@@ -45,8 +47,20 @@ cp ~/r2/trunk/spk/mda/lib/*.jar Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/JavaHelp.jar Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/SPK_User_Manual.pdf Build/webapps/user
 cp ~/r2/trunk/spk/webapps/user/RFPK_SPK_TERMS_OF_SERVICE.html Build/webapps/user
-cp -R ~/r2/trunk/spk/webapps/user/WebHelp Build/webapps/user
-cp -R ~/r2/trunk/spk/webapps/user/images Build/webapps/user
+mkdir -p Build/webapps/user/WebHelp
+cp ~/r2/trunk/spk/webapps/user/WebHelp/*.* Build/webapps/user/WebHelp
+mkdir -p Build/webapps/user/WebHelp/images
+cp ~/r2/trunk/spk/webapps/user/WebHelp/images/*.gif Build/webapps/user/WebHelp/images
+mkdir -p Build/webapps/user/WebHelp/spkstart
+cp  ~/r2/trunk/spk/webapps/user/WebHelp/spkstart/*.* Build/webapps/user/WebHelp/spkstart
+mkdir -p Build/webapps/user/WebHelp/whdata
+cp  ~/r2/trunk/spk/webapps/user/WebHelp/whdata/*.* Build/webapps/user/WebHelp/whdata
+mkdir -p Build/webapps/user/WebHelp/whgdata
+cp  ~/r2/trunk/spk/webapps/user/WebHelp/whgdata/*.* Build/webapps/user/WebHelp/whgdata
+mkdir -p Build/webapps/user/WebHelp/whxdata
+cp  ~/r2/trunk/spk/webapps/user/WebHelp/whxdata/*.* Build/webapps/user/WebHelp/whxdata
+mkdir -p Build/webapps/user/images
+cp ~/r2/trunk/spk/webapps/user/images/*.* Build/webapps/user/images
 mkdir -p Build/webapps/user/jnlp
 mkdir -p Build/webapps/user/WEB-INF
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/web.xml_release Build/webapps/user/WEB-INF/web.xml
@@ -78,8 +92,8 @@ cp ~/r2/trunk/spk/mail/install Build/mail
 # dbapi
 mkdir -p Build/dbapi
 cp ~/r2/trunk/spk/db/api/java/build.xml Build/dbapi
-mkdir -p Build/dbapi/src
-cp -R ~/r2/trunk/spk/db/api/java/rfpk Build/dbapi/src
+mkdir -p Build/dbapi/src/rfpk/spk/spkdb
+cp ~/r2/trunk/spk/db/api/java/rfpk/spk/spkdb/*.java Build/dbapi/src/rfpk/spk/spkdb
 mkdir -p Build/dbapi/test
 cp ~/r2/trunk/spk/db/api/java/TestSpkdb.java Build/dbapi/test
 
@@ -91,8 +105,8 @@ cp ~/r2/trunk/spk/jobqs/install Build/jobqs
 cp ~/r2/trunk/spk/jobqs/jobqd Build/jobqs
 cp ~/r2/trunk/spk/jobqs/jobqtestd Build/jobqs
 cp ~/r2/trunk/spk/jobqs/jobqd.pl Build/jobqs
-mkdir -p Build/jobqs/src
-cp -R ~/r2/trunk/spk/jobqs/uw Build/jobqs/src
+mkdir -p Build/jobqs/src/uw/rfpk/jobqs
+cp ~/r2/trunk/spk/jobqs/uw/rfpk/jobqs/*.java Build/jobqs/src/uw/rfpk/jobqs
 mkdir -p Build/jobqs/test
 cp ~/r2/trunk/spk/jobqs/TestJobqs.java Build/jobqs/test
 
