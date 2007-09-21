@@ -101,13 +101,13 @@ break;
 case 2:
 ?>
 
-<p>You may now choose a username for use on our system.</p>
+<p>You may now choose a username for use on our system.  Please note, usernames have a 15 character limit.</p>
 
 <form method="POST" action="process.php">
 <input type="hidden" name="step" value="<?= $step ?>">
 <fieldset>
 <legend><?= $steps[$step] ?></legend>
-<p><label for="username">Username:</label> <input type="text" id="username" name="username" maxlength="10" value="<?= strip_tags($_SESSION['username']) ?>"  /></p>
+<p><label for="username">Username:</label> <input type="text" id="username" name="username" maxlength="15" value="<?= strip_tags($_SESSION['username']) ?>"  /></p>
 <p><input type="submit" value="Request Username" /></p>
 </fieldset>
 </form>
