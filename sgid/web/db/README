@@ -1,9 +1,0 @@
-This directory maintains the necessary code required to build a relational
-database to manage and track job status. 
-
-At this time, only MySQL v5.0 or higher is supported. 
-
-To create your database, issue the following commands:
-
-$ mysqladmin create SGID
-$ mysql SGID <SGID_mysql.sql
