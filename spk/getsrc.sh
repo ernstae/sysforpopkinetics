@@ -1,117 +1,116 @@
+#!/bin/bash
+
 # clean up
-rm -rf Build
+rm -rf ~/r2/trunk/release/java-components
 
 # mda
-mkdir -p Build/mda
-cp ~/r2/trunk/spk/mda/build.xml Build/mda/
-mkdir -p Build/mda/lib
-cp ~/r2/trunk/spk/mda/lib/*.jar Build/mda/lib
-mkdir -p Build/mda/src/uw/rfpk/mda
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/*.java Build/mda/src/uw/rfpk/mda/
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/*.png Build/mda/src/uw/rfpk/mda/
-mkdir -p Build/mda/src/uw/rfpk/mda/nonmem
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/*.java Build/mda/src/uw/rfpk/mda/nonmem/
-mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/wizard
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/*.java Build/mda/src/uw/rfpk/mda/nonmem/wizard
-mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/wizard/icons
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons/*.gif Build/mda/src/uw/rfpk/mda/nonmem/wizard/icons
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons/*.png Build/mda/src/uw/rfpk/mda/nonmem/wizard/icons
-mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/display
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/display/*.java Build/mda/src/uw/rfpk/mda/nonmem/display
-mkdir -p Build/mda/src/uw/rfpk/mda/nonmem/compartment
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/compartment/*.java Build/mda/src/uw/rfpk/mda/nonmem/compartment
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/compartment/*.png Build/mda/src/uw/rfpk/mda/nonmem/compartment
-cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/compartment/*.jpg Build/mda/src/uw/rfpk/mda/nonmem/compartment
-mkdir -p Build/mda/src/org/netbeans/ui/wizard
-cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/*.java Build/mda/src/org/netbeans/ui/wizard
-mkdir -p Build/mda/src/org/netbeans/ui/wizard/plaf
-cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/*.java Build/mda/src/org/netbeans/ui/wizard/plaf
-mkdir -p Build/mda/src/org/netbeans/ui/wizard/plaf/basic
-cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/basic/*.java Build/mda/src/org/netbeans/ui/wizard/plaf/basic
-mkdir -p Build/mda/src/org/netbeans/ui/wizard/plaf/basic/icons
-cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/basic/icons/*.gif Build/mda/src/org/netbeans/ui/wizard/plaf/basic/icons
-mkdir -p Build/mda/src/org/netbeans/ui/wizard/plaf/basic/resources
-cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/basic/resources/*.properties Build/mda/src/org/netbeans/ui/wizard/plaf/basic/resources
+mkdir -p ~/r2/trunk/release/java-components/mda
+cp ~/r2/trunk/spk/mda/build.xml ~/r2/trunk/release/java-components/mda/
+mkdir -p ~/r2/trunk/release/java-components/mda/lib
+cp ~/r2/trunk/spk/mda/lib/*.jar ~/r2/trunk/release/java-components/mda/lib
+mkdir -p ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/*.java ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/*.png ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/
+mkdir -p ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/*.java ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/
+mkdir -p ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/wizard
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/*.java ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/wizard
+cp -R ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/wizard/icons ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/wizard
+mkdir -p ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/display
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/display/*.java ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/display
+mkdir -p ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/compartment
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/compartment/*.java ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/compartment
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/compartment/*.png ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/compartment
+cp ~/r2/trunk/spk/mda/uw/rfpk/mda/nonmem/compartment/*.jpg ~/r2/trunk/release/java-components/mda/src/uw/rfpk/mda/nonmem/compartment
+mkdir -p ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard
+cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/*.java ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard
+mkdir -p ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf
+cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/*.java ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf
+mkdir -p ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf/basic
+cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/basic/*.java ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf/basic
+mkdir -p ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf/basic/icons
+cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/basic/icons/*.gif ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf/basic/icons
+mkdir -p ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf/basic/resources
+cp ~/r2/trunk/spk/mda/org/netbeans/ui/wizard/plaf/basic/resources/*.properties ~/r2/trunk/release/java-components/mda/src/org/netbeans/ui/wizard/plaf/basic/resources
 
 # webapps
-mkdir -p Build/webapps
-cp ~/r2/trunk/spk/webapps/build.xml Build/webapps
-cp ~/r2/trunk/spk/webapps/README Build/webapps
-mkdir -p Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/*.jsp Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/*.shtml Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/*.css Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/*.java Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/*.class Build/webapps/user
-cp ~/r2/trunk/spk/mda/lib/*.jar Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/JavaHelp.jar Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/SPK_User_Manual.pdf Build/webapps/user
-cp ~/r2/trunk/spk/webapps/user/RFPK_SPK_TERMS_OF_SERVICE.html Build/webapps/user
-mkdir -p Build/webapps/user/WebHelp
-cp ~/r2/trunk/spk/webapps/user/WebHelp/*.* Build/webapps/user/WebHelp
-mkdir -p Build/webapps/user/WebHelp/images
-cp ~/r2/trunk/spk/webapps/user/WebHelp/images/*.gif Build/webapps/user/WebHelp/images
-mkdir -p Build/webapps/user/WebHelp/spkstart
-cp  ~/r2/trunk/spk/webapps/user/WebHelp/spkstart/*.* Build/webapps/user/WebHelp/spkstart
-mkdir -p Build/webapps/user/WebHelp/whdata
-cp  ~/r2/trunk/spk/webapps/user/WebHelp/whdata/*.* Build/webapps/user/WebHelp/whdata
-mkdir -p Build/webapps/user/WebHelp/whgdata
-cp  ~/r2/trunk/spk/webapps/user/WebHelp/whgdata/*.* Build/webapps/user/WebHelp/whgdata
-mkdir -p Build/webapps/user/WebHelp/whxdata
-cp  ~/r2/trunk/spk/webapps/user/WebHelp/whxdata/*.* Build/webapps/user/WebHelp/whxdata
-mkdir -p Build/webapps/user/images
-cp ~/r2/trunk/spk/webapps/user/images/*.* Build/webapps/user/images
-mkdir -p Build/webapps/user/jnlp
-mkdir -p Build/webapps/user/WEB-INF
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/web.xml_release Build/webapps/user/WEB-INF/web.xml
-mkdir -p Build/webapps/src/uw/rfpk/servlets
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/servlets/*.java Build/webapps/src/uw/rfpk/servlets
-mkdir -p Build/webapps/src/uw/rfpk/beans
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/beans/*.java Build/webapps/src/uw/rfpk/beans
-mkdir -p Build/webapps/src/uw/rfpk/rcs
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/rcs/*.java Build/webapps/src/uw/rfpk/rcs
-mkdir -p Build/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/jaxp-api.jar Build/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/jstl.jar Build/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/servlet-api.jar Build/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/standard.jar Build/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/oraclasses_3_0.jar Build/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/orataglib_3_0.jar Build/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar Build/webapps/user/WEB-INF/lib
+mkdir -p ~/r2/trunk/release/java-components/webapps
+cp ~/r2/trunk/spk/webapps/build.xml ~/r2/trunk/release/java-components/webapps
+cp ~/r2/trunk/spk/webapps/README ~/r2/trunk/release/java-components/webapps
+mkdir -p ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/*.jsp ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/*.shtml ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/*.css ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/*.java ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/*.class ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/mda/lib/*.jar ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/JavaHelp.jar ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/SPK_User_Manual.pdf ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/webapps/user/RFPK_SPK_TERMS_OF_SERVICE.html ~/r2/trunk/release/java-components/webapps/user
+cp -R ~/r2/trunk/spk/webapps/user/WebHelp ~/r2/trunk/release/java-components/webapps/user
+cp -R ~/r2/trunk/spk/webapps/user/images ~/r2/trunk/release/java-components/webapps/user
+mkdir -p ~/r2/trunk/release/java-components/webapps/user/jnlp
+mkdir -p ~/r2/trunk/release/java-components/webapps/user/WEB-INF
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/web.xml_release ~/r2/trunk/release/java-components/webapps/user/WEB-INF/web.xml
+mkdir -p ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/servlets
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/servlets/*.java ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/servlets
+mkdir -p ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/beans
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/beans/*.java ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/beans
+mkdir -p ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/rcs
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/rcs/*.java ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/rcs
+mkdir -p ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/jaxp-api.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/jstl.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/servlet-api.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/standard.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/oraclasses_3_0.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/orataglib_3_0.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
+cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
 
 # rcs
-mkdir -p Build/rcs
-cp ~/r2/trunk/spk/rcs/*.* Build/rcs
-cp ~/r2/trunk/spk/rcs/install Build/rcs
+mkdir -p ~/r2/trunk/release/java-components/rcs
+cp ~/r2/trunk/spk/rcs/*.* ~/r2/trunk/release/java-components/rcs
+cp ~/r2/trunk/spk/rcs/install ~/r2/trunk/release/java-components/rcs
 
 # mail
-mkdir -p Build/mail
-cp ~/r2/trunk/spk/mail/*.* Build/mail
-cp ~/r2/trunk/spk/mail/install Build/mail
+mkdir -p ~/r2/trunk/release/java-components/mail
+cp ~/r2/trunk/spk/mail/*.* ~/r2/trunk/release/java-components/mail
+cp ~/r2/trunk/spk/mail/install ~/r2/trunk/release/java-components/mail
 
 # dbapi
-mkdir -p Build/dbapi
-cp ~/r2/trunk/spk/db/api/java/build.xml Build/dbapi
-mkdir -p Build/dbapi/src/rfpk/spk/spkdb
-cp ~/r2/trunk/spk/db/api/java/rfpk/spk/spkdb/*.java Build/dbapi/src/rfpk/spk/spkdb
-mkdir -p Build/dbapi/test
-cp ~/r2/trunk/spk/db/api/java/TestSpkdb.java Build/dbapi/test
+mkdir -p ~/r2/trunk/release/java-components/dbapi
+cp ~/r2/trunk/spk/db/api/java/build.xml ~/r2/trunk/release/java-components/dbapi
+mkdir -p ~/r2/trunk/release/java-components/dbapi/src
+cp -R ~/r2/trunk/spk/db/api/java/rfpk ~/r2/trunk/release/java-components/dbapi/src
+mkdir -p ~/r2/trunk/release/java-components/dbapi/test
+cp ~/r2/trunk/spk/db/api/java/TestSpkdb.java ~/r2/trunk/release/java-components/dbapi/test
 
 # jobqs
-mkdir -p Build/jobqs
-cp ~/r2/trunk/spk/jobqs/build.xml Build/jobqs
-cp ~/r2/trunk/spk/jobqs/README Build/jobqs
-cp ~/r2/trunk/spk/jobqs/install Build/jobqs
-cp ~/r2/trunk/spk/jobqs/jobqd Build/jobqs
-cp ~/r2/trunk/spk/jobqs/jobqtestd Build/jobqs
-cp ~/r2/trunk/spk/jobqs/jobqd.pl Build/jobqs
-mkdir -p Build/jobqs/src/uw/rfpk/jobqs
-cp ~/r2/trunk/spk/jobqs/uw/rfpk/jobqs/*.java Build/jobqs/src/uw/rfpk/jobqs
-mkdir -p Build/jobqs/test
-cp ~/r2/trunk/spk/jobqs/TestJobqs.java Build/jobqs/test
+mkdir -p ~/r2/trunk/release/java-components/jobqs
+cp ~/r2/trunk/spk/jobqs/build.xml ~/r2/trunk/release/java-components/jobqs
+cp ~/r2/trunk/spk/jobqs/README ~/r2/trunk/release/java-components/jobqs
+cp ~/r2/trunk/spk/jobqs/install ~/r2/trunk/release/java-components/jobqs
+cp ~/r2/trunk/spk/jobqs/jobqd ~/r2/trunk/release/java-components/jobqs
+cp ~/r2/trunk/spk/jobqs/jobqtestd ~/r2/trunk/release/java-components/jobqs
+cp ~/r2/trunk/spk/jobqs/jobqd.pl ~/r2/trunk/release/java-components/jobqs
+mkdir -p ~/r2/trunk/release/java-components/jobqs/src
+cp -R ~/r2/trunk/spk/jobqs/uw ~/r2/trunk/release/java-components/jobqs/src
+mkdir -p ~/r2/trunk/release/java-components/jobqs/test
+cp ~/r2/trunk/spk/jobqs/TestJobqs.java ~/r2/trunk/release/java-components/jobqs/test
 
 
 
+cat <<EOF >~/r2/trunk/release/java-components/Build.sh
+#!/bin/bash
 
+for file in dbapi mda webapps; 
+  do cd \${file}; 
+  ant;
+  cd ..;
+done;
+
+EOF
+
+chmod +x ~/r2/trunk/release/java-components/Build.sh
 
 
