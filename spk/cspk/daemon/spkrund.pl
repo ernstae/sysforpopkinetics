@@ -234,7 +234,7 @@ my $max_concurrent = shift;
 
 my $hostname = hostname();
 my $from = 'rfpksoft@u.washington.edu';
-my $alert = 'jjdu@u.washington.edu,ernst@u.washington.edu';
+my $alert = 'ernst@u.washington.edu,jjdu@u.washington.edu';
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://bugzilla.rfpk.washington.edu/";
@@ -446,7 +446,7 @@ sub fork_driver {
           }
 	  unless (system(@args) == 0)  {
 	      $! = 101;
-	      die;
+	      exit(101);
 	  }
 	  # Redirect Standard output to a file
 #          open STDOUT, ">$filename_optimizer_trace";
