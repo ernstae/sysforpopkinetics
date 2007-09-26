@@ -446,7 +446,7 @@ sub fork_driver {
           }
 	  unless (system(@args) == 0)  {
 	      $! = 101;
-	      exit(101);
+	      die;
 	  }
 	  # Redirect Standard output to a file
 #          open STDOUT, ">$filename_optimizer_trace";
