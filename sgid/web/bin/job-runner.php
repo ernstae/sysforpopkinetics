@@ -18,7 +18,7 @@ error_reporting(E_ALL);
  *
  ***************************************************************************/
 $concurrent = 0;
-$max_concurrent = 1;
+$max_concurrent = 2;
 $check_ident = "/usr/local/sgid/bin/check_ident";
 
 $q_queued = array();
@@ -84,7 +84,11 @@ while ( $row = $result->fetchRow() )
 			  'xml_input' => $row->xml_input, 
 			  'email_address' => $row->email_address,
 			  'xml_output' => NULL);
+
+    $m = $dba->query("UPDATE job set state_code='run' WHERE id in (" . $row->id . ")");
   }
+
+
 
 $dba->disconnect();
 unset ($dba);
