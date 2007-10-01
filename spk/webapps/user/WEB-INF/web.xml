@@ -203,6 +203,12 @@ http://depts.washington.edu/bioe/people/core/vicini/vicini.html</param-value>
         <description>The RFPK SPK TERMS OF SERVICE url</description>
     </context-param>
 
+    <context-param>
+        <param-name>new_account</param-name>
+        <param-value>https://newaccount.rfpk.washington.edu</param-value>
+        <description>The new user account request url</description>
+    </context-param>
+
     <!-- Session expiration -->
     <session-config>
         <session-timeout>
