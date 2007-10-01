@@ -15,11 +15,11 @@ SERVICE_HOST=cspkserver
 
 scp ${SERVICE_ROOT}d     ${SERVICE_HOST}:/etc/rc.d/init.d
 scp ${SERVICE_ROOT}testd ${SERVICE_HOST}:/etc/rc.d/init.d
-ssh ${SERVICE_HOST} mkdir -p /usr/local/bin/spktest
-scp ${SERVICE_ROOT}d.pl  ${SERVICE_HOST}:/usr/local/bin/spktest
+ssh ${SERVICE_HOST} mkdir -p /usr/local/spk/bin
+scp ${SERVICE_ROOT}d.pl  ${SERVICE_HOST}:/usr/local/spk/bin
 echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}d "
 echo "installed ${SERVICE_HOST}:/etc/rc.d/init.d/${SERVICE_ROOT}testd "
-echo "installed ${SERVICE_HOST}:/usr/local/bin/spktest/${SERVICE_ROOT}d.pl"
+echo "installed ${SERVICE_HOST}:/usr/local/spk/bin/${SERVICE_ROOT}d.pl"
 echo "Note: installation of ${SERVICE_ROOT}d.pl must be completed by the deployment process."
 
 D=${SERVICE_ROOT}d

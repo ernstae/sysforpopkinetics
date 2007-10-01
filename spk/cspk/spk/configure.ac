@@ -1,224 +1,223 @@
-dnl
-dnl <AC_INIT>
-dnl
-dnl Process any command-line arguments and perform various 
-dnl initialization and verifications.
-dnl
-dnl    AC_INIT( package, version, bug-report, tarname )
-dnl       package    - package name
-dnl       version    - version number
-dnl       bug-report - email address to which users should send bug reports
-dnl       tarname    - distribution tarball name
-dnl
-dnl The following macros and names are defined by AC_INIT.
-dnl    
-dnl    AC_PACKAGE_NAME, PACKAGE_NAME
-dnl       exactly "package"
-dnl    AC_PACKAGE_TARNAME, PACKAGE_TARNAME
-dnl       exactly "tarname"
-dnl    AC_PACKAGE_VERSION, PACKAGE_VERSION
-dnl       exactly "version"
-dnl    AC_PACKAGE_STRING, PACKAGE_STRING
-dnl       exactly "package version"
-dnl    AC_PACKAGE_BUGREPORT, PACKAGE_BUG_REPORT
-dnl       exactly "bug-report"
-dnl
-AC_INIT(Spk Library, 0.1, watrous@u.washington.edu, spklib)
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
 
-dnl
-dnl <AC_CONFIG_SRCDIR>
-dnl
-dnl    AC_CONFIG_SRCDIR( unique-file-in-source-dir )
-dnl       unique-file-in-source-dir - a file that is in the package's source directory.
-dnl
-dnl configure checks for this file's existence to make sure that the directory
-dnl that it is told contains the source code in fact does.
-dnl
-AC_CONFIG_SRCDIR(spk/DoubleMatrix.h)
-
-dnl
-dnl <AM_INIT_AUTOMAKE>
-dnl
-dnl Runs many macros required for proper operation of the generated Makefiles.
-dnl
+AC_PREREQ(2.61)
+AC_INIT(spk, 0.99, watrous@u.washington.edu)
+AC_CONFIG_SRCDIR([spk/SpkValarray.h])
 AM_INIT_AUTOMAKE
+AC_CONFIG_HEADER([config.h])
 
-dnl
-dnl <AM_CONFIG_HEADER>
-dnl
-dnl Automake will generate rules to automatically regenerate the config header.
-dnl
-AM_CONFIG_HEADER(config.h)
 
-dnl 
-dnl <AC_PROG_CC>
-dnl
-dnl Checks for C compiler and load the package when it's found.
-dnl 
-AC_PROG_CC
-
-dnl
-dnl <AC_F77_LIBRARY_LDFLAGS>
-dnl
-dnl Determine the linker flags (e.g., `-L' and `-l') for the Fortran 77 
-dnl intrinsic and run-time libraries that are required to successfully link 
-dnl a Fortran 77 program or shared library
-dnl 
-AC_F77_LIBRARY_LDFLAGS
-
-dnl
-dnl <AC_PROG_CXX>
-dnl
-dnl Checks for C++ compiler and load the package when it's found.
-dnl
+# Checks for programs.
 AC_PROG_CXX
-
-dnl
-dnl <AC_PROG_INSTALL>
-dnl
-AC_PROG_INSTALL
-
-dnl
-dnl <AC_PROG_LIBTOOL>
-dnl
-dnl Checks for LibTool (i.e. the tool needed to build dynamic link libraries)
-dnl and load the packeage when it's found.
-dnl
+AC_PROG_CC
+AC_F77_LIBRARY_LDFLAGS
+AC_PROG_MAKE_SET
+#AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-dnl
-dnl Null out default settings for C++ compiler flags
-dnl
-AC_SUBST(CXXFLAGS, "")
+# set the default install prefix
+AC_PREFIX_DEFAULT([/usr/local/spk])
 
-dnl
-dnl Null out default settings for FORTRAN compiler flags
-dnl
-AC_SUBST(FFLAGS, "")
+# For backwards compatibility with the old way of installing SPK, we need to
+# support POSTFIX (e.g. /usr/local/bin/spktest)
+#AC_ARG_WITH(postfix,
+#	AC_HELP_STRING( [--with-postfix=spktest], [provides a postfix directory for installation to \$PREFIX/bin/\$POSTFIX] ),
+#	[postfix=TRUE],
+#	[postfix=FALSE]
+#)
 
-dnl
-dnl Set an extra command line option "--enable-release-build" to 'configure'.
-dnl If the user specifies this option, a variable "release_build" gets
-dnl set to TRUE.  An important note here is that the variable name
-dnl must exactly match the option string after "enable_" with dashes 
-dnl replaces by underscores.
-dnl
-AC_ARG_ENABLE( release_build,
-       AC_HELP_STRING( [--enable-release-build], [optimize SPK Library for speed] ),
-       [release_build=TRUE],
-       [release_build=FALSE]
+#AM_CONDITIONAL(SPK_POSTFIX, test $postfix = TRUE )
+
+
+# Set an extra command line option "--enable-release-build" to 'configure'.
+# if the user specifies this option, a variable "release_build" gets set to TRUE
+AC_ARG_ENABLE(release_build,
+	AC_HELP_STRING( [--enable-release-build], [optimize SPK Library for speed] ),
+	[release_build=TRUE], 
+	[release_build=FALSE]
 )
 
-dnl
-dnl <AM_CONDITIONAL>
-dnl
-dnl    AM_CONDITIONAL(conditional, condition)
-dnl
-dnl Checks if $release_build is set to "yes".
-dnl If yes, define a macro SPK_RELEASE so that
-dnl Makefile's can switch its behavior and
-dnl build the SPK Library with compiler optimization
-dnl flags.
-dnl
+# Define a macro SPK_RELEASE so that Makefile can switch its behavior and
+# build an optimized version of SPK.
 AM_CONDITIONAL(SPK_RELEASE, test $release_build = TRUE)
 
-dnl
-dnl Display "checking for build mode ..." message on screen when 
-dnl "configure" is run.
-dnl
+# Display "checking for build mode..." message on screen when configure is run.
 AC_MSG_CHECKING( [for build mode] )
 
-dnl
-dnl If $release_build is set to "yes",
-dnl define SPK_RELEASE to be 1; otherwise to be 0.
-dnl Display a text, "release_build", followed after the 
-dnl "checking for build mode..." screen message.
-dnl
+# if $release_build is set to yes, then define SPK_RELEASE to be 1 otherwise 0
 if test $release_build = TRUE; then
- 	AC_DEFINE(SPK_RELEASE, 1, "build release")
-        AC_MSG_RESULT( [release] )
+   	AC_DEFINE(SPK_RELEASE, 1, "build release version of SPK (optimized)")
+	AC_MSG_RESULT( [release] )
 else
-	AC_DEFINE(SPK_RELEASE, 0, "build debug")
-        AC_MSG_RESULT( [debug] )
+	AC_DEFINE(SPK_RELEASE, 0, "building debugging version of SPK")
+	AC_MSG_RESULT( [debug] )
 fi
 
-dnl
-dnl Set an extra command line option "--enable-profiling" to 'configure'.
-dnl If the user specifies this option, a variable "profiling" gets
-dnl set to TRUE.  An important note here is that the variable name
-dnl must exactly match the option string after "enable_" with dashes
-dnl replaces by underscores.
-dnl
-AC_ARG_ENABLE( profiling,
-       AC_HELP_STRING( [--enable-profiling], [profile SPK Library] ),
-       [profiling=TRUE],
-       [profiling=FALSE]
-)
-                                                                                                                         
-dnl
-dnl <AM_CONDITIONAL>
-dnl
-dnl    AM_CONDITIONAL(conditional, condition)
-dnl
-dnl Checks if $profiling is set to "yes".
-dnl If yes, define a macro SPK_PROFILE so that
-dnl Makefile's can switch its behavior and
-dnl build the SPK Library with profile instrumentations
-dnl
-AM_CONDITIONAL(SPK_PROFILE, test $profiling = TRUE)
-                                                                                                                         
-dnl
-dnl Display "checking for profiling ..." message on screen when
-dnl "configure" is run.
-dnl
-AC_MSG_CHECKING( [for profiling] )
-                                                                                                                         
-dnl
-dnl If $profiling is set to "yes",
-dnl define SPK_PROFILE to be 1; otherwise to be 0.
-dnl Display a text, "yes" or "no", followed after the
-dnl "checking for profiling..." screen message.
-dnl
-if test $profiling = TRUE; then
-        AC_DEFINE(SPK_PROFILE, 1, "yes")
-        AC_MSG_RESULT( [yes] )
-else
-        AC_DEFINE(SPK_RELEASE, 0, "no")
-        AC_MSG_RESULT( [no] )
+
+#AM_CONDITIONAL(SPK_PROFILE, test $profiling = TRUE)
+#AC_MSG_CHECKING( [for profiling] )
+#if test $profiling = TRUE; then
+#   AC_DEFINE(SPK_PROFILE, 1 "yes")
+#   AC_MSG_RESULT( [yes] )
+#else
+#   AC_DEFINE(SPK_RELEASE, 0, "no")
+#   AC_MSG_RESULT( [no] )
+#fi
+
+
+
+# Checks for libraries.
+use_atlas=yes
+AC_CHECK_LIB([atlas],[main],[LIBS=$LIBS -latlas],[use_atlas=no])
+if test x$use_atlas = xyes; then
+AC_CHECK_LIB([f77blas],[main],[LIBS="$LIBS -lf77blas"],[use_atlas=no])
 fi
+if test x$use_atlas = xyes; then
+AC_CHECK_LIB([cblas],[main],[LIBS="$LIBS -lcblas"],[use_atlas=no])
+fi
+if test x$use_atlas = xyes; then
+AC_CHECK_LIB([lapack],[main],[LIBS="$LIBS -llapack"],[use_atlas=no])
+fi
+if test x$use_atlas = xyes; then
+AC_CHECK_LIB([lapack_atlas],[main],[LIBS="$LIBS -llapack_atlas"], [use_atlas=no])
+fi
+if test x$use_atlas = xno; then
+AC_CHECK_LIB([gslcblas],[main],[LIBS="$LIBS -lgslcblas"],[
+echo \
+"------------------------------------------------------------------------
+ERROR: Could not find a CBLAS implementation.
+Tried both ATLAS cblas and gslcblas.
+------------------------------------------------------------------------"
+exit
+])
+fi
+AC_CHECK_LIB([gsl],[main],[LIBS="$LIBS -lgsl"],[
+echo \
+"------------------------------------------------------------------------
+ERROR: libgsl appears to be missing. You cannot sanely try to build
+SPK without libgsl, the GNU Scientific Library. It is available from
+http://www.gnu.org/ and compiles readily on most systems.
+------------------------------------------------------------------------"
+exit
+],[-lgslcblas])
 
-dnl
-dnl <AC_CONFIG_FILES>
-dnl
-dnl Make AC_OUTPUT create each 'file' by copying an input file (by default 'file.in')
-dnl substituing the output variable values.  
-dnl This macro creates the directory that the file is in if it doesn't exist.
-dnl Usually, 'Makefile's are created this way, but other files such as '.gdbinit'
-dnl can be specified as well.
-dnl
-dnl    AC_CONFIG_FILES(file..., [cmds], [init-cmds])
-dnl       file
-dnl 
-AC_CONFIG_FILES( [Makefile 
-	          spk/Makefile
-                  test/Makefile
-                  test/UnitTests/Makefile
-	          test/UnitTests/src/Makefile
-                  test/PopulationUser/Makefile] )
+dnl Checks for header files.
+AC_CHECK_HEADERS([gsl/gsl_version.h],[],[
+echo \
+"------------------------------------------------------------------------
+ERROR: libgsl is present, but the header files appear not to have been
+installed. If the GNU Scientific Library was installed as an RPM or
+similar, make sure you also include the -devel package. Otherwise, you
+can obtain the GNU Scientific Library from http://www.gnu.org.
+------------------------------------------------------------------------"
+exit
+])
 
-dnl
-dnl <AC_OUTPUT>
-dnl
-dnl Generate 'config.status' and launch it.  Call this macro once at the end
-dnl of 'configure.ac'.
-dnl 'config.status' will perform all the configuration actions;
-dnl all the output files, header files, comands, links, subdirectories
-dnl to configure are hornored.
-dnl
-dnl The location of AC_OUTPUT invocation is the exact point where
-dnl configuration actions are taken; any code afterwards will be executed
-dnl by configure once config.status was run.  
-dnl
+# FIXME: Replace `main' with a function in `-lcppunit':
+AM_PATH_CPPUNIT(1.8.0, [LIBS="$LIBS -lcppunit"],[
+    AC_MSG_WARN([])
+    AC_MSG_WARN([CppUnit not found])
+    AC_MSG_WARN([Please install CppUnit from http://cppunit.sourceforge.net])
+    AC_MSG_WARN([])
+    AC_MSG_ERROR([Sorry, I can't continue without CppUnit])
+])
+
+# FIXME: Replace `main' with a function in `-ldl':
+AC_CHECK_LIB([dl], [main])
+
+# FIXME: Replace `main' with a function in `-lginac':
+AC_CHECK_LIB([ginac], [main], [LIBS="$LIBS -lginac"], [
+echo \
+"------------------------------------------------------------------------
+ERROR: libginac.so appears to be missing.  You cannot sanely try to build
+SPK without libginac.  It is available from http://www.ginac.de/ and 
+compiles readily on most systems.  If ginac is installed as an RPM or
+similar package, make sure you also include the -devel package.
+-------------------------------------------------------------------------"
+exit
+])
+		    
+# FIXME: Replace `main' with a function in `-lm':
+AC_CHECK_LIB([m], [main], [LIBS="$LIBS -lm"], AC_MSG_ERROR(libm not found))
+
+# FIXME: Replace `main' with a function in `-lpthread':
+AC_CHECK_LIB([pthread], [main], [LIBS="$LIBS -lpthread"], AC_MSG_ERROR(libpthread not found))
+
+AC_CHECK_HEADER($PVM_ROOT/include/pvm3.h,
+[
+ 	        PVM_INCLUDES='-I${PVM_ROOT}/include'
+ 	        PVM_XTRA_LIBS="`sed -n '/^ARCHLIB/s/[[^-]]*//p' ${PVM_ROOT}/conf/${PVM_ARCH}.def`"
+	        echo "PVM_XTRA_LIBS=$PVM_XTRA_LIBS"
+	        PVM_LIBS='-L${PVM_ROOT}/lib/${PVM_ARCH} -lpvm3'
+ 	        tPVM_LIBS="-L${PVM_ROOT}/lib/${PVM_ARCH} -lpvm3 ${PVM_XTRA_LIBS}"
+ 	        LIBS="$tPVM_LIBS $LIBS"
+
+AC_CHECK_LIB(pvm3,pvm_parent,[
+ 	                AC_CHECK_LIB(pvm3,pvm_pkmesg,[])
+ 	        ],[
+ 	                echo "There is a pvm3.h but I can't link with -lpvm3"
+ 	                echo "So not using pvm afterall."
+ 	                PVM_INCLUDES=""
+ 	                PVM_LIBS=""
+ 	                tPVM_LIBS=""
+		   ])
+ 	        LIBS="$xLIBS"
+ ])
+
+
+
+
+
+# FIXME: Replace `main' with a function in `-lQN01Box':
+# NOTE:  This should be changed to use AC_CHECK_LIB (aernst)
+#AC_CHECK_FILE([/usr/local/spk/lib/libQN01Box.a],[LIBS="$LIBS -lQN01Box"],[
+AC_CHECK_LIB([QN01Box], [main], [], [
+echo \
+"----------------------------------------------------------------------
+ERROR: It appears as though libQN01Box is missing.  You cannot sanely
+try to build SPK without the SPK Optimizer (libQN01Box).  It must be
+installed prior to installing this library, and is included in the 
+source distribution of SPK
+-----------------------------------------------------------------------"
+exit
+])
+
+# FIXME: Replace `main' with a function in `-lnon_par':
+AC_CHECK_LIB([non_par], [main], [LIBS="$LIBS -lnon_par"], AC_MSG_ERROR(libnon_par not found))
+
+# FIXME: Replace `main' with a function in `-lmat2cpp':
+AC_CHECK_LIB([mat2cpp], [main], [LIBS="$LIBS -lmat2cpp"], AC_MSG_ERROR(libmat2cpp not found))
+
+
+EXTRA_LIBS="$EXTRA_LIBS $LIBS"
+
+AC_SUBST(LIBS)
+AC_SUBST(EXTRA_LIBS)
+AC_SUBST(PVM_LIBS)
+AC_SUBST(PVM_INCLUDES)
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([float.h limits.h stdlib.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+
+# Checks for library functions.
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_MALLOC
+AC_FUNC_STAT
+AC_CHECK_FUNCS([getcwd pow sqrt strstr])
+
+AC_CONFIG_FILES( [Makefile
+		  spk/Makefile
+		  driver/Makefile
+		  test/Makefile
+		  test/UnitTests/Makefile
+		  test/UnitTests/src/Makefile] )
+
 AC_OUTPUT
-
-
