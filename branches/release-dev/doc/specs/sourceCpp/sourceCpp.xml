@@ -1,0 +1,2092 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article>
+   <title>SPK Compiler Output (C++)</title>
+   <articleinfo>
+      <revhistory>
+	 <revision>
+            <revnumber>2.5</revnumber>
+            <date>December 14, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            OdePred.h
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>2.4</revnumber>
+            <date>June 10, 2005</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            ADVAN6 specific outputs
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>2.3</revnumber>
+            <date>September 8, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Added an explanation for IndData::getMeasurements() from the class client's perspective.
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>2.2</revnumber>
+            <date>September 8, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>
+            Added a description for DataSet::DataSet().
+            </revremark>
+         </revision>
+         <revision>
+            <revnumber>2.1</revnumber>
+            <date>August 3, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>Explanations for Makefile.SPK and Monte Carlo related topics</revremark>
+         </revision>
+         <revision>
+            <revnumber>2.0</revnumber>
+            <date>July 1, 2004</date>
+            <authorinitials>sh</authorinitials>
+            <revremark>Complete reorganization.</revremark>
+         </revision>
+         <revision>
+            <revnumber>1.3</revnumber>
+            <date>March 13, 2004</date>
+            <authorinitials>alan</authorinitials>
+            <revremark>Changes to move documentation to web server.</revremark>
+         </revision>
+         <revision>
+            <revnumber>1.2</revnumber>
+            <date>January 6, 2004</date>
+            <authorinitials>alan</authorinitials>
+            <revremark>Changed version of Docbook DTD from 4.1.2 to 4.2 in all .xml files</revremark>
+         </revision>
+         <revision>
+	    <revnumber>1.1</revnumber>
+	    <date>December 8, 2003</date>
+	    <authorinitials>sh</authorinitials>
+	    <revremark>Initial version.</revremark>
+         </revision>
+      </revhistory>
+      <abstract>
+         <para>
+This documentation describes the source code files produced by 
+SPK Compiler.
+         </para>
+     </abstract>
+   </articleinfo>
+   <sect1>
+      <title>Related Articles</title>
+      <para>
+         <itemizedlist>
+            <listitem>
+               <para>
+                  <ulink url="../sourceML/sourceML.html">SpkSourceML</ulink>
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  <ulink url="../dataML/dataML.html">SpkDataML</ulink>
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  <ulink url="../reportML/reportML.html">SpkReportML</ulink>
+               </para>
+            </listitem>
+            <listitem>
+               <para>
+                  <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/hierarchy.html">
+                  Pred Library</ulink>
+               </para>
+            </listitem>
+         </itemizedlist>
+      </para>
+   </sect1>
+   <sect1>
+      <title><filename>NonmemPars.h</filename></title>
+      <para>
+      This header file exports a namespace, <literal>NonmemPars</literal>, 
+      defining variables that contain the values of NONMEM control parameters. 
+      </para>
+      <variablelist>
+         <title>Namespace Entries</title>
+         <varlistentry>
+            <term><literal>const int nTheta</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>theta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaUp</literal></term>
+            <listitem>
+               <para>
+               contains the upper boundary value for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaLow</literal></term>
+            <listitem>
+               <para>
+               contains the lower boundary value for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; thetaIn</literal></term>
+            <listitem>
+               <para>
+               contains the initial estimate for <emphasis>theta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;bool&gt; thetaFixed</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean flags specifying whether
+               the corresponding i-th element of 
+               <emphasis>theta</emphasis> is fixed to the initial estimate value or not.
+               <literal>thetaFixed[i]</literal> = true causes <emphasis>theta(i+1)</emphasis>
+               to be fixed.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nEta</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>eta</emphasis> vector, 
+               which determines the dimension of <emphasis>Omega</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; etaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimate for <emphasis>eta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum covStruct omegaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the <emphasis>population analysis</emphasis>
+               is requested in the given SpkSourceML document.
+               The value is either <varname>DIAGONAL</varname>,  
+               <varname>FULL</varname> or <varname>BLOCKDIAG</varname>.
+               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
+               <emphasis>Omega</emphasis> matrix
+               are subject to optimization.  <varname>FULL</varname> indicates that potentially all elements
+               are subject to optimization (but remember, <emphasis>Omega</emphasis> is symmetric).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum covStruct omegaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the <emphasis>individual analysis</emphasis>
+               is requested in the given SpkSourceML document.
+               The value is always <varname>DIAGONAL</varname> for this type of analysis. 
+               <varname>DIAGONAL</varname>  indicates that potentially all lower triangle elements
+               are subject to optimization (remember, <emphasis>Omega</emphasis> is symmetric). 
+               <varname>BLOCKDIAG</varname> indicates that the <emphasis>Omega</emphasis> matrix is potentially 
+               made up of multiple <varname>DIAGONAL</varname> and <varname>FULL</varname> blocks.  
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int omegaDim</literal></term>
+            <listitem>
+               <para>
+               is the dimension of <emphasis>Omega</emphasis> (symmetric) matrix.
+               This value is determined by the length of <emphasis>eta</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int omegaOrder</literal></term>
+            <listitem>
+               <para>
+               is the number of elements in <emphasis>Omega</emphasis> matrix that are subject to optimization
+               (ie. the order of <emphasis>Omega</emphasis>).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; omegaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimates for the elements of <emphasis>Omega</emphasis>
+               that are subject to optimization.  Thus, the length of <varname>omegaIn</varname>
+               is <literal>omegaOrder</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;bool&gt; omegaFixed</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean values specifying whether the corresponding i-th
+               element of <emphasis>Omega</emphasis> should be fixed to the initial estimate value or not.
+               If Omega is 3 by 3 and only the diagonal elements are subject to optimization,
+               setting <literal>omegaFixed[2] = true</literal> causes the (3,3) element of the matrix
+               to be fixed.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nOmegaBlk</literal></term>
+            <listitem>
+               <para>
+               is the number of blocks in the block diagonal representation of <emphasis>Omega</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;covStruct&gt; omegaBlockStruct</literal></term>
+            <listitem>
+               <para>
+               contains a vector of <varname>covStruct</varname> values specifying whether the corresponding i-th
+               block is <varname>DIAGONAL</varname> or <varname>FULL</varname>.
+               If <emphasis>Omega</emphasis> is made up of 3 blocks, 
+               setting <literal>omegaBlockStruct[1] = FULL</literal> causes the second block to be recorded as 
+               <varname>FULL</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; omegaBlockdims</literal></term>
+            <listitem>
+               <para>
+               contains a vector of integers specifying the dimension corresponding i-th block.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;bool&gt; omegaBlockSameAsPrev</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean values specifying whether the corresponding i-th
+               block of <emphasis>Omega</emphasis> should be constrained equal to the previous block.
+               If <emphasis>Omega</emphasis> is made up of 3 blocks, 
+               setting <literal>omegaBlockSameAsPrev[3] = true</literal> causes the third block to be constrained 
+               equal to the second.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nEps</literal></term>
+            <listitem>
+               <para>
+               is the length of <emphasis>eps</emphasis> vector,
+               which determines the dimension of <emphasis>Sigma</emphasis>.
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const enum covStruct sigmaStruct</literal></term>
+            <listitem>
+               <para>
+               is present only if the <emphasis>population analysis</emphasis> is requested.
+               The value is either <varname>DIAGONAL</varname>, <varname>FULL</varname> or
+               <varname>BLOCKDIAG</varname>. 
+               <varname>DIAGONAL</varname> indicates that only the diagonal elements of 
+               <emphasis>Sigma</emphasis> matrix
+               are subject to optimization.  <varname>FULL</varname> indicates that potentially all lower triangle elements
+               are subject to optimization (remember, <emphasis>Sigma</emphasis> is symmetric). 
+               <varname>BLOCKDIAG</varname> indicates that the <emphasis>Sigma</emphasis> matrix is potentially 
+               made up of multiple <varname>DIAGONAL</varname> and <varname>FULL</varname> blocks.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int sigmaDim</literal></term>
+            <listitem>
+               <para>
+               is the dimension of <emphasis>Sigma</emphasis> (symmetric) matrix.
+               ex. For a 3 by 3 matrix, the value here is 3.
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int sigmaOrder</literal></term>
+            <listitem>
+               <para>
+               is the number of elements in <emphasis>Sigma</emphasis> matrix that are subject to optimization
+               (ie. the order of <emphasis>Sigma</emphasis>).
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; sigmaIn</literal></term>
+            <listitem>
+               <para>
+               is the initial estimates for the elements of <emphasis>Sigma</emphasis>
+               that are subject to optimization.  Thus, the length of <varname>simgaIn</varname>
+               is <varname>sigmaOrder</varname>.
+               This field is present only if the <emphasis>population analysis</emphasis> is requested.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nSigmaBlk</literal></term>
+            <listitem>
+               <para>
+               is the number of blocks in the block diagonal representation of <emphasis>Sigma</emphasis>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;covStruct&gt; sigmaBlockStruct</literal></term>
+            <listitem>
+               <para>
+               contains a vector of <varname>covStruct</varname> values specifying whether the corresponding i-th
+               block is <varname>DIAGONAL</varname> or <varname>FULL</varname>.
+               If <emphasis>Sigma</emphasis> is made up of 3 blocks, 
+               setting <literal>sigmaBlockStruct[1] = FULL</literal> causes the second block to be recorded as 
+               <varname>FULL</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; sigmaBlockdims</literal></term>
+            <listitem>
+               <para>
+               contains a vector of integers specifying the dimension corresponding i-th block.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;bool&gt; sigmaBlockSameAsPrev</literal></term>
+            <listitem>
+               <para>
+               contains a vector of boolean values specifying whether the corresponding i-th
+               block of <emphasis>Sigma</emphasis> should be constrained equal to the previous block.
+               If <emphasis>Sigma</emphasis> is made up of 3 blocks, 
+               setting <literal>sigmaBlockSameAsPrev[3] = true</literal> causes the third block to be constrained 
+               equal to the second.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int seed</literal></term>
+            <listitem>
+               <para>
+               specifies the seed for random number generation.
+               A value < 0 indicates no simulation to be done.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <!-- Begin ONLY APPEAR in ADVAN6 -------------------------------------------------------------------- -->
+         <varlistentry>
+            <term>----- For ADVAN6 only from here -----</term>
+            <listitem>
+              <variablelist>
+                  <varlistentry>
+                     <term><literal>const bool isPkFunctionofT</literal></term>
+                     <listitem>
+                        <para>
+                        inidicates as to whether the user's PK model is a function of T (continuous time variable).
+                        A value, true, indicates it does.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool nCompartments</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the number of compartments 
+                        (including the output compartment that 
+                        NONMEM implicitely adds).
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool nParameters</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the number of PK parameters.  Currently this is equal to the length
+                        of P vector variable appearing in the user's model.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool defaultDoseComp</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the default compartment that receives dose.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const bool defaultObservationComp</literal></term>
+                     <listitem>
+                        <para>
+                        specifies the default observation compartment.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const valarray&lt;bool&gt; initialOff</literal></term>
+                     <listitem>
+                        <para>
+                        is a vector of boolean values where the i-th value indicates
+                        as to whether the corresponding compartment is initiall off or not.
+                        True inidicates initially off.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const valarray&lt;bool&gt; noOff</literal></term>
+                     <listitem>
+                        <para>
+                        is a vector of boolean values where the i-th value indicates
+                        as to whether the corresponding compartment can be turned off or not.
+                        True indicates no turn-off.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>const valarray&lt;bool&gt; noDose</literal></term>
+                     <listitem>
+                        <para>
+                        is a vector of boolean values where the i-th value indicates
+                        as to whehter the corresponding compartment would ever receive a dose or not.
+                        True indicates no dose at all.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+               </variablelist>
+            </listitem>
+         </varlistentry>
+         <!-- End ONLY APPEAR in ADVAN6 -------------------------------------------------------------------- -->
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>MontePars.h</filename></title>
+      <para>
+         This header file exports a namespace, <filename>MontePars</filename> containing
+         parameters that control Monte Carlo simulation.
+         This file is generated only if <emphasis>Monte Carlo simulation is requested</emphasis>
+         from the given SpkSourceML document.
+      </para>
+      <variablelist>
+         <varlistentry>
+            <term><literal>const enum { plain, grid, misser, analytic } method</literal></term>
+            <listitem>
+               <para>specifies the method for approximating (or computing) the integral.
+               </para>
+               <para>  
+               NOTE: Do not assume the order of appearance of enum values
+               to be the same as the one appeared in this document!
+               <variablelist>
+                  <varlistentry>
+                     <term><literal>plain</literal></term>
+                     <listitem>
+                        <para>Monte-Carlo approximation for integral
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>analytic</literal></term>
+                     <listitem>
+                        <para>Closed form solution only valid for <emphasis>LinearModel</emphasis> 
+                        (consult <ulink url="mailto:brad@apl.washington.edu">Brad Bell</ulink> for details)
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>grid</literal></term>
+                     <listitem>
+                        <para>Approximation integral using evaluation on a uniform grid
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term><literal>miser</literal></term>
+                     <listitem>
+                        <para>Approximation integral using Miser algorithm</para>
+                     </listitem>
+                  </varlistentry>
+               </variablelist>
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const int nEval</literal></term>
+            <listitem>
+               <para>
+               is the number of components or the number of function evaluations.
+               If method = grid, the value is taken as the number of random effects.
+               Otherwise, the value must be one.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; numberEval</literal></term>
+            <listitem>
+               <para>
+               specifies the number of function evalautions.
+               If method == grid, the length of the vector is equal to the
+               number of random effects.  numberEval[i] specifies the 
+               number of grid points in i-th random effect, 
+               and the corresponding total number of function evaluations is
+               the product of the elements of numberEval.
+               If method != grid, the length of the vector is 1 and 
+               numberEval[0] is taken as the total number of functions
+               evaluations.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>IndData.h</filename></title>
+      <para>
+      This header file exports the definition of a template class, <classname>IndData</classname>.
+      <classname>IndData</classname> is a representation of the data set associated with
+      <emphasis>a single individual</emphasis>.
+      </para>
+      <para>
+      The class object contains not only the individual's original data set but also
+      placeholders for values computed during the process that correspond to each data record.
+      The original data set values are declared read-only and others are most likely read-write.
+      It also provides a number of methods for data operation.
+      </para>
+      <variablelist>
+         <title>Public Methods</title>
+         <varlistentry>
+            <term><literal>IndData( int nRecords, 
+                                    const vector&lt;char*&gt; &amp;IDIn, 
+                                    const vector&lt;double&gt; &amp;d1In, 
+                                    const vector&lt;double&gt; &amp;d2In, 
+                                    ...)</literal></term>
+            <listitem>
+               <para>
+               The constructor.  The first argument, <varname>nRecords</varname> specifies
+               the number of data records (for the individual).  The arguments after
+               following <varname>nRecords</varname> (ex. <varname>IDIn</varname>,
+               <varname>d1In</varname>, <varname>d2In</varname>...)
+               are vectors containing the values of data items
+               from the data set such as ID, DV and TIME.  Optional data items such
+               as ID and MDV will appear in this list of arguments with their default values.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>~IndData()</literal></term>
+            <listitem>
+               <para>
+                The destructor.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNRecords() const</literal></term>
+            <listitem>
+               <para>
+               Returns the total number of data records associated with this individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNObservs() const</literal></term>
+            <listitem>
+               <para>
+               Returns the number of data records whose corresponding MDV (Missing Data Value)
+               value is 0 (false).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; getMeasurements() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of measurements.
+               i.e. The DV values of which corresponding MDV values are 0.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getMeasurementIndex( j ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getRecordIndex( int j' ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceMeasurements( const valarray&lt;double&gt; &amp; yi )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of measurements with the values of <varname>yi</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePred ( const valarray&lt;double&gt; &amp; predIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PRED (prediction) with the values of <varname>predIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceRes( const valarray&lt;double&gt; &amp; ResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of RES (residual) with the values of <varname>ResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceWRes( const valarray&lt;double&gt; &amp; WResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of WRES (weighted residual)
+               with the values of <varname>WResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePPred( const valarray&lt;double&gt; &amp; pPredIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PPRED (population prediction)
+               with the values of <varname>pPredIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePRes( const valarray&lt;double&gt; &amp; pResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PRES (population residual)
+               with the values of <varname>pResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePWRes( const valarray&lt;double&gt; &amp; pWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PWRES (population weighted residual)
+               with the values of <varname>pWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIPred( const valarray&lt;double&gt; &amp; iPredIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IPRED (individualized prediction)
+               with the values of <varname>iPredIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIRes( const valarray&lt;double&gt; &amp; iResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IRES (individualized residual)
+               with the values of <varname>iResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIWres( const valarray&lt;double&gt; &amp; iWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IWRES (individualized weighted residual)
+               with the values of <varname>iWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCPred( const valarray&lt;double&gt; &amp; cPredIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CPRED (conditional prediction) 
+               with the values of <varname>cPredIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCRes( const valarray&lt;double&gt; &amp; cResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CRES (conditional residual)
+               with the values of <varname>cResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCWRes( const valarray&lt;double&gt; &amp; cWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CWRES (conditional weighted residual)
+               with the values of <varname>cWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceEta( const valarray&lt;double&gt; &amp; etaIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of ETA (eta) 
+               with the values of <varname>etaIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceEtaRes( const valarray&lt;double&gt; &amp; etaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of ETARES (eta residual)
+               with the values of <varname>etaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceWEtaRes( const valarray&lt;double&lt; &amp; etaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of WETARES (weighted eta residual)
+               with the values of <varname>etaWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIEtaRes( const valarray&lt;double&gt; &amp; iEtaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IETARES (individualized eta residual)
+               with the values of <varname>iEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceIWEtaRes( const valarray&lt;double&gt; &amp; iEtaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of IWETARES (individualized weighted eta residual)
+               with the values of <varname>iWEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePEtaRes( const valarray&lt;double&gt; &amp; pEtaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PETARES (population eta residual)
+               with the values of <varname>pEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replacePWEtaRes( const valarray&lt;double&gt; &amp; pEtaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of PWETARES (population weighted eta residual)
+               with the values of <varname>pEtaWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCEtaRes( const valarray&lt;double&gt; &amp; cEtaResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CETARES (conditional eta residual)
+               with the values of <varname>cEtaResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void replaceCWEtaRes( const valarray&lt;double&gt; &amp; cEtaWResIn )</literal></term>
+            <listitem>
+               <para>
+               Replace the internally kept values of CWETARES (conditional weighted eta residual)
+               with the values of <varname>cEtaWResIn</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+      <variablelist>
+         <title>Public Properties</title>
+         <varlistentry>
+            <term><literal>const vector&lt;T&gt; <replaceable>xXx</replaceable></literal></term>
+            <listitem>
+               <para>
+               <replaceable>xXx</replaceable> is replaced exactly by the labels of user-given (read only) 
+               data items such as ID, TIME and DV. 
+               It has a length of <varname>nRecords</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>vector&lt;T&gt; <replaceable>yYy</replaceable></literal></term>
+            <listitem>
+               <para>
+               <replaceable>yYy</replaceable> is replaced exactly by variable names that appear
+               on the left hand side of assignment statements in model definitions.
+               It has a length of <varname>nRecords</varname>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>vector&lt; vector&lt;T&gt; &gt; THETA</literal></term>
+            <listitem>
+               <para>
+               A read-write vector of <varname>n</varname>, 
+               <varname>nTheta</varname>-dimensional vectors, 
+               where <varname>n</varname> is the number of data records for the indiviual and
+               <varname>nTheta</varname> is the size of <emphasis>theta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>vector&lt; vector&lt;T&gt; &gt; ETA</literal></term>
+            <listitem>
+               <para>
+               A read-write vector of <varname>n</varname> 
+               <varname>nEta</varname>-dimensional vectors, 
+               where <varname>n</varname> is the number of data records for the indiviual and
+               <varname>nTheta</varname> is the size of <emphasis>eta</emphasis> vector.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>vector&lt; vector&lt;T&gt; &gt; EPS</literal></term>
+            <listitem>
+               <para>
+               A read-write vector that contains <varname>n</varname> 
+               <varname>nEps</varname>-dimensional vectors, 
+               where <varname>n</varname> is the number of data records for the indiviual and
+               <varname>nTheta</varname> is the size of <emphasis>eps</emphasis> vector.
+               <emphasis>This vector is present only if the population analysis is requested.</emphasis>
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>DataSet.h</filename></title>
+      <para>
+      This header file exports the definition of a template class, <classname>DataSet</classname>.
+      <classname>DataSet</classname> class is a reprentation of an entire data set
+      (the population size >= 1).
+      </para>
+      <variablelist>
+         <title>Public Methods</title>
+         <varlistentry>
+            <term><literal>DataSet&lt;class T&gt;::DataSet()</literal>
+            </term>
+            <listitem>
+               <para>
+               Constructor.  The type of the template argument is somewhat restrictive at this point.
+               <varname>T</varname> has to be a concrete type of 
+               <ulink url="http://www.coin-or.org/CppAD/">CppAD</ulink>. 
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>~DataSet()</literal></term>
+            <listitem>
+               <para>Destructor</para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getPopSize() const </literal></term>
+            <listitem>
+               <para>
+               Returns the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;double&gt; getAllMeasurements() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of measurements, i.e. DV values of which corresponding MDV values
+               are 0 in the original data set.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getMeasurementIndex( int j ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getMeasurementIndex( int i, int j ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to an element of the i-th individual's measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the 
+               i-th individual's original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getRecordIndex( int j' ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getRecordIndex( int i, int j' ) const</literal></term>
+            <listitem>
+               <para>
+               Returns the index to a record in the i-th individual's
+               original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>void expand( const valarray&lt;double&gt; &amp; trancated, valarray&lt;double&gt; &amp; expanded ) const</literal></term>
+            <listitem>
+               <para>
+               Map <varname>trancated</varname> that is in the measurement-oriented space to the original record-oriented space.  The measurement-oriented space refers to the space in which only the data records that contain Dependent Variable values.  Whereas, the record-oriented space refers to the original data set that also contains rows missing DVs.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; getNObservs() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of numbers of obervation records.  The i-th element of the vector
+               indicates the number of measurements for the i-th individual, 
+               where 0 &lt;= i &lt; n and
+               n is the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNObservs(int i) const</literal></term>
+            <listitem>
+               <para>
+               Returns the number of obervation records for the i-th individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>const valarray&lt;int&gt; getNRecords() const</literal></term>
+            <listitem>
+               <para>
+               Returns a vector of numbers of records.  The i-th element of the vector
+               indicates the number of record for the i-th individual, 
+               where 0 &lt;= i &lt; n and
+               n is the number of individuals in the population.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term><literal>int getNRecords(int i) const</literal></term>
+            <listitem>
+               <para>
+               Returns the number of records for the i-th individual.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>
+               <literal>friend ostream &amp; operator&lt;&lt;( ostream&amp; o, const DataSet&lt;T&gt; A )</literal>
+            </term>
+            <listitem>
+               <para>
+               Extracts the data set into <literal>o</literal> in the following format:
+<programlisting>
+&lt;presentation_data columns="10" rows="12"&gt;
+   &lt;data_labels&gt;
+      &lt;label name="ID"&gt;
+      &lt;label name="TIME"&gt;
+      &lt;label name="DV" synonym="CP"&gt;
+      ...
+   &lt;/data_label&gt;
+   &lt;row position=""&gt;
+      &lt;value type="double" ref="ID"&gt;
+         1
+      &lt;/value&gt;
+      &lt;value type="double" ref="TIME"&gt;
+         0.0
+      &lt;/value&gt;
+      &lt;value type="double" ref="DV"&gt;
+         0.0
+      &lt;/value&gt;
+      ...
+   &lt;/row&gt;
+   &lt;row position=""&gt;
+      &lt;value type="double" ref="ID"&gt;
+         1
+      &lt;/value&gt;
+      &lt;value type="double" ref="TIME"&gt;
+         1.0
+      &lt;/value&gt;
+      &lt;value type="double" ref="DV"&gt;
+         3.0
+      &lt;/value&gt;
+      ...
+   &lt;/row&gt;
+
+&lt;/<replaceable>presentation_data</replaceable>&gt;
+</programlisting>
+               The order in which &lt;label&gt;s in &lt;data_labels&gt; appear is arbitrary.  
+               However, the &lt;value&gt;s in a &lt;row&gt; are guaranteed to be listed
+               in the same order as &lt;label&gt;s.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>Pred.h</filename></title>
+      <para>
+<filename>Pred.h</filename> defines a template class, <classname>Pred</classname>,
+which is derived from an abstract class, <classname>PredBase</classname>.
+The purpose of this class is to provide a facility to execute the user's PRED model.
+      </para>
+      <programlisting>
+template &lt;class spk_ValueType&gt;
+Pred : public PredBase
+{
+   public:
+      Pred( const DataSet&lt;spk_ValueType&gt;* dataIn );
+      ~Pred(){}
+      virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
+                         int spk_etaOffset,   int spk_etaLen,
+		         int spk_epsOffset,   int spk_epsLen,
+		         int spk_fOffset,     int spk_fLen,
+		         int spk_yOffset,     int spk_yLen,
+		         int spk_i,
+		         int spk_j,
+                         int &amp; spk_m,
+		         const vector&lt;spk_ValueType&gt; &amp; spk_indepVar,
+		         vector&lt;spk_ValueType&gt;       &amp; spk_depVar ) = 0;
+      int getNObservs( int who ) const;
+      int getNRecords( int who ) const;
+      int getMeasurementIndex( int who, int recordIndex ) const;
+      int getMeasurementIndex( int recordIndex ) const;
+      int getRecordIndex( int who, int measurementIndex ) const;
+      int getRecordIndex( int measurementIndex ) const;
+}
+      </programlisting>
+      <sect2>
+         <title>Methods to Implement</title>
+         <anchor id="predbase"/>
+         <para>
+            <classname>Pred</classname> must implement a pure virtual function of
+            its super class <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html">
+            PredBase</ulink>, <function>eval()</function>.
+         </para>
+         <sect3>
+            <title>Constructor</title>
+            <variablelist>
+               <title>Arguments</title>
+               <varlistentry>
+                  <term><literal>const DataSet&lt;spk_ValueType&gt;* dataIn</literal></term>
+                  <listitem>
+                     <para>
+                     A pointer to a DataSet object.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </sect3>
+         <sect3>
+            <title><literal>virtual bool eval()</literal></title>
+            <para>
+               <function>eval()</function> function evaluates
+               the $PRED model at the evaluation point corresponding to the i-th
+               individual's j-th data record.
+            </para>
+            <para>
+               For the complete specification of <function>eval()</function>,
+               consult <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0">
+               PredBase Specifiction</ulink>.
+            </para>
+            <formalpara>
+               <title>Requirements</title>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>
+The user's model definition which is in a psudo FORTRAN language
+shall retain the case-insensitive attribute when it is translated to C++.
+                        </para>
+                     </listitem>
+                     <listitem>
+                        <para>
+Prefix <literal>spk_</literal> is added to all non-user variables in order
+to avoid a conflict with user variable names.  A non-user variable
+in this sense is a variable created by the system (i.e. non-user).
+Whereas, a user-variable is a variable that appear in the model definition.
+                        </para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+            </formalpara>
+            <formalpara>
+               <title>Return Value</title>
+               <para>
+               The function returns <literal>true</literal> 
+               if the MDV for the current data 
+               record is 0.  <literal>false</literal> otherwise.
+               </para>
+            </formalpara>
+            <variablelist>
+               <title>Arguments</title>
+               <varlistentry>
+                  <term><literal>const int spk_thetaOffset</literal></term>
+                  <listitem>
+	             <para>
+                     is the index to the head of <emphasis>theta</emphasis> 
+                      vector within <varname>spk_indepVar</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_thetaLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the length of <emphasis>theta</emphasis> vector.  
+                     The vector elements are assumed to be placed
+                     from <varname>spk_indepVar[spk_thetaOffset]</varname> 
+                     to <varname>spk_indepVar[spk_theetaOffset + spk_thetaLen]</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_etaOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the head of <emphasis>eta</emphasis> 
+                     vector within <varname>spk_indepVar</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_etaLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the length of <emphasis>eta</emphasis> vector.  
+                     The vector elements are assumed to be placed   
+                     from <varname>spk_indepVar[spk_etaOffset]</varname>
+                     to <varname>spk_indepVar[spk_etaOffset + spk_etaLen]</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_epsOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the head of <emphasis>eps</emphasis> 
+                     vector within <varname>spk_indepVar</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_epsLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the length of <emphasis>eps</emphasis> vector.
+                     The vector elements are assumed to be placed
+                     from <varname>spk_indepVar[spk_thetaOffset]</varname> 
+                     to <varname>spk_indepVar[spk_theetaOffset + spk_theetaLen]</varname>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_fOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the element in <varname>spk_depVar</varname> in which
+                     the prediction for the j-th data record for the i-th individual, 
+                     <emphasis>F</emphasis> (in NONMEM's term), shall be placed.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+               <term><literal>const int spk_fLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the number of measurements for the i-th individual.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_yOffset</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the element in <varname>spk_depVar</varname> in which
+                     the error model value for the j-th data record for the i-th individual,
+                     <emphasis>Y</emphasis> (in NONMEM's term), shall be placed.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_yLen</literal></term>
+                  <listitem>
+                     <para>
+                     is the number of measurments for the i-th individual..
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_i</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the i-th individual 
+                     within the population (0 indicates the first individual).
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int spk_j</literal></term>
+                  <listitem>
+                     <para>
+                     is the index to the j-th data record of the i-th individual.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const int &amp;spk_m</literal></term>
+                  <listitem>
+                     <para>
+                     will be replaced by the index to the observation record that corresponds to
+                     the j-th data record of the i-th individual if the MDV is 0.  
+                     The value is unspecified for MDV=1.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const vector&lt;T&gt; &amp; spk_indepVar</literal></term>
+                  <listitem>
+                     <para>
+                     is the vector containing independent variables: 
+                     <emphasis>theta</emphasis>, <emphasis>eta</emphasis> 
+                     and <emphasis>eps</emphasis>.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>vector&lt;T&gt; &amp; spk_depVar</literal></term>
+                  <listitem>
+                     <para>
+                     is an output in which the predicted value for the i-th individual's j-th data record
+                     will be placed at the <varname>spk_yOffset</varname>-th element.
+                     The <literal>spk_yOffset</literal>-th elements will be 
+                     are replaced by the error model value for the i-th individual's j-th data record.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </sect3>
+         <sect3>
+            <title><literal>int getNObservs( int i ) const</literal></title>
+            <para>
+            Returns the number of obervations records for the i-th individual.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>int getNRecords( int i ) const</literal></title>
+            <para>
+            Returns the number of total records for the i-th individual.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>int getMeasurementIndex( int j ) const</literal></title>
+            <para>
+               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>int getMeasurementIndex( int i, int j ) const</literal></title>
+            <para>
+               Returns the index to an element of the i-th individual's measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the 
+               i-th individual's original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.            
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>int getRecordIndex( int j ) const</literal></title>
+            <para>
+               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>int getRecordIndex( int i, int j ) const</literal></title>
+            <para>
+               Returns the index to a record in the i-th individual's
+               original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+            </para>
+         </sect3>
+      </sect2>
+   </sect1>
+   <sect1>
+      <title><filename>OdePred.h</filename></title>
+      <para>
+      <filename>OdePred.h</filename> defines a template class, <classname>OdePred</classname>,
+      which is dervied from an abstract class, 
+      <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+      OdePredBase</ulink>.  The purpose of this class is to provide a facility to execute
+      the User's ODE model.
+      </para>
+      <programlisting>
+template &lt;class spk_ValueType&gt;
+class OdePred : public OdePredBase&lt;spk_ValueType&gt;
+{
+public:
+   OdePred( const DataSet&lt;spk_ValueType&gt;*  dataIn,
+            int                            nPopSizeIn,
+            bool                           isPkFunctionOfTIn,
+            int                            nCompartmentsWithOutputIn,
+            int                            nParametersIn,
+            int                            defaultDoseCompIn,
+            int                            defaultObservationCompIn,
+            const std::valarray&lt;bool&gt;&amp;     initialOffIn,
+            const std::valarray&lt;bool&gt;&amp;     noOffIn,
+            const std::valarray&lt;bool&gt;&amp;     noDoseIn,
+            double                         tolRelIn
+   );
+
+  ~OdePred();
+
+  int getNObservs( int who ) const;
+
+  int getNRecords( int who ) const;
+
+  const spk_ValueType lininterp( const string &amp; devVar );
+
+  virtual void initUserEnv( int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_fOffset,     int spk_fLen,
+                            int spk_yOffset,     int spk_yLen,
+                            int spk_i,
+                            int spk_j,
+                            const vector&lt;spk_ValueType&gt;&amp; spk_indepVar,
+                            vector&lt;spk_ValueType&gt;      &amp; spk_depVar );
+
+  virtual void saveUserEnv( int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_fOffset,     int spk_fLen,
+                            int spk_yOffset,     int spk_yLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_depVar );
+                                                                                                                          
+  virtual void evalError(   int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar);
+  virtual void evalError();
+
+  virtual void evalPk(      int thetaOffset, int thetaLen,
+                            int etaOffset,   int etaLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar );
+  void evalPk( const spk_ValueType &amp; t );
+
+  virtual void evalDes(     int thetaOffset,     int thetaLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&lt;spk_ValueType&gt;&amp; spk_indepVar );
+  void evalDes(             const spk_ValueType &amp; t,
+                            typename vector&lt;spk_ValueType&gt;::const_iterator a );
+}
+      </programlisting>
+      <sect2>
+         <title>Methods to Implement</title>
+         <sect3>
+            <title><literal>OdePred(...)</literal></title>
+            <variablelist>
+               <title>Arguments</title>
+               <varlistentry>
+                  <term><literal>const DataSet&lt;spk_ValueType&gt; * dataIn</literal></term>
+                  <listitem>
+                     <para>A pointer to a DataSet object.</para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int nPopSizeIn</literal></term>
+                  <listitem>
+                     <para>The population size (> 0).</para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>bool isPkFunctionOfTIn</literal></term>
+                  <listitem>
+                     <para>
+                     The value of <literal>true</literal> indicates that the PK model 
+                     is a function of T (i.e. continuous time variable).
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int nCompartmentsWithOutputIn</literal></term>
+                  <listitem>
+                     <para>
+                     The number of compartments, including the output compartment.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int nParametersIn</literal></term>
+                  <listitem>
+                     <para>
+                     The number of PK parameters.  
+                     </para>
+                     <para>
+                     <emphasis>Note to Developer: </emphasis>
+                     The meaning of this parameter is not quite understood.  Currently
+                     the value is not used by the system.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int defaultDoseCompIn</literal></term>
+                  <listitem>
+                     <para>
+                     The integer value indicates the default dose compartment (>=1).
+                     For instance, the value of <literal>1</literal> indicates
+                     the first compartment is given doses.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>int defaultObservationCompIn</literal></term>
+                  <listitem>
+                     <para>
+                     The integer value indicates the default observation compartment (>=1).
+                     For instance, the value of <literal>1</literal> indicates
+                     the first compartment is taken observations.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const valarray&lt;bool&gt; &amp; initialOffIn</literal></term>
+                  <listitem>
+                     <para>
+                     An array of boolean values.  If <literal>initialOffIn[i]</literal>
+                     were true, (i+1)-th compartment is considered initially OFF.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const valarray&lt;bool&gt; &amp; noOffIn</literal></term>
+                  <listitem>
+                     <para>
+                     An array of boolean values.  If <literal>noOffIn[i]</literal> were true,
+                     (i+1)-th compartment is considered that it will be never turned off.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>const valarray&lt;bool&gt; &amp; noDoseIn</literal></term>
+                  <listitem>
+                     <para>
+                     An array of boolean values.  If <literal>noDoseIn[i]</literal> were true,
+                     (i+1)-th compartment is considered that it will be never receive doses.
+                     </para>
+                  </listitem>
+               </varlistentry>
+               <varlistentry>
+                  <term><literal>double tolRelIn</literal></term>
+                  <listitem>
+                     <para>
+                     The relative tolerance.
+                     </para>
+                  </listitem>
+               </varlistentry>
+            </variablelist>
+         </sect3>
+         <sect3>
+            <title><literal>~OdePred()</literal></title>
+            <para>Destructor</para>
+         </sect3>
+         <sect3>
+            <title><literal>int getNObservs( int who ) const</literal></title>
+            <para>
+            The function returns the number of measurements 
+            for the individual indicated by <varname>who</varname>
+            Measurements means DV values whose corresponding MDV values are 0.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>int getNRecords( int who ) const</literal></title>
+            <para>
+            The function returns the number of data records
+            for the individual indicated by <varname>who</varname>. 
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>const spk_ValueType lininterp( const string & devVar )</literal></title>
+            <para>
+            <function>lininterp</function> linearly interpolates 
+            <varname>devVar</varname> at the current T (i.e. continuous time variable).
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void initUserEnv(...)</literal></title>
+            <para>
+            This function initializes the user's space so that their models are
+            evaluated properly at a given evaluation point.
+            The specifications for the arguments are the same as of 
+            <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0">
+            <function>Pred::eval()</function></ulink>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void saveUserEnv(...)</literal></title>
+            <para>
+            This function saves the status of user's environment.
+            The specifications for the arguments are the same as of 
+            <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0">
+            <function>Pred::eval()</function></ulink>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void evalError(...)</literal></title>
+            <para>
+            This is a deplicated version of <function>evalError()</function>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>void evalError()</literal></title>
+            <para>
+            Evaluates the user's error model at the current state of the object.
+            </para>
+            <para>
+            <emphasis>Note to developers:</emphasis> Once the deplicated version is removed
+            from <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+            OdePred</ulink> class, this function should be come "virtual".
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void evalPk(...)</literal></title>
+            <para>
+            This is a deplicated version of <function>evalPk()</function>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>void evalPk( const spk_ValueType &amp; t )</literal></title>
+            <para>
+            Evaluates the user's error model at <varname>t</varname> and the current state of
+            the object.
+            </para>
+            <para>
+            <emphasis>Note to developers:</emphasis> Once the deplicated version is removed
+            from <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+            OdePred</ulink> class, this function should be come "virtual".
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>virtual void evalDes(...)</literal></title>
+            <para>
+            This is a deplicated version of <function>evalDes()</function>.
+            </para>
+         </sect3>
+         <sect3>
+            <title><literal>void evalOde( const spk_ValueType& t, typename vector&lt;spk_ValueType&gt;::const_iterator a )</literal></title>
+            <para>
+            Evaluates the user's differential equation model at <varname>t</varname>,
+            <varname>a</varname> and the current state of the object.
+            </para>
+            <para>
+            <emphasis>Note to developers:</emphasis> Once the deplicated version is removed
+            from <ulink url="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html">
+            OdePred</ulink> class, this function should be come "virtual".
+            </para>
+         </sect3>
+      </sect2>
+   </sect1>
+   <sect1>
+      <title><filename>fitDriver.cpp</filename></title>
+      <para>
+      This is the SPK job driver (for parameter estimation, statistics and simulation).
+      When you run <filename>Makefile.SPK</filename> generated together by SPK Compiler,
+      this file builds to an executable named <filename>driver</filename>.
+      </para>
+      <programlisting>
+Usage: driver FORCE_WARM_START
+
+FORCE_WARM_START --- Forces the job to start from the status found in "checkpoint.xml" in the current directory.
+      </programlisting>
+      <variablelist>
+         <title>Input File</title>
+            <varlistentry>
+               <term><filename>checkpoint.xml</filename></term>
+               <listitem>
+                  <para>
+                  When the contents of this file is loaded into the job driver,
+                  the optimization will start from the status saved in the file (i.e. warm-start).
+                  </para>
+                  <para>
+                  There are two scenarios where this file is loaded into the job driver:
+                  <itemizedlist>
+                    <listitem>
+                       <para>
+                       This file is found in the working directory 
+                       <emphasis>and</emphasis> the user has requested the warm start.
+                       </para>
+                    </listitem>
+                    <listitem>
+                       <para>
+                       This file is found in the working directory
+                       <emphasis>and</emphasis> the first command line argument to this driver
+                       is <emphasis>1</emphasis>.  The argument value overrides the user's request.
+                       </para>
+                    </listitem>
+                  </itemizedlist>
+                  </para>
+               </listitem>
+            </varlistentry>
+      </variablelist>
+      <variablelist>
+         <title>Return value</title>
+         <varlistentry>
+            <term>0</term>
+            <listitem>
+               <para>
+               Successful/normal completion.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>1</term>
+            <listitem>
+               <para>
+               Normal completion for unknown problem(s).
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>2</term>
+            <listitem>
+               <para>
+               Abnormal completion for unknown failures.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>10</term>
+            <listitem>
+               <para>
+               Normal completion but some known problem was detected during a file/directory access
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>12</term>
+            <listitem>
+               <para>
+               Normal completion but some known prolem was detected during optimization.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>13</term>
+            <listitem>
+               <para>
+               Normal completion but some known problem was detected during statisitcs calculation.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>14</term>
+            <listitem>
+               <para>
+               Normal completion but some known user input error was detected.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>15</term>
+            <listitem>
+               <para>
+               Normal completion but some known programmer's error was detected.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>16</term>
+            <listitem>
+               <para>
+               Normal completion but some known problem was detected during data simulation.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>100</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown system failures.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>101</term>
+            <listitem>
+               <para>
+               The value, 101, is reserved for C++ compilation error.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term>102</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown optimization failure.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>103</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown statisitcs calculation failure.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>104</term>
+            <listitem>
+               <para>
+               Abnormal completion due to some unknown user input error.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>105</term>
+            <listitem>
+               <para>
+               Abnormal completion due to some programmer's error.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>106</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown data simulation fatal failure.
+               This shall result in submitting a bugzilla report.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+      <variablelist>
+         <title>File Output</title>
+            <varlistentry>
+               <term><filename>checkpoint.xml</filename></term>
+               <listitem>
+                  <para>
+                  The optimizer's state information from the last successful iteration 
+                  is saved in this file.  This file is always generated as long as
+                  fitDriver executes an iteration of optimization.
+                  </para>
+               </listitem>
+            </varlistentry>
+      </variablelist>
+      <variablelist>
+         <title>Screen Output</title>
+                  <varlistentry>
+                     <term>Standard Error</term>
+                     <listitem>
+                        <para>
+<emphasis>Plain</emphasis> error messages that are directed to the standard error and cannot be
+caught by the driver normally still go to the standard error.
+Such messages may include an error generated as a rusult of violation of an assertion statement.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                     <term>Standard Output</term>
+                     <listitem>
+                        <para>
+The optimizer's tracing information which is generated for each iteration of
+optimization is directed to the standard output as long as tracing level 
+is requested to be greater than 0 by the user.  
+At the very end of the execution, an exit value is also printed in the following format:
+<literal>exit code = INT</literal>, where <literal>INT</literal> is one of the return values defined above.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>monteDriver.cpp</filename></title>
+      <para>
+      This is a driver for a post-optimality process (ex. Monte Carlo).
+      </para>
+      <variablelist>
+         <title>Return value</title>
+         <varlistentry>
+            <term>0</term>
+            <listitem>
+               <para>
+               Successful/normal completion.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>10</term>
+            <listitem>
+               <para>
+               Normal completion but some known problem was detected during file/directory access 
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>100</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown file/directory access failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>200</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a known post-optimality failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>7</term>
+            <listitem>
+               <para>
+               Abnormal completion for other known errors.
+               </para>
+            </listitem>
+         </varlistentry>
+        <varlistentry>
+            <term>300</term>
+            <listitem>
+               <para>
+               Abnormal completion due to a unknown post-optimality failure.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>8</term>
+            <listitem>
+               <para>
+               Abnormal completion for other unknown failures.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+   <sect1>
+      <title><filename>Makefile.SPK</filename></title>
+      <para>
+      The primary goals of this Make file is to define rules to build 
+      two versions of executables.  One is an executable hooked to the production
+      version of libraries and the other is to the test version of libraries.
+      An executable is either for the parameter optimization or for 
+      the Monte Carlo integration.
+      </para>
+      <variablelist>
+         <title>Targets</title>
+         <varlistentry>
+            <term>proc <emphasis>(default)</emphasis></term>
+            <listitem>
+               <para>
+               Compile SPK-Compiler-generated C++ source code files,
+               link to <emphasis>production</emphasis> libraries 
+               (ie. libspk, libspkpred, and libopt)
+               and build a driver, named <filename>driver</filename>.
+               The <emphasis>production</emphasis> libraries are expected to be 
+               found in <filename>/usr/local/lib/spkprod/</filename>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>test</term>
+            <listitem>
+               <para>
+               Compile SPK-Compiler-generated C++ source code files,
+               link to <emphasis>test</emphasis> libraries 
+               (ie. libspk, libspkpred, and libopt)
+               and build a driver, named <filename>driver</filename>.
+               The <emphasis>production</emphasis> libraries are expected to be 
+               found in <filename>/usr/local/lib/spktest/</filename>.
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>clean</term>
+            <listitem>
+               <para>
+               Delete all artifacts generated by SPK Compiler except for itself, 
+               <filename>Makefile.SPK</filename>.
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+      <variablelist> 
+         <title>Source Code Files</title>
+         <varlistentry>
+            <term>Common source</term>
+            <listitem>
+               <para>
+               The source code files commonly needed by the two processes: optimization and Monte Carlo.
+               The files are expected to be found in the current directory.
+               </para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>NonmemPars.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>IndData.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>DataSet.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>Pred.h</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>                     
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Optimization-specific source</term>
+            <listitem>
+               <para>
+               The source code file only needed by the optimization process.
+               The file is expected to be found in the current directory.
+               </para>
+               <para>
+                  <itemizedlist>
+                      <listitem>
+                         <para>fitDriver.cpp</para>
+                      </listitem>
+                  </itemizedlist>
+               </para>
+            </listitem>
+         </varlistentry>
+         <varlistentry>
+            <term>Monte Carlo-specific source</term>
+            <listitem>
+               <para>
+               The source code files only needed by the Monte Carlo process.
+               </para>
+               <para>
+               The following header is expected be found in the current directory.
+               </para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>MontePars.h</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+               <para>
+               The following files are expected to be found in <filename>/usr/local/src/spktest/ml/</filename>.
+               </para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>monteDriver.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>AnalyticalIntegral.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>AnalyticalIntegral.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>GridIntegral.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>GridIntegral.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>GridIntegral.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MapBay.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MapBay.cpp</para>
+                     </listitem>
+                     <listitem>
+                        <para>MapBay.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MontePopObj.h</para>
+                     </listitem>
+                     <listitem>
+                        <para>MontePopObj.cpp</para>
+                     </listitem>
+                  </itemizedlist>                     
+               </para>
+            </listitem>
+         </varlistentry>
+      </variablelist>
+   </sect1>
+</article>

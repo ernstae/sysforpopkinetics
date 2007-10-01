@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html;charset=windows-1252">
+<link rel="stylesheet" href="../spkstart_rtf_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='../spkstart_rtf.css'>");}
+//-->
+</script>
+ <TITLE>7. Random Effects Covariance.</TITLE>
+<META NAME="generator" CONTENT="RoboHelp by eHelp Corporation www.ehelp.com"><SCRIPT LANGUAGE="JavaScript" TITLE="BSSC Special Effects" SRC="../ehlpdhtm.js" name="EHELP_DHTM"></SCRIPT>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="../whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="../whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whtopic.js"></script>
+</HEAD>
+<BODY><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("SPKStart\n7. Random Effects Covariance.");
+addAvenueInfo("MAIN","spkstart/6_fixed_effects_.htm","spkstart/8_residual_unknown_variability_covariance_.htm");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("../spkstart.htm");
+
+		autoSync(0);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<H1><FONT style="font-size:12pt; " >7. Random Effects Covariance.</FONT></H1>
+ <P><FONT style="font-size:12pt; " >In this screen, enter the initial estimate for the population variance term OMEGA. A reasonable overestimate of the standard deviation is 30, so use an initial estimate of 900 for the variance term OMEGA.</FONT></P>
+ <P style="margin-left:36.00pt;text-indent:-18.00pt;"><FONT style="font-family:'Symbol'; " >·</FONT><span style="font-size:8pt; font-family='Times New Roman'; letter-spacing=0pt; font-weight=normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><FONT style="font-size:12pt; " >Check &quot;New Block&quot; and &quot;Diagonal&quot; (&quot;Full Matrix&quot; would be OK too since the matrix is 1x1). </FONT></P>
+ <P style="margin-left:36.00pt;text-indent:-18.00pt;"><FONT style="font-family:'Symbol'; " >·</FONT><span style="font-size:8pt; font-family='Times New Roman'; letter-spacing=0pt; font-weight=normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><FONT style="font-size:12pt; " >In the &quot;Block Size&quot; menu, select &quot;1&quot; (since we only have a single variance term) and click &quot;Enter data&quot;. </FONT><FONT style="font-size:12pt; " >The &quot;Diagonal Matrix Entry</FONT><FONT style="font-size:12pt; " > Form&quot; will pop open. </FONT></P>
+ <P style="margin-left:36.00pt;text-indent:-18.00pt;"><FONT style="font-family:'Symbol'; " >·</FONT><span style="font-size:8pt; font-family='Times New Roman'; letter-spacing=0pt; font-weight=normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><FONT style="font-size:12pt; " >Enter the estimated variance 900</FONT><FONT style="font-size:12pt; " >.</FONT></P>
+ <P style="margin-left:36.00pt;text-indent:-18.00pt;"><FONT style="font-family:'Symbol'; " >·</FONT><span style="font-size:8pt; font-family='Times New Roman'; letter-spacing=0pt; font-weight=normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><FONT style="font-size:12pt; " >C</FONT><FONT style="font-size:12pt; " >lick &quot;Add&quot;. </FONT><FONT style="font-size:12pt; " > The entry form will close and </FONT><FONT style="font-size:12pt; " >$OMEGA DIAGONAL(1) 900 </FONT><FONT style="font-size:12pt; " >will appear in the</FONT><FONT style="font-size:12pt; " > window</FONT><FONT style="font-size:12pt; " > below</FONT><FONT style="font-size:12pt; " >.</FONT></P>
+ <P><IMG src="../images/img00032.gif" border=0 height=501 width=708 alt="images\img00032.gif"><FONT style="font-size:12pt; " > </FONT></P>
+ <P><FONT style="font-size:12pt; " >Click Next&gt; to continue.</FONT></P>
+ <P style="margin-top:0;margin-bottom:0">&nbsp;</P>
+ <P><FONT style="font-size:12pt; " >(In a more complex example where the covariance matrix OMEGA has higher dimension, select the matrix dimension in the &quot;Block Size&quot; menu and click &quot;Enter data&quot; to get the entry form for filling in variance/covariance initial estimates.)</FONT></P>
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</BODY>
+</HTML>

@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html;charset=windows-1252">
+<link rel="stylesheet" href="../spkstart_rtf_ns.css"><script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='../spkstart_rtf.css'>");}
+//-->
+</script>
+ <TITLE>Example:</TITLE>
+<META NAME="generator" CONTENT="RoboHelp by eHelp Corporation www.ehelp.com"><SCRIPT LANGUAGE="JavaScript" TITLE="BSSC Special Effects" SRC="../ehlpdhtm.js" name="EHELP_DHTM"></SCRIPT>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute; left:0px; top:0px; z-index:4; visibility:hidden; }
+-->
+</style><script type="text/javascript" language="javascript1.2" src="../whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="../whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="../whtopic.js"></script>
+</HEAD>
+<BODY><script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("SPKStart\nExample:");
+addAvenueInfo("MAIN","spkstart/getting_started_with_spk.htm","spkstart/1_analysis_selection_.htm");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("../spkstart.htm");
+
+		autoSync(0);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+//-->
+</script>
+<H1><FONT style="font-size:12pt; " >Example:</FONT></H1>
+ <P><FONT style="font-size:12pt; " >This example is from: Pinheiro, J. C. and Bates, D. M. (2000), Mixed-Effects Models in S and S-PLUS, Springer, </FONT><FONT style="font-size:12pt; " >New York</FONT><FONT style="font-size:12pt; " >. (Appendix A.26). The data are from longitudinal stress testing in railway rails. Each of 6 rails was tested 3 times by measuring the travel time of an ultrasonic wave along the length of the rail. The data are shown here </FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 1 55</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 1 53</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 1 54</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 2 26</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 2 37</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 2 32</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 3 78</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 3 91</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 3 85</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 4 92</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 4 100</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 4 96</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 5 49</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 5 51</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 5 50</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 6 80</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 6 85</FONT></P>
+ <P><FONT style="font-family:'Courier New'; font-size:12pt; " > 6 83</FONT></P>
+ <P><FONT style="font-size:12pt; " >with rail ID in the first column and travel time, in nanoseconds minus 36,100 nanoseconds, in the second column. The full dataset can also be found in the SPK dataset library. For the purposes of this tutorial, copy the data in a text file and save them in your local file system.</FONT></P>
+ <P style="margin-top:0;margin-bottom:0">&nbsp;</P>
+ <P><FONT style="font-size:12pt; " >The mixed effects model we wish to apply is</FONT></P>
+ <P style="text-align:center;"><IMG src="../images/img00001.gif" border=0 height=25 width=107 alt="images\img00001.gif"><FONT style="font-size:12pt; " > </FONT></P>
+ <P><FONT style="font-size:12pt; " >where </FONT><IMG src="../images/img00002.gif" border=0 height=25 width=20 alt="images\img00002.gif"><FONT style="font-size:12pt; " > represents the data for observation </FONT><FONT style="font-size:12pt; font-style:italic; " >j</FONT><FONT style="font-size:12pt; " > on rail </FONT><FONT style="font-size:12pt; font-style:italic; " >i</FONT><FONT style="font-size:12pt; " >, </FONT><IMG src="../images/img00003.gif" border=0 height=20 width=13 alt="images\img00003.gif"><FONT style="font-size:12pt; " > is the mean sampled travel time, </FONT><IMG src="../images/img00004.gif" border=0 height=24 width=87 alt="images\img00004.gif"><FONT style="font-size:12pt; " > is the random variable representing mean deviation in travel time for the </FONT><FONT style="font-size:12pt; font-style:italic; " >i</FONT><FONT style="font-size:12pt; vertical-align:super; " >th</FONT><FONT style="font-size:12pt; " > rail and </FONT><IMG src="../images/img00005.gif" border=0 height=25 width=85 alt="images\img00005.gif"><FONT style="font-size:12pt; " > is the random variable representing deviation in the </FONT><FONT style="font-size:12pt; font-style:italic; " >j</FONT><FONT style="font-size:12pt; vertical-align:super; " >th</FONT><FONT style="font-size:12pt; " > observation from the mean travel time on the</FONT><FONT style="font-size:12pt; font-style:italic; " > i</FONT><FONT style="font-size:12pt; vertical-align:super; " >th</FONT><FONT style="font-size:12pt; " > rail.</FONT></P>
+ <P style="margin-top:0;margin-bottom:0">&nbsp;</P>
+ <P><FONT style="font-size:12pt; " >We wish to determine the best estimates of parameters</FONT><IMG src="../images/img00006.gif" border=0 height=20 width=13 alt="images\img00006.gif"><FONT style="font-size:12pt; " >, </FONT><IMG src="../images/img00007.gif" border=0 height=17 width=17 alt="images\img00007.gif"><FONT style="font-size:12pt; " > and </FONT><IMG src="../images/img00008.gif" border=0 height=16 width=15 alt="images\img00008.gif"><FONT style="font-size:12pt; " > – represented as</FONT><FONT style="font-size:12pt; " > THETA, OMEGA and SIGMA in the MDA – given the available data. Parameters </FONT><IMG src="../images/img00009.gif" border=0 height=24 width=17 alt="images\img00009.gif"><FONT style="font-size:12pt; " > and </FONT><IMG src="../images/img00010.gif" border=0 height=25 width=20 alt="images\img00010.gif"><FONT style="font-size:12pt; " > are represented as</FONT><FONT style="font-size:12pt; " > ETA and EPS in the MDA.</FONT></P>
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+</BODY>
+</HTML>

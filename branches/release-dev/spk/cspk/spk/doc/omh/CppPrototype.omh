@@ -1,0 +1,14 @@
+$begin CppPrototype$$
+
+$section C++ Classes and Functions$$
+
+$childtable/
+    DMclass.omh/
+    DMfunctions.omh/
+    DoubleFunctions.omh/
+    Model.omh/
+    CovarianceClasses.omh/
+    GeneralPurposeClasses.omh/$$
+
+$end
+
