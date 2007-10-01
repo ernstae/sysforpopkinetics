@@ -253,12 +253,13 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                         return false;
                     }
                 }           
-                if(iterator.analysis.equals("population") && nEps == 0)
+                if(!iterator.analysis.equals("population") && nEps > 0)
                 {
-                    JOptionPane.showMessageDialog(null, "The number of residual unkown variability parameters is 0.\n",
+                    JOptionPane.showMessageDialog(null, "The EPS can not be used in " + iterator.analysis + " Model Equations.\n",
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
+                
 
                 // Check ENDIF syntax
                 if(!Utility.checkENDIF(code, title)) return false;;
@@ -324,6 +325,8 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                     {
                         JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
                     }
+                    if(lines.size() == 0 && errors.size() == 0)
+                        return true;
                     return false;
                 }
             }
