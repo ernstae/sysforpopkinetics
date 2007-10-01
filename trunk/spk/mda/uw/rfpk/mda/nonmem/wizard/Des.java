@@ -303,6 +303,8 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                     {
                         JOptionPane.showMessageDialog(null, e, "BadLocationException", JOptionPane.ERROR_MESSAGE);
                     }
+                    if(lines.size() == 0 && errors.size() == 0)
+                        return true;
                     return false;
                 }
             }
