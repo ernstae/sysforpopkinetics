@@ -172,7 +172,8 @@ AC_CHECK_LIB(pvm3,pvm_parent,[
 # FIXME: Replace `main' with a function in `-lQN01Box':
 # NOTE:  This should be changed to use AC_CHECK_LIB (aernst)
 #AC_CHECK_FILE([/usr/local/spk/lib/libQN01Box.a],[LIBS="$LIBS -lQN01Box"],[
-AC_CHECK_LIB([QN01Box], [main], [], [
+#AC_CHECK_LIB([QN01Box], [QN01Box::defaultErrorHandler],[], [
+AX_CXX_CHECK_LIB([QN01Box], [QN01Box::QuasiNewton01Box], [], [
 echo \
 "----------------------------------------------------------------------
 ERROR: It appears as though libQN01Box is missing.  You cannot sanely
