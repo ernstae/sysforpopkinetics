@@ -1,0 +1,1228 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Glossary</title>
+<meta name="description" id="description" content="Glossary"/>
+<meta name="keywords" id="keywords" content=" avg: euclidean average avg Euclidean c: the complementarity conditions d: diagonal matrix of a vector D norm exception safe infinity l-one and correspondence e: ones e max: maximum element max min: minimum min l: lagrangian L Lagrange p: quadratic problem with box constraints P constraint trust region scaled projected gradient residual function R "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_glossary_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>glossary</option>
+</select>
+</td>
+<td><a href="error.xml" target="_top">Prev</a>
+</td><td><a href="whatsnew.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down1(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>glossary</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>avg: Euclidean Average</option>
+<option>C: The Complementarity Conditions</option>
+<option>D: Diagonal Matrix of a Vector</option>
+<option>Euclidean Norm</option>
+<option>Exception Safe</option>
+<option>Infinity Norm</option>
+<option>L-one Norm</option>
+<option>Matrix and Vector Correspondence</option>
+<option>e: Vector of Ones</option>
+<option>max: Maximum Element of a Vector</option>
+<option>min: Minimum Element of a Vector</option>
+<option>L: The Lagrangian</option>
+<option>P: Quadratic Problem with Box Constraints</option>
+<option>p: Scaled Projected Gradient</option>
+<option>Residual Function</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Glossary</big></big></b></center>
+<br/>
+<b><big><a name="avg: Euclidean Average" id="avg: Euclidean Average">avg: Euclidean Average</a></big></b>
+
+<br/>
+We define 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">|</mo>
+<mo stretchy="false">/</mo>
+<msqrt><mrow><mi mathvariant='italic'>n</mi>
+</mrow>
+</msqrt>
+</mrow></math>
+
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">|</mo>
+<mo stretchy="false">&#x000B7;</mo>
+<mo stretchy="false">|</mo>
+</mrow></math>
+
+ is the 
+<a href="glossary.xml#Euclidean Norm" target="_top"><span style='white-space: nowrap'>Euclidean&#xA0;norm</span></a>
+.
+It follows that 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">|</mo>
+<mo stretchy="false">=</mo>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mi mathvariant='italic'>e</mi>
+<mo stretchy="false">|</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="C: The Complementarity Conditions" id="C: The Complementarity Conditions">C: The Complementarity Conditions</a></big></b>
+<br/>
+Given 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+ the corresponding
+lower limit complementarity condition 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>l</mi>
+</msub>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>l</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>D</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">)</mo>
+<mi mathvariant='italic'>a</mi>
+</mrow></math>
+
+Given 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>u</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+ the corresponding
+upper limit complementarity condition
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>u</mi>
+</msub>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>u</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>D</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>u</mi>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mi mathvariant='italic'>b</mi>
+</mrow></math>
+
+<br/>
+<b><big><a name="D: Diagonal Matrix of a Vector" id="D: Diagonal Matrix of a Vector">D: Diagonal Matrix of a Vector</a></big></b>
+
+<br/>
+We define 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>D</mi>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mrow><mi mathvariant='italic'>n</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow>
+</msup>
+</mrow></math>
+
+
+by 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>D</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ is the diagonal matrix with 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+ along the diagonal.
+(It follows that 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>D</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>e</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ is the identity matrix.)
+
+<br/>
+<br/>
+<b><big><a name="Euclidean Norm" id="Euclidean Norm">Euclidean Norm</a></big></b>
+<br/>
+Given a vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+the corresponding Euclidean norm is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">|</mo>
+<mo stretchy="false">=</mo>
+<msup><mrow><mo stretchy="true">(</mo><mrow><munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mi mathvariant='italic'>n</mi>
+</munderover>
+<msubsup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+<mn>2</mn>
+</msubsup>
+</mrow><mo stretchy="true">)</mo></mrow>
+<mrow><mn>1</mn>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+</mrow>
+</msup>
+</mrow></math>
+
+<br/>
+<b><big><a name="Exception Safe" id="Exception Safe">Exception Safe</a></big></b>
+<br/>
+A routine is exception safe provided that it satisfies the following conditions:
+<ol type="1"><li>
+The routine does not throw or catch any exceptions.
+</li><li>
+
+All memory allocated by the routine is freed by calling the destructors
+for all the variables that are local to the routine.
+</li><li>
+
+All sub-routines that are called by the routine are also exception safe.
+</li></ol>
+
+
+
+<br/>
+<br/>
+<b><big><a name="Infinity Norm" id="Infinity Norm">Infinity Norm</a></big></b>
+<br/>
+Given a vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+the corresponding infinity norm is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>x</mi>
+<msub><mo stretchy="false">|</mo>
+<mo stretchy="false">&#x0221E;</mo>
+</msub>
+<mo stretchy="false">=</mo>
+<mi>max</mi>
+<mo stretchy="false">{</mo>
+<mo stretchy="false">|</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">|</mo>
+<mspace width='.3em'/>
+<mo stretchy="false">:</mo>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">}</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="L-one Norm" id="L-one Norm">L-one Norm</a></big></b>
+<br/>
+Given a vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+the corresponding L-one norm is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>x</mi>
+<msub><mo stretchy="false">|</mo>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mi mathvariant='italic'>n</mi>
+</munderover>
+<mo stretchy="false">|</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">|</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="Matrix and Vector Correspondence" id="Matrix and Vector Correspondence">Matrix and Vector Correspondence</a></big></b>
+<br/>
+An 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+ matrix 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>A</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mrow><mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow>
+</msup>
+</mrow></math>
+
+ 
+corresponds to a vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>A</mi>
+</mrow></math>
+
+ of length 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+ 
+in the following fashion:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msub><mi mathvariant='italic'>A</mi>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>j</mi>
+</mrow>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>A</mi>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>j</mi>
+</mrow>
+</msub>
+</mrow></math>
+
+<br/>
+<b><big><a name="e: Vector of Ones" id="e: Vector of Ones">e: Vector of Ones</a></big></b>
+
+<br/>
+The vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>e</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+ is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>e</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow></math>
+
+ for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="max: Maximum Element of a Vector" id="max: Maximum Element of a Vector">max: Maximum Element of a Vector</a></big></b>
+
+<br/>
+We define 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>max</mi>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>max</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi>max</mi>
+<mo stretchy="false">{</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mspace width='.3em'/>
+<mo stretchy="false">:</mo>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">}</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="min: Minimum Element of a Vector" id="min: Minimum Element of a Vector">min: Minimum Element of a Vector</a></big></b>
+
+<br/>
+We define 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>min</mi>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>min</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi>min</mi>
+<mo stretchy="false">{</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mspace width='.3em'/>
+<mo stretchy="false">:</mo>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">}</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="L: The Lagrangian" id="L: The Lagrangian">L: The Lagrangian</a></big></b>
+
+<br/>
+The Lagrangian corresponding to 
+<a href="glossary.xml#P: Quadratic Problem with Box Constraints" target="_top"><span style='white-space: nowrap'>P(Q,&#xA0;r,&#xA0;l,&#xA0;u)</span></a>
+
+is the function 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>L</mi>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+,
+defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>L</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mn>1</mn>
+</mrow>
+<mrow><mn>2</mn>
+</mrow>
+</mfrac>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mi mathvariant='italic'>Q</mi>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>r</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>u</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+The gradient of the Lagrangian with respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>L</mi>
+<mi mathvariant='italic'>x</mi>
+</msub>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+is given by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msub><mi mathvariant='italic'>L</mi>
+<mi mathvariant='italic'>x</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>Q</mi>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>r</mi>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>b</mi>
+</mrow></math>
+
+<br/>
+<b><big><a name="P: Quadratic Problem with Box Constraints" id="P: Quadratic Problem with Box Constraints">P: Quadratic Problem with Box Constraints</a></big></b>
+
+<br/>
+Given
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>Q</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mrow><mi mathvariant='italic'>n</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>r</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+and
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>u</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+the corresponding quadratic problem with box constraints
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>P</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>Q</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>r</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>u</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ is
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>minimize</mi>
+</mstyle></mrow>
+</mtd><mtd columnalign="right" >
+<mfrac><mrow><mn>1</mn>
+</mrow>
+<mrow><mn>2</mn>
+</mrow>
+</mfrac>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mi mathvariant='italic'>Q</mi>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>r</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mi mathvariant='italic'>x</mi>
+</mtd><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>with</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>respect</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mtd></mtr><mtr><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>subject</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+</mtd><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>l</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<msub><mi mathvariant='italic'>u</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>for</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x022EF;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+</mtd></mtr></mtable>
+</mrow></math>
+
+<br/>
+<b><big><a name="p: Scaled Projected Gradient" id="p: Scaled Projected Gradient">p: Scaled Projected Gradient</a></big></b>
+<br/>
+Suppose we are give a problem of the form
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>minimize</mi>
+</mstyle></mrow>
+</mtd><mtd columnalign="right" >
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>with</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>respect</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mtd></mtr><mtr><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>subject</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+</mtd><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>l</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<msub><mi mathvariant='italic'>u</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>for</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x022EF;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+</mtd></mtr></mtable>
+</mrow></math>
+
+The corresponding scaled projected gradient is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msub><mi mathvariant='italic'>p</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mrow><mo stretchy="true">{</mo><mrow><mtable rowalign="center" ><mtr><mtd columnalign="left" >
+<mo stretchy="false">(</mo>
+<msub><mi mathvariant='italic'>u</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">/</mo>
+<mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>if</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">/</mo>
+<mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&#x02264;</mo>
+<mn>0</mn>
+</mtd></mtr><mtr><mtd columnalign="left" >
+<mo stretchy="false">(</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>l</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">/</mo>
+<mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>if</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">/</mo>
+<mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&#x02265;</mo>
+<mn>0</mn>
+</mtd></mtr></mtable>
+</mrow><mo stretchy="true"> </mo></mrow>
+</mrow></math>
+
+<br/>
+<b><big><a name="Residual Function" id="Residual Function">Residual Function</a></big></b>
+
+<br/>
+We are given an upper limit vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>u</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+a lower limit vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+and a reduction multiplier 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mn>0</mn>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">&lt;</mo>
+<mn>1</mn>
+</mrow></math>
+
+.
+For an 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+ such that 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='italic'>u</mi>
+</mrow></math>
+
+,
+a Lagrange multiplier for the lower constraint 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+and 
+a Lagrange multiplier for the upper constraint 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+the residual function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>R</mi>
+</mrow></math>
+
+ is define by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mrow><mo stretchy="true">(</mo><mrow><mtable rowalign="center" ><mtr><mtd columnalign="center" >
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>u</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>l</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<msub><mi mathvariant='italic'>L</mi>
+<mi mathvariant='italic'>x</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr></mtable>
+</mrow><mo stretchy="true">)</mo></mrow>
+</mrow></math>
+
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>u</mi>
+</msub>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>C</mi>
+<mi mathvariant='italic'>l</mi>
+</msub>
+</mrow></math>
+
+ are the 
+upper and lower
+<a href="glossary.xml#C: The Complementarity Conditions" target="_top"><span style='white-space: nowrap'>complementarity&#xA0;conditions</span></a>
+
+and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>L</mi>
+<mi mathvariant='italic'>x</mi>
+</msub>
+</mrow></math>
+
+ is the gradient of the
+<a href="glossary.xml#L: The Lagrangian" target="_top"><span style='white-space: nowrap'>Lagrangian</span></a>
+.
+
+
+
+<hr/>Input File: omh/glossary.omh
+
+</body>
+</html>

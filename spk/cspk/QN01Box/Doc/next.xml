@@ -1,0 +1,1323 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Next Interior Point Iterate</title>
+<meta name="description" id="description" content="Next Interior Point Iterate"/>
+<meta name="keywords" id="keywords" content=" Next interior point iterate "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_next_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>QuasiNewton01Box</option>
+<option>QuadBox</option>
+<option>Next</option>
+</select>
+</td>
+<td><a href="quadbox.xml" target="_top">Prev</a>
+</td><td><a href="delta.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>QuasiNewton01Box-&gt;</option>
+<option>QuadBox</option>
+<option>Bfgs</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>QuadBox-&gt;</option>
+<option>Next</option>
+<option>Residual</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>Next-&gt;</option>
+<option>Delta</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Exceptions</option>
+<option>Return Value</option>
+<option>Input Arguments</option>
+<option>Notation</option>
+<option>Newton Step</option>
+<option>Output Arguments</option>
+<option>Descent Criteria</option>
+<option>Corrector Steps</option>
+<option>Staying Interior</option>
+<option>Subroutines</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Next Interior Point Iterate</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Syntax</b> </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+const&#xA0;char&#xA0;*&#xA0;Next(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Input&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;</span></font></code><i><span style='white-space: nowrap'>alpha</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>Q</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;//&#xA0;length&#xA0;n&#xA0;*&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;//&#xA0;length&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>l</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;//&#xA0;...<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;//&#xA0;...<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;//&#xA0;...<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>a</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;//&#xA0;...<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;//&#xA0;...<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Output&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>xOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;length&#xA0;n&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>aOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;...<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>bOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;...<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>lambda</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;)<br/>
+</span></font></code></td></tr>
+</table>
+<b><big><a name="Exceptions" id="Exceptions">Exceptions</a></big></b>
+<br/>
+The routine <code><font color="blue">Next</font></code> is <a href="glossary.xml#Exception Safe" target="_top"><span style='white-space: nowrap'>exception&#xA0;safe</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br/>
+If the return value of <code><font color="blue">Next</font></code> is either the (const char *) &quot;ok&quot;,
+it succeeded in meeting its specifications.
+Otherwise, the return value is an error message and the specifications
+have not been met.
+Provided that all the input and output arguments have their specified lengths,
+such a failure should not have any side effects.
+
+<br/>
+<br/>
+<b><big><a name="Input Arguments" id="Input Arguments">Input Arguments</a></big></b>
+<br/>
+We define 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msub><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>Z</mi>
+</mstyle></mrow>
+<mo stretchy="false">+</mo>
+</msub>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msub><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">+</mo>
+</msub>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>Q</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mrow><mi mathvariant='italic'>n</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>r</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>u</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msubsup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>n</mi>
+</msubsup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msubsup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>n</mi>
+</msubsup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>da</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>db</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+
+as the values of the corresponding input arguments.
+The matrix 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>Q</mi>
+</mrow></math>
+
+ must be positive definite
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mn>0</mn>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>l</mi>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='italic'>u</mi>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mn>0</mn>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='italic'>a</mi>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mn>0</mn>
+<mo stretchy="false">&lt;</mo>
+<mi mathvariant='italic'>b</mi>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="Notation" id="Notation">Notation</a></big></b>
+<br/>
+We use 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>e</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+ for the
+<a href="glossary.xml#e: Vector of Ones" target="_top"><span style='white-space: nowrap'>vector&#xA0;of&#xA0;ones</span></a>
+.
+We use 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>D</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ for the
+<a href="glossary.xml#D: Diagonal Matrix of a Vector" target="_top"><span style='white-space: nowrap'>diagonal&#xA0;matrix&#xA0;of&#xA0;a&#xA0;vector</span></a>
+.
+We use 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ for the
+<a href="glossary.xml#Residual Function" target="_top"><span style='white-space: nowrap'>residual&#xA0;function</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Newton Step" id="Newton Step">Newton Step</a></big></b>
+<br/>
+The values 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+, 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+and
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+
+are defined by:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>R</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mrow><mo stretchy="true">(</mo><mrow><mtable rowalign="center" ><mtr><mtd columnalign="center" >
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>x</mi>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>a</mi>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>b</mi>
+</mtd></mtr></mtable>
+</mrow><mo stretchy="true">)</mo></mrow>
+<mo stretchy="false">=</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mrow><mo stretchy="true">(</mo><mrow><mtable rowalign="center" ><mtr><mtd columnalign="center" >
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mi mathvariant='italic'>e</mi>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mi mathvariant='italic'>e</mi>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<mn>0</mn>
+</mtd></mtr></mtable>
+</mrow><mo stretchy="true">)</mo></mrow>
+</mrow></math>
+
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>R</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow></math>
+
+ is the derivative of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>R</mi>
+</mrow></math>
+
+
+and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>avg</mi>
+</mrow></math>
+
+ is the 
+<a href="glossary.xml#avg: Euclidean Average" target="_top"><span style='white-space: nowrap'>Euclidean&#xA0;Average</span></a>
+
+
+<br/>
+<br/>
+<b><big><a name="Output Arguments" id="Output Arguments">Output Arguments</a></big></b>
+<br/>
+We define 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mo stretchy="false">&#x02208;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+ as the 
+maximum value, greater than zero and less than or equal one,
+such that the following conditions hold:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>l</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02265;</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">(</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>l</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">/</mo>
+<mn>1000</mn>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>u</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02265;</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">(</mo>
+<msub><mi mathvariant='italic'>u</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">/</mo>
+<mn>1000</mn>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02265;</mo>
+</mtd><mtd columnalign="left" >
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">/</mo>
+<mn>1000</mn>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02265;</mo>
+</mtd><mtd columnalign="left" >
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">/</mo>
+<mn>1000</mn>
+</mtd></mtr></mtable>
+</mrow></math>
+
+The output values are defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>xOut</mi>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003BB;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>x</mi>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>aOut</mi>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003BB;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>a</mi>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>bOut</mi>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003BB;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>b</mi>
+</mtd></mtr></mtable>
+</mrow></math>
+
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>lambda</mi>
+<mo stretchy="false">=</mo>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mo stretchy="false">/</mo>
+<msup><mn>2</mn>
+<mi mathvariant='italic'>i</mi>
+</msup>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>i</mi>
+</mrow></math>
+
+ is the smallest
+non-negative integer such that the descent criteria below holds.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If <i>msg</i> is &quot;ok&quot;,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>xOut</mi>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+, 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>aOut</mi>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>a</mi>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>bOut</mi>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>b</mi>
+</mrow></math>
+
+,
+then an more accurate answer cannot be obtained 
+(due to numerical round off error).
+
+<br/>
+<br/>
+<b><big><a name="Descent Criteria" id="Descent Criteria">Descent Criteria</a></big></b>
+<br/>
+We define the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">:</mo>
+<msub><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">+</mo>
+</msub>
+<mo stretchy="false">&#x02192;</mo>
+<msub><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">+</mo>
+</msub>
+</mrow></math>
+
+ by:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">|</mo>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mi mathvariant='normal'>&#x00394;</mi>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mspace width='.3em'/>
+<msubsup><mo stretchy="false">|</mo>
+<mn>2</mn>
+<mn>2</mn>
+</msubsup>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">|</mo>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<msup><mi mathvariant='italic'>R</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='normal'>&#x00394;</mi>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mo stretchy="false">,</mo>
+<mi mathvariant='normal'>&#x00394;</mi>
+<msup><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mo stretchy="false">,</mo>
+<mi mathvariant='normal'>&#x00394;</mi>
+<msup><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<msup><mo stretchy="false">)</mo>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mspace width='.3em'/>
+<msubsup><mo stretchy="false">|</mo>
+<mn>2</mn>
+<mn>2</mn>
+</msubsup>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>O</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='normal'>&#x003B8;</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<msubsup><mrow><mo stretchy="true">|</mo><mrow><mspace width='.3em'/>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mrow><mo stretchy="true">(</mo><mrow><mtable rowalign="center" ><mtr><mtd columnalign="center" >
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mi mathvariant='italic'>e</mi>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mi mathvariant='italic'>e</mi>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<mn>0</mn>
+</mtd></mtr></mtable>
+</mrow><mo stretchy="true">)</mo></mrow>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mspace width='.3em'/>
+</mrow><mo stretchy="true">|</mo></mrow>
+<mn>2</mn>
+<mn>2</mn>
+</msubsup>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>O</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='normal'>&#x003B8;</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02264;</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<msup><mo stretchy="false">)</mo>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<msubsup><mo stretchy="false">|</mo>
+<mn>2</mn>
+<mn>2</mn>
+</msubsup>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mo stretchy="false">)</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<msub><mo stretchy="false">|</mo>
+<mn>2</mn>
+</msub>
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='normal'>&#x003B8;</mi>
+<mn>2</mn>
+</msup>
+<msup><mi mathvariant='normal'>&#x003B1;</mi>
+<mn>2</mn>
+</msup>
+<mi mathvariant='italic'>avg</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>R</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mi mathvariant='italic'>O</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='normal'>&#x003B8;</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02264;</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">[</mo>
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<msup><mo stretchy="false">)</mo>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mo stretchy="false">)</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='normal'>&#x003B8;</mi>
+<mn>2</mn>
+</msup>
+<msup><mi mathvariant='normal'>&#x003B1;</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">]</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>O</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='normal'>&#x003B8;</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">)</mo>
+</mtd></mtr></mtable>
+</mrow></math>
+
+It follows that
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02264;</mo>
+</mtd><mtd columnalign="left" >
+<mi mathvariant='normal'>&#x003B8;</mi>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">-</mo>
+<mn>2</mn>
+<mo stretchy="false">+</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">)</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>O</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='normal'>&#x003B8;</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msup><mi mathvariant='italic'>f</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">&#x02264;</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mn>2</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr></mtable>
+</mrow></math>
+
+The value 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003BB;</mi>
+</mrow></math>
+
+ is chosen so that 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='normal'>&#x003BB;</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&#x02264;</mo>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003BB;</mi>
+<mfrac><mrow><mn>1</mn>
+</mrow>
+<mrow><mn>2</mn>
+</mrow>
+</mfrac>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="Corrector Steps" id="Corrector Steps">Corrector Steps</a></big></b>
+<br/>
+If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow></math>
+
+, the current step is a corrector step.
+In this case 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003BB;</mi>
+</mrow></math>
+
+ is one if 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+and zero otherwise.
+In addition, if 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow></math>
+
+, <code><font color="blue">Next</font></code> always returns &quot;ok&quot;.
+
+<br/>
+<br/>
+<b><big><a name="Staying Interior" id="Staying Interior">Staying Interior</a></big></b>
+<br/>
+If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow></math>
+
+ is with in 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mn>100</mn>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>MachineEpsilon</mi>
+<mo stretchy="false">*</mo>
+<mo stretchy="false">(</mo>
+<msub><mi mathvariant='italic'>u</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>l</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+of the boundary, it is pushed back to that distance from the boundary.
+This is done on a component by component basis. 
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow></math>
+
+ or 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow></math>
+
+ is with in 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mn>100</mn>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>MachineEpsilon</mi>
+<mo stretchy="false">*</mo>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>Q</mi>
+<msub><mo stretchy="false">|</mo>
+<mo stretchy="false">&#x0221E;</mo>
+</msub>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>r</mi>
+<msub><mo stretchy="false">|</mo>
+<mo stretchy="false">&#x0221E;</mo>
+</msub>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+of zero, it is pushed back to that minimum value.
+This is done on a component by component basis. 
+
+<br/>
+<br/>
+<b><big><a name="Subroutines" id="Subroutines">Subroutines</a></big></b>
+
+
+<table><tr><td align='left'  valign='top'>
+
+<a href="delta.xml" target="_top">Delta</a></td><td>
+First Order Approximation Step</td></tr>
+<tr><td>
+
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The following example is also a test.
+It returns true if it succeeds and false otherwise.
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Error.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Memory.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Next.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Delta.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Residual.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/min.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/max.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/MaxAbs.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;CppAD/NearEqual.h&gt;<br/>
+<br/>
+//&#xA0;CppAD&#xA0;utilities&#xA0;used&#xA0;by&#xA0;QuasiNewton01Box<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;float.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;cstddef&gt;<br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;<br/>
+#&#xA0;include&#xA0;&lt;string&gt;<br/>
+#&#xA0;include&#xA0;&lt;CppAD/CppAD_vector.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;CppAD/LuSolve.h&gt;<br/>
+<br/>
+#&#xA0;define&#xA0;StepBound&#xA0;.999<br/>
+<br/>
+bool&#xA0;NextTest(std::string&#xA0;&amp;msg)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;QN01Box;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;int&#xA0;&#xA0;&#xA0;&#xA0;n&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;alpha&#xA0;=&#xA0;.2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;Q[]&#xA0;&#xA0;&#xA0;=&#xA0;{1.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;r[]&#xA0;&#xA0;&#xA0;=&#xA0;{5.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;l[]&#xA0;&#xA0;&#xA0;=&#xA0;{-.5};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;u[]&#xA0;&#xA0;&#xA0;=&#xA0;{1.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;x[]&#xA0;&#xA0;&#xA0;=&#xA0;{0.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a[]&#xA0;&#xA0;&#xA0;=&#xA0;{1.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;b[]&#xA0;&#xA0;&#xA0;=&#xA0;{2.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;xOut[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;aOut[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;bOut[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;ftmp[3];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;derivative&#xA0;of&#xA0;R,&#xA0;right&#xA0;hand&#xA0;side,&#xA0;and&#xA0;solution<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;LuSolve&#xA0;expects&#xA0;SimpleVector&#xA0;arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;Rp(9);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;Rhs(3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;Result(3);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;average&#xA0;residual<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;avg&#xA0;=&#xA0;(&#xA0;(*u&#xA0;-&#xA0;*x)*(*b)&#xA0;+&#xA0;(*x&#xA0;-&#xA0;*l)*(*a)&#xA0;)&#xA0;/&#xA0;2.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;first&#xA0;row&#xA0;of&#xA0;Rp<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[0]&#xA0;&#xA0;=&#xA0;-&#xA0;*b;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[1]&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[2]&#xA0;&#xA0;=&#xA0;*u&#xA0;-&#xA0;*x;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rhs[0]&#xA0;=&#xA0;-&#xA0;(*u&#xA0;-&#xA0;*x)*(*b)&#xA0;+&#xA0;alpha&#xA0;*&#xA0;avg;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;row&#xA0;of&#xA0;Rp<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[3]&#xA0;&#xA0;=&#xA0;*a;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[4]&#xA0;&#xA0;=&#xA0;*x&#xA0;-&#xA0;*l;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[5]&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rhs[1]&#xA0;=&#xA0;-&#xA0;(*x&#xA0;-&#xA0;*l)*(*a)&#xA0;+&#xA0;alpha&#xA0;*&#xA0;avg;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;third&#xA0;row&#xA0;of&#xA0;Rp<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[6]&#xA0;&#xA0;=&#xA0;*Q;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[7]&#xA0;&#xA0;=&#xA0;-1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rp[8]&#xA0;&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Rhs[2]&#xA0;=&#xA0;-&#xA0;(*Q)*(*x)&#xA0;-&#xA0;*r&#xA0;+&#xA0;*a&#xA0;-&#xA0;*b;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;solve&#xA0;to&#xA0;Delta&#xA0;x,&#xA0;Delta&#xA0;a,&#xA0;and&#xA0;Delta&#xA0;b<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;logdet;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::LuSolve(3,&#xA0;1,&#xA0;Rp,&#xA0;Rhs,&#xA0;Result,&#xA0;logdet);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;determine&#xA0;step&#xA0;size<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;lambda&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;lambda&#xA0;*&#xA0;Result[0]&#xA0;&gt;&#xA0;StepBound&#xA0;*&#xA0;(*u&#xA0;-&#xA0;*x)&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;lambda&#xA0;=&#xA0;StepBound&#xA0;*&#xA0;(*u&#xA0;-&#xA0;*x)&#xA0;/&#xA0;Result[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;lambda&#xA0;*&#xA0;Result[0]&#xA0;&lt;&#xA0;StepBound&#xA0;*&#xA0;(*l&#xA0;-&#xA0;*x)&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;lambda&#xA0;=&#xA0;StepBound&#xA0;*&#xA0;(*l&#xA0;-&#xA0;*x)&#xA0;/&#xA0;Result[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;lambda&#xA0;*&#xA0;Result[1]&#xA0;&lt;&#xA0;-&#xA0;StepBound&#xA0;*&#xA0;(*a)&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;lambda&#xA0;=&#xA0;-&#xA0;StepBound&#xA0;*&#xA0;(*a)&#xA0;/&#xA0;Result[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;lambda&#xA0;*&#xA0;Result[2]&#xA0;&lt;&#xA0;-&#xA0;StepBound&#xA0;*&#xA0;(*b)&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;lambda&#xA0;=&#xA0;-&#xA0;StepBound&#xA0;*&#xA0;(*b)&#xA0;/&#xA0;Result[2];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;f0&#xA0;=&#xA0;Residual(n,&#xA0;Q,&#xA0;r,&#xA0;l,&#xA0;u,&#xA0;x,&#xA0;a,&#xA0;b,&#xA0;ftmp);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;fs&#xA0;=&#xA0;f0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;lambda&#xA0;=&#xA0;2.&#xA0;*&#xA0;lambda;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(&#xA0;fs&#xA0;&gt;=&#xA0;&#xA0;f0&#xA0;*&#xA0;(&#xA0;1.&#xA0;-&#xA0;.5&#xA0;*&#xA0;lambda*(1&#xA0;-&#xA0;alpha)&#xA0;)&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;lambda&#xA0;=&#xA0;lambda&#xA0;/&#xA0;2.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*xOut&#xA0;=&#xA0;*x&#xA0;+&#xA0;lambda&#xA0;*&#xA0;Result[0];&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*aOut&#xA0;=&#xA0;*a&#xA0;+&#xA0;lambda&#xA0;*&#xA0;Result[1];&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*bOut&#xA0;=&#xA0;*b&#xA0;+&#xA0;lambda&#xA0;*&#xA0;Result[2];&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fs&#xA0;=&#xA0;Residual(n,&#xA0;Q,&#xA0;r,&#xA0;l,&#xA0;u,&#xA0;xOut,&#xA0;aOut,&#xA0;bOut,&#xA0;ftmp);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Result[0]&#xA0;=&#xA0;*xOut;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Result[1]&#xA0;=&#xA0;*aOut;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Result[2]&#xA0;=&#xA0;*bOut;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;lamOut;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;Next(n,&#xA0;alpha,&#xA0;Q,&#xA0;r,&#xA0;l,&#xA0;u,&#xA0;x,&#xA0;a,&#xA0;b,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xOut,&#xA0;aOut,&#xA0;bOut,&#xA0;lamOut);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;msg&#xA0;==&#xA0;&quot;ok&quot;&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;&quot;&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;ok&#xA0;=&#xA0;false;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(lambda,&#xA0;&#xA0;&#xA0;lamOut,&#xA0;1e-12,&#xA0;1e-12);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(Result[0],&#xA0;*xOut,&#xA0;1e-12,&#xA0;1e-12);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(Result[1],&#xA0;*aOut,&#xA0;1e-12,&#xA0;1e-12);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(Result[2],&#xA0;*bOut,&#xA0;1e-12,&#xA0;1e-12);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: lib/Next.cpp
+
+</body>
+</html>

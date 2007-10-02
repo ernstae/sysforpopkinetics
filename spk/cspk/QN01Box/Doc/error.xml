@@ -1,0 +1,249 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>QN01Box Error Messages and Traps</title>
+<meta name="description" id="description" content="QN01Box Error Messages and Traps"/>
+<meta name="keywords" id="keywords" content=" error handler trap assert exception "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_error_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>Utility</option>
+<option>Error</option>
+</select>
+</td>
+<td><a href="zero_one_scale.xml" target="_top">Prev</a>
+</td><td><a href="glossary.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Utility-&gt;</option>
+<option>Memory</option>
+<option>MaxAbs</option>
+<option>SumAbs</option>
+<option>PlusInfinity</option>
+<option>ScaleProjGrad</option>
+<option>PositiveMatrix</option>
+<option>zero_one_scale</option>
+<option>Error</option>
+</select>
+</td>
+<td>Error</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>LinkErrorHandler</option>
+<option>line</option>
+<option>file</option>
+<option>routine</option>
+<option>message</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>QN01Box Error Messages and Traps</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Syntax</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"><span style='white-space: nowrap'>#&#xA0;include&#xA0;&lt;QN01Box/Error.h&gt;</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>LinkErrorHandler(</span></font></code><i><span style='white-space: nowrap'>handler</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>handler</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>line</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>file</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>routine</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>message</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br/>
+The default <code><font color="blue">QN01Box</font></code> error handler prints messages
+to standard error and generates an assert (as an aid to using the debugger).
+If you do not want this action you will have to define your own 
+error handler and link it to the <code><font color="blue">QN01Box</font></code> package.
+
+<br/>
+<br/>
+<b><big><a name="LinkErrorHandler" id="LinkErrorHandler">LinkErrorHandler</a></big></b>
+<br/>
+The prototype for the argument <i>handler</i> is
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;</span></font></code><i><span style='white-space: nowrap'>handler</span></i><code><font color="blue"><span style='white-space: nowrap'>(int&#xA0;line,&#xA0;char&#xA0;*file,&#xA0;char&#xA0;*routine,&#xA0;char&#xA0;*message)<br/>
+</span></font></code>If you define a handler,
+you can call <code><font color="blue">LinkErrorHandler</font></code> to link it to the QN01Box package.
+You can restore the default error handler using the syntax
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::LinkErrorHandler(QN01Box::defaultErrorHandler);<br/>
+</span>
+</font></code>
+Note that if you are using <code><font color="blue">QN01Box</font></code> namespace,
+you need not have it present in the command above.
+
+<br/>
+<br/>
+<b><big><a name="line" id="line">line</a></big></b>
+<br/>
+The argument <i>line</i> to <i>handler</i> specifies the source
+code line number where the error was detected.
+
+<br/>
+<br/>
+<b><big><a name="file" id="file">file</a></big></b>
+<br/>
+The argument <i>file</i> to <i>handler</i> specifies the source
+code file where the error was detected.
+It is a <code><font color="blue">'\0'</font></code> terminated character string.
+
+<br/>
+<br/>
+<b><big><a name="routine" id="routine">routine</a></big></b>
+<br/>
+The argument <i>routine</i> to <i>handler</i> specifies the routine,
+in the <code><font color="blue">QN01Box</font></code> namespace, where the error was detected.
+
+<br/>
+<br/>
+<b><big><a name="message" id="message">message</a></big></b>
+<br/>
+The argument <i>message</i> to <i>handler</i> is a message
+describing the cause of the error (as a misuse of QN01Box).
+It is a <code><font color="blue">'\0'</font></code> terminated character string.
+If the message is empty, <code><font color="blue"></font></code><i><span style='white-space: nowrap'>message</span></i><code><font color="blue"><span style='white-space: nowrap'>[0]&#xA0;==&#xA0;'\0'</span></font></code>,
+the cause of the error is unknown.
+
+<br/>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The file <code><font color="blue">MemoryError.cpp</font></code> 
+(source code below) is an example of how to do this replacement:
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>/*<br/>
+-----------------------------------------------------------------------<br/>
+From:&#xA0;&#xA0;&#xA0;Resource&#xA0;Facility&#xA0;for&#xA0;Population&#xA0;Kinetics<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Department&#xA0;of&#xA0;Bioengineering&#xA0;Box&#xA0;352255<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;University&#xA0;of&#xA0;Washington<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Seattle,&#xA0;WA&#xA0;98195-2255<br/>
+<br/>
+This&#xA0;file&#xA0;is&#xA0;part&#xA0;of&#xA0;the&#xA0;System&#xA0;for&#xA0;Population&#xA0;Kinetics&#xA0;(SPK),&#xA0;which<br/>
+was&#xA0;developed&#xA0;with&#xA0;support&#xA0;from&#xA0;NIH&#xA0;grants&#xA0;RR-12609&#xA0;and&#xA0;P41-<br/>
+EB001975.&#xA0;Please&#xA0;cite&#xA0;these&#xA0;grants&#xA0;in&#xA0;any&#xA0;publication&#xA0;for&#xA0;which&#xA0;this<br/>
+software&#xA0;is&#xA0;used&#xA0;and&#xA0;send&#xA0;a&#xA0;notification&#xA0;to&#xA0;the&#xA0;address&#xA0;given&#xA0;above.<br/>
+<br/>
+SPK&#xA0;is&#xA0;Copyright&#xA0;(C)&#xA0;1998-2005,&#xA0;by&#xA0;the&#xA0;University&#xA0;of&#xA0;Washington,<br/>
+Resource&#xA0;Facility&#xA0;for&#xA0;Population&#xA0;Kinetics,&#xA0;and&#xA0;is&#xA0;made&#xA0;available&#xA0;as<br/>
+free&#xA0;open&#xA0;source&#xA0;software&#xA0;under&#xA0;the&#xA0;terms&#xA0;of&#xA0;the&#xA0;University&#xA0;of<br/>
+Washington&#xA0;Free-Fork&#xA0;License&#xA0;as&#xA0;a&#xA0;public&#xA0;service.&#xA0;&#xA0;A&#xA0;copy&#xA0;of&#xA0;the<br/>
+License&#xA0;can&#xA0;be&#xA0;found&#xA0;in&#xA0;the&#xA0;COPYING&#xA0;file&#xA0;in&#xA0;the&#xA0;root&#xA0;directory&#xA0;of&#xA0;this<br/>
+distribution.<br/>
+-----------------------------------------------------------------------<br/>
+Author:&#xA0;Brad&#xA0;Bell&#xA0;(brad@apl.washington.edu)<br/>
+<br/>
+*/<br/>
+//&#xA0;BEGIN&#xA0;PROGRAM<br/>
+<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Error.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Memory.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;string&gt;<br/>
+<br/>
+namespace&#xA0;{<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;handlerCount&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;handler(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;line&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;char&#xA0;&#xA0;&#xA0;&#xA0;*file&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;char&#xA0;*routine&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;char&#xA0;*message&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;handlerCount++;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;MemoryRight(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;proper&#xA0;use&#xA0;of&#xA0;Memory<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n1&#xA0;&#xA0;&#xA0;=&#xA0;10;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n2&#xA0;&#xA0;&#xA0;=&#xA0;20;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;ntot&#xA0;=&#xA0;n1&#xA0;+&#xA0;n2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::Memory&lt;double&gt;&#xA0;buffer(ntot);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*x1&#xA0;=&#xA0;buffer(n1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*x2&#xA0;=&#xA0;buffer(n2);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x1[0]&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x1[n1-1]&#xA0;=&#xA0;2.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x2[0]&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x2[n2-1]&#xA0;=&#xA0;2.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;MemoryWorng(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;improper&#xA0;use&#xA0;of&#xA0;Memory<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n1&#xA0;&#xA0;&#xA0;=&#xA0;10;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n2&#xA0;&#xA0;&#xA0;=&#xA0;20;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;ntot&#xA0;=&#xA0;n1&#xA0;+&#xA0;n2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::Memory&lt;double&gt;&#xA0;buffer(ntot);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*x1&#xA0;=&#xA0;buffer(n1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*(x1-1)&#xA0;&#xA0;&#xA0;=&#xA0;1.;&#xA0;//&#xA0;error&#xA0;1,&#xA0;write&#xA0;before&#xA0;allocated&#xA0;memory<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x1[n1+n2]&#xA0;=&#xA0;2.;&#xA0;//&#xA0;error&#xA0;2,&#xA0;write&#xA0;after&#xA0;allocated&#xA0;memory<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;error&#xA0;3,&#xA0;never&#xA0;ask&#xA0;for&#xA0;the&#xA0;last&#xA0;n2&#xA0;elements&#xA0;from&#xA0;buffer<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+<br/>
+bool&#xA0;MemoryError(std::string&amp;Msg)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;MemoryRight();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;switch&#xA0;from&#xA0;default&#xA0;reporting&#xA0;to&#xA0;just&#xA0;counting&#xA0;errors<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::LinkErrorHandler(handler);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;make&#xA0;the&#xA0;mistakes<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;MemoryWorng();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;switch&#xA0;back&#xA0;to&#xA0;default&#xA0;error&#xA0;reporting&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::LinkErrorHandler(QN01Box::defaultErrorHandler);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;that&#xA0;3&#xA0;errors&#xA0;occurred&#xA0;during&#xA0;call&#xA0;to&#xA0;MemoryWorng<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;handlerCount&#xA0;==&#xA0;3;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Msg&#xA0;=&#xA0;&quot;&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span></font></code>
+<hr/>Input File: lib/Error.cpp
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Maximum Absolute Value of an Element of a Vector</title>
+<meta name="description" id="description" content="Maximum Absolute Value of an Element of a Vector"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_maxabs_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>Utility</option>
+<option>MaxAbs</option>
+</select>
+</td>
+<td><a href="memory.xml" target="_top">Prev</a>
+</td><td><a href="sumabs.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Utility-&gt;</option>
+<option>Memory</option>
+<option>MaxAbs</option>
+<option>SumAbs</option>
+<option>PlusInfinity</option>
+<option>ScaleProjGrad</option>
+<option>PositiveMatrix</option>
+<option>zero_one_scale</option>
+<option>Error</option>
+</select>
+</td>
+<td>MaxAbs</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Exceptions</option>
+<option>Description</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Maximum Absolute Value of an Element of a Vector</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Syntax</b> </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>double&#xA0;MaxAbs(size_t&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Exceptions" id="Exceptions">Exceptions</a></big></b>
+<br/>
+The routine <code><font color="blue">MaxAbs</font></code> is <a href="glossary.xml#Exception Safe" target="_top"><span style='white-space: nowrap'>exception&#xA0;safe</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br/>
+Returns the maximum with respect to the elements of <i>x</i>
+of the absolute value of each element; i.e., the
+<a href="glossary.xml#Infinity Norm" target="_top"><span style='white-space: nowrap'>infinity&#xA0;norm</span></a>
+ of <i>x</i>.
+The argument 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">&gt;</mo>
+<mn>0</mn>
+</mrow></math>
+
+ is the length of the vector <i>x</i>.
+
+<br/>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The following example is also a test.
+It returns true if it succeeds and false otherwise.
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/MaxAbs.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;cstddef&gt;<br/>
+#&#xA0;include&#xA0;&lt;string&gt;<br/>
+<br/>
+bool&#xA0;MaxAbsTest(std::string&#xA0;&amp;msg)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;QN01Box;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x[]&#xA0;=&#xA0;{&#xA0;-1.,&#xA0;3.,&#xA0;-2.,&#xA0;2.,&#xA0;-3.,&#xA0;1.,&#xA0;-4.,&#xA0;0.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;&#xA0;&#xA0;=&#xA0;sizeof(x)&#xA0;/&#xA0;sizeof(x[0]);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;MaxAbs(n,&#xA0;x)&#xA0;==&#xA0;4.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;&quot;&quot;;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+</span>
+</font></code>
+
+<hr/>Input File: lib/MaxAbs.cpp
+
+</body>
+</html>

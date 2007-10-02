@@ -1,0 +1,197 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Compute the Scaled Projected Gradient</title>
+<meta name="description" id="description" content="Compute the Scaled Projected Gradient"/>
+<meta name="keywords" id="keywords" content=" scale project gradient "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_scaleprojgrad_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>Utility</option>
+<option>ScaleProjGrad</option>
+</select>
+</td>
+<td><a href="plusinfinity.xml" target="_top">Prev</a>
+</td><td><a href="positivematrix.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Utility-&gt;</option>
+<option>Memory</option>
+<option>MaxAbs</option>
+<option>SumAbs</option>
+<option>PlusInfinity</option>
+<option>ScaleProjGrad</option>
+<option>PositiveMatrix</option>
+<option>zero_one_scale</option>
+<option>Error</option>
+</select>
+</td>
+<td>ScaleProjGrad</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Exceptions</option>
+<option>Description</option>
+<option>n</option>
+<option>x</option>
+<option>g</option>
+<option>l</option>
+<option>u</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Compute the Scaled Projected Gradient</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Syntax</b> </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>void&#xA0;ScaleProjGrad(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*</span></font></code><i><span style='white-space: nowrap'>p</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>g</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>l</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code></td></tr>
+</table>
+<b><big><a name="Exceptions" id="Exceptions">Exceptions</a></big></b>
+<br/>
+The routine <code><font color="blue">ScaleProjGrad</font></code> 
+is <a href="glossary.xml#Exception Safe" target="_top"><span style='white-space: nowrap'>exception&#xA0;safe</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br/>
+Computes a 
+<a href="glossary.xml#p: Scaled Projected Gradient" target="_top"><span style='white-space: nowrap'>scaled&#xA0;projected&#xA0;gradient</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="n" id="n">n</a></big></b>
+<br/>
+specifies the dimension of the domain space for the objective function
+in the definition of the scaled projected gradient. 
+
+<br/>
+<br/>
+<b><big><a name="x" id="x">x</a></big></b>
+<br/>
+the vector <i>x</i> has length <i>n</i> and specifies
+the argument value at which we are computing the scaled projected gradient.
+
+<br/>
+<br/>
+<b><big><a name="g" id="g">g</a></big></b>
+<br/>
+the vector <i>g</i> has length <i>n</i> and contains
+the gradient of the objective function a the point <i>x</i>.
+
+<br/>
+<br/>
+<b><big><a name="l" id="l">l</a></big></b>
+<br/>
+This argument is optional. If it is not
+present, the value zero is used for the lower limits.
+If it is present,
+the vector <i>l</i> has length <i>n</i> and specifies
+the lower limits for the argument in the definition of the scaled
+projected gradient. 
+
+
+<br/>
+<br/>
+<b><big><a name="u" id="u">u</a></big></b>
+<br/>
+This argument is optional. If it is not
+present, the value one is used for the upper limits.
+If it is present,
+the vector <i>u</i> has length <i>n</i> and specifies
+the upper limits for the argument in the definition of the scaled
+projected gradient.
+
+<br/>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The following example is also a test.
+It returns true if it succeeds and false otherwise.
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/ScaleProjGrad.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;cstddef&gt;<br/>
+#&#xA0;include&#xA0;&lt;string&gt;<br/>
+<br/>
+bool&#xA0;ScaleProjGradTest(std::string&#xA0;&amp;msg)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;QN01Box;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;n&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;l[]&#xA0;=&#xA0;{&#xA0;-1.,&#xA0;-1.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;u[]&#xA0;=&#xA0;{&#xA0;2.,&#xA0;2.&#xA0;};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x[]&#xA0;=&#xA0;{&#xA0;.5,&#xA0;.5&#xA0;};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;g[]&#xA0;=&#xA0;{&#xA0;2.,&#xA0;-3.};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;p[2];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;formula&#xA0;for&#xA0;case&#xA0;where&#xA0;g[0]&#xA0;&gt;=&#xA0;0&#xA0;and&#xA0;g[1]&#xA0;&lt;=&#xA0;0<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ScaleProjGrad(p,&#xA0;n,&#xA0;x,&#xA0;g,&#xA0;l,&#xA0;u);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;p[0]&#xA0;==&#xA0;(x[0]-l[0])*g[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;p[1]&#xA0;==&#xA0;(u[1]-x[1])*g[1];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;use&#xA0;default&#xA0;values&#xA0;for&#xA0;lower&#xA0;and&#xA0;upper&#xA0;limits&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ScaleProjGrad(p,&#xA0;n,&#xA0;x,&#xA0;g);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;l[0]&#xA0;=&#xA0;0.;&#xA0;l[1]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;u[0]&#xA0;=&#xA0;1.;&#xA0;u[1]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;p[0]&#xA0;==&#xA0;(x[0]-l[0])*g[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;p[1]&#xA0;==&#xA0;(u[1]-x[1])*g[1];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;&quot;&quot;;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+</span>
+</font></code>
+
+<hr/>Input File: lib/ScaleProjGrad.cpp
+
+</body>
+</html>

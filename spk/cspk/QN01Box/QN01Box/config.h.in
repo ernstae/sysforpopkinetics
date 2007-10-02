@@ -1,13 +1,4 @@
-/* config.h.in.  Generated from configure.ac by autoheader.  */
-
-/* Define to 1 if you have the `boost' library (-lboost). */
-#undef HAVE_LIBBOOST
-
-/* Define to 1 if you have the `mat2cpp' library (-lmat2cpp). */
-#undef HAVE_LIBMAT2CPP
-
-/* Define to 1 if you have the `QN01Box' library (-lQN01Box). */
-#undef HAVE_LIBQN01BOX
+/* QN01Box/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Name of package */
 #undef PACKAGE
@@ -29,3 +20,9 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif

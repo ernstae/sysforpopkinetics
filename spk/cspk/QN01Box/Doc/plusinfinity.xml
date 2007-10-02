@@ -1,0 +1,104 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Returns the IEEE Floating Point Value Plus Infinity</title>
+<meta name="description" id="description" content="Returns the IEEE Floating Point Value Plus Infinity"/>
+<meta name="keywords" id="keywords" content=" infinity plus Plusinfinity ieee "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_plusinfinity_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>Utility</option>
+<option>PlusInfinity</option>
+</select>
+</td>
+<td><a href="sumabs.xml" target="_top">Prev</a>
+</td><td><a href="scaleprojgrad.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Utility-&gt;</option>
+<option>Memory</option>
+<option>MaxAbs</option>
+<option>SumAbs</option>
+<option>PlusInfinity</option>
+<option>ScaleProjGrad</option>
+<option>PositiveMatrix</option>
+<option>zero_one_scale</option>
+<option>Error</option>
+</select>
+</td>
+<td>PlusInfinity</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Type</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Returns the IEEE Floating Point Value Plus Infinity</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Syntax</b> </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>PlusInfinity(const&#xA0;&lt;</span></font></code><i><span style='white-space: nowrap'>Type</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>zero</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br/>
+This routine
+returns the ieee value 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">&#x0221E;</mo>
+</mrow></math>
+
+ with the 
+same type as <i>zero</i>
+(where <i>zero</i> is equal to zero).
+Note that passing in <i>zero</i> as an argument avoids
+having the compiler detect division by zero 
+and warn or generate an error in response.
+
+<br/>
+<br/>
+<b><big><a name="Type" id="Type">Type</a></big></b>
+<br/>
+Conversion from integer to this type must be supported.
+
+
+<hr/>Input File: QN01Box/PlusInfinity.h
+
+</body>
+</html>

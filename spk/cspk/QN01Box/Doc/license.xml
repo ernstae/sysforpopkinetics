@@ -1,0 +1,119 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Your License To Use This Program</title>
+<meta name="description" id="description" content="Your License To Use This Program"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_license_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>License</option>
+</select>
+</td>
+<td><a href="_contents_xml.htm" target="_top">Prev</a>
+</td><td><a href="install.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down1(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>License</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>Your License To Use This Program</big></big></b></center>
+<code><font color="black"><span style='white-space: nowrap'>-----------------------------------------------------------------------<br/>
+University&#xA0;of&#xA0;Washington's&#xA0;Free-Fork&#xA0;License<br/>
+<br/>
+System&#xA0;for&#xA0;Population&#xA0;Kinetics&#xA0;(SPK)<br/>
+Copyright&#xA0;©&#xA0;1998-2003&#xA0;University&#xA0;of&#xA0;Washington,<br/>
+Resource&#xA0;Facility&#xA0;for&#xA0;Population&#xA0;Kinetics.<br/>
+<br/>
+This&#xA0;University&#xA0;of&#xA0;Washington&#xA0;Distribution&#xA0;(code&#xA0;and&#xA0;documentation)&#xA0;is<br/>
+made&#xA0;available&#xA0;to&#xA0;the&#xA0;open&#xA0;source&#xA0;community&#xA0;as&#xA0;a&#xA0;public&#xA0;service&#xA0;by&#xA0;the<br/>
+University&#xA0;of&#xA0;Washington.<br/>
+<br/>
+Under&#xA0;this&#xA0;license,&#xA0;this&#xA0;Distribution&#xA0;may&#xA0;be&#xA0;modified&#xA0;and&#xA0;the&#xA0;original<br/>
+version&#xA0;and&#xA0;modified&#xA0;versions&#xA0;may&#xA0;be&#xA0;copied,&#xA0;distributed,&#xA0;publicly<br/>
+displayed&#xA0;and&#xA0;performed&#xA0;provided&#xA0;that&#xA0;the&#xA0;following&#xA0;conditions&#xA0;are<br/>
+met:<br/>
+<br/>
+1.&#xA0;Modified&#xA0;versions&#xA0;are&#xA0;distributed&#xA0;with&#xA0;source&#xA0;code&#xA0;and<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;documentation&#xA0;and&#xA0;with&#xA0;permission&#xA0;for&#xA0;others&#xA0;to&#xA0;use&#xA0;any&#xA0;code&#xA0;and<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;documentation&#xA0;(whether&#xA0;in&#xA0;original&#xA0;or&#xA0;modified&#xA0;versions)&#xA0;as&#xA0;granted<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;under&#xA0;this&#xA0;license;<br/>
+2.&#xA0;if&#xA0;modified,&#xA0;the&#xA0;source&#xA0;code,&#xA0;documentation,&#xA0;and&#xA0;user&#xA0;run-time<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;elements&#xA0;should&#xA0;be&#xA0;clearly&#xA0;labeled&#xA0;by&#xA0;placing&#xA0;an&#xA0;identifier&#xA0;of&#xA0;origin<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(such&#xA0;as&#xA0;a&#xA0;name,&#xA0;initial,&#xA0;or&#xA0;other&#xA0;tag)&#xA0;after&#xA0;the&#xA0;version&#xA0;number;<br/>
+3.&#xA0;users,&#xA0;modifiers,&#xA0;distributors,&#xA0;and&#xA0;others&#xA0;coming&#xA0;into<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;possession&#xA0;or&#xA0;using&#xA0;the&#xA0;Distribution&#xA0;in&#xA0;original&#xA0;or&#xA0;modified&#xA0;form<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;accept&#xA0;the&#xA0;entire&#xA0;risk&#xA0;as&#xA0;to&#xA0;the&#xA0;possession,&#xA0;use,&#xA0;and&#xA0;performance&#xA0;of<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;the&#xA0;Distribution;<br/>
+4.&#xA0;this&#xA0;copyright&#xA0;management&#xA0;information&#xA0;(software&#xA0;identifier&#xA0;and<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;version&#xA0;number,&#xA0;copyright&#xA0;notice&#xA0;and&#xA0;license)&#xA0;shall&#xA0;be&#xA0;retained&#xA0;in&#xA0;all<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;versions&#xA0;of&#xA0;the&#xA0;Distribution;<br/>
+5.&#xA0;the&#xA0;University&#xA0;of&#xA0;Washington&#xA0;may&#xA0;make&#xA0;modifications&#xA0;to&#xA0;the<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Distribution&#xA0;that&#xA0;are&#xA0;substantially&#xA0;similar&#xA0;to&#xA0;modified&#xA0;versions&#xA0;of<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;the&#xA0;Distribution,&#xA0;and&#xA0;may&#xA0;make,&#xA0;use,&#xA0;sell,&#xA0;copy,&#xA0;distribute,&#xA0;publicly<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;display,&#xA0;and&#xA0;perform&#xA0;such&#xA0;modifications,&#xA0;including&#xA0;making&#xA0;such<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;modifications&#xA0;available&#xA0;under&#xA0;this&#xA0;or&#xA0;other&#xA0;licenses,&#xA0;without<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;obligation&#xA0;or&#xA0;restriction;<br/>
+6.&#xA0;modifications&#xA0;incorporating&#xA0;code,&#xA0;libraries,&#xA0;and/or<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;documentation&#xA0;subject&#xA0;to&#xA0;any&#xA0;other&#xA0;open&#xA0;source&#xA0;license&#xA0;may&#xA0;be&#xA0;made,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;and&#xA0;the&#xA0;resulting&#xA0;work&#xA0;may&#xA0;be&#xA0;distributed&#xA0;under&#xA0;the&#xA0;terms&#xA0;of&#xA0;such&#xA0;open<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;source&#xA0;license&#xA0;if&#xA0;required&#xA0;by&#xA0;that&#xA0;open&#xA0;source&#xA0;license,&#xA0;but&#xA0;doing&#xA0;so<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;will&#xA0;not&#xA0;affect&#xA0;this&#xA0;Distribution,&#xA0;other&#xA0;modifications&#xA0;made&#xA0;under&#xA0;this<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;license&#xA0;or&#xA0;modifications&#xA0;made&#xA0;under&#xA0;other&#xA0;University&#xA0;of&#xA0;Washington<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;licensing&#xA0;arrangements;<br/>
+7.&#xA0;no&#xA0;permission&#xA0;is&#xA0;granted&#xA0;to&#xA0;distribute,&#xA0;publicly&#xA0;display,&#xA0;or<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;publicly&#xA0;perform&#xA0;modifications&#xA0;to&#xA0;the&#xA0;Distribution&#xA0;made&#xA0;using<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;proprietary&#xA0;materials&#xA0;that&#xA0;cannot&#xA0;be&#xA0;released&#xA0;in&#xA0;source&#xA0;format&#xA0;under<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;conditions&#xA0;of&#xA0;this&#xA0;license;<br/>
+8.&#xA0;the&#xA0;name&#xA0;of&#xA0;the&#xA0;University&#xA0;of&#xA0;Washington&#xA0;may&#xA0;not&#xA0;be&#xA0;used&#xA0;in<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;advertising&#xA0;or&#xA0;publicity&#xA0;pertaining&#xA0;to&#xA0;Distribution&#xA0;of&#xA0;the&#xA0;software<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;without&#xA0;specific,&#xA0;prior&#xA0;written&#xA0;permission.<br/>
+<br/>
+This&#xA0;software&#xA0;is&#xA0;made&#xA0;available&#xA0;&quot;as&#xA0;is&quot;,&#xA0;and<br/>
+<br/>
+THE&#xA0;UNIVERSITY&#xA0;OF&#xA0;WASHINGTON&#xA0;DISCLAIMS&#xA0;ALL&#xA0;WARRANTIES,&#xA0;EXPRESS&#xA0;OR<br/>
+IMPLIED,&#xA0;WITH&#xA0;REGARD&#xA0;TO&#xA0;THIS&#xA0;SOFTWARE,&#xA0;INCLUDING&#xA0;WITHOUT&#xA0;LIMITATION<br/>
+ALL&#xA0;IMPLIED&#xA0;WARRANTIES&#xA0;OF&#xA0;MERCHANTABILITY&#xA0;AND&#xA0;FITNESS&#xA0;FOR&#xA0;A&#xA0;PARTICULAR<br/>
+PURPOSE,&#xA0;AND&#xA0;IN&#xA0;NO&#xA0;EVENT&#xA0;SHALL&#xA0;THE&#xA0;UNIVERSITY&#xA0;OF&#xA0;WASHINGTON&#xA0;BE&#xA0;LIABLE<br/>
+FOR&#xA0;ANY&#xA0;SPECIAL,&#xA0;INDIRECT&#xA0;OR&#xA0;CONSEQUENTIAL&#xA0;DAMAGES&#xA0;OR&#xA0;ANY&#xA0;DAMAGES<br/>
+WHATSOEVER&#xA0;RESULTING&#xA0;FROM&#xA0;LOSS&#xA0;OF&#xA0;USE,&#xA0;DATA&#xA0;OR&#xA0;PROFITS,&#xA0;WHETHER&#xA0;IN&#xA0;AN<br/>
+ACTION&#xA0;OF&#xA0;CONTRACT,&#xA0;TORT&#xA0;(INCLUDING&#xA0;NEGLIGENCE)&#xA0;OR&#xA0;STRICT&#xA0;LIABILITY,<br/>
+ARISING&#xA0;OUT&#xA0;OF&#xA0;OR&#xA0;IN&#xA0;CONNECTION&#xA0;WITH&#xA0;THE&#xA0;USE&#xA0;OR&#xA0;PERFORMANCE&#xA0;OF&#xA0;THIS<br/>
+SOFTWARE.<br/>
+-----------------------------------------------------------------------<br/>
+</span></font></code>
+<hr/>Input File: omh/License.omh
+
+</body>
+</html>
