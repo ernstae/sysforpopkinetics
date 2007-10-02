@@ -1,0 +1,225 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Record of New Features and Bug Fixes For QN01Box</title>
+<meta name="description" id="description" content="Record of New Features and Bug Fixes For QN01Box"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_whatsnew_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td><a href="glossary.xml" target="_top">Prev</a>
+</td><td><a href="_reference.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down1(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>WhatsNew</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>06-07-28</option>
+<option>06-05-04</option>
+<option>05-12-12</option>
+<option>05-12-08</option>
+<option>05-12-07</option>
+<option>05-12-05</option>
+<option>05-11-21</option>
+<option>05-11-15</option>
+<option>05-11-14</option>
+<option>05-10-25</option>
+<option>05-10-28</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Record of New Features and Bug Fixes For QN01Box</big></big></b></center>
+<br/>
+<b><big><a name="06-07-28" id="06-07-28">06-07-28</a></big></b>
+<br/>
+Added optional computation of the 
+<a href="quasinewton01box.xml#Fun obj.Hessian" target="_top"><span style='white-space: nowrap'>Hessian</span></a>
+ argument to
+<a href="quasinewton01box.xml" target="_top"><span style='white-space: nowrap'>QuasiNewton01Box</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="06-05-04" id="06-05-04">06-05-04</a></big></b>
+<br/>
+Fix some standard compliance problems so that QN01Box builds
+under gcc 4.1.0 (Red Hat 4.1.0-3).
+
+<br/>
+<br/>
+<b><big><a name="05-12-12" id="05-12-12">05-12-12</a></big></b>
+<br/>
+Change <code><font color="blue">./Build</font></code> script to make debug,
+instead of optimized, 
+version of library and tests.
+Add <code><font color="blue"></font></code><i><span style='white-space: nowrap'>*</span></i><code><font color="blue"><span style='white-space: nowrap'>.o</span></font></code> and <code><font color="blue"></font></code><i><span style='white-space: nowrap'>*</span></i><code><font color="blue"><span style='white-space: nowrap'>.a</span></font></code> to remove list
+in <code><font color="blue">./CleanQN01Box</font></code> script.
+Add error recovery in <a href="quadbox.xml" target="_top"><span style='white-space: nowrap'>QuadBox</span></a>
+ in the case where
+<a href="next.xml" target="_top"><span style='white-space: nowrap'>Next</span></a>
+ fails.
+
+
+<br/>
+<br/>
+<b><big><a name="05-12-08" id="05-12-08">05-12-08</a></big></b>
+<br/>
+Separate the routine that ensure positive definite matrices 
+<a href="positivematrix.xml" target="_top"><span style='white-space: nowrap'>PositiveMatrix</span></a>
+ from the routine that computes the 
+<a href="bfgs.xml" target="_top"><span style='white-space: nowrap'>Bfgs</span></a>
+ update. 
+
+<br/>
+<br/>
+<b><big><a name="05-12-07" id="05-12-07">05-12-07</a></big></b>
+<br/>
+The makefiles for the <code><font color="blue">lib</font></code> and <code><font color="blue">Test</font></code> directories
+were not properly using the new <code><font color="blue">COMPILE_FLAGS</font></code> configure option.
+This has been fixed.
+The <code><font color="blue">QuadBox</font></code> function was return an error message when
+the maximum number of iterations was reached instead of returning <code><font color="blue">ok</font></code>
+together with how accurate an answer it was able to achieve.
+This has been fixed.
+
+<br/>
+<br/>
+<b><big><a name="05-12-05" id="05-12-05">05-12-05</a></big></b>
+
+<ol type="1"><li>
+Add the 
+<a href="http://www.itl.nist.gov/div898/strd/nls/data/bennett5.shtml" target="_top"><span style='white-space: nowrap'>Bennet5</span></a>
+
+test case in the file <code><font color="blue">Test/NLRegression.cpp</font></code>.
+This is a very ill-conditioned problem that only seems
+to pass when one starts at the solution.
+
+</li><li>
+
+Add the value <code><font color="blue">dxMax</font></code> to tracing output.
+
+</li><li>
+
+Change error criteria in subproblem to be relative to both
+current gradient and current Hessian approximation.
+
+</li><li>
+
+Use a fixed minimum step size in Bfgs of 1e-5 (so that very small
+steps do not cause large round off errors).
+
+</li><li>
+
+Add compiler flags to list of configure options during <a href="install.xml" target="_top"><span style='white-space: nowrap'>Install</span></a>
+.
+
+</li></ol>
+
+
+
+<br/>
+<br/>
+<b><big><a name="05-11-21" id="05-11-21">05-11-21</a></big></b>
+<br/>
+The calling sequence to <a href="quadbox.xml" target="_top"><span style='white-space: nowrap'>QuadBox</span></a>
+ has changed to have 
+both an input and output error criteria value.
+
+<br/>
+<br/>
+<b><big><a name="05-11-15" id="05-11-15">05-11-15</a></big></b>
+<br/>
+The calling sequence to <a href="quasinewton01box.xml" target="_top"><span style='white-space: nowrap'>QuasiNewton01Box</span></a>
+ has been changed.
+In particular, a new argument called 
+<a href="quasinewton01box.xml#norm" target="_top"><span style='white-space: nowrap'>norm</span></a>
+ has been added.
+This allows for different various convergence criteria.
+The meaning of 
+<a href="quasinewton01box.xml#QuadMax" target="_top"><span style='white-space: nowrap'>QuadMax</span></a>
+ has been changed.
+In addition,
+some of the norms in the 
+<a href="quasinewton01box.xml#level" target="_top"><span style='white-space: nowrap'>level&#xA0;=&#xA0;1</span></a>
+ tracing
+have also been changed (to be the controlled by <i>norm</i>).
+
+
+<br/>
+<br/>
+<b><big><a name="05-11-14" id="05-11-14">05-11-14</a></big></b>
+<br/>
+The routine <code><font color="blue">QuadFixed</font></code> was no longer being used and has been
+removed (it was long ago replaced by <a href="quadbox.xml" target="_top"><span style='white-space: nowrap'>QuadBox</span></a>
+).
+Add the <a href="scaleprojgrad.xml" target="_top"><span style='white-space: nowrap'>ScaleProjGrad</span></a>
+ and <a href="sumabs.xml" target="_top"><span style='white-space: nowrap'>SumAbs</span></a>
+ utilities.
+Use alphabetical order for the test cases in <code><font color="blue">Test/RunTest</font></code>.
+Change the <a href="quasinewton01box.xml#QuadMax" target="_top"><span style='white-space: nowrap'>QuadMax</span></a>
+ argument
+to <a href="quasinewton01box.xml" target="_top"><span style='white-space: nowrap'>QuasiNewton01Box</span></a>
+ to mean maximum number of iterations
+per subproblem (instead of total maximum).
+
+<br/>
+<br/>
+<b><big><a name="05-10-25" id="05-10-25">05-10-25</a></big></b>
+<br/>
+The routine 
+<a href="error.xml" target="_top"><span style='white-space: nowrap'>LinkErrorHandler</span></a>
+ was added so that the user
+could replace the default QN01Box error handler.
+
+<br/>
+<br/>
+<b><big><a name="05-10-28" id="05-10-28">05-10-28</a></big></b>
+<br/>
+A summary message was added at the end of the
+<code><font color="blue">Test/RunTest</font></code> program (which is run during
+<a href="install.xml" target="_top"><span style='white-space: nowrap'>installation</span></a>
+).
+
+
+<hr/>Input File: omh/WhatsNew.omh
+
+</body>
+</html>

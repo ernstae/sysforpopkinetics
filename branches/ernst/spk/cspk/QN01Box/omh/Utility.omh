@@ -1,0 +1,17 @@
+$begin Utility$$
+
+$section General Purpose Utilities$$
+
+
+$childtable%
+	QN01Box/Memory.h%
+	lib/MaxAbs.cpp%
+	lib/SumAbs.cpp%
+	QN01Box/PlusInfinity.h%
+	lib/ScaleProjGrad.cpp%
+	lib/PositiveMatrix.cpp%
+	QN01Box/zero_one_scale.h%
+	lib/Error.cpp
+%$$
+
+$end

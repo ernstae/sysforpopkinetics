@@ -1,0 +1,1874 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Nonlinear Optimization with [0, 1] Box Constraints</title>
+<meta name="description" id="description" content="Nonlinear Optimization with [0, 1] Box Constraints"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_quasinewton01box_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>QuasiNewton01Box</option>
+</select>
+</td>
+<td><a href="install.xml" target="_top">Prev</a>
+</td><td><a href="quadbox.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down1(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>QuasiNewton01Box-&gt;</option>
+<option>QuadBox</option>
+<option>Bfgs</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Original Problem</option>
+<option>Convention</option>
+<option>---..Arguments</option>
+<option>---..Exceptions</option>
+<option>Return Value</option>
+<option>ItrMax</option>
+<option>QuadMax</option>
+<option>n</option>
+<option>norm</option>
+<option>delta</option>
+<option>Fun obj</option>
+<option>---..Objective Function</option>
+<option>---..Gradient</option>
+<option>---..Hessian</option>
+<option>sOkCur</option>
+<option>ItrCur</option>
+<option>QuadCur</option>
+<option>BfgsCur</option>
+<option>rCur</option>
+<option>fCur</option>
+<option>xCur</option>
+<option>sCur</option>
+<option>---..Quadratic Subproblem</option>
+<option>---..Discussion</option>
+<option>gCur</option>
+<option>HCur</option>
+<option>os</option>
+<option>level</option>
+<option>---..level &gt; 0</option>
+<option>---..abs(level) &gt;= 1</option>
+<option>---..abs(level) &gt;= 2</option>
+<option>---..abs(level) &gt;= 3</option>
+<option>---..abs(level) &gt;= 4</option>
+<option>---..abs(level) &gt;= 5</option>
+<option>Subroutines</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Nonlinear Optimization with [0, 1] Box Constraints</big></big></b></center>
+<center>(Bradley M. Bell &amp; James V. Burke)
+</center><table><tr><td align='left'  valign='top'>
+<b>Syntax</b> </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>template&#xA0;&lt;class&#xA0;</span></font></code><i><span style='white-space: nowrap'>Fun</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;<br/>
+const&#xA0;char&#xA0;*&#xA0;QuasiNewton01Box(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Arguments&#xA0;that&#xA0;are&#xA0;only&#xA0;Inputs<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::ostream&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>os</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>level</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>ItrMax</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>QuadMax</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ConvergeNorm&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>norm</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>delta</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>Fun</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Arguments&#xA0;that&#xA0;are&#xA0;both&#xA0;Inputs&#xA0;and&#xA0;Outputs<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>sOkCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>ItrCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>QuadCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>BfgsCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>rCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>fCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*</span></font></code><i><span style='white-space: nowrap'>xCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;//&#xA0;length&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*</span></font></code><i><span style='white-space: nowrap'>sCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;//&#xA0;length&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*</span></font></code><i><span style='white-space: nowrap'>gCur</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;//&#xA0;length&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;&#xA0;*</span></font></code><i><span style='white-space: nowrap'>HCur</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;&#xA0;//&#xA0;length&#xA0;n&#xA0;*&#xA0;n<br/>
+)</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Original Problem" id="Original Problem">Original Problem</a></big></b>
+<br/>
+Determine a value of <i>x</i> such that the
+<a href="glossary.xml#Infinity Norm" target="_top"><span style='white-space: nowrap'>infinity&#xA0;norm</span></a>
+ of the
+<a href="glossary.xml#p: Scaled Projected Gradient" target="_top"><span style='white-space: nowrap'>scaled&#xA0;project&#xA0;gradient</span></a>
+
+for the following problem is less than or equal
+<a href="quasinewton01box.xml#delta" target="_top"><span style='white-space: nowrap'>delta</span></a>
+:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>minimize</mi>
+</mstyle></mrow>
+</mtd><mtd columnalign="right" >
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>with</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>respect</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mtd></mtr><mtr><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>subject</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+</mtd><mtd columnalign="right" >
+<mn>0</mn>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02264;</mo>
+<mn>1</mn>
+</mtd></mtr></mtable>
+</mrow></math>
+
+<br/>
+<b><big><a name="Convention" id="Convention">Convention</a></big></b>
+
+
+
+<br/>
+<br/>
+<b><a name="Convention.Arguments" id="Convention.Arguments">Arguments</a></b>
+<br/>
+All of the arguments to <code><font color="blue">QuasiNewton01Box</font></code>
+are inputs; i.e., their values must
+be set before <code><font color="blue">QuasiNewton01Box</font></code> is called.
+In addition, the arguments with names that
+end in <i>Cur</i> are both inputs and outputs; i.e.
+their values must be set before <code><font color="blue">QuasiNewton01Box</font></code> is called
+and they have the same definition (but possibly different values)
+when <code><font color="blue">QuasiNewton01Box</font></code> returns.
+
+<br/>
+<br/>
+<b><a name="Convention.Exceptions" id="Convention.Exceptions">Exceptions</a></b>
+<br/>
+This routine <code><font color="blue">QuasiNewton01Box</font></code> is
+<a href="glossary.xml#Exception Safe" target="_top"><span style='white-space: nowrap'>exception&#xA0;safe</span></a>
+.
+There is one stipulations to this,
+calls to <i>obj</i> may not be exception safe because
+<i>obj</i> is under the
+control of the calling routine and hence the callers responsibility.
+Furthermore, if an exception does occur,
+the arguments that are both inputs and outputs are valid
+and can be used to continue the optimization process.
+
+<br/>
+<br/>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br/>
+The routine <code><font color="blue">QuasiNewton01Box</font></code> returns &quot;ok&quot; if it detects convergence,
+and an error message otherwise.
+(See <a href="quasinewton01box.xml#delta" target="_top"><span style='white-space: nowrap'>delta</span></a>
+ for the definition of convergence.)
+
+
+<br/>
+<br/>
+<b><big><a name="ItrMax" id="ItrMax">ItrMax</a></big></b>
+<br/>
+The argument <i>ItrMax</i> specifies the maximum allowable value
+for <i>ItrCur</i>. Thus <i>ItrMax</i>
+minus <i>ItrCur</i> is the maximum number of
+<code><font color="blue">QuasiNewton01Box</font></code> iterations that will be preformed,
+and the maximum number of times that <code><font color="blue">QuasiNewton01Box</font></code> will
+change its state
+(in response to this call).
+There is at most one evaluation of the gradient of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+and at most one Bfgs update of the approximate Hessian for each
+iteration.
+There may be multiple evaluations of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+for each iteration.
+
+<br/>
+<br/>
+<b><big><a name="QuadMax" id="QuadMax">QuadMax</a></big></b>
+<br/>
+The argument <i>QuadMax</i> specifies the maximum number
+of interior point iterations to use when solving one Quadratic subproblem.
+
+<br/>
+<br/>
+<b><big><a name="n" id="n">n</a></big></b>
+<br/>
+The argument <i>n</i> specifies the number of components
+in the argument vector <i>x</i>.
+
+<br/>
+<br/>
+<b><big><a name="norm" id="norm">norm</a></big></b>
+<br/>
+The argument <i>norm</i> specifies the norm used for the 
+convergence criteria.
+It is be one of the following enum type values
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;namespace&#xA0;QN01Box&#xA0;{&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;enum&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;GradSumAbs,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;GradMaxAbs,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;StepSumAbs,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;StepMaxAbs<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ConvergeNorm;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="delta" id="delta">delta</a></big></b>
+<br/>
+The argument <i>delta</i> specifies the convergence criteria.
+If the return value of <code><font color="blue">QuasiNewton01Box</font></code> is equal to &quot;ok&quot;,
+convergence criteria has been satisfied:
+<table><tr><td align='left'  valign='top'>
+
+<b>norm</b>         </td><td align='left'  valign='top'>
+ <b>Criteria</b>                  </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">GradSumAbs</font></code>   </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>pCur</mi>
+<msub><mo stretchy="false">|</mo>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='normal'>&#x003B4;</mi>
+</mrow></math>
+
+  </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">GradMaxAbs</font></code>   </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>pCur</mi>
+<msub><mo stretchy="false">|</mo>
+<mo stretchy="false">&#x0221E;</mo>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='normal'>&#x003B4;</mi>
+</mrow></math>
+
+ </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">StepSumAbs</font></code>   </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>sCur</mi>
+<msub><mo stretchy="false">|</mo>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='normal'>&#x003B4;</mi>
+</mrow></math>
+
+  </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">StepMaxAbs</font></code>   </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">|</mo>
+<mi mathvariant='italic'>sCur</mi>
+<msub><mo stretchy="false">|</mo>
+<mo stretchy="false">&#x0221E;</mo>
+</msub>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='normal'>&#x003B4;</mi>
+</mrow></math>
+
+ 
+</td></tr>
+</table>
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">|</mo>
+<mo stretchy="false">&#x000B7;</mo>
+<msub><mo stretchy="false">|</mo>
+<mn>1</mn>
+</msub>
+</mrow></math>
+
+ 
+is the <a href="glossary.xml#L-one Norm" target="_top"><span style='white-space: nowrap'>L-one&#xA0;norm</span></a>
+,
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">|</mo>
+<mo stretchy="false">&#x000B7;</mo>
+<msub><mo stretchy="false">|</mo>
+<mo stretchy="false">&#x0221E;</mo>
+</msub>
+</mrow></math>
+
+ 
+is the <a href="glossary.xml#Infinity Norm" target="_top"><span style='white-space: nowrap'>infinity&#xA0;norm</span></a>
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>pCur</mi>
+</mrow></math>
+
+ is the current value of the
+<a href="glossary.xml#p: Scaled Projected Gradient" target="_top"><span style='white-space: nowrap'>scaled&#xA0;projected&#xA0;gradient</span></a>
+,
+and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>sCur</mi>
+</mrow></math>
+
+ is the step from the current point to the solution
+of the approximating quadratic subproblem.
+Note that if <code><font color="blue">StepSumAbs</font></code> or <code><font color="blue">StepMaxAbs</font></code> is chosen
+convergence will not be accepted unless the addition condition
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>ItrCur</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;&gt;&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i> is satisfied 
+(to ensure that <i>HCur</i> is a reasonably accurate approximation).
+
+<br/>
+<br/>
+<b><big><a name="Fun obj" id="Fun obj">Fun obj</a></big></b>
+<br/>
+The template argument <i>Fun</i> is a special class defined for this objective function.
+Any data that is special to this functions definition can be stored as private data in the class
+and initialized when <i>obj</i> object is constructed.
+It must have the following member functions:
+
+<br/>
+<br/>
+<b><a name="Fun obj.Objective Function" id="Fun obj.Objective Function">Objective Function</a></b>
+<br/>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function(const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;double&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>evaluates the objective.
+If the return value of <i>obj</i> is equal to &quot;ok&quot;,
+this sets the scalar <i>f</i>
+equal to the objective function at <i>x</i>
+where <i>x</i> is a vector of length <i>n</i> and
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mn>0</mn>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02264;</mo>
+<mn>1</mn>
+</mrow></math>
+
+.
+This may be equal to any finite value or <a href="plusinfinity.xml" target="_top"><span style='white-space: nowrap'>PlusInfinity</span></a>
+
+(it cannot be not a number).
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If the return value is plus infinity,
+the function is not assumed to be smooth
+between its current best point (<i>xCur</i>)
+and the requested new point (<i>xNext</i> or <i>xTmp</i>).
+The optimizer will (in some sense) try to take a smaller step
+in its search for a new <i>x</i> near <i>xCur</i> where the objective
+is lower than its current best estimate of the minimizer.
+The gradient of the objective will not be evaluated at
+any point where the objective is plus infinity.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If the return value of
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>
+is not equal to &quot;ok&quot;,
+<code><font color="blue">QuasiNewton01Box</font></code> will abort its operation and return with
+its return value
+equal to the value returned by
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>.
+
+<br/>
+<br/>
+<b><a name="Fun obj.Gradient" id="Fun obj.Gradient">Gradient</a></b>
+<br/>
+The objective function is alway evaluated at the same 
+<i>x</i> value directly before
+evaluating the gradient of the objective function.
+In addition, the corresponding value of the objective will be finite; i.e.,
+not equal to plus infinity.
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.gradient(double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>g</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>evaluates the gradient using the value of <i>x</i> in the previous
+call to <code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>.
+The argument <i>g</i> is a vector of length <i>n</i>.
+If the return value of
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.gradient</span></font></code>
+is not equal to &quot;ok&quot;,
+<code><font color="blue">QuasiNewton01Box</font></code> will abort its operation and return with
+its return value
+equal to the value returned by
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.gradient</span></font></code> .
+
+<br/>
+<br/>
+<b><a name="Fun obj.Hessian" id="Fun obj.Hessian">Hessian</a></b>
+<br/>
+The objective function is alway evaluated at the same 
+<i>x</i> value directly before
+evaluating the Hessian of the objective.
+In addition, the corresponding value of the objective will be finite; i.e.,
+not equal to plus infinity.
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.Hessian(double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>H</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>If the return value of 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.Hessian</span></font></code>
+is equal to &quot;not available&quot;, the values in <i>H</i> will be ignored
+and a Quasi-Newton approximation will be used for the Hessian.
+Otherwise, <i>H</i> 
+contains the Hessian corresponding to the value of <i>x</i> 
+in the previous call to <code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>
+In this case, <i>H</i> is a vector of length <code><font color="blue"></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;*&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i>
+(row major or column major order does not matter because the Hessian
+is symmetric).
+If the return value of
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.Hessian</span></font></code>
+is not equal to &quot;ok&quot; or &quot;not available&quot;,
+<code><font color="blue">QuasiNewton01Box</font></code> will abort its operation and return with
+its return value
+equal to the value returned by
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.Hessian</span></font></code> .
+
+<br/>
+<br/>
+<b><big><a name="sOkCur" id="sOkCur">sOkCur</a></big></b>
+<br/>
+The value <i>sOkCur</i> is discussed
+together with <a href="quasinewton01box.xml#sCur" target="_top"><span style='white-space: nowrap'>sCur</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="ItrCur" id="ItrCur">ItrCur</a></big></b>
+<br/>
+On input and output,
+<i>ItrCur</i> contains the number of <code><font color="blue">QuasiNewton01Box</font></code> iterations
+that have been completed so far.
+This is also the number of times that the state of
+<code><font color="blue">QuasiNewton01Box</font></code> has changed.
+The current state is defined by the value of
+<i>rCur</i>, <i>xCur</i>, and <i>HCur</i>.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If the input value of <i>xCur</i> satisfies the convergence criteria,
+the output value of <i>ItrCur</i> is equal to its input value
+(the state of <code><font color="blue">QuasiNewton01Box</font></code> does not change)
+and the return value of <code><font color="blue">QuasiNewton01Box</font></code> is equal to &quot;ok&quot;.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If the input value of <i>xCur</i>
+does not satisfies the convergence criteria,
+and the input value of <i>ItrCur</i> equal to <i>ItrMax</i>,
+<code><font color="blue">QuasiNewton01Box</font></code> will not change its state.
+It will however attempt to set the output value of <i>sCur</i>
+to a solution of the
+<a href="quasinewton01box.xml#sCur.Quadratic Subproblem" target="_top"><span style='white-space: nowrap'>quadratic&#xA0;subproblem</span></a>
+.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If the return value of <code><font color="blue">QuasiNewton01Box</font></code> is not equal to &quot;ok&quot; and
+the output value of <i>ItrCur</i> is equal to its input value,
+<code><font color="blue">QuasiNewton01Box</font></code> will never make any progress from
+its current state.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code><b><big><a name="QuadCur" id="QuadCur">QuadCur</a></big></b>
+<br/>
+On input and output,
+<i>QuadCur</i> contains the total number of interior point iterations
+used by the Quadratic sub-problem solver so far
+(counting all iterations of <code><font color="blue">QuasiNewton01Box</font></code>).
+
+<br/>
+<br/>
+<b><big><a name="BfgsCur" id="BfgsCur">BfgsCur</a></big></b>
+<br/>
+On input and output,
+<i>BfgsCur</i> contains the total number of Bfgs updates
+that were applied to obtain the current approximate Hessian <i>HCur</i>.
+Note that the update is only applied on a subset of the
+<code><font color="blue">QuasiNewton01Box</font></code> iterations
+during which the current <i>x</i> value changes.
+Also note that one evaluation of the Hessian using 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.Hessian</span></font></code> counts as <i>n</i> Bfgs updates.
+
+<br/>
+<br/>
+<b><big><a name="rCur" id="rCur">rCur</a></big></b>
+<br/>
+On input and output, <i>rCur</i> must be between
+<code><font color="blue">MinRadius</font></code> (1e-7) and <code><font color="blue">MaxRadius</font></code> (.5).
+It specifies the current trust region radius
+as an infinity norm bound on the step size in the
+<a href="quasinewton01box.xml#sCur.Quadratic Subproblem" target="_top"><span style='white-space: nowrap'>quadratic&#xA0;subproblem</span></a>
+.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>The value <i>rCur</i> is adjusted to be larger when the solution of
+the quadratic approximation does well in predicting descent of the
+original problem.
+It is adjusted to be smaller when the solution of the quadratic approximation
+does very poorly at predicting descent of the original problem.
+If you restart <code><font color="blue">QuasiNewton01Box</font></code> using values output from
+a previous call except that you change <i>rCur</i> to what you think is a
+better value,
+this will invalidate the previous value of <i>sCur</i>
+and you should therefore set <i>sOkCur</i> to false.
+
+<br/>
+<br/>
+<b><big><a name="fCur" id="fCur">fCur</a></big></b>
+<br/>
+On input and output, <i>fCur</i>
+contains the value 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>xCur</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+.
+This cannot (on input) and will not (on output)
+be equal to <a href="plusinfinity.xml" target="_top"><span style='white-space: nowrap'>PlusInfinity</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="xCur" id="xCur">xCur</a></big></b>
+<br/>
+The argument <i>xCur</i> is a vector of length <i>n</i>.
+On input, it
+specifies the point at which to start the optimization procedure.
+On output, it is the closest to optimal point obtained so far.
+
+<br/>
+<br/>
+<b><big><a name="sCur" id="sCur">sCur</a></big></b>
+<br/>
+The argument <i>sCur</i> is a vector of length <i>n</i>.
+If <i>sOkCur</i> is false,
+the elements of <i>sCur</i> are unspecified.
+Otherwise, <i>sCur</i> solves the quadratic subproblem defined below
+
+<br/>
+<br/>
+<b><a name="sCur.Quadratic Subproblem" id="sCur.Quadratic Subproblem">Quadratic Subproblem</a></b>
+<br/>
+Determine a value of <i>s</i> such that the
+<a href="glossary.xml#Infinity Norm" target="_top"><span style='white-space: nowrap'>infinity&#xA0;norm</span></a>
+ of the
+<a href="glossary.xml#p: Scaled Projected Gradient" target="_top"><span style='white-space: nowrap'>scaled&#xA0;project&#xA0;gradient</span></a>
+
+for the following problem is less than or equal
+<a href="quasinewton01box.xml#rCur" target="_top"><span style='white-space: nowrap'>rCur</span></a>
+ times
+<a href="quasinewton01box.xml#delta" target="_top"><span style='white-space: nowrap'>delta</span></a>
+:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>minimize</mi>
+</mstyle></mrow>
+</mtd><mtd columnalign="center" >
+<msup><mi mathvariant='italic'>gCur</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>HCur</mi>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>s</mi>
+</mtd><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>with</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>respect</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mtd></mtr><mtr><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>subject</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+</mtd><mtd columnalign="center" >
+<mn>0</mn>
+<mo stretchy="false">&#x02264;</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>xCur</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&#x02264;</mo>
+<mn>1</mn>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>and</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>rCur</mi>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='italic'>rCur</mi>
+</mtd></mtr></mtable>
+</mrow></math>
+
+where
+<i>xCur</i>,
+<i>gCur</i>, and
+<i>HCur</i>, are the corresponding output values.
+Note that if the value zero solves the problem above,
+the infinity norm of the scaled projected gradient for the
+<a href="quasinewton01box.xml#Original Problem" target="_top"><span style='white-space: nowrap'>original&#xA0;problem</span></a>
+
+is less than or equal <i>delta</i>.
+
+<br/>
+<br/>
+<b><a name="sCur.Discussion" id="sCur.Discussion">Discussion</a></b>
+
+<ol type="1"><li>
+If <i>sOkCur</i> is true on input,
+and <i>ItrCur</i> is less than <i>ItrMax</i>,
+the next iteration of <code><font color="blue">QuasiNewton01Box</font></code> will either keep
+<i>xCur</i> the same or change it by adding <i>sCur</i> to it.
+
+</li><li>
+
+If <i>sOkCur</i> is false on output,
+one of the following conditions must hold:
+<ol type="a"><li>
+The quadratic subproblem could not be solved.
+</li><li>
+
+On output, <i>ItrCur</i> is less that <i>ItrMax</i>
+and an error message,
+other than the maximum number of iterations error message,
+has been returned by <code><font color="blue">QuasiNewton01Box</font></code>.
+</li></ol>
+
+
+</li><li>
+
+The value <i>sCur</i> is an accurate estimate of the
+true solution minus <i>xCur</i> under the following assumptions:
+<ol type="a"><li>
+The value <i>delta</i>
+is less than half the infinity norm of the value
+of the scaled projected gradient corresponding to the input values.
+</li><li>
+
+The value <i>sOkCur</i> is true.
+</li><li>
+
+The infinity norm of <i>sCur</i> is less than <i>rCur</i>.
+</li><li>
+
+The value <i>xCur</i> is close to the true solution.
+</li><li>
+
+The Hessian of the objective at the true solution of the
+<a href="quasinewton01box.xml#Original Problem" target="_top"><span style='white-space: nowrap'>original&#xA0;problem</span></a>
+
+is positive definite.
+</li><li>
+
+The value <i>HCur</i> is close to the Hessian at <i>xCur</i>.
+</li></ol>
+
+</li></ol>
+
+
+<br/>
+<br/>
+<b><big><a name="gCur" id="gCur">gCur</a></big></b>
+<br/>
+The vector <i>gCur</i> must have length 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+.
+On input and output,
+it contains the gradient of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+</mrow></math>
+
+
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>xCur</mi>
+</mrow></math>
+
+.
+To be specific
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>g</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+</mfrac>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>xCur</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="HCur" id="HCur">HCur</a></big></b>
+<br/>
+The vector <i>HCur</i> must have length 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>n</mi>
+<mn>2</mn>
+</msup>
+</mrow></math>
+
+.
+On input and output,
+it must contain a positive definite approximate for the
+Hessian of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+</mrow></math>
+
+
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>xCur</mi>
+</mrow></math>
+
+.
+(On input, if you have no better ideas about this approximation,
+it is suggested that you use the identity matrix.)
+To be specific
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>H</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>i</mi>
+<mspace width='.18em'/>
+<mo stretchy="false">&#x000D7;</mo>
+<mspace width='.18em'/>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">&#x02248;</mo>
+<mfrac><mrow><msup><mo stretchy="false">&#x02202;</mo>
+<mn>2</mn>
+</msup>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>xCur</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="os" id="os">os</a></big></b>
+<br/>
+The argument <i>os</i> specifies which output stream the
+tracing should be written to (if any tracing is done).
+
+<br/>
+<br/>
+<b><big><a name="level" id="level">level</a></big></b>
+<br/>
+The argument <i>level</i> specifies the amount of tracing to do
+during the optimization procedure.
+If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>level</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow></math>
+
+, no tracing is done; i.e., <code><font color="blue">QuasiNewton01Box</font></code>
+does not write any output.
+Otherwise, tracing is done for each iteration during which the state changes
+(<i>rCur</i>, <i>xCur</i>, or <i>HCur</i> changes).
+
+<br/>
+<br/>
+<b><a name="level.level &gt; 0" id="level.level &gt; 0">level &gt; 0</a></b>
+<br/>
+If <i>level</i> is greater than zero,
+the final values corresponding to the final iteration are printed.
+Using <i>level</i> less than zero is useful when the optimization
+will be continued and the final iteration values will be the same
+as the first iteration of the continuation.
+(If there is a choice of infinity or L1 norm below, 
+the chosen norm is the one specified by the argument <i>norm</i>).
+
+<br/>
+<br/>
+<b><a name="level.abs(level) &gt;= 1" id="level.abs(level) &gt;= 1">abs(level) &gt;= 1</a></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>label</b> </td><td align='left'  valign='top'>
+ <b>Description</b>
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">k</font></code> </td><td align='left'  valign='top'>
+
+	The current iteration number
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">r</font></code> </td><td align='left'  valign='top'>
+
+	The current value of the trust region radius; i.e., 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>r</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">f</font></code> </td><td align='left'  valign='top'>
+
+	The objective function value at the current iterate; i.e.,
+	
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">|p|</font></code> </td><td align='left'  valign='top'>
+
+	The infinity or L1 norm of the scaled projected gradient 
+	corresponding to
+	the current iterate; i.e., the infinity norm of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+	where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>p</mi>
+</mrow></math>
+
+ is the scaled projected gradient function.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">|s|</font></code> </td><td align='left'  valign='top'>
+
+	The infinity or L1 norm of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+ where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+ 
+	solves the problem
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>minimize</mi>
+</mstyle></mrow>
+</mtd><mtd columnalign="center" >
+<mi mathvariant='italic'>g</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<msup><mo stretchy="false">)</mo>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<msup><mi mathvariant='italic'>H</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+</mtd><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>with</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>respect</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mtd></mtr><mtr><mtd columnalign="left" >
+<mrow><mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>subject</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>to</mi>
+</mstyle></mrow>
+</mrow>
+</mtd><mtd columnalign="center" >
+<mn>0</mn>
+<mo stretchy="false">&#x02264;</mo>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&#x02264;</mo>
+<mn>1</mn>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>and</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mo stretchy="false">-</mo>
+<msup><mi mathvariant='italic'>r</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='italic'>s</mi>
+<mo stretchy="false">&#x02264;</mo>
+<msup><mi mathvariant='italic'>r</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mtd></mtr></mtable>
+</mrow></math>
+
+</td></tr><tr><td align='left'  valign='top'>
+<code><font color="blue">|H|</font></code> </td><td align='left'  valign='top'>
+
+	The infinity or L1 norm of Hessian of the quadratic approximation
+	for the function <i>f</i>; i.e., the infinity norm of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>H</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">det(H)</font></code> </td><td align='left'  valign='top'>
+
+	The determinant of the Hessian of the quadratic approximation
+	for the function <i>f</i>; i.e., the determinant of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>H</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">Bfgs</font></code>  </td><td align='left'  valign='top'>
+
+	The current value of <i>BfgsCur</i>.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">df</font></code> </td><td align='left'  valign='top'>
+
+	The following difference of objective function values
+	
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">dq</font></code> </td><td align='left'  valign='top'>
+
+	The current quadratic approximation for
+	
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+; i.e.,
+	
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>g</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<msup><mo stretchy="false">)</mo>
+<mi mathvariant='italic'>T</mi>
+</msup>
+<msup><mi mathvariant='italic'>H</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">eta</font></code> </td><td align='left'  valign='top'>
+
+	The current line search parameter 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='normal'>&#x003B7;</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+.
+	The next iterate is given by the formula
+	
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+</mrow>
+</msup>
+<mo stretchy="false">=</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='normal'>&#x003B7;</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">dxMax</font></code> </td><td align='left'  valign='top'>
+
+	The infinity norm of the change in 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+; i.e.,
+	the infinity norm of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+</mrow>
+</msup>
+<mo stretchy="false">-</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">|Herr|</font></code> </td><td align='left'  valign='top'>
+
+	The infinity norm for the change in the gradient between
+	iterates and the prediction of change by 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>H</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+; i.e.,
+	the infinity norm of
+	
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>g</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>g</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<msup><mi mathvariant='italic'>H</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+</mrow>
+</msup>
+<mo stretchy="false">-</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+<br/>
+<b><a name="level.abs(level) &gt;= 2" id="level.abs(level) &gt;= 2">abs(level) &gt;= 2</a></b>
+<br/>
+The information is printed above the <code><font color="blue"></font></code><i><span style='white-space: nowrap'>level</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;&gt;=&#xA0;1</span></font></code> information.
+<table><tr><td align='left'  valign='top'>
+
+<b>label</b> </td><td align='left'  valign='top'>
+ <b>Description</b>
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">i</font></code>    </td><td align='left'  valign='top'>
+
+	The component of the vectors being printed
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">x</font></code>     </td><td align='left'  valign='top'>
+
+	The current argument value <i>x^k</i>; i.e., the value
+	of <i>xCur</i> at the beginning of the iteration.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">s</font></code>     </td><td align='left'  valign='top'>
+
+	The current step value 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>s</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">g</font></code>    </td><td align='left'  valign='top'>
+
+	The current gradient 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>g</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">p</font></code>     </td><td align='left'  valign='top'>
+
+	The current scaled projected gradient 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+.
+</td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+<br/>
+<b><a name="level.abs(level) &gt;= 3" id="level.abs(level) &gt;= 3">abs(level) &gt;= 3</a></b>
+<br/>
+The information is printed above the <code><font color="blue"></font></code><i><span style='white-space: nowrap'>level</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;&gt;=&#xA0;2</span></font></code> information.
+<table><tr><td align='left'  valign='top'>
+
+<b>label</b> </td><td align='left'  valign='top'>
+ <b>Description</b> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">H</font></code>     </td><td align='left'  valign='top'>
+
+	The approximation for the Hessian 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>H</mi>
+<mi mathvariant='italic'>k</mi>
+</msup>
+</mrow></math>
+
+.
+</td></tr>
+</table>
+<br/>
+<b><a name="level.abs(level) &gt;= 4" id="level.abs(level) &gt;= 4">abs(level) &gt;= 4</a></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>label</b> </td><td align='left'  valign='top'>
+ <b>Description</b> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">i</font></code>     </td><td align='left'  valign='top'>
+
+	The component of <i>x</i> corresponding to the gradient check
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">fp</font></code> </td><td align='left'  valign='top'>
+
+	The forward function value used in difference
+	approximation for gradient
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">fm</font></code> </td><td align='left'  valign='top'>
+
+	The backward function value used in difference approximation for
+	gradient
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">a</font></code> </td><td align='left'  valign='top'>
+
+	The finite difference approximation for the gradient
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">gi</font></code> </td><td align='left'  valign='top'>
+
+	The value of the gradient returned by <i>obj</i> for this component
+</td></tr>
+</table>
+<br/>
+<b><a name="level.abs(level) &gt;= 5" id="level.abs(level) &gt;= 5">abs(level) &gt;= 5</a></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>label</b> </td><td align='left'  valign='top'>
+ <b>Description</b> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">j</font></code>     </td><td align='left'  valign='top'>
+
+	The component of <i>x</i> corresponding to the Hessian check
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">gp</font></code> </td><td align='left'  valign='top'>
+
+	The forward gradient value used in difference
+	approximation for Hessian
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">gm</font></code> </td><td align='left'  valign='top'>
+
+	The backward gradient value used in difference approximation for
+	Hessian
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">aij</font></code> </td><td align='left'  valign='top'>
+
+	The finite difference approximation for 
+	the <i>(i,j)</i>-th component of the Hessian 
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">Hij</font></code> </td><td align='left'  valign='top'>
+
+	The <i>(i,j)</i>-th component of the Hessian 
+	returned by <i>obj</i>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Subroutines" id="Subroutines">Subroutines</a></big></b>
+
+
+<table><tr><td align='left'  valign='top'>
+
+<a href="next.xml" target="_top">Next</a></td><td>
+Next Interior Point Iterate</td></tr>
+<tr><td>
+
+<a href="residual.xml" target="_top">Residual</a></td><td>
+Central Path Residual</td></tr>
+<tr><td>
+
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The following example is also a test.
+It returns true if it succeeds and false otherwise.
+(A simpler usage of <code><font color="blue">QuasiNewton01Box</font></code> can be 
+found in the <a href="zero_one_scale.xml#Example" target="_top"><span style='white-space: nowrap'>zero_one_scale&#xA0;example</span></a>
+.)
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/QuasiNewton01Box.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Memory.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;iostream&gt;<br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;<br/>
+#&#xA0;include&#xA0;&lt;string&gt;<br/>
+#&#xA0;include&#xA0;&lt;sstream&gt;<br/>
+<br/>
+//&#xA0;begin&#xA0;empty&#xA0;namespace<br/>
+namespace&#xA0;{&#xA0;<br/>
+//<br/>
+//&#xA0;Function&#xA0;object&#xA0;class<br/>
+class&#xA0;Fun&#xA0;{<br/>
+public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor&#xA0;for&#xA0;a&#xA0;function&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun(bool&#xA0;exponential_,&#xA0;size_t&#xA0;n_,&#xA0;double&#xA0;*Q_,&#xA0;double&#xA0;*b_)&#xA0;:&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fcount(0),&#xA0;gcount(0),&#xA0;Hcount(0),&#xA0;exponential(&#xA0;exponential_&#xA0;),&#xA0;n(&#xA0;n_&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;nsq(&#xA0;n_&#xA0;*&#xA0;n_&#xA0;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x&#xA0;=&#xA0;new&#xA0;double[n_];&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Q&#xA0;=&#xA0;new&#xA0;double[nsq];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;b&#xA0;=&#xA0;new&#xA0;double[n_];&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;g&#xA0;=&#xA0;new&#xA0;double[n_];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;b[i]&#xA0;=&#xA0;b_[i];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;nsq;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Q[i]&#xA0;=&#xA0;Q_[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;destructor&#xA0;for&#xA0;a&#xA0;function&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;~Fun(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;x;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;Q;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;b;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;g;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;function<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;function(const&#xA0;double&#xA0;*x_,&#xA0;double&#xA0;&amp;f_&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;j;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[i]&#xA0;=&#xA0;x_[i];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;b[i]&#xA0;*&#xA0;x[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;.5&#xA0;*&#xA0;x[i]&#xA0;*&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;*&#xA0;x[j];&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;exponential&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_&#xA0;&#xA0;=&#xA0;exp(sum);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;f_&#xA0;&#xA0;=&#xA0;sum;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;++fcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;(const&#xA0;char&#xA0;*)(&quot;ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;gradient<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;gradient(double&#xA0;*g_&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;j;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;g[i]&#xA0;=&#xA0;b[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;g[i]&#xA0;+=&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;*&#xA0;x[j];&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;exponential&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;g[i]&#xA0;*=&#xA0;exp(sum);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;g_[i]&#xA0;=&#xA0;g[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;++gcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;(const&#xA0;char&#xA0;*)(&quot;ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;Hessian<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;Hessian(double&#xA0;*H_&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;j;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;H_[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;=&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j];&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;exponential&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;H_[i&#xA0;+&#xA0;n&#xA0;+&#xA0;j]&#xA0;*=&#xA0;exp(sum);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;H_[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;+=&#xA0;g[i]&#xA0;*&#xA0;g[j];&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;++Hcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;(const&#xA0;char&#xA0;*)(&quot;ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;function&#xA0;counter<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;functionCount(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;fcount;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;gradient&#xA0;counter<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;gradientCount(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;gcount;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;Hessian&#xA0;counter<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;HessianCount(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;Hcount;&#xA0;}<br/>
+private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;gcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Hcount;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;data&#xA0;that&#xA0;defines&#xA0;the&#xA0;function<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;bool&#xA0;&#xA0;&#xA0;exponential;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;size_t&#xA0;n;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*x;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*Q;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*b;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*g;<br/>
+};<br/>
+<br/>
+}&#xA0;<br/>
+//&#xA0;end&#xA0;empty&#xA0;namespace<br/>
+<br/>
+bool&#xA0;QuasiNewton01Box(std::string&#xA0;&amp;Msg)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;QN01Box;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::ostream&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;os&#xA0;=&#xA0;std::cout;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;level&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ItrMax&#xA0;=&#xA0;50;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;m&#xA0;=&#xA0;7;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n&#xA0;=&#xA0;5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QuadMax&#xA0;=&#xA0;40;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;bool&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;exponential&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delta&#xA0;=&#xA0;1e-7;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;apxnorm;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;j;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;k;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::string&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Memory&lt;double&gt;&#xA0;dMemory(6&#xA0;*&#xA0;n&#xA0;+&#xA0;3&#xA0;*&#xA0;n&#xA0;*&#xA0;n&#xA0;+&#xA0;m&#xA0;*&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*xOut&#xA0;=&#xA0;dMemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*xCur&#xA0;=&#xA0;dMemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*sCur&#xA0;=&#xA0;dMemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*gCur&#xA0;=&#xA0;dMemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*gOut&#xA0;=&#xA0;dMemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*b&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dMemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*HCur&#xA0;=&#xA0;dMemory(n&#xA0;*&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*Q&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dMemory(n&#xA0;*&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*HOut&#xA0;=&#xA0;dMemory(n&#xA0;*&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;*A&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dMemory(m&#xA0;*&#xA0;n);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;A&#xA0;is&#xA0;a&#xA0;random&#xA0;n&#xA0;x&#xA0;m&#xA0;matrix<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n&#xA0;*&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[i]&#xA0;=&#xA0;rand()&#xA0;/&#xA0;(double)&#xA0;RAND_MAX&#xA0;-&#xA0;.5;<br/>
+<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Q&#xA0;is&#xA0;a&#xA0;normalized&#xA0;version&#xA0;of&#xA0;A&#xA0;*&#xA0;A^T&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;apxnorm&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(k&#xA0;=&#xA0;0;&#xA0;k&#xA0;&lt;&#xA0;m;&#xA0;k++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;+=&#xA0;A[i&#xA0;*&#xA0;m&#xA0;+&#xA0;k]&#xA0;*&#xA0;A[j&#xA0;*&#xA0;m&#xA0;+&#xA0;k];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;*&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;apxnorm&#xA0;+=&#xA0;sqrt(sum&#xA0;/&#xA0;double(n)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;apxnorm&#xA0;/=&#xA0;double(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n&#xA0;*&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Q[i]&#xA0;=&#xA0;Q[i]&#xA0;/&#xA0;apxnorm;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;set&#xA0;solution&#xA0;to&#xA0;center&#xA0;of&#xA0;box;&#xA0;i.e.,&#xA0;.1&#xA0;*&#xA0;e<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;b[i]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;b[i]&#xA0;-=&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;/&#xA0;10.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;special&#xA0;case&#xA0;when&#xA0;n&#xA0;==&#xA0;1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;n&#xA0;==&#xA0;1&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;Q[0]&#xA0;=&#xA0;8.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;b[0]&#xA0;=&#xA0;-4.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;construct&#xA0;function&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&#xA0;obj(exponential,&#xA0;n,&#xA0;Q,&#xA0;b);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;State&#xA0;values<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sOkCur;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;ItrCur;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;QuadCur;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;BfgsCur;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;rCur;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;fCur;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Output&#xA0;values<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;fOut;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;run;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(run&#xA0;=&#xA0;1;&#xA0;run&#xA0;&lt;=&#xA0;2;&#xA0;run++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Initialize&#xA0;the&#xA0;state&#xA0;of&#xA0;the&#xA0;optimizer&#xA0;---------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sOkCur&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ItrCur&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QuadCur&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BfgsCur&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;rCur&#xA0;=&#xA0;.5;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initial&#xA0;xCur&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xCur[i]&#xA0;=&#xA0;.75;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;fCur&#xA0;is&#xA0;objective&#xA0;function&#xA0;value&#xA0;at&#xA0;xCur<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;obj.function(xCur,&#xA0;fCur);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(msg&#xA0;==&#xA0;&quot;ok&quot;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;gCur&#xA0;is&#xA0;gradient&#xA0;at&#xA0;xCur<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;obj.gradient(gCur);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(msg&#xA0;==&#xA0;&quot;ok&quot;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;the&#xA0;HCur&#xA0;as&#xA0;the&#xA0;identity&#xA0;matrix<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;HCur[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j&#xA0;]&#xA0;=&#xA0;static_cast&lt;double&gt;(&#xA0;i&#xA0;==&#xA0;j&#xA0;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Solve&#xA0;the&#xA0;optimization&#xA0;problem&#xA0;------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Msg&#xA0;=&#xA0;&quot;&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(&#xA0;Msg&#xA0;==&#xA0;&quot;&quot;&#xA0;&amp;&amp;&#xA0;ItrCur&#xA0;&lt;&#xA0;ItrMax&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;ItrPrev&#xA0;=&#xA0;ItrCur;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;ItrPlus;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;run&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ItrPlus&#xA0;=&#xA0;ItrCur&#xA0;+&#xA0;ItrMax;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;ItrPlus&#xA0;=&#xA0;ItrCur&#xA0;+&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Msg&#xA0;=&#xA0;QuasiNewton01Box(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Input&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;os,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;level,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ItrCur+ItrMax,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QuadMax,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::GradMaxAbs,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delta,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;obj,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Input+Output&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sOkCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ItrCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QuadCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BfgsCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;rCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;gCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;HCur&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;run&#xA0;==&#xA0;1&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;Msg&#xA0;!=&#xA0;&quot;&quot;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;Msg&#xA0;==&#xA0;&quot;ok&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;store&#xA0;solution&#xA0;corresponding&#xA0;to&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;all&#xA0;iterations&#xA0;at&#xA0;once<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xOut[i]&#xA0;=&#xA0;xCur[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;tracing&#xA0;for&#xA0;one&#xA0;iteration&#xA0;at&#xA0;a&#xA0;time&#xA0;solution<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;level&#xA0;&#xA0;=&#xA0;-level;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;if(&#xA0;Msg&#xA0;==&#xA0;&quot;ok&quot;&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;trace&#xA0;the&#xA0;last&#xA0;iterate<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Msg&#xA0;=&#xA0;QuasiNewton01Box(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Input&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;os,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;abs(level),<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ItrCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QuadMax,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::GradMaxAbs,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delta,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;obj,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Input+Output&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sOkCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ItrCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QuadCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BfgsCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;rCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;gCur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;HCur&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;if(&#xA0;ItrCur&#xA0;&gt;&#xA0;ItrPrev&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Msg&#xA0;=&#xA0;&quot;&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;the&#xA0;reutrn&#xA0;message<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;Msg&#xA0;==&#xA0;&quot;ok&quot;&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::ostringstream&#xA0;buf;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;buf&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;:functionCount&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;obj.functionCount();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;buf&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;:gradientCount&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;obj.gradientCount();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;buf&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;:HessianCount&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;obj.HessianCount();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Msg&#xA0;=&#xA0;buf.str();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;ok&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;that&#xA0;the&#xA0;all&#xA0;at&#xA0;once&#xA0;solution&#xA0;is&#xA0;equal&#xA0;to<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;the&#xA0;once&#xA0;iteration&#xA0;at&#xA0;a&#xA0;time&#xA0;solution<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;xOut[i]&#xA0;==&#xA0;xCur[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;objective&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;obj.function(xCur,&#xA0;fOut);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(msg&#xA0;==&#xA0;&quot;ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;fCur&#xA0;==&#xA0;fOut;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;gradient<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;obj.gradient(gOut);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;gCur[i]&#xA0;==&#xA0;gOut[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;the&#xA0;scaled&#xA0;projected&#xA0;gradient<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;p&#xA0;=&#xA0;gOut[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;p&#xA0;&gt;=&#xA0;0.&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;p&#xA0;*=&#xA0;(xCur[i]&#xA0;-&#xA0;0.);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;p&#xA0;*=&#xA0;(1.&#xA0;-&#xA0;xCur[i]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;fabs(p)&#xA0;&lt;=&#xA0;delta;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;abs(level)&#xA0;&gt;=&#xA0;2&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;fOut&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;fOut&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;xOut[0]&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;xCur[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;1;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;i&#xA0;%&#xA0;5&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;,&#xA0;[&quot;&#xA0;&lt;&lt;&#xA0;i&#xA0;&lt;&lt;&#xA0;&quot;]&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;xCur[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;obj.Hessian(HOut);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;HCur(&quot;&#xA0;&lt;&lt;&#xA0;i&#xA0;&lt;&lt;&#xA0;&quot;,&quot;&#xA0;&lt;&lt;&#xA0;j&#xA0;&lt;&lt;&#xA0;&quot;)&#xA0;=&#xA0;&quot;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;HCur[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;,&#xA0;HOut(&quot;&#xA0;&lt;&lt;&#xA0;i&#xA0;&lt;&lt;&#xA0;&quot;,&quot;&#xA0;&lt;&lt;&#xA0;j&#xA0;&lt;&lt;&#xA0;&quot;)&#xA0;=&#xA0;&quot;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;HOut[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;,&#xA0;Q(&quot;&#xA0;&lt;&lt;&#xA0;i&#xA0;&lt;&lt;&#xA0;&quot;,&quot;&#xA0;&lt;&lt;&#xA0;j&#xA0;&lt;&lt;&#xA0;&quot;)&#xA0;=&#xA0;&quot;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;Q[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: QN01Box/QuasiNewton01Box.h
+
+</body>
+</html>

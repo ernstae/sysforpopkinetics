@@ -1,0 +1,129 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Alphabetic Listing of Cross Reference Tags</title>
+<meta name="description" id="description" content="Alphabetic Listing of Cross Reference Tags"/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='__reference_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>_reference</option>
+</select>
+</td>
+<td><a href="whatsnew.xml" target="_top">Prev</a>
+</td><td><a href="_index.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down1(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>_reference</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>B</option>
+<option>C</option>
+<option>D</option>
+<option>E</option>
+<option>G</option>
+<option>I</option>
+<option>L</option>
+<option>M</option>
+<option>N</option>
+<option>P</option>
+<option>Q</option>
+<option>R</option>
+<option>S</option>
+<option>U</option>
+<option>W</option>
+<option>Z</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Alphabetic Listing of Cross Reference Tags</big></big></b></center>
+<table>
+<tr valign="top"><td>
+
+<b><big><a name="B">B</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="bfgs.xml" target="_top">Bfgs</a><br/> </td><td> The Broyden-Fletcher-Goldfarb-Shanno Update </td></tr><tr valign="top"><td>
+
+<b><big><a name="C">C</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="converge.xml" target="_top">Converge</a><br/> </td><td> Choosing a Scaled Projected Gradient Convergence Criteria </td></tr><tr valign="top"><td>
+
+<b><big><a name="D">D</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="delta.xml" target="_top">Delta</a><br/> </td><td> First Order Approximation Step </td></tr><tr valign="top"><td>
+
+<b><big><a name="E">E</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="error.xml" target="_top">Error</a><br/> </td><td> QN01Box Error Messages and Traps </td></tr><tr valign="top"><td>
+
+<b><big><a name="G">G</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="glossary.xml" target="_top">glossary</a><br/> </td><td> Glossary </td></tr><tr valign="top"><td>
+
+<b><big><a name="I">I</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="install.xml" target="_top">Install</a><br/> </td><td> Install QN01Box </td></tr><tr valign="top"><td>
+
+<b><big><a name="L">L</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="license.xml" target="_top">License</a><br/> </td><td> Your License To Use This Program </td></tr><tr valign="top"><td>
+
+<b><big><a name="M">M</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="maxabs.xml" target="_top">MaxAbs</a><br/> </td><td> Maximum Absolute Value of an Element of a Vector </td></tr><tr valign="top"><td>
+<a href="memory.xml" target="_top">Memory</a><br/> </td><td> A Fast and Simple Memory Management Template Class </td></tr><tr valign="top"><td>
+
+<b><big><a name="N">N</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="next.xml" target="_top">Next</a><br/> </td><td> Next Interior Point Iterate </td></tr><tr valign="top"><td>
+
+<b><big><a name="P">P</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="plusinfinity.xml" target="_top">PlusInfinity</a><br/> </td><td> Returns the IEEE Floating Point Value Plus Infinity </td></tr><tr valign="top"><td>
+<a href="positivematrix.xml" target="_top">PositiveMatrix</a><br/> </td><td> Ensure that A Symmetric Matrix is Positive Definite </td></tr><tr valign="top"><td>
+
+<b><big><a name="Q">Q</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="qn01box.xml" target="_top">QN01Box</a><br/> </td><td> A Box Constrained, Interior Point, Trust Region, Quasi-Newton Method </td></tr><tr valign="top"><td>
+<a href="quadbox.xml" target="_top">QuadBox</a><br/> </td><td> Quadratic Problem with Box Constraints: Approximate Complementarity </td></tr><tr valign="top"><td>
+<a href="quasinewton01box.xml" target="_top">QuasiNewton01Box</a><br/> </td><td> Nonlinear Optimization with [0, 1] Box Constraints </td></tr><tr valign="top"><td>
+
+<b><big><a name="R">R</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="residual.xml" target="_top">Residual</a><br/> </td><td> Central Path Residual </td></tr><tr valign="top"><td>
+
+<b><big><a name="S">S</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="scaleprojgrad.xml" target="_top">ScaleProjGrad</a><br/> </td><td> Compute the Scaled Projected Gradient </td></tr><tr valign="top"><td>
+<a href="sumabs.xml" target="_top">SumAbs</a><br/> </td><td> Sum of Absolute Value of Elements of a Vector </td></tr><tr valign="top"><td>
+
+<b><big><a name="U">U</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="utility.xml" target="_top">Utility</a><br/> </td><td> General Purpose Utilities </td></tr><tr valign="top"><td>
+
+<b><big><a name="W">W</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="whatsnew.xml" target="_top">WhatsNew</a><br/> </td><td> Record of New Features and Bug Fixes For QN01Box </td></tr><tr valign="top"><td>
+
+<b><big><a name="Z">Z</a></big></b> </td><td>  </td></tr><tr valign="top"><td>
+<a href="zero_one_scale.xml" target="_top">zero_one_scale</a><br/> </td><td> Zero One Scale a Function's Argument Vector </td></tr><tr valign="top"><td>
+</td></tr></table>
+
+</body>
+</html>

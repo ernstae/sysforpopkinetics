@@ -1,0 +1,79 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>General Purpose Utilities</title>
+<meta name="description" id="description" content="General Purpose Utilities"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_utility_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>Utility</option>
+</select>
+</td>
+<td><a href="converge.xml" target="_top">Prev</a>
+</td><td><a href="memory.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down1(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>Utility-&gt;</option>
+<option>Memory</option>
+<option>MaxAbs</option>
+<option>SumAbs</option>
+<option>PlusInfinity</option>
+<option>ScaleProjGrad</option>
+<option>PositiveMatrix</option>
+<option>zero_one_scale</option>
+<option>Error</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Contents</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+<center><b><big><big>General Purpose Utilities</big></big></b></center>
+<br/>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br/>
+<table>
+<tr><td><a href="memory.xml" target="_top">Memory</a></td><td>A&#xA0;Fast&#xA0;and&#xA0;Simple&#xA0;Memory&#xA0;Management&#xA0;Template&#xA0;Class</td></tr><tr><td><a href="maxabs.xml" target="_top">MaxAbs</a></td><td>Maximum&#xA0;Absolute&#xA0;Value&#xA0;of&#xA0;an&#xA0;Element&#xA0;of&#xA0;a&#xA0;Vector</td></tr><tr><td><a href="sumabs.xml" target="_top">SumAbs</a></td><td>Sum&#xA0;of&#xA0;Absolute&#xA0;Value&#xA0;of&#xA0;Elements&#xA0;of&#xA0;a&#xA0;Vector</td></tr><tr><td><a href="plusinfinity.xml" target="_top">PlusInfinity</a></td><td>Returns&#xA0;the&#xA0;IEEE&#xA0;Floating&#xA0;Point&#xA0;Value&#xA0;Plus&#xA0;Infinity</td></tr><tr><td><a href="scaleprojgrad.xml" target="_top">ScaleProjGrad</a></td><td>Compute&#xA0;the&#xA0;Scaled&#xA0;Projected&#xA0;Gradient</td></tr><tr><td><a href="positivematrix.xml" target="_top">PositiveMatrix</a></td><td>Ensure&#xA0;that&#xA0;A&#xA0;Symmetric&#xA0;Matrix&#xA0;is&#xA0;Positive&#xA0;Definite</td></tr><tr><td><a href="zero_one_scale.xml" target="_top">zero_one_scale</a></td><td>Zero&#xA0;One&#xA0;Scale&#xA0;a&#xA0;Function's&#xA0;Argument&#xA0;Vector</td></tr><tr><td><a href="error.xml" target="_top">Error</a></td><td>QN01Box&#xA0;Error&#xA0;Messages&#xA0;and&#xA0;Traps</td></tr></table>
+<hr/>Input File: omh/Utility.omh
+
+</body>
+</html>

@@ -1,0 +1,911 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Zero One Scale a Function's Argument Vector</title>
+<meta name="description" id="description" content="Zero One Scale a Function's Argument Vector"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_zero_one_scale_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>QN01Box</option>
+<option>Utility</option>
+<option>zero_one_scale</option>
+</select>
+</td>
+<td><a href="positivematrix.xml" target="_top">Prev</a>
+</td><td><a href="error.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>QN01Box-&gt;</option>
+<option>License</option>
+<option>Install</option>
+<option>QuasiNewton01Box</option>
+<option>Converge</option>
+<option>Utility</option>
+<option>glossary</option>
+<option>WhatsNew</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Utility-&gt;</option>
+<option>Memory</option>
+<option>MaxAbs</option>
+<option>SumAbs</option>
+<option>PlusInfinity</option>
+<option>ScaleProjGrad</option>
+<option>PositiveMatrix</option>
+<option>zero_one_scale</option>
+<option>Error</option>
+</select>
+</td>
+<td>zero_one_scale</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Constructor</option>
+<option>Purpose</option>
+<option>Notation</option>
+<option>fun</option>
+<option>m</option>
+<option>n</option>
+<option>a</option>
+<option>b</option>
+<option>to_zero_one</option>
+<option>from_zero_one</option>
+<option>function</option>
+<option>gradient</option>
+<option>Hessian</option>
+<option>msg</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Zero One Scale a Function's Argument Vector</big></big></b></center>
+<br/>
+<b><big><a name="Constructor" id="Constructor">Constructor</a></big></b>
+
+<br/>
+<code><font color="blue"><span style='white-space: nowrap'>zero_one_scale&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>fun</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>a</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+<br/>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+Given the object <i>fun</i> that evaluations a function
+defined on 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">]</mo>
+</mrow></math>
+
+,
+<code><font color="blue">zero_one_scale</font></code> creates the object <i>obj</i>
+that evaluates a scaled version of the function
+defined on 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">[</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<mo stretchy="false">]</mo>
+</mrow></math>
+
+
+(so that it can be used with <a href="quasinewton01box.xml" target="_top"><span style='white-space: nowrap'>QuasiNewton01Box</span></a>
+).
+
+<br/>
+<br/>
+<b><big><a name="Notation" id="Notation">Notation</a></big></b>
+<br/>
+We are given 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>m</mi>
+</msup>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>m</mi>
+</msup>
+</mrow></math>
+
+ where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">&#x02264;</mo>
+<mi mathvariant='italic'>b</mi>
+</mrow></math>
+
+, 
+and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>h</mi>
+<mo stretchy="false">:</mo>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+.
+We define 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+ as the number of indices such that
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&lt;</mo>
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow></math>
+
+ and
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="left" >
+<mi mathvariant='italic'>I</mi>
+<mo stretchy="false">:</mo>
+<mo stretchy="false">{</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mn>-1</mn>
+<mo stretchy="false">}</mo>
+<mo stretchy="false">&#x02192;</mo>
+<mo stretchy="false">{</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">-</mo>
+<mn>1</mn>
+<mo stretchy="false">}</mo>
+</mtd></mtr><mtr><mtd columnalign="left" >
+<mi mathvariant='italic'>I</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi>min</mi>
+<mrow><mo stretchy="true">{</mo><mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">:</mo>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">&gt;</mo>
+<mi mathvariant='italic'>I</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>j</mi>
+<mn>-1</mn>
+<mo stretchy="false">)</mo>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>and</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&lt;</mo>
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow><mo stretchy="true">}</mo></mrow>
+</mtd></mtr></mtable>
+</mrow></math>
+
+where the expression 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>I</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>j</mi>
+<mn>-1</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ is interpreted as minus one 
+when 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow></math>
+
+.
+We define the function
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mo stretchy="false">:</mo>
+<mo stretchy="false">[</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<msup><mo stretchy="false">]</mo>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>m</mi>
+</msup>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msub><mi mathvariant='normal'>&#x003B2;</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mrow><mo stretchy="true">{</mo><mrow><mtable rowalign="center" ><mtr><mtd columnalign="center" >
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">+</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+<mo stretchy="false">*</mo>
+<mo stretchy="false">(</mo>
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>if</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>I</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">)</mo>
+<mspace width='.3em'/>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>for</mi>
+<mspace width='.3em'/>
+<mi mathvariant='normal'>some</mi>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<mi mathvariant='italic'>j</mi>
+</mtd></mtr><mtr><mtd columnalign="center" >
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd><mtd columnalign="left" >
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>otherwise</mi>
+<mo stretchy="false">;</mo>
+<mspace width='.3em'/>
+<mi mathvariant='normal'>i</mi>
+<mo stretchy="false">.</mo>
+<mi mathvariant='normal'>e</mi>
+<mo stretchy="false">.</mo>
+<mo stretchy="false">,</mo>
+</mstyle></mrow>
+<mspace width='.3em'/>
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mtd></mtr></mtable>
+</mrow><mo stretchy="true"> </mo></mrow>
+</mrow></math>
+
+for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>m</mi>
+<mn>-1</mn>
+</mrow></math>
+
+.
+The function
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">:</mo>
+<mo stretchy="false">[</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+  is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>h</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="fun" id="fun">fun</a></big></b>
+<br/>
+The argument <i>fun</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>Fun</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;*</span></font></code><i><span style='white-space: nowrap'>fun</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It is input to the <code><font color="blue">zero_one_scale</font></code> constructor
+and must support the 
+<a href="zero_one_scale.xml#function" target="_top"><span style='white-space: nowrap'>function</span></a>
+,
+<a href="zero_one_scale.xml#gradient" target="_top"><span style='white-space: nowrap'>gradient</span></a>
+, and
+<a href="zero_one_scale.xml#Hessian" target="_top"><span style='white-space: nowrap'>Hessian</span></a>
+
+operations listed below
+(for as long as the object <i>obj</i> exists).
+
+<br/>
+<br/>
+<b><big><a name="m" id="m">m</a></big></b>
+<br/>
+The argument <i>m</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It specifies the dimension of the argument space for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>h</mi>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="n" id="n">n</a></big></b>
+<br/>
+The argument <i>n</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It must be equal to the number of indices 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>i</mi>
+</mrow></math>
+
+ such that
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>a</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">&lt;</mo>
+<msub><mi mathvariant='italic'>b</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="a" id="a">a</a></big></b>
+<br/>
+The argument <i>a</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>a</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It is a vector of length <i>m</i> that
+specifies the lower limit for the domain of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>h</mi>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="b" id="b">b</a></big></b>
+<br/>
+The argument <i>b</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It is a vector of length <i>m</i> that
+specifies the upper limit for the domain of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>h</mi>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="to_zero_one" id="to_zero_one">to_zero_one</a></big></b>
+<br/>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.to_zero_one(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>y_</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>maps a point <i>y_</i>, in the box 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">]</mo>
+</mrow></math>
+
+,
+to the corresponding point <i>x</i>,
+in the box 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">[</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<msup><mo stretchy="false">]</mo>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+; i.e., 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">_</mo>
+</mrow></math>
+
+.
+The argument <i>x</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It is a vector of length <i>n</i>.
+The argument <i>y_</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>y_</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It is a vector of length <i>m</i>.
+
+<br/>
+<br/>
+<b><big><a name="from_zero_one" id="from_zero_one">from_zero_one</a></big></b>
+<br/>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.from_zero_one(</span></font></code><i><span style='white-space: nowrap'>x_</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>maps a point <i>x_</i>, in the box 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">[</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<msup><mo stretchy="false">]</mo>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+,
+to the corresponding point <i>y</i>, in the box 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>b</mi>
+<mo stretchy="false">]</mo>
+</mrow></math>
+
+; i.e.,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x003B2;</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">_</mo>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>y</mi>
+</mrow></math>
+
+.
+The argument <i>x_</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>x_</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It is a vector of length <i>n</i>.
+The argument <i>y</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>It is a vector of length <i>m</i>.
+
+<br/>
+<br/>
+<b><big><a name="function" id="function">function</a></big></b>
+<br/>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>msg</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>fun</span></i><code><font color="blue"><span style='white-space: nowrap'>.function(</span></font></code><i><span style='white-space: nowrap'>y_</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>h</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>set <i>h</i> to the corresponding value of the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>h</mi>
+</mrow></math>
+
+.
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>msg</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function(</span></font></code><i><span style='white-space: nowrap'>x_</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>set <i>f</i> to the corresponding value of the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+</mrow></math>
+
+.
+The arguments <i>h</i> and <i>f</i> have prototypes
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>h</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>The arguments <i>y_</i> and <i>x_</i> have prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>y_</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>x_</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>Their lengths are <i>m</i> and <i>n</i> respectively.
+
+<br/>
+<br/>
+<b><big><a name="gradient" id="gradient">gradient</a></big></b>
+<br/>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>msg</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>fun</span></i><code><font color="blue"><span style='white-space: nowrap'>.gradient(</span></font></code><i><span style='white-space: nowrap'>h_y</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>set <i>h_y</i> to the derivative
+of the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>h</mi>
+</mrow></math>
+
+ with respect to its argument 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>y</mi>
+</mrow></math>
+
+
+(corresponding to the previous call to <code><font color="blue"></font></code><i><span style='white-space: nowrap'>fun</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>).
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>msg</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.gradient(</span></font></code><i><span style='white-space: nowrap'>f_x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>set <i>f_x</i> to the derivative 
+of the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+</mrow></math>
+
+ with respect to its argument 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+
+(corresponding to the previous call to <code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>).
+The arguments <i>f_x</i> and <i>h_y</i> have prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>h_y</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>f_x</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>Their lengths are <i>m</i> and <i>n</i> respectively.
+
+<br/>
+<br/>
+<b><big><a name="Hessian" id="Hessian">Hessian</a></big></b>
+<br/>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>msg</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>fun</span></i><code><font color="blue"><span style='white-space: nowrap'>.Hessian(</span></font></code><i><span style='white-space: nowrap'>h_yy</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>set <i>h_yy</i> to the Hessian
+of the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>h</mi>
+</mrow></math>
+
+ with respect to its argument 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>y</mi>
+</mrow></math>
+
+
+(corresponding to the previous call to <code><font color="blue"></font></code><i><span style='white-space: nowrap'>fun</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>).
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>msg</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.gradient(</span></font></code><i><span style='white-space: nowrap'>f_xx</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>set <i>f_xx</i> to the Hessian 
+of the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+</mrow></math>
+
+ with respect to its argument 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+
+(corresponding to the previous call to <code><font color="blue"></font></code><i><span style='white-space: nowrap'>obj</span></i><code><font color="blue"><span style='white-space: nowrap'>.function</span></font></code>).
+The arguments <i>h_yy</i> and <i>f_xx</i> have prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>h_yy</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*</span></font></code><i><span style='white-space: nowrap'>f_xx</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>Their lengths are 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>m</mi>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+ respectively.
+It does not matter if the matrices are stored in row major or column
+major order because they should be symmetric.
+
+<br/>
+<br/>
+<b><big><a name="msg" id="msg">msg</a></big></b>
+<br/>
+The <i>msg</i> results for 
+<code><font color="blue">function</font></code>, <code><font color="blue">gradient</font></code> and <code><font color="blue">Hessian</font></code> above
+has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*</span></font></code><i><span style='white-space: nowrap'>msg</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>.
+In each case,
+the <i>msg</i> result for <i>obj</i> is equal
+to the corresponding <i>msg</i> result for <i>fun</i>.
+
+<br/>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The following example is also a test.
+It returns true if it succeeds and false otherwise.
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/QuasiNewton01Box.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/zero_one_scale.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;QN01Box/Memory.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;iostream&gt;<br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;<br/>
+#&#xA0;include&#xA0;&lt;string&gt;<br/>
+#&#xA0;include&#xA0;&lt;sstream&gt;<br/>
+<br/>
+//&#xA0;begin&#xA0;empty&#xA0;namespace<br/>
+namespace&#xA0;{&#xA0;<br/>
+//<br/>
+//&#xA0;Function&#xA0;object&#xA0;class<br/>
+class&#xA0;Fun&#xA0;{<br/>
+private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;m;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;QN01Box::Memory&lt;double&gt;&#xA0;dmemory;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*y;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;gcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Hcount;<br/>
+public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor&#xA0;for&#xA0;original&#xA0;function&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun(size_t&#xA0;m_)&#xA0;:&#xA0;&#xA0;m(m_),&#xA0;dmemory(m_),&#xA0;fcount(0),&#xA0;gcount(0),&#xA0;Hcount(0)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;=&#xA0;dmemory(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;destructor&#xA0;for&#xA0;a&#xA0;function&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;~Fun(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;function<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;function(const&#xA0;double&#xA0;*y_,&#xA0;double&#xA0;&amp;f)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y[i]&#xA0;=&#xA0;y_[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f&#xA0;+=&#xA0;.5&#xA0;*&#xA0;(y[i]&#xA0;-&#xA0;i&#xA0;-&#xA0;1.)&#xA0;*&#xA0;(y[i]&#xA0;-&#xA0;i&#xA0;-&#xA0;1.);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;++fcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;&quot;ok&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;gradient<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;gradient(double&#xA0;*f_y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_y[i]&#xA0;=&#xA0;y[i]&#xA0;-&#xA0;i&#xA0;-&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;++gcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;&quot;ok&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;Hessian<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*&#xA0;Hessian(double&#xA0;*f_yy)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;++Hcount;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;&quot;not&#xA0;available&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;function&#xA0;counter<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;functionCount(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;fcount;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;gradient&#xA0;counter<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;gradientCount(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;gcount;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;Hessian&#xA0;counter<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;HessianCount(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;Hcount;&#xA0;}<br/>
+};<br/>
+<br/>
+}&#xA0;<br/>
+//&#xA0;end&#xA0;empty&#xA0;namespace<br/>
+<br/>
+bool&#xA0;zero_one_scale_(std::string&#xA0;&amp;msg)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;QN01Box;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i,&#xA0;j;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;dimension&#xA0;of&#xA0;domain&#xA0;of&#xA0;h<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&#xA0;h(m);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;lower&#xA0;and&#xA0;upper&#xA0;limits&#xA0;for&#xA0;domain&#xA0;of&#xA0;h<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;a[]&#xA0;=&#xA0;{&#xA0;-5.,&#xA0;1.,&#xA0;-4.&#xA0;};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;b[]&#xA0;=&#xA0;{&#xA0;+5.,&#xA0;1.,&#xA0;+4.&#xA0;};<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::ostream&#xA0;&#xA0;&#xA0;&#xA0;&amp;os&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;std::cout;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;level&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;itr_max&#xA0;&#xA0;=&#xA0;50;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;quad_max&#xA0;=&#xA0;40;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;m&#xA0;-&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ConvergeNorm&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;norm&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;GradMaxAbs;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delta&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1e-7;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;zero_one_scale&lt;Fun&gt;&#xA0;obj(&amp;h,&#xA0;m,&#xA0;n,&#xA0;a,&#xA0;b);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sok_cur&#xA0;&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;itr_cur&#xA0;&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;quad_cur&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bfgs_cur&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r_cur&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;.25;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_cur;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Memory&lt;double&gt;&#xA0;&#xA0;dmemory(m&#xA0;+&#xA0;n&#xA0;+&#xA0;n&#xA0;+&#xA0;n&#xA0;+&#xA0;n&#xA0;*&#xA0;n&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*y_cur&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dmemory(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*x_cur&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dmemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*s_cur&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dmemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*g_cur&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dmemory(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;*H_cur&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;dmemory(n&#xA0;*&#xA0;n);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;y_cur[i]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y_cur[i]&#xA0;=&#xA0;std::max(y_cur[i],&#xA0;a[i]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y_cur[i]&#xA0;=&#xA0;std::min(y_cur[i],&#xA0;b[i]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;convert&#xA0;from&#xA0;y&#xA0;to&#xA0;x&#xA0;coordinates<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;obj.to_zero_one(x_cur,&#xA0;y_cur);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;initial&#xA0;objective<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;obj.function(x_cur,&#xA0;f_cur);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(msg&#xA0;==&#xA0;&quot;ok&quot;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;initial&#xA0;gradient<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;obj.gradient(g_cur);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(msg&#xA0;==&#xA0;&quot;ok&quot;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;Hessian&#xA0;to&#xA0;identity<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;H_cur[i&#xA0;*&#xA0;n&#xA0;+&#xA0;j]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;H_cur[i&#xA0;*&#xA0;n&#xA0;+&#xA0;i]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;QuasiNewton01Box(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Input&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;os,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;level,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;itr_max,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;quad_max,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;norm,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delta,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;obj,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Input+Output&#xA0;Arguments<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sok_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;itr_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;quad_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bfgs_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;s_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;g_cur,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;H_cur&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;the&#xA0;reutrn&#xA0;message<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;msg&#xA0;==&#xA0;&quot;ok&quot;&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::ostringstream&#xA0;buf;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;buf&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;:functionCount&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;h.functionCount();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;buf&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;:gradientCount&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;h.gradientCount();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;msg&#xA0;=&#xA0;buf.str();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;ok&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;convert&#xA0;to&#xA0;y&#xA0;coordinates<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;obj.from_zero_one(x_cur,&#xA0;y_cur);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;solution<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;a[i]&#xA0;==&#xA0;b[i]&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(&#xA0;y_cur[1]&#xA0;==&#xA0;a[1]&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;ok&#xA0;&amp;=&#xA0;std::fabs(&#xA0;y_cur[i]&#xA0;-&#xA0;i&#xA0;-&#xA0;1.&#xA0;)&#xA0;&lt;=&#xA0;1e-6;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: QN01Box/zero_one_scale.h
+
+</body>
+</html>
