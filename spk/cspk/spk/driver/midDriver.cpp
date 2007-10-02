@@ -136,7 +136,6 @@ start:
         }
     }
 
-    int exit_value = SUCCESSFUL;
     pvm_initsend(PvmDataDefault);
     pvm_pkint(&exit_value, 1, 1);
     pvm_send(parent_tid, SpkPvmExitValue);
