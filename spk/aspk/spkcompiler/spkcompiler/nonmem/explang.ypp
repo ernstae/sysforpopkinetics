@@ -1333,7 +1333,7 @@ DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' {
        sprintf( buf, "cos( %s )",  $3 );
 
    else if( strcmp( lowercase, STR_ABS ) == 0 )
-       sprintf( buf, "fabs( %s )",  $3 );
+       sprintf( buf, "abs( %s )",  $3 );
    else if( strcmp( lowercase, STR_ACOS ) == 0 )
        sprintf( buf, "acos( %s )",  $3 );
    else if( strcmp( lowercase, STR_ASIN ) == 0 )
