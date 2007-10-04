@@ -239,12 +239,8 @@ su -
 	    Run the regression test.
 	    <screen>
 regression_test
-pvm
-quit
 regression_test --pvm
 regression_test --pvm --parallel
-pvm
-halt
 	    </screen>
 	  </para>
 	</listitem>
