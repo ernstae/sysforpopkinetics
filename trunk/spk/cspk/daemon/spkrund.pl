@@ -263,6 +263,7 @@ my $pathname_driver_pvm = "/usr/local/bin/spkprod/jobDriver";
 my $pathname_mid_driver_pvm = "/usr/local/bin/spkprod/midDriver";
 my $filename_job_id = "job_id";
 my %jobid_pid = ();
+my %jobid_ntasks = ();
 my $filename_makefile = "Makefile.SPK";
 my $filename_optimizer_trace = "optimizer_trace.txt";
 my $filename_results = "result.xml";
@@ -350,7 +351,12 @@ sub fork_driver {
     my $warmstart = shift;
     my $cpp_source = $jrow->{'cpp_source'};
     my $checkpoint = $jrow->{'checkpoint'};
-    my $parallel = $jrow->{'parallel'};
+    my $ntasks = $jrow->{'parallel'};
+    my $parallel = 1;
+    if ($ntasks == 0) {
+        $parallel = 0;
+        $ntasks = 1;
+    }
     my $pid;
 
     # Create a working directory
@@ -398,10 +404,15 @@ sub fork_driver {
       if ($pid = fork) {
 	  # This is the parent (fork returned a nonzero value)
           syslog("info", "forked process with pid=$pid for job_id=$job_id");
-	  $concurrent++;
+          
+          # Add ntasks of the job to concurrent ntasks
+	  $concurrent += $ntasks;
 
-          # Add the child process to jobid_pid hash
+          # Add the child process id to jobid_pid hash
           $jobid_pid{$job_id} = $pid;
+
+          # Add the ntasks of the job to the jobid_ntasks hash
+          $jobid_ntasks{$job_id} = $ntasks;
       }
       elsif (defined $pid) {
 	  # This is the child (fork returned zero).
@@ -570,8 +581,6 @@ sub reaper {
     my $end_code;
     my $email;
 
-    $concurrent--;
-
     # Get the job_id from the file spkcmpd.pl wrote to the working
     # directory of this process
 #    my $unique_name = "$prefix_working_dir" . "-pid-" . $child_pid;
@@ -595,6 +604,9 @@ sub reaper {
     # Get the job_id from the child pid
     my %pid_jobid = reverse %jobid_pid;
     $job_id = $pid_jobid{$child_pid};
+
+    # Subtract ntasks of the job from concurrent ntasks
+    $concurrent -= $jobid_ntasks{$job_id};
 
     # Change to working directory
 #    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
@@ -662,7 +674,7 @@ sub reaper {
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  13) {
-        $end_code = "stae"; #statistics error
+        $end_code = "stae"; #optimization ok statistics error
         $err_msg .= "a known error was detected during statistics calculation; ";
         $submit_to_bugzilla &= 0;
     }
@@ -686,6 +698,11 @@ sub reaper {
         $err_msg .= "a known error was detected during identifiability analysis; ";
         $submit_to_bugzilla &= 0;
     }
+    elsif($child_exit_value ==  18) {
+        $end_code = "rese"; #optimization ok residual error
+        $err_msg .= "a known error was detected during residual calculation; ";
+        $submit_to_bugzilla &= 0;
+    }
     elsif($child_exit_value ==  100) {
         $end_code = "accf"; #access failure
         $err_msg .= "an unknown failure occured during file/directory access; ";
@@ -700,7 +717,7 @@ sub reaper {
         $submit_to_bugzilla &= 1;
     }
     elsif($child_exit_value ==  103) {
-        $end_code = "staf"; #statistics failure
+        $end_code = "staf"; #optimization ok statistics failure
         $err_msg .= "an unknown failure occured during statistics calculation; ";
         $submit_to_bugzilla &= 1;
     }
@@ -724,9 +741,19 @@ sub reaper {
         $err_msg .= "an unknown failure occured during identifiability analysis; ";
         $submit_to_bugzilla &= 1;
     }
+    elsif($child_exit_value ==  108) {
+        $end_code = "resf"; #optimization ok residual failure
+        $err_msg .= "an unknown failure occured during residual calculation; ";
+        $submit_to_bugzilla &= 1;
+    }
     elsif($child_exit_value ==  200) {
         $end_code = "pose"; #post-optimality error
         $err_msg .= "a known error was detected during post-optimality; ";
+        $submit_to_bugzilla &= 0;
+    }
+    elsif($child_exit_value ==  202) {
+        $end_code = "optm"; #optimization max iter error
+        $err_msg .= "optimization maximum number of iteration reached; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  300) {
