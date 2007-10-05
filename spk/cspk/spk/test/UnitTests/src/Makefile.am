@@ -26,6 +26,7 @@ endif
 # Set linker flags
 AM_LDFLAGS  = \
 	-L/usr/local/lib \
+	-L/usr/lib64/atlas \
 	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
 	-L/usr/share/pvm3/lib/LINUX \
