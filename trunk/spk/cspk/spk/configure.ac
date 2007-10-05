@@ -203,8 +203,7 @@ AC_CONFIG_FILES( [Makefile
 	          spk/Makefile
                   test/Makefile
                   test/UnitTests/Makefile
-	          test/UnitTests/src/Makefile
-                  test/PopulationUser/Makefile] )
+	          test/UnitTests/src/Makefile] )
 
 dnl
 dnl <AC_OUTPUT>
