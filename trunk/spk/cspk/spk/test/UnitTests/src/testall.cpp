@@ -3,6 +3,7 @@
 #include <map>
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
+#include <pvm3.h>
 
 #include "ABA_xTest.h"
 #include "addTest.h"
@@ -120,6 +121,10 @@ void usage()
 
 int main( int argc, const char * argv[] )
 {
+  char* arg[1];
+  arg[0] = "localhost";
+  pvm_start_pvmd(1, arg, 1);
+
   //  Turning on the floating point error detection mechanism
   FpErrorChecker checkerON;
 
@@ -273,6 +278,6 @@ Brad: 2006-05-09: It appears to me this should have never been here.
     }
 
   runner.run();
-
+  pvm_halt();
   return 0;
 }

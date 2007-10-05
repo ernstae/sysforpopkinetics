@@ -27,13 +27,9 @@ an (executable) searching path (e.x. /usr/local/bin).
 
 1. Change directory to ./test/UnitTest/src and run "testall":
 
-   > cd test/UnitTest/src
-   > pvm
-   > quit
+   > cd test/UnitTests/src
    > ./testall
-   > pvm
-   > halt
-
+   
 This should display a number of dots and some matrices.  If something
 goes wrong, it should display messages containing a text "fail".
 
