@@ -1,5 +1,34 @@
+<<<<<<< .mine
+#
+dnl <AC_INIT>
+dnl
+dnl Process any command-line arguments and perform various 
+dnl initialization and verifications.
+dnl
+dnl    AC_INIT( package, version, bug-report, tarname )
+dnl       package    - package name
+dnl       version    - version number
+dnl       bug-report - email address to which users should send bug reports
+dnl       tarname    - distribution tarball name
+dnl
+dnl The following macros and names are defined by AC_INIT.
+dnl    
+dnl    AC_PACKAGE_NAME, PACKAGE_NAME
+dnl       exactly "package"
+dnl    AC_PACKAGE_TARNAME, PACKAGE_TARNAME
+dnl       exactly "tarname"
+dnl    AC_PACKAGE_VERSION, PACKAGE_VERSION
+dnl       exactly "version"
+dnl    AC_PACKAGE_STRING, PACKAGE_STRING
+dnl       exactly "package version"
+dnl    AC_PACKAGE_BUGREPORT, PACKAGE_BUG_REPORT
+dnl       exactly "bug-report"
+dnl
+AC_INIT(Spk Library, 0.1, watrous@u.washington.edu, spklib)
+=======
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
+>>>>>>> .r2612
 
 AC_PREREQ(2.61)
 AC_INIT(spk, 0.99, watrous@u.washington.edu)
