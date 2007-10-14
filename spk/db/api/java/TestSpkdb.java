@@ -163,7 +163,7 @@ public class TestSpkdb {
 					 0,
 					 false,
                                          false,
-                                         false);
+                                         0);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
@@ -197,7 +197,7 @@ public class TestSpkdb {
 					      0,
 					      false,
                                               false,
-                                              false);
+                                              0);
 		    b = newerJobId != 0;
 		    s += ": job number " + newerJobId;
 
@@ -218,7 +218,7 @@ public class TestSpkdb {
 					       0,
                                                false,
                                                false,
-                                               false);
+                                               0);
 		    b = newestJobId != 0;
 		    s += ": job number " + newestJobId;
 		    break;
@@ -615,7 +615,7 @@ public class TestSpkdb {
 					 2,
 					 true,
                                          true,
-                                         false);
+                                         0);
 		    b = jobId != 0;
 		    s += ": job number " + jobId;
 		    break;
