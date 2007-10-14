@@ -207,7 +207,7 @@ public abstract class Element implements Cloneable
             super.model = model;
             number = newNumber(Model.elements);
             name = "D" + number;
-            delayTime = new Parameter(name, "TLAG" + number + "=");
+            delayTime = new Parameter("TLAG" + number, "TLAG" + number + "=");
 //            delayTime= "TLAG" + number + "=";
             Model.parameterList.add(delayTime);
         }
@@ -779,6 +779,8 @@ public abstract class Element implements Cloneable
                 double d = Math.sqrt(x*x + y*y);
                 gc2D.drawLine((int)(x*4/d), (int)(y*4/d), (int)(x - x*26/d), (int)(y - y*26/d));
                 gc2D.drawOval(- 4, - 4, 8, 8);
+                if(!errorModel.equals(""))
+                    gc2D.fillOval(- 4, - 4, 8, 8);
             }
             gc2D.translate(-xCenter - x0, -yCenter - y0);
             drawName(gc2D, x0, y0);

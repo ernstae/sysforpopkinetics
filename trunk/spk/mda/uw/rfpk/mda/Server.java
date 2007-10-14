@@ -62,12 +62,12 @@ public class Server {
      * @param jobParent a long representing the id of the parent job.
      * @param isWarmStart a boolean "true" for warm start, "false" for otherwise.
      * @param isMailNotice a boolean "true" for sending end-job mail notice, "false" for otherwise.
-     * @param isParallel a boolean "true" for running the job in parallel mode, "false" for otherwise.
+     * @param nTasks number of sub-tasks in parallel processing or 0 for single processing.
      * @return true if the job submission was successful, false if otherwise.
      */
     public boolean submitJob(String source, String jobAbstract, ArchiveInfo modelInfo, ArchiveInfo dataInfo, 
                              String jobMethodCode, long jobParent, boolean isWarmStart, boolean isMailNotice,
-                             boolean isParallel)
+                             int nTasks)
     {
         String[] messageOut = new String[25];
         messageOut[0] = secret;
@@ -100,7 +100,7 @@ public class Server {
         messageOut[21] = String.valueOf(isWarmStart);
         messageOut[22] = System.getProperty("user.name").replaceAll(" ", "_");
         messageOut[23] = String.valueOf(isMailNotice);
-        messageOut[24] = String.valueOf(isParallel);
+        messageOut[24] = String.valueOf(nTasks);
 
         try
         {

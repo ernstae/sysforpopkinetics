@@ -370,6 +370,27 @@ public class Utility {
 */
     }
     
+    /** Determine if a character sting represents an positive floating point number.
+     * @param s a String object containing the the character string.
+     * @return a boolean, true for the string is an positive floating point number,
+     * false for otherwise.
+     */    
+    public static boolean isPosFloatNumber(String s)
+    {        
+        double d;
+        try
+        {
+            d = Double.parseDouble(s);
+        }
+        catch(NumberFormatException e)
+        {
+            return false;   
+        }
+        if(d <= 0)
+            return false;
+        return true;
+    }
+    
     /** Determine if a character sting represents an positive integer number.
      * @param s a String object containing the character string.
      * @return a boolean, true for the string is an positive integer number,
@@ -1326,12 +1347,96 @@ public class Utility {
         return text;
     }
     
+    /** get the number of sub tasks from source.xml.
+     * @param source the source.xml text.
+     * @param methodCode method code of the job.
+     * @param methodClass method class of the job.
+     * @return number of sub tasks of a parallel job.
+     */
+    public static int findNTasks(String source, String methodCode, String methodClass)
+    {
+        int nTasks = 0;
+        int begin, end;
+        if(methodCode.equals("eh") || methodCode.equals("la"))
+        {
+            begin = source.indexOf(" pop_size=\"", source.indexOf("<pop_analysis ")) + 11;
+            end = source.indexOf("\"", begin);
+            nTasks = Integer.parseInt(source.substring(begin, end));
+        }
+        if(methodClass.equals("le"))
+        {
+            begin = source.indexOf("<in>", source.indexOf("<theta "));
+            end = source.indexOf("</in>", begin);
+            nTasks += Utility.findNAlp(source.substring(begin, end));
+            String text = new String(source);
+            while(text.indexOf("<omega ") != -1)
+            {
+                begin = text.indexOf("<in>", text.indexOf("<omega "));
+                end = text.indexOf("</in>", begin);
+                nTasks += Utility.findNAlp(text.substring(begin, end));
+                text = text.substring(end);
+            }
+            text = new String(source);
+            while(text.indexOf("<sigma ") != -1)
+            {
+                begin = text.indexOf("<in>", text.indexOf("<sigma "));
+                end = text.indexOf("</in>", begin);
+                nTasks += Utility.findNAlp(text.substring(begin, end));
+                text = text.substring(end);
+            }
+        }
+        return nTasks;
+    }
+        
+    private static int findNAlp(String input)
+    {
+        int nAlp = 0;
+        String regExp = "<value";
+        Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+        Matcher matcher = pattern.matcher(input);
+        while(matcher.find())
+            nAlp++;
+        regExp = "<value fixed=\"yes\">";
+        pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+        matcher = pattern.matcher(input);
+        while(matcher.find())
+            nAlp--;
+        return nAlp;
+    }
+    
     /** Test methods.
      * @param args argument not used.
      */    
     public static void main(String[] args)
-    {
-          System.out.println(correctIFConditions("IF((T.GE.0.AND.T.LE.1).OR.(T.EQ.2.AND.T.EQ.3))"));
+    {            
+        String source = "<pop_analysis pop_size=\"25\" sig_digits=\"3\">\n" +
+            "<theta length=\"4\">\n" +
+               "<in>\n" +
+                  "<value fixed=\"no\">5</value>\n" +
+                  "<value fixed=\"no\">500</value>\n" +
+                  "<value fixed=\"no\">3</value>\n" +
+                  "<value fixed=\"no\">200</value>\n" +
+               "</in>\n" +
+            "</theta>\n" +
+            "<omega dimension=\"3\" same_as_previous=\"no\" struct=\"block\">\n" +
+               "<in>\n" +
+                  "<value fixed=\"no\">6</value>\n" +
+                  "<value fixed=\"no\">.13</value>\n" +
+                  "<value fixed=\"no\">.6</value>\n" +
+                  "<value fixed=\"yes\">0</value>\n" +
+                  "<value fixed=\"no\">-.057</value>\n" +
+                  "<value fixed=\"no\">1</value>\n" +
+               "</in>\n" +
+            "</omega>\n" +
+            "<sigma dimension=\"2\" same_as_previous=\"no\" struct=\"diagonal\">\n" +
+               "<in>\n" +
+                  "<value fixed=\"no\">.04</value>\n" +
+                  "<value fixed=\"yes\">.000001</value>\n" +
+               "</in>\n" +
+            "</sigma>";
+        System.out.println(findNTasks(source, "eh", "al"));
+        System.out.println(findNTasks(source, "mc", "le"));
+//        System.out.println(correctIFConditions("IF((T.GE.0.AND.T.LE.1).OR.(T.EQ.2.AND.T.EQ.3))"));
 //        String[] dataLabels = {"ID", "DV", "TIME", "PRED", "A", "S1","ALAG2", "R3N"};
 //        System.out.print(checkDataLabels(dataLabels));
         
