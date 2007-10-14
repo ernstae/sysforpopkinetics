@@ -36,7 +36,7 @@ import uw.rfpk.rcs.Archive;
  * Strings are source, dataset, model archive, job_abstract, model_abstract, model_log, 
  * model_name, model_version, model_id, is_new_model, is_new_model_version, dataset_abstract, 
  * dataset_log, dataset_name, dataset_version, dataset_id, is_new_dataset, is_new_dataset_version,
- * job_method_code, job_parent, is_warm_start, isMailNotice and isParallel.
+ * job_method_code, job_parent, is_warm_start, isMailNotice and number of sub tasks.
  * If the model is new the servlet calls database API method, newModle, to get model_id.
  * If the model is old but the version is new the servlet calls database API methods, getModel
  * and updateModel, to update the model archive.  The servlet does the same operations for the
@@ -122,7 +122,7 @@ public class SubmitJob extends HttpServlet
                 String isWarmStart = messageIn[21];
                 String author = messageIn[22];
                 String isMailNotice = messageIn[23];
-                String isParallel = messageIn[24]; 
+                int nTasks = Integer.parseInt(messageIn[24]);
                 String perlDir = getServletContext().getInitParameter("perlDir");
                 if(modelLog != null && modelLog.equals("")) modelLog = "None";
                 if(datasetLog != null && datasetLog.equals("")) datasetLog = "None";
@@ -258,7 +258,7 @@ public class SubmitJob extends HttpServlet
                                               jobParent,
                                               isWarmStart.equals("true"),
                                               isMailNotice.equals("true"),
-                                              isParallel.equals("true"));
+                                              nTasks);
 
                     
                     if(jobId > 0)
