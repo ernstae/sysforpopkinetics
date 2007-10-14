@@ -128,7 +128,7 @@ public class DesignTool extends javax.swing.JFrame {
         addButton.doClick();
         Reload reload = new Reload(this);
         isInit = false;
-        if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
+        if(!iterator.analysis.equals("population"))
         {
             addButton.setEnabled(false);
             applyButton.setEnabled(false);
@@ -1001,7 +1001,7 @@ public class DesignTool extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
+        if(!iterator.analysis.equals("population"))
         {
             clearButton.doClick();
             setCursor(null);
@@ -1134,7 +1134,7 @@ public class DesignTool extends javax.swing.JFrame {
         addButton.setEnabled(true);
         addButton.doClick();
         isInit = false;
-        if(iterator.analysis.equals("individual") || iterator.analysis.equals("two-stage") || iterator.analysis.equals("nonparametric"))
+        if(!iterator.analysis.equals("population"))
             addButton.setEnabled(false);       
         setRecords();
         setCursor(null);   

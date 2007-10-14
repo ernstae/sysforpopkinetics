@@ -481,7 +481,6 @@ public class Plotter extends JPanel
         try
         {
             printer.print(g2d, format, 0);
-            JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Save Image File");
             fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter());
             fileChooser.addChoosableFileFilter(new MyFilter("jpg"));
@@ -2074,6 +2073,7 @@ public class Plotter extends JPanel
     private int baseX, meanX, medianX;
     private double baselineX;
     private int[][] indPoints;
+    private JFileChooser fileChooser = new JFileChooser();
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

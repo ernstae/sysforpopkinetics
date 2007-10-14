@@ -47,7 +47,7 @@ public class JobInfo extends javax.swing.JFrame {
         this.frame = frame;
         isFirst = true;
         initComponents();
-        jCheckBox1.setEnabled(frame.myName.equals("jiaji"));
+        jCheckBox1.setEnabled(frame.isTester);
         Properties jobInfo = frame.server.getJobInfo(id);
         if(jobInfo == null)
             return;
@@ -1298,9 +1298,16 @@ public class JobInfo extends javax.swing.JFrame {
                                          "Question", JOptionPane.YES_NO_OPTION) == 0)
             isMailNotice = true;
         
+        int nTasks = 0;
+        if(jCheckBox1.isSelected())
+        {
+            String methodClass = ((String[])frame.methodTable.get(methodCode))[1];
+            nTasks = Utility.findNTasks(source, methodCode, methodClass);
+        }
+        
         // submit the warm start job
         frame.server.submitJob(source, jobAbstract, modelArchive, dataArchive, methodCode, id, true, isMailNotice,
-                               jCheckBox1.isSelected());
+                               nTasks);
 
         // Close the dialog
         warmStartDialog.dispose();

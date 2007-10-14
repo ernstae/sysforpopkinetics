@@ -1303,14 +1303,14 @@ public class Diagram extends javax.swing.JPanel {
         delay.name = delayNameTextField.getText();
         if(delayTimeRadioButton.isSelected())
         {
-            if(Utility.isPosIntNumber(delayTimeTextField.getText()))
+            if(Utility.isPosFloatNumber(delayTimeTextField.getText()))
             {
                 delay.delayTime.value = "TLAG" + delay.number + "=" + delayTimeTextField.getText();
                 tool.updateParameterList(delay.delayTime, false);
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Delay time must be a positive integer.",
+                JOptionPane.showMessageDialog(null, "Delay time must be a positive real number.",
                                               "Input Error", JOptionPane.ERROR_MESSAGE);
                 setCursor(null);
                 return;

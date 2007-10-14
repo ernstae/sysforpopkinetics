@@ -4232,7 +4232,7 @@ public class MDAFrame extends JFrame
         jCheckBox1.setSelected(false);
         jCheckBox2.setSelected(false);
         jCheckBox2.setEnabled(jobMethodCode.equals("eh") || jobMethodCode.equals("la") || jobMethodClass.equals("le"));
-        if(!isDeveloper) jCheckBox2.setEnabled(false);
+        if(!isTester) jCheckBox2.setEnabled(false);
         jRadioButton12.setEnabled(false);
         archiveDialog.setSize(300, 380);
         archiveDialog.setVisible(true);    
@@ -4697,9 +4697,15 @@ public class MDAFrame extends JFrame
             jobId = 0;
         }
 
+        int nTasks = 0;
+        if(jCheckBox2.isSelected())
+        {
+            nTasks = Utility.findNTasks(source, jobMethodCode, jobMethodClass);
+        }
+        
         // Submit the job
         boolean ok = server.submitJob(source, jobAbstract, modelArchive, dataArchive, jobMethodCode,
-                                      jobParent, false, jCheckBox1.isSelected(), jCheckBox2.isSelected());
+                                      jobParent, false, jCheckBox1.isSelected(), nTasks);
         
         // Close the dialog
         if(ok) archiveDialog.dispose();
