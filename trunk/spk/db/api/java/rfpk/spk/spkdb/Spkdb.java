@@ -86,7 +86,7 @@ public abstract class Spkdb {
 			      long parent,
                               boolean isWarmStart,
                               boolean isMailNotice,
-                              boolean isParallel)
+                              int nTasks)
 	throws SQLException, SpkdbException, FileNotFoundException
     {
 	long jobId = 0;
@@ -97,7 +97,6 @@ public abstract class Spkdb {
         String sql;
         Blob checkpoint = null;
         int mail = isMailNotice ? 1 : 0;
-        int parallel = isParallel ? 1 : 0;
         if(isWarmStart)
         {
             sql = "select checkpoint from job where job_id=" + parent + ";";
@@ -116,7 +115,7 @@ public abstract class Spkdb {
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
                               + "', ?,'" + methodCode + "'," + parent + "," 
-	                      + startTime + "," + eventTime + ", ?," + mail + "," + parallel + ");";
+	                      + startTime + "," + eventTime + ", ?," + mail + "," + nTasks + ");";
         }
         else
         {
@@ -126,7 +125,7 @@ public abstract class Spkdb {
                   + " values ('" + stateCode + "'," + userId + ", ?," + datasetId
                               + ",'" + datasetVersion + "'," + modelId + ",'" + modelVersion
                               + "', ?,'" + methodCode + "'," + parent + "," 
-	                      + startTime + "," + eventTime + "," + mail + "," + parallel + ");";
+	                      + startTime + "," + eventTime + "," + mail + "," + nTasks + ");";
         }
 	PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, abstraction);
