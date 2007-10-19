@@ -608,6 +608,9 @@ sub reaper {
     # Subtract ntasks of the job from concurrent ntasks
     $concurrent -= $jobid_ntasks{$job_id};
 
+    # Remove the ntasks of the job from jobid_ntasks hash
+    delete($jobid_ntasks{$job_id});
+
     # Change to working directory
 #    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
 #    my $working_dir = "$tmp_dir/$unique_name";
