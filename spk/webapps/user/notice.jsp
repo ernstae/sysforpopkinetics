@@ -42,30 +42,33 @@ author: Jiaji Du
     {
         String pathName = getServletContext().getInitParameter("jnlp_directory") + 
                           "notifyusers.txt";
-        String spkEmail = getServletContext().getInitParameter("emailAddress");
-        String perlDir = getServletContext().getInitParameter("perlDir");
-        String emailList = "";
         file = new File(pathName);
-        reader = new BufferedReader(new FileReader(file));
-        String line, email;
-        while((line = reader.readLine()) != null) {
-            String userEmail = line.trim();
-            if(!userEmail.equals("")) {
-                if(!emailList.equals("")) emailList += ",";
-                emailList += userEmail;
+        if(file.exists())
+        {
+            String spkEmail = getServletContext().getInitParameter("emailAddress");
+            String perlDir = getServletContext().getInitParameter("perlDir");
+            String emailList = "";
+            reader = new BufferedReader(new FileReader(file));
+            String line, email;
+            while((line = reader.readLine()) != null) {
+                String userEmail = line.trim();
+                if(!userEmail.equals("")) {
+                    if(!emailList.equals("")) emailList += ",";
+                    emailList += userEmail;
+                }
             }
+            String subject = "SPK service is now available.";
+            String message = subject + "\n\nThis message was sent by the SPK service provider.";
+            String[] command = {"perl", perlDir + "email.pl", spkEmail, spkEmail, emailList, subject, message};
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
         }
-        String subject = "SPK service is now available.";
-        String message = subject + "\n\nThis message was sent by the SPK service provider.";
-        String[] command = {"perl", perlDir + "email.pl", spkEmail, spkEmail, emailList, subject, message};
-        process = Runtime.getRuntime().exec(command);
-        process.waitFor();
     }
     finally
     {
-        reader.close();
+        if(reader != null) reader.close();
         file.delete();
-        process.destroy();
+        if(process != null) process.destroy();
     }
 %>
 </c:if>

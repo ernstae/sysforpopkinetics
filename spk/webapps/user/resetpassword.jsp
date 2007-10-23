@@ -31,6 +31,14 @@ author: Jiaji Du
     <c:param name="msg" value="You must enter your username and email address." />
   </c:redirect>
 </c:if>
+
+<%-- Check user entered username. --%>
+<c:if test="${param.userName == 'useradmin' || param.userName == 'librarian'}">
+  <c:redirect url="enteremail.jsp" >
+    <c:param name="msg" value="You must enter your username and email address." />
+  </c:redirect>
+</c:if>
+
 <%-- Generate a random character string as a password --%>
 <% char[] pw = new char[8];
    int c = 0;
