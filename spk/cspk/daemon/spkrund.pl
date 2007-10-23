@@ -357,6 +357,9 @@ sub fork_driver {
         $parallel = 0;
         $ntasks = 1;
     }
+    if($pvm eq "off") {
+        $ntasks = 1;
+    }
     my $pid;
 
     # Create a working directory
