@@ -43,7 +43,7 @@
 
 /*
 
-$begin FirstOrderOpt$$
+$begin firstOrderOpt$$
 $latex \newcommand{\B}[1]{{\bf #1}}$$
 $latex \newcommand{\R}[1]{{\rm #1}}$$
 
@@ -474,6 +474,9 @@ To be specific,
 the $th i$$ column is the minimizer of $latex \Lambda_i ( \alpha , b )$$
 with respect to $latex b$$ where $latex \alpha$$ corresponds
 to the optimal value for the fixed effects (population parameters).
+If the optimization of $latex \Lambda_i ( \alpha , b )$$ fails for 
+individual $latex i$$, then the elements of the $th i$$ column of 
+$italic dvecBOut$$ will be set equal to Not a Number (NaN).
 
 $head dvecBStep$$
 This column vector has length $latex n$$ and
@@ -531,6 +534,8 @@ $end
 */
 
 # include <valarray>
+# include <vector>
+# include <sstream>
 # include "quasiNewtonAnyBox.h"
 # include "SpkModel.h"
 # include "DoubleMatrix.h"
@@ -928,6 +933,8 @@ void firstOrderOpt(
 	if( pvecAlpOut )
 		*pvecAlpOut = dvecAlpOut;
 
+	std::vector<int> postHocFailedIndex;
+
 	// Using the FO approximation for the fixed effects alpha, 
 	// determine each individuals random effects b_i
 	// by optimizing the original model (not the FO approximation)
@@ -983,21 +990,39 @@ void firstOrderOpt(
 			}
 			catch( SpkException& e )
 			{
-				throw e.push(
-					SpkError::SPK_OPT_ERR,
-					"Individual level optimization failed.",
-					__LINE__, __FILE__);
+				// If the optimization of Lambda_i
+				// failed, then check to see if there
+				// were any standard errors.
+				if ( e.find( SpkError::SPK_STD_ERR ) <  0 )
+				{
+					// If no standard errors, then
+					// set the output parameters
+					// equal to Not a Number (NaN).
+					double zero = 0.0;
+					dvecBOut.fill( zero / zero );
+
+					// Add this individual's index
+					// to the list.
+					postHocFailedIndex.push_back( i );
+				}
+				else
+				{
+					throw e.push(
+						SpkError::SPK_OPT_ERR,
+						"The post-hoc individual level optimization failed.",
+						__LINE__, __FILE__);
+				}
 			}
 			catch( const std::exception& e )
 			{
 				throw SpkException(e,
-					"A standard exception was thrown during the individual level optimization.", 
+					"A standard exception was thrown during the post-hoc individual level optimization.", 
 					__LINE__, __FILE__);
 			}
 			catch( ... )
 			{
 				throw SpkException(SpkError::SPK_UNKNOWN_OPT_ERR,
-					"An exception of unknown type was thrown during the individual level optimization.", 
+					"An exception of unknown type was thrown during the post-hoc individual level optimization.", 
 					__LINE__, __FILE__);
 			}
 			double *bmatOut  = pmatBOut->data();
@@ -1005,6 +1030,24 @@ void firstOrderOpt(
 			for(j = 0; j < n; j++)
 				bmatOut[j + n * i] = bOut[j];
 		}
+	}
+	// issue a warning if post-hoc optimizations failed
+	int nPostHocFailed = postHocFailedIndex.size();
+	if( postHocFailedIndex.size() > 0 )
+	{
+		std::ostringstream message;
+		int commaCounter = 0;
+		int k;
+		message << "The post-hoc individual level optimization failed for the following \nindividuals:  ";
+		for ( k = 0; k < nPostHocFailed; k++ )
+		{
+			message << postHocFailedIndex[k] + 1 << ( commaCounter++ < nPostHocFailed - 1 ? ", " : "" );
+		}
+		message << ".";
+		WarningsManager::addWarning(
+			message.str(),
+			__LINE__,
+			__FILE__ );
 	}
 	// objective
 	double  dLtildeOut;

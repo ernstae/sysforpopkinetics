@@ -42,6 +42,7 @@ private:
     void firstOrderOptAnalyticTest(void);
     void firstOrderOptExampleTest(void);
     void firstOrderOptBackupTest(void);
+    void firstOrderOptPostHocFailsTest(void);
     void firstOrderOptRestartTest(void);
     void firstOrderOptZeroIterationsTest(void);
 public: 

@@ -795,8 +795,20 @@ SpkError::SpkError( const std::exception& e, const char* mess, unsigned int line
     strcpy(_filename, file);
     strcpy(_message, mess);
     strcat(_message, "\n");
-    strcat(_message, e.what());
     strcat(_message, "\n");
+
+    if( typeid(e) == typeid(bad_alloc) )
+      strcat(_message, "The maximum amount of computer memory was exceeded.");
+    else if( typeid(e) == typeid(bad_cast) )
+      strcat(_message, "A C++ dynamic cast failed.");
+    else if( typeid(e) == typeid(bad_exception) )
+      strcat(_message, "An uncaught exception was thrown.");
+    else if( typeid(e) == typeid(bad_typeid) )
+      strcat(_message, "An error occured determining a C++ type.");
+    else if( typeid(e) == typeid(ios_base::failure) )
+      strcat(_message, "An input or output error occurred.");
+    else
+      strcat(_message, "Unknown standard exception.");
   }
   catch( ... )
     {
@@ -1102,6 +1114,9 @@ const SpkError::ErrorMap SpkError::fillErrorMap()
   tmpMap.insert( ErrorMap::value_type(SPK_NOT_READY_WARM_START_ERR, 
 				      "SPK_NOT_READY_WARM_START_ERR") );
 
+  tmpMap.insert( ErrorMap::value_type(SPK_ODE_SOLN_ERR, 
+				      "SPK_ODE_SOLN_ERR") );
+
   tmpMap.insert( ErrorMap::value_type(SPK_MODEL_NOT_IMPLEMENTED_ERR, 
 				      "SPK_MODEL_NOT_IMPLEMENTED_ERR") );
   tmpMap.insert( ErrorMap::value_type(SPK_MODEL_SET_IND_ERR, 
@@ -1112,6 +1127,8 @@ const SpkError::ErrorMap SpkError::fillErrorMap()
 				      "SPK_MODEL_SET_INDEX_ERR") );
   tmpMap.insert( ErrorMap::value_type(SPK_MODEL_DATA_MEAN_ERR, 
 				      "SPK_MODEL_DATA_MEAN_ERR") );
+  tmpMap.insert( ErrorMap::value_type(SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR, 
+				      "SPK_MODEL_DATA_MEAN_NAN_OR_INF_ERR") );
   tmpMap.insert( ErrorMap::value_type(SPK_MODEL_DATA_MEAN_POP_ERR, 
 				      "SPK_MODEL_DATA_MEAN_POP_ERR") );
   tmpMap.insert( ErrorMap::value_type(SPK_MODEL_DATA_MEAN_IND_ERR, 
@@ -1159,6 +1176,9 @@ const SpkError::ErrorMap SpkError::fillErrorMap()
   tmpMap.insert( ErrorMap::value_type(SPK_INSUFFICIENT_MEM_ERR,"SPK_INSUFFICIENT_MEM_ERR") ); // longest =: 25
 
   tmpMap.insert( ErrorMap::value_type(SPK_XMLDOM_ERR,         "SPK_XMLDOM_ERR") );
+
+
+  tmpMap.insert( ErrorMap::value_type(SPK_NON_PAR_ERR,        "SPK_NON_PAR_ERR") );
 
   tmpMap.insert( ErrorMap::value_type(SPK_UNKNOWN_ERR,        "SPK_UNKNOWN_ERR") );
 
