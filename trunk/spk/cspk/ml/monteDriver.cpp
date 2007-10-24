@@ -204,10 +204,11 @@ $end
 # define monteDriverDebug 0
 
 enum { SUCCESSFUL             = 0,
-	OTHER_KNOWN_ERROR      = 1,
+	UNKNOWN_ERROR          = 1,
 	UNKNOWN_FAILURE        = 2,
 	PVM_FAILURE            = 3,
-        USER_ABORT             = 4,
+	USER_ABORT             = 4,
+	FILE_ACCESS_ERROR      = 10,
 	USER_INPUT_ERROR       = 14,
 	FILE_ACCESS_FAILURE    = 100
 };
@@ -392,7 +393,7 @@ namespace {
                         if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
                         {
                             pvm_exit();
-                            exit(UNKNOWN_FAILURE);
+                            exit(UNKNOWN_ERROR);
                         }
 		}
 	}
@@ -439,7 +440,7 @@ namespace {
                         if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
                         {
                             pvm_exit();
-                            exit(UNKNOWN_FAILURE);
+                            exit(UNKNOWN_ERROR);
                         }
 		}
 		pop_obj_stderror = sqrt( pop_obj_stderror);
@@ -580,8 +581,8 @@ int main(int argc, const char *argv[])
 		if(chdir(working_dir) != 0)
 		{
 			OutputErrorMsg( "could not change working directory" );
-			finish(FILE_ACCESS_FAILURE );
-			return FILE_ACCESS_FAILURE;
+			finish(FILE_ACCESS_ERROR );
+			return FILE_ACCESS_ERROR;
 		}
 	}
 	bool isPvmParallel = argc > 2 && strcmp(argv[2], "parallel") == 0;
@@ -734,17 +735,29 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
-		return USER_INPUT_ERROR;
+		return UNKNOWN_ERROR;
+	}
+	catch( const std::exception& stde )
+	{       SpkException e( stde,
+			"DataSet or Pred constructor",
+			__LINE__,
+			__FILE__
+		);
+		OutputSpkException( e );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		fout.close();
+		fclose( stderr );
+		return UNKNOWN_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("DataSet or Pred constructor");
-		if(isUsingPvm) finish( UNKNOWN_FAILURE );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose( stderr );
-		return UNKNOWN_FAILURE;
+		return UNKNOWN_ERROR;
 	}
 
 	const int nPop = set->getPopSize();
@@ -809,17 +822,29 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
-		return USER_INPUT_ERROR;
+		return UNKNOWN_ERROR;
+	}
+	catch( const std::exception& stde )
+	{       SpkException e( stde,
+			"Model constructor",
+			__LINE__,
+			__FILE__
+		);
+		OutputSpkException( e );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		fout.close();
+		fclose(stderr);
+		return UNKNOWN_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("Model constructor");
-		if(isUsingPvm) finish( UNKNOWN_FAILURE );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
-		return UNKNOWN_FAILURE;
+		return UNKNOWN_ERROR;
 	}
 
 	// get the input value for the fixed effects as a single vector
@@ -898,9 +923,9 @@ int main(int argc, const char *argv[])
                 {
                     if(exit_val[aid] == SpkPvmUnreported)
                     {
-                        stop("an alpha task exited without an exit value", UNKNOWN_FAILURE);
+                        stop("an alpha task exited without an exit value", UNKNOWN_ERROR);
                         fclose(stderr);
-                        return UNKNOWN_FAILURE;
+                        return UNKNOWN_ERROR;
                     }
                     ndone++;
                 }
@@ -952,7 +977,7 @@ int main(int argc, const char *argv[])
 				alp         = alpIn;
 				alp[i]      = alp[i] + step;
 
-				// numericall integral approximation
+				// numerical integral approximation
 				if( numeric ) NumericIntegralAll(
 					pop_obj_estimate, 
 					pop_obj_stderror,
@@ -989,22 +1014,34 @@ int main(int argc, const char *argv[])
 	}
 	catch( SpkException& e )
 	{       e.push(SpkError::SPK_USER_INPUT_ERR,
-			"Monte Carlo or numericall integration",
+			"Monte Carlo or numerical integration",
 			__LINE__,
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
-		return USER_INPUT_ERROR;
+		return UNKNOWN_ERROR;
+	}
+	catch( const std::exception& stde )
+	{       SpkException e( stde,
+			"Monte Carlo or numerical integration",
+			__LINE__,
+			__FILE__
+		);
+		OutputSpkException( e );
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		fout.close();
+		fclose(stderr);
+		return UNKNOWN_ERROR;
 	}
 	catch( ... )
-	{	OutputErrorMsg("Monte Carlo or numericall integration");
-		if(isUsingPvm) finish( UNKNOWN_FAILURE );
+	{	OutputErrorMsg("Monte Carlo or numerical integration");
+		if(isUsingPvm) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
-		return UNKNOWN_FAILURE;
+		return UNKNOWN_ERROR;
 	}
     }
 

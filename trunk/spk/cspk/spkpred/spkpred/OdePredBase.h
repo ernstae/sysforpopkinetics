@@ -212,8 +212,6 @@ public:
     // reset if it appears in the data record.
     pcmt = -9999;
 
-    // Set this to indicate the warning has not yet been issued.
-   issuedStartTimeWarning = false;
   }
 
 
@@ -1691,7 +1689,7 @@ private:
   std::vector<int>   turnOnOrOffComp;             ///< Compartments to be turned on or off.
   std::vector<Value> turnOnOrOffTime;             ///< Times to turn the compartments on or off.
 
-  bool issuedStartTimeWarning;
+  static bool issuedStartTimeWarning;
 
 
   //------------------------------------------------------------
@@ -2603,7 +2601,7 @@ protected:
       if ( !issuedStartTimeWarning )
       {
         WarningsManager::addWarning( 
-          "The integration of the ordinary differential equations begins at the first time available for an individual.  The starting time for the model predictions is not TIME=0 for at least one individual in this data set. If this is not what was intended, adding a data point at TIME=0 will solve this problem.",
+          "The integration of the ordinary differential equations begins at the first \ntime available for an individual.  The starting time for the model predictions \nis not TIME = 0 for at least one individual in this data set. If this is not \nwhat was intended, adding a data point at TIME = 0 will solve this problem.",
           __LINE__,
           __FILE__ );
     
@@ -3431,4 +3429,8 @@ private:
   OdePredBase( const OdePredBase& );
   OdePredBase & operator=( const OdePredBase& );
 };
+
+template <class Value>
+bool OdePredBase<Value>::issuedStartTimeWarning = false;
+
 #endif

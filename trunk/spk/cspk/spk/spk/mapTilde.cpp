@@ -1092,7 +1092,7 @@ void mapTilde(
     if( !converged )
     {
         throw SpkException(
-                SpkError::SPK_TOO_MANY_ITER, 
+                SpkError::SPK_OPT_ERR, 
                 "Solution of the individual level first order necessary conditions failed \nbecause the maximum number of iterations was performed without convergence.",
                 __LINE__, 
                 __FILE__);
