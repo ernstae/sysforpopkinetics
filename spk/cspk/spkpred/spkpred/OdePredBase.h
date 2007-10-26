@@ -1809,6 +1809,27 @@ protected:
       // Get the data items for the current data record.
       readDataRecord( i, j );
 
+      // Evaluate the current values for the PK parameters because the
+      // rates and durations of zero-order bolus doses can be set in
+      // the PK block.
+      evalPk(
+        thetaOffset,
+        thetaLen,
+        etaOffset,
+        etaLen,
+        i,
+        j,
+        indepVar );
+
+      // Initially assume that the data record does not have an ODE
+      // solution.
+      dataRecHasOdeSoln[j] = false;
+
+
+      //--------------------------------------------------------
+      // Do some miscellaneous sanity checks.
+      //--------------------------------------------------------
+
       // Check that the compartment number data item is valid.
       if ( cmt > nComp )
       {
@@ -1830,21 +1851,22 @@ protected:
           __FILE__ );
       }
 
-      // Evaluate the current values for the PK parameters because the
-      // rates and durations of zero-order bolus doses can be set in
-      // the PK block.
-      evalPk(
-        thetaOffset,
-        thetaLen,
-        etaOffset,
-        etaLen,
-        i,
-        j,
-        indepVar );
+      // Check that the mdv and evid values are consistent.
+      if ( mdv == 1 && evid == OBSERV_EVENT )
+      {
+        ostringstream message;
 
-      // Initially assume that the data record does not have an ODE
-      // solution.
-      dataRecHasOdeSoln[j] = false;
+        message << "The " << intToOrdinalString( j, ZERO_IS_FIRST_INT )
+                << " data record for the "
+                << intToOrdinalString( i, ZERO_IS_FIRST_INT )
+                            << " individual has contradictory \nMDV and EVID values.  The MDV value is 1, which indicates this \nis not an observation record.  The EVID value is 0, however, \nwhich indicates this is an observation record.";
+
+        throw SpkException(
+          SpkError::SPK_USER_INPUT_ERR, 
+          message.str().c_str(),
+          __LINE__, 
+          __FILE__ );
+      }
 
 
       //--------------------------------------------------------
