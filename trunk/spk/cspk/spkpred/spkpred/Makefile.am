@@ -1,4 +1,5 @@
 # Static library
+
 lib_LIBRARIES = libspkpred.a 
 
 INST_BASE = /usr/local
@@ -28,7 +29,6 @@ AM_CXXFLAGS += -pg -Dspk_profiling $(CXX_FLAGS_64_BIT)
 endif
 
 libspkpred_a_SOURCES = \
-	calcGroebnerBasis.c \
 	Cov.cpp \
 	DiagCov.cpp \
 	DiagCovBase.cpp \
@@ -43,7 +43,6 @@ libspkpred_a_SOURCES = \
 	PopPredModelBase.cpp \
 	predNonparamMethod.cpp \
 	predTwoStageMethod.cpp \
-	calcGroebnerBasis.h \
 	Cov.h \
 	DiagCov.h \
 	DiagCovBase.h \
@@ -51,7 +50,6 @@ libspkpred_a_SOURCES = \
 	FullCovBase.h \
 	BlkDiagCov.h \
 	BlkDiagCovBase.h \
-	IdentPredBase.h \
 	IndPredModel.h \
 	IndPredModelBase.h \
 	isEqual.h \
@@ -63,9 +61,13 @@ libspkpred_a_SOURCES = \
 	predNonparamMethod.h \
 	predTwoStageMethod.h \
 	$(top_builddir)/config.h
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+#	calcGroebnerBasis.h \
+#	calcGroebnerBasis.c \
+#	IdentPredBase.h \
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
 
 pkginclude_HEADERS = \
-	calcGroebnerBasis.h \
 	Cov.h \
 	DiagCov.h \
 	DiagCovBase.h \
@@ -73,7 +75,6 @@ pkginclude_HEADERS = \
 	FullCovBase.h \
 	BlkDiagCov.h \
 	BlkDiagCovBase.h \
-	IdentPredBase.h \
 	IndPredModel.h \
 	IndPredModelBase.h \
 	isEqual.h \
@@ -84,4 +85,8 @@ pkginclude_HEADERS = \
 	PredBase.h \
 	predNonparamMethod.h \
 	predTwoStageMethod.h
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+#	calcGroebnerBasis.h \
+#	IdentPredBase.h \
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
 
