@@ -43,25 +43,22 @@ AM_LDFLAGS  = \
 	-lm \
 	-lcppunit \
 	-lxerces-c \
-	-lcln \
 	-lginac \
-	-lbad \
-	-lbap \
-	-lbav \
-	-lba0 \
 	-lgsl \
 	-lgslcblas \
 	-lnon_par \
 	-lmat2cpp \
 	-lpvm3
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+#	-lcln \
+#	-lbad -lbap -lbav -lba0 \
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
 
 testall_SOURCES = \
-	calcGroebnerBasisTest.cpp \
 	compareToKnown.cpp \
 	DiagCovTest.cpp \
 	FullCovTest.cpp \
 	BlkDiagCovTest.cpp \
-	IdentPredBaseTest.cpp \
 	IndPredModelTest.cpp \
 	IndPredModelBaseTest.cpp \
 	OdeBreakTest.cpp \
@@ -71,12 +68,10 @@ testall_SOURCES = \
 	predNonparamMethodTest.cpp \
 	predTwoStageMethodTest.cpp \
 	testall.cpp \
-	calcGroebnerBasisTest.h \
 	compareToKnown.h \
 	DiagCovTest.h \
 	FullCovTest.h \
 	BlkDiagCovTest.h \
-	IdentPredBaseTest.h \
 	IndPredModelTest.h \
 	IndPredModelBaseTest.h \
 	OdeBreakTest.h \
@@ -86,14 +81,19 @@ testall_SOURCES = \
 	predNonparamMethodTest.h \
 	predTwoStageMethodTest.h \
 	$(top_builddir)/config.h
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+#	calcGroebnerBasisTest.cpp \
+#	IdentPredBaseTest.cpp \
+#	calcGroebnerBasisTest.h \
+#	IdentPredBaseTest.h \
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+
 
 pkginclude_HEADERS = \
-	calcGroebnerBasisTest.h \
 	compareToKnown.h \
 	DiagCovTest.h \
 	FullCovTest.h \
 	BlkDiagCovTest.h \
-	IdentPredBaseTest.h \
 	IndPredModelTest.h \
 	IndPredModelBaseTest.h \
 	OdeBreakTest.h \
@@ -103,3 +103,8 @@ pkginclude_HEADERS = \
 	predNonparamMethodTest.h \
 	predTwoStageMethodTest.h \
 	@top_builddir@/config.h
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+#	calcGroebnerBasisTest.h \
+#	IdentPredBaseTest.h \
+# [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+

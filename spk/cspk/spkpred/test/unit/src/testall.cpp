@@ -4,13 +4,15 @@
 #include <cppunit/TextTestResult.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include "calcGroebnerBasisTest.h"
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+//#include "calcGroebnerBasisTest.h"
 #include "DiagCovTest.h"
 #include "FullCovTest.h"
 #include "BlkDiagCovTest.h"
 # if 0
 // Mitch will revisit this (generates failure in test system)
-#include "IdentPredBaseTest.h"
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+//#include "IdentPredBaseTest.h"
 # endif
 #include "IndPredModelTest.h"
 #include "IndPredModelBaseTest.h"
@@ -42,13 +44,15 @@ int main( int argc, const char * argv[] )
   map<string, CppUnit::Test*> master_list_of_tests;
   vector<CppUnit::Test*> tests_to_be_executed;
 
-  master_list_of_tests[ "calcGroebnerBasisTest" ]     = calcGroebnerBasisTest   ::suite();
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+//  master_list_of_tests[ "calcGroebnerBasisTest" ]     = calcGroebnerBasisTest   ::suite();
   master_list_of_tests[ "DiagCovTest" ]               = DiagCovTest             ::suite();
   master_list_of_tests[ "FullCovTest" ]               = FullCovTest             ::suite();
   master_list_of_tests[ "BlkDiagCovTest" ]            = BlkDiagCovTest          ::suite();
 # if 0
 // Mitch will revisit this (generates failure in test system)
-  master_list_of_tests[ "IdentPredBaseTest" ]         = IdentPredBaseTest       ::suite();
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+//  master_list_of_tests[ "IdentPredBaseTest" ]         = IdentPredBaseTest       ::suite();
 # endif
   master_list_of_tests[ "IndPredModelTest" ]          = IndPredModelTest        ::suite();
   master_list_of_tests[ "IndPredModelBaseTest" ]      = IndPredModelBaseTest    ::suite();
