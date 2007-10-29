@@ -12,7 +12,8 @@
 #include "ind_simTest.h"
 #include "ind_simNoEstTest.h"
 #include "ind_fixedParaTest.h"
-#include "ind_identTest.h"
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+//#include "ind_identTest.h"
 #include "pop_basicTest.h"
 #include "pop_fixedParaTest.h"
 #include "pop_blockDiagCovTest.h"
@@ -99,7 +100,8 @@ int main( int argc, const char * argv[] )
   master[ "ind_fixedParaTest" ] = ind_fixedParaTest::suite();
 
   // test for NonmemTranslator: ability to handle individual identifiability
-  master[ "ind_identTest" ] = ind_identTest::suite();
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+//  master[ "ind_identTest" ] = ind_identTest::suite();
 
   // test for NonmemTranslator: ability to handle fixed parameters (not fixed effects)
   master[ "pop_fixedParaTest" ] = pop_fixedParaTest::suite();

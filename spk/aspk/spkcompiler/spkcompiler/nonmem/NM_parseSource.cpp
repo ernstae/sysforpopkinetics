@@ -534,7 +534,13 @@ void NonmemTranslator::parseSource()
   
   if( myIsIdent )
     {
-      generateIdentDriver();
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+//      generateIdentDriver();
+// [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
+      throw SpkCompilerException( SpkCompilerError::ASPK_PROGRAMMER_ERR, 
+        "The identifiability capabilities have been removed from SPK.",
+        __LINE__,
+        __FILE__ );
     }
   else if( myIsEstimate || myIsSimulate )
     {
