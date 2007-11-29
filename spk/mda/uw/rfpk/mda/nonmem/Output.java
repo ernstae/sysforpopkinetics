@@ -26,7 +26,7 @@ import java.util.Properties;
  * @author  Jiaji Du
  */
 public class Output {
-    
+            
     /** Creates a new instance of Output. */
     public Output() {
     }
@@ -103,6 +103,8 @@ public class Output {
     public String[][][] stdErrOmega = null;
     /** The standard error of SIGMA. */
     public String[][][] stdErrSigma = null;
+    /** The standard error vector. */
+    public String[] stdErrVector = null;
     /** The covariance matrix. */
     public String[][] covariance = null;
     /** The correlation matrix. */

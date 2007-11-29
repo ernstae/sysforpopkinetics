@@ -1456,8 +1456,6 @@ public class JobInfo extends javax.swing.JFrame {
                 frame.file = null;
             }
         }
-        else
-            JOptionPane.showMessageDialog(null, "Report was not found."); 
         setCursor(null);        
     }
     

@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -75,14 +76,14 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(2);
         jTextArea1.setWrapStyleWord(true);
-        jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextArea1KeyTyped(evt);
-            }
-        });
         jTextArea1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTextArea1MouseClicked(evt);
+            }
+        });
+        jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextArea1KeyTyped(evt);
             }
         });
 
@@ -97,7 +98,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 
         jTextPane1.setBackground(new java.awt.Color(238, 238, 238));
         jTextPane1.setEditable(false);
-        jTextPane1.setText("Enter the title of the problem into the following text area.  \nOnly the first 72 characters of the text are used. ");
+        jTextPane1.setText("Enter the title of the problem into the following text area.  \nA maximum of 72 characters, including spaces, are allowed. ");
         jTextPane1.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -120,6 +121,11 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
             jTextArea1.setText("");
             highlighter.removeAllHighlights();
             isHighlight = false;
+        }
+        if(jTextArea1.getText().length() > 71)
+        {
+            evt.consume();
+            Toolkit.getDefaultToolkit().beep();
         }
     }//GEN-LAST:event_jTextArea1KeyTyped
     

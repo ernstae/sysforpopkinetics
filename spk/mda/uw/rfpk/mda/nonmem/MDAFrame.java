@@ -576,6 +576,13 @@ public class MDAFrame extends JFrame
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(jLabel3, gridBagConstraints);
 
+        jTextField1.setColumns(20);
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField1KeyTyped(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -601,6 +608,12 @@ public class MDAFrame extends JFrame
         jScrollPane8.setPreferredSize(new java.awt.Dimension(260, 48));
         jTextArea8.setLineWrap(true);
         jTextArea8.setRows(3);
+        jTextArea8.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextArea8KeyTyped(evt);
+            }
+        });
+
         jScrollPane8.setViewportView(jTextArea8);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -709,6 +722,12 @@ public class MDAFrame extends JFrame
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel3.add(jLabel6, gridBagConstraints);
 
+        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField4KeyTyped(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -734,6 +753,12 @@ public class MDAFrame extends JFrame
         jTextArea9.setLineWrap(true);
         jTextArea9.setRows(3);
         jTextArea9.setBorder(null);
+        jTextArea9.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextArea9KeyTyped(evt);
+            }
+        });
+
         jScrollPane9.setViewportView(jTextArea9);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -874,6 +899,12 @@ public class MDAFrame extends JFrame
         jScrollPane10.setPreferredSize(new java.awt.Dimension(260, 48));
         jTextArea10.setLineWrap(true);
         jTextArea10.setRows(3);
+        jTextArea10.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextArea10KeyTyped(evt);
+            }
+        });
+
         jScrollPane10.setViewportView(jTextArea10);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -884,7 +915,6 @@ public class MDAFrame extends JFrame
 
         jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 12));
         jCheckBox2.setText("Run the job in parallel computation mode");
-        jCheckBox2.setActionCommand("Run the job in parallel computation mode");
         jCheckBox2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jCheckBox2.setEnabled(false);
         jCheckBox2.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -2420,6 +2450,46 @@ public class MDAFrame extends JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jTextArea10KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea10KeyTyped
+        if(jTextArea10.getText().length() == 100)
+        {
+            evt.consume();
+            Toolkit.getDefaultToolkit().beep();
+        }
+    }//GEN-LAST:event_jTextArea10KeyTyped
+
+    private void jTextArea9KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea9KeyTyped
+        if(jTextArea9.getText().length() == 100)
+        {
+            evt.consume();
+            Toolkit.getDefaultToolkit().beep();
+        }       
+    }//GEN-LAST:event_jTextArea9KeyTyped
+
+    private void jTextArea8KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea8KeyTyped
+        if(jTextArea8.getText().length() == 100)
+        {
+            evt.consume();
+            Toolkit.getDefaultToolkit().beep();
+        }  
+    }//GEN-LAST:event_jTextArea8KeyTyped
+
+    private void jTextField4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyTyped
+        if(jTextField4.getText().length() == 20)
+        {
+            evt.consume();
+            Toolkit.getDefaultToolkit().beep();
+        }    
+    }//GEN-LAST:event_jTextField4KeyTyped
+
+    private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
+        if(jTextField1.getText().length() == 20)
+        {
+            evt.consume();
+            Toolkit.getDefaultToolkit().beep();
+        }    
+    }//GEN-LAST:event_jTextField1KeyTyped
+    
     private void paramInMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paramInMenuActionPerformed
         if(output != null && output.nonparamInTheta != null && output.nonparamInOmega != null)
             NonparamShow.initTable(this, output);
@@ -4598,11 +4668,7 @@ public class MDAFrame extends JFrame
                 
         // Collect model archive information 
         modelArchive.name = jTextField1.getText();
-        if(modelArchive.name.length() > 20)
-            modelArchive.name = modelArchive.name.substring(0, 20);
-        modelArchive.description = jTextArea8.getText(); 
-        if(modelArchive.description.length() > 100)
-            modelArchive.description = modelArchive.description.substring(0, 100);        
+        modelArchive.description = jTextArea8.getText();        
         modelArchive.version = "1." + jTextField3.getText();
         modelArchive.isNewArchive = jRadioButton1.isSelected(); 
         modelArchive.isNewVersion = jRadioButton2.isSelected();
@@ -4612,26 +4678,36 @@ public class MDAFrame extends JFrame
         // Check input errors
         if(modelArchive.name.equals(""))
         {
-            JOptionPane.showMessageDialog(null, "The model name is requried",  
+            JOptionPane.showMessageDialog(null, "The model name is requried.",  
                                           "Input Error",            
                                           JOptionPane.ERROR_MESSAGE);                 
             return; 
-        }            
+        }
+        if(modelArchive.name.length() > 20)
+        {
+            JOptionPane.showMessageDialog(null, "The model name is too long.",  
+                                          "Input Error",            
+                                          JOptionPane.ERROR_MESSAGE);                 
+            return; 
+        }  
+        if(modelArchive.description.length() > 100)
+        {
+            JOptionPane.showMessageDialog(null, "The model description is too long.",  
+                                          "Input Error",            
+                                          JOptionPane.ERROR_MESSAGE);                 
+            return;
+        }
         if(modelArchive.version.equals(""))
         {
-            JOptionPane.showMessageDialog(null, "The model version is requried",  
+            JOptionPane.showMessageDialog(null, "The model version is requried.",  
                                           "Input Error",            
                                           JOptionPane.ERROR_MESSAGE);                 
             return; 
         }        
 
         // Collect data archive information 
-        dataArchive.name = jTextField4.getText();
-        if(dataArchive.name.length() > 20)
-            dataArchive.name = dataArchive.name.substring(0, 20);        
-        dataArchive.description = jTextArea9.getText(); 
-        if(dataArchive.description.length() > 100)
-            dataArchive.description = dataArchive.description.substring(0, 100);        
+        dataArchive.name = jTextField4.getText();    
+        dataArchive.description = jTextArea9.getText();     
         dataArchive.version = "1." + jTextField6.getText();
         dataArchive.isNewArchive = jRadioButton4.isSelected(); 
         dataArchive.isNewVersion = jRadioButton5.isSelected();
@@ -4645,10 +4721,24 @@ public class MDAFrame extends JFrame
                                           "Input Error",            
                                           JOptionPane.ERROR_MESSAGE);
             return;
-        }            
+        }
+        if(dataArchive.name.length() > 20)
+        {
+            JOptionPane.showMessageDialog(null, "The dataset name is too long.",  
+                                          "Input Error",            
+                                          JOptionPane.ERROR_MESSAGE);                 
+            return; 
+        }  
+        if(dataArchive.description.length() > 100)
+        {
+            JOptionPane.showMessageDialog(null, "The dataset description is too long.",  
+                                          "Input Error",            
+                                          JOptionPane.ERROR_MESSAGE);                 
+            return;
+        }
         if(dataArchive.version.equals(""))
         {
-            JOptionPane.showMessageDialog(null, "The dataset version is requried",  
+            JOptionPane.showMessageDialog(null, "The dataset version is requried.",  
                                           "Input Error",            
                                           JOptionPane.ERROR_MESSAGE);                 
             return;

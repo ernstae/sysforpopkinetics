@@ -48,29 +48,35 @@ public class XMLReader
      * @param text a Sting object containing three xml documents: spkjob, spkreport and spksource.
      * @param output an Output object to hold output information.
      */
-    public XMLReader(String text, Output output) 
+    public XMLReader(String text, Output output, boolean... isReportOnly)
     {
         this.output = output;
         
         // Get the XML documents as String objects
         int indexReport = text.lastIndexOf("<?xml ", text.indexOf("<spkreport"));
         int indexSource = text.lastIndexOf("<?xml ", text.indexOf("<spksource"));
-        String job = text.substring(0, indexReport);
-        String report = text.substring(indexReport, indexSource);
-        String source = text.substring(indexSource);
-//        int index1 = text.indexOf("<spkreport");
-//        int index2 = text.indexOf("<spksource");
-//        String job = text.substring(0, index1 - 22);
-//        String report = text.substring(index1 - 22, index2 - 22);
-//        String source = text.substring(index2 - 22);  
+        String job = "";
+        String report = "";
+        String source = "";
+        if(isReportOnly.length == 0 || !isReportOnly[0])
+        {
+            job = text.substring(0, indexReport);
+            report = text.substring(indexReport, indexSource);
+            source = text.substring(indexSource);
+        }
         try
         {
             // Parse the XML documents
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            docJob = builder.parse(new InputSource(new ByteArrayInputStream(job.getBytes())));
-            docReport = builder.parse(new InputSource(new ByteArrayInputStream(report.getBytes())));
-            docSource = builder.parse(new InputSource(new ByteArrayInputStream(source.getBytes())));
+            if(isReportOnly.length == 0 || !isReportOnly[0])
+            {
+                docJob = builder.parse(new InputSource(new ByteArrayInputStream(job.getBytes())));
+                docReport = builder.parse(new InputSource(new ByteArrayInputStream(report.getBytes())));
+                docSource = builder.parse(new InputSource(new ByteArrayInputStream(source.getBytes())));
+            }
+            else
+                docReport = builder.parse(new InputSource(new ByteArrayInputStream(text.getBytes())));
 //            DOMParser parser = new DOMParser(); 
 //            parser.parse(new InputSource(new ByteArrayInputStream(job.getBytes()))); 
 //            docJob = parser.getDocument();            
@@ -98,11 +104,14 @@ public class XMLReader
             return;            
         }
         
-        // Get job
-        getJob();
+        if(indexSource != -1)
+        {
+            // Get job
+            getJob();
         
-        // Get source
-        getSource();
+            // Get source
+            getSource();
+        }
         
         // Get report
         getReport();
@@ -340,6 +349,7 @@ public class XMLReader
         NodeList pop_analysis_resultList = spkreport.getElementsByTagName("pop_analysis_result");
         if(pop_analysis_resultList.getLength() > 0)
         {
+            output.analysis = "population";
             Element pop_analysis_result = (Element)pop_analysis_resultList.item(0);
             getPopEstimationResult(pop_analysis_result);
             NodeList stat_resultList = pop_analysis_result.getElementsByTagName("pop_stat_result");
@@ -419,6 +429,7 @@ public class XMLReader
         NodeList ind_analysis_resultList = spkreport.getElementsByTagName("ind_analysis_result");
         if(ind_analysis_resultList.getLength() > 0)
         {
+            output.analysis = "individual";
             Element ind_analysis_result = (Element)ind_analysis_resultList.item(0);
             getIndEstimationResult(ind_analysis_result);
             NodeList stat_resultList = ind_analysis_result.getElementsByTagName("ind_stat_result");     
@@ -558,7 +569,7 @@ public class XMLReader
         String[] rows = ((Element)list.item(0)).getFirstChild().getNodeValue().trim().split("\n");
         output.nonparamInTheta = new String[rows.length][];
         for(int i = 0; i < rows.length; i++)
-            output.nonparamInTheta[i] = rows[i].replaceAll("nan", "NaN").replaceAll("inf", "Infinity").split(",");
+            output.nonparamInTheta[i] = rows[i].replaceAll("nan", "NreplaceAllaN").replaceAll("inf", "Infinity").split(",");
         list = element.getElementsByTagName("omega_all_in");
         int nBlock = list.getLength();
         output.nonparamInOmega = new String[nBlock][][];
@@ -854,6 +865,9 @@ public class XMLReader
             int length = valueList.getLength();
             if(length > 0 && length == output.statLabels.length)
             {
+                output.stdErrVector = new String[length];
+                for(int i = 0; i < length; i++)
+                    output.stdErrVector[i] = valueList.item(i).getFirstChild().getNodeValue();
                 int dimension = output.theta.length;
                 output.stdErrTheta = new String[dimension];
                 for(int i = 0; i < dimension; i++)
