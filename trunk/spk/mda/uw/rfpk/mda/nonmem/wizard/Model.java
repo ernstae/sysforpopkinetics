@@ -531,6 +531,24 @@ public class Model extends javax.swing.JPanel implements WizardStep {
             jCheckBox4.setSelected(false);
             jCheckBox5.setSelected(false);            
         }
+        for(int i = 0; i < model.getSize(); i++)
+        {
+            if(((String)model.get(i)).indexOf(" DEFDOSE") != -1)
+            {
+                jCheckBox7.setEnabled(false);
+                jCheckBox7.setSelected(false);
+                break;
+            }
+        }
+        for(int i = 0; i < model.getSize(); i++)
+        {
+            if(((String)model.get(i)).indexOf(" DEFOBSERVATION") != -1)
+            {
+                jCheckBox6.setEnabled(false);
+                jCheckBox6.setSelected(false);
+                break;
+            }
+        }
         jDialog1.setSize(260,300);
         jDialog1.setLocationRelativeTo(this);
         jDialog1.setVisible(true);

@@ -1078,7 +1078,7 @@ public class Utility {
         for(int i = 0; i < theta.length; i++)
         {
             if(theta[i].endsWith("FIXED)"))
-                theta[i] = "\n(" + replacement + " FIXED)";
+                theta[i] = "\n(" + replacement[i] + " FIXED)";
             else
                 theta[i] = "\n" + theta[i].split(",")[0] + "," + replacement[i] + "," + theta[i].split(",")[2];
             thetas += theta[i];
@@ -1403,7 +1403,7 @@ public class Utility {
             nAlp--;
         return nAlp;
     }
-    
+       
     /** Test methods.
      * @param args argument not used.
      */    
