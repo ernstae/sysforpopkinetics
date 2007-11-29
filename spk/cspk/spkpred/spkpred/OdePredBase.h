@@ -497,6 +497,10 @@ public:
         // Get the data items for the current data record.
         readDataRecord( i, j );
 
+        // Set the continuous time variable T equal to the TIME value
+        // for this data record.
+        setT( time );
+
         // Set current values for any variables defined in the PK block.
         evalPk(
           thetaOffset,
@@ -900,6 +904,10 @@ public:
 
         // Get the data items for the current data record.
         readDataRecord( i, j );
+
+        // Set the continuous time variable T equal to the TIME value
+        // for this data record.
+        setT( time );
 
         // Set current values for any variables defined in the PK block.
         evalPk(
