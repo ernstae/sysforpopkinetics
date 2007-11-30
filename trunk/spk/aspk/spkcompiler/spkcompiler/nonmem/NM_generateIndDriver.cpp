@@ -522,7 +522,7 @@ void NonmemTranslator::generateIndDriver( ) const
   oIndDriver << "            }" << endl;
   oIndDriver << "            catch( const SpkException& e )" << endl;
   oIndDriver << "            {" << endl;
-  oIndDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) )" << endl;
+  oIndDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) >= 0 )" << endl;
   oIndDriver << "                  ret = OPT_MAX_ITER_ERROR;" << endl;
   oIndDriver << "               else" << endl;
   oIndDriver << "                  ret = OPTIMIZATION_ERROR;" << endl;

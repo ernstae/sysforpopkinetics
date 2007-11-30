@@ -1060,7 +1060,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "            }" << endl;
   oPopDriver << "            catch( SpkException& e )" << endl;
   oPopDriver << "            {" << endl;
-  oPopDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) )" << endl;
+  oPopDriver << "               if( e.find( SpkError::SPK_TOO_MANY_ITER ) >= 0 )" << endl;
   oPopDriver << "                  ret = OPT_MAX_ITER_ERROR;" << endl;
   oPopDriver << "               else" << endl;
   oPopDriver << "                  ret = OPTIMIZATION_ERROR;" << endl;
