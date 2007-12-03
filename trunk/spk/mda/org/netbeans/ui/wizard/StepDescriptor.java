@@ -86,7 +86,7 @@ public abstract class StepDescriptor {
     public abstract void hidingStep(JWizardPane wizard);
 
     /** Test whether the panel is finished and it is safe to proceed to the next one.
-     * @return ture if it is valid to proceed, false otherwisw.
+     * @return ture if it is valid to proceed, false otherwise.
      */
     public abstract boolean isValid();
     
