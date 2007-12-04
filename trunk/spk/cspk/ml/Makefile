@@ -3,10 +3,10 @@
 CPPFLAGS = \
 	-g \
 	-c \
-        -I../spk/spk
+        -I/usr/local/include/spktest
 
 INSTALL_DIR = \
-	/usr/local/spk/src/ml
+	/usr/local/src/spktest/ml
 
 install : \
 	adapt.h \

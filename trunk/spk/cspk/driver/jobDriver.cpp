@@ -23,13 +23,52 @@ static void stop(const char* msg, int exit_value)
     cout << "exit_value: " << exit_value << endl;
 }
 
+static bool isInt(const char* str)
+{
+    int i = 0;
+    while(str[i] != '\0')
+    {
+        if(!isdigit(str[i++]))
+            return false;
+    }
+    return true;
+}
+
 int main(int argc, const char *argv[])
 {
+    char* usage = "Usage: jobDriver [argument1] [argument2]\n\nargument1: number of processes\nargument2: only for single process mode it is the path of the midDriver";
+    if(argc == 1 || argc > 3)
+    {
+        cerr << usage << endl;
+        return USER_INPUT_ERROR;
+    }
+    else if(argc == 2)
+    {
+        if(strcmp(argv[1], "--help") == 0)
+        {
+            cerr << usage << endl;
+            return USER_INPUT_ERROR;
+        }
+        else if(!isInt(argv[1]) || atoi(argv[1]) < 2)
+        {
+            cerr << usage << endl;
+            return USER_INPUT_ERROR;
+        }
+    }
+    else
+    {
+        if(atoi(argv[1]) != 1)
+        {
+            cerr << usage << endl;
+            return USER_INPUT_ERROR;
+        }
+    }
+
     char cwd[100];
     getcwd(cwd, 100);
     freopen("software_error", "a", stderr);
     pvm_setopt(PvmRoute, PvmDontRoute);
-    const char* driver_name = argc > 1 ? argv[1] : "driver";
+    const char* driver_name = argc > 2 ? argv[2] : "driver";
     ifstream driver(driver_name);
     if(!driver.good())
     {
@@ -42,21 +81,21 @@ int main(int argc, const char *argv[])
     char** arg;
 
 start:
-    if(argc > 1)
+    if(argc > 2)
     {
-        char* task = const_cast<char*>(argv[1]);
+        char* task = const_cast<char*>(argv[2]);
         arg = new char*[2];
         arg[0] = cwd;
         arg[1] = NULL;
         rval = pvm_spawn(task, arg, 0, NULL, 1, &tid);
     }
-    else
+    else if(argc > 1)
     {
         char task[100];
         sprintf(task, "%s/driver", cwd);
         arg = new char*[3];
         arg[0] = cwd;
-        arg[1] = "parallel";
+        arg[1] = const_cast<char*>(argv[1]);
         arg[2] = NULL;
         rval = pvm_spawn(task, arg, 0, NULL, 1, &tid);
     }

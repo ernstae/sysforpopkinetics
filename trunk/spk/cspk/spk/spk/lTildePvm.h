@@ -34,6 +34,7 @@
 
 // PVM parallel process mode
 void lTildePvm(
+               int                nPvmTasks,
                SpkModel<double>   &model,
                enum Objective     objective,
                const DoubleMatrix &dvecY_forAll,

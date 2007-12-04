@@ -163,6 +163,7 @@ $syntax/void fitPopulation(
 				double*                         /popObjOut/,
 				SPK_VA::valarray<double>*       /popObj_popParOut/,
 				SPK_VA::valarray<double>*       /popObj_popPar_popParOut/,
+                                int                             /nPvmTasks/,
 				const DirBasedParallelControls& /dirBasedParallelControls/
                      )
 /$$
@@ -796,19 +797,14 @@ with step sizes specified by $italic popParStep$$.
 
 $syntax/
 
-/isUsingPvm/
+/nPvmTasks/
 /$$
-When this is specified $math%true%$$, $italic SPK$$ runs on the parallel virtual machine (PVM).
-Otherwise, $italic SPK$$ runs in the ordinary single-process mode without the PVM.
-
-$syntax/
-
-/isPvmParallel/
-/$$
-If the isUsingPvm is specified $math%true%$$ and this is specified $math%true%$$, $italic SPK$$ 
-runs in the parallel-process mode via PVM. If the isUsingPvm is specified $math%true%$$ and this 
-is specified $math%false%$$, $italic SPK$$ runs in the single-process mode via PVM.  Otherwise, 
-$italic SPK$$ runs in the ordinary single-process mode without the PVM.
+Number of of PVM sub-tasks.  
+If this number is specified smaller than $math%1%$$, $italic SPK$$ runs not on the PVM. 
+If this number is specified equal to $math%1%$$, $italic SPK$$ runs in single process 
+mode via PVM. 
+If this number is specified greater than $math%1%$$, $italic SPK$$ runs in
+parallel process mode via PVM with the number of sub-tasks equal to the specified value.
 
 $syntax/
 
@@ -1146,8 +1142,7 @@ int main()
 					  &dLTildeOut,
 					  &drowLTilde_alpOut,
 					  &dmatLTilde_alp_alpOut,
-                                          false,
-                                          false,
+                                          0,
 					  parallelControls
 			        );
        ok = true;
@@ -1302,8 +1297,7 @@ void fitPopulation( SpkModel<double>&               model,
                     double*                         popObjOut,
                     valarray<double>*               popObj_popParOut,
                     valarray<double>*               popObj_popPar_popParOut,
-                    bool                            isUsingPvm,
-                    bool                            isPvmParallel,
+                    int                             nPvmTasks,
                     const DirBasedParallelControls& dirBasedParallelControls )
 {
   using std::endl;
@@ -1322,8 +1316,6 @@ void fitPopulation( SpkModel<double>&               model,
   {
     return;
   }
-
-  if( !isUsingPvm ) isPvmParallel = false;
 
   const int nInd = nMeasurementsAll.size();
   const int nAlp = popParIn.size();
@@ -1987,8 +1979,7 @@ where n is the size of population parameter. \
             popObjOut,
             pdrowLTilde_alpOut,
             pdmatLTilde_alp_alpOut,
-            isUsingPvm,
-            isPvmParallel,
+            nPvmTasks,
             isMultiple,
             c_sharedDirectory,
             coNodeCommand
@@ -2016,8 +2007,7 @@ where n is the size of population parameter. \
             popObjOut,
             pdrowLTilde_alpOut,
             pdmatLTilde_alp_alpOut,
-            isUsingPvm,
-            isPvmParallel,
+            nPvmTasks,
             isMultiple,
             c_sharedDirectory,
             coNodeCommand

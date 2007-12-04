@@ -65,8 +65,7 @@ void fitPopulation( SpkModel<double>&                model,
                     double*                          popObjOut,
                     SPK_VA::valarray<double>*        popObj_popParOut,
                     SPK_VA::valarray<double>*        popObj_popPar_popParOut,
-                    bool                             isUsingPvm,
-                    bool                             isPvmParallel,
+                    int                              nPvmTasks,
                     const DirBasedParallelControls&  dirBasedParallelControls = DirBasedParallelControls(false, NULL, NULL) );
 
 //
