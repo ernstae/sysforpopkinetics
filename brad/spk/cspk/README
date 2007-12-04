@@ -1,0 +1,11 @@
+You are now in the top-level directory supporting the computational
+functionality of the SPK system.  
+
+Steps to build in this directory are as follows:
+
+1.  Build QN01Box and install
+2.  Build spk (./configure; make; make install)
+3.  Build ml (make install)
+4.  Build spkpred (./configure; make; make install)
+5.  Build driver (make install)
+

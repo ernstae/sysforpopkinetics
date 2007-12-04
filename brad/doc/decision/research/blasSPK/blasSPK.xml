@@ -1,0 +1,725 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+  <article>
+  <title>Basic Linear Algebra Subroutines for Use in the System for
+    Population Kinetics</title>
+  <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>May 15, 2003</date>
+	<authorinitials>MJW</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+    <abstract>
+      <para>
+      </para>
+    </abstract>
+  </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      The BLAS (Basic Linear Algebra Subprograms) are 
+      building block routines for performing basic vector and
+      matrix operations.
+      Because the System for Population Kinetics (SPK)
+      performs many linear algebra operations, it uses the BLAS  
+      equivalent functions from the Numerical Algorithms Group
+      (NAG) C library in multiple places.
+    </para>
+    <para>
+      The motivation for this research project is the need to
+      remove the NAG library from SPK and to replace it with a different linear
+      algebra library that is fast, free, open-source, and
+      has no restrictions on the use of its source code
+      or binaries derived from that source.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Candidates for Replacing the NAG Linear Algebra Routines</title>
+    <para>
+      The following table lists possible candidates for
+      replacing the NAG library BLAS equivalent functions used in 
+      SPK and for use in other Resource for Population Kinetics (RFPK) software products.
+      All of these candidates are free and have no licensing or use
+      restrictions.
+    </para>
+    <para>
+      <table>
+	<title>BLAS Candidates for Inclusion in SPK</title>
+	<tgroup cols="3">
+	  <colspec colwidth='1*'/>
+	  <colspec colwidth='2*'/>
+	  <colspec colwidth='1*'/>
+	  <thead>
+	    <row>
+	      <entry>Candidate</entry>
+	      <entry>Description</entry>
+	      <entry>Evaluated?</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry>Automatically Tuned Linear Algebra Software (ATLAS)</entry>
+	      <entry>ATLAS is a software tool that generates C versions
+		of the BLAS library.
+		It uses "Automated Empirical Optimization of
+		Software" in order to provide portable performance.
+		In particular, ATLAS provides many ways of doing
+		the required operations and uses emperical timings
+		to choose the best method for a given architecture.
+		It can be found at math-atlas.sourceforge.net.</entry>
+	      <entry>Yes.</entry>
+	    </row>
+	    <row>
+	      <entry>uBLAS</entry>
+	      <entry>uBLAS is a C++ template class library that
+		provides BLAS level 1, 2, 3 functionality for dense, 
+		packed and sparse matrices. The design and
+		implementation unify mathematical notation via
+		operator overloading and efficient code
+		generation via expression templates.
+		It can be found at www.genesys-e.org/ublas.</entry>
+	      <entry>Yes.</entry>
+	    </row>
+	    <row>
+	      <entry>Fortran77 Reference BLAS</entry>
+	      <entry>This is a Fortran77 implementation of the BLAS.  
+		According to timing results from the ATLAS documentation, 
+		this library is 4 to 10 times faster than the ATLAS
+		generated C BLAS and vendor supplied BLAS's on various machines.
+		The Fortran77 Reference BLAS can be found
+		in the Netlib software repository:  www.netlib.org/blas. </entry>
+	      <entry>No.  It is not known if Fortran77 would be compatible
+		with the parallel architecture that SPK eventually uses.</entry>
+	    </row>
+	    <row>
+	      <entry>Blitz++</entry>
+	      <entry>The Blitz++ library uses C++ templates to
+		implement fast vectors and multidimensionl arrays.
+		It is competitive with Fortran
+		for some benchmark problems.
+		It can be found at www.oonumerics.org/blitz.</entry>
+	      <entry>No.  This library does not provide any linear
+		algebra support.</entry>
+	    </row>
+	    <row>
+	      <entry>Matrix Template Library (MTL)</entry>
+	      <entry>MTL is a generic component library that
+		supports a wide variety of matrix formats.
+		It can be found at www.osl.iu.edu/research/mtl.</entry>
+	      <entry>No.  This library was previously included in
+		SPK where it performed very poorly.</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table> 
+    </para>
+  </sect1>
+  <sect1>
+    <title>ATLAS vs. uBLAS:  Matrix Multiplication</title>
+    <para>
+      ATLAS and uBLAS were first compared using matrix
+      multiplication with full matrices that had no sparsity
+      structure.
+    </para>
+    <para>
+      The following table shows the evaluation times for matrix
+      multiplication of increasingly large double precision matrices.
+      The evaluation times for the "C array" row are those for normal 
+      matrix multiplication using C arrays and are included for reference.
+      The number of evaluations is larger for the smaller matrices
+      so that the total times are on the order of a few seconds.
+      <table>
+	<title>Seconds Spent Performing Matrix Multiplication for
+	  Various Matrix Sizes</title>
+	<tgroup cols="5">
+	  <colspec colwidth='1*'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <thead>
+	    <row>
+	      <entry>Size of Matrices</entry>
+	      <entry>3 by 3</entry>
+	      <entry>10 by 10</entry>
+	      <entry>30 by 30</entry>
+	      <entry>100 by 100</entry>
+	    </row>
+	    <row>
+	      <entry>Evaluations</entry>
+	      <entry>10^7</entry>
+	      <entry>3 x 10^5</entry>
+	      <entry>10^4</entry>
+	      <entry>300</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry>C array</entry> <entry>2.14</entry> <entry>1.32</entry> <entry>1.19</entry> <entry>1.29</entry> 
+	    </row>
+	    <row>
+	      <entry>uBLAS</entry>   <entry>3.68</entry> <entry>1.72</entry> <entry>1.35</entry> <entry>1.44</entry> 
+	    </row>
+	    <row>
+	      <entry>ATLAS</entry>   <entry>8.90</entry> <entry>1.61</entry> <entry>0.68</entry> <entry>0.46</entry> 
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table> 
+      For small matrices (3 by 3), ATLAS is slower than uBLAS and C arrays.
+      For medium matrices (10 by 10), ATLAS is about the same speed
+      as uBLAS and C arrays.
+      For large matrices (30 by 30, and larger), ATLAS is faster than uBLAS and C arrays.
+    </para>
+    <para>
+      Conclusion:  For full matrices of the sizes typically found in
+      SPK, ATLAS performs better than uBLAS.
+    </para>
+  </sect1>
+  <sect1>
+    <title>ATLAS vs. uBLAS:  Sparse Matrix Multiplication</title>
+    <para>
+      Since uBLAS has sparse matrix capibilities,
+      ATLAS and uBLAS were next compared using matrix
+      multiplication where the uBLAS matrices were of the sparse
+      type but the ATLAS matrices (and the C arrays) were full
+      matrices that had no sparsity structure.
+    </para>
+    <para>
+      Note that "sparse type" refers to the C++ data structure
+      provided by uBLAS, while "full"	and "diagonal" refer to
+      the actual structure of the matrices, i.e., the locations
+      of the zero values.
+    </para>
+    <para>
+      The following table shows the evaluation times for matrix
+      multiplication of increasingly large double precision matrices.
+      The evaluation times for the "C array" row are those for normal 
+      matrix multiplication using C arrays and are included for reference.
+      The difference between the full and diagonal uBLAS sparse
+      matrices is that full matrices have nonzero values for all of 
+      their elements while the diagonal matrices only have nonzero values along
+      their diagonals.
+      They are both of uBLAS sparse type.
+      The number of evaluations is larger for the smaller matrices
+      so that the total times are on the order of a few seconds.
+      <table>
+	<title>Seconds Spent Performing Matrix Multiplication for
+	  Various Matrix Sizes</title>
+	<tgroup cols="5">
+	  <colspec colwidth='1*'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <colspec colwidth='1*' align='center'/>
+	  <thead>
+	    <row>
+	      <entry>Size of Matrices</entry>
+	      <entry>3 by 3</entry>
+	      <entry>10 by 10</entry>
+	      <entry>30 by 30</entry>
+	      <entry>100 by 100</entry>
+	    </row>
+	    <row>
+	      <entry>Evaluations</entry>
+	      <entry>10^7</entry>
+	      <entry>3 x 10^5</entry>
+	      <entry>10^4</entry>
+	      <entry>300</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry>C array</entry>                 <entry>  2.10</entry> <entry> 1.34</entry> <entry> 1.13</entry> <entry> 1.24</entry> 
+	    </row>
+	    <row>
+	      <entry>uBLAS Sparse (Full)</entry>     <entry>141.41</entry> <entry>70.86</entry> <entry>41.19</entry> <entry>35.85</entry> 
+	    </row>
+	    <row>
+	      <entry>uBLAS Sparse (Diagonal)</entry> <entry>107.06</entry> <entry>36.53</entry> <entry>11.74</entry> <entry> 4.09</entry> 
+	    </row>
+	    <row>
+	      <entry>ATLAS</entry>                   <entry>  8.61</entry> <entry> 1.90</entry> <entry> 0.59</entry> <entry> 0.48</entry> 
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table> 
+      For small matrices (3 by 3), ATLAS is faster than sparse uBLAS
+      but slower than C arrays.
+      For medium matrices (10 by 10), ATLAS is faster than sparse
+      uBLAS and about the same speed as C arrays.
+      For large matrices (30 by 30, and larger), ATLAS is faster than uBLAS and C arrays.
+    </para>
+    <para>
+      It is especially noteworthy that when two sparse type uBLAS matrices are
+      actually full, the performance of uBLAS is extremely poor.
+      Since SPK will not know ahead of time which matrices are sparse and
+      which are full, if sparse uBLAS matrices were included in SPK,
+      then there would be many times where the sparse uBLAS
+      data structures would be full.
+      This would severly degrade the performance of SPK.
+    </para>
+    <para>
+      Conclusion:  For matrices of the sizes typically found in SPK, 
+      and even if uBLAS takes advantage of extreme sparseness and
+      ATLAS does not, ATLAS performs better than uBLAS.
+    </para>
+  </sect1>
+  <sect1>
+    <title>ATLAS vs. uBLAS:  Software Engineering Issues</title>
+    <para>
+      The following table compares ATLAS and uBLAS with regards to
+      some software engineering issues.
+      <table>
+	<title>Software Engineering Comparison of ATLAS and uBLAS</title>
+	<tgroup cols="2">
+	  <thead>
+	    <row>
+	      <entry>ATLAS</entry>
+	      <entry>uBLAS</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry>Would require minimal SPK code modifications.</entry>
+	      <entry>Would require major SPK code modifications.</entry>
+	    </row>
+	    <row>
+	      <entry>ATLAS is written in C, and the BLAS libraries it
+		generates are also C. 
+		ATLAS should produce optimized libraries on almost
+		any platform possessing an ANSI/ISO C compiler, 
+		some Unix-like command-line tools, and 
+		hierarchical memory.
+		(For more details, see the file ATLAS/doc/atlas_over.ps
+		that is included in the ATLAS distribution.)</entry>
+	      <entry>uBLAS uses C++ expression templates which are
+		part of the standard C++ library but which are not
+		supported by Microsoft's C++ compiler.</entry>
+	    </row>
+	    <row>
+	      <entry>ATLAS is low risk since the number of BLAS users is large in general, since
+		some major players (Maple, Mathematica, Matlab, Octave) use ATLAS, and since it could be replaced with
+		vendor supplied BLAS or other open source BLAS libraries if ATLAS ever
+		stopped being developed.</entry>
+	      <entry>uBLAS is high risk since it is relatively new,
+		since it is being developed by a small number of people
+		which means it may or may not still be around in 5 years, and
+		since it would require significant modifications to the code in SPK to take
+		it out if uBKAS ever stopped being developed.</entry>
+	    </row>
+	    <row>
+	      <entry>Conforms to the usual BLAS paradigm
+		used by the scientific programming community.</entry>
+	      <entry>Uses new data types and function names to
+		perform BLAS equivalent operations.</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table> 
+    </para>
+  </sect1>
+  <sect1>
+    <title>Recommendations</title>
+    <para>
+      ATLAS should be the replacement for the NAG linear algebra
+      routines rather than uBLAS.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Appendix:  Installing ATLAS and Generating the C BLAS Library</title>
+    <para>
+      Here are some basic instructions for installing ATLAS and
+      using it to generate a C BLAS library.
+    </para>
+    <sect2>
+      <title>Notes</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    These instructions are a record of how these 
+	    procedures were performed on a particular machine.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The paths used in this document are not necessarily
+	    appropriate for other machines nor are they necessarily
+	    consistent with the current directory structure for
+	    RFPK software products. 
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Installing ATLAS on Your Machine</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    Go to the ATLAS homepage on the internet:
+	    <screen format="linespecific">
+	      math-atlas.sourceforge.net</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Click on the "Software" link on that page, which should take you to
+	    <screen format="linespecific">
+	      https://sourceforge.net/project/showfiles.php?group_id=23725</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Download a stable, platform independent version of ATLAS,
+	    for example, 
+	    <screen format="linespecific">
+	      math-atlas/atlas3.4.1.tar.gz</screen>
+	    and place it in the appropriate directory, for example,
+	    <screen format="linespecific">
+	      home/watrous/Atlas</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Go to the directory where the archive was placed and then
+	    extract/uncompress it by typing
+	    <screen format="linespecific">
+	      tar xzf math-atlas/atlas3.4.1.tar.gz</screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Generating the C BLAS Using ATLAS</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    Follow the instructions in the file 
+	    <screen format="linespecific">
+	      ATLAS/INSTALL.txt</screen>
+	    which describes how to configure, install, and "sanity"
+	    test ATLAS.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    For the most part, choose the default values provided.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    At the end of the process there will be several ATLAS
+	    generated BLAS libraries on your machine.
+	    If your machine is a Pentium IV running Linux, for
+	    example, then these libraries will be located in the directory:
+	    <screen format="linespecific">
+	      ATLAS/lib/Linux_P4SSE2</screen>
+	    The library libatlas.a is the C BLAS library, 
+	    and the file libcblas.a is the C interface to that library.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Appendix:  Installing and Testing uBLAS</title>
+    <para>
+      Here are some basic instructions for installing and testing uBLAS.
+    </para>
+    <sect2>
+      <title>Notes</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    These instructions are a record of how these 
+	    procedures were performed on a particular machine.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The paths used in this document are not necessarily
+	    appropriate for other machines nor are they necessarily
+	    consistent with the current directory structure for
+	    RFPK software products. 
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Installing uBLAS on Your Machine</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    uBLAS is part of Boost.
+	    Information about Boost can be found on its homepage on the internet:
+	    <screen format="linespecific">
+	      www.boost.org</screen>
+	    The easiest way to install uBLAS is to install
+	    the whole Boost library.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Go to the download section of the Boost website:
+	    <screen format="linespecific">
+	      http://www.boost.org/more/download.html</screen>
+	    and click on the "download releases from SourceForge"
+	    link on that page.
+	    That link should take you to
+	    <screen format="linespecific">
+	      http://sourceforge.net/project/showfiles.php?group_id=7586</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Download a platform independent version of Boost,
+	    for example, 
+	    <screen format="linespecific">
+	      boost_1_30_0.tar.gz</screen>
+	    and place it in the appropriate directory, for example,
+	    <screen format="linespecific">
+	      home/watrous/Boost</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Go to the directory where the archive was placed and then
+	    extract/uncompress it by typing
+	    <screen format="linespecific">
+	      tar xzf boost_1_30_0.tar.gz</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Instructions for building the Boost library can be found in
+	    the file
+	    <screen format="linespecific">
+	      boost_1_30_0/tools/build/index.html</screen>
+	    Instructions for building the Boost.Jam executable,
+	    which is a make-like tool that comes with Boost, are located at the 
+	    bottom of that page of instructions and also in the file
+	    <screen format="linespecific">
+	      boost_1_30_0/tools/build/jam_src/index.html</screen>
+	    Before the Boost library can be built, however, the
+	    Boost.Jam executable must be built first.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In order to build the Boost.Jam executable change to
+	    <screen format="linespecific">
+	      boost_1_30_0/tools/build/jam_src</screen>
+	    and type
+	    <screen format="linespecific">
+	      sh ./build.sh</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Add the Boost.Jam executable's location to the path by typing
+	    <screen format="linespecific">
+	      PATH=$PATH:/home/watrous/Boost/boost_1_30_0/tools/build/jam_src/bin.linuxx86</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In order to build the Boost library follow the
+	    instructions in the previously mentioned file
+	    <screen format="linespecific">
+	      boost_1_30_0/tools/build/index.html</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Add the location of the Boost libraries to the path by typing
+	    <screen format="linespecific">
+	      PATH=$PATH:/home/watrous/Boost/boost_1_30_0</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Check the contents of the path by typing
+	    <screen format="linespecific">
+	      $PATH</screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Testing uBLAS</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    In order to build all of the tests for uBLAS, first change to
+	    <screen format="linespecific">
+	      boost_1_30_0/libs/numeric/ublas</screen>
+	    and then type
+	    <screen format="linespecific">
+	      bjam</screen>
+	    (Note that the locations of the Boost libraries and the Boost.Jam 
+	    executable's must be added to the path as discussed in the Installation
+	    section of these notes.)
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In order to run one of the tests, e.g. test1, change to
+	    <screen format="linespecific">
+	      /boost_1_30_0/libs/numeric/ublas/test1/bin/test1/gcc/debug/runtime-link-dynamic</screen>
+	    and then type
+	    <screen format="linespecific">
+	      ./test1</screen>
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Appendix:  Comparing the Performance of ATLAS and uBLAS</title>
+    <para>
+      This appendix describes how to compare the performance of ATLAS
+      and uBLAS for normal and sparse matrix multiplication.
+    </para>
+    <sect2>
+      <title>Notes</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    These instructions are a record of how these 
+	    procedures were performed on a particular machine.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The paths used in this document are not necessarily
+	    appropriate for other machines nor are they necessarily
+	    consistent with the current directory structure for
+	    RFPK software products. 
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The makefiles for this test assume the 
+	    directory structure is as described in this document.
+	    If that is no longer the case, i.e., if the directory structure
+	    is different, then the paths in the makefiles will need to
+	    be modified.
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Comparing ATLAS and uBLAS on Normal Matrix Multplication</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    Copy the files
+	    <screen format="linespecific">
+	      bench1.cpp
+	      bench13.cpp
+	      makefile</screen>
+	    to the directory 
+	    <screen format="linespecific">
+	      boost_1_30_0/libs/numeric/ublas/bench1</screen>
+	    These files are probably located in a subdirectory of 
+	    the directory where the XML source for this document
+	    is located:
+	    <screen format="linespecific">
+	      ~/dvl/doc/decision/research/blas/normal</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The file bench1.cpp is a modified version of the
+	    original file with the scale variable increased to
+	    make the test run long enough for the differences
+	    between the methods to be seen.
+	    The file bench13.cpp is a modified version of the
+	    original file that now contains calls to the ATLAS library.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In order to build the release version of the bench1 program, first change to
+	    <screen format="linespecific">
+	      boost_1_30_0/libs/numeric/ublas/bench1</screen>
+	    and then type
+	    <screen format="linespecific">
+	      make</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In order to run the bench1 program, type
+	    <screen format="linespecific">
+	      ./bench1</screen>
+	    The timing results can be found in the output from this 
+	    program in the multiple sections for each matrix size
+	    that are preceeded with the headings "bench_3" and
+	    "prod (matrix, matrix)".
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+    <sect2>
+      <title>Comparing ATLAS and uBLAS on Sparse Matrix Multplication</title>
+      <orderedlist numeration="arabic">
+	<listitem>
+	  <para>
+	    Copy the files
+	    <screen format="linespecific">
+	      bench2.cpp
+	      bench23.cpp
+	      makefile</screen>
+	    to the directory 
+	    <screen format="linespecific">
+	      boost_1_30_0/libs/numeric/ublas/bench2</screen>
+	    These files are probably located in a subdirectory of 
+	    the directory where the XML source for this document
+	    is located:
+	    <screen format="linespecific">
+	      ~/dvl/doc/decision/research/blas/normal</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The file bench2.cpp is a modified version of the
+	    original file with the scale variable increased to
+	    make the test run long enough for the differences
+	    between the methods to be seen.
+	    The file bench23.cpp is a modified version of the
+	    original file that now contains calls to the ATLAS library.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In order to build the release version of the bench2 program, first change to
+	    <screen format="linespecific">
+	      boost_1_30_0/libs/numeric/ublas/bench2</screen>
+	    and then type
+	    <screen format="linespecific">
+	      make</screen>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    In order to run the bench2 program, type
+	    <screen format="linespecific">
+	      ./bench2</screen>
+	    The timing results can be found in the output from this 
+	    program in the multiple sections for each matrix size
+	    that are preceeded with the headings "bench_3" and
+	    "prod (matrix, matrix)".
+	  </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+  </article>

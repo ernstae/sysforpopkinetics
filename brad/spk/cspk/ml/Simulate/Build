@@ -1,0 +1,27 @@
+# !/bin/bash
+for file in AUTHORS NEWS README ChangeLog
+do
+	if [ ! -e $file ]
+	then
+		echo "touch $file"
+		touch $file
+	fi
+done
+#
+echo "aclocal"
+aclocal
+#
+echo "autoheader"
+autoheader
+#
+echo "autoconf"
+autoconf
+#
+echo "automake --add-missing"
+automake --add-missing
+#
+echo "./configure"
+./configure
+#
+echo "make"
+make
