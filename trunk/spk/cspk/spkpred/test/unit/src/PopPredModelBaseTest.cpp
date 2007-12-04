@@ -1611,8 +1611,6 @@ void PopPredModelBaseTest::RailExample_OptimizerBackup_Test()
   valarray<double>* pVANull = 0;
 
   // Set the parallel controls object
-  bool isUsingPvm    = false;
-  bool isPvmParallel = false;
   DirBasedParallelControls parallelControls( false, 0, 0 );
 
   try
@@ -1637,8 +1635,7 @@ void PopPredModelBaseTest::RailExample_OptimizerBackup_Test()
                    pdNull,
                    pVANull,
                    pVANull,
-                   isUsingPvm,
-                   isPvmParallel,
+                   0,
                    parallelControls );
   }
   catch( const SpkException& e )
