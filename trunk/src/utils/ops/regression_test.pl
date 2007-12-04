@@ -246,7 +246,7 @@ for ('cerr', 'srun') {
 	        @args = ("ssh",$cluster,"java","-cp",$classpath,"uw/rfpk/nearequal/NearEqual");
 	        push @args, "$base_dir/$_/spkruntest-job-$job_id/result.xml";
 	        push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/result.xml";            
-                push @args, "$base_dir/$_/spkruntest-job-$job_id/souece.xml";
+                push @args, "$base_dir/$_/spkruntest-job-$job_id/source.xml";
 	        push @args, $relative_error, $absolute_error, $norm_code;
 
 #	    @args = ("ssh",$cluster,"/usr/local/bin/regression_near_equals.sh");
