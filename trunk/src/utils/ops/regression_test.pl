@@ -20,7 +20,7 @@ my %file_to_compare = ( 'cerr' => 'compilation_error.xml',
 my $config_file = "regression_test.xml";
 
 my %opt = ();
-GetOptions (\%opt, 'help', 'man', 'pvm', 'parallel', 'dump-config', 'ignore-candidate', 'config-file=s') 
+GetOptions (\%opt, 'help', 'man', 'pvm', 'parallel', 'dump-config', 'ignore-candidate', 'relative-error=s', 'absolute-error=s', 'norm-code=s', 'config-file=s') 
     or pod2usage(-verbose => 0);
 pod2usage(-verbose => 1)  if (defined $opt{'help'});
 pod2usage(-verbose => 2)  if (defined $opt{'man'});
@@ -37,6 +37,13 @@ $parallel = 1 if (defined $opt{'parallel'});
 if ($parallel == 1) {
     $config_file = "regression_test_parallel.xml";
 }
+
+my $relative_error = "1e-3";
+my $absolute_error = "1e-4";
+my $norm_code = "3";
+$relative_error = $opt{'relative-error'} if (defined $opt{'relative-error'});
+$absolute_error = $opt{'absolute-error'} if (defined $opt{'absolute-error'});
+$norm_code = $opt{'norm-code'} if (defined $opt{'norm-code'});
 
 $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
@@ -166,7 +173,6 @@ while ($active_jobs) {
 	sleep 10;
     }
 };
-&disconnect($dbh);
 
 my @args;
 
@@ -193,22 +199,29 @@ for ('cerr', 'srun') {
             # Without a break, it was hard to determine the id#
             # because 'diff' output starts with line #.
 	    print "\n\tjob $job_id: ";
-	    @args = ("/usr/local/bin/regression_near_equals.sh");
-#	    @args = ("/usr/local/bin/NearEqual");
-#	    @args = ("diff", "-bB");
-#	    for my $regexp (@$ignore) {
-#		push @args, ("--ignore-matching-lines", "\"$regexp\"");
-#	    }
-	    push @args, "$base_dir/$_/spkcmptest-job-$job_id/compilation_error.xml";
-	    push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/compilation_error.xml";
-	    push @args, "1e-3","1e-4";
-	    if (system(@args) == 0) {
-		print "\t\t\t\t\t\t\tOK";
-	    }
-	    else {
+            my $row = &job_status($dbh, $job_id);
+            my $end_code = $row->{"end_code"};
+            if ($end_code ne "cerr") {
+                print "Job end code: $end_code\t\t\t\t\tFailed";
 		push @job_ids_for_differed, $job_id;
 		$jobs_that_differed++;
-	    }
+            }
+            else {
+	        @args = ("diff", "-bB");
+	        for my $regexp (@$ignore) {
+		    push @args, ("--ignore-matching-lines", "\"$regexp\"");
+	        }
+	        push @args, "$base_dir/$_/spkcmptest-job-$job_id/compilation_error.xml";
+	        push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/compilation_error.xml";
+	        if (system(@args) == 0) {
+		    print "\t\t\t\t\t\t\tOK";
+	        }
+	        else {
+                    print "\t\t\t\t\tFailed";
+		    push @job_ids_for_differed, $job_id;
+		    $jobs_that_differed++;
+	        }
+            }
 	}
     };
     /srun/ and do {
@@ -220,26 +233,46 @@ for ('cerr', 'srun') {
             # Without a break, it was hard to determine the id#
             # because 'diff' output starts with line #.
 	    print "\n\tjob $job_id: ";
-	    @args = ("ssh",$cluster,"/usr/local/bin/regression_near_equals.sh");
-#	    @args = ("/usr/local/bin/NearEqual");
-#	    @args = ("ssh", $cluster, "diff", "-bB");
-#	    for my $regexp (@$ignore) {
-#		push @args, ("--ignore-matching-lines", "\"$regexp\"");
-#	    }
-	    push @args, "$base_dir/$_/spkruntest-job-$job_id/result.xml";
-	    push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/result.xml";
-	    push @args, "1e-3", "1e-4";
-	    system(@args);
-	    if (system(@args) == 0) {
-		print "\t\t\t\t\t\t\tOK";
-	    }
-	    else {
+            my $row = &job_status($dbh, $job_id);
+            my $end_code = $row->{"end_code"};
+            if ($end_code ne "srun") {
+                print "Job end code: $end_code\t\t\t\t\tFailed";
 		push @job_ids_for_differed, $job_id;
 		$jobs_that_differed++;
-	    }
+            }
+            else {
+                # Call Java nearequal program
+                my $classpath = "/usr/local/bin:/usr/local/lib/MDA.jar";
+	        @args = ("ssh",$cluster,"java","-cp",$classpath,"uw/rfpk/nearequal/NearEqual");
+	        push @args, "$base_dir/$_/spkruntest-job-$job_id/result.xml";
+	        push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/result.xml";            
+                push @args, "$base_dir/$_/spkruntest-job-$job_id/souece.xml";
+	        push @args, $relative_error, $absolute_error, $norm_code;
+
+#	    @args = ("ssh",$cluster,"/usr/local/bin/regression_near_equals.sh");
+##	    @args = ("/usr/local/bin/NearEqual");
+##	    @args = ("ssh", $cluster, "diff", "-bB");
+##	    for my $regexp (@$ignore) {
+##		push @args, ("--ignore-matching-lines", "\"$regexp\"");
+##	    }
+#	    push @args, "$base_dir/$_/spkruntest-job-$job_id/result.xml";
+#	    push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/result.xml";
+#	    push @args, "1e-3", "1e-4";
+#	    system(@args);
+	        if (system(@args) == 0) {
+		    print "\t\t\t\t\tOK";
+	        }
+	        else {
+                    print "\t\t\t\t\tFailed";
+		    push @job_ids_for_differed, $job_id;
+		    $jobs_that_differed++;
+	        }
+            }
 	}
     };
 }
+
+&disconnect($dbh);
 print "\nNumber of jobs that differed: $jobs_that_differed\n";
 
 # Added by Sachiko on 02/14/2005
@@ -261,7 +294,7 @@ regression_test.pl -- test a candidate before deployment
 
 =head1 SYNOPSIS
 
-regression_test.pl [--help] [--man] [--parallel] [--dump-config] [--ignore-candidate] [--config-file=file]
+regression_test.pl [--help] [--man] [--pvm] [--parallel] [--dump-config] [--ignore-candidate] [--relative-error=r] [--absolute-error=a] [--norm-code=n] [--config-file=file]
 
 =head1 ABSTRACT
 
@@ -336,6 +369,18 @@ Useful if this program is used for system testing rather than regression
 testing.  In regression testing, when used as part of the deployment 
 process, the most recent deployment candidate is copied into the test
 environment.  With this option, that copy does not occur.
+
+=item B<--relative-error=r>
+
+Specify the relative error.  Default is 1e-3.
+
+=item B<--absolute-error=a>
+
+Specify the absolute error.  Default is 1e-4.
+
+=item B<--norm-code=n>
+
+Specify the norm code.  1: max|xi|; 2:sum|xi|; 3: sqrt(sum(xi*xi)); 4: passng any of 1,2,3.  Default is 3.
 
 =item B<--config-file=file>
 

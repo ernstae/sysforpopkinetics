@@ -38,6 +38,6 @@ cp regression_test_parallel.xml /usr/local/spk/ops/regression_test/config
 
 scp rt_script.html $WEBHOST:$WEBDIR/ops/utils/rt_script.html
 scp rn_script.html $WEBHOST:$WEBDIR/ops/utils/rn_script.html
-
+scp -r nearequal/javadoc/*.html javadoc/*.css javadoc/resources javadoc/uw $WEBHOST:$WEBDIR/ops/utils/nearequal
 
 exit 0
