@@ -1,0 +1,10 @@
+Build mda and dbapi.
+
+> ant
+
+Modify user/WEB-INF/web.xml to configure the web application.
+
+> cd user
+> jar -cf user.war *
+
+Copy user.war to webapps directory of tomcat server.

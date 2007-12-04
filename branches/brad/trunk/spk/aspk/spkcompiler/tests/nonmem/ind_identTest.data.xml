@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spkdata version="0.1">
+    <table columns="3" rows="8">
+       <description>cad01.txt</description>
+       <row position="1">
+          <value type="string">TIME</value>
+          <value type="string">DV</value>
+          <value type="string">AMT</value>
+       </row>
+       <row position="2">
+          <value>0</value>
+          <value>0</value>
+          <value>30</value>
+       </row>
+       <row position="3">
+          <value>2.00E+00</value>
+          <value>1.09E+00</value>
+          <value>0</value>
+       </row>
+       <row position="4">
+          <value>4.00E+00</value>
+          <value>7.50E-01</value>
+          <value>0</value>
+       </row>
+       <row position="5">
+          <value>6.00E+00</value>
+          <value>5.30E-01</value>
+          <value>0</value>
+       </row>
+       <row position="6">
+          <value>8.00E+00</value>
+          <value>3.40E-01</value>
+          <value>0</value>
+       </row>
+       <row position="7">
+          <value>1.00E+01</value>
+          <value>2.30E-01</value>
+          <value>0</value>
+       </row>
+       <row position="8">
+          <value>2.40E+01</value>
+          <value>2.00E-02</value>
+          <value>0</value>
+       </row>
+    </table>
+</spkdata>

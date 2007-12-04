@@ -1,0 +1,40 @@
+$begin UserModel_1$$
+
+$spell namespace comp
+$$
+
+$section DEPRECIATED Model for Individual Analysis$$
+
+$head Description$$
+This class is for models that are functions of individual's parameter only (random population parameter).
+User sets pointers to functions $math%f(b)%$$, $math%f_b(b)%$$, 
+$math%R(b)%$$, and $math%R_b(b)%$$, at the time of object 
+construction.
+
+$pre
+
+$$
+A request to the object for evaluating a subset of the 
+functions is made via $code comp$$ method
+with string constants defined in $code user_model$$
+namespace.  Accessing the evaluation result(s) is
+made via $code get$$ method which takes a single
+argument that is one of these constant strings defined
+in the namespace.
+Hence, to use Model class properly,
+you must use $code user_model$$ namespace which is defined
+in $code Model.h$$.
+
+$pre
+
+$$
+Those constant strings which are legal for this
+type of Model are: "F", "F_B", "R", "R_B" and "NOREQ".
+$pre
+
+$$
+$contents/
+	Model_1.cpp/$$
+$end
+
+	
