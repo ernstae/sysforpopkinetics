@@ -351,15 +351,30 @@ sub fork_driver {
     my $warmstart = shift;
     my $cpp_source = $jrow->{'cpp_source'};
     my $checkpoint = $jrow->{'checkpoint'};
-    my $ntasks = $jrow->{'parallel'};
-    my $parallel = 1;
-    if ($ntasks == 0) {
-        $parallel = 0;
-        $ntasks = 1;
+    my $ntasks = 1;
+    my $parallel = 0;
+    if($pvm eq "on") {
+        $ntasks = $jrow->{'parallel'};
+        if($ntasks > 0) {
+            my $available = $max_concurrent - $concurrent;
+            if($ntasks > $available) {
+                $ntasks = $available;
+            }
+            if($ntasks > 1) {
+                $parallel = 1;
+            }
+        }
+        else {
+            $ntasks = 1;
+        }
     }
-    if($pvm eq "off") {
-        $ntasks = 1;
-    }
+
+    # Add ntasks of the job to concurrent ntasks
+    $concurrent += $ntasks;
+
+    # Add the ntasks of the job to the jobid_ntasks hash
+    $jobid_ntasks{$job_id} = $ntasks;
+    
     my $pid;
 
     # Create a working directory
@@ -407,15 +422,9 @@ sub fork_driver {
       if ($pid = fork) {
 	  # This is the parent (fork returned a nonzero value)
           syslog("info", "forked process with pid=$pid for job_id=$job_id");
-          
-          # Add ntasks of the job to concurrent ntasks
-	  $concurrent += $ntasks;
 
           # Add the child process id to jobid_pid hash
           $jobid_pid{$job_id} = $pid;
-
-          # Add the ntasks of the job to the jobid_ntasks hash
-          $jobid_ntasks{$job_id} = $ntasks;
       }
       elsif (defined $pid) {
 	  # This is the child (fork returned zero).
@@ -471,10 +480,10 @@ sub fork_driver {
 	  # execute the job driver
           if($pvm eq "on") {
               if($parallel == 1) {
-	          @args = ("$pathname_driver_pvm");
+	          @args = ("$pathname_driver_pvm", $ntasks);
               }
               else {
-                  @args = ("$pathname_driver_pvm", "$pathname_mid_driver_pvm");
+                  @args = ("$pathname_driver_pvm", "1", "$pathname_mid_driver_pvm");
               }
           }
           else {
@@ -610,9 +619,6 @@ sub reaper {
 
     # Subtract ntasks of the job from concurrent ntasks
     $concurrent -= $jobid_ntasks{$job_id};
-
-    # Remove the ntasks of the job from jobid_ntasks hash
-    delete($jobid_ntasks{$job_id});
 
     # Change to working directory
 #    my $unique_name = "$prefix_working_dir" . "-job-" . $job_id;
@@ -919,6 +925,9 @@ sub reaper {
             syslog('info', "end-job email notice sent for job_id=$job_id from spkrund");
         }
     }
+
+    # Remove the ntasks of the job from jobid_ntasks hash
+    delete($jobid_ntasks{$job_id});
 }
 sub sendmail {
     my $job_id = shift;

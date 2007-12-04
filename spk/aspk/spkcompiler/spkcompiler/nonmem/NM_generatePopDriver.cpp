@@ -265,10 +265,10 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "   enum RETURN_CODE ret = SUCCESS;" << endl;
   oPopDriver << endl;
 
-  oPopDriver << "   bool isUsingPvm = false;" << endl;
+  oPopDriver << "   int nPvmTasks = 0;;" << endl;
   oPopDriver << "   if(argc > 1)" << endl;
   oPopDriver << "   {" << endl;
-  oPopDriver << "      isUsingPvm = true;"<< endl;
+  oPopDriver << "      nPvmTasks = 1;"<< endl;
   oPopDriver << "      pvm_mytid();" << endl;
   oPopDriver << "      int parent_tid = pvm_parent();" << endl;
   oPopDriver << endl;
@@ -286,7 +286,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         return FILE_ACCESS_ERROR;" << endl;
   oPopDriver << "      }" << endl;
   oPopDriver << "   }" << endl;
-  oPopDriver << "   bool isPvmParallel = argc > 2 && strcmp(argv[2], \"parallel\") == 0;" << endl;
+  oPopDriver << "   if(argc > 2) nPvmTasks = atoi(argv[2]);" << endl;
   oPopDriver << endl;
 
   oPopDriver << "   // Redirect stdout and stderr to files" << endl;
@@ -1050,8 +1050,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                                &alpObjOut," << endl;
   oPopDriver << "                                &alpObj_alpOut," << endl;
   oPopDriver << "                                 NULL," << endl;
-  oPopDriver << "                                 isUsingPvm," << endl;
-  oPopDriver << "                                 isPvmParallel );" << endl;
+  oPopDriver << "                                 nPvmTasks );" << endl;
   oPopDriver << endl;
   oPopDriver << "                  // Evaluate the model at the optimal parameter value." << endl;
   oPopDriver << "                  model.setPopPar( alpOut );" << endl;
@@ -1700,8 +1699,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                              NULL," << endl;
   oPopDriver << "                              NULL," << endl;
   oPopDriver << "                              &alpObj_alp_alpOut," << endl;
-  oPopDriver << "                              false," << endl;
-  oPopDriver << "                              false );" << endl;
+  oPopDriver << "                              0 );" << endl;
   oPopDriver << endl;
   oPopDriver << "               for( int i=0; i<nAlp; i++ )" << endl;
   oPopDriver << "               {" << endl;
@@ -2529,7 +2527,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         fprintf( stderr, \"Failed to open a file, %s, for writing output.\"," << endl;
   oPopDriver << "\"" << fResult_xml << "\" );" << endl;
   oPopDriver << "         ret = FILE_ACCESS_ERROR;" << endl;
-  oPopDriver << "         if(isUsingPvm)" << endl;
+  oPopDriver << "         if(nPvmTasks > 0)" << endl;
   oPopDriver << "            finish(ret);" << endl;
   oPopDriver << "         else" << endl;
   oPopDriver << "            cout << \"exit code: \" << ret << endl;" << endl;
@@ -2555,7 +2553,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         fprintf( stderr, \"Failed to open a file, %s, for writing output.\"," << endl;
   oPopDriver << "\"" << fResult_xml << "\" );" << endl;
   oPopDriver << "         ret = FILE_ACCESS_ERROR;" << endl;
-  oPopDriver << "         if(isUsingPvm)" << endl;
+  oPopDriver << "         if(nPvmTasks > 0)" << endl;
   oPopDriver << "            finish(ret);" << endl;
   oPopDriver << "         else" << endl;
   oPopDriver << "            cout << \"exit code: \" << ret << endl;" << endl;
@@ -2582,7 +2580,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "         fprintf( stderr, \"Failed to open a file, %s, for writing output.\"," << endl;
   oPopDriver << "\"" << fResult_xml << "\" );" << endl;
   oPopDriver << "         ret = FILE_ACCESS_ERROR;" << endl;
-  oPopDriver << "         if(isUsingPvm)" << endl;
+  oPopDriver << "         if(nPvmTasks > 0)" << endl;
   oPopDriver << "            finish(ret);" << endl;
   oPopDriver << "         else" << endl;
   oPopDriver << "            cout << \"exit code: \" << ret << endl;" << endl;
@@ -2601,7 +2599,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "      ret = UNKNOWN_ERROR;" << endl;
   oPopDriver << "   }" << endl;
   oPopDriver << endl;
-  oPopDriver << "   if(isUsingPvm)" << endl;
+  oPopDriver << "   if(nPvmTasks > 0)" << endl;
   oPopDriver << "      finish(ret);" << endl;
   oPopDriver << "   else" << endl;
   oPopDriver << "      cout << \"exit code: \" << ret << endl;" << endl;

@@ -501,8 +501,7 @@ void fitPopulationTest::fitPopulationExampleTest(enum Objective whichObjective)
                      &dLTildeOut,
                      &lTilde_alpOut,
                      &lTilde_alp_alpOut,
-                     false,
-                     false,
+                     0,
                      parallelControls );
 
       // Exit this loop if the maximum number of iterations was
@@ -1092,8 +1091,7 @@ void fitPopulationTest::fitPopulationZeroIterationsTest(enum Objective whichObje
 					  &dLTildeOut,
 					  &lTilde_alpOut,
 					  &lTilde_alp_alpOut,
-                                          false,
-                                          false,
+                                          0,
 					  parallelControls 
 			        );
         okFitPopulation = true;
@@ -1556,8 +1554,7 @@ void fitPopulationTest::fitPopulationLimitsWarningsTest(enum Objective whichObje
               pdNull,
               pdmatNull,
               pdmatNull,
-              false,
-              false,
+              0,
               parallelControls );
     }
     catch( ... )
@@ -1779,8 +1776,7 @@ void fitPopulationTest::fitPopulationIndOptErrorTest(enum Objective whichObjecti
                    &dLTildeOut,
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
-                   false,
-                   false,
+                   0,
                    parallelControls );
   }
   catch( SpkException& e )
@@ -2084,8 +2080,7 @@ void fitPopulationTest::fitPopulationPopOptErrorTest(enum Objective whichObjecti
                    &dLTildeOut,
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
-                   false,
-                   false,
+                   0,
                    parallelControls );
   }
   catch( SpkException& e )
@@ -2419,8 +2414,7 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    &dLTildeOut,
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
-                   false,
-                   false,
+                   0,
                    parallelControls );
   }
   catch(...)
@@ -2484,8 +2478,7 @@ void fitPopulationTest::fitPopulationRestartTest(enum Objective whichObjective)
                    &dLTildeOut,
                    &lTilde_alpOut,
                    &lTilde_alp_alpOut,
-                   false,
-                   false,
+                   0,
                    parallelControls );
   }
   catch(...)

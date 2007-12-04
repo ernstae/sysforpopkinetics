@@ -81,8 +81,7 @@ void ppkaOpt(
               double*                 pdLTildeOut,
               DoubleMatrix*           pdrowLTilde_alpOut,
               DoubleMatrix*           pdmatLTilde_alp_alpOut,
-              bool                    isUsingPvm,
-              bool                    isPvmParallel,
+              int                     nPvmTasks,
               bool                    isMultiple,
               const char*             sharedDiskSpace = 0,
               const char*             nodeCommand = 0

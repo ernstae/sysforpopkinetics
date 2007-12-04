@@ -52,7 +52,7 @@ $index output, file$$
 $index file, output$$
 If the program completes normally, regardless of whether computation
 was successful or unsuccessful, an instance of SpkReportML is
-written to standard output.  The most outer level record, <spkrecord>,
+written to a file result.xml.  The most outer level record, <spkrecord>,
 contains the following records.
 
 $head error_list$$
@@ -216,11 +216,14 @@ enum { SUCCESSFUL             = 0,
 using namespace std;
 static ofstream fout;
 static char task[100];
-static int ntasks = 0;
-static int parent_tid = 0;
-static int* exit_val;
-static int* alp_tid;
-static int* host_tid;
+static int num_tasks;
+static int num_objectives;
+static int parent_tid;
+static std::vector<int> alp_tid;
+static std::vector<int> alp_aid;
+static std::vector<int> host_tid;
+static std::vector<int> exit_val;
+static int nPvmTasks = 0;
 static const char* working_dir;
 
 // locally defined functions
@@ -389,12 +392,15 @@ namespace {
 			pop_obj_stderror += error / estimate;
 
 			// Check parent
-                        int bufid = 0;
-                        if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
-                        {
-                            pvm_exit();
-                            exit(UNKNOWN_ERROR);
-                        }
+			if(nPvmTasks > 0)
+			{
+				int bufid = 0;
+				if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
+				{
+					pvm_exit();
+					exit(UNKNOWN_ERROR);
+				}
+			}
 		}
 	}
 	// Monte Carlo approximation for negative log marginal likelihood 
@@ -436,12 +442,15 @@ namespace {
 			                  / (estimate * estimate);
 
                         // Check parent
-                        int bufid = 0;
-                        if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
-                        {
-                            pvm_exit();
-                            exit(UNKNOWN_ERROR);
-                        }
+			if(nPvmTasks > 0)
+			{
+				int bufid = 0;
+				if((bufid = pvm_nrecv(-1, PvmTaskExit)) > 0)
+				{
+					pvm_exit();
+					exit(UNKNOWN_ERROR);
+				}
+			}
 		}
 		pop_obj_stderror = sqrt( pop_obj_stderror);
 	}
@@ -462,13 +471,6 @@ namespace {
 		fout << "</spkreport>"  << endl;
 	}
 
-	void clean()
-	{
-		delete [] alp_tid;
-		delete [] host_tid;
-		delete [] exit_val;
-	}
-
 	void finish(int exit_value)               // for using pvm
 	{
 		fout.close();
@@ -481,14 +483,15 @@ namespace {
 	void stop(char* message, int exit_value)  // for parallel
 	{
 		OutputErrorMsg(message);
-		clean();
-		for(int i = 0; i < ntasks; i++)
+		for(int i = 0; i < num_tasks; i++)
 			pvm_kill(alp_tid[i]);
 		finish(exit_value);
 	}
 
 	void spawnAlp(int j)
 	{
+		int id = j;
+		if(j >= num_tasks) id = j % num_tasks;
 		int i = 0;
                 int m = 0;
 		if(j == 1) m = 1;
@@ -514,30 +517,42 @@ namespace {
 			stop("could not spawn alpha level", PVM_FAILURE);
                         exit(PVM_FAILURE);
 		}
-		alp_tid[j]        = tid;
-		host_tid[j]       = pvm_tidtohost(tid);
-		exit_val[j]       = SpkPvmUnreported;
+		int host = pvm_tidtohost(tid);
+		if(j < num_tasks)
+		{
+			alp_tid.push_back(tid);
+                        alp_aid.push_back(j);
+			host_tid.push_back(host);
+			exit_val.push_back(SpkPvmUnreported);
+		}
+		else
+		{
+			alp_tid[id]  = tid;
+                        alp_aid[id]  = j;
+			host_tid[id] = host;
+			exit_val[id] = SpkPvmUnreported;
+		}
 
 		// Establish notification of deletion of the host of the task we have just
 		// spawned, if we haven't already asked to be notified for this host.
 		// WARNING! Do not change the order of these notifications.
 		bool host_notified = false;
-                for(int k = 0; k < ntasks; k++)
+                for(int k = 0; k < num_tasks; k++)
 		{
-			if(k != j && host_tid[k] == host_tid[j])
+			if(k != id && host_tid[k] == host_tid[id])
 			{
 				host_notified = true;
 				break;
 			}
 		}
-		if(!host_notified && pvm_notify(PvmHostDelete, PvmHostDelete, 1, host_tid + j) < 0)
+		if(!host_notified && pvm_notify(PvmHostDelete, PvmHostDelete, 1, &host) < 0)
 		{
 			stop("pvm_notify failed for PvmHostDelete", PVM_FAILURE);
                         exit(PVM_FAILURE);
 		}
 
 		// Establish notification for task exit of the task we have just spawned
-		if(pvm_notify(PvmTaskExit, PvmTaskExit, 1, alp_tid + j) < 0)
+		if(pvm_notify(PvmTaskExit, PvmTaskExit, 1, &tid) < 0)
 		{
 			stop("pvm_notify failed for PvmTaskExit", PVM_FAILURE);
                         exit(PVM_FAILURE);
@@ -547,19 +562,21 @@ namespace {
 	int respawn(int host)
 	{
 		int n = 0;
-		for(int i = 0; i < ntasks; i++)
-			if(host_tid[i] == host && exit_val[i] == SpkPvmUnreported)
+		for(int i = 0; i < num_tasks; i++)
+		{
+			if(host_tid[i] == host)
 			{
 				host_tid[i] = 0;
-				spawnAlp(i);
+				spawnAlp(alp_aid[i]);
                                 n++;
 			}
+		}
 		return n;		
 	}
 
-	int tid2aid(int tid)
+	int tid2id(int tid)
 	{
-		for(int i = 0; i < ntasks; i++)
+		for(int i = 0; i < num_tasks; i++)
 			if(alp_tid[i] == tid)
 				return i;
 		return -1;
@@ -568,10 +585,9 @@ namespace {
 
 int main(int argc, const char *argv[])
 {
-	bool isUsingPvm = false;
 	if(argc > 1)
 	{
-		isUsingPvm = true;
+		nPvmTasks = 1;
                 working_dir = argv[1];
 		pvm_mytid();
 		parent_tid = pvm_parent();
@@ -585,7 +601,10 @@ int main(int argc, const char *argv[])
 			return FILE_ACCESS_ERROR;
 		}
 	}
-	bool isPvmParallel = argc > 2 && strcmp(argv[2], "parallel") == 0;
+	if(argc > 2)
+	{
+		nPvmTasks = atoi(argv[2]);
+	}
 	const char* stderrFileName = "software_error";
 	freopen( stderrFileName, "a", stderr );
 
@@ -614,7 +633,7 @@ int main(int argc, const char *argv[])
 		{	msg = "monteDriver\n"
 		      	"Method is adapt and nEta < 2";
 			OutputErrorMsg( msg );
-			if(isUsingPvm) finish( USER_INPUT_ERROR );
+			if(nPvmTasks > 0) finish( USER_INPUT_ERROR );
 			fout.close();
 			fclose(stderr);
 			return USER_INPUT_ERROR;
@@ -646,7 +665,7 @@ int main(int argc, const char *argv[])
 		      "Method is not one of the following:\n"
 		      "grid, adapt, plain, miser, or vegas";
 		OutputErrorMsg( msg );
-		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		if(nPvmTasks > 0) finish( USER_INPUT_ERROR );
 		fout.close();
 		fclose( stderr );
 		return USER_INPUT_ERROR;
@@ -658,7 +677,7 @@ int main(int argc, const char *argv[])
 		{	msg = "monteDriver\n"
 			       "number_eval is not greater than zero";
 			OutputErrorMsg( msg );
-			if(isUsingPvm) finish( USER_INPUT_ERROR );
+			if(nPvmTasks > 0) finish( USER_INPUT_ERROR );
 			fout.close();
 			fclose(stderr);
 			return USER_INPUT_ERROR;
@@ -735,7 +754,7 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
 		return UNKNOWN_ERROR;
@@ -747,14 +766,14 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose( stderr );
 		return UNKNOWN_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("DataSet or Pred constructor");
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose( stderr );
 		return UNKNOWN_ERROR;
@@ -765,7 +784,7 @@ int main(int argc, const char *argv[])
 	{	msg = "monteDriver\n"
 		      "DataSet.getPopSize() is less than or equal 0";
 		OutputErrorMsg(msg);
-		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		if(nPvmTasks > 0) finish( USER_INPUT_ERROR );
 		fout.close();
 		fclose(stderr);
 		return USER_INPUT_ERROR;
@@ -776,7 +795,7 @@ int main(int argc, const char *argv[])
 		{	msg = "monteDriver\n"
 			      "DataSet.getN() is less than or equal 0";
 			OutputErrorMsg(msg);
-			if(isUsingPvm) finish( USER_INPUT_ERROR );
+			if(nPvmTasks > 0) finish( USER_INPUT_ERROR );
 			fout.close();
 			fclose(stderr);
 			return USER_INPUT_ERROR;
@@ -788,7 +807,7 @@ int main(int argc, const char *argv[])
 	{	msg = "monteDriver\n"
 		      "y.size != N[0] + ... + N[M-1]";
 		OutputErrorMsg(msg);
-		if(isUsingPvm) finish( USER_INPUT_ERROR );
+		if(nPvmTasks > 0) finish( USER_INPUT_ERROR );
 		fout.close();
 		fclose(stderr);
 		return USER_INPUT_ERROR;
@@ -822,7 +841,7 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
 		return UNKNOWN_ERROR;
@@ -834,14 +853,14 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
 		return UNKNOWN_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("Model constructor");
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
 		return UNKNOWN_ERROR;
@@ -880,79 +899,83 @@ int main(int argc, const char *argv[])
 	valarray<double> obj_value(nAlp * 3);
 	valarray<double> obj_std(nAlp * 3);
 
-    if(isPvmParallel)
+    if(nPvmTasks > 1)
     {
         // loop over indices in fixed effects vector
         size_t index;
         sprintf(task, "%s/alpDriver", argv[1]);
-        ntasks = nAlp * 2 + 1;
+        num_objectives = nAlp * 2 + 1;
+        num_tasks = num_objectives;
+        if(num_objectives > nPvmTasks) num_tasks = nPvmTasks;
 
-        alp_tid = new int[ntasks];
-        host_tid = new int[ntasks];
-        exit_val = new int[ntasks];
-
-        for(int j = 0; j < ntasks; j++)
+        for(int j = 0; j < num_objectives; j++)
         {
             // spawn a PVM task
             spawnAlp(j);
-        }
-
-        // receive results
-        int ndone = 0;
-        int ip[2];
-        double dp[2];
-        int i, m, bufid, bytes, msgtag, source, exit_tid, aid, exit_value;
-        while(ndone < ntasks && (bufid = pvm_recv(-1, -1)) > 0)
-        {
-            pvm_bufinfo(bufid, &bytes, &msgtag, &source);
-            if(msgtag == PvmHostDelete)
+            alp_aid[j % num_tasks] = j;
+        
+            if((j + 1) % num_tasks == 0 || j + 1 == num_objectives)
             {
-                pvm_upkint(&exit_tid, 1, 1);
-                respawn(exit_tid);
-            }
-            if(msgtag == PvmTaskExit)
-            {
-                pvm_upkint(&exit_tid, 1, 1);
-                if(exit_tid == parent_tid)
+                // receive results
+                int ndone = 0;
+                if(j + 1 == num_objectives && num_objectives % num_tasks != 0)
+                    ndone = num_tasks - num_objectives % num_tasks;
+                int ip[2];
+                double dp[2];
+                int i, m, bufid, bytes, msgtag, source, exit_tid, aid, exit_value;
+                while(ndone < num_tasks && (bufid = pvm_recv(-1, -1)) > 0)
                 {
-                    stop("user abort job", USER_ABORT);
-                    fclose(stderr);
-                    return USER_ABORT;
-                }
-                if((aid = tid2aid(exit_tid)) >= 0)
-                {
-                    if(exit_val[aid] == SpkPvmUnreported)
+                    pvm_bufinfo(bufid, &bytes, &msgtag, &source);
+                    if(msgtag == PvmHostDelete)
                     {
-                        stop("an alpha task exited without an exit value", UNKNOWN_ERROR);
-                        fclose(stderr);
-                        return UNKNOWN_ERROR;
+                        pvm_upkint(&exit_tid, 1, 1);
+                        respawn(exit_tid);
                     }
-                    ndone++;
-                }
-            }
-            if(msgtag == SpkPvmResult)
-            {
-                pvm_upkint(ip, 2, 1);
-                i = ip[0];
-                m = ip[1];
-                index = i * 3 + m;
-                pvm_upkdouble(dp, 2, 1);
-	        obj_value[index] = dp[0];
-	        obj_std[index]   = dp[1];
-            }
-            if(msgtag == SpkPvmExitValue)
-            {
-                if((aid = tid2aid(source)) >= 0)
-                {
-                    pvm_upkint(&exit_value, 1, 1);
-                    if((exit_val[aid] = exit_value) != SUCCESSFUL)
+                    if(msgtag == PvmTaskExit)
                     {
-                        char* error = new char[bytes];
-                        pvm_upkstr(error);
-                        stop(error, exit_value);
-                        delete [] error;
-                        fclose(stderr);
-                        return exit_value;
+                        pvm_upkint(&exit_tid, 1, 1);
+                        if(exit_tid == parent_tid)
+                        {
+                            stop("user abort job", USER_ABORT);
+                            fclose(stderr);
+                            return USER_ABORT;
+                        }
+                        if((aid = tid2id(exit_tid)) >= 0)
+                        {
+                            if(exit_val[aid] == SpkPvmUnreported)
+                            {
+                                stop("an alpha task exited without an exit value", UNKNOWN_ERROR);
+                                fclose(stderr);
+                                return UNKNOWN_ERROR;
+                            }
+                            ndone++;
+                        }
+                    }
+                    if(msgtag == SpkPvmResult)
+                    {
+                        pvm_upkint(ip, 2, 1);
+                        i = ip[0];
+                        m = ip[1];
+                        index = i * 3 + m;
+                        pvm_upkdouble(dp, 2, 1);
+	                obj_value[index] = dp[0];
+	                obj_std[index]   = dp[1];
+                    }
+                    if(msgtag == SpkPvmExitValue)
+                    {
+                        if((aid = tid2id(source)) >= 0)
+                        {
+                            pvm_upkint(&exit_value, 1, 1);
+                            if((exit_val[aid] = exit_value) != SUCCESSFUL)
+                            {
+                                char* error = new char[bytes];
+                                pvm_upkstr(error);
+                                stop(error, exit_value);
+                                delete [] error;
+                                fclose(stderr);
+                                return exit_value;
+                            }
+                        }
                     }
                 }
             }
@@ -1019,7 +1042,7 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
 		return UNKNOWN_ERROR;
@@ -1031,14 +1054,14 @@ int main(int argc, const char *argv[])
 			__FILE__
 		);
 		OutputSpkException( e );
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
 		return UNKNOWN_ERROR;
 	}
 	catch( ... )
 	{	OutputErrorMsg("Monte Carlo or numerical integration");
-		if(isUsingPvm) finish( UNKNOWN_ERROR );
+		if(nPvmTasks > 0) finish( UNKNOWN_ERROR );
 		fout.close();
 		fclose(stderr);
 		return UNKNOWN_ERROR;
@@ -1076,7 +1099,7 @@ int main(int argc, const char *argv[])
 	fout << "</spkreport>" << endl;
 	fout.close();
 
-	if(isUsingPvm) finish( SUCCESSFUL );
+	if(nPvmTasks > 0) finish( SUCCESSFUL );
 	fclose(stderr);
 	// automatic cleanup by auto_ptr
 	return SUCCESSFUL;

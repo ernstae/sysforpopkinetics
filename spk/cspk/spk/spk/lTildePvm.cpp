@@ -71,6 +71,7 @@
   Objective.h $rend
   $bold Prototype:$$    $cend  
   $syntax/void lTildePvm(
+  int                  /nPvmTasks/,
   SpkModel<double>     &/model/,
   enum Objective       /whichObjective/,
   const   DoubleMatrix &/y_forAll/,
@@ -113,6 +114,12 @@
   $head Arguments$$
   The return value of $code lTilde$$ is true if it succeeds and false otherwise.
   $math%false%$$ indicates no guarantees on any output values.
+
+  $syntax/
+
+  /nPvmTasks/
+  /$$
+  The number of PVM tasks to spawn.
 
   $syntax/
 
@@ -331,11 +338,12 @@ static DoubleMatrix prevLambdaTilde_alp(__FILE__);
 static DoubleMatrix prevLTilde_alp     (__FILE__);
 static std::vector<int> ind_tid;
 static std::vector<int> host_tid;
-static std::vector<int> exit_val;
-static std::vector<const char*> inputAll;
+static std::vector<int> ind_iid;
+static std::vector<std::string> inputAll;
 static bool first = true;
 static int num_subjects;
 static int parent_tid;
+static int num_tasks;
 
 // Objects to minimize memory allocation activities
 static DoubleMatrix dvecY_i            (__FILE__); 
@@ -352,7 +360,7 @@ static DoubleMatrix dmatLambdaTilde_alp(__FILE__);
 void stop(char* message, int exit_value)  // for parallel
 {
     std::cerr << message << std::endl;
-    for(int i = 0; i < num_subjects; i++)
+    for(int i = 0; i < num_tasks; i++)
         pvm_kill(ind_tid[i]);
     pvm_initsend(PvmDataDefault);
     pvm_pkint(&exit_value, 1, 1);
@@ -368,6 +376,8 @@ void stop(char* message, int exit_value)  // for parallel
  *------------------------------------------------------------------------*/
 static void spawnInd(const char* input, int iid)
 {
+    int id = iid;
+    if(iid >= num_tasks) id = iid % num_tasks;
     int tid, bytes, msgtag;   
     char cwd[100];
     getcwd(cwd, 100);
@@ -384,31 +394,32 @@ static void spawnInd(const char* input, int iid)
         exit(PVM_FAILURE);
     }
     int host = pvm_tidtohost(tid);
-    if(first)
+    if(first && iid < num_tasks)
     {
         ind_tid.push_back(tid);
+        ind_iid.push_back(iid);
         host_tid.push_back(host);
-        exit_val.push_back(SpkPvmUnreported);
     }
     else
     {
-        ind_tid[iid]  = tid;
-        host_tid[iid] = pvm_tidtohost(tid);
-        exit_val[iid] = SpkPvmUnreported;
+        ind_tid[id]  = tid;
+        ind_iid[id]  = iid;
+        host_tid[id] = host;
     }
 
     // Establish notification of deletion of the host of the task we have just
     // spawned, if we haven't already asked to be notified for this host.
     // WARNING! Do not change the order of these notifications.
     bool host_notified = false;
-    for(int k = 0; k < num_subjects; k++)
+    for(int k = 0; k < num_tasks; k++)
     {
-        if(k != iid && host_tid[k] == host_tid[iid])
+        if(k != id && host_tid[k] == host_tid[id])
         {
             host_notified = true;
             break;
         }
     }
+
     if(!host_notified && pvm_notify(PvmHostDelete, PvmHostDelete, 1, &host) < 0)
     {
         stop("pvm_notify failed for PvmHostDelete", PVM_FAILURE);
@@ -429,25 +440,28 @@ static void spawnInd(const char* input, int iid)
 static int respawn(int host)
 {
     int n = 0;
-    for(int i = 0; i < num_subjects; i++)
-        if(host_tid[i] == host && exit_val[i] == SpkPvmUnreported)
+    for(int i = 0; i < num_tasks; i++)
+    {
+        if(host_tid[i] == host)
         {
             host_tid[i] = 0;
-            spawnInd(inputAll[i], i);
+            const char* input = inputAll[ind_iid[i]].c_str();
+            spawnInd(input, ind_iid[i]);
             n++;
         }
-        return n;		
+    }
+    return n;
 }
 
 
 /*------------------------------------------------------------------------
  * Local Function definition
  *------------------------------------------------------------------------*/
-static int tid2iid(int tid)
+static int tid2id(int tid)
 {
-    for(int i = 0; i < num_subjects; i++)
-    if(ind_tid[i] == tid)
-        return i;
+    for(int i = 0; i < num_tasks; i++)
+        if(ind_tid[i] == tid)
+            return i;
     return -1;
 }
 
@@ -455,6 +469,7 @@ static int tid2iid(int tid)
  * Function definition
  *------------------------------------------------------------------------*/
 void lTildePvm(
+            int                nPvmTasks,
 	    SpkModel<double>   &model,
 	    enum Objective     whichObjective,
 	    const DoubleMatrix &dvecY_forAll,  // all individuals' data
@@ -565,6 +580,11 @@ void lTildePvm(
     // Get parent tid
     parent_tid = pvm_parent();
 
+    // Get number of tasks
+    num_tasks = num_subjects;
+    if(num_tasks > nPvmTasks)
+        num_tasks = nPvmTasks;
+
     for( i=0; i<num_subjects; i++ )
     {  
         model.selectIndividual(i);
@@ -590,11 +610,24 @@ void lTildePvm(
         const char* input = std_str.c_str();
 
         // Add input to input list
-        inputAll.push_back(input);
+        inputAll.push_back(std_str);
 
         if(first)
         {
-            spawnInd(input, i);
+            if(i < num_tasks)
+            {
+                // Spawn a PVM task
+                spawnInd(input, i);
+            }
+            else
+            {
+                // Send input to indDriver
+                char* str = const_cast<char*>(input);
+                pvm_initsend(PvmDataDefault);
+                pvm_pkstr(str);
+                pvm_send(ind_tid[i % num_tasks], SpkPvmDataPackage);
+                ind_iid[i % num_tasks] = i;
+            }
         }
         else
         {
@@ -602,78 +635,83 @@ void lTildePvm(
             char* str = const_cast<char*>(input);
             pvm_initsend(PvmDataDefault);
             pvm_pkstr(str);
-            pvm_send(ind_tid[i], SpkPvmDataPackage);
+            pvm_send(ind_tid[i % num_tasks], SpkPvmDataPackage);
+            ind_iid[i % num_tasks] = i;
         }
         inx_yi0 += num_y_i;
-    }
     
-    if(first)
-        first = false;
+        if((i + 1) % num_tasks == 0 || i + 1 == num_subjects)
+        {
+            int ndone = 0;
+            int bufid = 0;
+            int nWarnings;
 
-    int ndone = 0;
-    int bufid = 0;
-    int nWarnings;
-    IndOutputDataPackage outPack;
-    while((bufid = pvm_recv(-1, -1)) > 0)
-    {
-        int rval, bytes, msgtag, source, exit_tid;
-        rval = pvm_bufinfo(bufid, &bytes, &msgtag, &source);
-        if(msgtag == PvmHostDelete)
-        {
-            pvm_upkint(&exit_tid, 1, 1);
-            respawn(exit_tid);
-        }
-        if(msgtag == PvmTaskExit)
-        {
-            pvm_upkint(&exit_tid, 1, 1);
-            if(exit_tid == parent_tid) // my parent exit means user aborting job
+            if(i + 1 == num_subjects && num_subjects % num_tasks != 0)
+                ndone = num_tasks - num_subjects % num_tasks;
+
+            IndOutputDataPackage outPack;
+            while((bufid = pvm_recv(-1, -1)) > 0)
             {
-                stop("user aborting job", USER_ABORT);
-            }
-            if(tid2iid(exit_tid) >= 0) // my child shouldn't exit before my exit 
-            {
-                stop("an individual task exited unexpected", UNKNOWN_FAILURE);
-            }
-        }
-        if(msgtag == SpkPvmResult)
-        {
-            char* output = new char[bytes];
+                int rval, bytes, msgtag, source, exit_tid;
+                rval = pvm_bufinfo(bufid, &bytes, &msgtag, &source);
+                if(msgtag == PvmHostDelete)
+                {
+                    pvm_upkint(&exit_tid, 1, 1);
+                    respawn(exit_tid);
+                }
+                if(msgtag == PvmTaskExit)
+                {
+                    pvm_upkint(&exit_tid, 1, 1);
+                    if(exit_tid == parent_tid) // my parent exit means user aborting job
+                    {
+                        stop("user aborting job", USER_ABORT);
+                    }
+                    if(tid2id(exit_tid) >= 0) // my child shouldn't exit before my exit 
+                    {
+                        stop("an individual task exited unexpectedly", UNKNOWN_FAILURE);
+                    }
+                }
+                if(msgtag == SpkPvmResult)
+                {
+                    char* output = new char[bytes];
 
-            // Get results
-            pvm_upkstr(output);
-            string str(output);
-            istringstream iStringStream(str);
-            iStringStream >> outPack;
-            results = outPack.indResults;
-            resultsAll[results.getIndex()] = results;
+                    // Get results
+                    pvm_upkstr(output);
+                    string str(output);
+                    istringstream iStringStream(str);
+                    iStringStream >> outPack;
+                    results = outPack.indResults;
+                    resultsAll[results.getIndex()] = results;
 
-            // Get warnings
-            pvm_upkstr(output);
-            pvm_upkint(&nWarnings, 1, 1);
-            WarningsManager::addWarningList(output, nWarnings);
+                    // Get warnings
+                    pvm_upkstr(output);
+                    pvm_upkint(&nWarnings, 1, 1);
+                    WarningsManager::addWarningList(output, nWarnings);
 
-            delete [] output;
-            ndone++;
-            if(ndone == num_subjects) break;
-        }
-        if(msgtag == SpkPvmErrorMessage)
-        {
-            char* output = new char[bytes];
+                    delete [] output;
+                    ndone++;
+                    if(ndone == num_tasks) break;
+                }
+                if(msgtag == SpkPvmErrorMessage)
+                {
+                    char* output = new char[bytes];
 
-            // Get SpkExceptions
-            pvm_upkstr(output);
-            string str(output);
-            istringstream iStringStream(str);
-            SpkException e;
-            iStringStream >> e;
+                    // Get SpkExceptions
+                    pvm_upkstr(output);
+                    string str(output);
+                    istringstream iStringStream(str);
+                    SpkException e;
+                    iStringStream >> e;
             
-            // Get warnings
-            pvm_upkstr(output);
-            pvm_upkint(&nWarnings, 1, 1);
-            WarningsManager::addWarningList(output, nWarnings);
+                    // Get warnings
+                    pvm_upkstr(output);
+                    pvm_upkint(&nWarnings, 1, 1);
+                    WarningsManager::addWarningList(output, nWarnings);
 
-            delete [] output;
-            throw e;
+                    delete [] output;
+                    throw e;
+                }
+            }
         }
     }
 
@@ -743,6 +781,9 @@ void lTildePvm(
         assert(dmatLambdaTilde_alpOut->nc() == num_subjects);
         prevLambdaTilde_alp   = dmatLambdaTilde_alp;
     }
+
+    if(first)
+        first = false;
 
     ++cntPopItrs;
   return;

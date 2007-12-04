@@ -1399,8 +1399,7 @@ void ppkaOpt( SpkModel<double>&       model,
         pdLTildeOut,
         pdrowLTilde_alpOut,
         pdmatLTilde_alp_alpOut,
-        false,
-        false,
+        0,
         false
         );
     return;

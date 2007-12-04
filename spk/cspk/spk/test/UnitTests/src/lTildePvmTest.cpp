@@ -643,7 +643,8 @@ void lTildePvmTest::diagDTest(enum Objective whichObjective,
   if( whichObjective == NAIVE_FIRST_ORDER )
   {
     NaiveFoModel foModel( &model, bStep );
-    lTildePvm( foModel,
+    lTildePvm( nIndividuals,
+      foModel,
       whichObjective, 
       DoubleMatrix(y,1), 
       DoubleMatrix(N,1), 
@@ -656,7 +657,8 @@ void lTildePvmTest::diagDTest(enum Objective whichObjective,
       &bOut, &LOut, &L_alpOut, &Li_alpOut);
   }
   {
-    lTildePvm( model,
+    lTildePvm( nIndividuals,
+      model,
       whichObjective, 
       DoubleMatrix(y,1), 
       DoubleMatrix(N,1), 
