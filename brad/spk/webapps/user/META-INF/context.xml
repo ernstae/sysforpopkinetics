@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context path="/user">
-  <Logger className="org.apache.catalina.logger.FileLogger" prefix="user." suffix=".log" timestamp="true"/>
-</Context>
