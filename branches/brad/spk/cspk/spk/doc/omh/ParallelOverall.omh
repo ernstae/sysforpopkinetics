@@ -1,0 +1,104 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin ParallelOverall$$
+
+$spell
+    exe Spk executables multi parallelization intra ppka
+$$
+
+$section Overall$$
+$center $bold $big $big Shared Directory Version$$ $$ $$ $$
+
+$index Parallel, Overall$$
+
+$head Scope$$
+In this iteration of SPK software development, we limit ourselves to focusing on a successful first parallelization of SPK,
+leading careful design of abstract communication interface.
+$pre
+
+$$
+The system is aimed to be developed as ANSII C++ compliant.  
+However, issues around network access or multiple processing may result in the use of 
+a platform dependent routine.  
+When this is necessary, the developer should isolate the routine in such a way that it can be switched to corresponding 
+routines available on other platforms.  Keeping this in mind, we, however in the first iteration
+of SPK development, guarantee only the successful
+execution on NT/Win2000 machines connected over a NT/Win2000 served intra-network.
+
+$head Terminology$$
+For better communication, let us define some terminology first of all.  
+We refer the machine that runs SPK as Master simply $bold Master$$ 
+(may call it sometimes $bold Master machine$$ for clarification) and
+a machine that runs as Node a $bold Node$$ (may call it sometimes $bold Node machine$$ for clarification).  These machines are all
+$bold Participant$$s and are a subset of all NT/Win2000 machines connected over a NT/Win2000-based intra-network.  
+This subset of network is $bold SPK Parallel Network$$.  A shared directory to which
+all Participants read/write files for exchange of information is $bold Shared Directory$$. 
+A C++ program (as a function) user provides for performing population analysis (calling $xref/fitPopulation//fitPopulation()/$$ in particular)
+is $bold User-provided Driver$$.
+
+$head Introduction$$
+SPK's parallel processing occurs at the level of individuals' parameter estimations: to be specific, at a point where the 
+function that computes the population-level objective function 
+calls the function that minimizes the individual-level objective function with respect to the individual parameters
+for each individual.  
+Two classes of process will be active
+during the population parameter optimization: $bold $italic Master$$ $$ and $bold $italic Node$$ $$.  
+Master controls the entire population parameter optimization.  Node, on the other hand, processes 
+one individual's parameter optimization at a time and sees it as an isolated case.
+A Node may process more than one individual.
+The Master and the Node(s) communicate with each other by reading and writing files in a shared directory.
+For this reason, we refer this iteration of SPK as 
+$big $bold $italic Shared Directory Version$$ $$ $$.
+$pre
+
+$$
+In SPK Parallel Network, there will be only one Master and at least one Node.
+When user invoke SPK as Master, the master process creates and starts a sub (heavy weight) process
+as a Node.  This means that Master will make progress in computation without requiring the user
+to start a Node explicitly and also prevents from hanging when the network goes down or
+all other Nodes (on other machines) drop from participation.
+$pre
+
+$$
+A Node may jump in or drop out of computation anytime.  If a Node is started manually on some machine
+before Master is started, the Node will sit and wait until Master appears.  If the Node is
+started some time after Master was started, the Node immediately starts processing requests from
+Master.
+$pre
+
+$$
+There can be only one Master for a particular Shared Directory. This means that you may run multiple Spk applications
+as Masters but Shared Directory must be unique to each pair of Master - Node(s).
+$pre
+
+$$
+Note,running more than one Node(s) on a single CPU machine will only slow down the execution.
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end

@@ -1,0 +1,117 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin glossary$$
+$aindex head$$
+
+$escape #$$
+
+$spell
+	affine
+    bool
+    ind
+    covariance
+    valarray
+$$
+
+$section Glossary$$
+
+$head Affine$$
+A function is affine if its second derivative is zero for all argument values.
+
+$head Derivative$$
+A scalar or vector valued function is a special case
+of a matrix valued function.
+In general, if $math%A(x)%$$ is a matrix valued function 
+of a column vector $math%x%$$, 
+its derivative with respect to $math%x%$$ is denoted by $math%A_x(x)%$$. 
+The derivative of the $th (m, n)$$ element of $math%A(x)%$$
+with respect to the $th k$$ element of $math%x%$$ is equal to the element of 
+$math%A_x(x)%$$ with row index $math%n + (m - 1) * rowdim(A(x))%$$ and with 
+column index $math%k%$$. The row dimension $math%A_x(x)%$$ is equal to the 
+product of the row and column dimension of $math%A_x(x)%$$. 
+The column dimension of $math%A_x(x)%$$ is equal to the row dimension of $math%x%$$.
+
+$head Column major$$
+The elements of a matrix can be stored in a vector in two different orders.
+When the matrix elements are read vertically, it is said to be 
+$italic column major$$.  In particular, a 2 by 3 matrix, $math%
+[a11 a12 a13]
+[a21 a22 a23]
+%$$
+would be stored in a vector in the following way:
+$math%
+{a11, a21, a12, a22, a13, a23}.
+%$$
+Fortran, O-Matrix, and SPK adapt this ordering.
+
+$head Exception Handling Policy$$
+When a function throws an exception, the state of the function is
+undefined.  It tries to return to the initial state at which
+the function was called upon throwing an exception but it is
+not guaranteed.  It guarantees, however, no resource leak.
+
+$head Gradient$$
+The gradient of a vector valued function is the transpose of its derivative.
+
+$head Projected Gradient$$
+Suppose that $math%g(x)%$$ is the gradient of an objective function
+that is being minimized subject to the constraint that $math%xLow #le x #le xUp%$$.
+The project gradient $math%p(x)%$$ is defined by
+$math%
+	          / 0      #if xLow  = x  #and g (x) >= 0
+	         /         %       i    i %     i
+	         |
+	p (x) =  |  0      #if xUp  = x  #and g (x) <= 0
+	 i       |         %      i    i %     i
+	         \
+	          \ g (x)  #otherwise
+	             i
+%$$
+
+$comment
+This file has Glossary entries common to the internal and external
+SPK documentation.
+$$
+$include ModelFunctionsDepend.omh$$
+
+$head Row major$$
+The elements of a matrix can be stored in a vector in two different orders.
+When the matrix elements are read horizontally, it is said to be 
+$italic row major$$.  In particular, a 2 by 3 matrix, $math%
+[a11 a12 a13]
+[a21 a22 a23]
+%$$
+would be stored in a vector in the following way:
+$math%
+{a11, a12, a13, a21, a22, a23}.
+%$$
+C compilers adapt this ordering.
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end

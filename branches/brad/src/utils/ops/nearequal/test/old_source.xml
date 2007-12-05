@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spksource>
+   <theta length="2" />
+   <omega dimension="2" struct="block" />
+   <omega dimension="2" struct="diagonal" />
+   <sigma dimension="1" struct="diagonal" />
+</spksource>

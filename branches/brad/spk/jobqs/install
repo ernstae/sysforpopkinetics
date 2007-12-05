@@ -1,0 +1,4 @@
+cd classes
+cp -R uw /usr/local/bin/spktest
+cp jobqd jobqtestd /etc/rc.d/init.d
+cp *.pl /usr/local/bin/spktest

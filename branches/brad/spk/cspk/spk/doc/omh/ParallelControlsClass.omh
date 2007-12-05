@@ -1,0 +1,47 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin ParallelControlsclass$$
+
+$spell ParallelControls$$ 
+
+$section ParallelControls Class$$
+
+$index ParallelControls, Parallel Controls$$
+
+$head Description$$
+$code ParallelControls$$ class provides an encapsulation for the controlling 
+parameters for the program running in parallel processing mode.  The class 
+provides a number of public member functions listed under contents section 
+below.
+
+$childtable/
+	ParallelControls.h/$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+	

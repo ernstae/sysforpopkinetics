@@ -1,0 +1,622 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+      "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>MySQL and Spk</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>September 21, 2006</date>
+	<authorinitials>ernst</authorinitials>
+	<revremark>Revised instructions for Fedora Core 5.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>January 29, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	The installation, use, and management of the MySQL relational
+	database management system is discussed.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      MySQL is a relational database management system that is available
+      under an open source GPL license when included as a part of an
+      application that also bears an open source license. Because Spk is
+      distributed as open souce, this powerful
+      tool can be distributed as part of Spk at no cost to users.
+    </para>
+    <para>
+      Spk requires the ability to make updates to the database as
+      <emphasis>atomic transactions.</emphasis>.  This feature was
+      first available in Version 4 of MySQL. An Spk installation
+      should, therefore, install MySQL Version 4.0 or later.
+    </para>
+    <para>
+      This document describes how to install, configure, and 
+      manage MySQL as part of Spk.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Installing MySQL on Fedora Core</title>
+    <para>
+      The following installation instructions are specific to
+      RFPK and Fedora Core 5, which is installed by default on 
+      all of the developers' machines.
+    </para>
+    <sect2>
+    <title>Installing the Database Software</title>
+    <para>
+ 	The preferred way to install software on a Fedora system is with packages
+ 	assembled for installation using the <emphasis>RPM</emphasis> package format, which 
+	can be identified by the <filename>.rpm</filename> filename suffix.  These files
+ 	are distributed on Fedora's network of update servers, and can be installed using the
+	<emphasis>yum</emphasis> package management tool.  <emphasis>Yum</emphasis> is similar
+	to the <emphasis>up2date</emphasis> tool on a RHEL system.
+    </para>
+    <para>
+	In a terminal window:
+	<screen>
+yum install mysql-server mysql-devel perl-DBI perl-DBD-MySQL
+	</screen>
+    </para>
+    <para>
+	After the set of commands listed above have been executed, MySQL will have
+	been installed on your machine, and the MySQL server should be started.  You can
+	start MySQL by executing the following command:
+<screen>
+/etc/init.d/mysqld start
+/sbin/chkconfig --level 345 mysqld on
+</screen>
+    </para>
+    <para>
+	The second command <emphasis>chkconfig</emphasis> is used to tell the operating system
+	to start the MySQL server when the computer is started in runlevel 3, 4 or 5.
+    </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Installing MySQL in Production (RHEL)</title>
+    <para>
+      The following installation instructions are specific to 
+      RPFK and RedHat Enterprise Linux version 4 (RHEL).
+    </para>
+    <sect2>
+      <title>Installing the Database Software</title>
+      <para>
+	The preferred way to install software in an RHEL system is with 
+	packages assembled for installation using the <emphasis>rpm</emphasis>
+	command (Redhat Package Manager).  Files for <emphasis>rpm</emphasis>,
+	which can be identified by the <filename>.rpm</filename> filename
+	suffix, are available for MySQL at the 
+	<ulink url="http://www.mysql.com/">MySQL</ulink> web site.  The needed
+	files, however, have already been downloaded, and are available on
+	<filename>whitechuck.rfpk.washington.edu</filename>.
+      </para>
+      <para>
+	In a terminal window:
+	<screen>
+cd /tmp
+scp whitechuck:/opt/download/mysql-db.tar .
+tar xvf mysql-db.tar
+su
+cd mysql-db
+rpm -Uhv *
+cd /tmp
+rm -rf mysql-db.tar mysql-db
+	</screen>
+      </para>
+      <para>
+	After the set of commands listed above have been executed, MySQL
+	should be installed on your machine and the MySQL server should
+	be running.  Furthermore, the server will start automatically
+	each time that you boot your machine.
+      </para>
+    </sect2>
+</sect1>
+<sect1>
+<title>Post-installation Configuration</title>
+    <sect2>
+      <title>Adding the Root User</title>
+      <para>
+	As the first step toward using your MySQL database, you must
+	provide the MySQL root user with a password.  The MySQL 
+	root user is not the same as the Linux root user, and should
+	have a different password, because these two users have different
+	roles and responsibilities.  
+      </para>
+      <para>
+	In the following, assume that the password is 
+	<emphasis>secret-code</emphasis>. Be certain, however, that you do
+	not actually use <emphasis>secret-code</emphasis> as your password,
+	but rather provide a string of alphabetic characters, digits, and
+	special characters that is very difficult to guess.
+      </para>
+      <para>
+	From a terminal window:
+	<screen>
+su 
+/usr/bin/mysqladmin -u root password <emphasis>secret-code</emphasis>
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Creating the Databases</title>
+      <para>
+	In this step we will create two database,
+	<emphasis>spkdb</emphasis> and <emphasis>spktest</emphasis>.	
+	These databases will have exactly the same structure.
+	For now, we will create them empty:
+      </para>
+      <para>
+	<screen>
+mysql -uroot -p
+use mysql;
+create database spkdb;
+create database spktest;
+quit;
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Adding the Test User</title>
+      <para>
+	For testing of software, we need a user with access
+	rights to the <emphasis>spktest</emphasis> database.
+	Assume that <emphasis>hostname</emphasis> is the 
+	full DNS hostname of the computer. For example, 
+	<emphasis>hostname </emphasis> might be
+	<emphasis>rose.rfpk.washington.edu</emphasis>
+	<screen>
+mysql -u root -p
+grant all on spktest.* to tester@localhost identified by 'tester';
+grant all on spktest.* to tester@localhost.localdomain identified by 'tester';
+grant all on spktest.* to tester@<emphasis>hostname</emphasis> identified by 'tester';
+quit;
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title id="perl-access">Installing the Perl Access Modules</title>
+      <para>
+	To access any relational database from perl, the perl-DBI
+	module must be installed.  For access to
+	a MySQL database, the perl-DBD-MySQL module must be added.  The
+	following procedure will install both of these modules on your machine (use only for Red Hat Enterprise Linux RHEL).
+	<screen>
+cd /tmp
+scp whitechuck:/opt/download/mysql-perl.tar .
+tar xvf mysql-perl.tar
+su
+cd mysql-perl
+rpm -Uhv *
+exit
+cd /tmp
+rm -rf mysql-perl.tar mysql-perl
+	</screen>
+      </para>
+      <para>
+	If you are using Fedora Core, the Perl::DBI and Perl::DBD:MySQL modules were installed earlier in this document.
+	If your system does not have the Perl::DBI or Perl::DBD:MySQL modules installed, they can be installed by 
+	using the following command:
+	<screen>
+yum install perl-DBI perl-DBD-MySQL
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title id="java">Installing Java</title>
+      <para>
+	If you want to use java to access the database and you do not already
+	have the Java Software Development Kit (SDK) installed on your machine,
+	follow these instructions.
+	<screen>
+cd /tmp
+scp whitechuck:/opt/download/java.tar .
+tar xvf java.tar
+cd java
+chmod +x *bin
+./*bin
+	</screen>
+	At this point you will need to scroll down through a license 
+	agreement and respond that <command>yes</command>, you
+	accept it.
+	<screen>
+su
+rpm -Uhv *.rpm
+mv *.zip /usr/java
+cd /usr/java
+unzip *doc.zip
+rm *doc.zip
+exit
+cd /tmp
+rm -rf java java.tar
+	</screen>
+      </para>
+      <para>
+	Before you can use java, you will need to set up the 
+	<emphasis>JAVA_HOME</emphasis> environment variable.  
+	Add the following lines to your <filename>~/.bash_profile</filename>
+	file:
+	<screen>
+JAVA_HOME=/usr/java/j2sdk1.4.2_03
+export JAVA_HOME
+	</screen>
+	The above assumes that the SDK that you installed was
+	<filename>j2sdk1.4.2_03</filename>. If it is different, this
+	document needs to be updated, but you can simple adjust the 
+	name to what is installed.
+      </para>
+      <para>
+	Finally, log out of the desk top and log back in again.  This will 
+	insure that all processes descendent from your desktop will have 
+	<emphasis>JAVA_HOME</emphasis> set properly.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="java-access">Installing the Java Access Classes</title>
+      <para>
+	To use java to access a MySQL database, you must have the
+	mysql-connector-java jar installed on your machine.  The 
+	following instructions will accomplish this.
+	<screen>
+cd /tmp
+scp whitechuck:/opt/download/mysql-java.tar .
+tar xvf mysql-java.tar
+cd mysql-java
+tar xvzf *
+rm *.gz
+cd mysql*
+su
+cp *.jar $JAVA_HOME/jre/lib/ext
+exit
+cd /tmp
+rm -rf mysql-java.tar mysql-java
+	</screen>
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Backing Up the Spk Database</title>
+    <para>
+      Currently, a symbolic backup of the database is stored each night in the directory
+      <filename>dbserver:/usr/local/spk/db_backup</filename>.  The following
+      script,
+      <screen>
+#!/bin/sh
+ 
+# Remove any files in the current directory that have a filename suffix
+# of .sql and are more than eight days old.
+#
+# Make a backup copy of the spkdb database in the current directory.
+ 
+DB_BACKUP=/usr/local/spk/db_backup
+ 
+cd $DB_BACKUP
+find . -name '*.sql' -ctime +8 -exec rm -f {} \;
+ 
+/usr/local/bin/dump_spkdb.pl
+ 
+exit 0    
+      </screen>
+      which also resides in 
+      <filename>dbserver:/usr/local/spk/db_backup</filename>, is run nightly by the
+      <emphasis>cron.daily</emphasis> process.
+    </para>
+    <para>
+      The configuration of <emphasis>cron.daily</emphasis> needed to make this 
+      happen consists of a symbolic link in the 
+      <filename>/etc/cron.daily</filename> directory.  If this link should
+      need to be replaced, the following commands executed on 
+      <emphasis>dbserver</emphasis> would accomplish it:
+      <screen>
+su -
+cd /etc/cron.daily
+ln -s /usr/local/spk/db_backup/spkdb_backup.sh spkdb_backup.sh
+      </screen>
+    </para>
+    <para>
+      A week's worth of backups is retained online in the directory.
+      Once a week, the entire <emphasis>dbserver</emphasis>
+      is backed up to tape.
+    </para>
+    <para>
+      <emphasis>
+      This backup solution is adequate at the current time.  When the
+      database gets larger and there is much more usage, another 
+      solution will need to be implemented, because the symbolic 
+      backup is not guaranteed to provide a consistent snapshot of 
+      transactions in progress while the backup is running.  
+      </emphasis>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Installing the Spk Database Source</title>
+    <para>
+      The source for the Spk database API and administrative
+      scripts is located in
+      <filename>r2/src/apps/spk/db</filename> in the 
+      <emphasis>cvs</emphasis> tree. You can copy the
+      <filename>db</filename> subtree to another location,
+      if you want to.
+    </para>
+    <sect2>
+      <title>Installing and Testing the Perl API</title>
+      <para>
+	You will need to have the perl modules for access MySQL
+	installed on your machine. If you have not done so, follow the
+	instructions in the section
+	"<link linkend="perl-access">Installing the Perl Access Modules</link>."
+      </para>
+      <para>
+	Start in the 
+	<filename>r2/src/apps/spk/db</filename> directory
+	in a cvs workspace, or a copy of the subtree starting
+	at <filename>db</filename>:
+	<screen>
+cd api/perl
+perl Makefile.PL
+make
+make test
+	</screen>
+      </para>
+      <para>
+	If all the tests run correctly, complete the installation
+	this way:
+	<screen>
+su
+make install
+	</screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>Installing and Testing the Java API</title>
+      <para>
+	You will need to have Java and the MySQL access classes
+	installed on your machine. If you have not done so, follow the
+	instructions in the sections
+	"<link linkend="java">Installing Java</link>", and
+	"<link linkend="java-access">Installing the Java Access Classes</link>."
+      </para>
+      <para>
+	Start in the 
+	<filename>r2/src/apps/spk/db</filename> directory
+	in a cvs workspace, or a copy of the subtree starting
+	at <filename>db</filename>:
+	<screen>
+cd api/java
+make
+make docs
+make test
+	</screen>
+      </para>
+      <para>
+	The commands listed above will compile the rfpk.spk.spkdb package, 
+	generate html documentation (using javadoc) and run the test suite.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="example">
+    <title>Modify the Definition of the Database</title>
+    <para>
+      From time to time, the definition of the database (the schema of the database)
+      must be modified in order to support new features of the Spk application.
+      The process of making these changes must be an integral part of the processes
+      for 
+      <ulink url="../../../guide/system_test/system_test.html">
+	system test
+      </ulink>
+      and 
+      <ulink url="../../../guide/deployment/deployment.html">
+	deployment
+      </ulink>.
+    </para>
+    <sect2 id="modscript">
+      <title>Example Modification Script</title>
+      <para>
+	You could change the database schema by using
+	<emphasis>mysql</emphasis> interactively.  The problem with that approach
+	is that you might have to repeat the interaction several times, which
+	could be error prone.  It is better to place the SQL/DDL statements that
+	you would have used interactively in a file, and then use that file as
+	input to <emphasis>mysql</emphasis> in batch mode.
+      </para>
+      <para>
+	For example, let us suppose that you need to make the following changes:
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Add an <emphasis>mda_code</emphasis> field to the 
+	      <emphasis>job</emphasis> table.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Create a new table, <emphasis>mda</emphasis>, with fields
+	      <emphasis>mda_code</emphasis> and <emphasis>mda_name</emphasis>.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Set the <emphasis>mda</emphasis> field of all existing jobs
+	      to 'nonmem';
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	The following DDL would accomplish what you need:
+	<screen>
+ALTER TABLE job ADD mda_code varchar(6);
+CREATE TABLE mda (
+  mda_code char(6) NOT NULL default '',
+  mda_name char(20) default NULL,
+  PRIMARY KEY  (mda_code)
+) TYPE=MyISAM;
+INSERT INTO mda (mda_code, mda_name) VALUES ('nonmem','NONMEM Style MDA');
+INSERT INTO mda (mda_code, mda_name) VALUES ('saam2' ,'SAAM II Style MDA');
+UPDATE job SET mda_code='nonmem';
+	</screen>
+      </para>
+      <para>
+	Using a text editor as an ordinary user on <emphasis>dbserver</emphasis>,
+	place the above lines in a file.  You can use
+	any name for the file, but for this example, let us call it
+	<filename>modscript.sql</filename>, which is the default name used
+	by <emphasis>load_spktest.pl</emphasis>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using the Modification Script</title>
+      <para>
+	This section continues the above example, showing how the modification
+	script would be used.
+	<orderedlist>
+	  <listitem>
+	    <para>
+	      Get exclusive use of the test environment through negotiation
+	      with the other software engineers.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Take a snapshot of the production database to use to initialize
+	      a test database, using <emphasis>take_snapshot.pl</emphasis> for
+	      this purpose.  The snapshot will consist of three files, called
+	      <filename>basedata.sql</filename>, <filename>schema.sql</filename>
+	      and <filename>userdata.sql</filename>, created by 
+	      <emphasis>take_snapshot.pl</emphasis> in the current directory.
+	      Have <emphasis>take_snapshot.pl</emphasis> place several jobs in
+	      the snapshot: 10, 20, 30 (and parent and child jobs) for 
+	      example.
+	      <screen>
+take_snapshot.pl 10, 20, 30
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Create a test database, <emphasis>spktest</emphasis>, using 
+	      <emphasis>load_spktest.pl</emphasis> for this purpose.  As input,
+	      <emphasis>load_spktest.pl</emphasis> will use your
+	      <filename>modscript.sql</filename> and well as the three files
+	      that were created by <emphasis>take_snapshot.pl</emphasis>.
+	      <screen>
+load_spktest.pl
+	      </screen>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Use <emphasis>mysql</emphasis> interactively to examine
+	      the <emphasis>spktest</emphasis> database that you have
+	      just created.  You should find that the
+	      <emphasis>mda_code</emphasis> field has been added to
+	      the <emphasis>job</emphasis> table, that all existing
+	      jobs have <emphasis>nonmem</emphasis> as the value of
+	      that field, and that the <emphasis>mda</emphasis> table
+	      has been created and populated.  Also, verify that the
+	      definitions of the new fields in the <emphasis>job</emphasis>
+	      and <emphasis>mda</emphasis> tables are what you expect.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      When you are convinced that your database modification script is
+	      working correctly, go on to test the software modifications
+	      which the database modifications were designed to support.
+	      You can use your test database to do unit testing,
+	      and then go on to perform full
+	      <ulink url="../../../guide/system_test/system_test.html">
+		system testing
+	      </ulink>
+	      as usual.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      After successful system testing and staging of a deployment
+	      candidate, <emphasis>do not</emphasis> release the test environment.
+	      You <emphasis>must</emphasis> perform a deployment before 
+	      system testing of any additional deployment candidates can occur.
+	    </para>
+	    <para>
+	      The 
+	      <ulink url="../../../guide/deployment/deployment.html">
+		deployment
+	      </ulink>
+	      procedure, as described in the 
+	      <emphasis>SPK System Deployment Guide</emphasis>, covers both the case
+	      where the database is changed structurally and that where it is not.
+	      The differences between the two cases are as follows: 
+	      <orderedlist>
+		<listitem>
+		  <para>
+		    If the database is being modified, a modification script
+		    similar to that in the above
+		    <link linkend="modscript">
+		      example
+		    </link>
+		    must be present on <emphasis>aspkserver</emphasis> in the 
+		    directory in which <emphasis>regression_test</emphasis>
+		    is run.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    The production web server must be stopped before 
+		    <emphasis>deploy_candidate.pl</emphasis> is run, so that 
+		    changes to the software and the database can be synchronized.
+		    It is best to schedule this interruption of service and to
+		    announce the time of the shutdown to the user community.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    After <emphasis>deploy_candidate.pl</emphasis> is run, the
+		    modification script must be run against the production 
+		    database.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    If the modification requires the deployment of a modified
+		    web server application, that should occur at this time.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    After the production database has been modified and 
+		    the changes verified, the production web server can be restarted,
+		    in order to restart production.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+		    After production has started, but before any additional
+		    testing can occur, <emphasis>take_snapshot.pl</emphasis>
+		    may have to be modified, especially if the database 
+		    modifications added to the <emphasis>job</emphasis> table
+		    either a blob field or any field normally NULL at the time
+		    a job is submitted.
+		  </para>
+		</listitem>
+	      </orderedlist>
+	    </para>
+	  </listitem>
+	</orderedlist>
+      </para>
+    </sect2>
+  </sect1>
+</article>
