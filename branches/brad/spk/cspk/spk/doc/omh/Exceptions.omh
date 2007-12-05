@@ -1,8 +1,0 @@
-$begin Exceptions$$
-
-$section Exceptions$$
-
-$childtable/
-	SpkException.cpp/$$
-
-$end

@@ -1,6 +1,0 @@
-#!/bin/bash
-
-cd /usr/local/sgid/web/bin;
-./job-runner.php;
-
-exit(0);

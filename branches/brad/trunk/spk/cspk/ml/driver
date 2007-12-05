@@ -1,5 +1,0 @@
-#!/bin/bash
-
-USAGE="usage: driver"
-
-./monteDriver > result.xml
