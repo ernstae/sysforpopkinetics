@@ -27,7 +27,7 @@ import java.util.regex.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.io.*;
-import javax.jnlp.*;
+//import javax.jnlp.*;
 import java.net.URL;
 import javax.xml.parsers.*;
 import org.w3c.dom.Document;
@@ -782,7 +782,7 @@ public class Utility {
     /** This function opens an URL.
      * @param url a url to display.
      */
-    public static void openURL(String url)
+/*    public static void openURL(String url)
     {
         // Find a browser
         if(System.getProperty("os.name").startsWith("Windows"))
@@ -869,7 +869,7 @@ public class Utility {
             }
         }
     }
-    
+*/    
     /** Check if math functions used in the step are compatible with NONMEM.
      * @param text the program to be checked.
      * @param step the step title.

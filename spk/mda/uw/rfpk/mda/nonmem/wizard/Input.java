@@ -895,13 +895,7 @@ public class Input extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $INPUT Record", 
-                                 Input.class.getResource("/uw/rfpk/mda/nonmem/help/Input.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Input.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

@@ -1192,12 +1192,6 @@ public class Table extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $TABLE Record", 
-                                 Table.class.getResource("/uw/rfpk/mda/nonmem/help/Table.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Table.html");  
                 }
             };
 	}

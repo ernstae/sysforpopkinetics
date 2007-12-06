@@ -1258,13 +1258,7 @@ public class Omega extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $OMEGA Record", 
-                                 Omega.class.getResource("/uw/rfpk/mda/nonmem/help/Omega.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Omega.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

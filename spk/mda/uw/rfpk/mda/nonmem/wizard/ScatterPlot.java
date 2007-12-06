@@ -1412,13 +1412,7 @@ public class ScatterPlot extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for SCATTERPLOT Record", 
-                                 ScatterPlot.class.getResource("/uw/rfpk/mda/nonmem/help/ScatterPlot.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/ScatterPlot.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

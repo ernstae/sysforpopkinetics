@@ -339,13 +339,7 @@ public class Error extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $ERROR Record", 
-                                 Error.class.getResource("/uw/rfpk/mda/nonmem/help/Error.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Error.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

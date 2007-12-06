@@ -371,12 +371,6 @@ public class PK extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $PK Record", 
-                                 PK.class.getResource("/uw/rfpk/mda/nonmem/help/PK.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/PK.html");  
                 }
             };
 	}

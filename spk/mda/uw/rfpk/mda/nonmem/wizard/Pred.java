@@ -355,12 +355,6 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpBroker(){
             return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $PRED Record", 
-                                 Pred.class.getResource("/uw/rfpk/mda/nonmem/help/Pred.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Pred.html");  
                 }
             };
 	}

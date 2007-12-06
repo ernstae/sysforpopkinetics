@@ -225,13 +225,7 @@ public class Problem extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $PROBLEM Record", 
-                                 Problem.class.getResource("/uw/rfpk/mda/nonmem/help/Problem.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Problem.html");  
+                public void actionPerformed(ActionEvent e){  
                 }
             };
 	}
