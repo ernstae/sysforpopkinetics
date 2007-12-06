@@ -286,13 +286,7 @@ public class Aes extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $AES Record", 
-                                 Error.class.getResource("/uw/rfpk/mda/nonmem/help/Aes.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Aes.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

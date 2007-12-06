@@ -1237,13 +1237,7 @@ public class Sigma extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $SIGMA Record", 
-                                 Sigma.class.getResource("/uw/rfpk/mda/nonmem/help/Sigma.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Sigma.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

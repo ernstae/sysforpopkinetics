@@ -127,13 +127,7 @@ public class Confirmation extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for Confirmation", 
-                                 Confirmation.class.getResource("/uw/rfpk/mda/nonmem/help/Confirmation.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Confirmation.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

@@ -1047,13 +1047,7 @@ public class Theta extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $THETA Record", 
-                                 Theta.class.getResource("/uw/rfpk/mda/nonmem/help/Theta.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Theta.html");  
+                public void actionPerformed(ActionEvent e){   
                 }
             };
 	}

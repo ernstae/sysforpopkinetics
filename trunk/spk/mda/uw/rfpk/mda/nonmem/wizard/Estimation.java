@@ -1505,12 +1505,6 @@ public class Estimation extends javax.swing.JPanel implements WizardStep {
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
                 public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for $ESTIMATION Record", 
-                                 Estimation.class.getResource("/uw/rfpk/mda/nonmem/help/Estimation.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Estimation.html");  
                 }
             };
 	}

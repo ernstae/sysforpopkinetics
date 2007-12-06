@@ -129,13 +129,7 @@ public class Continue extends javax.swing.JPanel implements WizardStep {
 
 	public ActionListener getHelpAction(){
 	    return new ActionListener(){
-                public void actionPerformed(ActionEvent e){ 
-                    if(!iterator.getIsOnline()) 
-                        new Help("Help for Continue", 
-                                 Continue.class.getResource("/uw/rfpk/mda/nonmem/help/Continue.html"));
-                    else
-                        Utility.openURL("https://" + iterator.getServerName() + 
-                                        ":" + iterator.getServerPort() + "/user/help/Continue.html");  
+                public void actionPerformed(ActionEvent e){  
                 }
             };
 	}
