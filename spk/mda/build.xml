@@ -36,7 +36,6 @@ author: Jiaji Du
     <javac srcdir="src" destdir="classes" compiler="javac1.5" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
       <classpath>
         <pathelement location="classes" />
-        <pathelement location="lib/jnlp.jar" />
         <pathelement location="lib/jhall.jar" />
       </classpath>
     </javac>
@@ -63,7 +62,6 @@ author: Jiaji Du
        public="true">
       <classpath>
         <pathelement location="classes" />
-        <pathelement location="../webapps/user/jnlp.jar" />
         <pathelement location="../webapps/user/jhall.jar" />
       </classpath>
        <link href="${jdk-docs-location}"
