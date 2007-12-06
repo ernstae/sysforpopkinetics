@@ -378,8 +378,13 @@ void mapObjDiffTest::testMapObjDiff()
 
     // Set bStep to a vector:
     for( i=0; i<m; i++ ){
+# if 0
         dtemp = pow( DBL_EPSILON / (2.0/6.0), 1/3.0) + pdB[i];
         pdBStep[i] = 10.0 * ( dtemp - pdB[i] );
+# else
+	// changed by Brad on 2007-11-30
+	pdBStep[i] = 1e-5;
+# endif
     }
 
     // Set D to an identity matrix:

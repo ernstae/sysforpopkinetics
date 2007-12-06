@@ -46,9 +46,10 @@ AM_INIT_AUTOMAKE
 dnl
 dnl <AC_CONFIG_HEADER>
 dnl
-dnl Automake will generate rules to automatically regenerate the config header.
+dnl Automake will generate rules to automatically regenerate the 
+dnl spkpred/config.h header.
 dnl
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADER([spkpred/config.h])
 
 dnl 
 dnl <AC_PROG_CC>
@@ -82,7 +83,7 @@ dnl Null out default settings for C++ compiler flags
 dnl
 AC_SUBST(CXXFLAGS, "")
 
-dnl
+dnl -----------------------------------------------------------------------
 dnl Set an extra command line option "--enable-release-build" to 'configure'.
 dnl If the user specifies this option, a variable "release_build" gets
 dnl set to TRUE.  An important note here is that the variable name
@@ -128,7 +129,7 @@ else
         AC_MSG_RESULT( [debug] )
 fi
 
-dnl
+dnl -----------------------------------------------------------------------
 dnl Set an extra command line option "--enable-profiling" to 'configure'.
 dnl If the user specifies this option, a variable "profiling" gets
 dnl set to TRUE.  An important note here is that the variable name
@@ -169,11 +170,43 @@ if test $profiling = TRUE; then
         AC_DEFINE(SPK_PROFILE, 1, "yes")
         AC_MSG_RESULT( [yes] )
 else
-        AC_DEFINE(SPK_RELEASE, 0, "no")
+        AC_DEFINE(SPK_PROFILE, 0, "no")
+        AC_MSG_RESULT( [no] )
+fi
+dnl ------------------------------------------------------------------------
+dnl Set an extra command line option "--enable-calibrate" to 'configure'.
+dnl If the user specifies this option, a variable "calibrate" gets
+dnl set to TRUE.  An important note here is that the variable name
+dnl must exactly match the option string after "enable_" with dashes
+dnl replaces by underscores.
+dnl
+AC_ARG_ENABLE( calibrate,
+       AC_HELP_STRING( [--enable-calibrate], [profile SPK Library] ),
+       [calibrate=TRUE],
+       [calibrate=FALSE]
+)
+
+dnl
+dnl Display "checking for calibrate ..." message on screen when
+dnl "configure" is run.
+dnl
+AC_MSG_CHECKING( [for calibrate] )
+
+dnl
+dnl If $calibrate is set to "yes",
+dnl define SPK_CALIBRATE to be 1; otherwise to be 0.
+dnl Display a text, "yes" or "no", followed after the
+dnl "checking for calibrate..." screen message.
+dnl
+if test $calibrate = TRUE; then
+        AC_DEFINE(SPK_CALIBRATE, 1, "yes")
+        AC_MSG_RESULT( [yes] )
+else
+        AC_DEFINE(SPK_CALIBRATE, 0, "no")
         AC_MSG_RESULT( [no] )
 fi
 
-dnl
+dnl ----------------------------------------------------------------------
 dnl <AC_CONFIG_FILES>
 dnl
 dnl Make AC_OUTPUT create each 'file' by copying an input file (by default 'file.in')

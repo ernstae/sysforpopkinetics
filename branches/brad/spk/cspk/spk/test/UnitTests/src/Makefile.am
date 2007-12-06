@@ -49,7 +49,6 @@ AM_LDFLAGS  = \
 	-lpvm3
 
 testall_SOURCES = \
-	$(top_builddir)/config.h \
 	ABA_xTest.cpp \
 	ABA_xTest.h \
 	addTest.cpp \

@@ -48,8 +48,14 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* "build release" */
-#undef SACHIKO_DEBUG
+/* "no" */
+#undef SPK_CALIBRATE
+
+/* "no" */
+#undef SPK_PROFILE
+
+/* "build debug" */
+#undef SPK_RELEASE
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

@@ -59,8 +59,7 @@ libspkpred_a_SOURCES = \
 	PopPredModelBase.h \
 	PredBase.h \
 	predNonparamMethod.h \
-	predTwoStageMethod.h \
-	$(top_builddir)/config.h
+	predTwoStageMethod.h 
 # [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
 #	calcGroebnerBasis.h \
 #	calcGroebnerBasis.c \

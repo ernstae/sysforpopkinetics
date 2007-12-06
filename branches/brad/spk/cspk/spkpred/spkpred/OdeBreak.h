@@ -26,13 +26,9 @@ $$
 
 $section Multiple Break Point and Output Point Ode Integrator$$
 
-$table
-$bold Syntax$$ $cnext
-$syntax%OdeBreak(%eval%, %xout%,
-	%method%, %btime%, %otime%, %oleft%, %eabs%, %erel%)%$$ 
-$tend
-
-$fend 20$$
+$head Syntax$$
+$syntax%OdeBreak(%
+	eval%, %xout%, %method%, %btime%, %otime%, %oleft%, %eabs%, %erel%)%$$ 
 
 $head Notation$$
 $table
@@ -340,7 +336,8 @@ The argument $italic eabs$$ has prototype
 $syntax%
 	const %Scalar% &%erel%
 %$$
-and specifies the desired relative accuracy in the output values; i.e.,
+and specifies the desired relative accuracy in the output values.
+If the preprocessor sybol $code SPK_CALIBRATE$$ is false,
 for $latex i = 0 , \ldots , N-1$$ and $latex j = 0 , \ldots , J-1$$,
 $latex \[
 eabs[i] + erel * \left| X_i ( t_j ) \right|  
@@ -348,6 +345,13 @@ eabs[i] + erel * \left| X_i ( t_j ) \right|
 \left| xout[ i + j * N ] - X_i ( t_j ) \right|
 \] $$
 where $latex t_j$$ is $syntax%%otime%[%j%]%$$.
+If the preprocessor sybol $code SPK_CALIBRATE$$ is true,
+for $latex i = 0 , \ldots , N-1$$ and $latex j = 0 , \ldots , J-1$$,
+$latex \[
+\left[ eabs[i] + erel * \left| X_i ( t_j ) \right| \right] / 10
+\geq 
+\left| xout[ i + j * N ] - X_i ( t_j ) \right|
+\] $$
 
 
 $children%
@@ -657,9 +661,13 @@ void OdeBreak(
 		if( smin < (tnext - t) / Scalar(MaxNumberOdeStep) )
 			smin = (tnext - t) / Scalar(MaxNumberOdeStep);
 
-		// absolute error bound for this interval (number of intervals
-		// must be less than or equal btime.size() + otime.size() )
-		Scalar fraction = total / Scalar(btime.size() + otime.size());
+		// Absolute error bound for this interval, times the number
+		// of intervals, must be less than or equal error bound
+		Scalar fraction = 
+		Scalar(1) / Scalar(btime.size() + otime.size());
+# if SPK_CALIBRATE
+		fraction /= Scalar(10);
+# endif
 		for(i = 0; i < N; i++)
 		{	if( erel * maxabs[i] > eabs[i] )
 				e[i] = erel * maxabs[i];

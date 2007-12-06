@@ -79,8 +79,7 @@ testall_SOURCES = \
 	PopPredModelTest.h \
 	PopPredModelBaseTest.h \
 	predNonparamMethodTest.h \
-	predTwoStageMethodTest.h \
-	$(top_builddir)/config.h
+	predTwoStageMethodTest.h 
 # [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
 #	calcGroebnerBasisTest.cpp \
 #	IdentPredBaseTest.cpp \
@@ -101,8 +100,7 @@ pkginclude_HEADERS = \
 	PopPredModelTest.h \
 	PopPredModelBaseTest.h \
 	predNonparamMethodTest.h \
-	predTwoStageMethodTest.h \
-	@top_builddir@/config.h
+	predTwoStageMethodTest.h 
 # [Revisit - Identifiability Files Should not be Included in the Release - Mitch]
 #	calcGroebnerBasisTest.h \
 #	IdentPredBaseTest.h \
