@@ -281,7 +281,6 @@ libspk_a_SOURCES = \
  
 
 pkginclude_HEADERS = \
-	$(top_builddir)/config.h \
 	ABA_x.h \
 	add.h \
 	AkronBtimesC.h \

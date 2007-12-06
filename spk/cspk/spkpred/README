@@ -5,10 +5,13 @@ any argument for building the debug version (i.e. debug info and
 no code optimization) or with "--enable-release-build" for the release version.
 
   For debug...
-   > .autogen.sh
+   > ./autogen.sh
 
   For release...
-   > .autogen.sh --enable-release-build
+   > ./autogen.sh --enable-release-build
+
+  For calibrate
+   > ./autogen.sh --enable-calibrate
 
 This is a bootstrap script that generates and run "configure".
 By the end, all necessary Makefile's are generated in subsequent

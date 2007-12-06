@@ -10,6 +10,9 @@ no code optimization) or with "--enable-release-build" for the release version.
   For release...
    > ./autogen.sh --enable-release-build
 
+  For calibration
+   > ./autogen.sh --enable-calibrate
+
 This is a bootstrap script that generates and run "configure".
 By the end, all necessary Makefile's are generated in subsequent
 directories.

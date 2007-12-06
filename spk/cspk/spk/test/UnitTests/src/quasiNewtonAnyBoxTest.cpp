@@ -161,9 +161,9 @@ namespace // [Begin: unnamed namespace]
   //
   // Evaluates the following objective function and/or its gradient:
   //
-  //               4
-  //     f(x)  =  x     , where x = [ x    ] .
-  //               (1)                 (1)
+  //               4      2
+  //     f(x)  =  x    + x   / 100 , where x = [ x    ] .
+  //               (1)    (1)                     (1)
   //
   //**********************************************************************
 
@@ -215,7 +215,8 @@ namespace // [Begin: unnamed namespace]
       assert( dvecXCurr.nc() == 1 );
 
       // Set the objective.
-      *pdFOut = pow( pdXCurrData[0], 4.0 );
+      double x = pdXCurrData[0];
+      *pdFOut = pow( x, 4.0 ) + pow( x, 2.0) / 100.;
     }
 
 
@@ -235,7 +236,8 @@ namespace // [Begin: unnamed namespace]
       assert( pdrowF_xOut->nc() == nX );
 
       // Set the gradient of the objective.
-      pdF_xOutData[0] = 4.0 * pow( pdXCurrData[0], 3.0 );
+      double x = pdXCurrData[0];
+      pdF_xOutData[0] = 4.0 * pow( x, 3.0 ) + 2.0 * x / 100.;
     }
 
   };
@@ -974,14 +976,14 @@ void quasiNewtonAnyBoxTest::simpleFourthOrder_isWithinTolTest()
   // Set the known value for the parameter and then calculate
   // the objective function,
   //
-  //               4
-  //     f(x)  =  x     , where x = [ x    ] .
-  //               (1)                 (1)
+  //               4      2
+  //     f(x)  =  x    + x   / 100 , where x = [ x    ] .
+  //               (1)    (1)                     (1)
   //
   // and its gradient.
   pdXKnownData[0]   = 0.0;
-  fKnown            = pow( pdXKnownData[0], 4.0 );
-  pdF_xKnownData[0] = 4.0 * pow( pdXKnownData[0], 3.0 );
+  fKnown            = 0.0;
+  pdF_xKnownData[0] = 0.0;
 
 
   //------------------------------------------------------------
@@ -1417,7 +1419,7 @@ void quasiNewtonAnyBoxTest::doTheTest(
   // Check the objective function gradient values.
   //------------------------------------------------------------
 
-  tol = 3.0e-5;
+  tol = 5.0e-5;
 
   const double* pdF_xOutData   = drowF_xOut.data();
   const double* pdF_xKnownData = drowF_xKnown.data();
