@@ -5,17 +5,16 @@ use Spkdb ('connect', 'disconnect', 'set_parallel');
 
 =head1 NAME
 
-    set_job_parallel.pl -- set flags in spktest database to make the jobs 
+    set_job_parallel.pl -- set ntasks in spktest database to make the job 
     run in parallel processing mode
 
 =head1 SYNOPSIS
 
-    set_job_parallel.pl job_id ...
+    set_job_parallel.pl job_id ntasks
 
     =head1 DESCRIPTION
 
-    Given a list of job_id numbers, this program sets flags in the job table 
-    of the spktest database to make the jobs run in parallel processing mode.
+    Given a job_id numbers and an integer, this program sets ntasks for the job in the job table of the spktest database to make the job run in parallel processing mode.
 
 =head1 DEPENDENCIES
 
@@ -25,8 +24,8 @@ use Spkdb ('connect', 'disconnect', 'set_parallel');
 
 =cut
 
+my $job_id = shift;
+my $ntasks = shift;
 my $dbh = &connect("spktest", "localhost", "tester", "tester");
-for my $job_id (@ARGV) {
-    &set_parallel($dbh, $job_id, 1);
-}
+&set_parallel($dbh, $job_id, $ntasks);
 &disconnect($dbh);
