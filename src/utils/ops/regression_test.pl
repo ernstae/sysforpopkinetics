@@ -103,9 +103,16 @@ print "\t\t\t\t\tOK\n";
 
 if ($parallel == 1) {
     print "setting jobs to run in parallel process mode\n";
+
+    my $ntasks =  $config->{'cerr'}[0]{'ntasks'};
+    my @allntasks = @$ntasks;
+    $ntasks =  $config->{'srun'}[0]{'ntasks'};
+    push @allntasks, @$ntasks;
+
     my $dbh = &connect("spktest", "localhost", "tester", "tester");
+    my $i = 0;
     for my $job_id (@alljobs) {
-        &set_parallel($dbh, $job_id, 1);
+        &set_parallel($dbh, $job_id, $allntasks[$i++]);
     }
     &disconnect($dbh);
 }
