@@ -100,7 +100,7 @@ elseif ( $row->state_code == 'end' )
      
      <b>Computation Information</b>:
   <ul>
-     <pre><?= eregi_replace("\n{3,100}", "\n", htmlentities($xml['calculation_details'])) ?></pre>
+	<pre><?= htmlentities($xml['calculation_details']) ?> </pre>
      </ul>
      
      <b>Your input equations were</b>:
