@@ -39,7 +39,18 @@ public:
 private:
   // Test cases for this unit test.
   void paperTwoCompExample_Test();
+  void paperTwoCompExample_globallyIdent_Test();
+  void paperTwoCompExample_realNumberPrinting_Test();
+
   void oralAbsorpTwoCompModel_twoSolutions_Test();
+
+  void multipleGroebnerBasis_eightSolutions_Test();
+
+  void fourCompModel_sixSolutions_Test();
+
+  void noExhaustSummModel_zeroSolutions_Test();
+
+  void threeCompModel_unknownSolutions_Test();
 };
 
 #endif
