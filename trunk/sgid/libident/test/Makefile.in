@@ -60,7 +60,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am_test_libident_OBJECTS = calcGroebnerBasisTest.$(OBJEXT) \
+am_test_libident_OBJECTS = calcExhaustSummaryTest.$(OBJEXT) \
+	calcGroebnerBasisTest.$(OBJEXT) \
 	checkParamIdentTest.$(OBJEXT) test_libident.$(OBJEXT)
 test_libident_OBJECTS = $(am_test_libident_OBJECTS)
 test_libident_LDADD = $(LDADD)
@@ -207,14 +208,17 @@ AM_LDFLAGS = \
 	-lbav \
 	-lba0 \
 	-lcppunit \
+	-lxerces-c \
 	-lm \
 	-ldl
 
 
 # Set the files that make up the set of unit tests.
 test_libident_SOURCES = \
+	calcExhaustSummaryTest.cpp \
 	calcGroebnerBasisTest.cpp \
 	checkParamIdentTest.cpp \
+	calcExhaustSummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h \
 	test_libident.cpp
@@ -272,6 +276,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcExhaustSummaryTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcGroebnerBasisTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkParamIdentTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_libident.Po@am__quote@
@@ -474,6 +479,7 @@ uninstall-am: uninstall-info-am
 	uninstall-info-am
 
 	${top_builddir}/config.h \
+	calcExhaustSummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

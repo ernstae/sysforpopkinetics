@@ -15,6 +15,7 @@
 
 // Identifiability unit tests header files.
 #include "checkParamIdentTest.h"
+#include "calcExhaustSummaryTest.h"
 #include "calcGroebnerBasisTest.h"
 
 // CppUnit framework header files.
@@ -51,6 +52,7 @@ int main( int nArg, char* argCStr[] )
   CppUnit::TextUi::TestRunner unitTestRunner;
 
   // Register all of the unit tests.
+  unitTestRunner.addTest( calcExhaustSummaryTest::suite() );
   unitTestRunner.addTest( calcGroebnerBasisTest::suite() );
   unitTestRunner.addTest( checkParamIdentTest  ::suite() );
 

@@ -1,4 +1,4 @@
-#*************************************************************************
+\#*************************************************************************
 #
 # File: Makefile.am
 #
@@ -33,14 +33,17 @@ AM_LDFLAGS = \
 	-lbap \
 	-lbav \
 	-lba0 \
-	-lcppunit \
+ 	-lcppunit \
+	-lxerces-c \
 	-lm \
 	-ldl
 
 # Set the files that make up the set of unit tests.
 test_libident_SOURCES = \
+	calcexhaustsummaryTest.cpp \
 	calcGroebnerBasisTest.cpp \
 	checkParamIdentTest.cpp \
+	calcexhaustsummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h \
 	test_libident.cpp
@@ -48,5 +51,6 @@ test_libident_SOURCES = \
 # Set the header files for the set of unit tests.
 noinst_HEADERS =
 	${top_builddir}/config.h \
+	calcexhaustsummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h
