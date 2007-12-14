@@ -33,6 +33,8 @@ endif
 
 # Set the files that make up the library.
 libident_a_SOURCES = \
+	calcExhaustSummary.c \
+	calcExhaustSummary.h \
 	calcGroebnerBasis.c \
 	calcGroebnerBasis.h \
 	checkParamIdent.cpp \
@@ -42,6 +44,7 @@ libident_a_SOURCES = \
 # Set the header files the library.
 pkginclude_HEADERS = \
 	${top_builddir}/config.h \
+	calcExhaustSummary.h \
 	calcGroebnerBasis.h \
 	checkParamIdent.h \
 	IdentException.h

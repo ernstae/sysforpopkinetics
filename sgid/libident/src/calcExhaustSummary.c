@@ -1,9 +1,9 @@
 /*************************************************************************
  *//**
- * @file calcGroebnerBasis.c
+ * @file calcExhaustSummary.c
  * 
  * 
- * Implements calcGroebnerBasis() function.
+ * Implements calcExhaustSummary() function.
  *//*
  * Author: Mitch Watrous
  *
@@ -22,27 +22,24 @@
 
 /*************************************************************************
  *
- * Function: calcGroebnerBasis
+ * Function: calcExhaustSummary
  *
  *//**
- * Attempts to calculate the Groebner basis or bases that correspond
- * to the system-experiment model differential polyomial regular chain
- * sysExpModelRegChainIn.  Note that there can be multiple Groebner
- * bases found.
+ * Attempts to calculate the exhaustive summary that corresponds to
+ * the system-experiment model differential polyomial regular chain
+ * sysExpModelRegChainIn.
  *
- * To be specific, this function attempts to calculate the Groebner
- * bases for the exhaustive summary polynomials that come from the
- * input/output relations' coefficients, which are evaluated at a
- * random value for the vector that will be determined to be
- * identifiable or not, THETA.  See Audoly et al. (2001) for details
- * on the identifiability algorithm.
+ * To be specific, this function attempts to calculate the exhaustive
+ * summary polynomials that come from the input/output relations'
+ * coefficients, which are evaluated at a random value for the vector
+ * that will be determined to be identifiable or not, THETA.  See
+ * Audoly et al. (2001) for details on the identifiability algorithm.
  *
- * Note that if the Groebner bases are calculated successfully, then
- * memory will be allocated by this function for an array of C strings
- * containing each of the polynomials in each of the bases.  When these
- * polynomials are no longer needed, the memory required to store them
- * and the memory required for the array should be freed by the caller
- * of this function.
+ * Note that if the exhaustive summary is calculated successfully,
+ * then memory will be allocated by this function for an array of C
+ * strings containing the polynomials in the summary.  When these
+ * polynomial strings are no longer needed, the memory required to
+ * store them should be freed by the caller of this function.
  *
  *
  * Reference:
@@ -220,32 +217,13 @@
  * The first and last characters of the string should be left and
  * right square brackets, respectively.
  * 
- * @param nGroebnerBasisPolyEachOut
+ * @param exhaustSummaryPolyOut
  * 
- * If the Groebner bases were calculated successfully, then the
- * integer array pointed to by this pointer to an integer array will
- * be allocated to have nGroebnerBasis elements. The elements of this
- * array will be set equal to the number of polynomials for each of
- * the Groebner bases that were found.  When this array is no longer
- * needed, its memory should be released by the caller of this
- * function.  No memory should be allocated by the caller before
- * calling this function, however, because this function does the
- * allocation.  It is the responsibility of the caller of the function
- * to free the memory allocated by this function.
- *
- * @param nGroebnerBasisPolyTotalOut
- * 
- * If the Groebner bases were calculated successfully, then the
- * integer pointed to this integer pointer will be set equal to the
- * total number of polynomials in all of the Groebner bases.
- *
- * @param groebnerBasisPolyAllOut
- * 
- * If the Groebner bases were calculated successfully, then the memory
- * pointed to by this pointer to a pointer to a char pointer (char***)
- * will contain an array with separate C strings for each of the
- * polynomials for each of the bases.  An example Groebner bases
- * polynomial with a single basis made up of a single polynomial is
+ * If the exhaustive summary was calculated successfully, then the
+ * memory pointed to by this pointer to a pointer to a char pointer
+ * (char***) will contain an array with separate C strings for each of
+ * the polynomials in the summary.  An example exhaustive summary
+ * polynomial is
  * \verbatim
 
     THETA1*THETA2 - 28
@@ -254,27 +232,26 @@
  * where
 \verbatim
  
-    thetaName = ( "THETA1", ..., "THETAR" )  ,
+    thetaName = ( "THETA1", "THETA2" )  .
  
 \endverbatim
- * and R = nTheta.
  * When these polynomials are no longer needed, the memory required to
  * store them should be released by the caller of this function.  No
  * memory should be allocated by the caller before calling this
  * function, however, because this function does the allocation.  It
  * is the responsibility of the caller of the function to free the
  * memory allocated by this function.  The memory pointed to by
- * groebnerBasisOut will be allocated using malloc() as a C array of
- * nGroebnerBasisPolyTotalOut pointers to C style strings, each of
- * which contains a polynomial from one of the Groebner bases and each
- * of which will be allocated using malloc() with enough memory to
- * hold the polynomial. The value for nGroebnerBasisPolyTotalOut is equal
- * to the sum of all of the elements in nGroebnerBasisPolyEachOut.  The
- * following code shows how to get a pointer to the C string that
- * contains the m-th polynomial:
+ * exhaustSummaryOut will be allocated using malloc() as a C array of
+ * nExhaustSummPoly pointers to C style strings, each of which
+ * contains a polynomial from the exhaustive summary and each of which
+ * will be allocated using malloc() with enough memory to hold the
+ * polynomial. The value for nExhaustSummPoly is equal to the
+ * number of polynomials in the exhaustive summary and is returned by
+ * this function.  The following code shows how to get a pointer to
+ * the C string that contains the m-th polynomial:
  * \code
  *
- *     char* poly_m = (*groebnerBasisPolyAllOut)[m];
+ *     char* poly_m = (*exhaustSummaryPolyOut)[m];
  *
  * \endcode
  * When the polynomials are no longer needed, then the memory for each
@@ -282,17 +259,17 @@
  * pointers to the polynomials' C strings must be freed also using
  * free().
  * The following code shows how to free all of the memory allocated by
- * this function to hold the Groebner bases polynomials:
+ * this function to hold the exhaustive summary polynomials:
  * \code
  *
- *   for ( m = 0; m < nGroebnerBasisPolyTotalOut; m++)
+ *   for ( m = 0; m < nExhaustSummPoly; m++)
  *   {
  *     // Free the memory for this polynomial's C style string.
- *     free( (*groebnerBasisPolyAllOut)[m] );
+ *     free( (*exhaustSummaryPolyOut)[m] );
  *   }
  * 
  *   // Free the memory for the pointers to the C style strings.
- *   free( (*groebnerBasisPolyAllOut) );
+ *   free( (*exhaustSummaryPolyOut) );
  *
  * \endcode
  * The above code should be executed by the caller of this function.
@@ -300,45 +277,31 @@
  *
  * @return
  *
- * If the Groebner bases could not be calculated, then the return
- * value will be equal to 0.
- *
- * If the Groebner bases were calculated successfully, then the return
- * value will be the number of Groebner bases that were found.
+ * The return value will be the number of exhaustive summary
+ * polynomials nExhaustSummPoly.
  *
  */
 /*************************************************************************/
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// [Revisit - Deprecated Function - Mitch]
-//
-// This function is no longer being used because SINGULAR is now
-// being used to calculate the Groebner bases rather than BLAD.
-// Eventually this function can be removed from the library if it is
-// not needed.
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // [Revisit - Duplicated Code - Mitch]
 //
 // The code that calculates the exhaustive summary in this function
-// is duplicated in calcExhaustSummary.c.  Changes to that function
-// should be duplicated here to keep this function up to date.
+// is duplicated in calcExhaustSummary.c.  Changes to this function
+// should be duplicated there to keep that function up to date.
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-int calcGroebnerBasis( int         level,
-                       int         nTheta,
-                       char**      thetaName,
-                       int         thetaSeed,
-                       int         nIdentComp,
-                       int         nObservType,
-                       int         nDoseType,
-                       const char* sysExpModelRegChainIn,
-                       const char* naturalOrderingIn,
-                       const char* charSetOrderingIn,
-                       int**       nGroebnerBasisPolyEachOut,
-                       int*        nGroebnerBasisPolyTotalOut,
-                       char***     groebnerBasisPolyAllOut )
+int calcExhaustSummary( int         level,
+                        int         nTheta,
+                        char**      thetaName,
+                        int         thetaSeed,
+                        int         nIdentComp,
+                        int         nObservType,
+                        int         nDoseType,
+                        const char* sysExpModelRegChainIn,
+                        const char* naturalOrderingIn,
+                        const char* charSetOrderingIn,
+                        char***     exhaustSummaryPolyOut )
 {
   //----------------------------------------------------------
   // Preliminaries.
@@ -420,58 +383,11 @@ int calcGroebnerBasis( int         level,
     "regchain( %s, [prime, differential, autoreduced, squarefree, primitive] )",
     sysExpModelRegChainIn );
 
-  // Initialize a BLAD library exception handling structure and
-  // set a catch point for the long jump associated with it.
-  struct ba0_exception_code excepHandlerSysExpModel;
-  BA0_PUSH_EXCEPTION( excepHandlerSysExpModel );
-
   // Set the sytem-experiment model regular chain.
-  //
-  // The first time this if block is executed ba0_exception_is_set()
-  // will return true.  The long jump will return here if an exception
-  // is raised and then ba0_exception_is_set() will return false.
-  if ( ba0_exception_is_set( excepHandlerSysExpModel ) )
-  {
-    ba0_sscanf2(
-      sysExpModelRegChainString,
-      "%regchain",
-      &sysExpModelRegChain );
-
-    // Remove this exception catching point.
-    ba0_pull_exception( excepHandlerSysExpModel );
-  }
-  else
-  {
-    if ( level > 0 )
-    {
-      printf( "The identifiability calculation failed while setting the system-experiment model \n" );
-
-      // Check to see what type of error occurred.
-      if ( ba0_mesgerr == BA0_ERROOM )
-      {
-        printf( "because too much computer memory was used. \n" );
-      }
-      else if ( ba0_mesgerr == BA0_ERRALG )
-      {
-        printf( "because a BLAD library internal algebra error occurred. \n" );
-        printf( "\n" );
-        printf( "Please submit a bug report.\n" );
-      }
-      else
-      {
-        printf( "because of an unknown error.\n" );
-        printf( "\n" );
-        printf( "Please submit a bug report.\n" );
-      }
-      printf( "\n" );
-    }
-
-    // Call the BLAD library termination function.
-    bad_terminate( ba0_init_level );
-
-    // Return zero to indicate no Groebner basis was found. 
-    return 0;
-  }    
+  ba0_sscanf2(
+    sysExpModelRegChainString,
+    "%regchain",
+    &sysExpModelRegChain );
 
   // Free the string.
   free( sysExpModelRegChainString );
@@ -549,56 +465,9 @@ int calcGroebnerBasis( int         level,
   ba0_sscanf2( "regchain( [], [autoreduced, squarefree, primitive, normalized])",
                "%regchain", &charSetRegChain );
 
-  // Initialize a BLAD library exception handling structure and
-  // set a catch point for the long jump associated with it.
-  struct ba0_exception_code excepHandlerCharSet;
-  BA0_PUSH_EXCEPTION( excepHandlerCharSet );
-
   // Change the ordering for the variables in order to get the
   // characteristic set.
-  //
-  // The first time this if block is executed ba0_exception_is_set()
-  // will return true.  The long jump will return here if an exception
-  // is raised and then ba0_exception_is_set() will return false.
-  if ( ba0_exception_is_set( excepHandlerCharSet ) )
-  {
-    bad_pardi( &charSetRegChain, charSetOrdering, &sysExpModelRegChain );
-
-    // Remove this exception catching point.
-    ba0_pull_exception( excepHandlerCharSet );
-  }
-  else
-  {
-    if ( level > 0 )
-    {
-      printf( "The identifiability calculation failed while calculating the characteristic set \n" );
-
-      // Check to see what type of error occurred.
-      if ( ba0_mesgerr == BA0_ERROOM )
-      {
-        printf( "because too much computer memory was used. \n" );
-      }
-      else if ( ba0_mesgerr == BA0_ERRALG )
-      {
-        printf( "because a BLAD library internal algebra error occurred. \n" );
-        printf( "\n" );
-        printf( "Please submit a bug report.\n" );
-      }
-      else
-      {
-        printf( "because of an unknown error.\n" );
-        printf( "\n" );
-        printf( "Please submit a bug report.\n" );
-      }
-      printf( "\n" );
-    }
-
-    // Call the BLAD library termination function.
-    bad_terminate( ba0_init_level );
-
-    // Return zero to indicate no Groebner basis was found. 
-    return 0;
-  }    
+  bad_pardi( &charSetRegChain, charSetOrdering, &sysExpModelRegChain );
 
   // Set the number of polynomials in the characteristic set.
   int nCharSetPoly = charSetRegChain.decision_system.size;
@@ -966,213 +835,23 @@ int calcGroebnerBasis( int         level,
   // Print the polynomials in the exhaustive summary.
   if ( level > 0 )
   {
-    printf( "Exhaustive summary = {\n" );
-    printf( "\n" );
-    for ( i = 0; i < nExhaustSummPoly; i++ )
+    if ( nExhaustSummPoly == 0 )
     {
-      // Reset the output driver to avoid spurious line breaks.
-      ba0_reset_output();
-
-      ba0_printf( "%Az", exhaustSumm->tab[i] );
-
-      if ( i < nExhaustSummPoly - 1 )
-      {
-        printf( ",\n" );
-      }
-      else
-      {
-        printf( " }\n" );
-      }
+      printf( "Exhaustive summary = { }\n" );
       printf( "\n" );
-    }
-    printf( "\n" );
-  }
-
-
-  //----------------------------------------------------------
-  // Get the Groebner bases for the exhaustive summary.
-  //----------------------------------------------------------
-
-  bad_intersectof_regchain exhaustSummGroebnerBasis;
-  exhaustSummGroebnerBasis = bad_new_intersectof_regchain();
-
-  // Prepare the intersection of regular chains for the exhaustive
-  // summary that will contain the Groebner bases.
-  ba0_sscanf2(
-    "intersectof_regchain( [], [normalized, primitive, autoreduced])",
-    "%intersectof_regchain",
-    exhaustSummGroebnerBasis );
-
-  // Initialize a BLAD library exception handling structure and
-  // set a catch point for the long jump associated with it.
-  struct ba0_exception_code excepHandlerGroebnerBasis;
-  BA0_PUSH_EXCEPTION( excepHandlerGroebnerBasis );
-
-  // Calculate the intersection of regular chains.
-  //
-  // The first time this if block is executed ba0_exception_is_set()
-  // will return true.  The long jump will return here if an exception
-  // is raised and then ba0_exception_is_set() will return false.
-  if ( ba0_exception_is_set( excepHandlerGroebnerBasis ) )
-  {
-    bad_Rosenfeld_Groebner( 
-      exhaustSummGroebnerBasis,
-      exhaustSumm,
-      (bap_tableof_polynom_mpz)0,
-      (bav_tableof_variable)0 );
-
-    // Remove this exception catching point.
-    ba0_pull_exception( excepHandlerGroebnerBasis );
-  }
-  else
-  {
-    if ( level > 0 )
-    {
-      printf( "The identifiability calculation failed while calculating the Groebner basis \n" );
-
-      // Check to see what type of error occurred.
-      if ( ba0_mesgerr == BA0_ERROOM )
-      {
-        printf( "because too much computer memory was used. \n" );
-      }
-      else if ( ba0_mesgerr == BA0_ERRALG )
-      {
-        printf( "because a BLAD library internal algebra error occurred. \n" );
-        printf( "\n" );
-        printf( "Please submit a bug report.\n" );
-      }
-      else
-      {
-        printf( "because of an unknown error.\n" );
-        printf( "\n" );
-        printf( "Please submit a bug report.\n" );
-      }
-      printf( "\n" );
-    }
-
-    // Call the BLAD library termination function.
-    bad_terminate( ba0_init_level );
-
-    // Return zero to indicate no Groebner basis was found. 
-    return 0;
-  }    
-
-  // Set the number of Groebner bases that were found, which is equal
-  // to the number of regular chains in the intersection.
-  int nGroebnerBasis = exhaustSummGroebnerBasis->inter.size;
-
-  // See if there were any Groebner bases found.
-  if ( nGroebnerBasis == 0 )
-  {
-    // If no Groebner bases could be found, then don't change the
-    // Groebner bases output string.
-    return nGroebnerBasis;
-  }
-
-  // Allocate the array that will hold the number of polynomials in
-  // each of the Groebner bases that were found.
-  *nGroebnerBasisPolyEachOut = (int*) malloc( nGroebnerBasis * sizeof( int ) );
-
-  int w;
-
-  // Determine the total number of polynomials in all of the Groebner
-  // bases that were found.
-  int nGroebnerBasisPolyTotal = 0;
-  for ( w = 0; w < nGroebnerBasis; w++ )
-  {
-    // Set the number of polynomials for this Groebner basis.
-    (*nGroebnerBasisPolyEachOut)[w] = (*exhaustSummGroebnerBasis->inter.tab[w]).decision_system.size;
-
-    // Add the number of polynomials to the total.
-    nGroebnerBasisPolyTotal += (*nGroebnerBasisPolyEachOut)[w];
-  }
-
-  // Allocate enough elements in the output array to hold all of the
-  // of polynomials for all of the Groebner bases.
-  *groebnerBasisPolyAllOut = 
-      (char**) malloc( nGroebnerBasisPolyTotal * sizeof( char* ) );
-
-  char* groebnerBasisPolyString;
-  int nGroebnerBasisPolyChar;
-  int groebnerBasisPolyCount;
-
-  int m;
-
-  // Set the output array of polynomials for all of the Groebner
-  // bases that were found.
-  groebnerBasisPolyCount = 0;
-  for ( w = 0; w < nGroebnerBasis; w++ )
-  {
-    for ( m = 0; m < (*nGroebnerBasisPolyEachOut)[w]; m++ )
-    {
-      // Get a string that contains this Groebner bases polynomial.
-      //
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // [Revisit - Possible BLAD Library Memory Leak - Mitch]
-      // Note that this string is allocated by the BLAD library function
-      // ba0_malloc and it is assumed that the BLAD memory clean up
-      // functions will free this memory.
-      //
-      // Even if the memory does not get freed, it is probably not a big
-      // problem since the calculation of the Groebner bases happens
-      // only once during the identifiability calculation, and the
-      // amount of memory for the bases polynomials is relatively small.
-      //
-      // If this is a problem, consider (i.) making a fixed length
-      // buffer that is much longer than any polynomials are likely to
-      // be (1000?) and checking to be sure that it is not overwritten;
-      // or (ii.)  writing the polynomials to a temporary file and using
-      // BLAD's output counter to get the length, which would then be
-      // used to allocate the proper amount of memory.
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      //
-      groebnerBasisPolyString = ba0_new_printf(
-        "%Az",
-        (*exhaustSummGroebnerBasis->inter.tab[w]).decision_system.tab[m] );
-  
-      // Because the function strlen() gives the number of characters in
-      // the string not including the null termination, allocate enough
-      // memory for the Groebner bases polynomial output string with an
-      // extra character for the null termination.
-      nGroebnerBasisPolyChar = strlen( groebnerBasisPolyString ) + 1;
-      (*groebnerBasisPolyAllOut)[m + groebnerBasisPolyCount] = 
-        (char*) malloc( nGroebnerBasisPolyChar * sizeof( char ) );
-      
-      // Set the Groebner bases output string.
-      strncpy(
-        (*groebnerBasisPolyAllOut)[m + groebnerBasisPolyCount],
-        groebnerBasisPolyString,
-        nGroebnerBasisPolyChar );
-    }
-
-    groebnerBasisPolyCount += (*nGroebnerBasisPolyEachOut)[w];
-  }
-
-  // Print the polynomials in the Groebner bases.
-  if ( level > 0 )
-  {
-    if ( nGroebnerBasis == 1 )
-    {
-      printf( "There is 1 Groebner basis. \n" );
     }
     else
     {
-      printf( "There are %d Groebner bases. \n", nGroebnerBasis );
-    }
-    printf( "\n" );
-    for ( w = 0; w < nGroebnerBasis; w++ )
-    {
-      printf( "Groebner basis %d = {\n", w + 1 );
+      printf( "Exhaustive summary = {\n" );
       printf( "\n" );
-      for ( m = 0; m < (*nGroebnerBasisPolyEachOut)[w]; m++ )
+      for ( i = 0; i < nExhaustSummPoly; i++ )
       {
         // Reset the output driver to avoid spurious line breaks.
         ba0_reset_output();
-    
-        ba0_printf( "%Az",
-         (*exhaustSummGroebnerBasis->inter.tab[w]).decision_system.tab[m] );
-    
-        if ( m < (*nGroebnerBasisPolyEachOut)[w] - 1 )
+      
+        ba0_printf( "%Az", exhaustSumm->tab[i] );
+      
+        if ( i < nExhaustSummPoly - 1 )
         {
           printf( ",\n" );
         }
@@ -1183,6 +862,65 @@ int calcGroebnerBasis( int         level,
         printf( "\n" );
       }
     }
+    printf( "\n" );
+  }
+
+
+  //----------------------------------------------------------
+  // Set the exhaustive summary polynomial strings.
+  //----------------------------------------------------------
+
+  // Allocate enough elements in the output array to hold all of the
+  // of polynomials in the exhaustive summary.
+  *exhaustSummaryPolyOut = 
+      (char**) malloc( nExhaustSummPoly * sizeof( char* ) );
+
+  char* exhaustSummaryPolyString;
+  int nExhaustSummPolyChar;
+
+  int m;
+
+  // Set the output array of exhaustive summary polynomial strings.
+  for ( m = 0; m < nExhaustSummPoly; m++ )
+  {
+    // Get a string that contains this exhaustive summary polynomial.
+    //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // [Revisit - Possible BLAD Library Memory Leak - Mitch]
+    // Note that this string is allocated by the BLAD library function
+    // ba0_malloc and it is assumed that the BLAD memory clean up
+    // functions will free this memory.
+    //
+    // Even if the memory does not get freed, it is probably not a big
+    // problem since the calculation of the exhaustive summary happens
+    // only once during the identifiability calculation, and the
+    // amount of memory for the summary polynomials is relatively small.
+    //
+    // If this is a problem, consider (i.) making a fixed length
+    // buffer that is much longer than any polynomials are likely to
+    // be (1000?) and checking to be sure that it is not overwritten;
+    // or (ii.)  writing the polynomials to a temporary file and using
+    // BLAD's output counter to get the length, which would then be
+    // used to allocate the proper amount of memory.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //
+    exhaustSummaryPolyString = ba0_new_printf(
+      "%Az",
+      exhaustSumm->tab[m] );
+
+    // Because the function strlen() gives the number of characters in
+    // the string not including the null termination, allocate enough
+    // memory for the exhaustive summary polynomial output string with an
+    // extra character for the null termination.
+    nExhaustSummPolyChar = strlen( exhaustSummaryPolyString ) + 1;
+    (*exhaustSummaryPolyOut)[m] = 
+      (char*) malloc( nExhaustSummPolyChar * sizeof( char ) );
+    
+    // Set the exhaustive summary output string.
+    strncpy(
+      (*exhaustSummaryPolyOut)[m],
+      exhaustSummaryPolyString,
+      nExhaustSummPolyChar );
   }
 
 
@@ -1206,12 +944,7 @@ int calcGroebnerBasis( int         level,
   // Call the BLAD library termination function.
   bad_terminate( ba0_init_level );
 
-  // Set the total number of polynomials in all of the Groebner bases
-  // that were found.
-  *nGroebnerBasisPolyTotalOut = nGroebnerBasisPolyTotal;
-
-  // Return the number Groebner basis that were found.
-  return nGroebnerBasis;
+  // Return the number exhaustive summary polynomials.
+  return nExhaustSummPoly;
 }
-
 

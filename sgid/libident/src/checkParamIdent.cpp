@@ -14,12 +14,14 @@
  *------------------------------------------------------------------------*/
 
 // Identifiability header files.
-#include "calcGroebnerBasis.h"
+#include "calcExhaustSummary.h"
 #include "checkParamIdent.h"
 #include "IdentException.h"
 
 // Standard library header files.
 #include <cmath>
+#include <cstdio>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -30,6 +32,21 @@
 // GiNaC computer algebra library header files.
 #include <ginac/ginac.h>
 
+// Xerces XML parser library header files.
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLString.hpp>
+
+#if defined(XERCES_NEW_IOSTREAMS)
+#include <iostream>
+#else
+#include <iostream.h>
+#endif
+
+XERCES_CPP_NAMESPACE_USE 
+  
 
 /*------------------------------------------------------------------------
  * Local functions
@@ -63,90 +80,118 @@ namespace // [Begin: unnamed namespace]
     }
     else
     {
-      // Print real values enclosed in paranthesis.
-      printContext.s << "(";
-    
-      // Get a double versions of x and use standard math
-      // functions to get its exponent and mantissa.
+      // Get a double versions of x.
       double xDouble = x.to_double();
+
+      // See if the value is negative.
+      bool isNeg = false;
+      if ( xDouble < 0.0 )
+      {
+        xDouble = -1.0 * xDouble;
+        isNeg = true;
+      }
     
       // Print the value.
-      if ( xDouble == 0.0 )
+      //
+      // First handle the case where the value is an integer.
+      if ( floor( xDouble ) == xDouble )
       {
-        // Handle the case where the value is equal to zero.
-        printContext.s << "0";
+        printContext.s << ( isNeg ? "-" : "" );
+        printContext.s << static_cast<int>( floor( xDouble ) );
       }
       else
       {
-        // Handle the case where the value is negative.
-        if ( xDouble < 0.0 )
+        // Print the non-integer values enclosed in paranthesis.
+        printContext.s << "(";
+        printContext.s << ( isNeg ? "-" : "" );
+    
+        // Handle the case where the value is a multiple of 1/2.
+        if ( floor( 2.0 * xDouble ) == ( 2.0 * xDouble ) )
         {
-          printContext.s << "-";
-          xDouble = -1.0 * xDouble;
+          printContext.s << static_cast<int>( floor( 2.0 * xDouble ) ) << "/2";
         }
-    
-        // Calculate the exponent and mantissa such that
-        //
-        //                        exponent
-        //     x  =  mantissa * 10          .
-        //
-        int    exponent = static_cast<int>( floor( log10( xDouble ) ) );
-        double mantissa = xDouble / std::pow( 10.0, exponent );
-    
-        // Calculate a new exponent and mantissa such that
-        //
-        //                        exponent
-        //     x  =  mantissa * 10
-        //
-        //            -                      -
-        //           |               nDigits  |     (exponent - nDigits)
-        //        =  |  mantissa * 10         | * 10                      .
-        //            -                      -
-        //
-        //                           newExponent
-        //        =  newMantissa * 10             .
-        //
-        int nDigits = 4;
-        int newExponent = exponent - nDigits;
+        else
+        {
+          // Calculate the exponent and mantissa such that
+          //
+          //                        exponent
+          //     x  =  mantissa * 10          .
+          //
+          int    exponent = static_cast<int>( floor( log10( xDouble ) ) );
+          double mantissa = xDouble / std::pow( 10.0, exponent );
+      
+          // Calculate a new exponent and mantissa such that
+          //
+          //                        exponent
+          //     x  =  mantissa * 10
+          //
+          //            -                      -
+          //           |               nDigits  |     (exponent - nDigits)
+          //        =  |  mantissa * 10         | * 10                      .
+          //            -                      -
+          //
+          //                           newExponent
+          //        =  newMantissa * 10             .
+          //
+          int nDigits = 4;
+          int newExponent = exponent - nDigits;
+  
+          // Note that the first value for the new mantissa has been
+          // multiplied by an extra factor of ten so that it can be
+          // rounded properly before the extra factor of ten is removed.
+          int newMantissa = static_cast<int>( mantissa * std::pow( 10.0, nDigits + 1 ) );
+          newMantissa = ( newMantissa + 5 ) / 10;
 
-        // Note that the first value for the new mantissa has been
-        // multiplied by an extra factor of ten so that it can be
-        // rounded properly before the extra factor of ten is removed.
-        int newMantissa = static_cast<int>( mantissa * std::pow( 10.0, nDigits + 1 ) );
-        newMantissa = ( newMantissa + 5 ) / 10;
-    
-        printContext.s << newMantissa;
+          int i;
 
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // [Revisit - Only 5 Digits of Mantissa Printed for Doubles - Mitch]
-        // For now, only print the the first five digits of the mantissa
-        // because the BLAD library gives a syntax error if one of the
-        // polynomials is multipled by a number like this
-        //
-        //     (11800 * 10^(2))
-        //
-        // in a system-experiment model like this
-        //
-        //     [A1[T] - ( (11800 * 10^(2))*U+THETA2*A2-THETA1*A1-A1*THETA3 ) / ( 1 ),
-        //     A2[T] - ( -THETA2*A2+A1*THETA3 ) / ( 1 ),
-        //     Y - ( A1 ) / ( THETA4 ), 
-        //     THETA1[T], THETA2[T], THETA3[T], THETA4[T]]
-        //
-        // This commented out code prints out the new exponent
-        // properly, but won't work with BLAD.
-        /*
-        printContext.s << " * 10^(";
-        printContext.s << newExponent;
+          // Print
+          //
+          //                     newExponent
+          //     newMantissa * 10             .
+          //
+          if ( newExponent == 0 )
+          {
+            printContext.s << newMantissa;
+          }
+          else
+          {
+            std::string powersOfTenStr;
+
+            for ( i = 0; i < abs( newExponent); i++)
+            {
+              if ( newExponent > 0 )
+              {
+                // Create a string equal to 10 raised to the
+                // newExponent power,
+                //
+                //     *10*10 ... *10  .
+                //
+                // where there are newExponent 10's.
+                powersOfTenStr += "*10";
+              }
+              else
+              {
+                // Create a string equal to 10 raised to the
+                // negative newExponent power,
+                //
+                //     /10/10 ... /10
+                //
+                // where there are newExponent 10's.
+                powersOfTenStr += "/10";
+              }
+            }
+
+            printContext.s << newMantissa << powersOfTenStr;
+          }
+        }
+
+        // Print the value enclosed in paranthesis.
         printContext.s << ")";
-        */
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       }
-    
-      // Print the value enclosed in paranthesis.
-      printContext.s << ")";
     }
 
   }
+
 
   /***********************************************************************
    *
@@ -170,6 +215,94 @@ namespace // [Begin: unnamed namespace]
     // Print the numeric value in the normal way.
     x.print( printContext.s );
   }
+
+
+  /*************************************************************************
+   *
+   * Function: getElementText
+   *
+   *//**
+   * Returns the text from an XML element like this
+   *
+   *     <element>text</element>
+   *
+   * The argument pDOMElementRoot points to the root element of the XML 
+   * file that has currently been parsed.
+   *
+  /*************************************************************************/
+
+  std::string getElementText( 
+    const DOMElement* pDOMElementRoot,
+    const std::string& elementName )
+  {
+    //----------------------------------------------------------
+    // Preliminaries.
+    //----------------------------------------------------------
+
+    using namespace std;
+
+
+    //----------------------------------------------------------
+    // Find the element.
+    //----------------------------------------------------------
+
+    XMLCh tempXMLCh[100];
+
+    // Set the element's name XML string.
+    XMLString::transcode( elementName.c_str(), tempXMLCh, 99 );
+
+    // Get a pointer to a list containing the elements that match the
+    // element's name.
+    DOMNodeList* pDOMNodeList = pDOMElementRoot->getElementsByTagName( tempXMLCh );
+
+    // Check that there is at least one element.
+    if ( pDOMNodeList->getLength() < 1 )
+    {
+      std::string message = "There was no " 
+                         + elementName
+                         + " element in the SINGULAR output file.";
+
+      throw IdentException( message );
+    }
+
+    // Check that there is no more than one element.
+    if ( pDOMNodeList->getLength() > 1 )
+    {
+      std::string message = "There was more than one " 
+                         + elementName
+                         + " element in the SINGULAR output file.";
+
+      throw IdentException( message );
+    }
+
+
+    //----------------------------------------------------------
+    // Get the element's text.
+    //----------------------------------------------------------
+
+    // Get a pointer to the element in the DOM document tree.
+    DOMElement* pDOMELement = dynamic_cast<DOMElement*>( pDOMNodeList->item( 0 ) );
+
+    // Get the element's text as an XML string.
+    const XMLCh* nodeTextXMLCh = pDOMELement->getFirstChild()->getNodeValue();
+
+    // Convert the element's text to be a C style string.
+    char* nodeTextCStr =  XMLString::transcode( nodeTextXMLCh );
+
+    // Set the element's text.
+    std::string elementTextStrOut = nodeTextCStr;
+
+    // Free the memory allocated for this C style string.
+    XMLString::release( &nodeTextCStr );
+
+
+    //----------------------------------------------------------
+    // Finish up.
+    //----------------------------------------------------------
+
+    return elementTextStrOut;
+  }
+
 
 } // [End: unnamed namespace]
 
@@ -196,8 +329,8 @@ namespace // [Begin: unnamed namespace]
  * random value for the vector that will be determined to be
  * identifiable or not, THETA.
  *
- * Finally, this function attempts to solve each set of Groebner
- * basis equations, which are a nonlinear system of polynomials.
+ * Finally, this function attempts to solve the nonlinear systems of
+ * polynomials that correspond to each of Groebner basis.
  *
  *
  * Reference:
@@ -333,12 +466,11 @@ and
  * 
  * @return
  *
- * Returns the total number of solutions of the nonlinear system of
- * equations that make up all of the Groebner basis equations.
+ * Returns the total number of solutions of the nonlinear systems of
+ * polynomials that correspond to each of the Groebner bases.
  *
- * If the number of solutions is equal to 0, then the
- * identifiability of the individual's THETA parameter could not be
- * determined.
+ * If the number of solutions is equal to 0, then the individual's
+ * THETA parameter is not identifiable.
  *
  * If the number of solutions is equal to 1, then the individual's
  * THETA parameter is globally (uniquely) identifiable.
@@ -350,8 +482,8 @@ and
  * THETA parameter has an infinite number of solutions and is
  * nonidentifiable.
  *
- * If the number of solutions is equal to -2, then the individual's
- * THETA parameter had multiple Groebner bases.
+ * If the number of solutions is equal to -3, then the identifiability
+ * of the individual's THETA parameter could not be determined.
  *
 /*************************************************************************/
 
@@ -1020,7 +1152,7 @@ int checkParamIdent( int                                level,
 
 
   //----------------------------------------------------------
-  // Calculate the exhaustive summary Groebner bases polynomials.
+  // Calculate the exhaustive summary polynomials.
   //----------------------------------------------------------
 
   // Set C++ strings that contain the differential polynomials for the
@@ -1035,29 +1167,20 @@ int checkParamIdent( int                                level,
   const char* naturalOrderingCStr     = naturalOrderingStr .c_str();
   const char* charSetOrderingCStr     = charSetOrderingStr .c_str();
 
-  // This will be the number of Groebner bases that were found.
-  int nGroebnerBasis;
+  // This will be the number of polynomials in the exhaustive summary.
+  int nExhaustSummPoly;
 
-  // This will be the number of polynomial for each of the Groebner
-  // bases found.
-  int* nGroebnerBasisPolyEachOut;
-
-  // This will be the total number of polynomials for all of the
-  // Groebner bases found.
-  int nGroebnerBasisPolyTotalOut;
-
-  // This pointer to a C style string will be used like an array of
-  // C style strings that will contain the polynomials for all of
-  // the Groebner bases after the call to calcGroebnerBasis().
+  // This pointer to a C style string will be used like an array of C
+  // style strings that will contain the polynomials in the exhaustive
+  // summary after the call to calcExhaustSummary().
   //
-  // Note that calcGroebnerBasis() uses malloc() to allocate the
+  // Note that calcExhaustSummary() uses malloc() to allocate the
   // memory for the polynomials, which means that the allocated memory
   // must be freed by this function after it is no longer needed.
-  char** groebnerBasisPolyAllCStrOut = 0;
+  char** exhaustSummPolyCStrOut = 0;
 
-  // Calculate the Groebner basis or bases for the exhaustive
-  // summary.
-  nGroebnerBasis = calcGroebnerBasis(
+  // Calculate the exhaustive summary polynomials.
+  nExhaustSummPoly = calcExhaustSummary(
     level,
     nTheta,
     thetaNameCStr,
@@ -1068,9 +1191,7 @@ int checkParamIdent( int                                level,
     sysExpModelRegChainCStr,
     naturalOrderingCStr,
     charSetOrderingCStr,
-    &nGroebnerBasisPolyEachOut,
-    &nGroebnerBasisPolyTotalOut,
-    &groebnerBasisPolyAllCStrOut );
+    &exhaustSummPolyCStrOut );
 
   // Free this memory before any exceptions are thrown.
   for ( r = 0; r < nTheta; r++ )
@@ -1079,264 +1200,727 @@ int checkParamIdent( int                                level,
   }
   delete[] thetaNameCStr;
 
-  // If the Groebner bases could not be calculated, then this
-  // calculation cannot continue.
-  if ( nGroebnerBasis == 0 )
-  {
-    throw IdentException( "The parameter identifiability calculation failed because the Groebner basis for the \nexhaustive summary could not be determined." );
-  }
-
   // Reset the default methods for the output of numeric values.
   set_print_func<numeric, print_dflt>( defaultNumericPrintFunc );
 
 
   //----------------------------------------------------------
-  // Set the exhaustive summary Groebner bases equations.
+  // Set the exhaustive summary polynomials.
   //----------------------------------------------------------
 
-  std::string groebnerBasisEqnStr_m;
+  // Each of these strings will contain one of the exhaustive summary
+  // polynomials in the following format,
+  //
+  //     11*THETA1^2-32*THETA1-3
+  //
+  std::vector< std::string > exhaustSummPolyStr( nExhaustSummPoly );
 
-  GiNaC::ex  groebnerBasisEqn_m;
-  GiNaC::lst groebnerBasisEqn;
+  std::string exhaustSummPolyStr_m;
 
   int m;
 
-  // Set an equation for each of the Groebner bases polynomials
-  //
-  //     poly   =  0  
-  //         m
-  //
-  // and free its C style string.
-  for ( m = 0; m < nGroebnerBasisPolyTotalOut; m++ )
+  // Set each of the exhaustive summary polynomial strings and free
+  // its C style string.
+  for ( m = 0; m < nExhaustSummPoly; m++ )
   {
-    // Initially set the equation just equal to the polynomial.
-    groebnerBasisEqnStr_m = std::string( groebnerBasisPolyAllCStrOut[m] );
+    // Get the next polynomial in the list.
+    exhaustSummPolyStr_m = std::string( exhaustSummPolyCStrOut[m] );
 
-    // Add the equality operator and the equations right-hand side to
-    // get the full equation.
-    groebnerBasisEqnStr_m += " == 0";
-
-    // Set the expression containing the equation.    
-    groebnerBasisEqn_m = GiNaC::ex( groebnerBasisEqnStr_m, identPar );
-    
-    // Add this equation to the list.
-    groebnerBasisEqn.append( groebnerBasisEqn_m );
+    // Set this polynomial's string.
+    exhaustSummPolyStr[m] += exhaustSummPolyStr_m;
 
     // Free the memory for this polynomial's C style string.
-    free( groebnerBasisPolyAllCStrOut[m] );
+    free( exhaustSummPolyCStrOut[m] );
   }
 
   // Free the memory for pointers to the C style strings.
-  free( groebnerBasisPolyAllCStrOut );
+  free( exhaustSummPolyCStrOut );
 
-  // Free the memory for this C array.
-  free( nGroebnerBasisPolyEachOut );
-
-
-  //----------------------------------------------------------
-  // Solve the Groebner bases equations.
-  //----------------------------------------------------------
-
-  // This will be the number of unique solutions of the Groebner
-  // bases equations.
-  int nGroebnerBasisSoln = 0;
-
-  // This will be the number of equations for one of the unique
-  // solutions of the Groebner bases equations.
-  int nGroebnerBasisSoln_lEqn;
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // [Revisit - Multiple Groebner Bases are not Currently Solved - Mitch]
-  // Right now, this does not try to solve the Groebner bases if
-  // there are more than one of them.
-  //
-  // Once we have decided upon the proper messaging and
-  // interpretation of this situation, then this function should
-  // probably try to solve each of the Groebner bases.
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  //
-  // See if multiple Groebner bases were calculated.
-  if ( nGroebnerBasis > 1 )
+  // If the exhaustive is empty, the model is not identifiable.
+  // There is no need to calculate and solve its Groebner basis.
+  if ( nExhaustSummPoly == 0 )
   {
-    // Set the value used to indicate that there were multiple
-    // bases.
-    nGroebnerBasisSoln = -2;
-
-    // Set the status string.
-    identStatus = "Multiple Groebner Bases - Identifiability not Determined (Possible Multiple Solutions)";
+    // Set the proper status string.
+    identStatus = "Nonidentifiable (No Solutions)";
 
     if ( level > 0 )
     {
-      outputStream << "This system-experiment model had multiple Groebner bases." << endl;
-      outputStream << "This program cannot currently determine its identifiability." << endl;
-      outputStream << endl;
+      outputStream << "This system-experiment model is nonidentifiable." << endl;
+      outputStream << "Its exhaustive summary is empty." << endl;
     }
 
-    // Return the number of unique solutions of the Groebner bases
-    // equations.
-    return nGroebnerBasisSoln;  
+    // Return zero to indicate there were no solutions of the systems
+    // of nonlinear polynomials for each of the Groebner bases.
+    return 0;
   }
 
-  int l;
-  int n;
 
-  GiNaC::ex groebnerBasisSoln;
+  //----------------------------------------------------------
+  // Prepare to run SINGULAR to calculate and solve the Groebner bases.
+  //----------------------------------------------------------
 
-  // Try to solve the Groebner bases equations.
+  // Set the SINGULAR input and output file names.
+  const string singularInputFileName  = "calc_and_solve_groebner_basis.sng";
+  const string singularOutputFileName = "calc_and_solve_groebner_basis.xml";
+
+  // Open the SINGULAR input file.
+  ofstream singularInputStream;
+  singularInputStream.open( singularInputFileName.c_str(), ios::trunc );
+  if ( !singularInputStream )
+  {
+    std::string message = "The SINGULAR input file could not be opened.";
+
+    throw IdentException( message );
+  }
+
+  //----------------------------------------------------------
+  // Write the contents of the SINGULAR input file. 
+  //----------------------------------------------------------
+
+  singularInputStream << "//*****************************************************************" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// File:  " << singularInputFileName << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// This SINGULAR script calculates the Groebner basis for the" << endl;
+  singularInputStream << "// exhaustive summary specified below and then solves the system" << endl;
+  singularInputStream << "// of nonlinear polynomials that make up the Groebner basis." << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// The solutions for the Groebner basis are written to an XML file," << endl;
+  singularInputStream << "// " << singularOutputFileName << "." << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "//*****************************************************************" << endl;
+  singularInputStream << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << "// Local procedure definition." << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << endl;
+  singularInputStream << "//*************************************************************" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// Procedure:  finishUp" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// Prints the final information to the XML output file and " << endl;
+  singularInputStream << "// then closes the link associated with that file." << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "//*************************************************************" << endl;
+  singularInputStream << endl;
+  singularInputStream << "proc finishUp( link singularOutputFileName, int nExhaustSummGroebnerBasisSoln )" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"</groebner_basis_solution_details>\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  write( singularOutputFileName, \"<number_of_groebner_basis_solutions>\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, nExhaustSummGroebnerBasisSoln );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"</number_of_groebner_basis_solutions>\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"</singular_output>\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Close the link." << endl;
+  singularInputStream << "  close( singularOutputFileName );" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << endl;
+  singularInputStream << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << "// Preliminaries." << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Load SINGULAR libraries." << endl;
+  singularInputStream << "LIB \"triang.lib\";" << endl;
+  singularInputStream << "LIB \"solve.lib\";" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Set this flag so that monomials will not be printed in the short format;" << endl;
+  singularInputStream << "short = 0;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// The output XML file will be accessed via an ASCII link that is writeable." << endl;
+  singularInputStream << "link singularOutputFileName = \"ASCII:w " << singularOutputFileName << "\";" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// The first call to write opens the link." << endl;
+  singularInputStream << "write( singularOutputFileName, \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"no\\\"?>\" );" << endl;
+  singularInputStream << "write( singularOutputFileName, \"<singular_output>\" );" << endl;
+  singularInputStream << "write( singularOutputFileName, \"<groebner_basis_solution_details>\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << "// Prepare the rings used in the calculation." << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Declare a ring in the variables with lexicographical ordering." << endl;
+  singularInputStream << "ring variableRing = 0,( ";
+  for ( r = 0; r < nTheta; r++ )
+  {
+    singularInputStream << thetaName[r];
+    if ( r < nTheta - 1 )
+    {
+      singularInputStream << ", ";
+    }
+  }
+  singularInputStream << " ), lp;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Declare another ring that will be used below." << endl;
+  singularInputStream << "ring polySolnRing;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Reset the current ring." << endl;
+  singularInputStream << "setring variableRing;" << endl;
+  singularInputStream << endl;
+  singularInputStream << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << "// Calculate the Groebner basis for the exhaustive summary." << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Set the exhaustive summary." << endl;
+  singularInputStream << "ideal exhaustSummary = ";
+  for ( m = 0; m < nExhaustSummPoly; m++ )
+  {
+    singularInputStream << exhaustSummPolyStr[m];
+    if ( m < nExhaustSummPoly - 1 )
+    {
+      singularInputStream << ", ";
+    }
+  }
+  singularInputStream << ";" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// This will be the number of polynomials in the exhaustive summary" << endl;
+  singularInputStream << "// Groebner basis." << endl;
+  singularInputStream << "int nExhaustSummGroebnerBasisPoly;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Set the maximum calculation time equal to the number of seconds." << endl;
+  singularInputStream << "// in 30 minutes." << endl;
+  singularInputStream << "int maxTimeInSec = 30 * 60;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Set the option for computing a reduced Groebner basis" << endl;
+  singularInputStream << "option( redSB );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Calculate the Groebner basis for the exhaustive summary" << endl;
+  singularInputStream << "// with a time limit for the calculation." << endl;
+  singularInputStream << "ideal exhaustSummGroebnerBasis = groebner( exhaustSummary, maxTimeInSec );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// If the Groebner basis could not be calculated in the maximum number " << endl;
+  singularInputStream << "// of seconds, then issue an error message." << endl;
+  singularInputStream << "if ( exhaustSummGroebnerBasis == 0 || defined( groebner_error ) )" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"The Groebner basis for the exhaustive summary could not be calculated\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"in less than 30 minutes.\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Set the total number of exhaustive summary Groebner basis solutions equal to" << endl;
+  singularInputStream << "  // -3 to indicate that the identifiability could not be determined." << endl;
+  singularInputStream << "  nExhaustSummGroebnerBasisSoln = -3;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Print the final information to the output file and close it." << endl;
+  singularInputStream << "  finishUp( singularOutputFileName, nExhaustSummGroebnerBasisSoln );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  exit;" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << "else" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  // Get the number of polynomials in the exhaustive summary" << endl;
+  singularInputStream << "  // Groebner basis." << endl;
+  singularInputStream << "  nExhaustSummGroebnerBasisPoly = size( exhaustSummGroebnerBasis );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // If the exhaustive summary Groebner basis was empty," << endl;
+  singularInputStream << "  // then issue an error message." << endl;
+  singularInputStream << "  if ( nExhaustSummGroebnerBasisPoly == 0 )" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"The Groebner basis for the exhaustive summary was empty.\" );" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "    // Set the total number of exhaustive summary Groebner basis solutions equal to" << endl;
+  singularInputStream << "    // 0 to indicate that there are no solutions." << endl;
+  singularInputStream << "    nExhaustSummGroebnerBasisSoln = 0;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "    // Print the final information to the output file and close it." << endl;
+  singularInputStream << "    finishUp( singularOutputFileName, nExhaustSummGroebnerBasisSoln );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "    exit;" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << endl;
+  singularInputStream << "int j;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "string polyString_j;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Print all of the polynomials in the Groebner basis." << endl;
+  singularInputStream << "write( singularOutputFileName, \"Groebner basis = {\" );" << endl;
+  singularInputStream << "write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "for ( j = 1; j <= nExhaustSummGroebnerBasisPoly; j = j + 1 )" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  // Set this polynomial." << endl;
+  singularInputStream << "  if ( j < nExhaustSummGroebnerBasisPoly )" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    polyString_j = string( exhaustSummGroebnerBasis[j] ) + \",\";" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << "  else" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    polyString_j = string( exhaustSummGroebnerBasis[j] ) + \" }\";" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  write( singularOutputFileName, polyString_j );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << "write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << "// Calculate the Groebner basis for the exhaustive summary Groebner basis." << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << endl;
+  singularInputStream << "int k;" << endl;
+  singularInputStream << "int m;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Get the number of variables in the ring." << endl;
+  singularInputStream << "int nVariable = nvars( variableRing );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "ideal exhaustSummGroebnerBasisGroebnerBasis;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "int nExhaustSummGroebnerBasisGroebnerBasisPoly;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Set the option for computing a reduced Groebner basis" << endl;
+  singularInputStream << "option( redSB );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Calculate the Groebner basis for the ideal generated by the system" << endl;
+  singularInputStream << "// of polynomials from the exhaustive summary Groebner basis with a " << endl;
+  singularInputStream << "// time limit for the calculation." << endl;
+  singularInputStream << "exhaustSummGroebnerBasisGroebnerBasis = groebner( exhaustSummGroebnerBasis, maxTimeInSec );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// If the Groebner basis for the exhaustive summary Groebner basis could not" << endl;
+  singularInputStream << "// be calculated in the maximum number of seconds, then issue an error message." << endl;
+  singularInputStream << "if ( exhaustSummGroebnerBasisGroebnerBasis == 0 || defined( groebner_error ) )" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"The Groebner basis for the exhaustive summary Groebner basis\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"could not be calculated in less than 30 minutes.\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Set the total number of exhaustive summary Groebner basis solutions equal to" << endl;
+  singularInputStream << "  // -3 to indicate that the identifiability could not be determined." << endl;
+  singularInputStream << "  nExhaustSummGroebnerBasisSoln = -3;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Print the final information to the output file and close it." << endl;
+  singularInputStream << "  finishUp( singularOutputFileName, nExhaustSummGroebnerBasisSoln );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  exit;" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << endl;
+  singularInputStream << "//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+  singularInputStream << "// [Revisit - Groebner Basis Calculation with Time Limit Changes Result - Mitch]" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// Because the previous call to the function groebner with a time" << endl;
+  singularInputStream << "// limit returns a Groebner basis that the function triangMH does think" << endl;
+  singularInputStream << "// is a proper Groebner basis, repeat the call to groebner here without a" << endl;
+  singularInputStream << "// time limit" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// It is fine to do the calculation without a time limit here, because" << endl;
+  singularInputStream << "// to get here the first call to groebner must have taken less than 30" << endl;
+  singularInputStream << "// minutes." << endl;
+  singularInputStream << "//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// Calculate the Groebner basis for the ideal generated by the system" << endl;
+  singularInputStream << "// of polynomials from the exhaustive summary Groebner basis without " << endl;
+  singularInputStream << "// a time limit for the calculation." << endl;
+  singularInputStream << "exhaustSummGroebnerBasisGroebnerBasis = groebner( exhaustSummGroebnerBasis );" << endl;
+  singularInputStream << endl;
+  singularInputStream << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << "// Solve the exhaustive summary Groebner basis polynomials." << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << endl;
+  singularInputStream << "list exhaustSummGroebnerBasisSolnPolyList;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "int nExhaustSummGroebnerBasisSoln;" << endl;
+  singularInputStream << "int nExhaustSummGroebnerBasisSolnPoly_k;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "string relnString_m;" << endl;
+  singularInputStream << "string solnString_k_m;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Get the number of polynomials in the exhaustive summary Groebner basis," << endl;
+  singularInputStream << "// the number of polynomials in the Groebner basis for the exhaustive summary" << endl;
+  singularInputStream << "// Groebner basis." << endl;
+  singularInputStream << "nExhaustSummGroebnerBasisPoly              = size( exhaustSummGroebnerBasis );" << endl;
+  singularInputStream << "nExhaustSummGroebnerBasisGroebnerBasisPoly = size( exhaustSummGroebnerBasisGroebnerBasis );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Print the number of solutions for the exhaustive summary Groebner basis." << endl;
+  singularInputStream << "if ( nVariable > nExhaustSummGroebnerBasisPoly )" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"polynomials in the basis (\" + string( nExhaustSummGroebnerBasisPoly ) + \") than there are parameters (\" + string( nVariable ) + \").\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << "else" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  if ( nVariable > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"polynomials in its solution (\" + string( nExhaustSummGroebnerBasisGroebnerBasisPoly ) + \") than there are parameters (\" + string( nVariable ) + \").\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << "if ( nExhaustSummGroebnerBasisPoly > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"polynomials in its solution (\" + string( nExhaustSummGroebnerBasisGroebnerBasisPoly ) + \") than there are in the basis (\" + string( nExhaustSummGroebnerBasisPoly ) + \").\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// If there are more variables than polymials (an underdetermined system)," << endl;
+  singularInputStream << "// or if there are more polymials than exhaustive summary Groebner basis" << endl;
+  singularInputStream << "// polynomials, or if there are more variables than exhaustive summary" << endl;
+  singularInputStream << "// Groebner basis polynomials, then the numerical solution finder " << endl;
+  singularInputStream << "// triang_solve won't be able to find a solution." << endl;
+  singularInputStream << "//" << endl;
+  singularInputStream << "// In this case, use the Groebner basis for the exhaustive summary Groebner" << endl;
+  singularInputStream << "// basis as the parameter relationships." << endl;
+  singularInputStream << "if ( nVariable                     > nExhaustSummGroebnerBasisPoly              ||" << endl;
+  singularInputStream << "     nExhaustSummGroebnerBasisPoly > nExhaustSummGroebnerBasisGroebnerBasisPoly ||" << endl;
+  singularInputStream << "     nVariable                     > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"The following parameter relationships satisfy the Groebner basis\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"polynomials and may be useful to determine identifiable parameter\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"combinations.\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  write( singularOutputFileName, \"Parameter relationships = {\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Print all of the polynomials in the Groebner basis for the exhaustive" << endl;
+  singularInputStream << "  // summary Groebner basis." << endl;
+  singularInputStream << "  for ( m = 1; m <= nExhaustSummGroebnerBasisGroebnerBasisPoly; m = m + 1 )" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    // Set an equation for this polynomial." << endl;
+  singularInputStream << "    relnString_m =" << endl;
+  singularInputStream << "      string( exhaustSummGroebnerBasisGroebnerBasis[m] - jet( exhaustSummGroebnerBasisGroebnerBasis[m], 0 ) )" << endl;
+  singularInputStream << "      + \" = \"" << endl;
+  singularInputStream << "      + string( - jet( exhaustSummGroebnerBasisGroebnerBasis[m], 0 ) );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "    if ( m < nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
+  singularInputStream << "    {" << endl;
+  singularInputStream << "      relnString_m = relnString_m + \",\";" << endl;
+  singularInputStream << "    }" << endl;
+  singularInputStream << "    else" << endl;
+  singularInputStream << "    {" << endl;
+  singularInputStream << "      relnString_m = relnString_m + \" }\";" << endl;
+  singularInputStream << "    }" << endl;
+  singularInputStream << endl;
+  singularInputStream << "    write( singularOutputFileName, relnString_m );" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Set the total number of exhaustive summary Groebner basis solutions equal to" << endl;
+  singularInputStream << "  // -1 to indicate this basis has infinite solutions." << endl;
+  singularInputStream << "  nExhaustSummGroebnerBasisSoln = -1;" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << "else" << endl;
+  singularInputStream << "{" << endl;
+  singularInputStream << "  // Solve the system of nonlinear polynomials that corresponds to the" << endl;
+  singularInputStream << "  // the exhaustive summary Groebner basis." << endl;
+  singularInputStream << "  //" << endl;
+  singularInputStream << "  // Calculate a list of triangular systems of factorized polynomials," << endl;
+  singularInputStream << "  // such that the disjoint union of their solutions equals the solution of" << endl;
+  singularInputStream << "  // system of polynomials for the exhaustive summary Groebner basis." << endl;
+  singularInputStream << "  exhaustSummGroebnerBasisSolnPolyList = triangMH( exhaustSummGroebnerBasisGroebnerBasis, 2 );" << endl;
+  singularInputStream << "  " << endl;
+  singularInputStream << "  // Get the number of solutions for the exhaustive summary" << endl;
+  singularInputStream << "  // Groebner basis." << endl;
+  singularInputStream << "  nExhaustSummGroebnerBasisSoln = size( exhaustSummGroebnerBasisSolnPolyList );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  if ( nExhaustSummGroebnerBasisSoln == 1 )" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"The Groebner basis has 1 solution.\" );" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << "  else" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"The Groebner basis has \" + string( nExhaustSummGroebnerBasisSoln ) + \" solutions.\" );" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Solve the exhaustive summary Groebner basis polynomials and put the." << endl;
+  singularInputStream << "  // solutions into a ring." << endl;
+  singularInputStream << "  polySolnRing = triang_solve( exhaustSummGroebnerBasisSolnPolyList, 6 );" << endl;
+  singularInputStream << "  setring polySolnRing;" << endl;
+  singularInputStream << endl;
+  singularInputStream << "  // Print the numeric solutions for the exhaustive summary Groebner basis." << endl;
+  singularInputStream << "  for ( k = 1; k <= nExhaustSummGroebnerBasisSoln; k = k + 1 )" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    if ( nExhaustSummGroebnerBasisSoln == 1 )" << endl;
+  singularInputStream << "    {" << endl;
+  singularInputStream << "      write( singularOutputFileName, \"Groebner basis solution = {\" );" << endl;
+  singularInputStream << "    }" << endl;
+  singularInputStream << "    else" << endl;
+  singularInputStream << "    {" << endl;
+  singularInputStream << "      write( singularOutputFileName, \"Groebner basis solution \" + string( k ) + \" = {\" );" << endl;
+  singularInputStream << "    }" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "    // Set the number of polynomials in this solution." << endl;
+  singularInputStream << "    nExhaustSummGroebnerBasisSolnPoly_k = size( rlist[k] );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "    // Print all of the polynomials in this solution." << endl;
+  singularInputStream << "    for ( m = 1; m <= nExhaustSummGroebnerBasisSolnPoly_k; m = m + 1 )" << endl;
+  singularInputStream << "    {" << endl;
+  singularInputStream << "      // Set an equation for this polynomial." << endl;
+  singularInputStream << "      solnString_k_m =" << endl;
+  singularInputStream << "        string( varstr( variableRing, m ) ) + \" = \"" << endl;
+  singularInputStream << "        + string( repart( rlist[k][m] ) )" << endl;
+  singularInputStream << "        + \" + \"" << endl;
+  singularInputStream << "        + string( impart( rlist[k][m] ) )" << endl;
+  singularInputStream << "        + \" * i\";" << endl;
+  singularInputStream << endl;
+  singularInputStream << "      if ( m < nExhaustSummGroebnerBasisSolnPoly_k )" << endl;
+  singularInputStream << "      {" << endl;
+  singularInputStream << "        solnString_k_m = solnString_k_m + \",\";" << endl;
+  singularInputStream << "      }" << endl;
+  singularInputStream << "      else" << endl;
+  singularInputStream << "      {" << endl;
+  singularInputStream << "        solnString_k_m = solnString_k_m + \" }\";" << endl;
+  singularInputStream << "      }" << endl;
+  singularInputStream << endl;
+  singularInputStream << "      write( singularOutputFileName, solnString_k_m );" << endl;
+  singularInputStream << "      write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "    }" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << "}" << endl;
+  singularInputStream << endl;
+  singularInputStream << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << "// Finish up." << endl;
+  singularInputStream << "//------------------------------------------------------------" << endl;
+  singularInputStream << endl;
+  singularInputStream << "// Print the final information to the output file and close it." << endl;
+  singularInputStream << "finishUp( singularOutputFileName, nExhaustSummGroebnerBasisSoln );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "exit;" << endl;
+  singularInputStream << endl;
+
+  // Close the SINGULAR input file. 
+  singularInputStream.close();
+
+
+  //----------------------------------------------------------
+  // Run SINGULAR to calculate and solve the Groebner bases.
+  //----------------------------------------------------------
+
+  // Delete any existing version of the SINGULAR output file.
+  int removeReturnValue = remove( singularOutputFileName.c_str() );
+
+  // Use the system command to make SINGULAR execute the input file
+  // with all output suppressed, no startup banner, and no messages
+  // when loading libraries.
+  string systemCommand = "Singular --no-out --quiet " + singularInputFileName;
+  system( systemCommand.c_str() );
+
+
+  //----------------------------------------------------------
+  // Prepare the XML parser.
+  //----------------------------------------------------------
+
+  // Initialize the Xerces XML parser.
   try
   {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - A Nonlinear System of Equations Solver is Needed - Mitch]
-    // The Groebner bases equations should really be solved using a
-    // nonlinear systems of equations solver.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
-    // Try to solve the Groebner bases equations as a linear system
-    // of equations that are functions of the parameters that will
-    // be checked to be identifiable.
-    //
-    // If the system of equations is nonlinear, then the linear
-    // solver will throw an exception.
-    groebnerBasisSoln = lsolve( groebnerBasisEqn, identPar );
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-    // [Revisit - A Nonlinear System of Equations Solver is Needed - Mitch]
-    // Once a nonlinear systems of equations solver is used there
-    // can be multiple solutions and this number can be larger than
-    // one
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
-    // If the linear solver is able to solve the equations, set the
-    // number the equations equal to one to indicate there were not
-    // multiple solutions.
-    nGroebnerBasisSoln = 1;
-
-    // Print the solution of the Groebner bases equations.
-    if ( level > 0 )
-    {
-      outputStream << "Groebner basis solution = {" << endl;
-      outputStream << endl;
-      for ( l = 0; l < nGroebnerBasisSoln; l++ )
-      {
-        // Get the number of equations in this solution.
-        nGroebnerBasisSoln_lEqn = groebnerBasisSoln.nops();
-
-        // Print the equations in this solution.
-        for ( n = 0; n < nGroebnerBasisSoln_lEqn; n++ )
-        {
-          outputStream << groebnerBasisSoln[n];
-          if ( n < nGroebnerBasisSoln_lEqn - 1 )
-          {
-            outputStream << "," << endl;
-          }
-          else
-          {
-            outputStream << " }" << endl;
-          }
-          outputStream << endl;
-        }
-      }
-      outputStream << endl;
-    }
-
-    // Reset the number of solutions if the number of Groebner basis
-    // polynomials does not match the number paramters (THETA's).
-    if ( groebnerBasisEqn.nops() == identPar.nops() )
-    {
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-      // [Revisit - A Nonlinear System of Equations Solver is Needed - Mitch]
-      // Once a nonlinear systems of equations solver is used there
-      // can be multiple solutions and this number can be larger than
-      // one, which would make the status string be:  
-      //
-      //     identStatus = "Locally (Nonuniquely) Identifiable";
-      //
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      //
-      // If there are the same number of equations as unknowns, and
-      // the equations are linear, then the solution is unique.
-      nGroebnerBasisSoln = 1;
-
-      // Set the status string.
-      identStatus = "Globally (Uniquely) Identifiable";
-
-      if ( level > 0 )
-      {
-        outputStream << "This system-experiment model is globally (uniquely) identifiable." << endl;
-      }
-    }
-    else if ( groebnerBasisEqn.nops() < identPar.nops() )
-    {
-      // If there are less equations than unknowns, then there are
-      // an infinite number of solutions.
-      nGroebnerBasisSoln = -1;
-
-      // Set the status string.
-      identStatus = "Nonidentifiable (Infinite Solutions)";
-
-      if ( level > 0 )
-      {
-        outputStream << "There are fewer polynomials in the Groebner basis (" 
-                     << groebnerBasisEqn.nops() << ") than there are parameters (" 
-                     << identPar.nops() << ")." << endl;
-        outputStream << endl;
-        outputStream << "This system-experiment model is nonidentifiable." << endl;
-        outputStream << "Its Groebner basis has an infinite number of solutions." << endl;
-      }
-    }
-    else
-    {
-      // If there are more equations than unknowns, then there are
-      // no solutions.
-      nGroebnerBasisSoln = 0;
-
-      // Set the status string.
-      identStatus = "Nonidentifiable (No Solutions)";
-
-      if ( level > 0 )
-      {
-        outputStream << "There are more polynomials in the Groebner basis (" 
-                     << groebnerBasisEqn.nops() << ") than there are parameters (" 
-                     << identPar.nops() << ")." << endl;
-        outputStream << endl;
-        outputStream << "This system-experiment model is nonidentifiable." << endl;
-        outputStream << "Its Groebner basis has no solutions." << endl;
-      }
-    }
-
-    if ( level > 0 )
-    {
-      outputStream << endl;
-    }
-
-    // Return the number of unique solutions of the Groebner bases
-    // equations.
-    return nGroebnerBasisSoln;  
+    XMLPlatformUtils::Initialize();
   }
-  catch( const std::exception& stde )
+  catch ( ... )
   {
-    if ( level > 0 )
-    {
-      std::string message = "The Groebner basis is not a linear system of polynomials.  \nThis program cannot currently solve such a nonlinear system. \n";
-      message += stde.what();
-      outputStream << message << endl;
-      outputStream << endl;
+    throw IdentException( "The SINGULAR output file parser could not be initialized." );
+  }
 
-      outputStream << "Try solving this Groebner basis by inspection or by using a nonlinear system \nof equations solver to determine if the system-experiment model is identifiable." << endl;
-      outputStream << endl;
-    }
 
+  //----------------------------------------------------------
+  // Read in the SINGULAR output file with the Groebner bases' solutions.
+  //----------------------------------------------------------
+
+  // Instantiate the XML parser.
+  XercesDOMParser* pXMLParser = new XercesDOMParser();
+
+  // Set some options for the XML parser.
+  pXMLParser->setValidationScheme            ( XercesDOMParser::Val_Always );
+  pXMLParser->setDoNamespaces                ( true );
+  pXMLParser->setDoNamespaces                ( true );
+  pXMLParser->setDoSchema                    ( true );
+  pXMLParser->setValidationSchemaFullChecking( true );
+  pXMLParser->setCreateEntityReferenceNodes  ( true );
+
+  // Parse the XML SINGULAR output file specified by the first C
+  // style string argument for this function.
+  try
+  {
+    pXMLParser->parse( singularOutputFileName.c_str() );
+  }
+  catch ( ... )
+  {
+    throw IdentException( "The SINGULAR output file could not be parsed." );
+  }
+
+
+  //----------------------------------------------------------
+  // Prepare to get the SINGULAR outputs for the Groebner bases solution.
+  //----------------------------------------------------------
+
+  DOMDocument* pDOMDocument;
+
+  // Get the DOM document tree that contains all of the elements and
+  // text nodes from the SINGULAR output file
+  try
+  {
+    pDOMDocument = pXMLParser->getDocument();
+  }
+  catch ( ... )
+  {
+    throw IdentException( "The SINGULAR output information could not be processed." );
+  }
+
+
+  // Get the root (first) element of the DOM document tree.
+  DOMElement* pDOMElementRoot = pDOMDocument->getDocumentElement();
+
+  // Check that there are elements in the DOM document tree.
+  if ( !pDOMElementRoot )
+  {
+    throw IdentException( "The SINGULAR output file was empty." );
+  }
+
+  XMLCh tempXMLCh[100];
+
+  // Check the name of the root element.
+  XMLString::transcode( "singular_output", tempXMLCh, 99 );
+  if ( !XMLString::equals( pDOMElementRoot->getTagName(), tempXMLCh ) ) 
+  {
+    throw IdentException(
+      "The first element of the SINGULAR output file had the wrong name." );
+  }
+
+
+  //---------------------------------------------------------
+  // Get the Groebner bases solution details.
+  //----------------------------------------------------------
+
+  string groebner_basis_solution_detailsStr;
+
+  const string groebner_basis_solution_detailsErrorStr =
+    "The Groebner solution details could not be determined from the SINGULAR output file.";
+
+  try
+  {
+    groebner_basis_solution_detailsStr = getElementText( pDOMElementRoot, "groebner_basis_solution_details" );
+  }
+  catch ( const IdentException& e )
+  {
+    throw IdentException( groebner_basis_solution_detailsErrorStr + "\n\n" + e.what() );
+  }
+  catch ( ... )
+  {
+    throw IdentException( groebner_basis_solution_detailsErrorStr + "\n\n" 
+      + "The reason for this problem is unknown." );
+  }
+
+  // Print the details of the solution of the Groebner bases
+  // polynomials.
+  if ( level > 0 )
+  {
+    outputStream << groebner_basis_solution_detailsStr << endl;
+    outputStream << endl;
+  }
+
+
+  //---------------------------------------------------------
+  // Get the number of solutions for the Groebner bases.
+  //----------------------------------------------------------
+
+  string number_of_groebner_basis_solutionsStr;
+
+  const string number_of_groebner_basis_solutionsErrorStr =
+    "The number of solutions could not be determined from the SINGULAR output file.";
+
+  try
+  {
+    number_of_groebner_basis_solutionsStr = getElementText( pDOMElementRoot, "number_of_groebner_basis_solutions" );
+  }
+  catch ( const IdentException& e )
+  {
+    throw IdentException( number_of_groebner_basis_solutionsErrorStr + "\n\n" + e.what() );
+  }
+  catch ( ... )
+  {
+    throw IdentException( number_of_groebner_basis_solutionsErrorStr + "\n\n" 
+      + "The reason for this problem is unknown." );
+  }
+
+  // Get the number of solutions of the system of nonlinear
+  // polynomials that corresponds to the Groebner basis for the
+  // exhaustive summary.
+  int nGroebnerBasisSoln = atoi( number_of_groebner_basis_solutionsStr.c_str() );
+
+  // Set the proper status string based on the number of solutions.
+  if ( nGroebnerBasisSoln == 1 )
+  {
     // Set the status string.
-    identStatus = "Groebner Basis Nonlinear - Identifiability not Determined (Possible Multiple Solutions)";
+    identStatus = "Globally (Uniquely) Identifiable";
 
-    // Return a value of 0 to indicate that the identifiability
-    // of the individual's THETA parameter could not be determined.
-    return 0;  
+    if ( level > 0 )
+    {
+      outputStream << "This system-experiment model is globally (uniquely) identifiable." << endl;
+    }
   }
-  catch( ... )
+  else if ( nGroebnerBasisSoln > 1 )
   {
-    throw IdentException( "An unknown exception was thrown during the attempt to solve the Groebner basis as a \nlinear system of equations." );
+    // Set the status string.
+    identStatus = "Locally (Nonuniquely) Identifiable";
+
+    if ( level > 0 )
+    {
+      outputStream << "This system-experiment model is locally (nonuniquely) identifiable." << endl;
+    }
   }
+  else if ( nGroebnerBasisSoln == -1 )
+  {
+    // Set the status string.
+    identStatus = "Nonidentifiable (Infinite Solutions)";
+
+    if ( level > 0 )
+    {
+      outputStream << "This system-experiment model is nonidentifiable." << endl;
+    }
+  }
+  else if ( nGroebnerBasisSoln == -3 )
+  {
+    // Set the status string.
+    identStatus = "Identifiability Not Determined";
+
+    if ( level > 0 )
+    {
+      outputStream << "The identifiability of this system-experiment model" << endl;
+      outputStream << "could not be determined." << endl;
+    }
+  }
+  else if ( nGroebnerBasisSoln == 0 )
+  {
+    // Set the status string.
+    identStatus = "Nonidentifiable (No Solutions)";
+
+    if ( level > 0 )
+    {
+      outputStream << "This system-experiment model is nonidentifiable." << endl;
+      outputStream << "Its Groebner basis has no solutions." << endl;
+    }
+  }
+  else
+  {
+    throw IdentException( "An unexpected number of Groebner bases solutions was returned." );
+  }
+
+  if ( level > 0 )
+  {
+    outputStream << endl;
+  }
+
+
+  //----------------------------------------------------------
+  // Finish up.
+  //----------------------------------------------------------
+
+  // Delete the SINGULAR input and output files.
+  removeReturnValue = remove( singularInputFileName .c_str() );
+  removeReturnValue = remove( singularOutputFileName.c_str() );
+
+  // Return the number of solutions of the systems of nonlinear
+  // polynomials for each of the Groebner bases.
+  return nGroebnerBasisSoln;
 
 }
 

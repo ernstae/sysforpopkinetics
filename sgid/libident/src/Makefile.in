@@ -68,7 +68,8 @@ LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libident_a_AR = $(AR) $(ARFLAGS)
 libident_a_LIBADD =
-am_libident_a_OBJECTS = calcGroebnerBasis.$(OBJEXT) \
+am_libident_a_OBJECTS = calcExhaustSummary.$(OBJEXT) \
+	calcGroebnerBasis.$(OBJEXT) \
 	checkParamIdent.$(OBJEXT)
 libident_a_OBJECTS = $(am_libident_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -215,6 +216,8 @@ AM_CPPFLAGS = -I.
 
 # Set the files that make up the library.
 libident_a_SOURCES = \
+	calcExhaustSummary.c \
+	calcExhaustSummary.h \
 	calcGroebnerBasis.c \
 	calcGroebnerBasis.h \
 	checkParamIdent.cpp \
@@ -225,6 +228,7 @@ libident_a_SOURCES = \
 # Set the header files the library.
 pkginclude_HEADERS = \
 	${top_builddir}/config.h \
+	calcExhaustSummary.h \
 	calcGroebnerBasis.h \
 	checkParamIdent.h \
 	IdentException.h
@@ -302,6 +306,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcExhaustSummary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcGroebnerBasis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkParamIdent.Po@am__quote@
 
