@@ -37,7 +37,7 @@ my @variables = (
 my @config_files = ( 	'cspk/daemon/spkrund.pl',
 	      		'aspk/daemon/spkcmpd.pl' );
 
-my $license_file = "license.txt";
+my $license_file = "LICENSE";
 
 # display_config() shows the menu of configuration options that can be changed
 # by the end user upon installing the SPK system.
