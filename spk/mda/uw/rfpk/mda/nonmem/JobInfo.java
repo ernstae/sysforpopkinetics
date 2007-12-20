@@ -1307,7 +1307,7 @@ public class JobInfo extends javax.swing.JFrame {
         
         // submit the warm start job
         frame.server.submitJob(source, jobAbstract, modelArchive, dataArchive, methodCode, id, true, isMailNotice,
-                               nTasks);
+                               nTasks, frame.myName);
 
         // Close the dialog
         warmStartDialog.dispose();

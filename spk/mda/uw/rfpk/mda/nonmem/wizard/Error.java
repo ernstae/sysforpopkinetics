@@ -233,7 +233,10 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                         return false;
                     }
                 }
-                
+                // Check P on left handside
+                if(!Utility.checkPonLeft(code)) return false;
+                // Check index
+                if(!Utility.checkIndex(code, "ETA", "EPS")) return false;
                 // Check ENDIF syntax
                 if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility

@@ -87,7 +87,32 @@ public class Utility {
         }
         return list.size();
     }
-
+    
+    /** Find substrings that has the patten of s(i), where s is a character string,
+     * and check if i is an integer.
+     * @param input a String object containing the text to search in.
+     * @param s String objects each containing the character string described above. 
+     * @return true if the index is an integer, false otherwise.
+     */
+    public static boolean checkIndex(String input, String... s)
+    {
+        for(int i = 0; i < s.length; i++)
+        {
+            String regExp = "\\b" + s[i] + "\\s*\\(?([\\.[^\\)]]+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
+            Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+            Matcher matcher = pattern.matcher(" " + input.toUpperCase());
+            while(matcher.find())
+                if(!isPosIntNumber(matcher.group(1)))
+                {
+                    JOptionPane.showMessageDialog(null, "The index of " + s[i] + " must be an positive integer.",  
+                                                  "Input Error",            
+                                                  JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+        }
+        return true;
+    }
+    
     /** Add ETA(n) to THETA(n) in a text, i.e., THETA(n)+ETA(n).
      * @param text a text to be modified.
      * @return the modified text.
@@ -1007,6 +1032,24 @@ public class Utility {
         return errors;
     }
     
+    /** Check if P is not used as a variable name.
+     * @param text the program to be checked.
+     * @return true if P is not used as a variable name, false otherwise.
+     */
+    public static boolean checkPonLeft(String text)
+    {
+        String[] lines = text.trim().split("\n");
+        for(int i = 0; i < lines.length; i++)
+            if(lines[i].indexOf("=") != -1 && lines[i].split("=")[0].trim().equals("P"))
+            {
+                JOptionPane.showMessageDialog(null, "P cannot be used as a variable name because it is reserved.", 
+                                                  "Input Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        return true;
+    }
+    
     /** Generate a dataset by replacing DV by simulated data from parent job's report.
      * @param report the report XML as a String object.
      * @param source the source XML as a String object.
@@ -1408,8 +1451,14 @@ public class Utility {
      * @param args argument not used.
      */    
     public static void main(String[] args)
-    {            
-        String source = "<pop_analysis pop_size=\"25\" sig_digits=\"3\">\n" +
+    {
+        System.out.println(checkPonLeft("\nP = A\n"));
+//        System.out.println(checkIndex("ETA(1)", "ETA"));
+//        System.out.println(checkIndex("ETA(.1)", "ETA"));
+//        System.out.println(checkIndex("ETA(A)", "ETA"));
+//        System.out.println(checkIndex("ETA(ETA(1))", "ETA"));
+//        System.out.println(checkIndex("ETA(1)+A(A(1))", "ETA", "A"));
+/*        String source = "<pop_analysis pop_size=\"25\" sig_digits=\"3\">\n" +
             "<theta length=\"4\">\n" +
                "<in>\n" +
                   "<value fixed=\"no\">5</value>\n" +
@@ -1436,6 +1485,7 @@ public class Utility {
             "</sigma>";
         System.out.println(findNTasks(source, "eh", "al"));
         System.out.println(findNTasks(source, "mc", "le"));
+*/
 //        System.out.println(correctIFConditions("IF((T.GE.0.AND.T.LE.1).OR.(T.EQ.2.AND.T.EQ.3))"));
 //        String[] dataLabels = {"ID", "DV", "TIME", "PRED", "A", "S1","ALAG2", "R3N"};
 //        System.out.print(checkDataLabels(dataLabels));
