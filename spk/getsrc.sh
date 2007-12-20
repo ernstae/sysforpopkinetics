@@ -43,7 +43,7 @@ cp ~/r2/trunk/spk/webapps/user/*.shtml ~/r2/trunk/release/java-components/webapp
 cp ~/r2/trunk/spk/webapps/user/*.css ~/r2/trunk/release/java-components/webapps/user
 cp ~/r2/trunk/spk/webapps/user/*.java ~/r2/trunk/release/java-components/webapps/user
 cp ~/r2/trunk/spk/webapps/user/*.class ~/r2/trunk/release/java-components/webapps/user
-cp ~/r2/trunk/spk/mda/lib/*.jar ~/r2/trunk/release/java-components/webapps/user
+cp ~/r2/trunk/spk/mda/lib/jhall.jar ~/r2/trunk/release/java-components/webapps/user
 cp ~/r2/trunk/spk/webapps/user/JavaHelp.jar ~/r2/trunk/release/java-components/webapps/user
 cp ~/r2/trunk/spk/webapps/user/SPK_User_Manual.pdf ~/r2/trunk/release/java-components/webapps/user
 cp ~/r2/trunk/spk/webapps/user/RFPK_SPK_TERMS_OF_SERVICE.html ~/r2/trunk/release/java-components/webapps/user
@@ -59,11 +59,8 @@ cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/beans/*.java ~/r2/trunk/r
 mkdir -p ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/rcs
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/classes/uw/rfpk/rcs/*.java ~/r2/trunk/release/java-components/webapps/src/uw/rfpk/rcs
 mkdir -p ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/jaxp-api.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/jstl.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/servlet-api.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/standard.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
-cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/oraclasses_3_0.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/orataglib_3_0.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
 cp ~/r2/trunk/spk/webapps/user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar ~/r2/trunk/release/java-components/webapps/user/WEB-INF/lib
 
