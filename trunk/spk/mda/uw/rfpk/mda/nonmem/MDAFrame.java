@@ -4795,7 +4795,7 @@ public class MDAFrame extends JFrame
         
         // Submit the job
         boolean ok = server.submitJob(source, jobAbstract, modelArchive, dataArchive, jobMethodCode,
-                                      jobParent, false, jCheckBox1.isSelected(), nTasks);
+                                      jobParent, false, jCheckBox1.isSelected(), nTasks, myName);
         
         // Close the dialog
         if(ok) archiveDialog.dispose();

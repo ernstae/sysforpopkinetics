@@ -259,10 +259,12 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                                                   "Input Error", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
-                
-
+                // Check P on left handside
+                if(!Utility.checkPonLeft(code)) return false;
+                // Check index
+                if(!Utility.checkIndex(code, "THETA", "ETA", "EPS")) return false;
                 // Check ENDIF syntax
-                if(!Utility.checkENDIF(code, title)) return false;;
+                if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility
                 Vector names = Utility.checkMathFunction(code, title);
                 // Check parenthesis mismatch

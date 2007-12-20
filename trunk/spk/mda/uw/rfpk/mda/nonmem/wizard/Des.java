@@ -239,6 +239,10 @@ public class Des extends javax.swing.JPanel implements WizardStep {
                 if(!Utility.checkCharacter(record, title)) return false;              
                 // Eliminate comments
                 code = Utility.eliminateComments(record);
+                // Check P on left handside
+                if(!Utility.checkPonLeft(code)) return false;
+                // Check index
+                if(!Utility.checkIndex(code, "A", "DADT")) return false;
                 // Check ENDIF syntax
                 if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility
