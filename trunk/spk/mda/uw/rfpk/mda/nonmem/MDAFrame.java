@@ -1657,7 +1657,7 @@ public class MDAFrame extends JFrame
         jTextPane3.setBackground(new java.awt.Color(0, 204, 204));
         jTextPane3.setEditable(false);
         jTextPane3.setFont(new java.awt.Font("Dialog", 0, 14));
-        jTextPane3.setText("NONMEM  Compatible  Version:  0.1");
+        jTextPane3.setText("Version:  0.1");
         jTextPane3.setFocusable(false);
         jTextPane3.setMinimumSize(new java.awt.Dimension(240, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
