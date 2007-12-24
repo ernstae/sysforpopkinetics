@@ -87,16 +87,25 @@ foreach $prog ( @programs ) {
     }
 }
 
-if ( get_os() eq 'Fedora' ) {
-    print "Installing missing packages via YUM\n";
-    @args = ("yum", "install", "-y");
-    foreach $item ( @not_avail ) {
-	push(@args, $item);
+print "Would you like to install the packages via YUM? [yes/no]: ";
+my $response = <STDIN>;
+chop($response);
+
+if ( $response =~ /^yes$/i ) {
+    
+    if ( get_os() eq 'Fedora' ) {
+        print "Installing missing packages via YUM\n";
+        @args = ("yum", "install", "-y");
+        foreach $item ( @not_avail ) {
+            push(@args, $item);
+        }
+        system(@args) == 0 or die "Could not run yum for update";
     }
-    system(@args) == 0 or die "Could not run yum for update";
+    else {
+        print get_os();
+    }
+    
 }
-else {
-    print get_os();
-}
+
 
 
