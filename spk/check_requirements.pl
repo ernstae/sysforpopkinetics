@@ -3,7 +3,6 @@
 my @programs = qw ( QN01Box
 		    ginac
 		    ginac-devel
-                    compat-gcc-g77
 		    atlas
 		    atlas-devel
 		    lapack
@@ -42,7 +41,8 @@ my @programs = qw ( QN01Box
 		    perl-Net-DNS
 		    perl-Digest-HMAC
 		    perl-libwww-perl
-		    
+		    bison
+                    compat-gcc-34-g77
 		    );
 
 $rpmcmd = "rpm -q ";
@@ -89,7 +89,7 @@ foreach $prog ( @programs ) {
 
 if ( get_os() eq 'Fedora' ) {
     print "Installing missing packages via YUM\n";
-    @args = ("yum", "update", "-y");
+    @args = ("yum", "install", "-y");
     foreach $item ( @not_avail ) {
 	push(@args, $item);
     }
