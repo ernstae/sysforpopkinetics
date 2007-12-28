@@ -78,7 +78,7 @@ public class NearEqual {
     
     // Check old number u with new number v. nan, inf and -inf are all allowed,
     // but them must be the same in u and v.
-    private static boolean checkNumber(double u, double v)
+    private static boolean checkNumber(double u, double v, double aTol, double rTol)
     {
         if(u != u)  // NaN
         {
@@ -102,7 +102,7 @@ public class NearEqual {
             else
             {
                 double diff = Math.abs(u - v);
-                if(diff > aErr && diff > rErr * (Math.abs(u) + Math.abs(v)))
+                if(diff > aTol && diff > rTol * (Math.abs(u) + Math.abs(v)))
                     return false;
             }
         }
@@ -138,7 +138,7 @@ public class NearEqual {
         return true;
     }
     
-    // norm(X) = max|xi|
+    // norm(X) = max|xi| norm_inf
     private static boolean norm1(String[] u, String[] v)
     {
         double x = 0;
@@ -162,7 +162,7 @@ public class NearEqual {
         return true; 
     }
     
-    // norm(X) = sum|xi|
+    // norm(X) = sum|xi| norm_1
     private static boolean norm2(String[] u, String[] v)
     {
         double x = 0;
@@ -186,7 +186,7 @@ public class NearEqual {
         return true; 
     }
     
-    // norm(X) = sqrt(sum(xi*xi))
+    // norm(X) = sqrt(sum(xi*xi)) norm_2
     private static boolean norm3(String[] u, String[] v)
     {
         double x = 0;
@@ -235,6 +235,8 @@ public class NearEqual {
                 index = i + 1;
             }
         }
+        oldValue = u[index - 1];
+        newValue = v[index - 1];
     }
     
     // Check matrix by converting lower triangle matrix into full matrix
@@ -242,6 +244,9 @@ public class NearEqual {
     // If checkVector method returns false, convert back the index.
     private static boolean checkMatrix(String[][] u, String[][] v)
     {
+        double temp = rErr;
+        rErr = rErr * pdfm;
+        if(isInverseMatrix) rErr = rErr * pdfm;
         int l = v.length;
         String[] x = new String[l * l];
         String[] y = new String[l * l];
@@ -271,8 +276,10 @@ public class NearEqual {
                 j = index / l;
             }
             index = (i + 1) * i / 2 + j + 1;
+            rErr = temp;
             return false;
         }
+        rErr = temp;
         return true;
     }
     
@@ -285,10 +292,11 @@ public class NearEqual {
             if(newOutput.objective != null)
             {
                 if(!checkVector(new String[]{oldOutput.objective}, new String[]{newOutput.objective}))
-                    msg.append("\nValue of objective is different.");
+                    msg.append("\nValue of objective (obj) is different." +
+                               "\n    Old value: " + oldOutput.objective + "     New value: " + newOutput.objective);
             }
             else
-                msg.append("\nObjective is missing.");
+                msg.append("\nObjective (obj) is missing.");
         }
         
         // Check theta
@@ -301,7 +309,8 @@ public class NearEqual {
                     for(int i = 0; i < oldOutput.theta.length; i++)
                     {
                         if(!checkVector(new String[]{oldOutput.theta[i]}, new String[]{newOutput.theta[i]}))
-                            msg.append("\nValue of THETA " + (i + 1) + " is different.");
+                            msg.append("\nValue of THETA " + (i + 1) + " is different." +
+                                       "\n    Old value: " + oldOutput.theta[i] + "     New value: " + newOutput.theta[i]);
                     }
                 }
                 else
@@ -323,14 +332,16 @@ public class NearEqual {
                         if(oldOutput.omega[i].length == newOutput.omega[i].length)
                         {
                             if(!checkMatrix(oldOutput.omega[i], newOutput.omega[i]))
-                                msg.append("\nValue of OMEGA block " + (i + 1) + " is different.  index = " + index);
+                                msg.append("\nValue of OMEGA block " + (i + 1) + " is different.  index = " + index + values());
                         }
                         else
-                            msg.append("\nDimension of of OMEGA blocks " + (i + 1) + " is wrong.");
+                            msg.append("\nDimension of of OMEGA blocks " + (i + 1) + " is wrong." +
+                                       "\n    Old value: " + oldOutput.omega[i].length + "     New value: " + newOutput.omega[i].length);
                     }
                 }
                 else
-                    msg.append("\nTotal number of OMEGA blocks is wrong.");
+                    msg.append("\nTotal number of OMEGA blocks is wrong." +
+                               "\n    Old value: " + oldOutput.omega.length + "     New value: " + newOutput.omega.length);
             }
             else
                 msg.append("\nOMEGA is missing.");
@@ -348,14 +359,16 @@ public class NearEqual {
                         if(oldOutput.sigma[i].length == newOutput.sigma[i].length)
                         {
                             if(!checkMatrix(oldOutput.sigma[i], newOutput.sigma[i]))
-                                msg.append("\nValue of SIGMA block " + (i + 1) + " is different.  index = " + index);
+                                msg.append("\nValue of SIGMA block " + (i + 1) + " is different.  index = " + index + values());
                         }
                         else
-                            msg.append("\nDimension of of SIGMA blocks " + (i + 1) + " is wrong.");
+                            msg.append("\nDimension of of SIGMA blocks " + (i + 1) + " is wrong." +
+                                       "\n    Old value: " + oldOutput.sigma[i].length + "     New value: " + newOutput.sigma[i].length);
                     }
                 }
                 else
-                    msg.append("\nTotal number of SIGMGA blocks is wrong.");
+                    msg.append("\nTotal number of SIGMGA blocks is wrong." +
+                               "\n    Old value: " + oldOutput.sigma.length + "     New value: " + newOutput.sigma.length);
             }
             else
                 msg.append("\nSIGMA is missing.");
@@ -368,14 +381,19 @@ public class NearEqual {
             {
                 if(oldOutput.stdErrVector.length == newOutput.stdErrVector.length)
                 {
+                    double temp = rErr;
+                    rErr = rErr * pdfm;
                     if(!checkVector(oldOutput.stdErrVector, newOutput.stdErrVector))
-                       msg.append("\nValue of standard error is different.  index = " + index);
+                        msg.append("\nValue of standard error (stderror) is different.  index = " + index +
+                                   "\n    Old value: " + oldOutput.stdErrVector[index -1] + "     New value: " + newOutput.stdErrVector[index -1]);
+                    rErr = temp;
                 }
                 else
-                    msg.append("\nLength of standard error vector is wrong.");
+                    msg.append("\nLength of standard error (stderror) vector is wrong." +
+                               "\n    Old value: " + oldOutput.stdErrVector.length + "     New value: " + newOutput.stdErrVector.length);
             }
             else
-                msg.append("\nStandard error vector is missing.");
+                msg.append("\nStandard error (stderror) vector is missing.");
         }
         
         // Check covariance
@@ -386,10 +404,11 @@ public class NearEqual {
                 if(oldOutput.covariance.length == newOutput.covariance.length)
                 {
                     if(!checkMatrix(oldOutput.covariance, newOutput.covariance))
-                        msg.append("\nCovariance matrix is different.  index = " + index);
+                        msg.append("\nCovariance matrix is different.  index = " + index + values());
                 }
                 else
-                    msg.append("\nDimension of of covariance matrix is wrong.");
+                    msg.append("\nDimension of covariance matrix is wrong." +
+                               "\n    Old value: " + oldOutput.covariance.length + "     New value: " + newOutput.covariance.length);
             }
             else
                 msg.append("\nCovariance matrix is missing.");            
@@ -402,11 +421,14 @@ public class NearEqual {
             {
                 if(oldOutput.invCovariance.length == newOutput.invCovariance.length)
                 {
+                    isInverseMatrix = true;
                     if(!checkMatrix(oldOutput.invCovariance, newOutput.invCovariance))
-                        msg.append("\nInverse covariance matrix is different.  index = " + index);
+                        msg.append("\nInverse covariance matrix is different.  index = " + index + values());
+                    isInverseMatrix = false;
                 }
                 else
-                    msg.append("\nDimension of of inverse covariance matrix is wrong.");
+                    msg.append("\nDimension of inverse covariance matrix is wrong." +
+                               "\n    Old value: " + oldOutput.invCovariance.length + "     New value: " + newOutput.invCovariance.length);
             }
             else
                 msg.append("\nInverse covariance matrix is missing.");            
@@ -420,10 +442,11 @@ public class NearEqual {
                 if(oldOutput.correlation.length == newOutput.correlation.length)
                 {
                     if(!checkMatrix(oldOutput.correlation, newOutput.correlation))
-                        msg.append("\nCorrelation matrix is different.  index = " + index);
+                        msg.append("\nCorrelation matrix is different.  index = " + index + values());
                 }
                 else
-                    msg.append("\nDimension of of covariance matrix is wrong.");
+                    msg.append("\nDimension of correlation matrix is wrong." +
+                               "\n    Old value: " + oldOutput.correlation.length + "     New value: " + newOutput.correlation.length);
             }
             else
                 msg.append("\nCorrelation matrix is missing."); 
@@ -436,11 +459,15 @@ public class NearEqual {
             {
                 if(oldOutput.coefVariation.length == newOutput.coefVariation.length)
                 {
+                    double temp = rErr;
+                    rErr = rErr * pdfm;
                     if(!checkVector(oldOutput.coefVariation, newOutput.coefVariation))
-                        msg.append("\nCoefficient of variation is different.  index = " + index);
+                        msg.append("\nCoefficient of variation is different.  index = " + index + values());
+                    rErr = temp;
                 }
                 else
-                    msg.append("\nLength of coefficient of variation is wrong.");                
+                    msg.append("\nLength of coefficient of variation is wrong." +
+                               "\n    Old value: " + oldOutput.coefVariation.length + "     New value: " + newOutput.coefVariation.length);                
             }
             else
                 msg.append("\nCoefficient of variation is missing.");
@@ -454,17 +481,19 @@ public class NearEqual {
                 if(oldOutput.confInterval[0].length == newOutput.confInterval[0].length)
                 {
                     if(!checkVector(oldOutput.confInterval[0], newOutput.confInterval[0]))
-                        msg.append("\nConfidence interval lower bound is different.  index = " + index);
+                        msg.append("\nConfidence interval lower bound is different.  index = " + index + values());
                 }
                 else
-                    msg.append("\nLength of confidence interval lower bound is different.");
+                    msg.append("\nLength of confidence interval lower bound is wrong." +
+                               "\n    Old value: " + oldOutput.confInterval[0].length + "     New value: " + newOutput.confInterval[0].length);
                 if(oldOutput.confInterval[1].length == newOutput.confInterval[1].length)
                 {
                     if(!checkVector(oldOutput.confInterval[1], newOutput.confInterval[1]))
-                        msg.append("\nConfidence interval upper bound is different.  index = " + index);
+                        msg.append("\nConfidence interval upper bound is different.  index = " + index + values());
                 }
                 else
-                    msg.append("\nLength of confidence interval upper bound is wrong.");
+                    msg.append("\nLength of confidence interval upper bound is wrong." +
+                               "\n    Old value: " + oldOutput.confInterval[1].length + "     New value: " + newOutput.confInterval[1].length);
             }
             else
                 msg.append("\nConfidence interval is missing.");
@@ -477,13 +506,35 @@ public class NearEqual {
             {
                 if(oldOutput.dataAll.length == newOutput.dataAll.length && oldOutput.dataAll[0].length == newOutput.dataAll[0].length)
                 {
+                    int indexDV = oldOutput.dataItems.indexOf("DV");
+                    int indexF = oldOutput.dataItems.indexOf("F");
                     for(int i = 0; i < oldOutput.dataAll.length; i++)
+                    {
                         for(int j = 0; j < oldOutput.dataAll[0].length; j++)
-                            if(!checkNumber(oldOutput.dataAll[i][j], newOutput.dataAll[i][j]))
-                                msg.append("\nValue of presentation data at row " + (i + 1) + ", column " + (j + 1) + " is different.");
+                        {
+                            double rTol = rErr;
+                            double aTol = aErr;
+                            String label = (String)oldOutput.dataItems.get(j);
+                            if(label.endsWith(")") && !label.startsWith("THETA("))
+                                rTol = rErr * pdfm;
+                            if(label.endsWith("RES") && !label.endsWith("WRES"))
+                            {
+                                double DV = oldOutput.dataAll[i][indexDV];
+                                double F = oldOutput.dataAll[i][indexF];
+//                                double s = DV - F == 0 ?  1 : oldOutput.dataAll[i][j] / (DV - F);
+//                                aTol = s * (rErr * (Math.abs(DV) + Math.abs(F)) + aErr);
+                                aTol = rErr * (Math.abs(DV) + Math.abs(F));
+                                rTol = 0;
+                            }
+                            if(!label.endsWith("WRES") && !checkNumber(oldOutput.dataAll[i][j], newOutput.dataAll[i][j], aTol, rTol))
+                                msg.append("\nValue of presentation data at row " + (i + 1) + ", column " + (j + 1) + ", " + label +", is different." +
+                                           "\n    Old value: " + oldOutput.dataAll[i][j] + "     New value: " + newOutput.dataAll[i][j]);
+                        }
+                    }
                 }
                 else
-                    msg.append("\nDimension of presentation data is wrong.");
+                    msg.append("\nDimension of presentation data is wrong." +
+                               "\n    Old value: " + oldOutput.dataAll.length + "     New value: " + newOutput.dataAll.length);
             }
             else
                 msg.append("\nPresentation data is missing.");
@@ -501,7 +552,7 @@ public class NearEqual {
                         String which = i == 0? "center" : "step";
                         for(int j = 0; j < nTheta; j++)
                             if(!checkVector(new String[]{oldOutput.alpha[i][j]}, new String[]{newOutput.alpha[i][j]}))
-                                msg.append("\nValue of alpha " + which + " for THETA " + (j + 1) + " is different.");
+                                msg.append("\nValue of alpha " + which + " for THETA " + (j + 1) + " is different." + values());
                         int start = nTheta;
                         for(int j = 0; j < nOmega.length; j++)
                         {
@@ -513,7 +564,7 @@ public class NearEqual {
                                 newOmega[k] = newOutput.alpha[i][start + k];
                             }
                             if(!checkVector(oldOmega, newOmega))
-                                msg.append("\nValue of alpha " + which + " for OMEGA block" + (j + 1) + " is different.  index = " + index);
+                                msg.append("\nValue of alpha " + which + " for OMEGA block" + (j + 1) + " is different.  index = " + index + values());
                             start += nOmega[j];
                         }
                         for(int j = 0; j < nSigma.length; j++)
@@ -526,13 +577,14 @@ public class NearEqual {
                                 newSigma[k] = newOutput.alpha[i][start + k];
                             }
                             if(!checkVector(oldSigma, newSigma))
-                                msg.append("\nValue of alpha " + which + " for SIGMA block" + (j + 1) + " is different.  index = " + index);
+                                msg.append("\nValue of alpha " + which + " for SIGMA block" + (j + 1) + " is different.  index = " + index + values());
                             start += nSigma[j];
                         }
                     }
                 }
                 else
-                    msg.append("\nNumber of alpha is wrong.");
+                    msg.append("\nNumber of alpha is wrong." +
+                               "\n    Old value: " + oldOutput.alpha.length + "     New value: " + newOutput.alpha.length);
             }
             else
                 msg.append("\nAlpha is missing.");
@@ -552,11 +604,12 @@ public class NearEqual {
                             if(j == 0) which = "lower";
                             if(j == 2) which = "upper";
                             if(!checkVector(new String[]{oldOutput.likelihood[i][j]}, new String[]{newOutput.likelihood[i][j]}))
-                                msg.append("\nValue of likelihood " + which + " " + (i + 1) + " is different.");
+                                msg.append("\nValue of likelihood " + which + " " + (i + 1) + " is different." + values());
                         }
                 }
                 else
-                    msg.append("\nNumber of likelihood is wrong.");
+                    msg.append("\nNumber of likelihood is wrong." +
+                               "\n    Old value: " + oldOutput.likelihood.length + "     New value: " + newOutput.likelihood.length);
             }
             else
                 msg.append("\nLikelihood is missing.");
@@ -576,11 +629,12 @@ public class NearEqual {
                             if(j == 0) which = "lower";
                             if(j == 2) which = "upper";
                             if(!checkVector(new String[]{oldOutput.likelihood_std[i][j]}, new String[]{newOutput.likelihood_std[i][j]}))
-                                msg.append("\nValue of likelihood standard error " + which + " " + (i + 1) + " is different.");
+                                msg.append("\nValue of likelihood standard error " + which + " " + (i + 1) + " is different." + values());
                         }
                 }
                 else
-                    msg.append("\nNumber of likelihood standard error is wrong.");                
+                    msg.append("\nNumber of likelihood standard error is wrong." +
+                               "\n    Old value: " + oldOutput.likelihood_std.length + "     New value: " + newOutput.likelihood_std.length);                
             }
             else
                 msg.append("\nLikelihood standard error is missing.");            
@@ -603,6 +657,7 @@ public class NearEqual {
      *              relative error limit;<br>
      *              absolute error limit;<br>
      *              norm type: 1 as max|xi|, 2 as sum|xi|, 3 as sqrt(sum(xi*xi)), 4 passng any of 1,2,3.
+     *              optional precision degradation factor for comparing matrix, 10 as the default.
      */
     public static void main(String[] args)
     {
@@ -612,6 +667,8 @@ public class NearEqual {
         rErr = Double.parseDouble(args[3]);
         aErr = Double.parseDouble(args[4]);
         norm = Integer.parseInt(args[5]);
+        pdfm = 10;
+        if(args.length == 7) pdfm = Double.parseDouble(args[6]);
         
         Output oldOutput = new Output();
         Output newOutput = new Output();
@@ -698,8 +755,15 @@ public class NearEqual {
         }
     }
     
-    private static double rErr, aErr;
+    private static String values()
+    {
+        return "\n    Old value: " + oldValue + "     New value: " + newValue;
+    }
+    
+    private static double rErr, aErr, pdfm;
+    private static String oldValue, newValue;
     private static int nTheta, norm, index;
     private static int[] nOmega, nSigma;
     private static StringBuffer msg = new StringBuffer();
+    private static boolean isInverseMatrix;
 }
