@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.61)
+AC_PREREQ(2.5)
 AC_INIT(spk, 0.99, watrous@u.washington.edu)
 AC_CONFIG_SRCDIR([spk/SpkValarray.h])
 AM_INIT_AUTOMAKE
@@ -55,18 +55,6 @@ else
 fi
 
 
-#AM_CONDITIONAL(SPK_PROFILE, test $profiling = TRUE)
-#AC_MSG_CHECKING( [for profiling] )
-#if test $profiling = TRUE; then
-#   AC_DEFINE(SPK_PROFILE, 1 "yes")
-#   AC_MSG_RESULT( [yes] )
-#else
-#   AC_DEFINE(SPK_RELEASE, 0, "no")
-#   AC_MSG_RESULT( [no] )
-#fi
-
-
-
 # Checks for libraries.
 use_atlas=yes
 AC_CHECK_LIB([atlas],[main],[LIBS=$LIBS -latlas],[use_atlas=no])
@@ -115,7 +103,7 @@ exit
 ])
 
 # FIXME: Replace `main' with a function in `-lcppunit':
-AM_PATH_CPPUNIT(1.8.0, [LIBS="$LIBS -lcppunit"],[
+AM_PATH_CPPUNIT(1.6.0, [LIBS="$LIBS -lcppunit"],[
     AC_MSG_WARN([])
     AC_MSG_WARN([CppUnit not found])
     AC_MSG_WARN([Please install CppUnit from http://cppunit.sourceforge.net])
@@ -215,7 +203,6 @@ AC_CHECK_FUNCS([getcwd pow sqrt strstr])
 
 AC_CONFIG_FILES( [Makefile
 		  spk/Makefile
-		  driver/Makefile
 		  test/Makefile
 		  test/UnitTests/Makefile
 		  test/UnitTests/src/Makefile] )
