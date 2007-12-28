@@ -43,6 +43,17 @@ my @programs = qw ( QN01Box
 		    perl-libwww-perl
 		    bison
                     compat-gcc-34-g77
+                    mysql-server
+                    mysql-client
+                    mysql-devel
+                    mysql-libs
+                    libtool
+                    automake
+                    autoconf
+                    imake
+                    mysql-connector-java
+                    gcc-java
+                    java-1.5.0-gcj-devel
 		    );
 
 $rpmcmd = "rpm -q ";
@@ -56,12 +67,14 @@ sub get_os() {
     if ( open( FR, "/etc/issue" ) ) {
 	while (<FR>) {
 	    $contents = $_;
-	    $os_ver = "Fedora" if (/^Fedora/) ;
+	    $os_ver = "unknown";  # by default, we don't know.
+	    $os_ver = "Fedora" if (/^Fedora/);
+	    $os_ver = "RedHat" if (/^RedHat/);
 	    return($os_ver);
 	}
     }
     else {
-	print ">> ERROR: Could not determine operating system\n";
+	print ">> ERROR: Could not determine operating system. RedHat and Fedora Linux are the only operating systems we currently support.\n";
 	exit(1);
     }
     close(FR);
