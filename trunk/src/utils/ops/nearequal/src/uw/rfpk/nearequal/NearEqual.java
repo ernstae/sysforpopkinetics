@@ -517,7 +517,7 @@ public class NearEqual {
                             String label = (String)oldOutput.dataItems.get(j);
                             if(label.endsWith(")") && !label.startsWith("THETA("))
                                 rTol = rErr * pdfm;
-                            if(label.endsWith("RES") && !label.endsWith("WRES"))
+                            if(label.endsWith("RES") && !label.endsWith("WRES") && label.indexOf("WETARES(") == -1)
                             {
                                 double DV = oldOutput.dataAll[i][indexDV];
                                 double F = oldOutput.dataAll[i][indexF];
@@ -526,7 +526,8 @@ public class NearEqual {
                                 aTol = rErr * (Math.abs(DV) + Math.abs(F));
                                 rTol = 0;
                             }
-                            if(!label.endsWith("WRES") && !checkNumber(oldOutput.dataAll[i][j], newOutput.dataAll[i][j], aTol, rTol))
+                            if(!label.endsWith("WRES") && label.indexOf("WETARES(") == -1 &&
+                               !checkNumber(oldOutput.dataAll[i][j], newOutput.dataAll[i][j], aTol, rTol))
                                 msg.append("\nValue of presentation data at row " + (i + 1) + ", column " + (j + 1) + ", " + label +", is different." +
                                            "\n    Old value: " + oldOutput.dataAll[i][j] + "     New value: " + newOutput.dataAll[i][j]);
                         }
