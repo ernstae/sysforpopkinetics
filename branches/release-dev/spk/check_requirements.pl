@@ -44,7 +44,7 @@ my @programs = qw ( QN01Box
 		    bison
                     compat-gcc-34-g77
                     mysql-server
-                    mysql-client
+                    mysql
                     mysql-devel
                     mysql-libs
                     libtool
