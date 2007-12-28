@@ -49,16 +49,23 @@ import org.xml.sax.InputSource;
  *   Correlation:  The whole matrix is a unit.<br>
  *   Coefficient of variation:  The whole vector is a unit.<br>
  *   Confidence interval:  Each bound vector is a unit.<br>
- *   Presentation data:  Each element is a unit.<br>
+ *   Presentation data:  Each element is a unit.
  *   Alpha:  Each element coresponding to THETA is a unit.  The group of elements corresponding to each OMEGA or SIGMA block is a unit.<br> 
  *   Likelihood:  Each element is a unit.<br>
  *   Likelihood standard error:  Each element is a unit.<br>
  *<p>
  *   A matrix is treated as a vector.  The vector consists of all the elements of the original matrix.<br>
+ *   For matrix, relative error tolerance is increased by the precision degradation factor.<br>
+ *   For inversed matrix, relative error tolerance is increased twice by the precision degradation factor.<br>
  *<p>
  *   Test passing conditions:<br>
  *   |X - Y| <= aErr,  or |X - Y| <= rErr * (|X| + |Y|)<br>
  *   where aErr is absolute error; rErr is relative error.<br>
+ *   For matrix, relative error tolerance is increased by the precision degradation factor.<br>
+ *   For inversed matrix, relative error tolerance is increased twice by the precision degradation factor.<br>
+ *   For presentation data,  All weighted residuals are ignored.<br> 
+ *   For non-weighted population level residuals, error tolerances are modified to aErr = rErr * (|DV| + |F|) and rErr = 0<br>
+ *   For non-weighted individual level residuals, relative error tolerance is increased by the precision degradation factor.<br>
  *<p>
  *   Norm definitions:<br>
  *   1:  norm(X) = max|xi|<br>
