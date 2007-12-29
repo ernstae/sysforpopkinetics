@@ -1,0 +1,110 @@
+$begin Converge$$
+$spell
+	optimizer
+$$
+
+
+$section Choosing a Scaled Projected Gradient Convergence Criteria$$
+
+$head Introduction$$
+The $xref/QuasiNewton01Box/$$ optimizer accepts convergence when
+the $xref/glossary/p: Scaled Projected Gradient/scaled projected gradient/$$
+$latex p$$ is less that $xref/QuasiNewton01Box/delta/delta/$$; i.e.,
+$latex | p_i | \leq \delta$$  for $latex = 1 , \ldots , n$$.
+In this section we discuss some relationships between $latex \delta$$
+and other criteria.
+
+$head Objective Bound$$
+Suppose that we are given an $latex x \in [0,1]^n$$
+and $latex y \in [0,1]^n$$ a local minimizer of 
+$latex f : [0,1]^n \rightarrow \R$$.
+We define the function $latex g : [0,1] \rightarrow \R$$ defined by
+$latex \[
+g( \lambda ) = f[ \lambda x + (1 - \lambda) y ]
+\] $$
+It follows from this definition that
+$latex \[
+g^{(1)} ( \lambda ) = f^{(1)} [ \lambda x + (1 - \lambda) y ] (x - y)
+\] $$
+We suppose that the function $latex f$$ is convex on the 
+line segment between $latex x$$ and $latex y$$ which implies that
+$latex g^{(1)} ( \lambda )$$ is monotone. 
+It also follows that $latex g(1) \geq g(0)$$ 
+and $latex g^{(1)} ( \lambda ) \geq 0$$ for
+all $latex \lambda \in [0,1]$$.
+Thus
+$latex \[
+\begin{array}{rcl}
+g(1) - g(0) & \leq & g^{(1)} (1)
+\\
+f(x) - f(y) & \leq & f^{(1)} (x) (x - y)
+\\
+f(y) - f(x) & \geq & \sum_{i=1}^n ( \partial f / \partial x_i ) ( y_i - x_i )
+\\
+& \geq & \sum_{i=1}^n \left\{ \begin{array}{ll}
+( \partial f / \partial x_i ) ( u_i - x_i ) 
+	& {\rm if} \; ( \partial f / \partial x_i )  \leq 0
+\\
+( \partial f / \partial x_i ) ( l_i - x_i ) 
+	& {\rm if} \; ( \partial f / \partial x_i )  \geq 0
+\end{array} \right.
+\\
+| f(y) - f(x) | & \leq & \sum_{i=1}^n | p_i | = \| p \|_1
+\end{array}
+\] $$
+where $latex p$$ is the scaled projected gradient of
+$latex f$$ at $latex x$$ and $latex \| \cdot \|_1 $$ is the 
+$latex \ell-1$$ norm
+(sum of the absolute value of its components).
+Thus the $latex \ell-1$$ norm of the scaled projected gradient
+is a bound on absolute difference between the 
+current objective value and its optimum value.
+
+$head Relative Objective$$
+We define the projection function
+$latex P : \R^n \rightarrow [0, 1]^n$$ by
+$latex \[ 
+P_i (z) = \left\{ \begin{array}{ll}
+	0   & {\rm if} \; z_i \leq 0 \\
+	z_i & {\rm if} \; 0 \leq z_i \leq 1 \\
+	1   & {\rm if} \; 1 \leq z_i
+\end{array} \right.
+\] $$ 
+Let $latex X$$ be the set of $latex z \in [0,1]^n$$ such that
+the scaled projected gradient at $latex z$$ is not zero.
+We fix $latex \alpha \in (0,1)$$ and define the step function
+$latex S : X \rightarrow [0,1]^n$$ by
+$latex \[
+\begin{array}{rcl}
+S_+ (z) & = & P [ z + \alpha p (z) / \| p (z) \|_2 ]
+\\
+S_- (z) & = & P [ z - \alpha p (z) / \| p (z) \|_2 ]
+\end{array}
+\] $$ 
+where $latex p(z)$$ is the scaled projected gradient at $latex z$$
+and $latex \| \cdot \|_2$$ is the $latex \ell-2$$ norm
+(square root of the sum of squares of components).
+We define the approximate difference function
+$latex D : X \rightarrow [0,1]^n$$ by
+$latex \[
+D (z) =  \frac{ | f[ S_+ (z)]  - f[z] | + | f[z] - f[ S_- (z) ] | }{  2 \alpha }
+\] $$ 
+This is a rough approximation for the difference of the objective
+function over $latex x \in [0, 1]^n$$.
+Note that $latex \alpha$$ should be chosen large enough so that
+if the derivative of $latex f$$ is near zero at $latex z$$
+($latex z$$ is near a local minimum),
+the forward difference still a reasonable approximation for the 
+order of the derivative over $latex [0,1]^n$$.
+One might expect (but not be certain of)
+a relative accuracy of $latex \varepsilon$$ for the 
+optimal value of the objective at $latex x$$ if
+$latex \[
+	\| p (x) \|_1 \leq \varepsilon D(z)
+\] $$
+where $latex x$$ is any point in $latex [0,1]^n$$; for example,
+we could choose $latex z$$ as the initial point where the optimization
+starts.
+
+
+$end
