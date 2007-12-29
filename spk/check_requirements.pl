@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
 my @programs = qw ( QN01Box
-		    ginac
+		    gcc-c++
+                    ginac
 		    ginac-devel
 		    atlas
 		    atlas-devel
@@ -10,6 +11,8 @@ my @programs = qw ( QN01Box
 		    xerces-c
 		    xerces-c-devel
 		    gmp
+                    cppunit
+                    cppunit-devel
 		    boost
 		    boost-devel
 		    pvm
