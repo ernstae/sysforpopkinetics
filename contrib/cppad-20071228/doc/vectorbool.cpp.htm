@@ -1,0 +1,153 @@
+<html><head>
+<title>CppAD::vectorBool Class: Example and Test</title>
+<meta name="description" id="description" content="CppAD::vectorBool Class: Example and Test">
+<meta name="keywords" id="keywords" content=" bool Cppad::vector vectorbool Cppad Cppad::vectorbool example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_vectorbool.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>CppAD_vector</option>
+<option>vectorBool.cpp</option>
+</select>
+</td>
+<td><a href="cppad_vector.cpp.htm" target="_top">Prev</a>
+</td><td><a href="tracknewdel.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>CppAD_vector-&gt;</option>
+<option>CppAD_vector.cpp</option>
+<option>vectorBool.cpp</option>
+</select>
+</td>
+<td>vectorBool.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>CppAD::vectorBool Class: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/vector.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/check_simple_vector.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;sstream&gt;&nbsp;//&nbsp;sstream&nbsp;and&nbsp;string&nbsp;are&nbsp;used&nbsp;to&nbsp;test&nbsp;output&nbsp;operation<br>
+#&nbsp;include&nbsp;&lt;string&gt;<br>
+<br>
+bool&nbsp;vectorBool(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::vectorBool;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vectorBool&nbsp;x;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;default&nbsp;constructor&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(x.size()&nbsp;==&nbsp;0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x.resize(2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;resize&nbsp;and&nbsp;set&nbsp;element&nbsp;assignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(x.size()&nbsp;==&nbsp;2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vectorBool&nbsp;y(2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;sizing&nbsp;constructor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(y.size()&nbsp;==&nbsp;2);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;vectorBool&nbsp;z(x);&nbsp;//&nbsp;copy&nbsp;constructor&nbsp;and&nbsp;const&nbsp;element&nbsp;access<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(z.size()&nbsp;==&nbsp;2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;(z[0]&nbsp;==&nbsp;false)&nbsp;&amp;&amp;&nbsp;(z[1]&nbsp;==&nbsp;true)&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;true;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;modify,&nbsp;assignment&nbsp;changes&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(x[0]&nbsp;==&nbsp;true);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;y&nbsp;=&nbsp;z;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vector&nbsp;assignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;(x[0]&nbsp;==&nbsp;false)&nbsp;&amp;&amp;&nbsp;(x[1]&nbsp;==&nbsp;true)&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;(y[0]&nbsp;==&nbsp;false)&nbsp;&amp;&amp;&nbsp;(y[1]&nbsp;==&nbsp;true)&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;(z[0]&nbsp;==&nbsp;false)&nbsp;&amp;&amp;&nbsp;(z[1]&nbsp;==&nbsp;true)&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;test&nbsp;of&nbsp;output<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;correct=&nbsp;&quot;01&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;str;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::ostringstream&nbsp;buf;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buf&nbsp;&lt;&lt;&nbsp;z;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;=&nbsp;buf.str();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(str&nbsp;==&nbsp;correct);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;test&nbsp;of&nbsp;push_back<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x.resize(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;100;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x.push_back(&nbsp;(i&nbsp;%&nbsp;3)&nbsp;!=&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(x.size()&nbsp;==&nbsp;100);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;100;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;x[i]&nbsp;==&nbsp;((i&nbsp;%&nbsp;3)&nbsp;!=&nbsp;0)&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;is&nbsp;that&nbsp;boolvector&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;simple&nbsp;vector&nbsp;class&nbsp;with&nbsp;elements&nbsp;of&nbsp;type&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::CheckSimpleVector&lt;&nbsp;bool,&nbsp;vectorBool&nbsp;&gt;();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/vector_bool.cpp
+
+</body>
+</html>

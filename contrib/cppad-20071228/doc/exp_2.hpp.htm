@@ -1,0 +1,94 @@
+<html><head>
+<title>exp_2: Implementation</title>
+<meta name="description" id="description" content="exp_2: Implementation">
+<meta name="keywords" id="keywords" content=" implementation exp_2 ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_exp_2.hpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>exp_2</option>
+<option>exp_2.hpp</option>
+</select>
+</td>
+<td><a href="exp_2.htm" target="_top">Prev</a>
+</td><td><a href="exp_2.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>exp_2-&gt;</option>
+<option>exp_2.hpp</option>
+<option>exp_2.cpp</option>
+<option>exp_2_for0</option>
+<option>exp_2_for1</option>
+<option>exp_2_rev1</option>
+<option>exp_2_for2</option>
+<option>exp_2_rev2</option>
+<option>exp_2_cppad</option>
+</select>
+</td>
+<td>exp_2.hpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>exp_2: Implementation</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+template&nbsp;&lt;class&nbsp;Type&gt;<br>
+Type&nbsp;exp_2(const&nbsp;Type&nbsp;&amp;x)&nbsp;<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;v1&nbsp;&nbsp;=&nbsp;x;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;v1&nbsp;=&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;v2&nbsp;&nbsp;=&nbsp;Type(1)&nbsp;+&nbsp;v1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;v2&nbsp;=&nbsp;1&nbsp;+&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;v3&nbsp;&nbsp;=&nbsp;v1&nbsp;*&nbsp;v1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;v3&nbsp;=&nbsp;x^2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;v4&nbsp;&nbsp;=&nbsp;v3&nbsp;/&nbsp;Type(2);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;v4&nbsp;=&nbsp;x^2&nbsp;/&nbsp;2&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;v5&nbsp;&nbsp;=&nbsp;v2&nbsp;+&nbsp;v4;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;v5&nbsp;=&nbsp;1&nbsp;+&nbsp;x&nbsp;+&nbsp;x^2&nbsp;/&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;v5;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;exp_2(x)&nbsp;=&nbsp;1&nbsp;+&nbsp;x&nbsp;+&nbsp;x^2&nbsp;/&nbsp;2<br>
+}<br>
+</span></font></code>
+<hr>Input File: introduction/exp_apx/exp_2.omh
+
+</body>
+</html>

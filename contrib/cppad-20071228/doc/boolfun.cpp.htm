@@ -1,0 +1,134 @@
+<html><head>
+<title>AD Boolean Functions: Example and Test</title>
+<meta name="description" id="description" content="AD Boolean Functions: Example and Test">
+<meta name="keywords" id="keywords" content=" example Ad bool test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_boolfun.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>BoolValued</option>
+<option>BoolFun</option>
+<option>BoolFun.cpp</option>
+</select>
+</td>
+<td><a href="boolfun.htm" target="_top">Prev</a>
+</td><td><a href="parvar.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>BoolValued-&gt;</option>
+<option>Compare</option>
+<option>NearEqualExt</option>
+<option>BoolFun</option>
+<option>ParVar</option>
+<option>EqualOpSeq</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>BoolFun-&gt;</option>
+<option>BoolFun.cpp</option>
+</select>
+</td>
+<td>BoolFun.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>AD Boolean Functions: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;complex&gt;<br>
+<br>
+<br>
+//&nbsp;define&nbsp;abbreviation&nbsp;for&nbsp;double&nbsp;precision&nbsp;complex&nbsp;<br>
+typedef&nbsp;std::complex&lt;double&gt;&nbsp;Complex;<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;unary&nbsp;bool&nbsp;function&nbsp;with&nbsp;Complex&nbsp;argument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;bool&nbsp;IsReal(const&nbsp;Complex&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;x.imag()&nbsp;==&nbsp;0.;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;binary&nbsp;bool&nbsp;function&nbsp;with&nbsp;Complex&nbsp;arguments<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;bool&nbsp;AbsGeq(const&nbsp;Complex&nbsp;&amp;x,&nbsp;const&nbsp;Complex&nbsp;&amp;y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;axsq&nbsp;=&nbsp;x.real()&nbsp;*&nbsp;x.real()&nbsp;+&nbsp;x.imag()&nbsp;*&nbsp;x.imag();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;aysq&nbsp;=&nbsp;y.real()&nbsp;*&nbsp;y.real()&nbsp;+&nbsp;y.imag()&nbsp;*&nbsp;y.imag();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;axsq&nbsp;&gt;=&nbsp;aysq;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;version&nbsp;of&nbsp;IsReal&nbsp;with&nbsp;AD&lt;Complex&gt;&nbsp;argument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;inside&nbsp;of&nbsp;namespace&nbsp;and&nbsp;outside&nbsp;of&nbsp;any&nbsp;other&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_BOOL_UNARY(Complex,&nbsp;IsReal)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;version&nbsp;of&nbsp;AbsGeq&nbsp;with&nbsp;AD&lt;Complex&gt;&nbsp;arguments<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;inside&nbsp;of&nbsp;namespace&nbsp;and&nbsp;outside&nbsp;of&nbsp;any&nbsp;other&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_BOOL_BINARY(Complex,&nbsp;AbsGeq)<br>
+<br>
+}<br>
+bool&nbsp;BoolFun(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::AD&lt;Complex&gt;&nbsp;x&nbsp;=&nbsp;Complex(1.,&nbsp;&nbsp;0.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::AD&lt;Complex&gt;&nbsp;y&nbsp;=&nbsp;Complex(1.,&nbsp;&nbsp;1.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;IsReal(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;AbsGeq(x,&nbsp;y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/bool_fun.cpp
+
+</body>
+</html>

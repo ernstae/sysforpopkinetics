@@ -1,0 +1,158 @@
+<html><head>
+<title>speed_test: Example and test</title>
+<meta name="description" id="description" content="speed_test: Example and test">
+<meta name="keywords" id="keywords" content=" speed_test example test speed ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_speed_test.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>speed_test</option>
+<option>speed_test.cpp</option>
+</select>
+</td>
+<td><a href="speed_test.htm" target="_top">Prev</a>
+</td><td><a href="speedtest.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>speed_test-&gt;</option>
+<option>speed_test.cpp</option>
+</select>
+</td>
+<td>speed_test.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+
+
+
+
+<center><b><big><big>speed_test: Example and test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/speed_test.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;vector&gt;<br>
+<br>
+namespace&nbsp;{&nbsp;//&nbsp;empty&nbsp;namespace<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;test(size_t&nbsp;size,&nbsp;size_t&nbsp;repeat)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;setup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*a&nbsp;=&nbsp;new&nbsp;double[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*b&nbsp;=&nbsp;new&nbsp;double[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*c&nbsp;=&nbsp;new&nbsp;double[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i&nbsp;&nbsp;=&nbsp;size;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;--i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[i]&nbsp;=&nbsp;2&nbsp;*&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;operations&nbsp;we&nbsp;are&nbsp;timing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(repeat--)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;=&nbsp;size;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;--i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c[i]&nbsp;=&nbsp;a[i]&nbsp;+&nbsp;b[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;teardown<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;c;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+bool&nbsp;speed_test(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size&nbsp;of&nbsp;the&nbsp;test&nbsp;cases<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;size_t&gt;&nbsp;size_vec(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_vec[0]&nbsp;=&nbsp;10;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_vec[1]&nbsp;=&nbsp;20;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;a&nbsp;small&nbsp;amout&nbsp;of&nbsp;time&nbsp;(we&nbsp;do&nbsp;not&nbsp;need&nbsp;accurate&nbsp;results)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;time_min&nbsp;=&nbsp;.2;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;run&nbsp;the&nbsp;test&nbsp;cases<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;size_t&gt;&nbsp;rate_vec(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rate_vec&nbsp;=&nbsp;CppAD::speed_test(test,&nbsp;size_vec,&nbsp;time_min);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;time&nbsp;per&nbsp;repeat&nbsp;loop&nbsp;(note&nbsp;counting&nbsp;setup&nbsp;or&nbsp;teardown)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;time_0&nbsp;=&nbsp;1.&nbsp;/&nbsp;double(rate_vec[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;time_1&nbsp;=&nbsp;1.&nbsp;/&nbsp;double(rate_vec[1]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;for&nbsp;this&nbsp;case,&nbsp;time&nbsp;should&nbsp;be&nbsp;linear&nbsp;w.r.t&nbsp;size<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;double(size_vec[1])&nbsp;*&nbsp;time_0&nbsp;/&nbsp;double(size_vec[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;rel_diff&nbsp;=&nbsp;std::abs(check&nbsp;-&nbsp;time_1)&nbsp;/&nbsp;time_1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;(rel_diff&nbsp;&lt;=&nbsp;.1);<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span></font></code>
+<hr>Input File: speed/example/speed_test.cpp
+
+</body>
+</html>

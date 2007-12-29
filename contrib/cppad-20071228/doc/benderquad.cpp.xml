@@ -1,0 +1,502 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>BenderQuad: Example and Test</title>
+<meta name="description" id="description" content="BenderQuad: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Benderquad example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_benderquad.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>BenderQuad</option>
+<option>BenderQuad.cpp</option>
+</select>
+</td>
+<td><a href="benderquad.xml" target="_top">Prev</a>
+</td><td><a href="luratio.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>BenderQuad-&gt;</option>
+<option>BenderQuad.cpp</option>
+</select>
+</td>
+<td>BenderQuad.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>BenderQuad: Example and Test</big></big></b></center>
+Define 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">:</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">&#x000D7;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mn>1</mn>
+</mrow>
+<mrow><mn>2</mn>
+</mrow>
+</mfrac>
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mi mathvariant='italic'>N</mi>
+</munderover>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">*</mo>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>t</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>z</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<msup><mo stretchy="false">]</mo>
+<mn>2</mn>
+</msup>
+</mrow></math>
+
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>z</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>N</mi>
+</msup>
+</mrow></math>
+
+ is a fixed vector.
+It follows that
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<msub><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>y</mi>
+</msub>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mi mathvariant='italic'>N</mi>
+</munderover>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">*</mo>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>t</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>z</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">]</mo>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>t</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>y</mi>
+</msub>
+<msub><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>y</mi>
+</msub>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mi mathvariant='italic'>N</mi>
+</munderover>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<msub><mi mathvariant='italic'>t</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<msup><mo stretchy="false">)</mo>
+<mn>2</mn>
+</msup>
+</mtd></mtr></mtable>
+</mrow></math>
+
+Furthermore if we define 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>Y</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ 
+as the argmin of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ with respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>y</mi>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>Y</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">-</mo>
+<mo stretchy="false">[</mo>
+<msub><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>y</mi>
+</msub>
+<msub><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>y</mi>
+</msub>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">)</mo>
+<msup><mo stretchy="false">]</mo>
+<mrow><mn>-1</mn>
+</mrow>
+</msup>
+<msub><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>y</mi>
+</msub>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">]</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mrow><mo stretchy="true"> </mo><mrow><munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mi mathvariant='italic'>N</mi>
+</munderover>
+<msub><mi mathvariant='italic'>z</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<msub><mi mathvariant='italic'>t</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">)</mo>
+</mrow><mo stretchy="true">/</mo></mrow>
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mi mathvariant='italic'>N</mi>
+</munderover>
+<msub><mi mathvariant='italic'>z</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>t</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<msup><mo stretchy="false">)</mo>
+<mn>2</mn>
+</msup>
+</mtd></mtr></mtable>
+</mrow></math>
+
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+namespace&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;template&#xA0;&lt;class&#xA0;Type&gt;&#xA0;&#xA0;&#xA0;//&#xA0;Type&#xA0;can&#xA0;be&#xA0;either&#xA0;double&#xA0;or&#xA0;AD&lt;double&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;class&#xA0;Fun&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;BAvector;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;CPPAD_TEST_VECTOR&lt;Type&gt;&#xA0;&#xA0;&#xA0;ADvector;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BAvector&#xA0;t;&#xA0;//&#xA0;measurement&#xA0;times<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BAvector&#xA0;z;&#xA0;//&#xA0;measurement&#xA0;values<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun(const&#xA0;BAvector&#xA0;&amp;t_,&#xA0;const&#xA0;BAvector&#xA0;&amp;z_)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Fun.f(x,&#xA0;y)&#xA0;=&#xA0;F(x,&#xA0;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADvector&#xA0;f(const&#xA0;ADvector&#xA0;&amp;x,&#xA0;const&#xA0;ADvector&#xA0;&amp;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;N&#xA0;=&#xA0;z.size();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADvector&#xA0;f(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f[0]&#xA0;=&#xA0;Type(0);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;residual;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;N;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;residual&#xA0;=&#xA0;y[0]&#xA0;*&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;)&#xA0;-&#xA0;z[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f[0]&#xA0;&#xA0;&#xA0;&#xA0;+=&#xA0;residual&#xA0;*&#xA0;residual;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;f;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Fun.h(x,&#xA0;y)&#xA0;=&#xA0;H(x,&#xA0;y)&#xA0;=&#xA0;F_y&#xA0;(x,&#xA0;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADvector&#xA0;h(const&#xA0;ADvector&#xA0;&amp;x,&#xA0;const&#xA0;BAvector&#xA0;&amp;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;N&#xA0;=&#xA0;z.size();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADvector&#xA0;fy(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fy[0]&#xA0;=&#xA0;Type(0);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;residual;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;N;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;residual&#xA0;=&#xA0;y[0]&#xA0;*&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;)&#xA0;-&#xA0;z[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fy[0]&#xA0;&#xA0;&#xA0;+=&#xA0;residual&#xA0;*&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;fy;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Fun.dy(x,&#xA0;y,&#xA0;h)&#xA0;=&#xA0;-&#xA0;H_y&#xA0;(x,y)^{-1}&#xA0;*&#xA0;h&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;-&#xA0;F_yy&#xA0;(x,&#xA0;y)^{-1}&#xA0;*&#xA0;h<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADvector&#xA0;dy(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;BAvector&#xA0;&amp;x&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;BAvector&#xA0;&amp;y&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;ADvector&#xA0;&amp;h&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;N&#xA0;=&#xA0;z.size();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADvector&#xA0;dy(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;fyy&#xA0;=&#xA0;Type(0);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;N;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;fyy&#xA0;+=&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;)&#xA0;*&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dy[0]&#xA0;=&#xA0;-&#xA0;h[0]&#xA0;/&#xA0;fyy;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;dy;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Fun.Y(x)&#xA0;=&#xA0;Y(x)&#xA0;&#xA0;(only&#xA0;used&#xA0;for&#xA0;testing&#xA0;results)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BAvector&#xA0;Y(const&#xA0;BAvector&#xA0;&amp;x&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;N&#xA0;=&#xA0;z.size();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BAvector&#xA0;y(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;num&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;den&#xA0;=&#xA0;0.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;N;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;num&#xA0;+=&#xA0;z[i]&#xA0;*&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;den&#xA0;+=&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;)&#xA0;*&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y[0]&#xA0;=&#xA0;num&#xA0;/&#xA0;den;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;};<br/>
+}<br/>
+<br/>
+bool&#xA0;BenderQuad(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::NearEqual;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;temporary&#xA0;indices<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;x&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;2.&#xA0;*&#xA0;3.141592653;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;y&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y[0]&#xA0;=&#xA0;1.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;t&#xA0;and&#xA0;z&#xA0;vectors<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;N&#xA0;=&#xA0;10;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;t(N);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;z(N);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;N;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;t[i]&#xA0;=&#xA0;double(i)&#xA0;/&#xA0;double(N);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;time&#xA0;or&#xA0;measurement<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;z[i]&#xA0;=&#xA0;y[0]&#xA0;*&#xA0;sin(&#xA0;x[0]&#xA0;*&#xA0;t[i]&#xA0;);&#xA0;&#xA0;&#xA0;//&#xA0;data&#xA0;without&#xA0;noise<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;construct&#xA0;the&#xA0;function&#xA0;object&#xA0;with&#xA0;Type&#xA0;=&#xA0;AD&lt;double&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;fun(z,&#xA0;t);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;construct&#xA0;the&#xA0;function&#xA0;object&#xA0;with&#xA0;Type&#xA0;=&#xA0;double<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fun_test(z,&#xA0;t);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;G(x),&#xA0;G'(x)&#xA0;and&#xA0;G''(x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;g(1),&#xA0;gx(n),&#xA0;gxx(n&#xA0;*&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;BenderQuad(x,&#xA0;y,&#xA0;fun,&#xA0;g,&#xA0;gx,&#xA0;gxx);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Evaluate&#xA0;G(x)&#xA0;at&#xA0;nearby&#xA0;points<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;step(1e-5);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;g0&#xA0;=&#xA0;fun_test.f(x,&#xA0;fun_test.Y(x)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;x[0]&#xA0;+&#xA0;1.&#xA0;*&#xA0;step;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;gp&#xA0;=&#xA0;fun_test.f(x,&#xA0;fun_test.Y(x)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;x[0]&#xA0;-&#xA0;2.&#xA0;*&#xA0;step;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;gm&#xA0;=&#xA0;fun_test.f(x,&#xA0;fun_test.Y(x)&#xA0;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;function&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;check&#xA0;=&#xA0;g0[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(check,&#xA0;g[0],&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;derivative&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;check&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;(gp[0]&#xA0;-&#xA0;gm[0])&#xA0;/&#xA0;(2.&#xA0;*&#xA0;step);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(check,&#xA0;gx[0],&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;check&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;(gp[0]&#xA0;-&#xA0;2.&#xA0;*&#xA0;g0[0]&#xA0;+&#xA0;gm[0])&#xA0;/&#xA0;(step&#xA0;*&#xA0;step);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(check,&#xA0;gxx[0],&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/bender_quad.cpp
+
+</body>
+</html>

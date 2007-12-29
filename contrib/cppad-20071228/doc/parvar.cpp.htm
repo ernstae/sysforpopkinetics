@@ -1,0 +1,141 @@
+<html><head>
+<title>AD Parameter and Variable Functions: Example and Test</title>
+<meta name="description" id="description" content="AD Parameter and Variable Functions: Example and Test">
+<meta name="keywords" id="keywords" content=" Parameter example Variable test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_parvar.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>BoolValued</option>
+<option>ParVar</option>
+<option>ParVar.cpp</option>
+</select>
+</td>
+<td><a href="parvar.htm" target="_top">Prev</a>
+</td><td><a href="equalopseq.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>BoolValued-&gt;</option>
+<option>Compare</option>
+<option>NearEqualExt</option>
+<option>BoolFun</option>
+<option>ParVar</option>
+<option>EqualOpSeq</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ParVar-&gt;</option>
+<option>ParVar.cpp</option>
+</select>
+</td>
+<td>ParVar.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+<center><b><big><big>AD Parameter and Variable Functions: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+bool&nbsp;ParVar(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::VecAD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::Parameter;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::Variable;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;x(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(x[0]);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;x[0]&nbsp;is&nbsp;a&nbsp;paraemter&nbsp;here<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Variable(x[0]);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;now&nbsp;x[0]&nbsp;is&nbsp;a&nbsp;variable&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;dependent&nbsp;variable&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[0]&nbsp;=&nbsp;2.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;Parameter(y[0]);&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;y[0]&nbsp;does&nbsp;not&nbsp;depend&nbsp;on&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[1]&nbsp;=&nbsp;abs(x[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;Variable(y[1]);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;y[1]&nbsp;does&nbsp;depends&nbsp;on&nbsp;x[0]&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;VecAD&nbsp;objects<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VecAD&lt;double&gt;&nbsp;z(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z[0]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z[1]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;Parameter(z);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;z&nbsp;does&nbsp;not&nbsp;depend&nbsp;on&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z[x[0]]&nbsp;=&nbsp;2.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;Variable(z);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;z&nbsp;depends&nbsp;on&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;x&nbsp;-&gt;&nbsp;y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(x,&nbsp;y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;that&nbsp;now&nbsp;all&nbsp;AD&lt;double&gt;&nbsp;objects&nbsp;are&nbsp;parameters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(x[0]);&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;Variable(x[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(y[0]);&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;Variable(y[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(y[1]);&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;Variable(y[1]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;that&nbsp;the&nbsp;VecAD&lt;double&gt;&nbsp;object&nbsp;is&nbsp;a&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(z);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/par_var.cpp
+
+</body>
+</html>

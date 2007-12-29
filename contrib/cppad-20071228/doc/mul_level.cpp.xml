@@ -1,0 +1,274 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Multiple Tapes: Example and Test</title>
+<meta name="description" id="description" content="Multiple Tapes: Example and Test"/>
+<meta name="keywords" id="keywords" content=" multiple Ad level "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_mul_level.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Example</option>
+<option>General</option>
+<option>mul_level</option>
+<option>mul_level.cpp</option>
+</select>
+</td>
+<td><a href="mul_level.xml" target="_top">Prev</a>
+</td><td><a href="exampleutility.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Example-&gt;</option>
+<option>General</option>
+<option>ExampleUtility</option>
+<option>ListAllExamples</option>
+<option>test_vector</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>General-&gt;</option>
+<option>Interface2C.cpp</option>
+<option>JacMinorDet.cpp</option>
+<option>JacLuDet.cpp</option>
+<option>HesMinorDet.cpp</option>
+<option>HesLuDet.cpp</option>
+<option>OdeStiff.cpp</option>
+<option>ode_taylor.cpp</option>
+<option>ode_taylor_adolc.cpp</option>
+<option>StackMachine.cpp</option>
+<option>mul_level</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>mul_level-&gt;</option>
+<option>mul_level.cpp</option>
+</select>
+</td>
+<td>mul_level.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Purpose</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Multiple Tapes: Example and Test</big></big></b></center>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+This is an example and test of using the <code><font color="blue">AD&lt;double&gt;</font></code> type,
+together with the <code><font color="blue">AD&lt; AD&lt;double&gt; &gt;</font></code> type,
+for multiple levels of taping.
+The example computes
+the value
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mfrac><mrow><mi mathvariant='italic'>d</mi>
+</mrow>
+<mrow><mi mathvariant='italic'>dx</mi>
+</mrow>
+</mfrac>
+<mrow><mo stretchy="true">[</mo><mrow><msup><mi mathvariant='italic'>f</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>v</mi>
+</mrow><mo stretchy="true">]</mo></mrow>
+</mrow></math>
+
+where 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">:</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+ and
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>v</mi>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+.
+The example <a href="hestimesdir.cpp.xml" target="_top"><span style='white-space: nowrap'>HesTimesDir.cpp</span></a>
+ computes the same value using only
+one level of taping (more efficient) and the identity
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mfrac><mrow><mi mathvariant='italic'>d</mi>
+</mrow>
+<mrow><mi mathvariant='italic'>dx</mi>
+</mrow>
+</mfrac>
+<mrow><mo stretchy="true">[</mo><mrow><msup><mi mathvariant='italic'>f</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>v</mi>
+</mrow><mo stretchy="true">]</mo></mrow>
+<mo stretchy="false">=</mo>
+<msup><mi mathvariant='italic'>f</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>2</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>v</mi>
+</mrow></math>
+
+The example <a href="mul_level_adolc.cpp.xml" target="_top"><span style='white-space: nowrap'>mul_level_adolc.cpp</span></a>
+ computes the same values using
+Adolc's type <code><font color="blue">adouble</font></code> and CppAD's type <code><font color="blue">AD&lt;adouble&gt;</font></code>.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+namespace&#xA0;{&#xA0;//&#xA0;put&#xA0;this&#xA0;function&#xA0;in&#xA0;the&#xA0;empty&#xA0;namespace<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;f(x)&#xA0;=&#xA0;|x|^2&#xA0;=&#xA0;.5&#xA0;*&#xA0;(&#xA0;x[0]^2&#xA0;+&#xA0;...&#xA0;+&#xA0;x[n-1]^2&#xA0;+&#xA0;.5&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;template&#xA0;&lt;class&#xA0;Type&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;f(CPPAD_TEST_VECTOR&lt;Type&gt;&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;sum;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;assignment&#xA0;of&#xA0;AD&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;=&#xA0;double<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;&#xA0;=&#xA0;.5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;.5;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i&#xA0;=&#xA0;x.size();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(i--)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;x[i]&#xA0;*&#xA0;x[i];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;computed&#xA0;assignment&#xA0;AD&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;-=&#xA0;int<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;-=&#xA0;1;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;double&#xA0;*&#xA0;AD&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;.5&#xA0;*&#xA0;sum;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}&#xA0;<br/>
+}<br/>
+<br/>
+bool&#xA0;mul_level(void)&#xA0;<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;test&#xA0;result<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;CppAD::AD&lt;double&gt;&#xA0;&#xA0;&#xA0;ADdouble;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;for&#xA0;one&#xA0;level&#xA0;of&#xA0;taping<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;CppAD::AD&lt;ADdouble&gt;&#xA0;ADDdouble;&#xA0;&#xA0;&#xA0;//&#xA0;for&#xA0;two&#xA0;levels&#xA0;of&#xA0;taping<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;5;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;dimension&#xA0;for&#xA0;example<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;j;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;a&#xA0;temporary&#xA0;index&#xA0;variable<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;ADdouble&gt;&#xA0;&#xA0;&#xA0;a_x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;ADDdouble&gt;&#xA0;aa_x(n);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;value&#xA0;of&#xA0;the&#xA0;independent&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a_x[j]&#xA0;=&#xA0;x[j]&#xA0;=&#xA0;double(j);&#xA0;//&#xA0;x[j]&#xA0;=&#xA0;j<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(a_x);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;a_x&#xA0;is&#xA0;indedendent&#xA0;for&#xA0;ADdouble<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;aa_x[j]&#xA0;=&#xA0;a_x[j];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;track&#xA0;how&#xA0;aa_x&#xA0;depends&#xA0;on&#xA0;a_x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(aa_x);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;aa_x&#xA0;is&#xA0;independent&#xA0;for&#xA0;ADDdouble<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;function<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;ADDdouble&gt;&#xA0;aa_f(1);&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;scalar&#xA0;valued&#xA0;function<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;aa_f[0]&#xA0;=&#xA0;f(aa_x);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;has&#xA0;only&#xA0;one&#xA0;component<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;inner&#xA0;function&#xA0;(corresponding&#xA0;to&#xA0;ADDdouble&#xA0;calculation)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;ADdouble&gt;&#xA0;a_F(aa_x,&#xA0;aa_f);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;f'(x)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;p&#xA0;=&#xA0;1;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;order&#xA0;of&#xA0;derivative&#xA0;of&#xA0;a_F<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;ADdouble&gt;&#xA0;a_w(1);&#xA0;&#xA0;//&#xA0;weight&#xA0;vector&#xA0;for&#xA0;a_F<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;ADdouble&gt;&#xA0;a_df(n);&#xA0;//&#xA0;value&#xA0;of&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a_w[0]&#xA0;=&#xA0;1;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;weighted&#xA0;function&#xA0;same&#xA0;as&#xA0;a_F<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a_df&#xA0;&#xA0;&#xA0;=&#xA0;a_F.Reverse(p,&#xA0;a_w);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;gradient&#xA0;of&#xA0;f<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;outter&#xA0;function&#xA0;(corresponding&#xA0;to&#xA0;ADdouble&#xA0;calculation)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;df(a_x,&#xA0;a_df);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;the&#xA0;d/dx&#xA0;of&#xA0;f'(x)&#xA0;*&#xA0;v&#xA0;=&#xA0;f''(x)&#xA0;*&#xA0;v<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;v(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;ddf_v(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[j]&#xA0;=&#xA0;double(n&#xA0;-&#xA0;j);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ddf_v&#xA0;=&#xA0;df.Reverse(p,&#xA0;v);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;f(x)&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;.5&#xA0;*&#xA0;(&#xA0;x[0]^2&#xA0;+&#xA0;x[1]^2&#xA0;+&#xA0;...&#xA0;+&#xA0;x[n-1]^2&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;f'(x)&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;(x[0],&#xA0;x[1],&#xA0;...&#xA0;,&#xA0;x[n-1])<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;f''(x)&#xA0;*&#xA0;v&#xA0;=&#xA0;(&#xA0;v[0],&#xA0;v[1],&#xA0;&#xA0;...&#xA0;,&#xA0;x[n-1]&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(ddf_v[j],&#xA0;v[j],&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span></font></code>
+<hr/>Input File: example/mul_level.cpp
+
+</body>
+</html>

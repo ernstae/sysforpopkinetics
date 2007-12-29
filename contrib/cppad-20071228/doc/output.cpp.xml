@@ -1,0 +1,140 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>AD Output Operator: Example and Test</title>
+<meta name="description" id="description" content="AD Output Operator: Example and Test"/>
+<meta name="keywords" id="keywords" content=" &lt;&lt; Ad example output test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_output.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>Convert</option>
+<option>Output</option>
+<option>Output.cpp</option>
+</select>
+</td>
+<td><a href="output.xml" target="_top">Prev</a>
+</td><td><a href="printfor.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Convert-&gt;</option>
+<option>Value</option>
+<option>Integer</option>
+<option>Output</option>
+<option>PrintFor</option>
+<option>Var2Par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Output-&gt;</option>
+<option>Output.cpp</option>
+</select>
+</td>
+<td>Output.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>AD Output Operator: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;sstream&gt;&#xA0;&#xA0;//&#xA0;std::ostringstream<br/>
+#&#xA0;include&#xA0;&lt;string&gt;&#xA0;&#xA0;&#xA0;//&#xA0;std::string<br/>
+#&#xA0;include&#xA0;&lt;iomanip&gt;&#xA0;&#xA0;//&#xA0;std::setprecision,&#xA0;setw,&#xA0;setfill,&#xA0;right<br/>
+<br/>
+namespace&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;template&#xA0;&lt;class&#xA0;S&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;set_ostream(S&#xA0;&amp;os)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;os&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;std::setprecision(4)&#xA0;//&#xA0;4&#xA0;digits&#xA0;of&#xA0;precision<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;std::setw(6)&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;6&#xA0;characters&#xA0;per&#xA0;field<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;std::setfill('&#xA0;')&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;fill&#xA0;with&#xA0;spaces<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;std::right;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;adjust&#xA0;value&#xA0;to&#xA0;the&#xA0;right<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+<br/>
+bool&#xA0;Output(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;This&#xA0;output&#xA0;stream&#xA0;is&#xA0;an&#xA0;ostringstream&#xA0;for&#xA0;testing&#xA0;purposes.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;You&#xA0;can&#xA0;use&#xA0;&lt;&lt;&#xA0;with&#xA0;other&#xA0;types&#xA0;of&#xA0;streams;&#xA0;i.e.,&#xA0;std::cout.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::ostringstream&#xA0;stream;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;ouput&#xA0;an&#xA0;AD&lt;double&gt;&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::AD&lt;double&gt;&#xA0;&#xA0;pi&#xA0;=&#xA0;4.&#xA0;*&#xA0;atan(1.);&#xA0;//&#xA0;3.1415926536<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;set_ostream(stream);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;stream&#xA0;&lt;&lt;&#xA0;pi;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;ouput&#xA0;a&#xA0;VecAD&lt;double&gt;::reference&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::VecAD&lt;double&gt;&#xA0;v(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::AD&lt;double&gt;&#xA0;zero(0);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[zero]&#xA0;&#xA0;&#xA0;=&#xA0;exp(1.);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;2.7182818285<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;set_ostream(stream);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;stream&#xA0;&lt;&lt;&#xA0;v[zero];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;convert&#xA0;output&#xA0;from&#xA0;stream&#xA0;to&#xA0;string<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::string&#xA0;str&#xA0;=&#xA0;stream.str();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;the&#xA0;output<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;(str&#xA0;==&#xA0;&quot;&#xA0;3.142&#xA0;2.718&quot;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span></font></code>
+<hr/>Input File: example/output.cpp
+
+</body>
+</html>

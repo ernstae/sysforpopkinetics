@@ -1,0 +1,165 @@
+<html><head>
+<title>Source: det_by_lu</title>
+<meta name="description" id="description" content="Source: det_by_lu">
+<meta name="keywords" id="keywords" content=" det_by_lu source ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_det_by_lu.hpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_utility</option>
+<option>det_by_lu</option>
+<option>det_by_lu.hpp</option>
+</select>
+</td>
+<td><a href="det_by_lu.cpp.htm" target="_top">Prev</a>
+</td><td><a href="det_33.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed_utility-&gt;</option>
+<option>uniform_01</option>
+<option>det_of_minor</option>
+<option>det_by_minor</option>
+<option>det_by_lu</option>
+<option>det_33</option>
+<option>det_grad_33</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>det_by_lu-&gt;</option>
+<option>det_by_lu.cpp</option>
+<option>det_by_lu.hpp</option>
+</select>
+</td>
+<td>det_by_lu.hpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>Source: det_by_lu</big></big></b></center>
+<code><font color="blue"># ifndef CPPAD_DET_BY_LU_INCLUDED 
+<code><span style='white-space: nowrap'><br>
+</span></code># define CPPAD_DET_BY_LU_INCLUDED
+
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;complex&gt;<br>
+<br>
+//&nbsp;BEGIN&nbsp;CppAD&nbsp;namespace<br>
+namespace&nbsp;CppAD&nbsp;{<br>
+<br>
+//&nbsp;The&nbsp;AD&nbsp;complex&nbsp;case&nbsp;is&nbsp;used&nbsp;by&nbsp;examples&nbsp;by&nbsp;not&nbsp;used&nbsp;by&nbsp;speed&nbsp;tests&nbsp;<br>
+//&nbsp;Must&nbsp;define&nbsp;a&nbsp;specializatgion&nbsp;of&nbsp;LeqZero,AbsGeq&nbsp;for&nbsp;the&nbsp;ADComplex&nbsp;case<br>
+typedef&nbsp;std::complex&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Complex;<br>
+typedef&nbsp;CppAD::AD&lt;Complex&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADComplex;<br>
+CPPAD_BOOL_UNARY(Complex,&nbsp;&nbsp;LeqZero&nbsp;)<br>
+CPPAD_BOOL_BINARY(Complex,&nbsp;AbsGeq&nbsp;)<br>
+<br>
+template&nbsp;&lt;class&nbsp;Scalar&gt;<br>
+class&nbsp;det_by_lu&nbsp;{<br>
+private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;size_t&nbsp;m;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;size_t&nbsp;n;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADvector&lt;Scalar&gt;&nbsp;A;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADvector&lt;Scalar&gt;&nbsp;B;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADvector&lt;Scalar&gt;&nbsp;X;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;det_by_lu(size_t&nbsp;n_)&nbsp;:&nbsp;m(0),&nbsp;n(n_),&nbsp;A(n_&nbsp;*&nbsp;n_)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&lt;class&nbsp;Vector&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;Scalar&nbsp;operator()(const&nbsp;Vector&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::exp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scalar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logdet;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scalar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;det;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;signdet;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;copy&nbsp;matrix&nbsp;so&nbsp;it&nbsp;is&nbsp;not&nbsp;overwritten<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n&nbsp;*&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[i]&nbsp;=&nbsp;x[i];<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;comput&nbsp;log&nbsp;determinant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;signdet&nbsp;=&nbsp;CppAD::LuSolve(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n,&nbsp;m,&nbsp;A,&nbsp;B,&nbsp;X,&nbsp;logdet);<br>
+<br>
+#&nbsp;if&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Do&nbsp;not&nbsp;do&nbsp;this&nbsp;for&nbsp;speed&nbsp;test&nbsp;because&nbsp;it&nbsp;makes&nbsp;floating&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;point&nbsp;operation&nbsp;sequence&nbsp;very&nbsp;simple.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;signdet&nbsp;==&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;det&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;det&nbsp;=&nbsp;&nbsp;Scalar(&nbsp;signdet&nbsp;)&nbsp;*&nbsp;exp(&nbsp;logdet&nbsp;);<br>
+#&nbsp;endif<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;convert&nbsp;to&nbsp;determinant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;det&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;Scalar(&nbsp;signdet&nbsp;)&nbsp;*&nbsp;exp(&nbsp;logdet&nbsp;);&nbsp;<br>
+<br>
+#&nbsp;ifdef&nbsp;FADBAD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Fadbad&nbsp;requires&nbsp;tempories&nbsp;to&nbsp;be&nbsp;set&nbsp;to&nbsp;constants<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n&nbsp;*&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[i]&nbsp;=&nbsp;0;<br>
+#&nbsp;endif<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;det;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+};<br>
+}&nbsp;//&nbsp;END&nbsp;CppAD&nbsp;namespace<br>
+</span># endif
+</font></code>
+
+
+<hr>Input File: omh/det_by_lu_hpp.omh
+
+</body>
+</html>

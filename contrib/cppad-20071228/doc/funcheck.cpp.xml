@@ -1,0 +1,196 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>ADFun Check and Re-Tape: Example and Test</title>
+<meta name="description" id="description" content="ADFun Check and Re-Tape: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Funcheck example test Adfun Dependent "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_funcheck.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>FunCheck</option>
+<option>FunCheck.cpp</option>
+</select>
+</td>
+<td><a href="funcheck.xml" target="_top">Prev</a>
+</td><td><a href="omp_max_thread.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>FunCheck-&gt;</option>
+<option>FunCheck.cpp</option>
+</select>
+</td>
+<td>FunCheck.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>ADFun Check and Re-Tape: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+namespace&#xA0;{&#xA0;//&#xA0;-----------------------------------------------------------<br/>
+//&#xA0;define&#xA0;the&#xA0;template&#xA0;function&#xA0;object&#xA0;Fun&lt;Type,Vector&gt;&#xA0;in&#xA0;empty&#xA0;namespace<br/>
+template&#xA0;&lt;class&#xA0;Type,&#xA0;class&#xA0;Vector&gt;<br/>
+class&#xA0;Fun&#xA0;{<br/>
+private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n;<br/>
+public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun(size_t&#xA0;n_)&#xA0;:&#xA0;n(n_)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;evaluator<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;operator()&#xA0;(const&#xA0;Vector&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;y(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;This&#xA0;operaiton&#xA0;sequence&#xA0;depends&#xA0;on&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;x[i]&#xA0;&gt;=&#xA0;0&#xA0;)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y[i]&#xA0;=&#xA0;exp(x[i]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;y[i]&#xA0;=&#xA0;exp(-x[i]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+};<br/>
+//&#xA0;template&#xA0;function&#xA0;FunCheckCases&lt;Vector,&#xA0;ADVector&gt;&#xA0;in&#xA0;empty&#xA0;namespace<br/>
+template&#xA0;&lt;class&#xA0;Vector,&#xA0;class&#xA0;ADVector&gt;<br/>
+bool&#xA0;FunCheckCases(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::ADFun;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::Independent;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;use&#xA0;the&#xA0;ADFun&#xA0;default&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADFun&lt;double&gt;&#xA0;f;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADVector&#xA0;X(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;-1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[1]&#xA0;=&#xA0;1.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;starting&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;function&#xA0;object&#xA0;to&#xA0;use&#xA0;with&#xA0;AD&lt;double&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&lt;&#xA0;AD&lt;double&gt;,&#xA0;ADVector&#xA0;&gt;&#xA0;G(n);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;n;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADVector&#xA0;Y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y&#xA0;=&#xA0;G(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;stop&#xA0;tape&#xA0;and&#xA0;store&#xA0;operation&#xA0;sequence&#xA0;in&#xA0;f&#xA0;:&#xA0;X&#xA0;-&gt;&#xA0;Y<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f.Dependent(X,&#xA0;Y);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(f.size_taylor()&#xA0;==&#xA0;0);&#xA0;&#xA0;//&#xA0;no&#xA0;implicit&#xA0;forward&#xA0;operation<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;function&#xA0;object&#xA0;to&#xA0;use&#xA0;with&#xA0;double<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&lt;double,&#xA0;Vector&gt;&#xA0;g(n);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;values&#xA0;should&#xA0;agree&#xA0;when&#xA0;the&#xA0;independent&#xA0;variable&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;values&#xA0;are&#xA0;the&#xA0;same&#xA0;as&#xA0;during&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;j;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[j]&#xA0;=&#xA0;Value(X[j]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;r&#xA0;=&#xA0;1e-10;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;a&#xA0;=&#xA0;1e-10;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;FunCheck(f,&#xA0;g,&#xA0;x,&#xA0;a,&#xA0;r);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;values&#xA0;should&#xA0;not&#xA0;agree&#xA0;when&#xA0;the&#xA0;independent&#xA0;variable<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;values&#xA0;are&#xA0;the&#xA0;negative&#xA0;of&#xA0;values&#xA0;during&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[j]&#xA0;=&#xA0;-&#xA0;Value(X[j]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;!&#xA0;FunCheck(f,&#xA0;g,&#xA0;x,&#xA0;a,&#xA0;r);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;re-tape&#xA0;to&#xA0;obtain&#xA0;the&#xA0;new&#xA0;AD&#xA0;of&#xA0;double&#xA0;operation&#xA0;sequence<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[j]&#xA0;=&#xA0;x[j];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(X);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y&#xA0;=&#xA0;G(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;stop&#xA0;tape&#xA0;and&#xA0;store&#xA0;operation&#xA0;sequence&#xA0;in&#xA0;f&#xA0;:&#xA0;X&#xA0;-&gt;&#xA0;Y<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f.Dependent(X,&#xA0;Y);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(f.size_taylor()&#xA0;==&#xA0;0);&#xA0;&#xA0;//&#xA0;no&#xA0;implicit&#xA0;forward&#xA0;with&#xA0;this&#xA0;x<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;values&#xA0;should&#xA0;agree&#xA0;now<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;FunCheck(f,&#xA0;g,&#xA0;x,&#xA0;a,&#xA0;r);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+}&#xA0;//&#xA0;End&#xA0;empty&#xA0;namespace&#xA0;<br/>
+#&#xA0;include&#xA0;&lt;vector&gt;<br/>
+#&#xA0;include&#xA0;&lt;valarray&gt;<br/>
+bool&#xA0;FunCheck(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;CppAD::vector&lt;&#xA0;CppAD::AD&lt;double&gt;&#xA0;&gt;&#xA0;ADVector1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;&#xA0;&#xA0;std::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;&#xA0;&#xA0;std::vector&lt;&#xA0;CppAD::AD&lt;double&gt;&#xA0;&gt;&#xA0;ADVector2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;std::valarray&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;std::valarray&lt;&#xA0;CppAD::AD&lt;double&gt;&#xA0;&gt;&#xA0;ADVector3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Run&#xA0;with&#xA0;Vector&#xA0;and&#xA0;ADVector&#xA0;equal&#xA0;to&#xA0;three&#xA0;different&#xA0;cases<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;all&#xA0;of&#xA0;which&#xA0;are&#xA0;Simple&#xA0;Vectors&#xA0;with&#xA0;elements&#xA0;of&#xA0;type&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;double&#xA0;and&#xA0;AD&lt;double&gt;&#xA0;respectively.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;FunCheckCases&lt;&#xA0;Vector1,&#xA0;ADVector2&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;FunCheckCases&lt;&#xA0;Vector2,&#xA0;ADVector3&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;FunCheckCases&lt;&#xA0;Vector3,&#xA0;ADVector1&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span></font></code>
+<hr/>Input File: example/fun_check.cpp
+
+</body>
+</html>

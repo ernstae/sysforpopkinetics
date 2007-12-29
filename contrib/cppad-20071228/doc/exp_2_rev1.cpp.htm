@@ -1,0 +1,132 @@
+<html><head>
+<title>exp_2: Verify First Order Reverse Sweep</title>
+<meta name="description" id="description" content="exp_2: Verify First Order Reverse Sweep">
+<meta name="keywords" id="keywords" content=" reverse exp_2 mode ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_exp_2_rev1.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>exp_2</option>
+<option>exp_2_rev1</option>
+<option>exp_2_rev1.cpp</option>
+</select>
+</td>
+<td><a href="exp_2_rev1.htm" target="_top">Prev</a>
+</td><td><a href="exp_2_for2.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>exp_2-&gt;</option>
+<option>exp_2.hpp</option>
+<option>exp_2.cpp</option>
+<option>exp_2_for0</option>
+<option>exp_2_for1</option>
+<option>exp_2_rev1</option>
+<option>exp_2_for2</option>
+<option>exp_2_rev2</option>
+<option>exp_2_cppad</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>exp_2_rev1-&gt;</option>
+<option>exp_2_rev1.cpp</option>
+</select>
+</td>
+<td>exp_2_rev1.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>exp_2: Verify First Order Reverse Sweep</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cstddef&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;define&nbsp;size_t<br>
+#&nbsp;include&nbsp;&lt;cmath&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;prototype&nbsp;for&nbsp;fabs<br>
+extern&nbsp;bool&nbsp;exp_2_for0(double&nbsp;*v0);&nbsp;//&nbsp;computes&nbsp;zero&nbsp;order&nbsp;forward&nbsp;sweep<br>
+bool&nbsp;exp_2_rev1(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;the&nbsp;value&nbsp;of&nbsp;v0[j]&nbsp;for&nbsp;j&nbsp;=&nbsp;1&nbsp;,&nbsp;...&nbsp;,&nbsp;5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;v0[6];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;exp_2_for0(v0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initial&nbsp;all&nbsp;partial&nbsp;derivatives&nbsp;as&nbsp;zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;f_v[6];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;6;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_v[j]&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;partial&nbsp;derivative&nbsp;for&nbsp;f5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_v[5]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;f_v[5]&nbsp;-&nbsp;1.&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;//&nbsp;f5_v5<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f4&nbsp;=&nbsp;f5(&nbsp;v1&nbsp;,&nbsp;v2&nbsp;,&nbsp;v3&nbsp;,&nbsp;v4&nbsp;,&nbsp;v2&nbsp;+&nbsp;v4&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_v[2]&nbsp;+=&nbsp;f_v[5]&nbsp;*&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_v[4]&nbsp;+=&nbsp;f_v[5]&nbsp;*&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;f_v[2]&nbsp;-&nbsp;1.&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;//&nbsp;f4_v2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;f_v[4]&nbsp;-&nbsp;1.&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;//&nbsp;f4_v4<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f3&nbsp;=&nbsp;f4(&nbsp;v1&nbsp;,&nbsp;v2&nbsp;,&nbsp;v3&nbsp;,&nbsp;v3&nbsp;/&nbsp;2&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_v[3]&nbsp;+=&nbsp;f_v[4]&nbsp;/&nbsp;2.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;f_v[3]&nbsp;-&nbsp;0.5)&nbsp;&lt;=&nbsp;1e-10;&nbsp;//&nbsp;f3_v3<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f2&nbsp;=&nbsp;f3(&nbsp;v1&nbsp;,&nbsp;v2&nbsp;,&nbsp;v1&nbsp;*&nbsp;v1&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_v[1]&nbsp;+=&nbsp;f_v[3]&nbsp;*&nbsp;2.&nbsp;*&nbsp;v0[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;f_v[1]&nbsp;-&nbsp;0.5)&nbsp;&lt;=&nbsp;1e-10;&nbsp;//&nbsp;f2_v1<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f1&nbsp;=&nbsp;f2(&nbsp;v1&nbsp;,&nbsp;1&nbsp;+&nbsp;v1&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_v[1]&nbsp;+=&nbsp;f_v[2]&nbsp;*&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;f_v[1]&nbsp;-&nbsp;1.5)&nbsp;&lt;=&nbsp;1e-10;&nbsp;//&nbsp;f1_v1<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: introduction/exp_apx/exp_2_rev1.cpp
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>EqualOpSeq: Example and Test</title>
+<meta name="description" id="description" content="EqualOpSeq: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Equalopseq example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_equalopseq.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>BoolValued</option>
+<option>EqualOpSeq</option>
+<option>EqualOpSeq.cpp</option>
+</select>
+</td>
+<td><a href="equalopseq.xml" target="_top">Prev</a>
+</td><td><a href="vecad.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>BoolValued-&gt;</option>
+<option>Compare</option>
+<option>NearEqualExt</option>
+<option>BoolFun</option>
+<option>ParVar</option>
+<option>EqualOpSeq</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>EqualOpSeq-&gt;</option>
+<option>EqualOpSeq.cpp</option>
+</select>
+</td>
+<td>EqualOpSeq.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>EqualOpSeq: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+bool&#xA0;EqualOpSeq(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::EqualOpSeq;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x0&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;x0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(x);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;a&#xA0;=&#xA0;1.&#xA0;+&#xA0;x[0];&#xA0;&#xA0;//&#xA0;this&#xA0;variable&#xA0;is&#xA0;1&#xA0;+&#xA0;x0<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;b&#xA0;=&#xA0;2.&#xA0;*&#xA0;x[0];&#xA0;&#xA0;//&#xA0;this&#xA0;variable&#xA0;is&#xA0;2&#xA0;*&#xA0;x0<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;both&#xA0;a&#xA0;and&#xA0;b&#xA0;are&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(a&#xA0;==&#xA0;b);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;1&#xA0;+&#xA0;1&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;==&#xA0;2&#xA0;*&#xA0;1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;!&#xA0;EqualOpSeq(a,&#xA0;b);&#xA0;&#xA0;//&#xA0;1&#xA0;+&#xA0;x[0]&#xA0;&#xA0;!=&#xA0;2&#xA0;*&#xA0;x[0]&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y[0]&#xA0;=&#xA0;a;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;both&#xA0;y[0]&#xA0;and&#xA0;a&#xA0;are&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;EqualOpSeq(y[0],&#xA0;a);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;2&#xA0;*&#xA0;x[0]&#xA0;==&#xA0;2&#xA0;*&#xA0;x[0]<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;f:&#xA0;x&#xA0;-&gt;&#xA0;y&#xA0;and&#xA0;stop&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(x,&#xA0;y);&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;both&#xA0;a&#xA0;and&#xA0;b&#xA0;are&#xA0;parameters&#xA0;(after&#xA0;the&#xA0;creation&#xA0;of&#xA0;f&#xA0;above)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;EqualOpSeq(a,&#xA0;b);&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;1&#xA0;+&#xA0;1&#xA0;==&#xA0;2&#xA0;*&#xA0;1<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/equal_op_seq.cpp
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>nan: Example and Test</title>
+<meta name="description" id="description" content="nan: Example and Test"/>
+<meta name="keywords" id="keywords" content=" nan example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_nan.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>nan</option>
+<option>nan.cpp</option>
+</select>
+</td>
+<td><a href="nan.xml" target="_top">Prev</a>
+</td><td><a href="pow_int.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>nan-&gt;</option>
+<option>nan.cpp</option>
+</select>
+</td>
+<td>nan.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+<center><b><big><big>nan: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/nan.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;vector&gt;<br/>
+<br/>
+bool&#xA0;nan(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;get&#xA0;a&#xA0;nan<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;double_zero&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;double_nan&#xA0;=&#xA0;CppAD::nan(double_zero);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;a&#xA0;simple&#xA0;vector&#xA0;with&#xA0;no&#xA0;nans<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::vector&lt;double&gt;&#xA0;v(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[0]&#xA0;=&#xA0;double_zero;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[1]&#xA0;=&#xA0;double_zero;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;that&#xA0;zero&#xA0;is&#xA0;not&#xA0;nan<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;!&#xA0;CppAD::isnan(double_zero);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;!&#xA0;CppAD::hasnan(v);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;that&#xA0;nan&#xA0;is&#xA0;a&#xA0;nan<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[1]&#xA0;=&#xA0;double_nan;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::isnan(double_nan);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::hasnan(v);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/nan.cpp
+
+</body>
+</html>

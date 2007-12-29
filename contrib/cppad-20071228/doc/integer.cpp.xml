@@ -1,0 +1,143 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Convert From AD to Integer: Example and Test</title>
+<meta name="description" id="description" content="Convert From AD to Integer: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Integer example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_integer.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>Convert</option>
+<option>Integer</option>
+<option>Integer.cpp</option>
+</select>
+</td>
+<td><a href="integer.xml" target="_top">Prev</a>
+</td><td><a href="output.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Convert-&gt;</option>
+<option>Value</option>
+<option>Integer</option>
+<option>Output</option>
+<option>PrintFor</option>
+<option>Var2Par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Integer-&gt;</option>
+<option>Integer.cpp</option>
+</select>
+</td>
+<td>Integer.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Convert From AD to Integer: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+bool&#xA0;Integer(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::Integer;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;3.5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[1]&#xA0;=&#xA0;4.5;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;integer&#xA0;before&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(x[0])&#xA0;==&#xA0;3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(x[1])&#xA0;==&#xA0;4);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;start&#xA0;recording<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(x);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;integer&#xA0;during&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(x[0])&#xA0;==&#xA0;3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(x[1])&#xA0;==&#xA0;4);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;integer&#xA0;for&#xA0;VecAD&#xA0;element<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::VecAD&lt;double&gt;&#xA0;v(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;zero(0);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[zero]&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(v[zero])&#xA0;==&#xA0;2);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y[0]&#xA0;=&#xA0;-&#xA0;x[1];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;f:&#xA0;x&#xA0;-&gt;&#xA0;y&#xA0;and&#xA0;stop&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(x,&#xA0;y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;integer&#xA0;after&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(x[0])&#xA0;==&#xA0;&#xA0;3.);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(x[1])&#xA0;==&#xA0;&#xA0;4.);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(Integer(y[0])&#xA0;==&#xA0;-4.);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span></font></code>
+<hr/>Input File: example/integer.cpp
+
+</body>
+</html>

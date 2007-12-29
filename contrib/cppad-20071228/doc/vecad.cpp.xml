@@ -1,0 +1,200 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>AD Vectors that Record Index Operations: Example and Test</title>
+<meta name="description" id="description" content="AD Vectors that Record Index Operations: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Vecad example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_vecad.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>VecAD</option>
+<option>VecAD.cpp</option>
+</select>
+</td>
+<td><a href="vecad.xml" target="_top">Prev</a>
+</td><td><a href="base_require.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>VecAD-&gt;</option>
+<option>VecAD.cpp</option>
+</select>
+</td>
+<td>VecAD.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>AD Vectors that Record Index Operations: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cassert&gt;<br/>
+<br/>
+namespace&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;the&#xA0;vector&#xA0;x&#xA0;that&#xA0;solves&#xA0;the&#xA0;following&#xA0;linear&#xA0;system&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;&#xA0;&#xA0;a[0]&#xA0;*&#xA0;x[0]&#xA0;+&#xA0;a[1]&#xA0;*&#xA0;x[1]&#xA0;=&#xA0;b[0]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;&#xA0;&#xA0;a[2]&#xA0;*&#xA0;x[0]&#xA0;+&#xA0;a[3]&#xA0;*&#xA0;x[1]&#xA0;=&#xA0;b[1]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;in&#xA0;a&#xA0;way&#xA0;that&#xA0;will&#xA0;record&#xA0;pivot&#xA0;operations&#xA0;on&#xA0;the&#xA0;AD&lt;double&gt;&#xA0;tape<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;CppAD::AD&lt;double&gt;&#xA0;&gt;&#xA0;Vector;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;Solve(const&#xA0;Vector&#xA0;&amp;a&#xA0;,&#xA0;const&#xA0;Vector&#xA0;&amp;b)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;CppAD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(a.size()&#xA0;==&#xA0;4&#xA0;&amp;&amp;&#xA0;b.size()&#xA0;==&#xA0;2);&#xA0;&#xA0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;copy&#xA0;the&#xA0;vector&#xA0;b&#xA0;into&#xA0;the&#xA0;VecAD&#xA0;object&#xA0;B<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;VecAD&lt;double&gt;&#xA0;B(2);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;u;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(u&#xA0;=&#xA0;0;&#xA0;u&#xA0;&lt;&#xA0;2;&#xA0;u&#xA0;+=&#xA0;1.)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;B[u]&#xA0;=&#xA0;b[&#xA0;Integer(u)&#xA0;];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;copy&#xA0;the&#xA0;matrix&#xA0;a&#xA0;into&#xA0;the&#xA0;VecAD&#xA0;object&#xA0;A<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;VecAD&lt;double&gt;&#xA0;A(4);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(u&#xA0;=&#xA0;0;&#xA0;u&#xA0;&lt;&#xA0;4;&#xA0;u&#xA0;+=&#xA0;1.)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[u]&#xA0;=&#xA0;a&#xA0;[&#xA0;Integer(u)&#xA0;];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;tape&#xA0;AD&#xA0;operation&#xA0;sequence&#xA0;that&#xA0;determines&#xA0;the&#xA0;row&#xA0;of&#xA0;A<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;with&#xA0;maximum&#xA0;absolute&#xA0;element&#xA0;in&#xA0;column&#xA0;zero<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;zero(0),&#xA0;one(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;rmax&#xA0;=&#xA0;CondExpGt(abs(a[0]),&#xA0;abs(a[2]),&#xA0;zero,&#xA0;one);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;divide&#xA0;row&#xA0;rmax&#xA0;by&#xA0;A(rmax,&#xA0;0)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;1]&#xA0;&#xA0;=&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;1]&#xA0;/&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;B[rmax]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;B[rmax]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;/&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;0]&#xA0;&#xA0;=&#xA0;one;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;subtract&#xA0;A(other,0)&#xA0;times&#xA0;row&#xA0;rmax&#xA0;from&#xA0;other&#xA0;row<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;other&#xA0;&#xA0;&#xA0;=&#xA0;one&#xA0;-&#xA0;rmax;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[other&#xA0;*&#xA0;2&#xA0;+&#xA0;1]&#xA0;&#xA0;&#xA0;=&#xA0;A[other&#xA0;*&#xA0;2&#xA0;+&#xA0;1]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;-&#xA0;A[other&#xA0;*&#xA0;2&#xA0;+&#xA0;0]&#xA0;*&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;B[other]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;B[other]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;-&#xA0;A[other&#xA0;*&#xA0;2&#xA0;+&#xA0;0]&#xA0;*&#xA0;B[rmax];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[other&#xA0;*&#xA0;2&#xA0;+&#xA0;0]&#xA0;=&#xA0;zero;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;back&#xA0;substitute&#xA0;to&#xA0;compute&#xA0;the&#xA0;solution&#xA0;vector&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;x(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;iother&#xA0;=&#xA0;Integer(other);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;imax&#xA0;&#xA0;&#xA0;=&#xA0;Integer(rmax);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[iother]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;B[other]&#xA0;/&#xA0;A[other&#xA0;*&#xA0;2&#xA0;+&#xA0;1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[imax&#xA0;]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;(B[rmax]&#xA0;-&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;other]&#xA0;*&#xA0;x[iother])<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;/&#xA0;A[rmax&#xA0;*&#xA0;2&#xA0;+&#xA0;0];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;x;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+<br/>
+bool&#xA0;VecAD(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::NearEqual;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;4;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;X(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;2.;&#xA0;X[1]&#xA0;=&#xA0;0.;&#xA0;&#xA0;//&#xA0;2&#xA0;*&#xA0;identity&#xA0;matrix&#xA0;(rmax&#xA0;in&#xA0;Solve&#xA0;will&#xA0;be&#xA0;0)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[2]&#xA0;=&#xA0;0.;&#xA0;X[3]&#xA0;=&#xA0;2.;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;define&#xA0;the&#xA0;vector&#xA0;b<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;B(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;B[0]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;B[1]&#xA0;=&#xA0;1.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector&#xA0;solves&#xA0;X&#xA0;*&#xA0;Y&#xA0;=&#xA0;b<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y&#xA0;=&#xA0;Solve(X,&#xA0;B);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;f:&#xA0;X&#xA0;-&gt;&#xA0;Y&#xA0;and&#xA0;stop&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(X,&#xA0;Y);&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;value&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;NearEqual(Y[0]&#xA0;,&#xA0;B[0]&#xA0;/&#xA0;X[0],&#xA0;&#xA0;1e-10&#xA0;,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;NearEqual(Y[1]&#xA0;,&#xA0;B[1]&#xA0;/&#xA0;X[3],&#xA0;&#xA0;1e-10&#xA0;,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;forward&#xA0;computation&#xA0;of&#xA0;partials&#xA0;w.r.t.&#xA0;x[0]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;dx(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;dy(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dx[0]&#xA0;=&#xA0;1.;&#xA0;dx[1]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dx[2]&#xA0;=&#xA0;0.;&#xA0;dx[3]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dy&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(1,&#xA0;dx);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dy[0],&#xA0;-&#xA0;B[0]&#xA0;/&#xA0;(X[0]&#xA0;*&#xA0;X[0])&#xA0;,&#xA0;1e-10,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dy[1],&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;0.&#xA0;,&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;the&#xA0;solution&#xA0;for&#xA0;a&#xA0;new&#xA0;x&#xA0;matrix&#xA0;such&#xA0;that&#xA0;pivioting<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;on&#xA0;the&#xA0;original&#xA0;rmax&#xA0;row&#xA0;would&#xA0;divide&#xA0;by&#xA0;zero<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;x(n);&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;0.;&#xA0;x[1]&#xA0;=&#xA0;2.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[2]&#xA0;=&#xA0;2.;&#xA0;x[3]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(0,&#xA0;x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;NearEqual(y[0]&#xA0;,&#xA0;B[1]&#xA0;/&#xA0;x[2],&#xA0;&#xA0;1e-10&#xA0;,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;NearEqual(y[1]&#xA0;,&#xA0;B[0]&#xA0;/&#xA0;x[1],&#xA0;&#xA0;1e-10&#xA0;,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;forward&#xA0;computation&#xA0;of&#xA0;partials&#xA0;w.r.t.&#xA0;x[1]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dx[0]&#xA0;=&#xA0;0.;&#xA0;dx[1]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dx[2]&#xA0;=&#xA0;0.;&#xA0;dx[3]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dy&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(1,&#xA0;dx);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dy[0],&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;0.&#xA0;,&#xA0;1e-10,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dy[1],&#xA0;-&#xA0;B[0]&#xA0;/&#xA0;(x[1]&#xA0;*&#xA0;x[1])&#xA0;,&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/vec_ad.cpp
+
+</body>
+</html>

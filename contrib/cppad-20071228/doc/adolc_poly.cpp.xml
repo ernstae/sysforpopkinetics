@@ -1,0 +1,214 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Adolc Speed: Second Derivative of a Polynomial</title>
+<meta name="description" id="description" content="Adolc Speed: Second Derivative of a Polynomial"/>
+<meta name="keywords" id="keywords" content=" adolc speed polynomial compute_poly "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_adolc_poly.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_adolc</option>
+<option>adolc_poly.cpp</option>
+</select>
+</td>
+<td><a href="adolc_det_lu.cpp.xml" target="_top">Prev</a>
+</td><td><a href="speed_cppad.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>speed_adolc-&gt;</option>
+<option>adolc_det_minor.cpp</option>
+<option>adolc_det_lu.cpp</option>
+<option>adolc_poly.cpp</option>
+</select>
+</td>
+<td>adolc_poly.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Operation Sequence</option>
+<option>compute_poly</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Adolc Speed: Second Derivative of a Polynomial</big></big></b></center>
+<br/>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br/>
+Note that the polynomial evaluation
+<a href="glossary.xml#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&#xA0;sequence</span></a>
+
+does not depend on the argument to the polynomial.
+Hence we use the same <a href="adfun.xml" target="_top"><span style='white-space: nowrap'>ADFun</span></a>
+ object for all the argument values.
+
+<br/>
+<br/>
+<b><big><a name="compute_poly" id="compute_poly">compute_poly</a></big></b>
+
+<br/>
+Routine that computes the second derivative of a polynomial using Adolc:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;vector&gt;<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/speed/uniform_01.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cppad/poly.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cppad/vector.hpp&gt;<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;adolc/adouble.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;adolc/interfaces.h&gt;<br/>
+<br/>
+void&#xA0;compute_poly(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;repeat&#xA0;&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;a&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;&#xA0;//&#xA0;coefficients&#xA0;of&#xA0;polynomial<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;z&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;&#xA0;//&#xA0;polynomial&#xA0;argument&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;ddp&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;)&#xA0;&#xA0;//&#xA0;second&#xA0;derivative&#xA0;w.r.t&#xA0;z&#xA0;&#xA0;<br/>
+{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;-----------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;setup<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;tag&#xA0;&#xA0;=&#xA0;0;&#xA0;&#xA0;//&#xA0;tape&#xA0;identifier<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;keep&#xA0;=&#xA0;1;&#xA0;&#xA0;//&#xA0;keep&#xA0;forward&#xA0;mode&#xA0;results&#xA0;in&#xA0;buffer<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;m&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1;&#xA0;&#xA0;//&#xA0;number&#xA0;of&#xA0;dependent&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;n&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1;&#xA0;&#xA0;//&#xA0;number&#xA0;of&#xA0;independent&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;d&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;2;&#xA0;&#xA0;//&#xA0;order&#xA0;of&#xA0;the&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;f;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;i;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;temporary&#xA0;index<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;choose&#xA0;a&#xA0;vector&#xA0;of&#xA0;polynomial&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::uniform_01(size,&#xA0;a);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;AD&#xA0;copy&#xA0;of&#xA0;the&#xA0;polynomial&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::vector&lt;adouble&gt;&#xA0;A(size);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;int(size);&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[i]&#xA0;=&#xA0;a[i];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;and&#xA0;range&#xA0;space&#xA0;AD&#xA0;values<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;adouble&#xA0;Z,&#xA0;P;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;choose&#xA0;an&#xA0;argument&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::uniform_01(1,&#xA0;z);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;trace_on(tag,&#xA0;keep);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Z&#xA0;&lt;&lt;=&#xA0;z[0];&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;AD&#xA0;computation&#xA0;of&#xA0;the&#xA0;function&#xA0;value&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;P&#xA0;=&#xA0;CppAD::Poly(0,&#xA0;A,&#xA0;Z);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;function&#xA0;object&#xA0;f&#xA0;:&#xA0;Z&#xA0;-&gt;&#xA0;P<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;P&#xA0;&gt;&gt;=&#xA0;f;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;trace_off();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;allocate&#xA0;arguments&#xA0;to&#xA0;hos_forward<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*x0&#xA0;=&#xA0;new&#xA0;double&#xA0;&#xA0;[n];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;*y0&#xA0;=&#xA0;new&#xA0;double&#xA0;&#xA0;[m];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;**x&#xA0;=&#xA0;new&#xA0;double*&#xA0;[n];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;**y&#xA0;=&#xA0;new&#xA0;double*&#xA0;[m];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[i]&#xA0;=&#xA0;new&#xA0;double&#xA0;[d];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y[i]&#xA0;=&#xA0;new&#xA0;double&#xA0;[d];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Taylor&#xA0;coefficient&#xA0;for&#xA0;argument<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0][0]&#xA0;=&#xA0;1.;&#xA0;&#xA0;//&#xA0;first&#xA0;order<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0][1]&#xA0;=&#xA0;0.;&#xA0;&#xA0;//&#xA0;second&#xA0;order<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;------------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(repeat--)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;get&#xA0;the&#xA0;next&#xA0;argument&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::uniform_01(1,&#xA0;z);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x0[0]&#xA0;=&#xA0;z[0];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;polynomial&#xA0;at&#xA0;the&#xA0;new&#xA0;argument&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;hos_forward(tag,&#xA0;m,&#xA0;n,&#xA0;d,&#xA0;keep,&#xA0;x0,&#xA0;x,&#xA0;y0,&#xA0;y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;derivative&#xA0;is&#xA0;twice&#xA0;second&#xA0;order&#xA0;Taylor&#xA0;coefficient<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ddp[0]&#xA0;=&#xA0;2.&#xA0;*&#xA0;y[0][1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;------------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;tear&#xA0;down<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;x0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;y0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;x[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;y[i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;x;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;y;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return;<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: speed/adolc/poly.cpp
+
+</body>
+</html>

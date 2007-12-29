@@ -1,0 +1,130 @@
+<html><head>
+<title>Source: det_grad_33</title>
+<meta name="description" id="description" content="Source: det_grad_33">
+<meta name="keywords" id="keywords" content=" det_grad_33 source ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_det_grad_33.hpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_utility</option>
+<option>det_grad_33</option>
+<option>det_grad_33.hpp</option>
+</select>
+</td>
+<td><a href="det_grad_33.htm" target="_top">Prev</a>
+</td><td><a href="speed_double.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed_utility-&gt;</option>
+<option>uniform_01</option>
+<option>det_of_minor</option>
+<option>det_by_minor</option>
+<option>det_by_lu</option>
+<option>det_33</option>
+<option>det_grad_33</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>det_grad_33-&gt;</option>
+<option>det_grad_33.hpp</option>
+</select>
+</td>
+<td>det_grad_33.hpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Source: det_grad_33</big></big></b></center>
+<code><font color="blue"># ifndef CPPAD_DET_GRAD_33_INCLUDED 
+<code><span style='white-space: nowrap'><br>
+</span></code># define CPPAD_DET_GRAD_33_INCLUDED
+
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/near_equal.hpp&gt;<br>
+namespace&nbsp;CppAD&nbsp;{<br>
+template&nbsp;&lt;class&nbsp;Vector&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;det_grad_33(const&nbsp;Vector&nbsp;&amp;x,&nbsp;const&nbsp;Vector&nbsp;&amp;g)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;expansion&nbsp;by&nbsp;minors&nbsp;to&nbsp;compute&nbsp;the&nbsp;derivative&nbsp;by&nbsp;hand<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check[9];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[0]&nbsp;=&nbsp;+&nbsp;(&nbsp;x[4]&nbsp;*&nbsp;x[8]&nbsp;-&nbsp;x[5]&nbsp;*&nbsp;x[7]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[1]&nbsp;=&nbsp;-&nbsp;(&nbsp;x[3]&nbsp;*&nbsp;x[8]&nbsp;-&nbsp;x[5]&nbsp;*&nbsp;x[6]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[2]&nbsp;=&nbsp;+&nbsp;(&nbsp;x[3]&nbsp;*&nbsp;x[7]&nbsp;-&nbsp;x[4]&nbsp;*&nbsp;x[6]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[3]&nbsp;=&nbsp;-&nbsp;(&nbsp;x[1]&nbsp;*&nbsp;x[8]&nbsp;-&nbsp;x[2]&nbsp;*&nbsp;x[7]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[4]&nbsp;=&nbsp;+&nbsp;(&nbsp;x[0]&nbsp;*&nbsp;x[8]&nbsp;-&nbsp;x[2]&nbsp;*&nbsp;x[6]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[5]&nbsp;=&nbsp;-&nbsp;(&nbsp;x[0]&nbsp;*&nbsp;x[7]&nbsp;-&nbsp;x[1]&nbsp;*&nbsp;x[6]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[6]&nbsp;=&nbsp;+&nbsp;(&nbsp;x[1]&nbsp;*&nbsp;x[5]&nbsp;-&nbsp;x[2]&nbsp;*&nbsp;x[4]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[7]&nbsp;=&nbsp;-&nbsp;(&nbsp;x[0]&nbsp;*&nbsp;x[5]&nbsp;-&nbsp;x[2]&nbsp;*&nbsp;x[3]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check[8]&nbsp;=&nbsp;+&nbsp;(&nbsp;x[0]&nbsp;*&nbsp;x[4]&nbsp;-&nbsp;x[1]&nbsp;*&nbsp;x[3]&nbsp;);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;3&nbsp;*&nbsp;3;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(check[i],&nbsp;g[i],&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+</span># endif
+</font></code>
+
+
+<hr>Input File: omh/det_grad_33_hpp.omh
+
+</body>
+</html>

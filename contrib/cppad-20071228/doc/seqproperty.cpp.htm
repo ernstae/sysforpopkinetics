@@ -1,0 +1,138 @@
+<html><head>
+<title>ADFun Sequence Properties: Example and Test</title>
+<meta name="description" id="description" content="ADFun Sequence Properties: Example and Test">
+<meta name="keywords" id="keywords" content=" Domain Adfun Range Parameter size_var example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_seqproperty.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>SeqProperty</option>
+<option>SeqProperty.cpp</option>
+</select>
+</td>
+<td><a href="seqproperty.htm" target="_top">Prev</a>
+</td><td><a href="funeval.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>SeqProperty-&gt;</option>
+<option>SeqProperty.cpp</option>
+</select>
+</td>
+<td>SeqProperty.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>ADFun Sequence Properties: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+bool&nbsp;SeqProperty(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Use&nbsp;nvar&nbsp;to&nbsp;tracks&nbsp;number&nbsp;of&nbsp;variables&nbsp;in&nbsp;the&nbsp;operation&nbsp;sequence.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Start&nbsp;with&nbsp;one&nbsp;for&nbsp;the&nbsp;phantom&nbsp;variable&nbsp;at&nbsp;tape&nbsp;address&nbsp;zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;nvar&nbsp;=&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;x(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(x);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nvar&nbsp;&nbsp;&nbsp;&nbsp;+=&nbsp;n;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;u&nbsp;=&nbsp;x[0];&nbsp;&nbsp;//&nbsp;use&nbsp;same&nbsp;variable&nbsp;as&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;w&nbsp;=&nbsp;x[1];&nbsp;&nbsp;//&nbsp;use&nbsp;same&nbsp;variable&nbsp;as&nbsp;x[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;w&nbsp;*&nbsp;(u&nbsp;+&nbsp;w);&nbsp;//&nbsp;requires&nbsp;two&nbsp;new&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nvar&nbsp;&nbsp;+=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[0]&nbsp;&nbsp;&nbsp;=&nbsp;1.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;parameter&nbsp;value&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[1]&nbsp;&nbsp;&nbsp;=&nbsp;u;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;same&nbsp;variable&nbsp;as&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[2]&nbsp;&nbsp;&nbsp;=&nbsp;w;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;same&nbsp;variable&nbsp;as&nbsp;w<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;x&nbsp;-&gt;&nbsp;y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(x,&nbsp;y);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;Domain,&nbsp;Range,&nbsp;Parameter,&nbsp;use_VecAD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.Domain()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==&nbsp;n;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.Range()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==&nbsp;m;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.Parameter(0)&nbsp;==&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.Parameter(1)&nbsp;==&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.Parameter(2)&nbsp;==&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.use_VecAD()&nbsp;&nbsp;==&nbsp;false;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;add&nbsp;one&nbsp;for&nbsp;each&nbsp;range&nbsp;component&nbsp;that&nbsp;is&nbsp;a&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;f.Parameter(i)&nbsp;)&nbsp;nvar++;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;variables&nbsp;corresponding&nbsp;to&nbsp;the&nbsp;sequence<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.size_var()&nbsp;&nbsp;&nbsp;==&nbsp;nvar;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/seq_property.cpp
+
+</body>
+</html>

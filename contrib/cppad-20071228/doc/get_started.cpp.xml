@@ -1,0 +1,455 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>A Simple Program Using CppAD to Compute Derivatives</title>
+<meta name="description" id="description" content="A Simple Program Using CppAD to Compute Derivatives"/>
+<meta name="keywords" id="keywords" content=" getstarted simple example start using Cppad "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_get_started.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>get_started.cpp</option>
+</select>
+</td>
+<td><a href="introduction.xml" target="_top">Prev</a>
+</td><td><a href="exp_2.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>get_started.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Purpose</option>
+<option>Function</option>
+<option>Derivative</option>
+<option>Value</option>
+<option>Poly</option>
+<option>Exercises</option>
+<option>Program</option>
+<option>Output</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>A Simple Program Using CppAD to Compute Derivatives</big></big></b></center>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+Demonstrate the use of CppAD by computing the derivative 
+of a simple example function.
+
+<br/>
+<br/>
+<b><big><a name="Function" id="Function">Function</a></big></b>
+<br/>
+The example function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">:</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">&#x02192;</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+</mrow></math>
+
+ is defined by 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">+</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mn>1</mn>
+</msup>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">&#x022EF;</mo>
+<mo stretchy="false">+</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mn>-1</mn>
+</mrow>
+</msub>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mn>-1</mn>
+</mrow>
+</msup>
+</mrow></math>
+
+where <i>a</i> is a fixed vector of length <i>k</i>.
+
+<br/>
+<br/>
+<b><big><a name="Derivative" id="Derivative">Derivative</a></big></b>
+<br/>
+The derivative of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ is given by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">'</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">+</mo>
+<mn>2</mn>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">&#x022EF;</mo>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mn>-1</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mn>-1</mn>
+</mrow>
+</msub>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mi mathvariant='italic'>k</mi>
+<mn>-2</mn>
+</mrow>
+</msup>
+</mrow></math>
+
+<br/>
+<b><big><a name="Value" id="Value">Value</a></big></b>
+<br/>
+For the particular case in this example,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>k</mi>
+</mrow></math>
+
+ is equal to 5, 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>a</mi>
+<mo stretchy="false">=</mo>
+<mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<mo stretchy="false">,</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+, and 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>3</mn>
+</mrow></math>
+
+.
+If follows that 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">'</mo>
+<mo stretchy="false">(</mo>
+<mn>3</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">+</mo>
+<mn>2</mn>
+<mo stretchy="false">*</mo>
+<mn>3</mn>
+<mo stretchy="false">+</mo>
+<mn>3</mn>
+<mo stretchy="false">*</mo>
+<msup><mn>3</mn>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">+</mo>
+<mn>4</mn>
+<mo stretchy="false">*</mo>
+<msup><mn>3</mn>
+<mn>3</mn>
+</msup>
+<mo stretchy="false">=</mo>
+<mn>142</mn>
+</mrow></math>
+
+<br/>
+<b><big><a name="Poly" id="Poly">Poly</a></big></b>
+<br/>
+The routine <code><font color="blue">Poly</font></code> is defined below for this particular application.
+A general purpose polynomial evaluation routine is documented and
+distributed with CppAD (see <a href="poly.xml" target="_top"><span style='white-space: nowrap'>Poly</span></a>
+).
+
+<br/>
+<br/>
+<b><big><a name="Exercises" id="Exercises">Exercises</a></big></b>
+<br/>
+Modify the program below to accomplish the following tasks
+using CppAD:
+<ol type="1"><li>
+Compute and print the derivative of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mn>3</mn>
+</msup>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mn>4</mn>
+</msup>
+</mrow></math>
+
+
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>2</mn>
+</mrow></math>
+
+. 
+</li><li>
+
+Compute and print the derivative of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+</mrow></math>
+
+
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>.5</mn>
+</mrow></math>
+
+.
+</li><li>
+
+Compute and print the derivative of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi>exp</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mn>1</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">-</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+</mrow></math>
+
+
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>.5</mn>
+</mrow></math>
+
+.
+</li></ol>
+
+
+
+<br/>
+<br/>
+<b><big><a name="Program" id="Program">Program</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#include&#xA0;&lt;iostream&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;standard&#xA0;input/output&#xA0;<br/>
+#include&#xA0;&lt;vector&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;standard&#xA0;vector<br/>
+#include&#xA0;&lt;cppad/cppad.hpp&gt;&#xA0;//&#xA0;the&#xA0;CppAD&#xA0;package&#xA0;http://www.coin-or.org/CppAD/<br/>
+<br/>
+namespace&#xA0;{&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;define&#xA0;y(x)&#xA0;=&#xA0;Poly(a,&#xA0;x)&#xA0;in&#xA0;the&#xA0;empty&#xA0;namespace<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;template&#xA0;&lt;class&#xA0;Type&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;Poly(const&#xA0;std::vector&lt;double&gt;&#xA0;&amp;a,&#xA0;const&#xA0;Type&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;k&#xA0;&#xA0;=&#xA0;a.size();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;y&#xA0;&#xA0;&#xA0;=&#xA0;0.;&#xA0;&#xA0;//&#xA0;initialize&#xA0;summation<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;x_i&#xA0;=&#xA0;1.;&#xA0;&#xA0;//&#xA0;initialize&#xA0;x^i<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;k;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;+=&#xA0;a[i]&#xA0;*&#xA0;x_i;&#xA0;&#xA0;//&#xA0;y&#xA0;&#xA0;&#xA0;=&#xA0;y&#xA0;+&#xA0;a_i&#xA0;*&#xA0;x^i<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x_i&#xA0;*=&#xA0;x;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;x_i&#xA0;=&#xA0;x_i&#xA0;*&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+//&#xA0;main&#xA0;program<br/>
+int&#xA0;main(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;use&#xA0;AD&#xA0;as&#xA0;abbreviation&#xA0;for&#xA0;CppAD::AD<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;std::vector;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;use&#xA0;vector&#xA0;as&#xA0;abbreviation&#xA0;for&#xA0;std::vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;a&#xA0;temporary&#xA0;index<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;vector&#xA0;of&#xA0;polynomial&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;k&#xA0;=&#xA0;5;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;number&#xA0;of&#xA0;polynomial&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;a(k);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;vector&#xA0;of&#xA0;polynomial&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;k;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a[i]&#xA0;=&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;value&#xA0;of&#xA0;polynomial&#xA0;coefficients<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;1;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;number&#xA0;of&#xA0;domain&#xA0;space&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;X(n);&#xA0;//&#xA0;vector&#xA0;of&#xA0;domain&#xA0;space&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;3.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;value&#xA0;corresponding&#xA0;to&#xA0;operation&#xA0;sequence<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;recording&#xA0;operation&#xA0;sequence<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;number&#xA0;of&#xA0;ranges&#xA0;space&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Y(m);&#xA0;//&#xA0;vector&#xA0;of&#xA0;ranges&#xA0;space&#xA0;variables<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[0]&#xA0;=&#xA0;Poly(a,&#xA0;X[0]);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;value&#xA0;during&#xA0;recording&#xA0;of&#xA0;operations<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;store&#xA0;operation&#xA0;sequence&#xA0;in&#xA0;f:&#xA0;X&#xA0;-&gt;&#xA0;Y&#xA0;and&#xA0;stop&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(X,&#xA0;Y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;derivative&#xA0;using&#xA0;operation&#xA0;sequence&#xA0;stored&#xA0;in&#xA0;f<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;jac(m&#xA0;*&#xA0;n);&#xA0;//&#xA0;Jacobian&#xA0;of&#xA0;f&#xA0;(m&#xA0;by&#xA0;n&#xA0;matrix)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;x(n);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;3.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;argument&#xA0;value&#xA0;for&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;jac&#xA0;&#xA0;=&#xA0;f.Jacobian(x);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Jacobian&#xA0;for&#xA0;operation&#xA0;sequence<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;print&#xA0;the&#xA0;results<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;f'(3)&#xA0;computed&#xA0;by&#xA0;CppAD&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;jac[0]&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;if&#xA0;the&#xA0;derivative&#xA0;is&#xA0;correct<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;error_code;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;jac[0]&#xA0;==&#xA0;142.&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;error_code&#xA0;=&#xA0;0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;code&#xA0;for&#xA0;correct&#xA0;case<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;&#xA0;error_code&#xA0;=&#xA0;1;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;code&#xA0;for&#xA0;incorrect&#xA0;case<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;error_code;<br/>
+}<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="Output" id="Output">Output</a></big></b>
+<br/>
+Executing the program above will generate the following output:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f'(3)&#xA0;computed&#xA0;by&#xA0;CppAD&#xA0;=&#xA0;142<br/>
+</span>
+</font></code>
+
+<hr/>Input File: introduction/get_started/get_started.cpp
+
+</body>
+</html>

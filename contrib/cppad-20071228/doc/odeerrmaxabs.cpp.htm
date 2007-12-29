@@ -1,0 +1,231 @@
+<html><head>
+<title>OdeErrControl: Example and Test Using Maxabs Argument</title>
+<meta name="description" id="description" content="OdeErrControl: Example and Test Using Maxabs Argument">
+<meta name="keywords" id="keywords" content=" Odeerrcontrol example maxabs test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_odeerrmaxabs.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>OdeErrControl</option>
+<option>OdeErrMaxabs.cpp</option>
+</select>
+</td>
+<td><a href="odeerrcontrol.cpp.htm" target="_top">Prev</a>
+</td><td><a href="odegear.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>OdeErrControl-&gt;</option>
+<option>OdeErrControl.cpp</option>
+<option>OdeErrMaxabs.cpp</option>
+</select>
+</td>
+<td>OdeErrMaxabs.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>OdeErrControl: Example and Test Using Maxabs Argument</big></big></b></center>
+Define 
+<code>
+<span style='white-space: nowrap'>&nbsp;X&nbsp;:&nbsp;\R&nbsp;\rightarrow&nbsp;\R^2</span></code>
+ by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+X_0&nbsp;(t)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;&nbsp;-&nbsp;\exp&nbsp;(&nbsp;-&nbsp;w_0&nbsp;t&nbsp;)&nbsp;&nbsp;\\<br>
+X_1&nbsp;(t)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;\frac{w_0}{w_1&nbsp;-&nbsp;w_0}&nbsp;[&nbsp;\exp&nbsp;(&nbsp;-&nbsp;w_0&nbsp;t&nbsp;)&nbsp;-&nbsp;\exp(&nbsp;-&nbsp;w_1&nbsp;t&nbsp;)]<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+It follows that <code>
+<span style='white-space: nowrap'>&nbsp;X_0&nbsp;(0)&nbsp;=&nbsp;1</span></code>
+, <code>
+<span style='white-space: nowrap'>&nbsp;X_1&nbsp;(0)&nbsp;=&nbsp;0</span></code>
+ and
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X_0^{(1)}&nbsp;(t)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;-&nbsp;w_0&nbsp;X_0&nbsp;(t)&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X_1^{(1)}&nbsp;(t)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;+&nbsp;w_0&nbsp;X_0&nbsp;(t)&nbsp;-&nbsp;w_1&nbsp;X_1&nbsp;(t)&nbsp;<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+Note that <code>
+<span style='white-space: nowrap'>&nbsp;X_1&nbsp;(0)</span></code>
+ is zero an if <code>
+<span style='white-space: nowrap'>&nbsp;w_0&nbsp;t</span></code>
+ is large,
+<code>
+<span style='white-space: nowrap'>&nbsp;X_0&nbsp;(t)</span></code>
+ is near zero.
+This example tests OdeErrControl using the <i>maxabs</i> argument.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cstddef&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;for&nbsp;size_t<br>
+#&nbsp;include&nbsp;&lt;cmath&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;for&nbsp;exp<br>
+#&nbsp;include&nbsp;&lt;cppad/ode_err_control.hpp&gt;&nbsp;&nbsp;&nbsp;//&nbsp;CppAD::OdeErrControl<br>
+#&nbsp;include&nbsp;&lt;cppad/near_equal.hpp&gt;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;CppAD::NearEqual<br>
+#&nbsp;include&nbsp;&lt;cppad/vector.hpp&gt;&nbsp;//&nbsp;CppAD::vector<br>
+#&nbsp;include&nbsp;&lt;cppad/runge_45.hpp&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;CppAD::Runge45<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;Fun&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;w;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;constructor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fun(const&nbsp;CppAD::vector&lt;double&gt;&nbsp;&amp;w_)&nbsp;:&nbsp;w(w_)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;}&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;f&nbsp;=&nbsp;x'(t)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;Ode(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;t,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;CppAD::vector&lt;double&gt;&nbsp;&amp;x,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;f)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;f[0]&nbsp;=&nbsp;-&nbsp;w[0]&nbsp;*&nbsp;x[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f[1]&nbsp;=&nbsp;+&nbsp;w[0]&nbsp;*&nbsp;x[0]&nbsp;-&nbsp;w[1]&nbsp;*&nbsp;x[1];&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;Method&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fun&nbsp;F;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;constructor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Method(const&nbsp;CppAD::vector&lt;double&gt;&nbsp;&amp;w_)&nbsp;:&nbsp;F(w_)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;step(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;ta,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;tb,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&amp;xa&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&amp;xb&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&amp;eb&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;xb&nbsp;=&nbsp;CppAD::Runge45(F,&nbsp;1,&nbsp;ta,&nbsp;tb,&nbsp;xa,&nbsp;eb);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;order(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;4;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+}<br>
+<br>
+bool&nbsp;OdeErrMaxabs(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initial&nbsp;return&nbsp;value<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;w(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;10.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[1]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Method&nbsp;method(w);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;xi(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xi[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xi[1]&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;eabs(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eabs[0]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eabs[1]&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;ef(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;xf(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;maxabs(2);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;ti&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;tf&nbsp;&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;smin&nbsp;=&nbsp;.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;smax&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;scur&nbsp;=&nbsp;.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;erel&nbsp;=&nbsp;1e-4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;accurate&nbsp;=&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(&nbsp;!&nbsp;accurate&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;xf&nbsp;=&nbsp;OdeErrControl(method,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ti,&nbsp;tf,&nbsp;xi,&nbsp;smin,&nbsp;smax,&nbsp;scur,&nbsp;eabs,&nbsp;erel,&nbsp;ef,&nbsp;maxabs);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accurate&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;2;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accurate&nbsp;&amp;=&nbsp;ef[i]&nbsp;&lt;=&nbsp;erel&nbsp;*&nbsp;maxabs[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;!&nbsp;accurate&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;smin&nbsp;=&nbsp;smin&nbsp;/&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;x0&nbsp;=&nbsp;exp(-w[0]*tf);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(x0,&nbsp;xf[0],&nbsp;erel,&nbsp;0.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(0.,&nbsp;ef[0],&nbsp;erel,&nbsp;erel);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;x1&nbsp;=&nbsp;w[0]&nbsp;*&nbsp;(exp(-w[0]*tf)&nbsp;-&nbsp;exp(-w[1]*tf))/(w[1]&nbsp;-&nbsp;w[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(x1,&nbsp;xf[1],&nbsp;erel,&nbsp;0.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(0.,&nbsp;ef[1],&nbsp;erel,&nbsp;erel);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/ode_err_maxabs.cpp
+
+</body>
+</html>

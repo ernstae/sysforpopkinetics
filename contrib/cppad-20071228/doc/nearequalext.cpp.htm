@@ -1,0 +1,133 @@
+<html><head>
+<title>Compare AD with Base Objects: Example and Test</title>
+<meta name="description" id="description" content="Compare AD with Base Objects: Example and Test">
+<meta name="keywords" id="keywords" content=" Nearequalext example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_nearequalext.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>BoolValued</option>
+<option>NearEqualExt</option>
+<option>NearEqualExt.cpp</option>
+</select>
+</td>
+<td><a href="nearequalext.htm" target="_top">Prev</a>
+</td><td><a href="boolfun.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>BoolValued-&gt;</option>
+<option>Compare</option>
+<option>NearEqualExt</option>
+<option>BoolFun</option>
+<option>ParVar</option>
+<option>EqualOpSeq</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>NearEqualExt-&gt;</option>
+<option>NearEqualExt.cpp</option>
+</select>
+</td>
+<td>NearEqualExt.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Compare AD with Base Objects: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;complex&gt;<br>
+<br>
+bool&nbsp;NearEqualExt(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;double&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.00000;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.00001;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;.00005;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;r&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;.00005;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;zero&nbsp;=&nbsp;0.;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&lt;double&gt;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;ax(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;ay(y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(ax,&nbsp;ay,&nbsp;zero,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(ax,&nbsp;y,&nbsp;&nbsp;r,&nbsp;zero);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(x,&nbsp;ay,&nbsp;&nbsp;r,&nbsp;&nbsp;&nbsp;&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;std::complex&lt;double&gt;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;cx(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;cy(y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&lt;&nbsp;std::complex&lt;double&gt;&nbsp;&gt;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;acx(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;acy(y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(acx,&nbsp;acy,&nbsp;zero,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(acx,&nbsp;&nbsp;cy,&nbsp;r,&nbsp;zero);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(acx,&nbsp;&nbsp;&nbsp;y,&nbsp;r,&nbsp;&nbsp;&nbsp;&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(&nbsp;cx,&nbsp;acy,&nbsp;r,&nbsp;&nbsp;&nbsp;&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(&nbsp;&nbsp;x,&nbsp;acy,&nbsp;r,&nbsp;&nbsp;&nbsp;&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/near_equal_ext.cpp
+
+</body>
+</html>

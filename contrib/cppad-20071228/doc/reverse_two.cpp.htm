@@ -1,0 +1,157 @@
+<html><head>
+<title>Second Order Reverse ModeExample and Test</title>
+<meta name="description" id="description" content="Second Order Reverse ModeExample and Test">
+<meta name="keywords" id="keywords" content=" reverse second order example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_reverse_two.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>FunEval</option>
+<option>Reverse</option>
+<option>reverse_two</option>
+<option>reverse_two.cpp</option>
+</select>
+</td>
+<td><a href="reverse_two.htm" target="_top">Prev</a>
+</td><td><a href="hestimesdir.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>FunEval-&gt;</option>
+<option>Forward</option>
+<option>Reverse</option>
+<option>Sparse</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Reverse-&gt;</option>
+<option>reverse_one</option>
+<option>reverse_two</option>
+<option>reverse_any</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>reverse_two-&gt;</option>
+<option>reverse_two.cpp</option>
+<option>HesTimesDir.cpp</option>
+</select>
+</td>
+<td>reverse_two.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>Second Order Reverse ModeExample and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+namespace&nbsp;{&nbsp;//&nbsp;----------------------------------------------------------<br>
+//&nbsp;define&nbsp;the&nbsp;template&nbsp;function&nbsp;reverse_two_cases&lt;Vector&gt;&nbsp;in&nbsp;empty&nbsp;namespace<br>
+template&nbsp;&lt;typename&nbsp;Vector&gt;&nbsp;<br>
+bool&nbsp;reverse_two_cases(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;0.;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[1]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;X[0]&nbsp;*&nbsp;X[0]&nbsp;*&nbsp;X[1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f&nbsp;:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;zero&nbsp;order&nbsp;forward&nbsp;mode&nbsp;to&nbsp;evaluate&nbsp;y&nbsp;at&nbsp;x&nbsp;=&nbsp;(3,&nbsp;4)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;the&nbsp;template&nbsp;parameter&nbsp;Vector&nbsp;for&nbsp;the&nbsp;vector&nbsp;type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;x(n),&nbsp;y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;&nbsp;=&nbsp;3.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;&nbsp;=&nbsp;4.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(0,&nbsp;x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(y[0]&nbsp;,&nbsp;x[0]*x[0]*x[1],&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;first&nbsp;order&nbsp;forward&nbsp;mode&nbsp;in&nbsp;x[0]&nbsp;direction<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;(all&nbsp;second&nbsp;order&nbsp;partials&nbsp;below&nbsp;involve&nbsp;x[0])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;dx(n),&nbsp;dy(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[1]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;dx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check&nbsp;=&nbsp;2.*x[0]*x[1]*dx[0]&nbsp;+&nbsp;x[0]*x[0]*dx[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[0],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;second&nbsp;order&nbsp;reverse&nbsp;mode&nbsp;to&nbsp;evalaute&nbsp;second&nbsp;partials&nbsp;of&nbsp;y[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;with&nbsp;respect&nbsp;to&nbsp;(x[0],&nbsp;x[0])&nbsp;and&nbsp;with&nbsp;respect&nbsp;to&nbsp;(x[0],&nbsp;x[1])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;w(m),&nbsp;dw(&nbsp;n&nbsp;*&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(2,&nbsp;w);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;derivative&nbsp;of&nbsp;f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[0*2+0]&nbsp;,&nbsp;2.*x[0]*x[1],&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[1*2+0]&nbsp;,&nbsp;&nbsp;&nbsp;&nbsp;x[0]*x[0],&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;derivative&nbsp;of&nbsp;f^{(1)}&nbsp;(x)&nbsp;*&nbsp;dx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;2.*x[1]*dx[1]&nbsp;+&nbsp;2.*x[0]*dx[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[0*2+1]&nbsp;,&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;2.*x[0]*dx[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[1*2+1]&nbsp;,&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+}&nbsp;//&nbsp;End&nbsp;empty&nbsp;namespace&nbsp;<br>
+#&nbsp;include&nbsp;&lt;vector&gt;<br>
+#&nbsp;include&nbsp;&lt;valarray&gt;<br>
+bool&nbsp;reverse_two(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;reverse_two_cases&lt;&nbsp;CppAD::vector&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;reverse_two_cases&lt;&nbsp;std::vector&nbsp;&nbsp;&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;reverse_two_cases&lt;&nbsp;std::valarray&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span></font></code>
+<hr>Input File: example/reverse_two.cpp
+
+</body>
+</html>

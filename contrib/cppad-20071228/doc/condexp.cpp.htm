@@ -1,0 +1,214 @@
+<html><head>
+<title>Conditional Expressions: Example and Test</title>
+<meta name="description" id="description" content="Conditional Expressions: Example and Test">
+<meta name="keywords" id="keywords" content=" Condexp example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_condexp.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>ADValued</option>
+<option>CondExp</option>
+<option>CondExp.cpp</option>
+</select>
+</td>
+<td><a href="condexp.htm" target="_top">Prev</a>
+</td><td><a href="discrete.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>ADValued-&gt;</option>
+<option>Arithmetic</option>
+<option>std_math_ad</option>
+<option>MathOther</option>
+<option>CondExp</option>
+<option>Discrete</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>CondExp-&gt;</option>
+<option>CondExp.cpp</option>
+</select>
+</td>
+<td>CondExp.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Conditional Expressions: Example and Test</big></big></b></center>
+<br>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Use <code><font color="blue">CondExp</font></code> to compute
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f(x)&nbsp;=&nbsp;\sum_{j=0}^{m-1}&nbsp;\log(&nbsp;|&nbsp;x_j&nbsp;|&nbsp;)<br>
+\]&nbsp;</span></code>
+
+and its derivative at various argument values
+with out having to re-tape; i.e.,
+using only one <a href="adfun.htm" target="_top"><span style='white-space: nowrap'>ADFun</span></a>
+ object.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;Infinity(double&nbsp;zero)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;1.&nbsp;/&nbsp;zero;&nbsp;}<br>
+}<br>
+<br>
+bool&nbsp;CondExp(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::log;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::abs;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[j]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;sum&nbsp;with&nbsp;respect&nbsp;to&nbsp;j&nbsp;of&nbsp;log&nbsp;of&nbsp;absolute&nbsp;value&nbsp;of&nbsp;X[j]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;sould&nbsp;be&nbsp;-&nbsp;infinity&nbsp;if&nbsp;any&nbsp;of&nbsp;the&nbsp;X[j]&nbsp;are&nbsp;zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;MinusInfinity&nbsp;=&nbsp;-&nbsp;Infinity(0.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;Sum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;Zero(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;if&nbsp;X[j]&nbsp;&gt;&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sum&nbsp;+=&nbsp;CppAD::CondExpGt(X[j],&nbsp;Zero,&nbsp;log(X[j]),&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Zero);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;if&nbsp;X[j]&nbsp;&lt;&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sum&nbsp;+=&nbsp;CppAD::CondExpLt(X[j],&nbsp;Zero,&nbsp;log(-X[j]),&nbsp;&nbsp;&nbsp;&nbsp;Zero);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;if&nbsp;X[j]&nbsp;==&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sum&nbsp;+=&nbsp;CppAD::CondExpEq(X[j],&nbsp;Zero,&nbsp;MinusInfinity,&nbsp;Zero);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;Sum;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vectors&nbsp;for&nbsp;arguments&nbsp;to&nbsp;the&nbsp;function&nbsp;object&nbsp;f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;x(n);&nbsp;&nbsp;&nbsp;//&nbsp;argument&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;y(m);&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;values&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;w(m);&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;weights&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dw(n);&nbsp;&nbsp;//&nbsp;derivative&nbsp;of&nbsp;weighted&nbsp;function<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;case&nbsp;where&nbsp;abs(&nbsp;x[j]&nbsp;)&nbsp;&gt;&nbsp;0&nbsp;for&nbsp;all&nbsp;j<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sign&nbsp;&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;sign&nbsp;*=&nbsp;-1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[j]&nbsp;=&nbsp;sign&nbsp;*&nbsp;double(j&nbsp;+&nbsp;1);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;+=&nbsp;log(&nbsp;abs(&nbsp;x[j]&nbsp;)&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;value&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;=&nbsp;f.Forward(0,&nbsp;x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;y[0]&nbsp;==&nbsp;check&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;derivative&nbsp;of&nbsp;y[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;x[j]&nbsp;&gt;&nbsp;0.&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(dw[j],&nbsp;1./abs(&nbsp;x[j]&nbsp;),&nbsp;1e-10,&nbsp;1e-10);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(dw[j],&nbsp;-1./abs(&nbsp;x[j]&nbsp;),&nbsp;1e-10,&nbsp;1e-10);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;case&nbsp;where&nbsp;x[0]&nbsp;is&nbsp;equal&nbsp;to&nbsp;zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sign&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;sign&nbsp;*=&nbsp;-1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[j]&nbsp;=&nbsp;sign&nbsp;*&nbsp;double(j);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;value&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(0,&nbsp;x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;y[0]&nbsp;==&nbsp;-Infinity(0.)&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;derivative&nbsp;of&nbsp;y[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;x[j]&nbsp;&gt;&nbsp;0.&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(dw[j],&nbsp;1./abs(&nbsp;x[j]&nbsp;),&nbsp;1e-10,&nbsp;1e-10);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;if(&nbsp;x[j]&nbsp;&lt;&nbsp;0.&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(dw[j],&nbsp;-1./abs(&nbsp;x[j]&nbsp;),&nbsp;1e-10,&nbsp;1e-10);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;in&nbsp;this&nbsp;case&nbsp;computing&nbsp;dw[j]&nbsp;ends&nbsp;up&nbsp;multiplying&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-infinity&nbsp;*&nbsp;zero&nbsp;and&nbsp;hence&nbsp;results&nbsp;in&nbsp;Nan<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span></font></code>
+<hr>Input File: example/cond_exp.cpp
+
+</body>
+</html>

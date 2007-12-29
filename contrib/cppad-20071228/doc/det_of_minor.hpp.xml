@@ -1,0 +1,162 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Source: det_of_minor</title>
+<meta name="description" id="description" content="Source: det_of_minor"/>
+<meta name="keywords" id="keywords" content=" det_of_minor source "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_det_of_minor.hpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_utility</option>
+<option>det_of_minor</option>
+<option>det_of_minor.hpp</option>
+</select>
+</td>
+<td><a href="det_of_minor.cpp.xml" target="_top">Prev</a>
+</td><td><a href="det_by_minor.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed_utility-&gt;</option>
+<option>uniform_01</option>
+<option>det_of_minor</option>
+<option>det_by_minor</option>
+<option>det_by_lu</option>
+<option>det_33</option>
+<option>det_grad_33</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>det_of_minor-&gt;</option>
+<option>det_of_minor.cpp</option>
+<option>det_of_minor.hpp</option>
+</select>
+</td>
+<td>det_of_minor.hpp</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>Source: det_of_minor</big></big></b></center>
+<code><font color="blue"># ifndef CPPAD_DET_OF_MINOR_INCLUDED 
+<code><span style='white-space: nowrap'><br/>
+</span></code># define CPPAD_DET_OF_MINOR_INCLUDED
+
+<span style='white-space: nowrap'><br/>
+namespace&#xA0;CppAD&#xA0;{&#xA0;//&#xA0;BEGIN&#xA0;CppAD&#xA0;namespace<br/>
+template&#xA0;&lt;class&#xA0;Scalar&gt;&#xA0;<br/>
+Scalar&#xA0;det_of_minor(&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;std::vector&lt;Scalar&gt;&amp;&#xA0;a&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;m&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::vector&lt;size_t&gt;&amp;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::vector&lt;size_t&gt;&amp;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;c&#xA0;&#xA0;)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;size_t&#xA0;R0&#xA0;=&#xA0;r[m];&#xA0;//&#xA0;R(0)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Cj&#xA0;=&#xA0;c[m];&#xA0;//&#xA0;C(j)&#xA0;&#xA0;&#xA0;&#xA0;(case&#xA0;j&#xA0;=&#xA0;0)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Cj1&#xA0;=&#xA0;m;&#xA0;&#xA0;&#xA0;//&#xA0;C(j-1)&#xA0;&#xA0;(case&#xA0;j&#xA0;=&#xA0;0)<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;for&#xA0;1&#xA0;by&#xA0;1&#xA0;case<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;n&#xA0;==&#xA0;1&#xA0;)&#xA0;return&#xA0;a[&#xA0;R0&#xA0;*&#xA0;m&#xA0;+&#xA0;Cj&#xA0;];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;determinant&#xA0;of&#xA0;the&#xA0;minor&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Scalar&#xA0;detM;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;detM&#xA0;=&#xA0;0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;sign&#xA0;of&#xA0;factor&#xA0;for&#xA0;next&#xA0;sub-minor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;s&#xA0;=&#xA0;1;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;remove&#xA0;row&#xA0;with&#xA0;index&#xA0;0&#xA0;in&#xA0;M&#xA0;from&#xA0;all&#xA0;the&#xA0;sub-minors&#xA0;of&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r[m]&#xA0;=&#xA0;r[R0];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;for&#xA0;each&#xA0;column&#xA0;of&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(size_t&#xA0;j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;element&#xA0;with&#xA0;index&#xA0;(0,j)&#xA0;in&#xA0;the&#xA0;minor&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Scalar&#xA0;M0j&#xA0;=&#xA0;a[&#xA0;R0&#xA0;*&#xA0;m&#xA0;+&#xA0;Cj&#xA0;];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;remove&#xA0;column&#xA0;wht&#xA0;index&#xA0;j&#xA0;in&#xA0;M&#xA0;to&#xA0;form&#xA0;next&#xA0;sub-minor&#xA0;S&#xA0;of&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;c[Cj1]&#xA0;=&#xA0;c[Cj];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;determinant&#xA0;of&#xA0;the&#xA0;current&#xA0;sub-minor&#xA0;S<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Scalar&#xA0;detS&#xA0;=&#xA0;det_of_minor(a,&#xA0;m,&#xA0;n&#xA0;-&#xA0;1,&#xA0;r,&#xA0;c);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;restore&#xA0;column&#xA0;Cj&#xA0;to&#xA0;representaion&#xA0;of&#xA0;M&#xA0;as&#xA0;a&#xA0;minor&#xA0;of&#xA0;A<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;c[Cj1]&#xA0;=&#xA0;Cj;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;include&#xA0;this&#xA0;sub-minor&#xA0;term&#xA0;in&#xA0;the&#xA0;summation<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;s&#xA0;&gt;&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;detM&#xA0;=&#xA0;detM&#xA0;+&#xA0;M0j&#xA0;*&#xA0;detS;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;detM&#xA0;=&#xA0;detM&#xA0;-&#xA0;M0j&#xA0;*&#xA0;detS;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;advance&#xA0;to&#xA0;next&#xA0;column&#xA0;of&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Cj1&#xA0;=&#xA0;Cj;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Cj&#xA0;&#xA0;=&#xA0;c[Cj];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;s&#xA0;&#xA0;&#xA0;=&#xA0;-&#xA0;s;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;restore&#xA0;row&#xA0;zero&#xA0;to&#xA0;the&#xA0;minor&#xA0;representation&#xA0;for&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r[m]&#xA0;=&#xA0;R0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;return&#xA0;the&#xA0;determinant&#xA0;of&#xA0;the&#xA0;minor&#xA0;M<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;detM;<br/>
+}<br/>
+}&#xA0;//&#xA0;END&#xA0;CppAD&#xA0;namespace<br/>
+</span># endif
+</font></code>
+
+
+<hr/>Input File: omh/det_of_minor_hpp.omh
+
+</body>
+</html>

@@ -1,0 +1,420 @@
+<html><head>
+<title>Speed Testing Main Program</title>
+<meta name="description" id="description" content="Speed Testing Main Program">
+<meta name="keywords" id="keywords" content=" cppad speed test det_lu correct det_minor poly uniform_01 ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_speed_main_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_main</option>
+</select>
+</td>
+<td><a href="speed.htm" target="_top">Prev</a>
+</td><td><a href="speed_utility.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>speed_main</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>package</option>
+<option>---..AD Package</option>
+<option>---..double</option>
+<option>---..profile</option>
+<option>option</option>
+<option>---..correct</option>
+<option>---..speed</option>
+<option>det_lu</option>
+<option>---..size</option>
+<option>---..repeat</option>
+<option>---..matrix</option>
+<option>---..gradient</option>
+<option>det_minor</option>
+<option>---..size</option>
+<option>---..repeat</option>
+<option>---..matrix</option>
+<option>---..gradient</option>
+<option>poly</option>
+<option>---..size</option>
+<option>---..repeat</option>
+<option>---..a</option>
+<option>---..z</option>
+<option>---..ddp</option>
+<option>seed</option>
+<option>Correctness Results</option>
+<option>Speed Results</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Speed Testing Main Program</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>speed/</span></font></code><i><span style='white-space: nowrap'>package</span></i><code><font color="blue"><span style='white-space: nowrap'>/</span></font></code><i><span style='white-space: nowrap'>package</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;</span></font></code><i><span style='white-space: nowrap'>option</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;</span></font></code><i><span style='white-space: nowrap'>seed</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+A version of this program runs the correctness tests
+or the speed tests for one AD package identified by <i>package</i>.
+
+<br>
+<br>
+<b><big><a name="package" id="package">package</a></big></b>
+
+
+<br>
+<br>
+<b><a name="package.AD Package" id="package.AD Package">AD Package</a></b>
+<br>
+The value
+<i>package</i> can specify one of the following AD packages:
+<a href="speed_adolc.htm" target="_top"><span style='white-space: nowrap'>adolc</span></a>
+,
+<a href="speed_cppad.htm" target="_top"><span style='white-space: nowrap'>cppad</span></a>
+, 
+<a href="speed_fadbad.htm" target="_top"><span style='white-space: nowrap'>fadbad</span></a>
+, 
+<a href="speed_sacado.htm" target="_top"><span style='white-space: nowrap'>sacado</span></a>
+.
+
+<br>
+<br>
+<b><a name="package.double" id="package.double">double</a></b>
+<br>
+The value
+<i>package</i> can be <code><font color="blue">double</font></code> in which case
+the function values (instead of derivatives) are computed
+using double precision operations.
+This enables one to compare the speed of computing function
+values in <code><font color="blue">double</font></code> to the speed of the derivative computations.
+(It is often useful to divide the speed of the derivative computation by
+the speed of the function evaluation in <code><font color="blue">double</font></code>.) 
+
+<br>
+<br>
+<b><a name="package.profile" id="package.profile">profile</a></b>
+<br>
+In the special case where <i>package</i> is <code><font color="blue">profile</font></code>,
+the CppAD package is compiled and run with profiling to aid in determining
+where it is spending most of its time.
+
+<br>
+<br>
+<b><big><a name="option" id="option">option</a></big></b>
+<br>
+It the argument <i>option</i> specifies which test to run
+and has the following possible values:
+<a href="speed_main.htm#option.correct" target="_top"><span style='white-space: nowrap'>correct</span></a>
+,
+<a href="speed_main.htm#option.speed" target="_top"><span style='white-space: nowrap'>speed</span></a>
+,
+<a href="speed_main.htm#det_minor" target="_top"><span style='white-space: nowrap'>det_minor</span></a>
+,
+<a href="speed_main.htm#det_lu" target="_top"><span style='white-space: nowrap'>det_lu</span></a>
+,
+<a href="speed_main.htm#poly" target="_top"><span style='white-space: nowrap'>poly</span></a>
+.
+
+<br>
+<br>
+<b><a name="option.correct" id="option.correct">correct</a></b>
+<br>
+If <i>option</i> is equal to <code><font color="blue">correct</font></code>,
+all of the correctness tests are run.
+
+<br>
+<br>
+<b><a name="option.speed" id="option.speed">speed</a></b>
+<br>
+If <i>option</i> is equal to <code><font color="blue">speed</font></code>,
+all of the speed tests are run.
+
+<br>
+<br>
+<b><big><a name="det_lu" id="det_lu">det_lu</a></big></b>
+
+
+
+
+<br>
+If <i>option</i> is equal to <code><font color="blue">det_lu</font></code>,
+the correctness and speed test for the
+gradient of the determinant using LU factorization tests are run.
+Each package defines a version of this test with the following prototype:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extern&nbsp;void&nbsp;compute_det_lu(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;matrix&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;gradient&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+</span>
+</font></code>
+<br>
+<b><a name="det_lu.size" id="det_lu.size">size</a></b>
+<br>
+The argument <i>size</i>
+is the number of rows and columns in the matrix.
+
+<br>
+<br>
+<b><a name="det_lu.repeat" id="det_lu.repeat">repeat</a></b>
+<br>
+The argument <i>repeat</i> is the number of different matrices
+that the gradient is computed for.
+
+<br>
+<br>
+<b><a name="det_lu.matrix" id="det_lu.matrix">matrix</a></b>
+<br>
+The argument <i>matrix</i> is a vector with 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>*</span></font></code><i><span style='white-space: nowrap'>size</span></i> elements.
+The input value of its elements does not matter. 
+The output value of its elements is the last matrix that the
+gradient is computed for.
+
+<br>
+<br>
+<b><a name="det_lu.gradient" id="det_lu.gradient">gradient</a></b>
+<br>
+The argument <i>gradient</i> is a vector with 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>*</span></font></code><i><span style='white-space: nowrap'>size</span></i> elements.
+The input value of its elements does not matter. 
+The output value of its elements is the gradient of the
+determinant of <i>matrix</i> with respect to its elements.
+gradient is computed for.
+(If <i>package</i> is <code><font color="blue">double</font></code>, only the first element
+of <i>gradient</i> is used and it is actually the determinant value instead
+of the gradient value.)
+
+
+<br>
+<br>
+<b><big><a name="det_minor" id="det_minor">det_minor</a></big></b>
+
+
+
+
+<br>
+If <i>option</i> is equal to <code><font color="blue">det_minor</font></code>,
+the correctness and speed test for the
+gradient of the determinant using expansion by minors are run.
+Each package defines a version of this test with the following prototype:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extern&nbsp;void&nbsp;compute_det_minor(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;matrix&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;gradient&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+</span>
+</font></code>
+<br>
+<b><a name="det_minor.size" id="det_minor.size">size</a></b>
+<br>
+The argument <i>size</i>
+is the number of rows and columns in the matrix.
+
+<br>
+<br>
+<b><a name="det_minor.repeat" id="det_minor.repeat">repeat</a></b>
+<br>
+The argument <i>repeat</i> is the number of different matrices
+that the gradient is computed for.
+
+<br>
+<br>
+<b><a name="det_minor.matrix" id="det_minor.matrix">matrix</a></b>
+<br>
+The argument <i>matrix</i> is a vector with 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>*</span></font></code><i><span style='white-space: nowrap'>size</span></i> elements.
+The input value of its elements does not matter. 
+The output value of its elements is the last matrix that the
+gradient is computed for.
+
+<br>
+<br>
+<b><a name="det_minor.gradient" id="det_minor.gradient">gradient</a></b>
+<br>
+The argument <i>gradient</i> is a vector with 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>*</span></font></code><i><span style='white-space: nowrap'>size</span></i> elements.
+The input value of its elements does not matter. 
+The output value of its elements is the gradient of the
+determinant of <i>matrix</i> with respect to its elements.
+gradient is computed for.
+(If <i>package</i> is <code><font color="blue">double</font></code>, only the first element
+of <i>gradient</i> is used and it is actually the determinant value
+instead of the gradient value.)
+
+
+<br>
+<br>
+<b><big><a name="poly" id="poly">poly</a></big></b>
+
+
+
+
+<br>
+If <i>option</i> is equal to <code><font color="blue">poly</font></code>,
+the correctness and speed test for the derivative of a polynomial are run.
+Each package defines a version of this test with the following prototype:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extern&nbsp;void&nbsp;compute_poly(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;ddp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+</span>
+</font></code>
+<br>
+<b><a name="poly.size" id="poly.size">size</a></b>
+<br>
+The argument <i>size</i> is the order of the polynomial
+(the number of coefficients in the polynomial).
+
+<br>
+<br>
+<b><a name="poly.repeat" id="poly.repeat">repeat</a></b>
+<br>
+The argument <i>repeat</i> is the number of different argument
+values that the polynomial will be differentiated at.
+
+<br>
+<br>
+<b><a name="poly.a" id="poly.a">a</a></b>
+<br>
+The argument <i>a</i> is a vector with 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>*</span></font></code><i><span style='white-space: nowrap'>size</span></i> elements.
+The input value of its elements does not matter. 
+The output value of its is the coefficients of the 
+last polynomial that is differentiated
+(<i>i</i>-th element is coefficient of order <code>
+<span style='white-space: nowrap'>&nbsp;i</span></code>
+).
+
+<br>
+<br>
+<b><a name="poly.z" id="poly.z">z</a></b>
+<br>
+The argument <i>z</i> is a vector with one element.
+The input value of the element does not matter.
+The output its value is the polynomial argument value
+were the derivative was computed.
+
+<br>
+<br>
+<b><a name="poly.ddp" id="poly.ddp">ddp</a></b>
+<br>
+The argument <i>ddp</i> is a vector with one element.
+The input value of the element does not matter.
+The output its value is the second derivative of the polynomial value
+with respect to it's argument value.
+(If <i>package</i> is <code><font color="blue">double</font></code>, only the first element
+of <i>ddp</i> is used and it is actually the polynomial value instead
+of the gradient value.)
+
+<br>
+<br>
+<b><big><a name="seed" id="seed">seed</a></big></b>
+
+<br>
+The random number simulator <a href="uniform_01.htm" target="_top"><span style='white-space: nowrap'>uniform_01</span></a>
+ is initialized with
+the call
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uniform_01(</span></font></code><i><span style='white-space: nowrap'>seed</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>before any of the testing routines (listed above) are called.
+
+<br>
+<br>
+<b><big><a name="Correctness Results" id="Correctness Results">Correctness Results</a></big></b>
+<br>
+An output line is generated for each correctness test
+stating of the test passed or failed.
+
+<br>
+<br>
+<b><big><a name="Speed Results" id="Speed Results">Speed Results</a></big></b>
+<br>
+For each speed test, corresponds to three lines of output.
+The name of the package and test are printed on the first line,
+the vector of problem sizes are printed on the next line,
+and the rates corresponding to the different problem sizes are
+printed on the third line.
+The rate is the number of times per second that the calculation was repeated.
+
+
+<hr>Input File: speed/main.cpp
+
+</body>
+</html>

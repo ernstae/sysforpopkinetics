@@ -1,0 +1,197 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>One Dimensional Romberg Integration: Example and Test</title>
+<meta name="description" id="description" content="One Dimensional Romberg Integration: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Romberg example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_rombergmul.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>RombergMul</option>
+<option>RombergMul.cpp</option>
+</select>
+</td>
+<td><a href="rombergmul.xml" target="_top">Prev</a>
+</td><td><a href="runge45.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>RombergMul-&gt;</option>
+<option>RombergMul.cpp</option>
+</select>
+</td>
+<td>RombergMul.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>One Dimensional Romberg Integration: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/romberg_mul.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cppad/vector.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cppad/near_equal.hpp&gt;<br/>
+<br/>
+<br/>
+namespace&#xA0;{<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;class&#xA0;TestFun&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;CppAD::vector&lt;size_t&gt;&#xA0;deg;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;TestFun(const&#xA0;CppAD::vector&lt;size_t&gt;&#xA0;deg_)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;:&#xA0;deg(deg_)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;F(x)&#xA0;=&#xA0;x[0]^deg[0]&#xA0;*&#xA0;x[1]^deg[1]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;operator&#xA0;()&#xA0;(const&#xA0;CppAD::vector&lt;double&gt;&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;f&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;deg[0];&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f&#xA0;*=&#xA0;x[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;deg[1];&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f&#xA0;*=&#xA0;x[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;f;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;};<br/>
+<br/>
+}<br/>
+<br/>
+bool&#xA0;RombergMul(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;k;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;size_t&gt;&#xA0;deg(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;deg[0]&#xA0;=&#xA0;5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;deg[1]&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;TestFun&#xA0;F(deg);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::RombergMul&lt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;TestFun&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;size_t&gt;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;2&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&gt;&#xA0;RombergMulTest;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;arugments&#xA0;to&#xA0;RombergMul<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;a(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;b(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;size_t&gt;&#xA0;n(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;size_t&gt;&#xA0;p(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;2;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;a[i]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;b[i]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n[0]&#xA0;=&#xA0;4;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n[1]&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;r,&#xA0;e;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;int_a1^b1&#xA0;dx1&#xA0;int_a0^b0&#xA0;F(x0,x1)&#xA0;dx0<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;&#xA0;&#xA0;=&#xA0;[&#xA0;b0^(deg[0]+1)&#xA0;-&#xA0;a0^(deg[0]+1)&#xA0;]&#xA0;/&#xA0;(deg[0]+1)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;&#xA0;&#xA0;*&#xA0;[&#xA0;b1^(deg[1]+1)&#xA0;-&#xA0;a1^(deg[1]+1)&#xA0;]&#xA0;/&#xA0;(deg[1]+1)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;bpow&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;apow&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;=&#xA0;deg[0];&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bpow&#xA0;*=&#xA0;b[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;apow&#xA0;*=&#xA0;a[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;check&#xA0;=&#xA0;(bpow&#xA0;-&#xA0;apow)&#xA0;/&#xA0;(deg[0]+1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bpow&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;apow&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;=&#xA0;deg[1];&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bpow&#xA0;*=&#xA0;b[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;apow&#xA0;*=&#xA0;a[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;check&#xA0;*=&#xA0;(bpow&#xA0;-&#xA0;apow)&#xA0;/&#xA0;(deg[1]+1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;step&#xA0;=&#xA0;(b[1]&#xA0;-&#xA0;a[1])&#xA0;/&#xA0;exp(log(2.)*(n[1]-1));<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;spow&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(k&#xA0;=&#xA0;0;&#xA0;k&#xA0;&lt;=&#xA0;n[1];&#xA0;k++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;spow&#xA0;=&#xA0;spow&#xA0;*&#xA0;step&#xA0;*&#xA0;step;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;bnd&#xA0;=&#xA0;3&#xA0;*&#xA0;(deg[1]&#xA0;+&#xA0;1)&#xA0;*&#xA0;spow;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;2;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;p[i]&#xA0;=&#xA0;k;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;RombergMulTest(F,&#xA0;a,&#xA0;b,&#xA0;n,&#xA0;p,&#xA0;e);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;e&#xA0;&lt;&#xA0;bnd;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;CppAD::NearEqual(check,&#xA0;r,&#xA0;0.,&#xA0;e);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/romberg_mul.cpp
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Not Complex Differentiable: Example and Test</title>
+<meta name="description" id="description" content="Not Complex Differentiable: Example and Test"/>
+<meta name="keywords" id="keywords" content=" complex polynomial imag() real() example not differentiable test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_not_complex_ad.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>base_require</option>
+<option>base_complex.hpp</option>
+<option>not_complex_ad.cpp</option>
+</select>
+</td>
+<td><a href="complexpoly.cpp.xml" target="_top">Prev</a>
+</td><td><a href="base_adolc.hpp.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>base_require-&gt;</option>
+<option>base_complex.hpp</option>
+<option>base_adolc.hpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>base_complex.hpp-&gt;</option>
+<option>ComplexPoly.cpp</option>
+<option>not_complex_ad.cpp</option>
+</select>
+</td>
+<td>not_complex_ad.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Not Complex Differentiable</option>
+<option>See Also</option>
+<option>Poly</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Not Complex Differentiable: Example and Test</big></big></b></center>
+<br/>
+<b><big><a name="Not Complex Differentiable" id="Not Complex Differentiable">Not Complex Differentiable</a></big></b>
+<br/>
+If <i>x</i> is complex, the functions 
+<code><font color="blue"><span style='white-space: nowrap'>real(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>,
+<code><font color="blue"><span style='white-space: nowrap'>imag(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>,
+<code><font color="blue"><span style='white-space: nowrap'>conj(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>, and
+<code><font color="blue"><span style='white-space: nowrap'>abs(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+are examples of functions that are not complex differentiable.
+
+<br/>
+<br/>
+<b><big><a name="See Also" id="See Also">See Also</a></big></b>
+
+<br/>
+<a href="complexpoly.cpp.xml" target="_top"><span style='white-space: nowrap'>ComplexPoly.cpp</span></a>
+
+
+<br/>
+<br/>
+<b><big><a name="Poly" id="Poly">Poly</a></big></b>
+<br/>
+Select this link to view specifications for <a href="poly.xml" target="_top"><span style='white-space: nowrap'>Poly</span></a>
+:
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;complex&gt;<br/>
+<br/>
+bool&#xA0;not_complex_ad(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;deg&#xA0;=&#xA0;4;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::Poly;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;std::complex&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Complex;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;std::complex&lt;&#xA0;CppAD::AD&lt;double&gt;&#xA0;&gt;&#xA0;ComplexAD;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;polynomial&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;Complex&#xA0;&gt;&#xA0;&#xA0;&#xA0;a&#xA0;&#xA0;&#xA0;(deg&#xA0;+&#xA0;1);&#xA0;//&#xA0;coefficients&#xA0;for&#xA0;p(z)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;ComplexAD&#xA0;&gt;&#xA0;A&#xA0;&#xA0;&#xA0;(deg&#xA0;+&#xA0;1);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;=&#xA0;deg;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;a[i]&#xA0;=&#xA0;Complex(i,&#xA0;i);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;A[i]&#xA0;=&#xA0;ComplexAD(&#xA0;AD&lt;double&gt;(i)&#xA0;,&#xA0;AD&lt;double&gt;(i)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;taping<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Z_real(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;z_real&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Z_real[0]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;z_real;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(Z_real);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;complex&#xA0;calculations<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;z_imag&#xA0;=&#xA0;2.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ComplexAD&#xA0;Z&#xA0;=&#xA0;ComplexAD(&#xA0;Z_real[0],&#xA0;AD&lt;double&gt;(z_imag)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ComplexAD&#xA0;P&#xA0;=&#xA0;Poly(0,&#xA0;A,&#xA0;Z);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;P_real(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;P_real[0]&#xA0;=&#xA0;P.real();&#xA0;&#xA0;&#xA0;//&#xA0;real()&#xA0;is&#xA0;not&#xA0;complex&#xA0;differentiable<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;f:&#xA0;Z_real&#xA0;-&gt;&#xA0;P_real&#xA0;&#xA0;and&#xA0;stop&#xA0;taping<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(Z_real,&#xA0;P_real);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;first&#xA0;derivative&#xA0;w.r.t&#xA0;z<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;v(&#xA0;f.Domain()&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;w(&#xA0;f.Range()&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[0]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;w&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(1,&#xA0;v);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Complex&#xA0;z&#xA0;=&#xA0;Complex(z_real,&#xA0;z_imag);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Complex&#xA0;p&#xA0;=&#xA0;Poly(1,&#xA0;a,&#xA0;z);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(&#xA0;w[0]&#xA0;&#xA0;==&#xA0;p.real()&#xA0;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;derivative&#xA0;w.r.t&#xA0;z&#xA0;is&#xA0;2&#xA0;times&#xA0;its&#xA0;second&#xA0;order&#xA0;Taylor&#xA0;coeff<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v[0]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;w&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(2,&#xA0;v);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;p&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;Poly(2,&#xA0;a,&#xA0;z);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(&#xA0;2.&#xA0;*&#xA0;w[0]&#xA0;&#xA0;==&#xA0;p.real()&#xA0;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/not_complex_ad.cpp
+
+</body>
+</html>

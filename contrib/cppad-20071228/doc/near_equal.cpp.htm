@@ -1,0 +1,156 @@
+<html><head>
+<title>NearEqual Function: Example and Test</title>
+<meta name="description" id="description" content="NearEqual Function: Example and Test">
+<meta name="keywords" id="keywords" content=" Nearequal example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_near_equal.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>NearEqual</option>
+<option>Near_Equal.cpp</option>
+</select>
+</td>
+<td><a href="nearequal.htm" target="_top">Prev</a>
+</td><td><a href="speed_test.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>NearEqual-&gt;</option>
+<option>Near_Equal.cpp</option>
+</select>
+</td>
+<td>Near_Equal.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>File Name</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>NearEqual Function: Example and Test</big></big></b></center>
+<br>
+<b><big><a name="File Name" id="File Name">File Name</a></big></b>
+<br>
+This file is called <code><font color="blue">near_equal.cpp</font></code> instead of 
+<code><font color="blue">NearEqual.cpp</font></code>
+to avoid a name conflict with <code><font color="blue">../lib/NearEqual.cpp</font></code>
+in the corresponding Microsoft project file.
+
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/near_equal.hpp&gt;<br>
+<br>
+#&nbsp;include&nbsp;&lt;complex&gt;<br>
+<br>
+bool&nbsp;Near_Equal(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::complex&lt;double&gt;&nbsp;Complex;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;double&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.00000;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.00001;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;.00003;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;r&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;.00003;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;zero&nbsp;=&nbsp;0.;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;inf&nbsp;&nbsp;=&nbsp;1.&nbsp;/&nbsp;zero;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;nan&nbsp;&nbsp;=&nbsp;0.&nbsp;/&nbsp;zero;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(x,&nbsp;y,&nbsp;zero,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(x,&nbsp;y,&nbsp;r,&nbsp;zero);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(x,&nbsp;y,&nbsp;r,&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(x,&nbsp;y,&nbsp;r&nbsp;/&nbsp;10.,&nbsp;a&nbsp;/&nbsp;10.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(inf,&nbsp;inf,&nbsp;r,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(-inf,&nbsp;-inf,&nbsp;r,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(nan,&nbsp;nan,&nbsp;r,&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;complex&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Complex&nbsp;X(x,&nbsp;x&nbsp;/&nbsp;2.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Complex&nbsp;Y(y,&nbsp;y&nbsp;/&nbsp;2.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Complex&nbsp;Inf(inf,&nbsp;zero);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Complex&nbsp;Nan(zero,&nbsp;nan);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(X,&nbsp;Y,&nbsp;zero,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(X,&nbsp;Y,&nbsp;r,&nbsp;zero);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(X,&nbsp;Y,&nbsp;r,&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(X,&nbsp;Y,&nbsp;r&nbsp;/&nbsp;10.,&nbsp;a&nbsp;/&nbsp;10.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(Inf,&nbsp;Inf,&nbsp;r,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(-Inf,&nbsp;-inf,&nbsp;r,&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;!&nbsp;NearEqual(Nan,&nbsp;Nan,&nbsp;r,&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/near_equal.cpp
+
+</body>
+</html>

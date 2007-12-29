@@ -1,0 +1,187 @@
+<html><head>
+<title>Forward Mode: Example and Test</title>
+<meta name="description" id="description" content="Forward Mode: Example and Test">
+<meta name="keywords" id="keywords" content=" Forward example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_forward.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>FunEval</option>
+<option>Forward</option>
+<option>Forward.cpp</option>
+</select>
+</td>
+<td><a href="capacity_taylor.htm" target="_top">Prev</a>
+</td><td><a href="reverse.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>FunEval-&gt;</option>
+<option>Forward</option>
+<option>Reverse</option>
+<option>Sparse</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Forward-&gt;</option>
+<option>ForwardZero</option>
+<option>ForwardOne</option>
+<option>ForwardAny</option>
+<option>size_taylor</option>
+<option>CompareChange</option>
+<option>capacity_taylor</option>
+<option>Forward.cpp</option>
+</select>
+</td>
+<td>Forward.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Forward Mode: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+namespace&nbsp;{&nbsp;//&nbsp;--------------------------------------------------------<br>
+//&nbsp;define&nbsp;the&nbsp;template&nbsp;function&nbsp;ForwardCases&lt;Vector&gt;&nbsp;in&nbsp;empty&nbsp;namespace<br>
+template&nbsp;&lt;class&nbsp;Vector&gt;&nbsp;<br>
+bool&nbsp;ForwardCases(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;0.;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[1]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;starting&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;X[0]&nbsp;*&nbsp;X[0]&nbsp;*&nbsp;X[1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;The&nbsp;highest&nbsp;order&nbsp;Forward&nbsp;mode&nbsp;calculation&nbsp;below&nbsp;is&nbsp;is&nbsp;second&nbsp;order.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;This&nbsp;corresponds&nbsp;to&nbsp;three&nbsp;Taylor&nbsp;coefficients&nbsp;per&nbsp;variable&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;(zero,&nbsp;first,&nbsp;and&nbsp;second&nbsp;order).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.capacity_taylor(3);&nbsp;&nbsp;//&nbsp;pre-allocate&nbsp;memory&nbsp;for&nbsp;speed&nbsp;of&nbsp;execution<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initially,&nbsp;the&nbsp;variable&nbsp;values&nbsp;during&nbsp;taping&nbsp;are&nbsp;stored&nbsp;in&nbsp;f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.size_taylor()&nbsp;==&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;zero&nbsp;order&nbsp;forward&nbsp;mode&nbsp;using&nbsp;notaiton&nbsp;in&nbsp;ForwardZero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;the&nbsp;template&nbsp;parameter&nbsp;Vector&nbsp;for&nbsp;the&nbsp;vector&nbsp;type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;x(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;3.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;=&nbsp;4.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(0,&nbsp;x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;NearEqual(y[0]&nbsp;,&nbsp;x[0]*x[0]*x[1],&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;f.size_taylor()&nbsp;==&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;first&nbsp;order&nbsp;forward&nbsp;mode&nbsp;using&nbsp;notation&nbsp;in&nbsp;ForwardOne<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;X(t)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;x&nbsp;+&nbsp;dx&nbsp;*&nbsp;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Y(t)&nbsp;=&nbsp;F[X(t)]&nbsp;=&nbsp;y&nbsp;+&nbsp;dy&nbsp;*&nbsp;t&nbsp;+&nbsp;o(t)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;dx(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;dy(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[1]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;dx);&nbsp;//&nbsp;partial&nbsp;F&nbsp;w.r.t.&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[0]&nbsp;,&nbsp;2.*x[0]*x[1],&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;f.size_taylor()&nbsp;==&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;order&nbsp;forward&nbsp;mode&nbsp;using&nbsp;notaiton&nbsp;in&nbsp;ForwardAny<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;X(t)&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;+&nbsp;dx&nbsp;*&nbsp;t&nbsp;+&nbsp;x_2&nbsp;*&nbsp;t^2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Y(t)&nbsp;=&nbsp;F[X(t)]&nbsp;=&nbsp;y&nbsp;+&nbsp;dy&nbsp;*&nbsp;t&nbsp;+&nbsp;y_2&nbsp;*&nbsp;t^2&nbsp;+&nbsp;o(t^3)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;x_2(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;y_2(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_2[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_2[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(2,&nbsp;x_2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;F_00&nbsp;=&nbsp;2.&nbsp;*&nbsp;y_2[0];&nbsp;//&nbsp;second&nbsp;partial&nbsp;F&nbsp;w.r.t.&nbsp;x[0],&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(F_00,&nbsp;2.*x[1],&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;f.size_taylor()&nbsp;==&nbsp;3;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;suppose&nbsp;we&nbsp;no&nbsp;longer&nbsp;need&nbsp;second&nbsp;order&nbsp;Taylor&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.capacity_taylor(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.size_taylor()&nbsp;==&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;actually&nbsp;we&nbsp;no&nbsp;longer&nbsp;need&nbsp;any&nbsp;Taylor&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.capacity_taylor(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;f.size_taylor()&nbsp;==&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+}&nbsp;//&nbsp;End&nbsp;empty&nbsp;namespace&nbsp;<br>
+#&nbsp;include&nbsp;&lt;vector&gt;<br>
+#&nbsp;include&nbsp;&lt;valarray&gt;<br>
+bool&nbsp;Forward(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Run&nbsp;with&nbsp;Vector&nbsp;equal&nbsp;to&nbsp;three&nbsp;different&nbsp;cases<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;all&nbsp;of&nbsp;which&nbsp;are&nbsp;Simple&nbsp;Vectors&nbsp;with&nbsp;elements&nbsp;of&nbsp;type&nbsp;double.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;ForwardCases&lt;&nbsp;CppAD::vector&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;ForwardCases&lt;&nbsp;std::vector&nbsp;&nbsp;&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;ForwardCases&lt;&nbsp;std::valarray&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span></font></code>
+<hr>Input File: example/forward.cpp
+
+</body>
+</html>

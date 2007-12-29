@@ -1,0 +1,326 @@
+<html><head>
+<title>Sum of 1/i Main Program</title>
+<meta name="description" id="description" content="Sum of 1/i Main Program">
+<meta name="keywords" id="keywords" content=" Openmp example program ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_sum_i_inv.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>omp_max_thread</option>
+<option>openmp_run.sh</option>
+<option>sum_i_inv.cpp</option>
+</select>
+</td>
+<td><a href="multi_newton.hpp.htm" target="_top">Prev</a>
+</td><td><a href="fundeprecated.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>omp_max_thread-&gt;</option>
+<option>openmp_run.sh</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>openmp_run.sh-&gt;</option>
+<option>example_a11c.cpp</option>
+<option>multi_newton.cpp</option>
+<option>sum_i_inv.cpp</option>
+</select>
+</td>
+<td>sum_i_inv.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>n_thread</option>
+<option>repeat</option>
+<option>mega_sum</option>
+<option>Example Source</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Sum of 1/i Main Program</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>sum_i_inv&nbsp;</span></font></code><i><span style='white-space: nowrap'>n_thread</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;</span></font></code><i><span style='white-space: nowrap'>repeat</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;</span></font></code><i><span style='white-space: nowrap'>mega_sum</span></i>
+
+<br>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+Runs a timing test of computing
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;+&nbsp;1/2&nbsp;+&nbsp;1/3&nbsp;+&nbsp;...&nbsp;+&nbsp;1/</span></font></code><i><span style='white-space: nowrap'>n_sum</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>where <code><font color="blue"></font></code><i><span style='white-space: nowrap'>n_sum</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;1,000,000&nbsp;*&nbsp;</span></font></code><i><span style='white-space: nowrap'>mega_sum</span></i>
+
+<br>
+<br>
+<b><big><a name="n_thread" id="n_thread">n_thread</a></big></b>
+<br>
+If the argument <i>n_thread</i> is equal to <code><font color="blue">automatic</font></code>, 
+dynamic thread adjustment is used.
+Otherwise, <i>n_thread</i> must be a positive number
+specifying the number of OpenMP threads to use.
+
+<br>
+<br>
+<b><big><a name="repeat" id="repeat">repeat</a></big></b>
+<br>
+If the argument <i>repeat</i> is equal to <code><font color="blue">automatic</font></code>,
+the number of times to repeat the calculation of the number of zeros
+in total interval is automatically determined.
+In this case, the rate of execution of the total solution is reported.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If the argument <i>repeat</i> is not equal to <i>automatic</i>,
+it must be a positive integer.
+In this case <i>repeat</i> determination of the number of times 
+the calculation of the summation above.
+The rate of execution is not reported (it is assumed that the
+program execution time is being calculated some other way).
+
+<br>
+<br>
+<b><big><a name="mega_sum" id="mega_sum">mega_sum</a></big></b>
+<br>
+Is the value of <i>mega_sum</i> in the summation
+(it must be greater than or equal to the number of threads).
+
+<br>
+<br>
+<b><big><a name="Example Source" id="Example Source">Example Source</a></big></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;ifdef&nbsp;_OPENMP<br>
+#&nbsp;include&nbsp;&lt;omp.h&gt;<br>
+#&nbsp;endif<br>
+<br>
+#&nbsp;include&nbsp;&lt;cassert&gt;<br>
+#&nbsp;ifdef&nbsp;_OPENMP<br>
+#&nbsp;include&nbsp;&lt;omp.h&gt;<br>
+#&nbsp;endif<br>
+<br>
+#&nbsp;include&nbsp;&lt;cstring&gt;<br>
+<br>
+namespace&nbsp;{&nbsp;//&nbsp;empty&nbsp;namespace<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n_thread;<br>
+}<br>
+<br>
+double&nbsp;sum_using_one_thread(int&nbsp;start,&nbsp;int&nbsp;stop)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;1./start&nbsp;+&nbsp;1./(start+1)&nbsp;+&nbsp;...&nbsp;+&nbsp;1./(stop-1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i&nbsp;=&nbsp;stop;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(&nbsp;i&nbsp;&gt;&nbsp;start&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;i--;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;+=&nbsp;1.&nbsp;/&nbsp;double(i);&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;sum;<br>
+}<br>
+double&nbsp;sum_using_multiple_threads(int&nbsp;n_sum)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;1.&nbsp;+&nbsp;1./2&nbsp;+&nbsp;...&nbsp;+&nbsp;1./n_sum<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;n_sum&nbsp;&gt;=&nbsp;n_thread&nbsp;);&nbsp;&nbsp;&nbsp;//&nbsp;assume&nbsp;n_sum&nbsp;/&nbsp;n_thread&nbsp;&gt;&nbsp;1<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;limit&nbsp;holds&nbsp;start&nbsp;and&nbsp;stop&nbsp;values&nbsp;for&nbsp;each&nbsp;thread<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;limit[n_thread&nbsp;+&nbsp;1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;1;&nbsp;i&nbsp;&lt;&nbsp;n_thread;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit[i]&nbsp;=&nbsp;(n_sum&nbsp;*&nbsp;i&nbsp;)&nbsp;/&nbsp;n_thread;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limit[n_thread]&nbsp;&nbsp;=&nbsp;n_sum&nbsp;+&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;sum_one[i]&nbsp;=&nbsp;1/limit[i]&nbsp;+&nbsp;...&nbsp;+&nbsp;1/(limit[i+1}&nbsp;-&nbsp;1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum_one[n_thread];<br>
+//--------------------------------------------------------------------------<br>
+#&nbsp;ifdef&nbsp;_OPENMP<br>
+#&nbsp;pragma&nbsp;omp&nbsp;parallel&nbsp;for&nbsp;<br>
+#&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n_thread;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum_one[i]&nbsp;=&nbsp;sum_using_one_thread(limit[i],&nbsp;limit[i+1]);<br>
+//&nbsp;-------------------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;sum_all&nbsp;=&nbsp;sum_one[0]&nbsp;+&nbsp;...&nbsp;+&nbsp;sum_one[n_thread-1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum_all&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n_thread;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum_all&nbsp;+=&nbsp;sum_one[i];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;sum_all;<br>
+}<br>
+<br>
+void&nbsp;test_once(double&nbsp;&amp;sum,&nbsp;size_t&nbsp;mega_sum)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;mega_sum&nbsp;&gt;=&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n_sum&nbsp;=&nbsp;int(mega_sum&nbsp;*&nbsp;1000000);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;=&nbsp;sum_using_multiple_threads(n_sum);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+}<br>
+<br>
+void&nbsp;test_repeat(size_t&nbsp;size,&nbsp;size_t&nbsp;repeat)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;repeat;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_once(sum,&nbsp;size);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+}<br>
+<br>
+int&nbsp;main(int&nbsp;argc,&nbsp;char&nbsp;*argv[])<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::cout;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::vector;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char&nbsp;*usage&nbsp;=&nbsp;&quot;sum_i_inv&nbsp;n_thread&nbsp;repeat&nbsp;mega_sum&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;argc&nbsp;!=&nbsp;4&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;std::cerr&nbsp;&lt;&lt;&nbsp;usage&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argv++;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;n_thread&nbsp;command&nbsp;line&nbsp;argument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;std::strcmp(*argv,&nbsp;&quot;automatic&quot;)&nbsp;==&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_thread&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;n_thread&nbsp;=&nbsp;std::atoi(*argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argv++;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;repeat&nbsp;command&nbsp;line&nbsp;argument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;repeat;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;std::strcmp(*argv,&nbsp;&quot;automatic&quot;)&nbsp;==&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;std::atoi(*argv)&nbsp;&gt;&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;=&nbsp;std::atoi(*argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argv++;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;mega_sum&nbsp;command&nbsp;line&nbsp;argument&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;mega_sum;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;std::atoi(*argv)&nbsp;&gt;&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mega_sum&nbsp;=&nbsp;size_t(&nbsp;std::atoi(*argv++)&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;minimum&nbsp;time&nbsp;for&nbsp;test&nbsp;(repeat&nbsp;until&nbsp;this&nbsp;much&nbsp;time)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;time_min&nbsp;=&nbsp;1.;<br>
+<br>
+#&nbsp;ifdef&nbsp;_OPENMP<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;n_thread&nbsp;&gt;&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;omp_set_dynamic(0);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;off&nbsp;dynamic&nbsp;thread&nbsp;adjust<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;omp_set_num_threads(n_thread);&nbsp;//&nbsp;set&nbsp;the&nbsp;number&nbsp;of&nbsp;threads&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;now&nbsp;determine&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;threads<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_thread&nbsp;=&nbsp;omp_get_max_threads();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;n_thread&nbsp;&gt;&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;No&nbsp;tapes&nbsp;are&nbsp;currently&nbsp;active,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;so&nbsp;we&nbsp;can&nbsp;inform&nbsp;CppAD&nbsp;of&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;threads<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::AD&lt;double&gt;::omp_max_thread(size_t(n_thread));<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;inform&nbsp;the&nbsp;user&nbsp;of&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;threads<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;OpenMP:&nbsp;version&nbsp;=&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;&nbsp;_OPENMP;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;,&nbsp;max&nbsp;number&nbsp;of&nbsp;threads&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;n_thread&nbsp;&lt;&lt;&nbsp;endl;<br>
+#&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;_OPENMP&nbsp;is&nbsp;not&nbsp;defined,&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;running&nbsp;in&nbsp;single&nbsp;tread&nbsp;mode&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_thread&nbsp;=&nbsp;1;<br>
+#&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;flag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Correctness&nbsp;check<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_once(sum,&nbsp;mega_sum);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;epsilon&nbsp;=&nbsp;1e-6;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n_sum&nbsp;=&nbsp;mega_sum&nbsp;*&nbsp;1000000;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(i&nbsp;&lt;&nbsp;n_sum)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;-=&nbsp;1.&nbsp;/&nbsp;double(++i);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(sum)&nbsp;&lt;=&nbsp;epsilon;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;repeat&nbsp;&gt;&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;run&nbsp;the&nbsp;calculation&nbsp;the&nbsp;requested&nbsp;number&nbsp;of&nbsp;time<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_repeat(mega_sum,&nbsp;repeat);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;actually&nbsp;time&nbsp;the&nbsp;calculation&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size&nbsp;of&nbsp;the&nbsp;one&nbsp;test&nbsp;case<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;size_t&gt;&nbsp;size_vec(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_vec[0]&nbsp;=&nbsp;mega_sum;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;run&nbsp;the&nbsp;test&nbsp;case<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;size_t&gt;&nbsp;rate_vec&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::speed_test(test_repeat,&nbsp;size_vec,&nbsp;time_min);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;report&nbsp;results<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;mega_sum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;size_vec[0]&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;repeats&nbsp;per&nbsp;sec&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;rate_vec[0]&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;all&nbsp;the&nbsp;threads&nbsp;for&nbsp;a&nbsp;CppAD&nbsp;memory&nbsp;leak<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;CppADTrackCount()&nbsp;!=&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Error:&nbsp;memory&nbsp;leak&nbsp;detected&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Correctness&nbsp;Test&nbsp;Passed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Correctness&nbsp;Test&nbsp;Failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;static_cast&lt;int&gt;(&nbsp;!&nbsp;ok&nbsp;);<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: openmp/sum_i_inv.cpp
+
+</body>
+</html>

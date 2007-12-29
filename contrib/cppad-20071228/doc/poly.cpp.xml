@@ -1,0 +1,131 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Polynomial Evaluation: Example and Test</title>
+<meta name="description" id="description" content="Polynomial Evaluation: Example and Test"/>
+<meta name="keywords" id="keywords" content=" polynomial example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_poly.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>Poly</option>
+<option>Poly.cpp</option>
+</select>
+</td>
+<td><a href="poly.xml" target="_top">Prev</a>
+</td><td><a href="poly.hpp.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Poly-&gt;</option>
+<option>Poly.cpp</option>
+<option>poly.hpp</option>
+</select>
+</td>
+<td>Poly.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+<center><b><big><big>Polynomial Evaluation: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;<br/>
+<br/>
+bool&#xA0;Poly(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;degree&#xA0;of&#xA0;the&#xA0;polynomial<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;deg&#xA0;=&#xA0;3;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;set&#xA0;the&#xA0;polynomial&#xA0;coefficients&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&#xA0;&#xA0;a(deg&#xA0;+&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;=&#xA0;deg;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a[i]&#xA0;=&#xA0;1.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;this&#xA0;polynomial<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;k&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;z&#xA0;=&#xA0;2.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;p&#xA0;=&#xA0;CppAD::Poly(k,&#xA0;a,&#xA0;z);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;(p&#xA0;==&#xA0;1.&#xA0;+&#xA0;z&#xA0;+&#xA0;z*z&#xA0;+&#xA0;z*z*z);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;k&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;p&#xA0;=&#xA0;CppAD::Poly(k,&#xA0;a,&#xA0;z);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(p&#xA0;==&#xA0;1&#xA0;+&#xA0;2.*z&#xA0;+&#xA0;3.*z*z);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/poly.cpp
+
+</body>
+</html>

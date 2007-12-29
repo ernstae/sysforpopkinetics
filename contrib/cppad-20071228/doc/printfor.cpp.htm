@@ -1,0 +1,165 @@
+<html><head>
+<title>Printing During Forward Mode: Example and Test</title>
+<meta name="description" id="description" content="Printing During Forward Mode: Example and Test">
+<meta name="keywords" id="keywords" content=" forward mode print example ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_printfor.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>Convert</option>
+<option>PrintFor</option>
+<option>PrintFor.cpp</option>
+</select>
+</td>
+<td><a href="printfor.htm" target="_top">Prev</a>
+</td><td><a href="var2par.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Convert-&gt;</option>
+<option>Value</option>
+<option>Integer</option>
+<option>Output</option>
+<option>PrintFor</option>
+<option>Var2Par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>PrintFor-&gt;</option>
+<option>PrintFor.cpp</option>
+</select>
+</td>
+<td>PrintFor.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Program</option>
+<option>Output</option>
+</select>
+</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Printing During Forward Mode: Example and Test</big></big></b></center>
+<br>
+<b><big><a name="Program" id="Program">Program</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+int&nbsp;main(void)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;CppAD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::cout;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;independent&nbsp;variable&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;0.;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[1]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print&nbsp;a&nbsp;VecAD&lt;double&gt;::reference&nbsp;object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VecAD&lt;double&gt;&nbsp;V(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;Zero(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V[Zero]&nbsp;=&nbsp;X[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PrintFor(&quot;x[0]&nbsp;=&nbsp;&quot;,&nbsp;V[Zero]);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;dependent&nbsp;variable&nbsp;vector&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;V[Zero]&nbsp;+&nbsp;X[1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;First&nbsp;print&nbsp;a&nbsp;newline&nbsp;to&nbsp;separate&nbsp;this&nbsp;from&nbsp;previous&nbsp;output,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;then&nbsp;print&nbsp;an&nbsp;AD&lt;double&gt;&nbsp;object.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PrintFor(&nbsp;&nbsp;&quot;\nx[0]&nbsp;+&nbsp;x[1]&nbsp;=&nbsp;&quot;,&nbsp;Y[0]);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;define&nbsp;f:&nbsp;x&nbsp;-&gt;&nbsp;y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;zero&nbsp;order&nbsp;forward&nbsp;with&nbsp;x[0]&nbsp;=&nbsp;1&nbsp;and&nbsp;x[1]&nbsp;=&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;x(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;x[0]&nbsp;=&nbsp;1&quot;&nbsp;&lt;&lt;&nbsp;endl;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;x[0]&nbsp;+&nbsp;x[1]&nbsp;=&nbsp;2&quot;&nbsp;&lt;&lt;&nbsp;endl;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Test&nbsp;passes&nbsp;if&nbsp;two&nbsp;lines&nbsp;above&nbsp;repeat&nbsp;below:&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.Forward(0,&nbsp;x);&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print&nbsp;a&nbsp;new&nbsp;line&nbsp;after&nbsp;output<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+}<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Output" id="Output">Output</a></big></b>
+<br>
+Executing the program above generates the following output:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;+&nbsp;x[1]&nbsp;=&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test&nbsp;passes&nbsp;if&nbsp;two&nbsp;lines&nbsp;above&nbsp;repeat&nbsp;below:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;+&nbsp;x[1]&nbsp;=&nbsp;2<br>
+</span>
+</font></code>
+
+<hr>Input File: print_for/print_for.cpp
+
+</body>
+</html>

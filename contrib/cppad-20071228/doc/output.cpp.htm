@@ -1,0 +1,137 @@
+<html><head>
+<title>AD Output Operator: Example and Test</title>
+<meta name="description" id="description" content="AD Output Operator: Example and Test">
+<meta name="keywords" id="keywords" content=" &lt;&lt; Ad example output test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_output.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>Convert</option>
+<option>Output</option>
+<option>Output.cpp</option>
+</select>
+</td>
+<td><a href="output.htm" target="_top">Prev</a>
+</td><td><a href="printfor.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Convert-&gt;</option>
+<option>Value</option>
+<option>Integer</option>
+<option>Output</option>
+<option>PrintFor</option>
+<option>Var2Par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Output-&gt;</option>
+<option>Output.cpp</option>
+</select>
+</td>
+<td>Output.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>AD Output Operator: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+#&nbsp;include&nbsp;&lt;sstream&gt;&nbsp;&nbsp;//&nbsp;std::ostringstream<br>
+#&nbsp;include&nbsp;&lt;string&gt;&nbsp;&nbsp;&nbsp;//&nbsp;std::string<br>
+#&nbsp;include&nbsp;&lt;iomanip&gt;&nbsp;&nbsp;//&nbsp;std::setprecision,&nbsp;setw,&nbsp;setfill,&nbsp;right<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&lt;class&nbsp;S&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;set_ostream(S&nbsp;&amp;os)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;os&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;&nbsp;std::setprecision(4)&nbsp;//&nbsp;4&nbsp;digits&nbsp;of&nbsp;precision<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;&nbsp;std::setw(6)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;6&nbsp;characters&nbsp;per&nbsp;field<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;&nbsp;std::setfill('&nbsp;')&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;fill&nbsp;with&nbsp;spaces<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;&nbsp;std::right;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;adjust&nbsp;value&nbsp;to&nbsp;the&nbsp;right<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+<br>
+bool&nbsp;Output(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;This&nbsp;output&nbsp;stream&nbsp;is&nbsp;an&nbsp;ostringstream&nbsp;for&nbsp;testing&nbsp;purposes.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;You&nbsp;can&nbsp;use&nbsp;&lt;&lt;&nbsp;with&nbsp;other&nbsp;types&nbsp;of&nbsp;streams;&nbsp;i.e.,&nbsp;std::cout.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::ostringstream&nbsp;stream;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;ouput&nbsp;an&nbsp;AD&lt;double&gt;&nbsp;object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::AD&lt;double&gt;&nbsp;&nbsp;pi&nbsp;=&nbsp;4.&nbsp;*&nbsp;atan(1.);&nbsp;//&nbsp;3.1415926536<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set_ostream(stream);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stream&nbsp;&lt;&lt;&nbsp;pi;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;ouput&nbsp;a&nbsp;VecAD&lt;double&gt;::reference&nbsp;object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::VecAD&lt;double&gt;&nbsp;v(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::AD&lt;double&gt;&nbsp;zero(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[zero]&nbsp;&nbsp;&nbsp;=&nbsp;exp(1.);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;2.7182818285<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set_ostream(stream);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stream&nbsp;&lt;&lt;&nbsp;v[zero];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;convert&nbsp;output&nbsp;from&nbsp;stream&nbsp;to&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::string&nbsp;str&nbsp;=&nbsp;stream.str();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;the&nbsp;output<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;(str&nbsp;==&nbsp;&quot;&nbsp;3.142&nbsp;2.718&quot;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span></font></code>
+<hr>Input File: example/output.cpp
+
+</body>
+</html>

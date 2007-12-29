@@ -1,0 +1,154 @@
+<html><head>
+<title>Reverse Mode Jacobian Sparsity: Example and Test</title>
+<meta name="description" id="description" content="Reverse Mode Jacobian Sparsity: Example and Test">
+<meta name="keywords" id="keywords" content=" Revsparsejac example sparsity reverse test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_revsparsejac.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>FunEval</option>
+<option>Sparse</option>
+<option>RevSparseJac</option>
+<option>RevSparseJac.cpp</option>
+</select>
+</td>
+<td><a href="revsparsejac.htm" target="_top">Prev</a>
+</td><td><a href="revsparsehes.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>FunEval-&gt;</option>
+<option>Forward</option>
+<option>Reverse</option>
+<option>Sparse</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Sparse-&gt;</option>
+<option>ForSparseJac</option>
+<option>RevSparseJac</option>
+<option>RevSparseHes</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>RevSparseJac-&gt;</option>
+<option>RevSparseJac.cpp</option>
+</select>
+</td>
+<td>RevSparseJac.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Reverse Mode Jacobian Sparsity: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+namespace&nbsp;{&nbsp;//&nbsp;-------------------------------------------------------------<br>
+//&nbsp;define&nbsp;the&nbsp;template&nbsp;function&nbsp;RevSparseJacCases&lt;Vector&gt;&nbsp;in&nbsp;empty&nbsp;namespace<br>
+template&nbsp;&lt;typename&nbsp;Vector&gt;&nbsp;<br>
+bool&nbsp;RevSparseJacCases(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;0.;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[1]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;X[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[1]&nbsp;=&nbsp;X[0]&nbsp;*&nbsp;X[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[2]&nbsp;=&nbsp;X[1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;sparsity&nbsp;pattern&nbsp;for&nbsp;the&nbsp;identity&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;s(m&nbsp;*&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;m;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s[&nbsp;i&nbsp;*&nbsp;m&nbsp;+&nbsp;j&nbsp;]&nbsp;=&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s[&nbsp;i&nbsp;*&nbsp;m&nbsp;+&nbsp;i&nbsp;]&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;sparsity&nbsp;pattern&nbsp;for&nbsp;F'(x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;r(m&nbsp;*&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r&nbsp;=&nbsp;f.RevSparseJac(m,&nbsp;s);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(r[&nbsp;0&nbsp;*&nbsp;n&nbsp;+&nbsp;0&nbsp;]&nbsp;==&nbsp;true);&nbsp;&nbsp;//&nbsp;Y[0]&nbsp;does&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depend&nbsp;on&nbsp;X[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(r[&nbsp;0&nbsp;*&nbsp;n&nbsp;+&nbsp;1&nbsp;]&nbsp;==&nbsp;false);&nbsp;//&nbsp;Y[0]&nbsp;does&nbsp;not&nbsp;depend&nbsp;on&nbsp;X[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(r[&nbsp;1&nbsp;*&nbsp;n&nbsp;+&nbsp;0&nbsp;]&nbsp;==&nbsp;true);&nbsp;&nbsp;//&nbsp;Y[1]&nbsp;does&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depend&nbsp;on&nbsp;X[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(r[&nbsp;1&nbsp;*&nbsp;n&nbsp;+&nbsp;1&nbsp;]&nbsp;==&nbsp;true);&nbsp;&nbsp;//&nbsp;Y[1]&nbsp;does&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depend&nbsp;on&nbsp;X[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(r[&nbsp;2&nbsp;*&nbsp;n&nbsp;+&nbsp;0&nbsp;]&nbsp;==&nbsp;false);&nbsp;//&nbsp;Y[2]&nbsp;does&nbsp;not&nbsp;depend&nbsp;on&nbsp;X[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(r[&nbsp;2&nbsp;*&nbsp;n&nbsp;+&nbsp;1&nbsp;]&nbsp;==&nbsp;true);&nbsp;&nbsp;//&nbsp;Y[2]&nbsp;does&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depend&nbsp;on&nbsp;X[1]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+}&nbsp;//&nbsp;End&nbsp;empty&nbsp;namespace<br>
+#&nbsp;include&nbsp;&lt;vector&gt;<br>
+#&nbsp;include&nbsp;&lt;valarray&gt;<br>
+bool&nbsp;RevSparseJac(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Run&nbsp;with&nbsp;Vector&nbsp;equal&nbsp;to&nbsp;four&nbsp;different&nbsp;cases<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;all&nbsp;of&nbsp;which&nbsp;are&nbsp;Simple&nbsp;Vectors&nbsp;with&nbsp;elements&nbsp;of&nbsp;type&nbsp;bool.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;RevSparseJacCases&lt;&nbsp;CppAD::vectorBool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;RevSparseJacCases&lt;&nbsp;CppAD::vector&nbsp;&nbsp;&lt;bool&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;RevSparseJacCases&lt;&nbsp;std::vector&nbsp;&nbsp;&nbsp;&nbsp;&lt;bool&gt;&nbsp;&gt;();&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;RevSparseJacCases&lt;&nbsp;std::valarray&nbsp;&nbsp;&lt;bool&gt;&nbsp;&gt;();&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/rev_sparse_jac.cpp
+
+</body>
+</html>

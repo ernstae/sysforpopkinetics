@@ -1,0 +1,151 @@
+<html><head>
+<title>Replacing The CppAD Error Handler: Example and Test</title>
+<meta name="description" id="description" content="Replacing The CppAD Error Handler: Example and Test">
+<meta name="keywords" id="keywords" content=" error handler example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_errorhandler.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>ErrorHandler</option>
+<option>ErrorHandler.cpp</option>
+</select>
+</td>
+<td><a href="errorhandler.htm" target="_top">Prev</a>
+</td><td><a href="cppad_assert.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ErrorHandler-&gt;</option>
+<option>ErrorHandler.cpp</option>
+<option>cppad_assert</option>
+</select>
+</td>
+<td>ErrorHandler.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Replacing The CppAD Error Handler: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/error_handler.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cstring&gt;<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;myhandler(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;known&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*file&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*exp&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*msg&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;error&nbsp;handler&nbsp;must&nbsp;not&nbsp;return,&nbsp;so&nbsp;throw&nbsp;an&nbsp;exception<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw&nbsp;line;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+<br>
+<br>
+bool&nbsp;ErrorHandler(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::ErrorHandler;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;lineMinusFive&nbsp;=&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;replace&nbsp;the&nbsp;default&nbsp;CppAD&nbsp;error&nbsp;handler<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ErrorHandler&nbsp;info(myhandler);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;ok&nbsp;to&nbsp;false&nbsp;unless&nbsp;catch&nbsp;block&nbsp;is&nbsp;executed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;false;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;try&nbsp;/&nbsp;catch&nbsp;because&nbsp;handler&nbsp;throws&nbsp;an&nbsp;exception<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;the&nbsp;static&nbsp;variable&nbsp;Line&nbsp;to&nbsp;next&nbsp;source&nbsp;code&nbsp;line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lineMinusFive&nbsp;=&nbsp;__LINE__;<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;can&nbsp;call&nbsp;myhandler&nbsp;anywhere&nbsp;that&nbsp;ErrorHandler&nbsp;is&nbsp;defined<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ErrorHandler::Call(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;//&nbsp;reason&nbsp;for&nbsp;the&nbsp;error&nbsp;is&nbsp;known<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__LINE__&nbsp;,&nbsp;//&nbsp;current&nbsp;source&nbsp;code&nbsp;line&nbsp;number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__FILE__&nbsp;,&nbsp;//&nbsp;current&nbsp;source&nbsp;code&nbsp;file&nbsp;name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;1&nbsp;&gt;&nbsp;0&quot;&nbsp;&nbsp;,&nbsp;//&nbsp;an&nbsp;intentional&nbsp;error&nbsp;condition<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Testing&nbsp;ErrorHandler&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;reason&nbsp;for&nbsp;error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch&nbsp;(&nbsp;int&nbsp;line&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;value&nbsp;of&nbsp;the&nbsp;line&nbsp;number&nbsp;that&nbsp;was&nbsp;passed&nbsp;to&nbsp;handler<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;(line&nbsp;==&nbsp;lineMinusFive&nbsp;+&nbsp;5);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;info&nbsp;drops&nbsp;out&nbsp;of&nbsp;scope&nbsp;and&nbsp;the&nbsp;default&nbsp;CppAD&nbsp;error&nbsp;handler<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;is&nbsp;restored&nbsp;when&nbsp;this&nbsp;routine&nbsp;returns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/error_handler.cpp
+
+</body>
+</html>

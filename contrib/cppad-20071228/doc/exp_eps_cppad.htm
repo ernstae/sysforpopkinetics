@@ -1,0 +1,223 @@
+<html><head>
+<title>exp_eps: CppAD Forward and Reverse Sweeps</title>
+<meta name="description" id="description" content="exp_eps: CppAD Forward and Reverse Sweeps">
+<meta name="keywords" id="keywords" content=" ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_exp_eps_cppad_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>exp_eps</option>
+<option>exp_eps_cppad</option>
+</select>
+</td>
+<td><a href="exp_eps_rev2.cpp.htm" target="_top">Prev</a>
+</td><td><a href="exp_apx_main.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>exp_eps-&gt;</option>
+<option>exp_eps.hpp</option>
+<option>exp_eps.cpp</option>
+<option>exp_eps_for0</option>
+<option>exp_eps_for1</option>
+<option>exp_eps_rev1</option>
+<option>exp_eps_for2</option>
+<option>exp_eps_rev2</option>
+<option>exp_eps_cppad</option>
+</select>
+</td>
+<td>exp_eps_cppad</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Purpose</option>
+<option>Exercises</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>exp_eps: CppAD Forward and Reverse Sweeps</big></big></b></center>
+.
+
+<br>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+Use CppAD forward and reverse modes to compute the
+partial derivative with respect to <code>
+<span style='white-space: nowrap'>&nbsp;x</span></code>
+,
+at the point <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;.5</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon&nbsp;=&nbsp;.2</span></code>
+,
+of the function 
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exp_eps(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>as defined by the <a href="exp_eps.hpp.htm" target="_top"><span style='white-space: nowrap'>exp_eps.hpp</span></a>
+ include file.
+
+<br>
+<br>
+<b><big><a name="Exercises" id="Exercises">Exercises</a></big></b>
+
+<ol type="1"><li>
+Create and test a modified version of the routine below that computes
+the same order derivatives with respect to <code>
+<span style='white-space: nowrap'>&nbsp;x</span></code>
+,
+at the point <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;.1</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon&nbsp;=&nbsp;.2</span></code>
+,
+of the function 
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exp_eps(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code></li><li>
+Create and test a modified version of the routine below that computes
+partial derivative with respect to <code>
+<span style='white-space: nowrap'>&nbsp;x</span></code>
+,
+at the point <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;.1</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon&nbsp;=&nbsp;.2</span></code>
+,
+of the function corresponding to the operation sequence 
+for <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;.5</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon&nbsp;=&nbsp;.2</span></code>
+.
+Hint: you could define a vector u with two components and use
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>.Forward(0,&nbsp;</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>to run zero order forward mode at a point different
+form the point where the operation sequence corresponding to
+<i>f</i> was recorded.
+</li></ol>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;&nbsp;&nbsp;//&nbsp;http://www.coin-or.org/CppAD/&nbsp;<br>
+#&nbsp;include&nbsp;&quot;exp_eps.hpp&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;our&nbsp;example&nbsp;exponential&nbsp;function&nbsp;approximation<br>
+bool&nbsp;exp_eps_cppad(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::vector;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;can&nbsp;use&nbsp;any&nbsp;simple&nbsp;vector&nbsp;template&nbsp;class<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;&nbsp;//&nbsp;checks&nbsp;if&nbsp;values&nbsp;are&nbsp;nearly&nbsp;equal<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;&nbsp;//&nbsp;dimension&nbsp;of&nbsp;the&nbsp;domain&nbsp;space<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;U(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U[0]&nbsp;=&nbsp;.5;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;of&nbsp;x&nbsp;for&nbsp;this&nbsp;operation&nbsp;sequence<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U[1]&nbsp;=&nbsp;.2;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;of&nbsp;e&nbsp;for&nbsp;this&nbsp;operation&nbsp;sequence<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;recording&nbsp;operation&nbsp;sequence<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(U);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;our&nbsp;exponential&nbsp;approximation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;U[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;epsilon&nbsp;=&nbsp;U[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;apx&nbsp;=&nbsp;exp_eps(x,&nbsp;epsilon);&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;&nbsp;&nbsp;//&nbsp;dimension&nbsp;of&nbsp;the&nbsp;range&nbsp;space<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;apx;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;variable&nbsp;that&nbsp;represents&nbsp;only&nbsp;range&nbsp;space&nbsp;component<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;f:&nbsp;U&nbsp;-&gt;&nbsp;Y&nbsp;corresponding&nbsp;to&nbsp;this&nbsp;operation&nbsp;sequence<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;and&nbsp;stop&nbsp;recording.&nbsp;This&nbsp;also&nbsp;executes&nbsp;a&nbsp;zero&nbsp;order&nbsp;forward&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;mode&nbsp;sweep&nbsp;using&nbsp;values&nbsp;in&nbsp;U&nbsp;for&nbsp;x&nbsp;and&nbsp;e.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(U,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;first&nbsp;order&nbsp;forward&nbsp;mode&nbsp;sweep&nbsp;that&nbsp;computes&nbsp;partial&nbsp;w.r.t&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;du(n);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;differential&nbsp;in&nbsp;domain&nbsp;space<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;dy(m);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;differential&nbsp;in&nbsp;range&nbsp;space<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;du[0]&nbsp;=&nbsp;1.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;x&nbsp;direction&nbsp;in&nbsp;domain&nbsp;space<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;du[1]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;du);&nbsp;&nbsp;//&nbsp;partial&nbsp;w.r.t.&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check&nbsp;=&nbsp;1.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[0],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;first&nbsp;order&nbsp;reverse&nbsp;mode&nbsp;sweep&nbsp;that&nbsp;computes&nbsp;the&nbsp;derivative<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;&nbsp;w(m);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;weights&nbsp;for&nbsp;components&nbsp;of&nbsp;the&nbsp;range<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;dw(n);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;derivative&nbsp;of&nbsp;the&nbsp;weighted&nbsp;function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;1.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;there&nbsp;is&nbsp;only&nbsp;one&nbsp;weight&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(1,&nbsp;w);&nbsp;&nbsp;&nbsp;//&nbsp;derivative&nbsp;of&nbsp;w[0]&nbsp;*&nbsp;exp_eps(x,&nbsp;epsilon)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;1.5;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;partial&nbsp;w.r.t.&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[0],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;0.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;partial&nbsp;w.r.t.&nbsp;epsilon<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[1],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;order&nbsp;forward&nbsp;sweep&nbsp;that&nbsp;computes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;partial&nbsp;of&nbsp;exp_eps(x,&nbsp;epsilon)&nbsp;w.r.t.&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;x2(n);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;order&nbsp;Taylor&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;y2(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x2[0]&nbsp;=&nbsp;0.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;partial&nbsp;w.r.t&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x2[1]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y2&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(2,&nbsp;x2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;0.5&nbsp;*&nbsp;1.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Taylor&nbsp;coef&nbsp;is&nbsp;1/2&nbsp;second&nbsp;derivative<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(y2[0],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;order&nbsp;reverse&nbsp;sweep&nbsp;that&nbsp;computes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;derivative&nbsp;of&nbsp;partial&nbsp;of&nbsp;exp_eps(x,&nbsp;epsilon)&nbsp;w.r.t.&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw.resize(2&nbsp;*&nbsp;n);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;space&nbsp;for&nbsp;first&nbsp;and&nbsp;second&nbsp;derivative<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(2,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;1.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;result&nbsp;should&nbsp;be&nbsp;second&nbsp;derivative<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[0*2+1],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: introduction/exp_apx/exp_eps_cppad.cpp
+
+</body>
+</html>
