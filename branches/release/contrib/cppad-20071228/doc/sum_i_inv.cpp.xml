@@ -1,0 +1,329 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Sum of 1/i Main Program</title>
+<meta name="description" id="description" content="Sum of 1/i Main Program"/>
+<meta name="keywords" id="keywords" content=" Openmp example program "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_sum_i_inv.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>omp_max_thread</option>
+<option>openmp_run.sh</option>
+<option>sum_i_inv.cpp</option>
+</select>
+</td>
+<td><a href="multi_newton.hpp.xml" target="_top">Prev</a>
+</td><td><a href="fundeprecated.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>omp_max_thread-&gt;</option>
+<option>openmp_run.sh</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>openmp_run.sh-&gt;</option>
+<option>example_a11c.cpp</option>
+<option>multi_newton.cpp</option>
+<option>sum_i_inv.cpp</option>
+</select>
+</td>
+<td>sum_i_inv.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>n_thread</option>
+<option>repeat</option>
+<option>mega_sum</option>
+<option>Example Source</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Sum of 1/i Main Program</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br/>
+<code><font color="blue"><span style='white-space: nowrap'>sum_i_inv&#xA0;</span></font></code><i><span style='white-space: nowrap'>n_thread</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;</span></font></code><i><span style='white-space: nowrap'>repeat</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;</span></font></code><i><span style='white-space: nowrap'>mega_sum</span></i>
+
+<br/>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+Runs a timing test of computing
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;1&#xA0;+&#xA0;1/2&#xA0;+&#xA0;1/3&#xA0;+&#xA0;...&#xA0;+&#xA0;1/</span></font></code><i><span style='white-space: nowrap'>n_sum</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>where <code><font color="blue"></font></code><i><span style='white-space: nowrap'>n_sum</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;1,000,000&#xA0;*&#xA0;</span></font></code><i><span style='white-space: nowrap'>mega_sum</span></i>
+
+<br/>
+<br/>
+<b><big><a name="n_thread" id="n_thread">n_thread</a></big></b>
+<br/>
+If the argument <i>n_thread</i> is equal to <code><font color="blue">automatic</font></code>, 
+dynamic thread adjustment is used.
+Otherwise, <i>n_thread</i> must be a positive number
+specifying the number of OpenMP threads to use.
+
+<br/>
+<br/>
+<b><big><a name="repeat" id="repeat">repeat</a></big></b>
+<br/>
+If the argument <i>repeat</i> is equal to <code><font color="blue">automatic</font></code>,
+the number of times to repeat the calculation of the number of zeros
+in total interval is automatically determined.
+In this case, the rate of execution of the total solution is reported.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If the argument <i>repeat</i> is not equal to <i>automatic</i>,
+it must be a positive integer.
+In this case <i>repeat</i> determination of the number of times 
+the calculation of the summation above.
+The rate of execution is not reported (it is assumed that the
+program execution time is being calculated some other way).
+
+<br/>
+<br/>
+<b><big><a name="mega_sum" id="mega_sum">mega_sum</a></big></b>
+<br/>
+Is the value of <i>mega_sum</i> in the summation
+(it must be greater than or equal to the number of threads).
+
+<br/>
+<br/>
+<b><big><a name="Example Source" id="Example Source">Example Source</a></big></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+#&#xA0;ifdef&#xA0;_OPENMP<br/>
+#&#xA0;include&#xA0;&lt;omp.h&gt;<br/>
+#&#xA0;endif<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cassert&gt;<br/>
+#&#xA0;ifdef&#xA0;_OPENMP<br/>
+#&#xA0;include&#xA0;&lt;omp.h&gt;<br/>
+#&#xA0;endif<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cstring&gt;<br/>
+<br/>
+namespace&#xA0;{&#xA0;//&#xA0;empty&#xA0;namespace<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;n_thread;<br/>
+}<br/>
+<br/>
+double&#xA0;sum_using_one_thread(int&#xA0;start,&#xA0;int&#xA0;stop)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;1./start&#xA0;+&#xA0;1./(start+1)&#xA0;+&#xA0;...&#xA0;+&#xA0;1./(stop-1)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;sum&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;i&#xA0;=&#xA0;stop;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(&#xA0;i&#xA0;&gt;&#xA0;start&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;i--;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;1.&#xA0;/&#xA0;double(i);&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;sum;<br/>
+}<br/>
+double&#xA0;sum_using_multiple_threads(int&#xA0;n_sum)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;1.&#xA0;+&#xA0;1./2&#xA0;+&#xA0;...&#xA0;+&#xA0;1./n_sum<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;n_sum&#xA0;&gt;=&#xA0;n_thread&#xA0;);&#xA0;&#xA0;&#xA0;//&#xA0;assume&#xA0;n_sum&#xA0;/&#xA0;n_thread&#xA0;&gt;&#xA0;1<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;limit&#xA0;holds&#xA0;start&#xA0;and&#xA0;stop&#xA0;values&#xA0;for&#xA0;each&#xA0;thread<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;&#xA0;&#xA0;&#xA0;limit[n_thread&#xA0;+&#xA0;1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;1;&#xA0;i&#xA0;&lt;&#xA0;n_thread;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;limit[i]&#xA0;=&#xA0;(n_sum&#xA0;*&#xA0;i&#xA0;)&#xA0;/&#xA0;n_thread;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;limit[0]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;limit[n_thread]&#xA0;&#xA0;=&#xA0;n_sum&#xA0;+&#xA0;1;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;sum_one[i]&#xA0;=&#xA0;1/limit[i]&#xA0;+&#xA0;...&#xA0;+&#xA0;1/(limit[i+1}&#xA0;-&#xA0;1)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;sum_one[n_thread];<br/>
+//--------------------------------------------------------------------------<br/>
+#&#xA0;ifdef&#xA0;_OPENMP<br/>
+#&#xA0;pragma&#xA0;omp&#xA0;parallel&#xA0;for&#xA0;<br/>
+#&#xA0;endif<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n_thread;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum_one[i]&#xA0;=&#xA0;sum_using_one_thread(limit[i],&#xA0;limit[i+1]);<br/>
+//&#xA0;-------------------------------------------------------------------------<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;sum_all&#xA0;=&#xA0;sum_one[0]&#xA0;+&#xA0;...&#xA0;+&#xA0;sum_one[n_thread-1]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;sum_all&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n_thread;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum_all&#xA0;+=&#xA0;sum_one[i];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;sum_all;<br/>
+}<br/>
+<br/>
+void&#xA0;test_once(double&#xA0;&amp;sum,&#xA0;size_t&#xA0;mega_sum)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;mega_sum&#xA0;&gt;=&#xA0;1&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;n_sum&#xA0;=&#xA0;int(mega_sum&#xA0;*&#xA0;1000000);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;=&#xA0;sum_using_multiple_threads(n_sum);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return;<br/>
+}<br/>
+<br/>
+void&#xA0;test_repeat(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;sum;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;repeat;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;test_once(sum,&#xA0;size);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return;<br/>
+}<br/>
+<br/>
+int&#xA0;main(int&#xA0;argc,&#xA0;char&#xA0;*argv[])<br/>
+{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;std::cout;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::vector;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;char&#xA0;*usage&#xA0;=&#xA0;&quot;sum_i_inv&#xA0;n_thread&#xA0;repeat&#xA0;mega_sum&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;argc&#xA0;!=&#xA0;4&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::cerr&#xA0;&lt;&lt;&#xA0;usage&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;exit(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;argv++;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;n_thread&#xA0;command&#xA0;line&#xA0;argument<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;std::strcmp(*argv,&#xA0;&quot;automatic&quot;)&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_thread&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;n_thread&#xA0;=&#xA0;std::atoi(*argv);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;argv++;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;repeat&#xA0;command&#xA0;line&#xA0;argument<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;repeat;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;std::strcmp(*argv,&#xA0;&quot;automatic&quot;)&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;repeat&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;std::atoi(*argv)&#xA0;&gt;&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;repeat&#xA0;=&#xA0;std::atoi(*argv);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;argv++;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;mega_sum&#xA0;command&#xA0;line&#xA0;argument&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;mega_sum;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;std::atoi(*argv)&#xA0;&gt;&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;mega_sum&#xA0;=&#xA0;size_t(&#xA0;std::atoi(*argv++)&#xA0;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;minimum&#xA0;time&#xA0;for&#xA0;test&#xA0;(repeat&#xA0;until&#xA0;this&#xA0;much&#xA0;time)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;time_min&#xA0;=&#xA0;1.;<br/>
+<br/>
+#&#xA0;ifdef&#xA0;_OPENMP<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;n_thread&#xA0;&gt;&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;omp_set_dynamic(0);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;off&#xA0;dynamic&#xA0;thread&#xA0;adjust<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;omp_set_num_threads(n_thread);&#xA0;//&#xA0;set&#xA0;the&#xA0;number&#xA0;of&#xA0;threads&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;now&#xA0;determine&#xA0;the&#xA0;maximum&#xA0;number&#xA0;of&#xA0;threads<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_thread&#xA0;=&#xA0;omp_get_max_threads();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;n_thread&#xA0;&gt;&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;No&#xA0;tapes&#xA0;are&#xA0;currently&#xA0;active,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;so&#xA0;we&#xA0;can&#xA0;inform&#xA0;CppAD&#xA0;of&#xA0;the&#xA0;maximum&#xA0;number&#xA0;of&#xA0;threads<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::AD&lt;double&gt;::omp_max_thread(size_t(n_thread));<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;inform&#xA0;the&#xA0;user&#xA0;of&#xA0;the&#xA0;maximum&#xA0;number&#xA0;of&#xA0;threads<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;OpenMP:&#xA0;version&#xA0;=&#xA0;&quot;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;_OPENMP;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;,&#xA0;max&#xA0;number&#xA0;of&#xA0;threads&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;n_thread&#xA0;&lt;&lt;&#xA0;endl;<br/>
+#&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;_OPENMP&#xA0;is&#xA0;not&#xA0;defined,&#xA0;&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;running&#xA0;in&#xA0;single&#xA0;tread&#xA0;mode&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_thread&#xA0;=&#xA0;1;<br/>
+#&#xA0;endif<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;flag<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Correctness&#xA0;check<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;sum;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;test_once(sum,&#xA0;mega_sum);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;epsilon&#xA0;=&#xA0;1e-6;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n_sum&#xA0;=&#xA0;mega_sum&#xA0;*&#xA0;1000000;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(i&#xA0;&lt;&#xA0;n_sum)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;-=&#xA0;1.&#xA0;/&#xA0;double(++i);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;std::fabs(sum)&#xA0;&lt;=&#xA0;epsilon;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;repeat&#xA0;&gt;&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;run&#xA0;the&#xA0;calculation&#xA0;the&#xA0;requested&#xA0;number&#xA0;of&#xA0;time<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;test_repeat(mega_sum,&#xA0;repeat);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;actually&#xA0;time&#xA0;the&#xA0;calculation&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;size&#xA0;of&#xA0;the&#xA0;one&#xA0;test&#xA0;case<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;size_t&gt;&#xA0;size_vec(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_vec[0]&#xA0;=&#xA0;mega_sum;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;run&#xA0;the&#xA0;test&#xA0;case<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;size_t&gt;&#xA0;rate_vec&#xA0;=<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::speed_test(test_repeat,&#xA0;size_vec,&#xA0;time_min);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;report&#xA0;results<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;mega_sum&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;size_vec[0]&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;repeats&#xA0;per&#xA0;sec&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;rate_vec[0]&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;all&#xA0;the&#xA0;threads&#xA0;for&#xA0;a&#xA0;CppAD&#xA0;memory&#xA0;leak<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;CppADTrackCount()&#xA0;!=&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Error:&#xA0;memory&#xA0;leak&#xA0;detected&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;ok&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Correctness&#xA0;Test&#xA0;Passed&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Correctness&#xA0;Test&#xA0;Failed&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;static_cast&lt;int&gt;(&#xA0;!&#xA0;ok&#xA0;);<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: openmp/sum_i_inv.cpp
+
+</body>
+</html>

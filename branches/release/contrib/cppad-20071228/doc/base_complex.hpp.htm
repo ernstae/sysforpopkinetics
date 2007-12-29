@@ -1,0 +1,335 @@
+<html><head>
+<title>Enable use of AD&lt;Base&gt; where Base is std::complex&lt;double&gt;</title>
+<meta name="description" id="description" content="Enable use of AD&lt;Base&gt; where Base is std::complex&lt;double&gt;">
+<meta name="keywords" id="keywords" content=" complex double Base ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_base_complex.hpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>base_require</option>
+<option>base_complex.hpp</option>
+</select>
+</td>
+<td><a href="base_require.htm" target="_top">Prev</a>
+</td><td><a href="complexpoly.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>base_require-&gt;</option>
+<option>base_complex.hpp</option>
+<option>base_adolc.hpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>base_complex.hpp-&gt;</option>
+<option>ComplexPoly.cpp</option>
+<option>not_complex_ad.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Example</option>
+<option>See Also</option>
+<option>Include File</option>
+<option>CondExpOp</option>
+<option>EqualOpSeq</option>
+<option>Identical</option>
+<option>Ordered</option>
+<option>Integer</option>
+<option>Standard Functions</option>
+<option>---..Valid Complex Functions</option>
+<option>---..Invalid Complex Functions</option>
+</select>
+</td>
+</tr></table><br>
+
+
+
+
+
+
+
+<center><b><big><big>Enable use of AD&lt;Base&gt; where Base is std::complex&lt;double&gt;</big></big></b></center>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+The file <a href="complexpoly.cpp.htm" target="_top"><span style='white-space: nowrap'>ComplexPoly.cpp</span></a>
+ contains an example use of
+<code><font color="blue">std::complex&lt;double&gt;</font></code> type for a CppAD <i>Base</i> type.
+It returns true if it succeeds and false otherwise.
+
+<br>
+<br>
+<b><big><a name="See Also" id="See Also">See Also</a></big></b>
+<br>
+The file <a href="not_complex_ad.cpp.htm" target="_top"><span style='white-space: nowrap'>not_complex_ad.cpp</span></a>
+ contains an example using
+complex arithmetic where the function is not complex differentiable.
+
+<br>
+<br>
+<b><big><a name="Include File" id="Include File">Include File</a></big></b>
+<br>
+This file is included before <code><font color="blue">&lt;cppad/cppad.hpp&gt;</font></code>
+so it is necessary to define the error handler
+in addition to including
+<a href="base_require.htm#declare.hpp" target="_top"><span style='white-space: nowrap'>declare.hpp</span></a>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;complex&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/declare.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/error_handler.hpp&gt;<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="CondExpOp" id="CondExpOp">CondExpOp</a></big></b>
+<br>
+The conditional expressions <a href="condexp.htm" target="_top"><span style='white-space: nowrap'>CondExp</span></a>
+ 
+requires ordered comparisons (e.g., <code><font color="blue">&lt;</font></code>)
+and the C++ standard complex types do not allow for ordered comparisons.
+Thus, we make it an error to use the conditional comparisons 
+with complex types:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+namespace&nbsp;CppAD&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;std::complex&lt;double&gt;&nbsp;CondExpOp(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enum&nbsp;CppAD::CompareOp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;right&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;trueCase&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;falseCase&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ErrorHandler::Call(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;__LINE__&nbsp;,&nbsp;__FILE__&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;std::complex&lt;float&gt;&nbsp;CondExpOp(...)&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Error:&nbsp;cannot&nbsp;use&nbsp;CondExp&nbsp;with&nbsp;a&nbsp;complex&nbsp;type&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;std::complex&lt;double&gt;(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="EqualOpSeq" id="EqualOpSeq">EqualOpSeq</a></big></b>
+<br>
+Complex numbers do not carry operation sequence information. 
+Thus they are equal in this sense if and only if there values are equal.  
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+namespace&nbsp;CppAD&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;EqualOpSeq(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;y&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;x&nbsp;==&nbsp;y;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Identical" id="Identical">Identical</a></big></b>
+<br>
+Complex numbers do not carry operation sequence information. 
+Thus they are all parameters so the identical functions just check values.
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+namespace&nbsp;CppAD&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;IdenticalPar(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;IdenticalZero(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(x&nbsp;==&nbsp;std::complex&lt;double&gt;(0.,&nbsp;0.)&nbsp;);&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;IdenticalOne(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(x&nbsp;==&nbsp;std::complex&lt;double&gt;(1.,&nbsp;0.)&nbsp;);&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;IdenticalEqualPar(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x,&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(x&nbsp;==&nbsp;y);&nbsp;}<br>
+}<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Ordered" id="Ordered">Ordered</a></big></b>
+
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+namespace&nbsp;CppAD&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;GreaterThanZero(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ErrorHandler::Call(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;__LINE__&nbsp;,&nbsp;__FILE__&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;GreaterThanZero(x)&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Error:&nbsp;cannot&nbsp;use&nbsp;GreaterThanZero&nbsp;with&nbsp;complex&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;GreaterThanOrZero(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ErrorHandler::Call(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;__LINE__&nbsp;,&nbsp;__FILE__&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;GreaterThanZero(x)&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Error:&nbsp;cannot&nbsp;use&nbsp;GreaterThanZero&nbsp;with&nbsp;complex&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;LessThanZero(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ErrorHandler::Call(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;__LINE__&nbsp;,&nbsp;__FILE__&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;LessThanZero(x)&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Error:&nbsp;cannot&nbsp;use&nbsp;LessThanZero&nbsp;with&nbsp;complex&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;bool&nbsp;LessThanOrZero(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ErrorHandler::Call(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;__LINE__&nbsp;,&nbsp;__FILE__&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;LessThanZero(x)&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Error:&nbsp;cannot&nbsp;use&nbsp;LessThanZero&nbsp;with&nbsp;complex&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Integer" id="Integer">Integer</a></big></b>
+<br>
+The implementation of this function must agree
+with the CppAD user specifications for complex arguments to the
+<a href="integer.htm#x.Complex Types" target="_top"><span style='white-space: nowrap'>Integer</span></a>
+ function:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+namespace&nbsp;CppAD&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;int&nbsp;Integer(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;static_cast&lt;int&gt;(&nbsp;x.real()&nbsp;);&nbsp;}<br>
+}<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Standard Functions" id="Standard Functions">Standard Functions</a></big></b>
+
+
+<br>
+<br>
+<b><a name="Standard Functions.Valid Complex Functions" id="Standard Functions.Valid Complex Functions">Valid Complex Functions</a></b>
+<br>
+The following standard math functions,
+that are required by <a href="base_require.htm" target="_top"><span style='white-space: nowrap'>base_require</span></a>
+,
+are defined by 
+<code><font color="blue">std::complex</font></code>:
+<code><font color="blue">cos</font></code>,
+<code><font color="blue">cosh</font></code>,
+<code><font color="blue">exp</font></code>,
+<code><font color="blue">log</font></code>,
+<code><font color="blue">pow</font></code>,
+<code><font color="blue">sin</font></code>,
+<code><font color="blue">sinh</font></code>,
+<code><font color="blue">sqrt</font></code>.
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;define&nbsp;CPPAD_USER_MACRO(function)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+inline&nbsp;std::complex&lt;double&gt;&nbsp;function(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)&nbsp;&nbsp;&nbsp;\<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;std::function(x);&nbsp;}<br>
+<br>
+namespace&nbsp;CppAD&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(cos)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(cosh)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(exp)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(log)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;std::complex&lt;double&gt;&nbsp;pow(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;y&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;std::pow(x,&nbsp;y);&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(sin)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(sinh)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(sqrt)<br>
+}<br>
+#&nbsp;undef&nbsp;CPPAD_USER_MACRO<br>
+</span>
+</font></code>
+<br>
+<b><a name="Standard Functions.Invalid Complex Functions" id="Standard Functions.Invalid Complex Functions">Invalid Complex Functions</a></b>
+<br>
+The other standard math functions,
+(and <code><font color="blue">abs</font></code>) required by <a href="base_require.htm" target="_top"><span style='white-space: nowrap'>base_require</span></a>
+
+are not defined for complex types
+(see <a href="abs.htm#Complex Types" target="_top"><span style='white-space: nowrap'>abs</span></a>
+).
+Hence we make it an error to use them.
+(Note that the standard math functions are not defined in the CppAD namespace.)
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;define&nbsp;CPPAD_USER_MACRO(function)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+inline&nbsp;std::complex&lt;double&gt;&nbsp;function(const&nbsp;std::complex&lt;double&gt;&nbsp;&amp;x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ErrorHandler::Call(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;__LINE__&nbsp;,&nbsp;__FILE__&nbsp;,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;std::complex&lt;double&gt;&quot;,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Error:&nbsp;cannot&nbsp;use&nbsp;&quot;&nbsp;#function&nbsp;&quot;&nbsp;with&nbsp;complex&lt;double&gt;&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;std::complex&lt;double&gt;(0);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+}<br>
+<br>
+namespace&nbsp;CppAD&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(abs)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(acos)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(asin)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(atan)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_USER_MACRO(erf)<br>
+}<br>
+#&nbsp;undef&nbsp;CPPAD_USER_MACRO<br>
+</span>
+</font></code>
+
+<hr>Input File: cppad/local/base_complex.hpp
+
+</body>
+</html>

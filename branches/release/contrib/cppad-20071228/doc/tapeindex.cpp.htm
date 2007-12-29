@@ -1,0 +1,166 @@
+<html><head>
+<title>Taping Array Index Operation: Example and Test</title>
+<meta name="description" id="description" content="Taping Array Index Operation: Example and Test">
+<meta name="keywords" id="keywords" content=" array tape index operation ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_tapeindex.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>ADValued</option>
+<option>Discrete</option>
+<option>TapeIndex.cpp</option>
+</select>
+</td>
+<td><a href="discrete.htm" target="_top">Prev</a>
+</td><td><a href="interp_onetape.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>ADValued-&gt;</option>
+<option>Arithmetic</option>
+<option>std_math_ad</option>
+<option>MathOther</option>
+<option>CondExp</option>
+<option>Discrete</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Discrete-&gt;</option>
+<option>TapeIndex.cpp</option>
+<option>interp_onetape.cpp</option>
+<option>interp_retape.cpp</option>
+</select>
+</td>
+<td>TapeIndex.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+<center><b><big><big>Taping Array Index Operation: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;Array(const&nbsp;double&nbsp;&amp;index)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;double&nbsp;array[]&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;size_t&nbsp;number&nbsp;=&nbsp;sizeof(array)&nbsp;/&nbsp;sizeof(array[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;index&nbsp;&lt;&nbsp;0.&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;array[0];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i&nbsp;=&nbsp;static_cast&lt;size_t&gt;(index);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;i&nbsp;&gt;=&nbsp;number&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;array[number-1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;array[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;in&nbsp;empty&nbsp;namespace&nbsp;and&nbsp;outside&nbsp;any&nbsp;other&nbsp;routine<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_DISCRETE_FUNCTION(double,&nbsp;Array)<br>
+}<br>
+<br>
+bool&nbsp;TapeIndex(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;2.;&nbsp;&nbsp;&nbsp;//&nbsp;array&nbsp;index&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[1]&nbsp;=&nbsp;3.;&nbsp;&nbsp;&nbsp;//&nbsp;multiplier&nbsp;of&nbsp;array&nbsp;index&nbsp;value<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;X[1]&nbsp;*&nbsp;Array(&nbsp;X[0]&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vectors&nbsp;for&nbsp;arguments&nbsp;to&nbsp;the&nbsp;function&nbsp;object&nbsp;f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;x(n);&nbsp;&nbsp;&nbsp;//&nbsp;argument&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;y(m);&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;values&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;w(m);&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;weights&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dw(n);&nbsp;&nbsp;//&nbsp;derivative&nbsp;of&nbsp;weighted&nbsp;function<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;function&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;Value(X[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;=&nbsp;Value(X[1]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[0]&nbsp;=&nbsp;Value(Y[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;y[0]&nbsp;==&nbsp;x[1]&nbsp;*&nbsp;Array(x[0]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;f&nbsp;where&nbsp;x&nbsp;has&nbsp;different&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;x[0]&nbsp;+&nbsp;1.;&nbsp;&nbsp;//&nbsp;new&nbsp;array&nbsp;index&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;=&nbsp;x[1]&nbsp;+&nbsp;1.;&nbsp;&nbsp;//&nbsp;new&nbsp;multiplier&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(0,&nbsp;x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;y[0]&nbsp;==&nbsp;x[1]&nbsp;*&nbsp;Array(x[0]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;derivaitve&nbsp;of&nbsp;y[0]&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;dw[0]&nbsp;==&nbsp;0.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;partial&nbsp;w.r.t&nbsp;array&nbsp;index<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;dw[1]&nbsp;==&nbsp;Array(x[0]);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;partial&nbsp;w.r.t&nbsp;multiplier<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/tape_index.cpp
+
+</body>
+</html>

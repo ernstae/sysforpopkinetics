@@ -1,0 +1,135 @@
+<html><head>
+<title>Run the exp_2 and exp_eps Tests</title>
+<meta name="description" id="description" content="Run the exp_2 and exp_eps Tests">
+<meta name="keywords" id="keywords" content=" exp_apx main test run ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_exp_apx_main.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td><a href="exp_eps_cppad.htm" target="_top">Prev</a>
+</td><td><a href="ad.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>exp_apx_main.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>Run the exp_2 and exp_eps Tests</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+//&nbsp;system&nbsp;include&nbsp;files&nbsp;used&nbsp;for&nbsp;I/O<br>
+#&nbsp;include&nbsp;&lt;iostream&gt;<br>
+<br>
+//&nbsp;external&nbsp;complied&nbsp;tests<br>
+extern&nbsp;bool&nbsp;exp_2(void);<br>
+extern&nbsp;bool&nbsp;exp_2_cppad(void);<br>
+extern&nbsp;bool&nbsp;exp_2_for1(void);<br>
+extern&nbsp;bool&nbsp;exp_2_for2(void);<br>
+extern&nbsp;bool&nbsp;exp_2_rev1(void);<br>
+extern&nbsp;bool&nbsp;exp_2_rev2(void);<br>
+extern&nbsp;bool&nbsp;exp_2_for0(void);<br>
+extern&nbsp;bool&nbsp;exp_eps(void);<br>
+extern&nbsp;bool&nbsp;exp_eps_cppad(void);<br>
+extern&nbsp;bool&nbsp;exp_eps_for1(void);<br>
+extern&nbsp;bool&nbsp;exp_eps_for2(void);<br>
+extern&nbsp;bool&nbsp;exp_eps_for0(void);<br>
+extern&nbsp;bool&nbsp;exp_eps_rev1(void);<br>
+extern&nbsp;bool&nbsp;exp_eps_rev2(void);<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;that&nbsp;runs&nbsp;one&nbsp;test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;size_t&nbsp;Run_ok_count&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;size_t&nbsp;Run_error_count&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;Run(bool&nbsp;TestOk(void),&nbsp;const&nbsp;char&nbsp;*name)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;TestOk();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;Ok:&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;name&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run_ok_count++;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;Error:&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;name&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run_error_count++;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+<br>
+//&nbsp;main&nbsp;program&nbsp;that&nbsp;runs&nbsp;all&nbsp;the&nbsp;tests<br>
+int&nbsp;main(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;This&nbsp;comment&nbsp;is&nbsp;used&nbsp;by&nbsp;OneTest&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;external&nbsp;compiled&nbsp;tests<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_2,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_2&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_2_cppad,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_2_cppad&quot;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_2_for0,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_2_for0&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_2_for1,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_2_for1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_2_for2,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_2_for2&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_2_rev1,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_2_rev1&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_2_rev2,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_2_rev2&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_eps,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_eps&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_eps_cppad,&nbsp;&nbsp;&nbsp;&quot;exp_eps_cppad&quot;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_eps_for0,&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_eps_for0&quot;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_eps_for1,&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_eps_for1&quot;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_eps_for2,&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_eps_for2&quot;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_eps_rev1,&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_eps_rev1&quot;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Run(&nbsp;exp_eps_rev2,&nbsp;&nbsp;&nbsp;&nbsp;&quot;exp_eps_rev2&quot;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;All&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;int(Run_ok_count)&nbsp;&lt;&lt;&nbsp;&quot;&nbsp;tests&nbsp;passed.&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;cout&nbsp;&lt;&lt;&nbsp;int(Run_error_count)&nbsp;&lt;&lt;&nbsp;&quot;&nbsp;tests&nbsp;failed.&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;static_cast&lt;int&gt;(&nbsp;!&nbsp;ok&nbsp;);<br>
+}<br>
+</span></font></code>
+<hr>Input File: introduction/exp_apx/main.cpp
+
+</body>
+</html>

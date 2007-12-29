@@ -1,0 +1,401 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>OdeErrControl: Example and Test</title>
+<meta name="description" id="description" content="OdeErrControl: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Odeerrcontrol example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_odeerrcontrol.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>OdeErrControl</option>
+<option>OdeErrControl.cpp</option>
+</select>
+</td>
+<td><a href="odeerrcontrol.xml" target="_top">Prev</a>
+</td><td><a href="odeerrmaxabs.cpp.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>OdeErrControl-&gt;</option>
+<option>OdeErrControl.cpp</option>
+<option>OdeErrMaxabs.cpp</option>
+</select>
+</td>
+<td>OdeErrControl.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Nan</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>OdeErrControl: Example and Test</big></big></b></center>
+Define 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">:</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mn>2</mn>
+</msup>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mn>1</mn>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>X</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mn>0</mn>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msubsup><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msubsup><mi mathvariant='italic'>X</mi>
+<mn>1</mn>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mn>1</mn>
+<mo stretchy="false">/</mo>
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr></mtable>
+</mrow></math>
+
+It follows that
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mi>exp</mi>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">-</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>X</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">[</mo>
+<mi>exp</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mn>1</mn>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">/</mo>
+<mi mathvariant='normal'>&#x003B1;</mi>
+</mtd></mtr></mtable>
+</mrow></math>
+
+This example tests OdeErrControl using the relations above.
+
+<br/>
+<br/>
+<b><big><a name="Nan" id="Nan">Nan</a></big></b>
+<br/>
+Note that 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&gt;</mo>
+<mn>0</mn>
+</mrow></math>
+
+ for all 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>t</mi>
+</mrow></math>
+
+ and that the
+ODE goes through a singularity between 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&gt;</mo>
+<mn>0</mn>
+</mrow></math>
+
+
+and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&lt;</mo>
+<mn>0</mn>
+</mrow></math>
+
+.
+If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>X</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">&lt;</mo>
+<mn>0</mn>
+</mrow></math>
+
+,
+we return <code><font color="blue">nan</font></code> in order to inform 
+<code><font color="blue">OdeErrControl</font></code> that its is taking to large a step.
+
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cstddef&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;for&#xA0;size_t<br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;for&#xA0;exp<br/>
+#&#xA0;include&#xA0;&lt;cppad/ode_err_control.hpp&gt;&#xA0;&#xA0;&#xA0;//&#xA0;CppAD::OdeErrControl<br/>
+#&#xA0;include&#xA0;&lt;cppad/near_equal.hpp&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;CppAD::NearEqual<br/>
+#&#xA0;include&#xA0;&lt;cppad/vector.hpp&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;CppAD::vector<br/>
+#&#xA0;include&#xA0;&lt;cppad/runge_45.hpp&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;CppAD::Runge45<br/>
+#&#xA0;include&#xA0;&lt;cppad/nan.hpp&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;for&#xA0;nan<br/>
+<br/>
+namespace&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;--------------------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;class&#xA0;Fun&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;alpha_;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun(double&#xA0;alpha)&#xA0;:&#xA0;alpha_(alpha)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;set&#xA0;f&#xA0;=&#xA0;x'(t)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;Ode(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;t,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;CppAD::vector&lt;double&gt;&#xA0;&amp;x,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;f)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;f[0]&#xA0;=&#xA0;-&#xA0;alpha_&#xA0;*&#xA0;x[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f[1]&#xA0;=&#xA0;1.&#xA0;/&#xA0;x[0];&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;case&#xA0;where&#xA0;ODE&#xA0;does&#xA0;not&#xA0;make&#xA0;sense<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;x[0]&#xA0;&lt;&#xA0;0.&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f[1]&#xA0;=&#xA0;CppAD::nan(0.);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;};<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;--------------------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;class&#xA0;Method&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&#xA0;F;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Method(double&#xA0;alpha)&#xA0;:&#xA0;F(alpha)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;step(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;ta,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;tb,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&amp;xa&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&amp;xb&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&amp;eb&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;xb&#xA0;=&#xA0;CppAD::Runge45(F,&#xA0;1,&#xA0;ta,&#xA0;tb,&#xA0;xa,&#xA0;eb);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;order(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;4;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;};<br/>
+}<br/>
+<br/>
+bool&#xA0;OdeErrControl(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initial&#xA0;return&#xA0;value<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;alpha&#xA0;=&#xA0;10.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Method&#xA0;method(alpha);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;xi(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xi[0]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xi[1]&#xA0;=&#xA0;0.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;eabs(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;eabs[0]&#xA0;=&#xA0;1e-4;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;eabs[1]&#xA0;=&#xA0;1e-4;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;inputs<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;ti&#xA0;&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;tf&#xA0;&#xA0;&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;smin&#xA0;=&#xA0;1e-4;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;smax&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;scur&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;erel&#xA0;=&#xA0;0.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;outputs<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;ef(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;xf(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;maxabs(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;nstep;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xf&#xA0;=&#xA0;OdeErrControl(method,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ti,&#xA0;tf,&#xA0;xi,&#xA0;smin,&#xA0;smax,&#xA0;scur,&#xA0;eabs,&#xA0;erel,&#xA0;ef,&#xA0;maxabs,&#xA0;nstep);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x0&#xA0;=&#xA0;exp(-alpha*tf);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(x0,&#xA0;xf[0],&#xA0;1e-4,&#xA0;1e-4);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(0.,&#xA0;ef[0],&#xA0;1e-4,&#xA0;1e-4);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x1&#xA0;=&#xA0;(exp(alpha*tf)&#xA0;-&#xA0;1)&#xA0;/&#xA0;alpha;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(x1,&#xA0;xf[1],&#xA0;1e-4,&#xA0;1e-4);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(0.,&#xA0;ef[1],&#xA0;1e-4,&#xA0;1e-4);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/ode_err_control.cpp
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<html><head>
+<title>Example Use of SpeedTest</title>
+<meta name="description" id="description" content="Example Use of SpeedTest">
+<meta name="keywords" id="keywords" content=" Speedtest example test speed ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_speedtest.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>SpeedTest</option>
+<option>SpeedTest.cpp</option>
+</select>
+</td>
+<td><a href="speedtest.htm" target="_top">Prev</a>
+</td><td><a href="numerictype.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>SpeedTest-&gt;</option>
+<option>SpeedTest.cpp</option>
+</select>
+</td>
+<td>SpeedTest.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Running This Program</option>
+<option>Program</option>
+<option>Output</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Example Use of SpeedTest</big></big></b></center>
+<br>
+<b><big><a name="Running This Program" id="Running This Program">Running This Program</a></big></b>
+<br>
+On a Unix system that includes the <code><font color="blue">g++</font></code> compiler,
+you can compile and run this program by changing into the
+<code><font color="blue">speed/example</font></code> directory and executing the following commands
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g++&nbsp;-I../..&nbsp;speedtest.cpp&nbsp;-o&nbsp;speedtest.exe<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;./speedtest.exe<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Program" id="Program">Program</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/speed_test.hpp&gt;<br>
+<br>
+std::string&nbsp;Test(size_t&nbsp;size,&nbsp;size_t&nbsp;repeat)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;setup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*a&nbsp;=&nbsp;new&nbsp;double[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*b&nbsp;=&nbsp;new&nbsp;double[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*c&nbsp;=&nbsp;new&nbsp;double[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i&nbsp;&nbsp;=&nbsp;size;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;--i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[i]&nbsp;=&nbsp;2&nbsp;*&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;operations&nbsp;we&nbsp;are&nbsp;timing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(repeat--)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;=&nbsp;size;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;--i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c[i]&nbsp;=&nbsp;a[i]&nbsp;+&nbsp;b[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;teardown<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;c;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;a&nbsp;test&nbsp;name&nbsp;that&nbsp;is&nbsp;valid&nbsp;for&nbsp;all&nbsp;sizes&nbsp;and&nbsp;repeats<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;&quot;double:&nbsp;c[*]&nbsp;=&nbsp;a[*]&nbsp;+&nbsp;b[*]&quot;;<br>
+}<br>
+int&nbsp;main(void)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::SpeedTest(Test,&nbsp;10,&nbsp;10,&nbsp;100);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+}<br>
+<br>
+</span>
+</font></code>
+<b><big><a name="Output" id="Output">Output</a></big></b>
+<br>
+Executing of the program above generated the following output 
+(the rates will be different for each particular system):
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double:&nbsp;c[*]&nbsp;=&nbsp;a[*]&nbsp;+&nbsp;b[*]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;10&nbsp;&nbsp;rate&nbsp;=&nbsp;14,122,236<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;20&nbsp;&nbsp;rate&nbsp;=&nbsp;7,157,515<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;30&nbsp;&nbsp;rate&nbsp;=&nbsp;4,972,500<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;40&nbsp;&nbsp;rate&nbsp;=&nbsp;3,887,214<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;50&nbsp;&nbsp;rate&nbsp;=&nbsp;3,123,086<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;60&nbsp;&nbsp;rate&nbsp;=&nbsp;2,685,214<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;70&nbsp;&nbsp;rate&nbsp;=&nbsp;2,314,737<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;80&nbsp;&nbsp;rate&nbsp;=&nbsp;2,032,124<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;90&nbsp;&nbsp;rate&nbsp;=&nbsp;1,814,145<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;100&nbsp;rate&nbsp;=&nbsp;1,657,828<br>
+</span>
+</font></code>
+
+<hr>Input File: speed/example/speedtest.cpp
+
+</body>
+</html>

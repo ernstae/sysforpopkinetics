@@ -1,0 +1,130 @@
+<html><head>
+<title>The Tape Operator Codes</title>
+<meta name="description" id="description" content="The Tape Operator Codes">
+<meta name="keywords" id="keywords" content=" tape operator ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_opcode_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="identicalequalpar.htm" target="_top">Prev</a>
+</td><td><a href="printop.htm" target="_top">Next</a>
+</td><td><a href="cppad.htm" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down1(this)'>
+<option>CppAD-&gt;</option>
+<option>Distribute</option>
+<option>NewFeature</option>
+<option>Define</option>
+<option>GreaterThanZero</option>
+<option>GreaterThanOrZero</option>
+<option>LessThanZero</option>
+<option>LessThanOrZero</option>
+<option>IdenticalPar</option>
+<option>IdenticalZero</option>
+<option>IdenticalOne</option>
+<option>IdenticalEqualPar</option>
+<option>OpCode</option>
+<option>printOp</option>
+<option>NumInd</option>
+<option>NumVar</option>
+<option>tape_link</option>
+<option>TapeRec</option>
+<option>ADTape</option>
+<option>BoolFunLink</option>
+<option>Op</option>
+<option>ForwardSweep</option>
+<option>ReverseSweep</option>
+<option>ForJacSweep</option>
+<option>RevJacSweep</option>
+</select>
+</td>
+<td>OpCode</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Description</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>The Tape Operator Codes</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>OpCode</span></font></code><i></i><code><font color="blue"><span style='white-space: nowrap'>op</span></font></code> <code><span style='white-space: nowrap'><br>
+</span></code><br>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The value <i>op</i> is one of the following enum type values:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+namespace&nbsp;CppAD&nbsp;{<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;alphabetical&nbsp;order&nbsp;(ignoring&nbsp;the&nbsp;Op&nbsp;at&nbsp;the&nbsp;end)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enum&nbsp;OpCode&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AbsOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;abs(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AcosOp,&nbsp;&nbsp;&nbsp;//&nbsp;asin(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AddpvOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter&nbsp;&nbsp;+&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AddvpOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;+&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AddvvOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;+&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AsinOp,&nbsp;&nbsp;&nbsp;//&nbsp;asin(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AtanOp,&nbsp;&nbsp;&nbsp;//&nbsp;atan(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CExpOp,&nbsp;&nbsp;&nbsp;//&nbsp;CondExp(cop,&nbsp;left,&nbsp;right,&nbsp;trueCase,&nbsp;falseCase)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ComOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compare(cop,&nbsp;result,&nbsp;left,&nbsp;right)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CosOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;cos(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CoshOp,&nbsp;&nbsp;&nbsp;//&nbsp;cosh(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DisOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;dis(variable,&nbsp;&nbsp;&nbsp;&nbsp;index)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DivpvOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter&nbsp;&nbsp;/&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DivvpOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;/&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DivvvOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;/&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ExpOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;exp(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LdpOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;z[parameter]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LdvOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;z[variable]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InvOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;independent&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LogOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;log(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MulpvOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter&nbsp;&nbsp;*&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MulvpOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;*&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MulvvOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;*&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NonOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;space&nbsp;holder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ParOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PowvpOp,&nbsp;&nbsp;//&nbsp;&nbsp;pow(variable,&nbsp;&nbsp;&nbsp;&nbsp;parameter)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PowpvOp,&nbsp;&nbsp;//&nbsp;&nbsp;pow(parameter,&nbsp;&nbsp;&nbsp;variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PowvvOp,&nbsp;&nbsp;//&nbsp;&nbsp;pow(variable,&nbsp;&nbsp;&nbsp;&nbsp;variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PripOp,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PrivOp,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SinOp,&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;sin(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SinhOp,&nbsp;&nbsp;&nbsp;//&nbsp;sinh(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SqrtOp,&nbsp;&nbsp;&nbsp;//&nbsp;sqrt(variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;StppOp,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;z[parameter]&nbsp;=&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;StvpOp,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;z[variable]&nbsp;&nbsp;=&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;StpvOp,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;z[parameter]&nbsp;=&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;StvvOp,&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;z[variable]&nbsp;&nbsp;=&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SubpvOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter&nbsp;&nbsp;-&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SubvpOp,&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;-&nbsp;parameter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SubvvOp&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable&nbsp;&nbsp;&nbsp;-&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: cppad/local/op_code.hpp
+
+</body>
+</html>

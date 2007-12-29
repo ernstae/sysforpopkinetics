@@ -1,0 +1,116 @@
+<html><head>
+<title>AD Constructor From Base Type: Example and Test</title>
+<meta name="description" id="description" content="AD Constructor From Base Type: Example and Test">
+<meta name="keywords" id="keywords" content=" construct from base type convert to Ad example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_copybase.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>ad_copy</option>
+<option>CopyBase.cpp</option>
+</select>
+</td>
+<td><a href="copyad.cpp.htm" target="_top">Prev</a>
+</td><td><a href="eq.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ad_copy-&gt;</option>
+<option>CopyAD.cpp</option>
+<option>CopyBase.cpp</option>
+<option>Eq.cpp</option>
+</select>
+</td>
+<td>CopyBase.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>AD Constructor From Base Type: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+bool&nbsp;CopyBase(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;test&nbsp;result&nbsp;flag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;&nbsp;&nbsp;&nbsp;//&nbsp;so&nbsp;can&nbsp;use&nbsp;AD&nbsp;in&nbsp;place&nbsp;of&nbsp;CppAD::AD<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;construct&nbsp;directly&nbsp;from&nbsp;Base&nbsp;where&nbsp;Base&nbsp;is&nbsp;double&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;x(1.);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;construct&nbsp;from&nbsp;a&nbsp;type&nbsp;that&nbsp;converts&nbsp;to&nbsp;Base&nbsp;where&nbsp;Base&nbsp;is&nbsp;double<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;y&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;construct&nbsp;from&nbsp;a&nbsp;type&nbsp;that&nbsp;converts&nbsp;to&nbsp;Base&nbsp;where&nbsp;Base&nbsp;=&nbsp;AD&lt;double&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;z(3);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;that&nbsp;resulting&nbsp;objects&nbsp;are&nbsp;parameters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;Parameter(z);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;values&nbsp;of&nbsp;objects&nbsp;(compare&nbsp;AD&lt;double&gt;&nbsp;with&nbsp;double)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;x&nbsp;==&nbsp;1.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;y&nbsp;==&nbsp;2.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;Value(z)&nbsp;==&nbsp;3.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;user&nbsp;constructor&nbsp;through&nbsp;the&nbsp;static_cast&nbsp;template&nbsp;function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;=&nbsp;static_cast&nbsp;&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;(&nbsp;4&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z&nbsp;&nbsp;=&nbsp;static_cast&nbsp;&lt;&nbsp;AD&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;&gt;(&nbsp;5&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;x&nbsp;==&nbsp;4.&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;Value(z)&nbsp;==&nbsp;5.&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/copy_base.cpp
+
+</body>
+</html>

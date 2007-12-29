@@ -1,0 +1,425 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Multi-Threaded Newton's Method Main Program</title>
+<meta name="description" id="description" content="Multi-Threaded Newton's Method Main Program"/>
+<meta name="keywords" id="keywords" content=" Openmp example program "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_multi_newton.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>omp_max_thread</option>
+<option>openmp_run.sh</option>
+<option>multi_newton.cpp</option>
+</select>
+</td>
+<td><a href="example_a11c.cpp.xml" target="_top">Prev</a>
+</td><td><a href="multi_newton.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>omp_max_thread-&gt;</option>
+<option>openmp_run.sh</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>openmp_run.sh-&gt;</option>
+<option>example_a11c.cpp</option>
+<option>multi_newton.cpp</option>
+<option>sum_i_inv.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>multi_newton.cpp-&gt;</option>
+<option>multi_newton</option>
+<option>multi_newton.hpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>n_thread</option>
+<option>repeat</option>
+<option>n_zero</option>
+<option>n_grid</option>
+<option>n_sum</option>
+<option>Subroutines</option>
+<option>Example Source</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Multi-Threaded Newton's Method Main Program</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br/>
+<code><font color="blue"><span style='white-space: nowrap'>multi_newton&#xA0;</span></font></code><i><span style='white-space: nowrap'>n_thread</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;</span></font></code><i><span style='white-space: nowrap'>repeat</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;</span></font></code><i><span style='white-space: nowrap'>n_zero</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;</span></font></code><i><span style='white-space: nowrap'>n_grid</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;</span></font></code><i><span style='white-space: nowrap'>n_sum</span></i>
+
+<br/>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+Runs a timing test of the <a href="multi_newton.xml" target="_top"><span style='white-space: nowrap'>multi_newton</span></a>
+ routine.
+This routine uses Newton's method to determine if there is a zero of a 
+function on each of a set of sub-intervals.
+CppAD is used to calculate the derivatives required by Newton's method.
+OpenMP is used to parallelize the calculation on the different sub-intervals.
+
+<br/>
+<br/>
+<b><big><a name="n_thread" id="n_thread">n_thread</a></big></b>
+<br/>
+If the argument <i>n_thread</i> is equal to <code><font color="blue">automatic</font></code>, 
+dynamic thread adjustment is used.
+Otherwise, <i>n_thread</i> must be a positive number
+specifying the number of OpenMP threads to use.
+
+<br/>
+<br/>
+<b><big><a name="repeat" id="repeat">repeat</a></big></b>
+<br/>
+If the argument <i>repeat</i> is equal to <code><font color="blue">automatic</font></code>,
+the number of times to repeat the calculation of the number of zeros
+in total interval is automatically determined.
+In this case, the rate of execution of the total solution is reported.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>If the argument <i>repeat</i> is not equal to <i>automatic</i>,
+it must be a positive integer.
+In this case <i>repeat</i> determination of the number of times 
+the calculation of the zeros in the total interval is repeated.
+The rate of execution is not reported (it is assumed that the
+program execution time is being calculated some other way).
+
+<br/>
+<br/>
+<b><big><a name="n_zero" id="n_zero">n_zero</a></big></b>
+<br/>
+The argument <i>n_zero</i> is the actual number of zeros
+that there should be in the test function, 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+.
+It must be an integer greater than one.
+The total interval searched  for zeros is 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">[</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">_</mo>
+<mi mathvariant='italic'>zero</mi>
+<mo stretchy="false">-</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+<mi mathvariant='normal'>&#x003C0;</mi>
+<mo stretchy="false">]</mo>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="n_grid" id="n_grid">n_grid</a></big></b>
+<br/>
+The argument <i>n_grid</i>
+specifies the number of sub-intervals to divide the total interval into.
+It must an integer greater than zero
+(should probably be greater than two times <i>n_zero</i>).
+
+<br/>
+<br/>
+<b><big><a name="n_sum" id="n_sum">n_sum</a></big></b>
+<br/>
+The actual function that is used is 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>f</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mn>1</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>n</mi>
+<mo stretchy="false">_</mo>
+<mi mathvariant='italic'>sum</mi>
+</mrow>
+</mfrac>
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>n</mi>
+<mo stretchy="false">_</mo>
+<mi mathvariant='italic'>sum</mi>
+</mrow>
+</munderover>
+<mi>sin</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+where <i>n_sum</i> is a positive integer.
+The larger the value of <i>n_sum</i>,
+the more computation is required to calculate the function.
+
+<br/>
+<br/>
+<b><big><a name="Subroutines" id="Subroutines">Subroutines</a></big></b>
+
+
+<table><tr><td align='left'  valign='top'>
+
+<a href="multi_newton.xml" target="_top">multi_newton</a></td><td>
+Multi-Threaded Newton's Method Routine</td></tr>
+<tr><td>
+
+<a href="multi_newton.hpp.xml" target="_top">multi_newton.hpp</a></td><td>
+OpenMP Multi-Threading Newton's Method Source Code</td></tr>
+<tr><td>
+
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Example Source" id="Example Source">Example Source</a></big></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;<br/>
+#&#xA0;include&#xA0;&lt;cstring&gt;<br/>
+#&#xA0;include&#xA0;&quot;multi_newton.hpp&quot;<br/>
+<br/>
+#&#xA0;ifdef&#xA0;_OPENMP<br/>
+#&#xA0;include&#xA0;&lt;omp.h&gt;<br/>
+#&#xA0;endif<br/>
+<br/>
+<br/>
+namespace&#xA0;{&#xA0;//&#xA0;empty&#xA0;namespace<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n_sum;&#xA0;&#xA0;//&#xA0;larger&#xA0;values&#xA0;make&#xA0;fun(x)&#xA0;take&#xA0;longer&#xA0;to&#xA0;calculate<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n_zero;&#xA0;//&#xA0;number&#xA0;of&#xA0;zeros&#xA0;of&#xA0;fun(x)&#xA0;in&#xA0;the&#xA0;total&#xA0;interval<br/>
+}<br/>
+<br/>
+//&#xA0;A&#xA0;slow&#xA0;version&#xA0;of&#xA0;the&#xA0;sine&#xA0;function<br/>
+CppAD::AD&lt;double&gt;&#xA0;fun(const&#xA0;CppAD::AD&lt;double&gt;&#xA0;&amp;x)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;CppAD::AD&lt;double&gt;&#xA0;sum&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;n_sum;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;sin(x);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;sum&#xA0;/&#xA0;double(n_sum);<br/>
+}<br/>
+<br/>
+void&#xA0;test_once(CppAD::vector&lt;double&gt;&#xA0;&amp;xout,&#xA0;size_t&#xA0;n_grid)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;n_zero&#xA0;&gt;&#xA0;1&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;pi&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;4.&#xA0;*&#xA0;std::atan(1.);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;xlow&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;xup&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;(n_zero&#xA0;-&#xA0;1)&#xA0;*&#xA0;pi;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;epsilon&#xA0;=&#xA0;1e-6;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;max_itr&#xA0;=&#xA0;20;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;multi_newton(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xout&#xA0;&#xA0;&#xA0;&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fun&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_grid&#xA0;&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xlow&#xA0;&#xA0;&#xA0;&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xup&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;epsilon&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;max_itr<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return;<br/>
+}<br/>
+<br/>
+void&#xA0;test_repeat(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;xout;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;repeat;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;test_once(xout,&#xA0;size);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return;<br/>
+}<br/>
+<br/>
+int&#xA0;main(int&#xA0;argc,&#xA0;char&#xA0;*argv[])<br/>
+{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;std::cout;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::vector;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;char&#xA0;*usage&#xA0;=&#xA0;&quot;multi_newton&#xA0;n_thread&#xA0;repeat&#xA0;n_zero&#xA0;n_grid&#xA0;n_sum&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;argc&#xA0;!=&#xA0;6&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::cerr&#xA0;&lt;&lt;&#xA0;usage&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;exit(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;argv++;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;n_thread&#xA0;command&#xA0;line&#xA0;argument<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;int&#xA0;n_thread;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;std::strcmp(*argv,&#xA0;&quot;automatic&quot;)&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_thread&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;n_thread&#xA0;=&#xA0;std::atoi(*argv);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;argv++;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;repeat&#xA0;command&#xA0;line&#xA0;argument<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;repeat;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;std::strcmp(*argv,&#xA0;&quot;automatic&quot;)&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;repeat&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;std::atoi(*argv)&#xA0;&gt;&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;repeat&#xA0;=&#xA0;std::atoi(*argv);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;argv++;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;n_zero&#xA0;command&#xA0;line&#xA0;argument&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;std::atoi(*argv)&#xA0;&gt;&#xA0;1&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_zero&#xA0;=&#xA0;std::atoi(*argv++);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;n_grid&#xA0;command&#xA0;line&#xA0;argument<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;std::atoi(*argv)&#xA0;&gt;&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n_grid&#xA0;=&#xA0;std::atoi(*argv++);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;n_sum&#xA0;command&#xA0;line&#xA0;argument&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;std::atoi(*argv)&#xA0;&gt;&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_sum&#xA0;=&#xA0;std::atoi(*argv++);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;minimum&#xA0;time&#xA0;for&#xA0;test&#xA0;(repeat&#xA0;until&#xA0;this&#xA0;much&#xA0;time)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;time_min&#xA0;=&#xA0;1.;<br/>
+<br/>
+#&#xA0;ifdef&#xA0;_OPENMP<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;n_thread&#xA0;&gt;&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;omp_set_dynamic(0);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;off&#xA0;dynamic&#xA0;thread&#xA0;adjust<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;omp_set_num_threads(n_thread);&#xA0;//&#xA0;set&#xA0;the&#xA0;number&#xA0;of&#xA0;threads&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;now&#xA0;determine&#xA0;the&#xA0;maximum&#xA0;number&#xA0;of&#xA0;threads<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_thread&#xA0;=&#xA0;omp_get_max_threads();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;n_thread&#xA0;&gt;&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;No&#xA0;tapes&#xA0;are&#xA0;currently&#xA0;active,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;so&#xA0;we&#xA0;can&#xA0;inform&#xA0;CppAD&#xA0;of&#xA0;the&#xA0;maximum&#xA0;number&#xA0;of&#xA0;threads<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::AD&lt;double&gt;::omp_max_thread(size_t(n_thread));<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;inform&#xA0;the&#xA0;user&#xA0;of&#xA0;the&#xA0;maximum&#xA0;number&#xA0;of&#xA0;threads<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;OpenMP:&#xA0;version&#xA0;=&#xA0;&quot;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&lt;&lt;&#xA0;_OPENMP;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;,&#xA0;max&#xA0;number&#xA0;of&#xA0;threads&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;n_thread&#xA0;&lt;&lt;&#xA0;endl;<br/>
+#&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;_OPENMP&#xA0;is&#xA0;not&#xA0;defined,&#xA0;&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;running&#xA0;in&#xA0;single&#xA0;tread&#xA0;mode&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n_thread&#xA0;=&#xA0;1;<br/>
+#&#xA0;endif<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;flag<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;sub-block&#xA0;so&#xA0;xout&#xA0;gets&#xA0;deallocated&#xA0;before&#xA0;call&#xA0;to&#xA0;CppADTrackCount<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Correctness&#xA0;check<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;xout;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;test_once(xout,&#xA0;n_grid);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;epsilon&#xA0;=&#xA0;1e-6;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;pi&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;4.&#xA0;*&#xA0;std::atan(1.);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;(xout.size()&#xA0;==&#xA0;n_zero);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(&#xA0;ok&#xA0;&amp;&#xA0;(i&#xA0;&lt;&#xA0;n_zero)&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;std::fabs(&#xA0;xout[i]&#xA0;-&#xA0;pi&#xA0;*&#xA0;i)&#xA0;&lt;=&#xA0;2&#xA0;*&#xA0;epsilon;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;++i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;repeat&#xA0;&gt;&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;run&#xA0;the&#xA0;calculation&#xA0;the&#xA0;requested&#xA0;number&#xA0;of&#xA0;time<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;test_repeat(n_grid,&#xA0;repeat);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;actually&#xA0;time&#xA0;the&#xA0;calculation&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;size&#xA0;of&#xA0;the&#xA0;one&#xA0;test&#xA0;case<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;size_t&gt;&#xA0;size_vec(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_vec[0]&#xA0;=&#xA0;n_grid;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;run&#xA0;the&#xA0;test&#xA0;case<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;size_t&gt;&#xA0;rate_vec&#xA0;=<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::speed_test(test_repeat,&#xA0;size_vec,&#xA0;time_min);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;report&#xA0;results<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;n_grid&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;size_vec[0]&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;repeats&#xA0;per&#xA0;sec&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;rate_vec[0]&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;all&#xA0;the&#xA0;threads&#xA0;for&#xA0;a&#xA0;CppAD&#xA0;memory&#xA0;leak<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;CppADTrackCount()&#xA0;!=&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Error:&#xA0;memory&#xA0;leak&#xA0;detected&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;ok&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Correctness&#xA0;Test&#xA0;Passed&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Correctness&#xA0;Test&#xA0;Failed&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;static_cast&lt;int&gt;(&#xA0;!&#xA0;ok&#xA0;);<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: openmp/multi_newton.cpp
+
+</body>
+</html>

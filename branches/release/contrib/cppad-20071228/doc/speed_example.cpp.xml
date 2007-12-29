@@ -1,0 +1,134 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Program That Runs the Speed Examples</title>
+<meta name="description" id="description" content="Program That Runs the Speed Examples"/>
+<meta name="keywords" id="keywords" content=" speed example program "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_speed_example.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Example</option>
+<option>ExampleUtility</option>
+<option>speed_example.cpp</option>
+</select>
+</td>
+<td><a href="example.cpp.xml" target="_top">Prev</a>
+</td><td><a href="luvecad.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Example-&gt;</option>
+<option>General</option>
+<option>ExampleUtility</option>
+<option>ListAllExamples</option>
+<option>test_vector</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ExampleUtility-&gt;</option>
+<option>Example.cpp</option>
+<option>speed_example.cpp</option>
+<option>LuVecAD</option>
+</select>
+</td>
+<td>speed_example.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>Program That Runs the Speed Examples</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+//&#xA0;various&#xA0;example&#xA0;routines<br/>
+extern&#xA0;bool&#xA0;det_of_minor(void);<br/>
+extern&#xA0;bool&#xA0;det_by_lu(void);<br/>
+extern&#xA0;bool&#xA0;det_by_minor(void);<br/>
+extern&#xA0;bool&#xA0;speed_test(void);<br/>
+<br/>
+namespace&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;function&#xA0;that&#xA0;runs&#xA0;one&#xA0;test<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;static&#xA0;size_t&#xA0;Run_ok_count&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;static&#xA0;size_t&#xA0;Run_error_count&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;Run(bool&#xA0;TestOk(void),&#xA0;const&#xA0;char&#xA0;*name)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;std;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;TestOk();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;ok&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;Ok:&#xA0;&#xA0;&#xA0;&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;name&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Run_ok_count++;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;Error:&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;name&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Run_error_count++;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+<br/>
+//&#xA0;main&#xA0;program&#xA0;that&#xA0;runs&#xA0;all&#xA0;the&#xA0;tests<br/>
+int&#xA0;main(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;std;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;Run(det_of_minor,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;det_of_minor&quot;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;Run(det_by_minor,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;det_by_minor&quot;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;Run(det_by_lu,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;det_by_lu&quot;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;Run(speed_test,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;speed_test&quot;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;for&#xA0;memory&#xA0;leak&#xA0;in&#xA0;previous&#xA0;calculations<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;CppADTrackCount()&#xA0;!=&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Error:&#xA0;memroy&#xA0;leak&#xA0;detected&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;ok&#xA0;||&#xA0;(Run_error_count&#xA0;&gt;&#xA0;0)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;ok&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;All&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;int(Run_ok_count)&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;tests&#xA0;passed.&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;cout&#xA0;&lt;&lt;&#xA0;int(Run_error_count)&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;tests&#xA0;failed.&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;static_cast&lt;int&gt;(&#xA0;!&#xA0;ok&#xA0;);<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: speed/example/example.cpp
+
+</body>
+</html>

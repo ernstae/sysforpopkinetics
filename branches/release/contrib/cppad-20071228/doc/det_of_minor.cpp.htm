@@ -1,0 +1,144 @@
+<html><head>
+<title>Determinant of a Minor: Example and Test</title>
+<meta name="description" id="description" content="Determinant of a Minor: Example and Test">
+<meta name="keywords" id="keywords" content=" det_of_minor example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_det_of_minor.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_utility</option>
+<option>det_of_minor</option>
+<option>det_of_minor.cpp</option>
+</select>
+</td>
+<td><a href="det_of_minor.htm" target="_top">Prev</a>
+</td><td><a href="det_of_minor.hpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed_utility-&gt;</option>
+<option>uniform_01</option>
+<option>det_of_minor</option>
+<option>det_by_minor</option>
+<option>det_by_lu</option>
+<option>det_33</option>
+<option>det_grad_33</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>det_of_minor-&gt;</option>
+<option>det_of_minor.cpp</option>
+<option>det_of_minor.hpp</option>
+</select>
+</td>
+<td>det_of_minor.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Determinant of a Minor: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;vector&gt;<br>
+#&nbsp;include&nbsp;&lt;cstddef&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/det_of_minor.hpp&gt;<br>
+<br>
+bool&nbsp;det_of_minor()<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;dimension&nbsp;of&nbsp;the&nbsp;matrix&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;index&nbsp;vectors&nbsp;set&nbsp;so&nbsp;minor&nbsp;is&nbsp;the&nbsp;entire&nbsp;matrix&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;size_t&gt;&nbsp;r(m&nbsp;+&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;size_t&gt;&nbsp;c(m&nbsp;+&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;r[i]&nbsp;=&nbsp;i+1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c[i]&nbsp;=&nbsp;i+1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r[m]&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c[m]&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;values&nbsp;in&nbsp;the&nbsp;matrix&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;&nbsp;data[]&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.,&nbsp;2.,&nbsp;3.,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.,&nbsp;2.,&nbsp;1.,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.,&nbsp;1.,&nbsp;2.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;construct&nbsp;vector&nbsp;a&nbsp;with&nbsp;the&nbsp;values&nbsp;of&nbsp;the&nbsp;matrix&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;double&gt;&nbsp;a(data,&nbsp;data&nbsp;+&nbsp;9);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;the&nbsp;determinant&nbsp;of&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;&nbsp;=&nbsp;m;&nbsp;//&nbsp;minor&nbsp;has&nbsp;same&nbsp;dimension&nbsp;as&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;det&nbsp;=&nbsp;CppAD::det_of_minor(a,&nbsp;m,&nbsp;n,&nbsp;r,&nbsp;c);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;determinant&nbsp;of&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(det&nbsp;==&nbsp;(double)&nbsp;(1*(2*2-1*1)&nbsp;-&nbsp;2*(3*2-1*2)&nbsp;+&nbsp;3*(3*1-2*2))&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;minor&nbsp;where&nbsp;row&nbsp;0&nbsp;and&nbsp;column&nbsp;1&nbsp;are&nbsp;removed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r[m]&nbsp;=&nbsp;1;&nbsp;&nbsp;//&nbsp;skip&nbsp;row&nbsp;index&nbsp;0&nbsp;by&nbsp;starting&nbsp;at&nbsp;row&nbsp;index&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c[0]&nbsp;=&nbsp;2;&nbsp;&nbsp;//&nbsp;skip&nbsp;column&nbsp;index&nbsp;1&nbsp;by&nbsp;pointing&nbsp;from&nbsp;index&nbsp;0&nbsp;to&nbsp;index&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;determinant&nbsp;of&nbsp;the&nbsp;minor&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;=&nbsp;m&nbsp;-&nbsp;1;&nbsp;//&nbsp;dimension&nbsp;of&nbsp;the&nbsp;minor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;det&nbsp;=&nbsp;CppAD::det_of_minor(a,&nbsp;m,&nbsp;m-1,&nbsp;r,&nbsp;c);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;determinant&nbsp;of&nbsp;the&nbsp;minor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(det&nbsp;==&nbsp;(double)&nbsp;(3*2-1*2)&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span></font></code>
+<hr>Input File: speed/example/det_of_minor.cpp
+
+</body>
+</html>

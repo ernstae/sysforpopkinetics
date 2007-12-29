@@ -1,0 +1,134 @@
+<html><head>
+<title>Determinant Using Expansion by Minors: Example and Test</title>
+<meta name="description" id="description" content="Determinant Using Expansion by Minors: Example and Test">
+<meta name="keywords" id="keywords" content=" determinant by minors example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_det_by_minor.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_utility</option>
+<option>det_by_minor</option>
+<option>det_by_minor.cpp</option>
+</select>
+</td>
+<td><a href="det_by_minor.htm" target="_top">Prev</a>
+</td><td><a href="det_by_minor.hpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed_utility-&gt;</option>
+<option>uniform_01</option>
+<option>det_of_minor</option>
+<option>det_by_minor</option>
+<option>det_by_lu</option>
+<option>det_33</option>
+<option>det_grad_33</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>det_by_minor-&gt;</option>
+<option>det_by_minor.cpp</option>
+<option>det_by_minor.hpp</option>
+</select>
+</td>
+<td>det_by_minor.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Determinant Using Expansion by Minors: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/det_by_minor.hpp&gt;<br>
+<br>
+bool&nbsp;det_by_minor()<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;dimension&nbsp;of&nbsp;the&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;3;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;construct&nbsp;the&nbsp;determinat&nbsp;object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::det_by_minor&lt;double&gt;&nbsp;Det(n);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;&nbsp;a[]&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.,&nbsp;2.,&nbsp;3.,&nbsp;&nbsp;//&nbsp;a[0]&nbsp;a[1]&nbsp;a[2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.,&nbsp;2.,&nbsp;1.,&nbsp;&nbsp;//&nbsp;a[3]&nbsp;a[4]&nbsp;a[5]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.,&nbsp;1.,&nbsp;2.&nbsp;&nbsp;&nbsp;//&nbsp;a[6]&nbsp;a[7]&nbsp;a[8]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;A(9);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;9;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[i]&nbsp;=&nbsp;a[i];<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;the&nbsp;determinant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;det&nbsp;=&nbsp;Det(A);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;a[0]*(a[4]*a[8]&nbsp;-&nbsp;a[5]*a[7])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;a[1]*(a[3]*a[8]&nbsp;-&nbsp;a[5]*a[6])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;a[2]*(a[3]*a[7]&nbsp;-&nbsp;a[4]*a[6]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;det&nbsp;==&nbsp;check;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: speed/example/det_by_minor.cpp
+
+</body>
+</html>

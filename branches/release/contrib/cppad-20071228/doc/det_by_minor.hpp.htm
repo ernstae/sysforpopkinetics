@@ -1,0 +1,143 @@
+<html><head>
+<title>Source: det_by_minor</title>
+<meta name="description" id="description" content="Source: det_by_minor">
+<meta name="keywords" id="keywords" content=" det_by_minor source ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_det_by_minor.hpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_utility</option>
+<option>det_by_minor</option>
+<option>det_by_minor.hpp</option>
+</select>
+</td>
+<td><a href="det_by_minor.cpp.htm" target="_top">Prev</a>
+</td><td><a href="det_by_lu.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed_utility-&gt;</option>
+<option>uniform_01</option>
+<option>det_of_minor</option>
+<option>det_by_minor</option>
+<option>det_by_lu</option>
+<option>det_33</option>
+<option>det_grad_33</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>det_by_minor-&gt;</option>
+<option>det_by_minor.cpp</option>
+<option>det_by_minor.hpp</option>
+</select>
+</td>
+<td>det_by_minor.hpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>Source: det_by_minor</big></big></b></center>
+<code><font color="blue"># ifndef CPPAD_DET_BY_MINOR_INCLUDED 
+<code><span style='white-space: nowrap'><br>
+</span></code># define CPPAD_DET_BY_MINOR_INCLUDED
+
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/det_of_minor.hpp&gt;<br>
+<br>
+//&nbsp;BEGIN&nbsp;CppAD&nbsp;namespace<br>
+namespace&nbsp;CppAD&nbsp;{<br>
+<br>
+template&nbsp;&lt;class&nbsp;Scalar&gt;<br>
+class&nbsp;det_by_minor&nbsp;{<br>
+private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;made&nbsp;mutable&nbsp;because&nbsp;modified&nbsp;and&nbsp;then&nbsp;restored<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mutable&nbsp;std::vector&lt;size_t&gt;&nbsp;r_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mutable&nbsp;std::vector&lt;size_t&gt;&nbsp;c_;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;make&nbsp;mutable&nbsp;because&nbsp;its&nbsp;value&nbsp;does&nbsp;not&nbsp;matter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mutable&nbsp;std::vector&lt;Scalar&gt;&nbsp;a_;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;det_by_minor(size_t&nbsp;m)&nbsp;:&nbsp;m_(m)&nbsp;,&nbsp;r_(m&nbsp;+&nbsp;1)&nbsp;,&nbsp;c_(m&nbsp;+&nbsp;1),&nbsp;a_(m&nbsp;*&nbsp;m)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;values&nbsp;for&nbsp;r&nbsp;and&nbsp;c&nbsp;that&nbsp;correspond&nbsp;to&nbsp;entire&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;r_[i]&nbsp;=&nbsp;i+1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c_[i]&nbsp;=&nbsp;i+1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r_[m]&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c_[m]&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&lt;class&nbsp;Vector&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inline&nbsp;Scalar&nbsp;operator()(const&nbsp;Vector&nbsp;&amp;x)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i&nbsp;=&nbsp;m_&nbsp;*&nbsp;m_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(i--)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a_[i]&nbsp;=&nbsp;x[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;det_of_minor(a_,&nbsp;m_,&nbsp;m_,&nbsp;r_,&nbsp;c_);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+};<br>
+<br>
+}&nbsp;//&nbsp;END&nbsp;CppAD&nbsp;namespace<br>
+</span># endif
+</font></code>
+
+
+<hr>Input File: omh/det_by_minor_hpp.omh
+
+</body>
+</html>

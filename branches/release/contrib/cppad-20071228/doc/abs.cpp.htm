@@ -1,0 +1,167 @@
+<html><head>
+<title>AD Absolute Value Function: Example and Test</title>
+<meta name="description" id="description" content="AD Absolute Value Function: Example and Test">
+<meta name="keywords" id="keywords" content=" abs example test derivative directional ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_abs.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>ADValued</option>
+<option>MathOther</option>
+<option>abs</option>
+<option>Abs.cpp</option>
+</select>
+</td>
+<td><a href="abs.htm" target="_top">Prev</a>
+</td><td><a href="atan2.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADValued-&gt;</option>
+<option>Arithmetic</option>
+<option>std_math_ad</option>
+<option>MathOther</option>
+<option>CondExp</option>
+<option>Discrete</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>MathOther-&gt;</option>
+<option>abs</option>
+<option>atan2</option>
+<option>erf</option>
+<option>pow</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>abs-&gt;</option>
+<option>Abs.cpp</option>
+</select>
+</td>
+<td>Abs.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>AD Absolute Value Function: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+bool&nbsp;Abs(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::abs;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;x(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(x);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;abs(x[0]&nbsp;-&nbsp;1.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;abs(x[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[2]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;abs(x[0]&nbsp;+&nbsp;1.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;x&nbsp;-&gt;&nbsp;y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(x,&nbsp;y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(y[0]&nbsp;==&nbsp;1.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(y[1]&nbsp;==&nbsp;0.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(y[2]&nbsp;==&nbsp;1.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;computation&nbsp;of&nbsp;partials&nbsp;w.r.t.&nbsp;a&nbsp;positive&nbsp;x[0]&nbsp;direction<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;p&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dx(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dy(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(p,&nbsp;dx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dy[0]&nbsp;==&nbsp;-&nbsp;dx[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dy[1]&nbsp;==&nbsp;+&nbsp;dx[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dy[2]&nbsp;==&nbsp;+&nbsp;dx[0]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;computation&nbsp;of&nbsp;partials&nbsp;w.r.t.&nbsp;a&nbsp;negative&nbsp;x[0]&nbsp;direction<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[0]&nbsp;=&nbsp;-1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(p,&nbsp;dx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dy[0]&nbsp;==&nbsp;-&nbsp;dx[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dy[1]&nbsp;==&nbsp;-&nbsp;dx[0]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dy[2]&nbsp;==&nbsp;+&nbsp;dx[0]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;reverse&nbsp;computation&nbsp;of&nbsp;derivative&nbsp;of&nbsp;y[0]&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;&nbsp;w(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dw(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;1.;&nbsp;w[1]&nbsp;=&nbsp;0.;&nbsp;w[2]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(p+1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dw[0]&nbsp;==&nbsp;-1.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;reverse&nbsp;computation&nbsp;of&nbsp;derivative&nbsp;of&nbsp;y[1]&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;0.;&nbsp;w[1]&nbsp;=&nbsp;1.;&nbsp;w[2]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(p+1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dw[0]&nbsp;==&nbsp;0.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;reverse&nbsp;computation&nbsp;of&nbsp;derivative&nbsp;of&nbsp;y[2]&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;=&nbsp;0.;&nbsp;w[1]&nbsp;=&nbsp;0.;&nbsp;w[2]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(p+1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&amp;=&nbsp;(dw[0]&nbsp;==&nbsp;1.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;a&nbsp;VecAD&lt;Base&gt;::reference&nbsp;object&nbsp;with&nbsp;abs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::VecAD&lt;double&gt;&nbsp;v(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;zero(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[zero]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;result&nbsp;=&nbsp;abs(v[zero]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(result,&nbsp;1.,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/abs.cpp
+
+</body>
+</html>

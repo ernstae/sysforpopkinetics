@@ -1,0 +1,154 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Source: Poly</title>
+<meta name="description" id="description" content="Source: Poly"/>
+<meta name="keywords" id="keywords" content=" Poly source "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_poly.hpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>library</option>
+<option>Poly</option>
+<option>poly.hpp</option>
+</select>
+</td>
+<td><a href="poly.cpp.xml" target="_top">Prev</a>
+</td><td><a href="ludetandsolve.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>library-&gt;</option>
+<option>ErrorHandler</option>
+<option>NearEqual</option>
+<option>speed_test</option>
+<option>SpeedTest</option>
+<option>NumericType</option>
+<option>CheckNumericType</option>
+<option>SimpleVector</option>
+<option>CheckSimpleVector</option>
+<option>nan</option>
+<option>pow_int</option>
+<option>Poly</option>
+<option>LuDetAndSolve</option>
+<option>RombergOne</option>
+<option>RombergMul</option>
+<option>Runge45</option>
+<option>Rosen34</option>
+<option>OdeErrControl</option>
+<option>OdeGear</option>
+<option>OdeGearControl</option>
+<option>BenderQuad</option>
+<option>LuRatio</option>
+<option>std_math_unary</option>
+<option>CppAD_vector</option>
+<option>TrackNewDel</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Poly-&gt;</option>
+<option>Poly.cpp</option>
+<option>poly.hpp</option>
+</select>
+</td>
+<td>poly.hpp</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>Source: Poly</big></big></b></center>
+<code><font color="blue"># ifndef CPPAD_POLY_INCLUDED 
+<code><span style='white-space: nowrap'><br/>
+</span></code># define CPPAD_POLY_INCLUDED
+
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cstddef&gt;&#xA0;&#xA0;//&#xA0;used&#xA0;to&#xA0;defined&#xA0;size_t<br/>
+#&#xA0;include&#xA0;&lt;cppad/check_simple_vector.hpp&gt;<br/>
+<br/>
+namespace&#xA0;CppAD&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;BEGIN&#xA0;CppAD&#xA0;namespace<br/>
+<br/>
+template&#xA0;&lt;class&#xA0;Type,&#xA0;class&#xA0;Vector&gt;<br/>
+Type&#xA0;Poly(size_t&#xA0;k,&#xA0;const&#xA0;Vector&#xA0;&amp;a,&#xA0;const&#xA0;Type&#xA0;&amp;z)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;d&#xA0;=&#xA0;a.size()&#xA0;-&#xA0;1;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;tmp;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;Vector&#xA0;is&#xA0;Simple&#xA0;Vector&#xA0;class&#xA0;with&#xA0;Type&#xA0;elements<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CheckSimpleVector&lt;Type,&#xA0;Vector&gt;();<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;case&#xA0;where&#xA0;derivative&#xA0;order&#xA0;greater&#xA0;than&#xA0;degree&#xA0;of&#xA0;polynomial<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;k&#xA0;&gt;&#xA0;d&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;tmp&#xA0;=&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;tmp;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;case&#xA0;where&#xA0;we&#xA0;are&#xA0;evaluating&#xA0;a&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;k&#xA0;&gt;&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;factor&#xA0;as&#xA0;(k-1)&#xA0;!<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;factor&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;2;&#xA0;i&#xA0;&lt;&#xA0;k;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;factor&#xA0;*=&#xA0;i;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;set&#xA0;b&#xA0;to&#xA0;coefficient&#xA0;vector&#xA0;corresponding&#xA0;to&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;b(d&#xA0;-&#xA0;k&#xA0;+&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;k;&#xA0;i&#xA0;&lt;=&#xA0;d;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;factor&#xA0;&#xA0;&#xA0;*=&#xA0;i;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;tmp&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;factor;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;b[i&#xA0;-&#xA0;k]&#xA0;&#xA0;=&#xA0;a[i]&#xA0;*&#xA0;tmp;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;factor&#xA0;&#xA0;&#xA0;/=&#xA0;(i&#xA0;-&#xA0;k&#xA0;+&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;value&#xA0;of&#xA0;derivative&#xA0;polynomial<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;Poly(0,&#xA0;b,&#xA0;z);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;case&#xA0;where&#xA0;we&#xA0;are&#xA0;evaluating&#xA0;the&#xA0;original&#xA0;polynomial<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;sum&#xA0;=&#xA0;a[d];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;i&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;d;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(i&#xA0;&gt;&#xA0;0)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;*=&#xA0;z;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;sum&#xA0;+=&#xA0;a[--i];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;sum;<br/>
+}<br/>
+}&#xA0;//&#xA0;END&#xA0;CppAD&#xA0;namespace<br/>
+</span># endif
+</font></code>
+
+
+<hr/>Input File: omh/poly_hpp.omh
+
+</body>
+</html>

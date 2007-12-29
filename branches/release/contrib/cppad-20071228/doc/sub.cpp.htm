@@ -1,0 +1,145 @@
+<html><head>
+<title>AD Binary Subtraction: Example and Test</title>
+<meta name="description" id="description" content="AD Binary Subtraction: Example and Test">
+<meta name="keywords" id="keywords" content=" - Ad example subtract minus test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_sub.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>ADValued</option>
+<option>Arithmetic</option>
+<option>ad_binary</option>
+<option>Sub.cpp</option>
+</select>
+</td>
+<td><a href="add.cpp.htm" target="_top">Prev</a>
+</td><td><a href="mul.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADValued-&gt;</option>
+<option>Arithmetic</option>
+<option>std_math_ad</option>
+<option>MathOther</option>
+<option>CondExp</option>
+<option>Discrete</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Arithmetic-&gt;</option>
+<option>UnaryPlus</option>
+<option>UnaryMinus</option>
+<option>ad_binary</option>
+<option>compute_assign</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ad_binary-&gt;</option>
+<option>Add.cpp</option>
+<option>Sub.cpp</option>
+<option>Mul.cpp</option>
+<option>Div.cpp</option>
+</select>
+</td>
+<td>Sub.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+<center><b><big><big>AD Binary Subtraction: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+bool&nbsp;Sub(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;n&nbsp;=&nbsp;&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;x0&nbsp;=&nbsp;.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;x(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;x0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(x);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;a&nbsp;=&nbsp;2.&nbsp;*&nbsp;x[0]&nbsp;-&nbsp;1.;&nbsp;//&nbsp;AD&lt;double&gt;&nbsp;-&nbsp;double<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;b&nbsp;=&nbsp;a&nbsp;&nbsp;-&nbsp;2;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&lt;double&gt;&nbsp;-&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;c&nbsp;=&nbsp;3.&nbsp;-&nbsp;b;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;AD&lt;double&gt;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;d&nbsp;=&nbsp;4&nbsp;&nbsp;-&nbsp;c;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;AD&lt;double&gt;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[0]&nbsp;=&nbsp;x[0]&nbsp;-&nbsp;d;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&lt;double&gt;&nbsp;-&nbsp;AD&lt;double&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;x&nbsp;-&gt;&nbsp;y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(x,&nbsp;y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;value&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(y[0],&nbsp;x0-4.+3.+2.-2.*x0+1.,&nbsp;&nbsp;1e-10&nbsp;,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;computation&nbsp;of&nbsp;partials&nbsp;w.r.t.&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dx(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dy(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;dx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[0],&nbsp;-1.,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;reverse&nbsp;computation&nbsp;of&nbsp;derivative&nbsp;of&nbsp;y[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;&nbsp;w(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dw(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[0],&nbsp;-1.,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;a&nbsp;VecAD&lt;Base&gt;::reference&nbsp;object&nbsp;with&nbsp;subtraction<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::VecAD&lt;double&gt;&nbsp;v(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;zero(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[zero]&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;result&nbsp;=&nbsp;3.&nbsp;-&nbsp;v[zero];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;(result&nbsp;==&nbsp;c);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/sub.cpp
+
+</body>
+</html>

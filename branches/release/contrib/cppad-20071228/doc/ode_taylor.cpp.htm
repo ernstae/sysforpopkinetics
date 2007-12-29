@@ -1,0 +1,427 @@
+<html><head>
+<title>Taylor's Ode Solver: An Example and Test</title>
+<meta name="description" id="description" content="Taylor's Ode Solver: An Example and Test">
+<meta name="keywords" id="keywords" content=" Ode Taylor example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_ode_taylor.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Example</option>
+<option>General</option>
+<option>ode_taylor.cpp</option>
+</select>
+</td>
+<td><a href="odestiff.cpp.htm" target="_top">Prev</a>
+</td><td><a href="ode_taylor_adolc.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Example-&gt;</option>
+<option>General</option>
+<option>ExampleUtility</option>
+<option>ListAllExamples</option>
+<option>test_vector</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>General-&gt;</option>
+<option>Interface2C.cpp</option>
+<option>JacMinorDet.cpp</option>
+<option>JacLuDet.cpp</option>
+<option>HesMinorDet.cpp</option>
+<option>HesLuDet.cpp</option>
+<option>OdeStiff.cpp</option>
+<option>ode_taylor.cpp</option>
+<option>ode_taylor_adolc.cpp</option>
+<option>StackMachine.cpp</option>
+<option>mul_level</option>
+</select>
+</td>
+<td>ode_taylor.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Purpose</option>
+<option>ODE</option>
+<option>ODE Solution</option>
+<option>Derivative of ODE Solution</option>
+<option>Taylor's Method Using AD</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Taylor's Ode Solver: An Example and Test</big></big></b></center>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+This is a realistic example using 
+two levels of taping (see <a href="mul_level.htm" target="_top"><span style='white-space: nowrap'>mul_level</span></a>
+).
+The first level of taping uses <code><font color="blue">AD&lt;double&gt;</font></code> to tape the solution of an 
+ordinary differential equation.
+This solution is then differentiated with respect to a parameter vector.
+The second level of taping uses <code><font color="blue">AD&lt; AD&lt;double&gt; &gt;</font></code>
+to take derivatives during the solution of the differential equation.
+These derivatives are used in the application
+of Taylor's method to the solution of the ODE.
+The example <a href="ode_taylor_adolc.cpp.htm" target="_top"><span style='white-space: nowrap'>ode_taylor_adolc.cpp</span></a>
+ computes the same values using
+Adolc's type <code><font color="blue">adouble</font></code> and CppAD's type <code><font color="blue">AD&lt;adouble&gt;</font></code>.
+
+<br>
+<br>
+<b><big><a name="ODE" id="ODE">ODE</a></big></b>
+<br>
+For this example the ODE's are defined by the function
+<code>
+<span style='white-space: nowrap'>&nbsp;h&nbsp;:&nbsp;\R^n&nbsp;\times&nbsp;\R^n&nbsp;\rightarrow&nbsp;\R^n</span></code>
+ where
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h[&nbsp;x,&nbsp;y(t,&nbsp;x)&nbsp;]&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\left(&nbsp;\begin{array}{c}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_1&nbsp;y_0&nbsp;(t,&nbsp;x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\vdots&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_{n-1}&nbsp;y_{n-2}&nbsp;(t,&nbsp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\end{array}&nbsp;\right)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\left(&nbsp;\begin{array}{c}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\partial_t&nbsp;y_0&nbsp;(t&nbsp;,&nbsp;x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\partial_t&nbsp;y_1&nbsp;(t&nbsp;,&nbsp;x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\vdots&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\partial_t&nbsp;y_{n-1}&nbsp;(t&nbsp;,&nbsp;x)&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\end{array}&nbsp;\right)<br>
+\]&nbsp;</span></code>
+
+and the initial condition <code>
+<span style='white-space: nowrap'>&nbsp;y(0,&nbsp;x)&nbsp;=&nbsp;0</span></code>
+.
+The value of <code>
+<span style='white-space: nowrap'>&nbsp;x</span></code>
+ is fixed during the solution of the ODE
+and the function <code>
+<span style='white-space: nowrap'>&nbsp;g&nbsp;:&nbsp;\R^n&nbsp;\rightarrow&nbsp;\R^n</span></code>
+ is used to
+define the ODE where
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g(y)&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\left(&nbsp;\begin{array}{c}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_1&nbsp;y_0&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\vdots&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_{n-1}&nbsp;y_{n-2}&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\end{array}&nbsp;\right)<br>
+\]&nbsp;</span></code>
+	
+
+<br>
+<br>
+<b><big><a name="ODE Solution" id="ODE Solution">ODE Solution</a></big></b>
+<br>
+The solution for this example can be calculated by 
+starting with the first row and then using the solution
+for the first row to solve the second and so on.
+Doing this we obtain
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y(t,&nbsp;x&nbsp;)&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\left(&nbsp;\begin{array}{c}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_0&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_1&nbsp;x_0&nbsp;t^2&nbsp;/&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\vdots&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_{n-1}&nbsp;x_{n-2}&nbsp;\ldots&nbsp;x_0&nbsp;t^n&nbsp;/&nbsp;n&nbsp;!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\end{array}&nbsp;\right)<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="Derivative of ODE Solution" id="Derivative of ODE Solution">Derivative of ODE Solution</a></big></b>
+<br>
+Differentiating the solution above,
+with respect to the parameter vector <code>
+<span style='white-space: nowrap'>&nbsp;x</span></code>
+,
+we notice that
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\partial_x&nbsp;y(t,&nbsp;x&nbsp;)&nbsp;=<br>
+\left(&nbsp;\begin{array}{cccc}<br>
+y_0&nbsp;(t,x)&nbsp;/&nbsp;x_0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;\cdots&nbsp;&amp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+y_1&nbsp;(t,x)&nbsp;/&nbsp;x_0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;y_1&nbsp;(t,x)&nbsp;/&nbsp;x_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;\vdots&nbsp;\\<br>
+\vdots&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;\vdots&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;\ddots&nbsp;&amp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+y_{n-1}&nbsp;(t,x)&nbsp;/&nbsp;x_0&nbsp;&nbsp;&amp;&nbsp;y_{n-1}&nbsp;(t,x)&nbsp;/&nbsp;x_1&nbsp;&amp;&nbsp;\cdots&nbsp;&amp;&nbsp;y_{n-1}&nbsp;(t,x)&nbsp;/&nbsp;x_{n-1}<br>
+\end{array}&nbsp;\right)<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="Taylor's Method Using AD" id="Taylor's Method Using AD">Taylor's Method Using AD</a></big></b>
+<br>
+An <i>m</i>-th order Taylor method for 
+approximating the solution of an
+ordinary differential equations is 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y(t&nbsp;+&nbsp;\Delta&nbsp;t&nbsp;,&nbsp;x)&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\approx&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\sum_{k=0}^p&nbsp;\partial_t^k&nbsp;y(t&nbsp;,&nbsp;x&nbsp;)&nbsp;\frac{&nbsp;\Delta&nbsp;t^k&nbsp;}{&nbsp;k&nbsp;!&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y^{(0)}&nbsp;(t&nbsp;,&nbsp;x&nbsp;)&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y^{(1)}&nbsp;(t&nbsp;,&nbsp;x&nbsp;)&nbsp;\Delta&nbsp;t&nbsp;+&nbsp;\cdots&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y^{(p)}&nbsp;(t&nbsp;,&nbsp;x&nbsp;)&nbsp;\Delta&nbsp;t^p<br>
+\]&nbsp;</span></code>
+
+where the Taylor coefficients <code>
+<span style='white-space: nowrap'>&nbsp;y^{(k)}&nbsp;(t,&nbsp;x)</span></code>
+ are defined by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y^{(k)}&nbsp;(t,&nbsp;x)&nbsp;=&nbsp;\partial_t^k&nbsp;y(t&nbsp;,&nbsp;x&nbsp;)&nbsp;/&nbsp;k&nbsp;!<br>
+\]&nbsp;</span></code>
+
+We define the function <code>
+<span style='white-space: nowrap'>&nbsp;z(t,&nbsp;x)</span></code>
+ by the equation
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z&nbsp;(&nbsp;t&nbsp;,&nbsp;x&nbsp;)&nbsp;=&nbsp;g[&nbsp;y&nbsp;(&nbsp;t&nbsp;,&nbsp;x&nbsp;)&nbsp;]&nbsp;=&nbsp;h&nbsp;[&nbsp;x&nbsp;,&nbsp;y(&nbsp;t&nbsp;,&nbsp;x&nbsp;)&nbsp;]<br>
+\]&nbsp;</span></code>
+
+It follows that 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\partial_t&nbsp;y(t,&nbsp;x)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;z&nbsp;(t&nbsp;,&nbsp;x)&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\partial_t^{k+1}&nbsp;y(t&nbsp;,&nbsp;x)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;\partial_t^k&nbsp;z&nbsp;(t&nbsp;,&nbsp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y^{(k+1)}&nbsp;(&nbsp;t&nbsp;,&nbsp;x)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;z^{(k)}&nbsp;(t,&nbsp;x)&nbsp;/&nbsp;(k+1)&nbsp;<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+where <code>
+<span style='white-space: nowrap'>&nbsp;&nbsp;z^{(k)}&nbsp;(t,&nbsp;x)</span></code>
+ is the 
+<i>k</i>-th order Taylor coefficient
+for <code>
+<span style='white-space: nowrap'>&nbsp;z(t,&nbsp;x)</span></code>
+.
+In the example below, the Taylor coefficients
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y^{(0)}&nbsp;(t&nbsp;,&nbsp;x)&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;y^{(k)}&nbsp;(&nbsp;t&nbsp;,&nbsp;x&nbsp;)<br>
+\]&nbsp;</span></code>
+
+are used to calculate the Taylor coefficient <code>
+<span style='white-space: nowrap'>&nbsp;z^{(k)}&nbsp;(&nbsp;t&nbsp;,&nbsp;x&nbsp;)</span></code>
+
+which in turn gives the value for <code>
+<span style='white-space: nowrap'>&nbsp;&nbsp;y^{(k+1)}&nbsp;y&nbsp;(&nbsp;t&nbsp;,&nbsp;x)</span></code>
+.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+<br>
+//&nbsp;=========================================================================<br>
+//&nbsp;define&nbsp;types&nbsp;for&nbsp;each&nbsp;level<br>
+namespace&nbsp;{&nbsp;//&nbsp;BEGIN&nbsp;empty&nbsp;namespace<br>
+typedef&nbsp;CppAD::AD&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADdouble;<br>
+typedef&nbsp;CppAD::AD&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;ADDdouble;<br>
+<br>
+//&nbsp;-------------------------------------------------------------------------<br>
+//&nbsp;class&nbsp;definition&nbsp;for&nbsp;C++&nbsp;function&nbsp;object&nbsp;that&nbsp;defines&nbsp;ODE<br>
+class&nbsp;Ode&nbsp;{<br>
+private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;copy&nbsp;of&nbsp;a&nbsp;that&nbsp;is&nbsp;set&nbsp;by&nbsp;constructor&nbsp;and&nbsp;used&nbsp;by&nbsp;g(y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;x_;&nbsp;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;constructor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ode(&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;x)&nbsp;:&nbsp;x_(x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;the&nbsp;function&nbsp;g(y)&nbsp;is&nbsp;evaluated&nbsp;with&nbsp;two&nbsp;levels&nbsp;of&nbsp;taping<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADDdouble&nbsp;&gt;&nbsp;operator()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;const&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADDdouble&nbsp;&gt;&nbsp;&amp;y)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;y.size();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADDdouble&nbsp;&gt;&nbsp;g(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g[0]&nbsp;=&nbsp;x_[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;1;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g[i]&nbsp;=&nbsp;x_[i]&nbsp;*&nbsp;y[i-1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;g;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+};<br>
+<br>
+//&nbsp;-------------------------------------------------------------------------<br>
+//&nbsp;Routine&nbsp;that&nbsp;uses&nbsp;Taylor's&nbsp;method&nbsp;to&nbsp;solve&nbsp;ordinary&nbsp;differential&nbsp;equaitons<br>
+//&nbsp;and&nbsp;allows&nbsp;for&nbsp;algorithmic&nbsp;differentiation&nbsp;of&nbsp;the&nbsp;solution.&nbsp;<br>
+CPPAD_TEST_VECTOR&nbsp;&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;taylor_ode(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;//&nbsp;function&nbsp;that&nbsp;defines&nbsp;the&nbsp;ODE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;order&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;//&nbsp;order&nbsp;of&nbsp;Taylor's&nbsp;method&nbsp;used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nstep&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;steps&nbsp;to&nbsp;take<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADdouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;dt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;//&nbsp;Delta&nbsp;t&nbsp;for&nbsp;each&nbsp;step<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;&amp;y_ini&nbsp;&nbsp;)&nbsp;&nbsp;//&nbsp;y(t)&nbsp;at&nbsp;the&nbsp;initial&nbsp;time<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;some&nbsp;temporary&nbsp;indices<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;k,&nbsp;ell;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;variables&nbsp;in&nbsp;the&nbsp;ODE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;y_ini.size();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;copies&nbsp;of&nbsp;x&nbsp;and&nbsp;g(y)&nbsp;with&nbsp;two&nbsp;levels&nbsp;of&nbsp;taping<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADDdouble&nbsp;&gt;&nbsp;&nbsp;&nbsp;Y(n),&nbsp;Z(n);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;y,&nbsp;y^{(k)}&nbsp;,&nbsp;z^{(k)},&nbsp;and&nbsp;y^{(k+1)}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;&nbsp;y(n),&nbsp;y_k(n),&nbsp;z_k(n),&nbsp;y_kp(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[i]&nbsp;=&nbsp;y_ini[i];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;loop&nbsp;with&nbsp;respect&nbsp;to&nbsp;each&nbsp;step&nbsp;of&nbsp;Taylors&nbsp;method<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(ell&nbsp;=&nbsp;0;&nbsp;ell&nbsp;&lt;&nbsp;nstep;&nbsp;ell++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;prepare&nbsp;to&nbsp;compute&nbsp;derivatives&nbsp;of&nbsp;in&nbsp;ADdouble<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[i]&nbsp;=&nbsp;y[i];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;ODE&nbsp;in&nbsp;ADDdouble<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z&nbsp;=&nbsp;G(Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;define&nbsp;differentiable&nbsp;version&nbsp;of&nbsp;g:&nbsp;X&nbsp;-&gt;&nbsp;Y<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;that&nbsp;computes&nbsp;its&nbsp;derivatives&nbsp;in&nbsp;ADdouble<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;ADdouble&gt;&nbsp;g(Y,&nbsp;Z);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Use&nbsp;Taylor's&nbsp;method&nbsp;to&nbsp;take&nbsp;a&nbsp;step<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y_k&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;y;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;y^{(k)}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADdouble&nbsp;dt_kp&nbsp;=&nbsp;dt;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;dt^(k+1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;=&nbsp;order;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;k-th&nbsp;order&nbsp;Taylor&nbsp;coefficient&nbsp;of&nbsp;y<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z_k&nbsp;=&nbsp;g.Forward(k,&nbsp;y_k);<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;convert&nbsp;to&nbsp;(k+1)-Taylor&nbsp;coefficient&nbsp;for&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y_kp[i]&nbsp;=&nbsp;z_k[i]&nbsp;/&nbsp;ADdouble(k&nbsp;+&nbsp;1);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;add&nbsp;term&nbsp;for&nbsp;to&nbsp;this&nbsp;Taylor&nbsp;coefficient<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;to&nbsp;solution&nbsp;for&nbsp;y(t,&nbsp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y[i]&nbsp;&nbsp;&nbsp;&nbsp;+=&nbsp;y_kp[i]&nbsp;*&nbsp;dt_kp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;next&nbsp;power&nbsp;of&nbsp;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dt_kp&nbsp;*=&nbsp;dt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;next&nbsp;Taylor&nbsp;coefficient<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y_k&nbsp;&nbsp;&nbsp;=&nbsp;y_kp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;y;<br>
+}<br>
+}&nbsp;//&nbsp;END&nbsp;empty&nbsp;namespace<br>
+//&nbsp;==========================================================================<br>
+//&nbsp;Routine&nbsp;that&nbsp;tests&nbsp;alogirhtmic&nbsp;differentiation&nbsp;of&nbsp;solutions&nbsp;computed<br>
+//&nbsp;by&nbsp;the&nbsp;routine&nbsp;taylor_ode.<br>
+bool&nbsp;ode_taylor(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;the&nbsp;return&nbsp;value&nbsp;as&nbsp;true&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;components&nbsp;in&nbsp;differential&nbsp;equation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;4;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;some&nbsp;temporary&nbsp;indices<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;parameter&nbsp;vector&nbsp;in&nbsp;both&nbsp;double&nbsp;and&nbsp;ADdouble<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;&nbsp;&nbsp;x(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;ADdouble&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[i]&nbsp;=&nbsp;x[i]&nbsp;=&nbsp;double(i&nbsp;+&nbsp;1);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;the&nbsp;parameters&nbsp;as&nbsp;the&nbsp;independent&nbsp;variable<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;arguments&nbsp;to&nbsp;taylor_ode&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ode&nbsp;G(X);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;that&nbsp;defines&nbsp;the&nbsp;ODE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;order&nbsp;=&nbsp;n;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;order&nbsp;of&nbsp;Taylor's&nbsp;method&nbsp;used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;nstep&nbsp;=&nbsp;2;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;steps&nbsp;to&nbsp;take<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADdouble&nbsp;DT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Delta&nbsp;t&nbsp;for&nbsp;each&nbsp;step<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;of&nbsp;y(t,&nbsp;x)&nbsp;at&nbsp;the&nbsp;initial&nbsp;time<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;Y_INI(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y_INI[i]&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;integrate&nbsp;the&nbsp;differential&nbsp;equation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;Y_FINAL(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y_FINAL&nbsp;=&nbsp;taylor_ode(G,&nbsp;order,&nbsp;nstep,&nbsp;DT,&nbsp;Y_INI);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;define&nbsp;differentiable&nbsp;fucntion&nbsp;object&nbsp;f&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;Y_FINAL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;that&nbsp;computes&nbsp;its&nbsp;derivatives&nbsp;in&nbsp;double<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y_FINAL);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;function&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;nstep&nbsp;*&nbsp;Value(DT);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;*=&nbsp;x[i]&nbsp;*&nbsp;t&nbsp;/&nbsp;double(i&nbsp;+&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(Value(Y_FINAL[i]),&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;the&nbsp;Jacobian&nbsp;of&nbsp;h&nbsp;at&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;jac&nbsp;=&nbsp;f.Jacobian(x);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;Jacobian&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;jac_ij&nbsp;=&nbsp;jac[i&nbsp;*&nbsp;n&nbsp;+&nbsp;j];&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;i&nbsp;&lt;&nbsp;j&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;check&nbsp;=&nbsp;Value(&nbsp;Y_FINAL[i]&nbsp;)&nbsp;/&nbsp;x[j];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(jac_ij,&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/ode_taylor.cpp
+
+</body>
+</html>

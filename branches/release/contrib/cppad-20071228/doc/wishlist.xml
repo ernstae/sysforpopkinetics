@@ -1,0 +1,259 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>The CppAD Wish List</title>
+<meta name="description" id="description" content="The CppAD Wish List"/>
+<meta name="keywords" id="keywords" content=" wish list new features atan2 Condexp sequence operation optimize tape operations "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_wishlist_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>WishList</option>
+</select>
+</td>
+<td><a href="bugs.xml" target="_top">Prev</a>
+</td><td><a href="whats_new.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>WishList</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Atan2</option>
+<option>BenderQuad</option>
+<option>CondExp</option>
+<option>Computed Assignment</option>
+<option>Exceptions</option>
+<option>Operation Sequence</option>
+<option>Optimization</option>
+<option>Software Guidelines</option>
+<option>---..Boost</option>
+<option>---..Member Variables</option>
+<option>Vector Element Type</option>
+<option>Tracing</option>
+<option>VecAD</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>The CppAD Wish List</big></big></b></center>
+<br/>
+<b><big><a name="Atan2" id="Atan2">Atan2</a></big></b>
+
+<br/>
+The <a href="atan2.xml" target="_top"><span style='white-space: nowrap'>atan2</span></a>
+ function could be made faster by adding
+a special operator for it.
+
+<br/>
+<br/>
+<b><big><a name="BenderQuad" id="BenderQuad">BenderQuad</a></big></b>
+<br/>
+See the <a href="benderquad.xml#Problem" target="_top"><span style='white-space: nowrap'>problem</span></a>
+ with the 
+current <code><font color="blue">BenderQuad</font></code> specifications.
+
+<br/>
+<br/>
+<b><big><a name="CondExp" id="CondExp">CondExp</a></big></b>
+
+<br/>
+Extend the conditional expressions <a href="condexp.xml" target="_top"><span style='white-space: nowrap'>CondExp</span></a>
+ so that they are 
+valid for complex types by comparing real parts.
+In addition, use this change to extend <a href="luratio.xml" target="_top"><span style='white-space: nowrap'>LuRatio</span></a>
+ so 
+that it works with complex AD types.
+
+<br/>
+<br/>
+<b><big><a name="Computed Assignment" id="Computed Assignment">Computed Assignment</a></big></b>
+<br/>
+If the <i>Base</i> type is not <code><font color="blue">double</font></code>,
+the <a href="compute_assign.xml" target="_top"><span style='white-space: nowrap'>computed&#xA0;assignment</span></a>
+ operators do not
+always allow for <code><font color="blue">double</font></code> operands. For example,
+if <i>x</i> has type <code><font color="blue">AD&lt; AD&lt;double&gt; &gt;</font></code>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;+=&#xA0;.5;<br/>
+</span></font></code>will slice the value <code><font color="blue">.5</font></code> to an <code><font color="blue">int</font></code>
+and then convert it to an <code><font color="blue">AD&lt; AD&lt;double&gt; &gt;</font></code>.
+Hence, zero will be added to <i>x</i>.
+
+
+<br/>
+<br/>
+<b><big><a name="Exceptions" id="Exceptions">Exceptions</a></big></b>
+<br/>
+When the function
+<a href="independent.xml" target="_top"><span style='white-space: nowrap'>Independent</span></a>
+ is called,  
+a new tape is created.
+If an exception occurs before the call to the corresponding
+<a href="adfun.xml" target="_top"><span style='white-space: nowrap'>ADFun</span></a>
+ constructor or <a href="dependent.xml" target="_top"><span style='white-space: nowrap'>Dependent</span></a>
+, 
+the tape recording will never stop.
+Thus, there should be a way to abort a tape recording.
+
+<br/>
+<br/>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+
+
+<br/>
+It is possible to detect if the 
+AD of <i>Base</i> 
+<a href="glossary.xml#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&#xA0;sequence</span></a>
+ 
+does not depend on any of the
+<a href="glossary.xml#Tape.Independent Variable" target="_top"><span style='white-space: nowrap'>independent&#xA0;variable</span></a>
+ values.
+This could be returned as an extra
+<a href="seqproperty.xml" target="_top"><span style='white-space: nowrap'>SeqProperty</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Optimization" id="Optimization">Optimization</a></big></b>
+
+
+
+
+<br/>
+A single <a href="revsparsejac.xml" target="_top"><span style='white-space: nowrap'>RevSparseJac</span></a>
+ sweep could be used to determine
+which parts of the operation sequence in an
+<a href="funconstruct.xml" target="_top"><span style='white-space: nowrap'>ADFun</span></a>
+ object can be removed.
+
+<br/>
+<br/>
+<b><big><a name="Software Guidelines" id="Software Guidelines">Software Guidelines</a></big></b>
+
+
+<br/>
+<br/>
+<b><a name="Software Guidelines.Boost" id="Software Guidelines.Boost">Boost</a></b>
+<br/>
+The following is a list of some software guidelines taken from
+<a href="http://www.boost.org/more/lib_guide.htm#Guidelines" target="_top"><span style='white-space: nowrap'>boost</span></a>
+.
+These guidelines are not followed by the current CppAD source code,
+but perhaps they should be:
+
+<ol type="1"><li>
+Names (except as noted below) 
+should be all lowercase, with words separated by underscores.
+For example, acronyms should be treated as ordinary names 
+(xml_parser instead of XML_parser).
+
+</li><li>
+
+Template parameter names should begin with an uppercase letter.
+
+</li><li>
+
+Use spaces rather than tabs.  
+
+</li></ol>
+
+
+<br/>
+<br/>
+<b><a name="Software Guidelines.Member Variables" id="Software Guidelines.Member Variables">Member Variables</a></b>
+<br/>
+Change private member variables names
+(not part of the user interface)
+so that they all end with an underscore.
+(This has been done for the <code><font color="blue">AD</font></code> and <code><font color="blue">VecAD</font></code> template class,
+but not yet for the other classes.) 
+
+<br/>
+<br/>
+<b><big><a name="Vector Element Type" id="Vector Element Type">Vector Element Type</a></big></b>
+<br/>
+Change cross references from 
+<a href="simplevector.xml#Elements of Specified Type" target="_top"><span style='white-space: nowrap'>elements&#xA0;of&#xA0;a&#xA0;specified&#xA0;type</span></a>
+
+to
+<a href="simplevector.xml#Value Type" target="_top"><span style='white-space: nowrap'>value_type</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Tracing" id="Tracing">Tracing</a></big></b>
+<br/>
+Add forward and reverse mode operation tracing to the developer documentation
+(perhaps it will eventually become part of 
+the user interface and documentation).
+
+<br/>
+<br/>
+<b><big><a name="VecAD" id="VecAD">VecAD</a></big></b>
+<br/>
+Make assignment operation in <a href="vecad.xml" target="_top"><span style='white-space: nowrap'>VecAD</span></a>
+ like
+assignment in <a href="ad_copy.xml" target="_top"><span style='white-space: nowrap'>ad_copy</span></a>
+.
+This will fix slicing to <code><font color="blue">int</font></code> when assigning
+from <code><font color="blue">double</font></code> to 
+<code><font color="blue">VecAD&lt; AD&lt;double&gt; &gt;::reference</font></code> object.
+
+
+<hr/>Input File: omh/wish_list.omh
+
+</body>
+</html>

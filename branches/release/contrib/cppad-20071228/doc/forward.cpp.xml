@@ -1,0 +1,190 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Forward Mode: Example and Test</title>
+<meta name="description" id="description" content="Forward Mode: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Forward example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_forward.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>FunEval</option>
+<option>Forward</option>
+<option>Forward.cpp</option>
+</select>
+</td>
+<td><a href="capacity_taylor.xml" target="_top">Prev</a>
+</td><td><a href="reverse.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>FunEval-&gt;</option>
+<option>Forward</option>
+<option>Reverse</option>
+<option>Sparse</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Forward-&gt;</option>
+<option>ForwardZero</option>
+<option>ForwardOne</option>
+<option>ForwardAny</option>
+<option>size_taylor</option>
+<option>CompareChange</option>
+<option>capacity_taylor</option>
+<option>Forward.cpp</option>
+</select>
+</td>
+<td>Forward.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Forward Mode: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+namespace&#xA0;{&#xA0;//&#xA0;--------------------------------------------------------<br/>
+//&#xA0;define&#xA0;the&#xA0;template&#xA0;function&#xA0;ForwardCases&lt;Vector&gt;&#xA0;in&#xA0;empty&#xA0;namespace<br/>
+template&#xA0;&lt;class&#xA0;Vector&gt;&#xA0;<br/>
+bool&#xA0;ForwardCases(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::NearEqual;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;X(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;0.;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[1]&#xA0;=&#xA0;1.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;starting&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[0]&#xA0;=&#xA0;X[0]&#xA0;*&#xA0;X[0]&#xA0;*&#xA0;X[1];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;f:&#xA0;X&#xA0;-&gt;&#xA0;Y&#xA0;and&#xA0;stop&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(X,&#xA0;Y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;The&#xA0;highest&#xA0;order&#xA0;Forward&#xA0;mode&#xA0;calculation&#xA0;below&#xA0;is&#xA0;is&#xA0;second&#xA0;order.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;This&#xA0;corresponds&#xA0;to&#xA0;three&#xA0;Taylor&#xA0;coefficients&#xA0;per&#xA0;variable&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;(zero,&#xA0;first,&#xA0;and&#xA0;second&#xA0;order).<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f.capacity_taylor(3);&#xA0;&#xA0;//&#xA0;pre-allocate&#xA0;memory&#xA0;for&#xA0;speed&#xA0;of&#xA0;execution<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initially,&#xA0;the&#xA0;variable&#xA0;values&#xA0;during&#xA0;taping&#xA0;are&#xA0;stored&#xA0;in&#xA0;f<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;f.size_taylor()&#xA0;==&#xA0;1;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;zero&#xA0;order&#xA0;forward&#xA0;mode&#xA0;using&#xA0;notaiton&#xA0;in&#xA0;ForwardZero<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;use&#xA0;the&#xA0;template&#xA0;parameter&#xA0;Vector&#xA0;for&#xA0;the&#xA0;vector&#xA0;type<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;3.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[1]&#xA0;=&#xA0;4.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(0,&#xA0;x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;NearEqual(y[0]&#xA0;,&#xA0;x[0]*x[0]*x[1],&#xA0;1e-10,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;f.size_taylor()&#xA0;==&#xA0;1;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;first&#xA0;order&#xA0;forward&#xA0;mode&#xA0;using&#xA0;notation&#xA0;in&#xA0;ForwardOne<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;X(t)&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;x&#xA0;+&#xA0;dx&#xA0;*&#xA0;t<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Y(t)&#xA0;=&#xA0;F[X(t)]&#xA0;=&#xA0;y&#xA0;+&#xA0;dy&#xA0;*&#xA0;t&#xA0;+&#xA0;o(t)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;dx(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;dy(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dx[0]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dx[1]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dy&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(1,&#xA0;dx);&#xA0;//&#xA0;partial&#xA0;F&#xA0;w.r.t.&#xA0;x[0]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dy[0]&#xA0;,&#xA0;2.*x[0]*x[1],&#xA0;1e-10,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;f.size_taylor()&#xA0;==&#xA0;2;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;order&#xA0;forward&#xA0;mode&#xA0;using&#xA0;notaiton&#xA0;in&#xA0;ForwardAny<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;X(t)&#xA0;=&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x&#xA0;+&#xA0;dx&#xA0;*&#xA0;t&#xA0;+&#xA0;x_2&#xA0;*&#xA0;t^2<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Y(t)&#xA0;=&#xA0;F[X(t)]&#xA0;=&#xA0;y&#xA0;+&#xA0;dy&#xA0;*&#xA0;t&#xA0;+&#xA0;y_2&#xA0;*&#xA0;t^2&#xA0;+&#xA0;o(t^3)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;x_2(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;y_2(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x_2[0]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x_2[1]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y_2&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(2,&#xA0;x_2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;F_00&#xA0;=&#xA0;2.&#xA0;*&#xA0;y_2[0];&#xA0;//&#xA0;second&#xA0;partial&#xA0;F&#xA0;w.r.t.&#xA0;x[0],&#xA0;x[0]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(F_00,&#xA0;2.*x[1],&#xA0;1e-10,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;f.size_taylor()&#xA0;==&#xA0;3;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;suppose&#xA0;we&#xA0;no&#xA0;longer&#xA0;need&#xA0;second&#xA0;order&#xA0;Taylor&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f.capacity_taylor(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;f.size_taylor()&#xA0;==&#xA0;2;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;actually&#xA0;we&#xA0;no&#xA0;longer&#xA0;need&#xA0;any&#xA0;Taylor&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f.capacity_taylor(0);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;f.size_taylor()&#xA0;==&#xA0;0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+}&#xA0;//&#xA0;End&#xA0;empty&#xA0;namespace&#xA0;<br/>
+#&#xA0;include&#xA0;&lt;vector&gt;<br/>
+#&#xA0;include&#xA0;&lt;valarray&gt;<br/>
+bool&#xA0;Forward(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Run&#xA0;with&#xA0;Vector&#xA0;equal&#xA0;to&#xA0;three&#xA0;different&#xA0;cases<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;all&#xA0;of&#xA0;which&#xA0;are&#xA0;Simple&#xA0;Vectors&#xA0;with&#xA0;elements&#xA0;of&#xA0;type&#xA0;double.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;ForwardCases&lt;&#xA0;CppAD::vector&#xA0;&#xA0;&lt;double&gt;&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;ForwardCases&lt;&#xA0;std::vector&#xA0;&#xA0;&#xA0;&#xA0;&lt;double&gt;&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;ForwardCases&lt;&#xA0;std::valarray&#xA0;&#xA0;&lt;double&gt;&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span></font></code>
+<hr/>Input File: example/forward.cpp
+
+</body>
+</html>

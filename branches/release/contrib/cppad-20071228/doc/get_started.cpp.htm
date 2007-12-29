@@ -1,0 +1,256 @@
+<html><head>
+<title>A Simple Program Using CppAD to Compute Derivatives</title>
+<meta name="description" id="description" content="A Simple Program Using CppAD to Compute Derivatives">
+<meta name="keywords" id="keywords" content=" getstarted simple example start using Cppad ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_get_started.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>get_started.cpp</option>
+</select>
+</td>
+<td><a href="introduction.htm" target="_top">Prev</a>
+</td><td><a href="exp_2.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>get_started.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Purpose</option>
+<option>Function</option>
+<option>Derivative</option>
+<option>Value</option>
+<option>Poly</option>
+<option>Exercises</option>
+<option>Program</option>
+<option>Output</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>A Simple Program Using CppAD to Compute Derivatives</big></big></b></center>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+Demonstrate the use of CppAD by computing the derivative 
+of a simple example function.
+
+<br>
+<br>
+<b><big><a name="Function" id="Function">Function</a></big></b>
+<br>
+The example function <code>
+<span style='white-space: nowrap'>&nbsp;f&nbsp;:&nbsp;\R&nbsp;\rightarrow&nbsp;\R</span></code>
+ is defined by 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f(x)&nbsp;=&nbsp;a_0&nbsp;+&nbsp;a_1&nbsp;*&nbsp;x^1&nbsp;+&nbsp;\cdots&nbsp;+&nbsp;a_{k-1}&nbsp;*&nbsp;x^{k-1}<br>
+\]&nbsp;</span></code>
+
+where <i>a</i> is a fixed vector of length <i>k</i>.
+
+<br>
+<br>
+<b><big><a name="Derivative" id="Derivative">Derivative</a></big></b>
+<br>
+The derivative of <code>
+<span style='white-space: nowrap'>&nbsp;f(x)</span></code>
+ is given by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f'&nbsp;(x)&nbsp;=&nbsp;a_1&nbsp;+&nbsp;2&nbsp;*&nbsp;a_2&nbsp;*&nbsp;x&nbsp;+&nbsp;&nbsp;\cdots&nbsp;+&nbsp;(k-1)&nbsp;*&nbsp;a_{k-1}&nbsp;*&nbsp;x^{k-2}&nbsp;<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="Value" id="Value">Value</a></big></b>
+<br>
+For the particular case in this example,
+<code>
+<span style='white-space: nowrap'>&nbsp;k</span></code>
+ is equal to 5, 
+<code>
+<span style='white-space: nowrap'>&nbsp;a&nbsp;=&nbsp;(1,&nbsp;1,&nbsp;1,&nbsp;1,&nbsp;1)</span></code>
+, and 
+<code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;3</span></code>
+.
+If follows that 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f'&nbsp;(&nbsp;3&nbsp;)&nbsp;=&nbsp;1&nbsp;+&nbsp;2&nbsp;*&nbsp;3&nbsp;+&nbsp;3&nbsp;*&nbsp;3^2&nbsp;+&nbsp;4&nbsp;*&nbsp;3^3&nbsp;=&nbsp;142<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="Poly" id="Poly">Poly</a></big></b>
+<br>
+The routine <code><font color="blue">Poly</font></code> is defined below for this particular application.
+A general purpose polynomial evaluation routine is documented and
+distributed with CppAD (see <a href="poly.htm" target="_top"><span style='white-space: nowrap'>Poly</span></a>
+).
+
+<br>
+<br>
+<b><big><a name="Exercises" id="Exercises">Exercises</a></big></b>
+<br>
+Modify the program below to accomplish the following tasks
+using CppAD:
+<ol type="1"><li>
+Compute and print the derivative of <code>
+<span style='white-space: nowrap'>&nbsp;f(x)&nbsp;=&nbsp;1&nbsp;+&nbsp;x&nbsp;+&nbsp;x^2&nbsp;+&nbsp;x^3&nbsp;+&nbsp;x^4</span></code>
+
+at the point <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;2</span></code>
+. 
+</li><li>
+
+Compute and print the derivative of <code>
+<span style='white-space: nowrap'>&nbsp;f(x)&nbsp;=&nbsp;1&nbsp;+&nbsp;x&nbsp;+&nbsp;x^2&nbsp;/&nbsp;2</span></code>
+
+at the point <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;.5</span></code>
+.
+</li><li>
+
+Compute and print the derivative of <code>
+<span style='white-space: nowrap'>&nbsp;f(x)&nbsp;=&nbsp;\exp&nbsp;(x)&nbsp;-&nbsp;1&nbsp;-&nbsp;x&nbsp;-&nbsp;x^2&nbsp;/&nbsp;2</span></code>
+
+at the point <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;.5</span></code>
+.
+</li></ol>
+
+
+
+<br>
+<br>
+<b><big><a name="Program" id="Program">Program</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#include&nbsp;&lt;iostream&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;standard&nbsp;input/output&nbsp;<br>
+#include&nbsp;&lt;vector&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;standard&nbsp;vector<br>
+#include&nbsp;&lt;cppad/cppad.hpp&gt;&nbsp;//&nbsp;the&nbsp;CppAD&nbsp;package&nbsp;http://www.coin-or.org/CppAD/<br>
+<br>
+namespace&nbsp;{&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;define&nbsp;y(x)&nbsp;=&nbsp;Poly(a,&nbsp;x)&nbsp;in&nbsp;the&nbsp;empty&nbsp;namespace<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&lt;class&nbsp;Type&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;Poly(const&nbsp;std::vector&lt;double&gt;&nbsp;&amp;a,&nbsp;const&nbsp;Type&nbsp;&amp;x)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;k&nbsp;&nbsp;=&nbsp;a.size();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;y&nbsp;&nbsp;&nbsp;=&nbsp;0.;&nbsp;&nbsp;//&nbsp;initialize&nbsp;summation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;x_i&nbsp;=&nbsp;1.;&nbsp;&nbsp;//&nbsp;initialize&nbsp;x^i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;k;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;+=&nbsp;a[i]&nbsp;*&nbsp;x_i;&nbsp;&nbsp;//&nbsp;y&nbsp;&nbsp;&nbsp;=&nbsp;y&nbsp;+&nbsp;a_i&nbsp;*&nbsp;x^i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_i&nbsp;*=&nbsp;x;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;x_i&nbsp;=&nbsp;x_i&nbsp;*&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;y;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+//&nbsp;main&nbsp;program<br>
+int&nbsp;main(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;AD&nbsp;as&nbsp;abbreviation&nbsp;for&nbsp;CppAD::AD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::vector;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;vector&nbsp;as&nbsp;abbreviation&nbsp;for&nbsp;std::vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;temporary&nbsp;index<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vector&nbsp;of&nbsp;polynomial&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;k&nbsp;=&nbsp;5;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;polynomial&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;a(k);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vector&nbsp;of&nbsp;polynomial&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;k;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;1.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;of&nbsp;polynomial&nbsp;coefficients<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;domain&nbsp;space&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);&nbsp;//&nbsp;vector&nbsp;of&nbsp;domain&nbsp;space&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;3.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;corresponding&nbsp;to&nbsp;operation&nbsp;sequence<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;recording&nbsp;operation&nbsp;sequence<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;ranges&nbsp;space&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);&nbsp;//&nbsp;vector&nbsp;of&nbsp;ranges&nbsp;space&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;Poly(a,&nbsp;X[0]);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;during&nbsp;recording&nbsp;of&nbsp;operations<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;store&nbsp;operation&nbsp;sequence&nbsp;in&nbsp;f:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;derivative&nbsp;using&nbsp;operation&nbsp;sequence&nbsp;stored&nbsp;in&nbsp;f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;jac(m&nbsp;*&nbsp;n);&nbsp;//&nbsp;Jacobian&nbsp;of&nbsp;f&nbsp;(m&nbsp;by&nbsp;n&nbsp;matrix)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&lt;double&gt;&nbsp;x(n);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;3.;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;argument&nbsp;value&nbsp;for&nbsp;derivative<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jac&nbsp;&nbsp;=&nbsp;f.Jacobian(x);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Jacobian&nbsp;for&nbsp;operation&nbsp;sequence<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;print&nbsp;the&nbsp;results<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;f'(3)&nbsp;computed&nbsp;by&nbsp;CppAD&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;jac[0]&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;if&nbsp;the&nbsp;derivative&nbsp;is&nbsp;correct<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;error_code;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;jac[0]&nbsp;==&nbsp;142.&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error_code&nbsp;=&nbsp;0;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;code&nbsp;for&nbsp;correct&nbsp;case<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;&nbsp;error_code&nbsp;=&nbsp;1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;code&nbsp;for&nbsp;incorrect&nbsp;case<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;error_code;<br>
+}<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Output" id="Output">Output</a></big></b>
+<br>
+Executing the program above will generate the following output:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f'(3)&nbsp;computed&nbsp;by&nbsp;CppAD&nbsp;=&nbsp;142<br>
+</span>
+</font></code>
+
+<hr>Input File: introduction/get_started/get_started.cpp
+
+</body>
+</html>

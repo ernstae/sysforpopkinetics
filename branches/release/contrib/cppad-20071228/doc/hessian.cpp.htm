@@ -1,0 +1,166 @@
+<html><head>
+<title>Hessian: Example and Test</title>
+<meta name="description" id="description" content="Hessian: Example and Test">
+<meta name="keywords" id="keywords" content=" Hessian example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_hessian.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>Drivers</option>
+<option>Hessian</option>
+<option>Hessian.cpp</option>
+</select>
+</td>
+<td><a href="hessian.htm" target="_top">Prev</a>
+</td><td><a href="heslagrangian.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Drivers-&gt;</option>
+<option>Jacobian</option>
+<option>ForOne</option>
+<option>RevOne</option>
+<option>Hessian</option>
+<option>ForTwo</option>
+<option>RevTwo</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Hessian-&gt;</option>
+<option>Hessian.cpp</option>
+<option>HesLagrangian.cpp</option>
+</select>
+</td>
+<td>Hessian.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Hessian: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+namespace&nbsp;{&nbsp;//&nbsp;---------------------------------------------------------<br>
+//&nbsp;define&nbsp;the&nbsp;template&nbsp;function&nbsp;HessianCases&lt;Vector&gt;&nbsp;in&nbsp;empty&nbsp;namespace<br>
+template&nbsp;&lt;typename&nbsp;Vector&gt;&nbsp;<br>
+bool&nbsp;HessianCases()<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::exp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::sin;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::cos;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[1]&nbsp;=&nbsp;2.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;starting&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;calculation&nbsp;between&nbsp;the&nbsp;domain&nbsp;and&nbsp;range&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;Square&nbsp;=&nbsp;X[0]&nbsp;*&nbsp;X[0];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[0]&nbsp;=&nbsp;Square&nbsp;*&nbsp;exp(&nbsp;X[1]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[1]&nbsp;=&nbsp;Square&nbsp;*&nbsp;sin(&nbsp;X[1]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y[2]&nbsp;=&nbsp;Square&nbsp;*&nbsp;cos(&nbsp;X[1]&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;new&nbsp;value&nbsp;for&nbsp;the&nbsp;independent&nbsp;variable&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;x(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;2.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;derivative&nbsp;of&nbsp;y[1]&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;hes(&nbsp;n&nbsp;*&nbsp;n&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hes&nbsp;=&nbsp;f.Hessian(x,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;F_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;x[0]&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;sin(x[1])<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;F_1^{(1)}&nbsp;=&nbsp;[&nbsp;2&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;sin(x[1])&nbsp;,&nbsp;x[0]&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;cos(x[1])&nbsp;]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;F_1^{(2)}&nbsp;=&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;*&nbsp;sin(x[1])&nbsp;,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;cos(x[1])&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;cos(x[1])&nbsp;,&nbsp;-&nbsp;x[0]&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;sin(x[1])&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;&nbsp;NearEqual(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.*sin(x[1]),&nbsp;hes[0*n+0],&nbsp;1e-10,&nbsp;1e-10&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;&nbsp;NearEqual(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.*x[0]*cos(x[1]),&nbsp;hes[0*n+1],&nbsp;1e-10,&nbsp;1e-10&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;&nbsp;NearEqual(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.*x[0]*cos(x[1]),&nbsp;hes[1*n+0],&nbsp;1e-10,&nbsp;1e-10&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;&nbsp;NearEqual(&nbsp;-&nbsp;x[0]*x[0]*sin(x[1]),&nbsp;hes[1*n+1],&nbsp;1e-10,&nbsp;1e-10&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+}&nbsp;//&nbsp;End&nbsp;empty&nbsp;namespace&nbsp;<br>
+#&nbsp;include&nbsp;&lt;vector&gt;<br>
+#&nbsp;include&nbsp;&lt;valarray&gt;<br>
+bool&nbsp;Hessian(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Run&nbsp;with&nbsp;Vector&nbsp;equal&nbsp;to&nbsp;three&nbsp;different&nbsp;cases<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;all&nbsp;of&nbsp;which&nbsp;are&nbsp;Simple&nbsp;Vectors&nbsp;with&nbsp;elements&nbsp;of&nbsp;type&nbsp;double.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;HessianCases&lt;&nbsp;CppAD::vector&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;HessianCases&lt;&nbsp;std::vector&nbsp;&nbsp;&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;HessianCases&lt;&nbsp;std::valarray&nbsp;&nbsp;&lt;double&gt;&nbsp;&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span></font></code>
+<hr>Input File: example/hessian.cpp
+
+</body>
+</html>

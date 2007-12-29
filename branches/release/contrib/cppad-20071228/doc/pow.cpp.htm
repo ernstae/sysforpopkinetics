@@ -1,0 +1,171 @@
+<html><head>
+<title>The AD Power Function: Example and Test</title>
+<meta name="description" id="description" content="The AD Power Function: Example and Test">
+<meta name="keywords" id="keywords" content=" pow Ad example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_pow.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>ADValued</option>
+<option>MathOther</option>
+<option>pow</option>
+<option>Pow.cpp</option>
+</select>
+</td>
+<td><a href="pow.htm" target="_top">Prev</a>
+</td><td><a href="pow_int.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADValued-&gt;</option>
+<option>Arithmetic</option>
+<option>std_math_ad</option>
+<option>MathOther</option>
+<option>CondExp</option>
+<option>Discrete</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>MathOther-&gt;</option>
+<option>abs</option>
+<option>atan2</option>
+<option>erf</option>
+<option>pow</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>pow-&gt;</option>
+<option>Pow.cpp</option>
+<option>pow_int.cpp</option>
+</select>
+</td>
+<td>Pow.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>The AD Power Function: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cmath&gt;<br>
+<br>
+bool&nbsp;Pow(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;x&nbsp;=&nbsp;0.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;y&nbsp;=&nbsp;2.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;XY(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XY[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;x;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XY[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;y;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(XY);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Z(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z[0]&nbsp;=&nbsp;CppAD::pow(XY[0],&nbsp;XY[1]);&nbsp;&nbsp;//&nbsp;pow(variable,&nbsp;variable)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z[1]&nbsp;=&nbsp;CppAD::pow(XY[0],&nbsp;y);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;pow(variable,&nbsp;parameter)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z[2]&nbsp;=&nbsp;CppAD::pow(x,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XY[1]);&nbsp;&nbsp;//&nbsp;pow(parameter,&nbsp;variable)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;XY&nbsp;-&gt;&nbsp;Z&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(XY,&nbsp;Z);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;value&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;check&nbsp;=&nbsp;std::pow(x,&nbsp;y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(Z[i]&nbsp;,&nbsp;check,&nbsp;&nbsp;1e-10&nbsp;,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;computation&nbsp;of&nbsp;first&nbsp;partial&nbsp;w.r.t.&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dxy(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dz(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dxy[0]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dxy[1]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dz&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;dxy);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;y&nbsp;*&nbsp;std::pow(x,&nbsp;y-1.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dz[0],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dz[1],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dz[2],&nbsp;&nbsp;&nbsp;&nbsp;0.,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;computation&nbsp;of&nbsp;first&nbsp;partial&nbsp;w.r.t.&nbsp;y<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dxy[0]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dxy[1]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dz&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;dxy);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;std::log(x)&nbsp;*&nbsp;std::pow(x,&nbsp;y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dz[0],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dz[1],&nbsp;&nbsp;&nbsp;&nbsp;0.,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dz[2],&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;reverse&nbsp;computation&nbsp;of&nbsp;derivative&nbsp;of&nbsp;z[0]&nbsp;+&nbsp;z[1]&nbsp;+&nbsp;z[2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;&nbsp;w(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dw(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[0]&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[1]&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w[2]&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dw&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Reverse(1,&nbsp;w);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;y&nbsp;*&nbsp;std::pow(x,&nbsp;y-1.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[0],&nbsp;2.&nbsp;*&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check&nbsp;=&nbsp;std::log(x)&nbsp;*&nbsp;std::pow(x,&nbsp;y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dw[1],&nbsp;2.&nbsp;*&nbsp;check,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;use&nbsp;a&nbsp;VecAD&lt;Base&gt;::reference&nbsp;object&nbsp;with&nbsp;pow<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::VecAD&lt;double&gt;&nbsp;v(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;zero(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;one(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[zero]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;XY[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[one]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;XY[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;result&nbsp;=&nbsp;CppAD::pow(v[zero],&nbsp;v[one]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(result,&nbsp;Z[0],&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/pow.cpp
+
+</body>
+</html>

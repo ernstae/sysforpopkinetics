@@ -1,0 +1,317 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Enable use of AD&lt;Base&gt; where Base is Adolc's adouble Type</title>
+<meta name="description" id="description" content="Enable use of AD&lt;Base&gt; where Base is Adolc's adouble Type"/>
+<meta name="keywords" id="keywords" content=" Adolc adouble as Base Adolc's "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_base_adolc.hpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>base_require</option>
+<option>base_adolc.hpp</option>
+</select>
+</td>
+<td><a href="not_complex_ad.cpp.xml" target="_top">Prev</a>
+</td><td><a href="mul_level_adolc.cpp.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>base_require-&gt;</option>
+<option>base_complex.hpp</option>
+<option>base_adolc.hpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>base_adolc.hpp-&gt;</option>
+<option>mul_level_adolc.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Example</option>
+<option>Include File</option>
+<option>abs</option>
+<option>Standard Math Functions Defined by Adolc Package</option>
+<option>CondExpOp</option>
+<option>EqualOpSeq</option>
+<option>Identical</option>
+<option>Ordered</option>
+<option>Integer</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Enable use of AD&lt;Base&gt; where Base is Adolc's adouble Type</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+<br/>
+This file in located in the <code><font color="blue">example</font></code> directory. 
+It can be copied into the current working directory and
+included with the command:
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&quot;base_adolc.hpp&quot;<br/>
+</span></font></code><br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The file <a href="mul_level_adolc.cpp.xml" target="_top"><span style='white-space: nowrap'>mul_level_adolc.cpp</span></a>
+ contains an example use of
+Adolc's <code><font color="blue">adouble</font></code> type for a CppAD <i>Base</i> type.
+It returns true if it succeeds and false otherwise.
+The file <a href="ode_taylor_adolc.cpp.xml" target="_top"><span style='white-space: nowrap'>ode_taylor_adolc.cpp</span></a>
+ contains a more realistic
+(and complex) example.
+
+
+<br/>
+<br/>
+<b><big><a name="Include File" id="Include File">Include File</a></big></b>
+<br/>
+This file is included before <code><font color="blue">&lt;cppad/cppad.hpp&gt;</font></code>
+so it is necessary to define the error handler
+in addition to including
+<a href="base_require.xml#declare.hpp" target="_top"><span style='white-space: nowrap'>declare.hpp</span></a>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/declare.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cppad/error_handler.hpp&gt;<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="abs" id="abs">abs</a></big></b>
+<br/>
+The <code><font color="blue">abs</font></code> function is called <code><font color="blue">fabs</font></code> in the Adolc package.
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+namespace&#xA0;CppAD&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;adouble&#xA0;abs(const&#xA0;adouble&#xA0;&amp;x)&#xA0;&#xA0;&#xA0;&#xA0;\<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;::fabs(x);&#xA0;}<br/>
+}<br/>
+<br/>
+</span>
+</font></code>
+<b><big><a name="Standard Math Functions Defined by Adolc Package" id="Standard Math Functions Defined by Adolc Package">Standard Math Functions Defined by Adolc Package</a></big></b>
+<br/>
+The following <a href="base_require.xml" target="_top"><span style='white-space: nowrap'>required</span></a>
+ 
+functions are defined by the Adolc package:
+<code><span style='white-space: nowrap'><br/>
+</span></code><code><font color="blue">acos</font></code>,
+<code><font color="blue">asin</font></code>,
+<code><font color="blue">atan</font></code>,
+<code><font color="blue">cos</font></code>,
+<code><font color="blue">cosh</font></code>,
+<code><font color="blue">erf</font></code>,
+<code><font color="blue">exp</font></code>,
+<code><font color="blue">log</font></code>,
+<code><font color="blue">pow</font></code>,
+<code><font color="blue">sin</font></code>,
+<code><font color="blue">sinh</font></code>,
+<code><font color="blue">sqrt</font></code>,
+<code><font color="blue">tan</font></code>.
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;define&#xA0;CPPAD_USER_MACRO(function)&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;\<br/>
+inline&#xA0;adouble&#xA0;function(const&#xA0;adouble&#xA0;&amp;x)&#xA0;&#xA0;&#xA0;&#xA0;\<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;::function(x);&#xA0;}<br/>
+<br/>
+namespace&#xA0;CppAD&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(acos)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(asin)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(atan)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(cos)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(cosh)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(erf)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(exp)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(log)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;adouble&#xA0;pow(const&#xA0;adouble&#xA0;&amp;x,&#xA0;const&#xA0;adouble&#xA0;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;::pow(x,&#xA0;y);&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(sin)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(sinh)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(sqrt)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_USER_MACRO(tan)<br/>
+}<br/>
+#&#xA0;undef&#xA0;CPPAD_USER_MACRO<br/>
+<br/>
+</span>
+</font></code>
+<b><big><a name="CondExpOp" id="CondExpOp">CondExpOp</a></big></b>
+<br/>
+The type <code><font color="blue">adouble</font></code> supports a conditional assignment function
+with the syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;condassign(</span></font></code><i><span style='white-space: nowrap'>a</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>d</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>which evaluates to
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>a</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;(</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;&gt;&#xA0;0)&#xA0;?&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>d</span></i><code><font color="blue"><span style='white-space: nowrap'>;<br/>
+</span></font></code>This enables one to include conditionals in the recording of
+<code><font color="blue">adouble</font></code> operations and later evaluation for different
+values of the independent variables 
+(in the same spirit as the CppAD <a href="condexp.xml" target="_top"><span style='white-space: nowrap'>CondExp</span></a>
+ function).
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+namespace&#xA0;CppAD&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;adouble&#xA0;CondExpOp(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;enum&#xA0;&#xA0;CppAD::CompareOp&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cop&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;adouble&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;left&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;adouble&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;right&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;adouble&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;trueCase&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;adouble&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;falseCase&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;adouble&#xA0;result;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;switch(&#xA0;cop&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;case&#xA0;CompareLt:&#xA0;//&#xA0;left&#xA0;&lt;&#xA0;right<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;condassign(result,&#xA0;right&#xA0;-&#xA0;left,&#xA0;trueCase,&#xA0;falseCase);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;break;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;case&#xA0;CompareLe:&#xA0;//&#xA0;left&#xA0;&lt;=&#xA0;right<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;condassign(result,&#xA0;left&#xA0;-&#xA0;right,&#xA0;falseCase,&#xA0;trueCase);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;break;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;case&#xA0;CompareEq:&#xA0;//&#xA0;left&#xA0;==&#xA0;right<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;condassign(result,&#xA0;left&#xA0;-&#xA0;right,&#xA0;falseCase,&#xA0;trueCase);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;condassign(result,&#xA0;right&#xA0;-&#xA0;left,&#xA0;falseCase,&#xA0;result);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;break;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;case&#xA0;CompareGe:&#xA0;//&#xA0;left&#xA0;&gt;=&#xA0;right<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;condassign(result,&#xA0;right&#xA0;-&#xA0;left,&#xA0;falseCase,&#xA0;trueCase);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;break;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;case&#xA0;CompareGt:&#xA0;//&#xA0;left&#xA0;&gt;&#xA0;right<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;condassign(result,&#xA0;left&#xA0;-&#xA0;right,&#xA0;trueCase,&#xA0;falseCase);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;break;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;default:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ErrorHandler::Call(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;true&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;__LINE__&#xA0;,&#xA0;__FILE__&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;CppAD::CondExp&quot;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;Error:&#xA0;for&#xA0;unknown&#xA0;reason.&quot;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;result&#xA0;=&#xA0;trueCase;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;result;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="EqualOpSeq" id="EqualOpSeq">EqualOpSeq</a></big></b>
+<br/>
+The Adolc user interface does not specify a way to determine if 
+two <code><font color="blue">adouble</font></code> variables correspond to the same operations sequence. 
+Make <code><font color="blue">EqualOpSeq</font></code> an error if it gets used:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+namespace&#xA0;CppAD&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;EqualOpSeq(const&#xA0;adouble&#xA0;&amp;x,&#xA0;const&#xA0;adouble&#xA0;&amp;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ErrorHandler::Call(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;true&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;__LINE__&#xA0;,&#xA0;__FILE__&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;CppAD::EqualOpSeq(x,&#xA0;y)&quot;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&quot;Error:&#xA0;adouble&#xA0;does&#xA0;not&#xA0;support&#xA0;EqualOpSeq.&quot;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="Identical" id="Identical">Identical</a></big></b>
+<br/>
+The Adolc user interface does not specify a way to determine if an 
+<code><font color="blue">adouble</font></code> depends on the independent variables. 
+To be safe (but slow) return <code><font color="blue">false</font></code> in all the cases below.
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+namespace&#xA0;CppAD&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;IdenticalPar(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;false;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;IdenticalZero(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;false;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;IdenticalOne(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;false;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;IdenticalEqualPar(const&#xA0;adouble&#xA0;&amp;x,&#xA0;const&#xA0;adouble&#xA0;&amp;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;false;&#xA0;}<br/>
+}<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="Ordered" id="Ordered">Ordered</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;GreaterThanZero(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;(x&#xA0;&gt;&#xA0;0);&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;GreaterThanOrZero(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;(x&#xA0;&gt;=&#xA0;0);&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;LessThanZero(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;(x&#xA0;&lt;&#xA0;0);&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;bool&#xA0;LessThanOrZero(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;(x&#xA0;&lt;=&#xA0;0);&#xA0;}<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="Integer" id="Integer">Integer</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;inline&#xA0;int&#xA0;Integer(const&#xA0;adouble&#xA0;&amp;x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;static_cast&lt;int&gt;(&#xA0;x.value()&#xA0;);&#xA0;}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: example/base_adolc.hpp
+
+</body>
+</html>

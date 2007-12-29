@@ -1,0 +1,185 @@
+<html><head>
+<title>CppAD Speed: Second Derivative of a Polynomial</title>
+<meta name="description" id="description" content="CppAD Speed: Second Derivative of a Polynomial">
+<meta name="keywords" id="keywords" content=" cppad speed polynomial compute_poly ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_cppad_poly.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_cppad</option>
+<option>cppad_poly.cpp</option>
+</select>
+</td>
+<td><a href="cppad_det_lu.cpp.htm" target="_top">Prev</a>
+</td><td><a href="speed_fadbad.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>speed_cppad-&gt;</option>
+<option>cppad_det_minor.cpp</option>
+<option>cppad_det_lu.cpp</option>
+<option>cppad_poly.cpp</option>
+</select>
+</td>
+<td>cppad_poly.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Operation Sequence</option>
+<option>compute_poly</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>CppAD Speed: Second Derivative of a Polynomial</big></big></b></center>
+<br>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br>
+Note that the polynomial evaluation
+<a href="glossary.htm#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&nbsp;sequence</span></a>
+
+does not depend on the argument to the polynomial.
+Hence we use the same <a href="adfun.htm" target="_top"><span style='white-space: nowrap'>ADFun</span></a>
+ object for all the argument values.
+
+<br>
+<br>
+<b><big><a name="compute_poly" id="compute_poly">compute_poly</a></big></b>
+
+<br>
+Routine that computes the second derivative of a polynomial using CppAD:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/uniform_01.hpp&gt;<br>
+<br>
+void&nbsp;compute_poly(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;//&nbsp;coefficients&nbsp;of&nbsp;polynomial<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;//&nbsp;polynomial&nbsp;argument&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;ddp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;&nbsp;//&nbsp;second&nbsp;derivative&nbsp;w.r.t&nbsp;z&nbsp;&nbsp;<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;setup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;CppAD::AD&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADScalar;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;CppAD::vector&lt;ADScalar&gt;&nbsp;ADVector;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;temporary&nbsp;index<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;1;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;dependent&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;1;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;independent&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADVector&nbsp;Z(n);&nbsp;//&nbsp;AD&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADVector&nbsp;P(m);&nbsp;//&nbsp;AD&nbsp;range&nbsp;space&nbsp;vector<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;choose&nbsp;the&nbsp;polynomial&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::uniform_01(size,&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&nbsp;copy&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADVector&nbsp;A(size);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;size;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[i]&nbsp;=&nbsp;a[i];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;mode&nbsp;first&nbsp;and&nbsp;second&nbsp;differentials<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;p(1),&nbsp;dp(1),&nbsp;dz(1),&nbsp;ddz(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dz[0]&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ddz[0]&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;choose&nbsp;an&nbsp;argument&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::uniform_01(1,&nbsp;z);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z[0]&nbsp;=&nbsp;z[0];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Independent(Z);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&nbsp;computation&nbsp;of&nbsp;the&nbsp;function&nbsp;value&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P[0]&nbsp;=&nbsp;CppAD::Poly(0,&nbsp;A,&nbsp;Z[0]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;function&nbsp;object&nbsp;f&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;detA<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(Z,&nbsp;P);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(repeat--)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;get&nbsp;the&nbsp;next&nbsp;argument&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::uniform_01(1,&nbsp;z);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;the&nbsp;polynomial&nbsp;at&nbsp;the&nbsp;new&nbsp;argument&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;=&nbsp;f.Forward(0,&nbsp;z);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;first&nbsp;order&nbsp;Taylor&nbsp;coefficient<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dp&nbsp;=&nbsp;f.Forward(1,&nbsp;dz);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;derivative&nbsp;is&nbsp;twice&nbsp;second&nbsp;order&nbsp;Taylor&nbsp;coefficient<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ddp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(2,&nbsp;ddz);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ddp[0]&nbsp;*=&nbsp;2.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: speed/cppad/poly.cpp
+
+</body>
+</html>

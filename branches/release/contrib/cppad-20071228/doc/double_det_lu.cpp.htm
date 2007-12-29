@@ -1,0 +1,135 @@
+<html><head>
+<title>Double Speed: Determinant Using Lu Factorization</title>
+<meta name="description" id="description" content="Double Speed: Determinant Using Lu Factorization">
+<meta name="keywords" id="keywords" content=" double speed lu compute_det_lu ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_double_det_lu.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_double</option>
+<option>double_det_lu.cpp</option>
+</select>
+</td>
+<td><a href="double_det_minor.cpp.htm" target="_top">Prev</a>
+</td><td><a href="double_poly.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>speed_double-&gt;</option>
+<option>double_det_minor.cpp</option>
+<option>double_det_lu.cpp</option>
+<option>double_poly.cpp</option>
+</select>
+</td>
+<td>double_det_lu.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>compute_det_lu</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Double Speed: Determinant Using Lu Factorization</big></big></b></center>
+<br>
+<b><big><a name="compute_det_lu" id="compute_det_lu">compute_det_lu</a></big></b>
+
+<br>
+Routine that computes the gradient of determinant using CppAD:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/vector.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/det_by_lu.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/uniform_01.hpp&gt;<br>
+<br>
+void&nbsp;compute_det_lu(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;matrix&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;det&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;setup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::det_by_lu&lt;double&gt;&nbsp;&nbsp;Det(size);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;size&nbsp;*&nbsp;size;&nbsp;//&nbsp;number&nbsp;of&nbsp;independent&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(repeat--)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;get&nbsp;the&nbsp;next&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::uniform_01(n,&nbsp;matrix);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;computation&nbsp;of&nbsp;the&nbsp;determinant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;det[0]&nbsp;=&nbsp;Det(matrix);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: speed/double/det_lu.cpp
+
+</body>
+</html>

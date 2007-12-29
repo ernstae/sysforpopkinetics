@@ -1,0 +1,123 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>exp_2: Verify Second Order Forward Sweep</title>
+<meta name="description" id="description" content="exp_2: Verify Second Order Forward Sweep"/>
+<meta name="keywords" id="keywords" content=" second order exp_2 "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_exp_2_for2.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>exp_2</option>
+<option>exp_2_for2</option>
+<option>exp_2_for2.cpp</option>
+</select>
+</td>
+<td><a href="exp_2_for2.xml" target="_top">Prev</a>
+</td><td><a href="exp_2_rev2.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>exp_2-&gt;</option>
+<option>exp_2.hpp</option>
+<option>exp_2.cpp</option>
+<option>exp_2_for0</option>
+<option>exp_2_for1</option>
+<option>exp_2_rev1</option>
+<option>exp_2_for2</option>
+<option>exp_2_rev2</option>
+<option>exp_2_cppad</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>exp_2_for2-&gt;</option>
+<option>exp_2_for2.cpp</option>
+</select>
+</td>
+<td>exp_2_for2.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>exp_2: Verify Second Order Forward Sweep</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;prototype&#xA0;for&#xA0;fabs<br/>
+extern&#xA0;bool&#xA0;exp_2_for0(double&#xA0;*v0);&#xA0;//&#xA0;computes&#xA0;zero&#xA0;order&#xA0;forward&#xA0;sweep<br/>
+extern&#xA0;bool&#xA0;exp_2_for1(double&#xA0;*v1);&#xA0;//&#xA0;computes&#xA0;first&#xA0;order&#xA0;forward&#xA0;sweep<br/>
+bool&#xA0;exp_2_for2(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;v0[6],&#xA0;v1[6],&#xA0;v2[6];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;set&#xA0;the&#xA0;value&#xA0;of&#xA0;v0[j],&#xA0;v1[j],&#xA0;for&#xA0;j&#xA0;=&#xA0;1&#xA0;,&#xA0;...&#xA0;,&#xA0;5<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;exp_2_for0(v0);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;exp_2_for1(v1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v2[1]&#xA0;=&#xA0;0.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;v1&#xA0;=&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;v2[1]&#xA0;-&#xA0;0.&#xA0;)&#xA0;&lt;=&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v2[2]&#xA0;=&#xA0;v2[1];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;v2&#xA0;=&#xA0;1&#xA0;+&#xA0;v1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;v2[2]&#xA0;-&#xA0;0.&#xA0;)&#xA0;&lt;=&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v2[3]&#xA0;=&#xA0;2.*(v0[1]*v2[1]&#xA0;+&#xA0;v1[1]*v1[1]);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;v3&#xA0;=&#xA0;v1&#xA0;*&#xA0;v1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;v2[3]&#xA0;-&#xA0;2.&#xA0;)&#xA0;&lt;=&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v2[4]&#xA0;=&#xA0;v2[3]&#xA0;/&#xA0;2.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;v4&#xA0;=&#xA0;v3&#xA0;/&#xA0;2<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;v2[4]&#xA0;-&#xA0;1.&#xA0;)&#xA0;&lt;=&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;v2[5]&#xA0;=&#xA0;v2[2]&#xA0;+&#xA0;v2[4];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;v5&#xA0;=&#xA0;v2&#xA0;+&#xA0;v4<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;v2[5]&#xA0;-&#xA0;1.&#xA0;)&#xA0;&lt;=&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: introduction/exp_apx/exp_2_for2.cpp
+
+</body>
+</html>

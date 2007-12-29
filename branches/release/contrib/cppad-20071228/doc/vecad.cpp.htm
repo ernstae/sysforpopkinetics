@@ -1,0 +1,197 @@
+<html><head>
+<title>AD Vectors that Record Index Operations: Example and Test</title>
+<meta name="description" id="description" content="AD Vectors that Record Index Operations: Example and Test">
+<meta name="keywords" id="keywords" content=" Vecad example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_vecad.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>VecAD</option>
+<option>VecAD.cpp</option>
+</select>
+</td>
+<td><a href="vecad.htm" target="_top">Prev</a>
+</td><td><a href="base_require.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>VecAD-&gt;</option>
+<option>VecAD.cpp</option>
+</select>
+</td>
+<td>VecAD.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>AD Vectors that Record Index Operations: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cassert&gt;<br>
+<br>
+namespace&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;the&nbsp;vector&nbsp;x&nbsp;that&nbsp;solves&nbsp;the&nbsp;following&nbsp;linear&nbsp;system&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;a[0]&nbsp;*&nbsp;x[0]&nbsp;+&nbsp;a[1]&nbsp;*&nbsp;x[1]&nbsp;=&nbsp;b[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;a[2]&nbsp;*&nbsp;x[0]&nbsp;+&nbsp;a[3]&nbsp;*&nbsp;x[1]&nbsp;=&nbsp;b[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;in&nbsp;a&nbsp;way&nbsp;that&nbsp;will&nbsp;record&nbsp;pivot&nbsp;operations&nbsp;on&nbsp;the&nbsp;AD&lt;double&gt;&nbsp;tape<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;CppAD::AD&lt;double&gt;&nbsp;&gt;&nbsp;Vector;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector&nbsp;Solve(const&nbsp;Vector&nbsp;&amp;a&nbsp;,&nbsp;const&nbsp;Vector&nbsp;&amp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;CppAD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(a.size()&nbsp;==&nbsp;4&nbsp;&amp;&amp;&nbsp;b.size()&nbsp;==&nbsp;2);&nbsp;&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;copy&nbsp;the&nbsp;vector&nbsp;b&nbsp;into&nbsp;the&nbsp;VecAD&nbsp;object&nbsp;B<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VecAD&lt;double&gt;&nbsp;B(2);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;u;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(u&nbsp;=&nbsp;0;&nbsp;u&nbsp;&lt;&nbsp;2;&nbsp;u&nbsp;+=&nbsp;1.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[u]&nbsp;=&nbsp;b[&nbsp;Integer(u)&nbsp;];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;copy&nbsp;the&nbsp;matrix&nbsp;a&nbsp;into&nbsp;the&nbsp;VecAD&nbsp;object&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VecAD&lt;double&gt;&nbsp;A(4);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(u&nbsp;=&nbsp;0;&nbsp;u&nbsp;&lt;&nbsp;4;&nbsp;u&nbsp;+=&nbsp;1.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[u]&nbsp;=&nbsp;a&nbsp;[&nbsp;Integer(u)&nbsp;];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;tape&nbsp;AD&nbsp;operation&nbsp;sequence&nbsp;that&nbsp;determines&nbsp;the&nbsp;row&nbsp;of&nbsp;A<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;with&nbsp;maximum&nbsp;absolute&nbsp;element&nbsp;in&nbsp;column&nbsp;zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;zero(0),&nbsp;one(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;rmax&nbsp;=&nbsp;CondExpGt(abs(a[0]),&nbsp;abs(a[2]),&nbsp;zero,&nbsp;one);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;divide&nbsp;row&nbsp;rmax&nbsp;by&nbsp;A(rmax,&nbsp;0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;1]&nbsp;&nbsp;=&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;1]&nbsp;/&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[rmax]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;B[rmax]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;0]&nbsp;&nbsp;=&nbsp;one;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;subtract&nbsp;A(other,0)&nbsp;times&nbsp;row&nbsp;rmax&nbsp;from&nbsp;other&nbsp;row<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;double&gt;&nbsp;other&nbsp;&nbsp;&nbsp;=&nbsp;one&nbsp;-&nbsp;rmax;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[other&nbsp;*&nbsp;2&nbsp;+&nbsp;1]&nbsp;&nbsp;&nbsp;=&nbsp;A[other&nbsp;*&nbsp;2&nbsp;+&nbsp;1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;A[other&nbsp;*&nbsp;2&nbsp;+&nbsp;0]&nbsp;*&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[other]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;B[other]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;A[other&nbsp;*&nbsp;2&nbsp;+&nbsp;0]&nbsp;*&nbsp;B[rmax];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[other&nbsp;*&nbsp;2&nbsp;+&nbsp;0]&nbsp;=&nbsp;zero;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;back&nbsp;substitute&nbsp;to&nbsp;compute&nbsp;the&nbsp;solution&nbsp;vector&nbsp;x<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;x(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;iother&nbsp;=&nbsp;Integer(other);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;imax&nbsp;&nbsp;&nbsp;=&nbsp;Integer(rmax);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[iother]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;B[other]&nbsp;/&nbsp;A[other&nbsp;*&nbsp;2&nbsp;+&nbsp;1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[imax&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;(B[rmax]&nbsp;-&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;other]&nbsp;*&nbsp;x[iother])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;A[rmax&nbsp;*&nbsp;2&nbsp;+&nbsp;0];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;x;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+<br>
+bool&nbsp;VecAD(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::NearEqual;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;domain&nbsp;space&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;=&nbsp;4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;X(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[0]&nbsp;=&nbsp;2.;&nbsp;X[1]&nbsp;=&nbsp;0.;&nbsp;&nbsp;//&nbsp;2&nbsp;*&nbsp;identity&nbsp;matrix&nbsp;(rmax&nbsp;in&nbsp;Solve&nbsp;will&nbsp;be&nbsp;0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[2]&nbsp;=&nbsp;0.;&nbsp;X[3]&nbsp;=&nbsp;2.;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables&nbsp;and&nbsp;start&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::Independent(X);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;define&nbsp;the&nbsp;vector&nbsp;b<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;B(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[0]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[1]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;range&nbsp;space&nbsp;vector&nbsp;solves&nbsp;X&nbsp;*&nbsp;Y&nbsp;=&nbsp;b<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;double&gt;&nbsp;&gt;&nbsp;Y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;=&nbsp;Solve(X,&nbsp;B);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;X&nbsp;-&gt;&nbsp;Y&nbsp;and&nbsp;stop&nbsp;tape&nbsp;recording<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;double&gt;&nbsp;f(X,&nbsp;Y);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;value&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(Y[0]&nbsp;,&nbsp;B[0]&nbsp;/&nbsp;X[0],&nbsp;&nbsp;1e-10&nbsp;,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(Y[1]&nbsp;,&nbsp;B[1]&nbsp;/&nbsp;X[3],&nbsp;&nbsp;1e-10&nbsp;,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;computation&nbsp;of&nbsp;partials&nbsp;w.r.t.&nbsp;x[0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dx(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;dy(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[0]&nbsp;=&nbsp;1.;&nbsp;dx[1]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[2]&nbsp;=&nbsp;0.;&nbsp;dx[3]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;dx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[0],&nbsp;-&nbsp;B[0]&nbsp;/&nbsp;(X[0]&nbsp;*&nbsp;X[0])&nbsp;,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[1],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.&nbsp;,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;compute&nbsp;the&nbsp;solution&nbsp;for&nbsp;a&nbsp;new&nbsp;x&nbsp;matrix&nbsp;such&nbsp;that&nbsp;pivioting<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;on&nbsp;the&nbsp;original&nbsp;rmax&nbsp;row&nbsp;would&nbsp;divide&nbsp;by&nbsp;zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;x(n);&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;double&gt;&nbsp;y(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;0.;&nbsp;x[1]&nbsp;=&nbsp;2.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[2]&nbsp;=&nbsp;2.;&nbsp;x[3]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(0,&nbsp;x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(y[0]&nbsp;,&nbsp;B[1]&nbsp;/&nbsp;x[2],&nbsp;&nbsp;1e-10&nbsp;,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;NearEqual(y[1]&nbsp;,&nbsp;B[0]&nbsp;/&nbsp;x[1],&nbsp;&nbsp;1e-10&nbsp;,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;forward&nbsp;computation&nbsp;of&nbsp;partials&nbsp;w.r.t.&nbsp;x[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[0]&nbsp;=&nbsp;0.;&nbsp;dx[1]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx[2]&nbsp;=&nbsp;0.;&nbsp;dx[3]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;dx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[0],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.&nbsp;,&nbsp;1e-10,&nbsp;1e-10);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&amp;=&nbsp;NearEqual(dy[1],&nbsp;-&nbsp;B[0]&nbsp;/&nbsp;(x[1]&nbsp;*&nbsp;x[1])&nbsp;,&nbsp;1e-10,&nbsp;1e-10);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/vec_ad.cpp
+
+</body>
+</html>

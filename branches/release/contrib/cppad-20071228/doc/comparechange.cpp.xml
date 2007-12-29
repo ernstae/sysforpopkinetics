@@ -1,0 +1,170 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>CompareChange and Re-Tape: Example and Test</title>
+<meta name="description" id="description" content="CompareChange and Re-Tape: Example and Test"/>
+<meta name="keywords" id="keywords" content=" compare change example Comparechange test re-tape "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_comparechange.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>FunEval</option>
+<option>Forward</option>
+<option>CompareChange</option>
+<option>CompareChange.cpp</option>
+</select>
+</td>
+<td><a href="comparechange.xml" target="_top">Prev</a>
+</td><td><a href="capacity_taylor.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>FunEval-&gt;</option>
+<option>Forward</option>
+<option>Reverse</option>
+<option>Sparse</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Forward-&gt;</option>
+<option>ForwardZero</option>
+<option>ForwardOne</option>
+<option>ForwardAny</option>
+<option>size_taylor</option>
+<option>CompareChange</option>
+<option>capacity_taylor</option>
+<option>Forward.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>CompareChange-&gt;</option>
+<option>CompareChange.cpp</option>
+</select>
+</td>
+<td>CompareChange.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>CompareChange and Re-Tape: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+namespace&#xA0;{&#xA0;//&#xA0;put&#xA0;this&#xA0;function&#xA0;in&#xA0;the&#xA0;empty&#xA0;namespace<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;template&#xA0;&lt;typename&#xA0;Type&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Type&#xA0;Minimum(const&#xA0;Type&#xA0;&amp;x,&#xA0;const&#xA0;Type&#xA0;&amp;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Use&#xA0;a&#xA0;comparision&#xA0;to&#xA0;compute&#xA0;the&#xA0;min(x,&#xA0;y)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;(note&#xA0;that&#xA0;CondExp&#xA0;would&#xA0;never&#xA0;require&#xA0;retaping).&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;x&#xA0;&lt;&#xA0;y&#xA0;)&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;x;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+}<br/>
+<br/>
+bool&#xA0;CompareChange(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::ADFun;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::Independent;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;X(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;3.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[1]&#xA0;=&#xA0;4.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[0]&#xA0;=&#xA0;Minimum(X[0],&#xA0;X[1]);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;f:&#xA0;x&#xA0;-&gt;&#xA0;y&#xA0;and&#xA0;stop&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADFun&lt;double&gt;&#xA0;f(X,&#xA0;Y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;zero&#xA0;mode&#xA0;Forward&#xA0;where&#xA0;conditional&#xA0;has&#xA0;the&#xA0;same&#xA0;result<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;note&#xA0;that&#xA0;f.CompareChange&#xA0;is&#xA0;not&#xA0;defined&#xA0;when&#xA0;NDEBUG&#xA0;is&#xA0;true<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;3.5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[1]&#xA0;=&#xA0;4.;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(0,&#xA0;x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(y[0]&#xA0;==&#xA0;x[0]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(y[0]&#xA0;==&#xA0;Minimum(x[0],&#xA0;x[1]));<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(f.CompareChange()&#xA0;==&#xA0;0);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;zero&#xA0;mode&#xA0;Forward&#xA0;where&#xA0;conditional&#xA0;has&#xA0;different&#xA0;result<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;4.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[1]&#xA0;=&#xA0;3.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(0,&#xA0;x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(y[0]&#xA0;==&#xA0;x[0]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(y[0]&#xA0;!=&#xA0;Minimum(x[0],&#xA0;x[1]));<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(f.CompareChange()&#xA0;==&#xA0;1);&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;re-tape&#xA0;to&#xA0;obtain&#xA0;the&#xA0;new&#xA0;AD&#xA0;operation&#xA0;sequence<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;4.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[1]&#xA0;=&#xA0;3.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(X);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[0]&#xA0;=&#xA0;Minimum(X[0],&#xA0;X[1]);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;stop&#xA0;tape&#xA0;and&#xA0;store&#xA0;result&#xA0;in&#xA0;f<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f.Dependent(Y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;function&#xA0;at&#xA0;new&#xA0;argument&#xA0;values<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(0,&#xA0;x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(y[0]&#xA0;==&#xA0;x[1]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(y[0]&#xA0;==&#xA0;Minimum(x[0],&#xA0;x[1]));<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;(f.CompareChange()&#xA0;==&#xA0;0);&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/compare_change.cpp
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+<html><head>
+<title>A Simple Parallel Loop</title>
+<meta name="description" id="description" content="A Simple Parallel Loop">
+<meta name="keywords" id="keywords" content=" Openmp example A.1.1c ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_example_a11c.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>omp_max_thread</option>
+<option>openmp_run.sh</option>
+<option>example_a11c.cpp</option>
+</select>
+</td>
+<td><a href="openmp_run.sh.htm" target="_top">Prev</a>
+</td><td><a href="multi_newton.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>omp_max_thread-&gt;</option>
+<option>openmp_run.sh</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>openmp_run.sh-&gt;</option>
+<option>example_a11c.cpp</option>
+<option>multi_newton.cpp</option>
+<option>sum_i_inv.cpp</option>
+</select>
+</td>
+<td>example_a11c.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>n_thread</option>
+<option>repeat</option>
+<option>size</option>
+<option>Example Source</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>A Simple Parallel Loop</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>example_a11c&nbsp;</span></font></code><i><span style='white-space: nowrap'>n_thread</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;</span></font></code><i><span style='white-space: nowrap'>repeat</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;</span></font></code><i><span style='white-space: nowrap'>size</span></i>
+
+<br>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+Runs a timing test of Example A.1.1.1c of the OpenMP 2.5 standard document.
+
+<br>
+<br>
+<b><big><a name="n_thread" id="n_thread">n_thread</a></big></b>
+<br>
+If the argument <i>n_thread</i> is equal to <code><font color="blue">automatic</font></code>, 
+dynamic thread adjustment is used.
+Otherwise, <i>n_thread</i> must be a positive number
+specifying the number of OpenMP threads to use.
+
+<br>
+<br>
+<b><big><a name="repeat" id="repeat">repeat</a></big></b>
+<br>
+If the argument <i>repeat</i> is equal to <code><font color="blue">automatic</font></code>,
+the number of times to repeat the calculation of the number of zeros
+in total interval is automatically determined.
+In this case, the rate of execution of the total solution is reported.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If the argument <i>repeat</i> is not equal to <i>automatic</i>,
+it must be a positive integer.
+In this case <i>repeat</i> determination of the number of times 
+the calculation of the zeros in the total interval is repeated.
+The rate of execution is not reported (it is assumed that the
+program execution time is being calculated some other way).
+
+<br>
+<br>
+<b><big><a name="size" id="size">size</a></big></b>
+<br>
+The argument <i>size</i> is the length of the arrays in the example code.
+
+<br>
+<br>
+<b><big><a name="Example Source" id="Example Source">Example Source</a></big></b>
+
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#&nbsp;ifdef&nbsp;_OPENMP<br>
+#&nbsp;include&nbsp;&lt;omp.h&gt;<br>
+#&nbsp;endif<br>
+<br>
+#&nbsp;include&nbsp;&lt;cmath&gt;<br>
+#&nbsp;include&nbsp;&lt;cstring&gt;<br>
+#&nbsp;include&nbsp;&lt;cstdlib&gt;<br>
+<br>
+//&nbsp;see&nbsp;http://www.coin-or.org/CppAD/Doc/cppad_vector.htm<br>
+#&nbsp;include&nbsp;&lt;cppad/vector.hpp&gt;<br>
+<br>
+//&nbsp;see&nbsp;http://www.coin-or.org/CppAD/Doc/speed_test.htm<br>
+#&nbsp;include&nbsp;&lt;cppad/speed_test.hpp&gt;<br>
+<br>
+//&nbsp;Beginning&nbsp;of&nbsp;Example&nbsp;A.1.1.1c&nbsp;of&nbsp;OpenMP&nbsp;2.5&nbsp;standard&nbsp;document&nbsp;---------<br>
+void&nbsp;a1(int&nbsp;n,&nbsp;float&nbsp;*a,&nbsp;float&nbsp;*b)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i;<br>
+#&nbsp;ifdef&nbsp;_OPENMP<br>
+#&nbsp;pragma&nbsp;omp&nbsp;parallel&nbsp;for<br>
+#&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;1;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)&nbsp;/*&nbsp;i&nbsp;is&nbsp;private&nbsp;by&nbsp;default&nbsp;*/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[i]&nbsp;=&nbsp;(a[i]&nbsp;+&nbsp;a[i-1])&nbsp;/&nbsp;2.0;<br>
+}<br>
+//&nbsp;End&nbsp;of&nbsp;Example&nbsp;A.1.1.1c&nbsp;of&nbsp;OpenMP&nbsp;2.5&nbsp;standard&nbsp;document&nbsp;---------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+//&nbsp;routine&nbsp;that&nbsp;is&nbsp;called&nbsp;to&nbsp;repeat&nbsp;the&nbsp;example&nbsp;a&nbsp;number&nbsp;of&nbsp;times<br>
+void&nbsp;test(size_t&nbsp;size,&nbsp;size_t&nbsp;repeat)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;setup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;*a&nbsp;=&nbsp;new&nbsp;float[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;*b&nbsp;=&nbsp;new&nbsp;float[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;size;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;float(i);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n&nbsp;=&nbsp;int(size);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;run&nbsp;test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;repeat;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a1(n,&nbsp;a,&nbsp;b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;tear&nbsp;down<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+}<br>
+<br>
+//&nbsp;main&nbsp;program<br>
+int&nbsp;main(int&nbsp;argc,&nbsp;char&nbsp;*argv[])<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::cout;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;get&nbsp;command&nbsp;line&nbsp;arguments&nbsp;-----------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char&nbsp;*usage&nbsp;=&nbsp;&quot;example_a11c&nbsp;n_thread&nbsp;repeat&nbsp;size&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;argc&nbsp;!=&nbsp;4&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;std::cerr&nbsp;&lt;&lt;&nbsp;usage&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argv++;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;n_thread&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n_thread;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;std::strcmp(*argv,&nbsp;&quot;automatic&quot;)&nbsp;==&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_thread&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;n_thread&nbsp;=&nbsp;std::atoi(*argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argv++;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;repeat&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;repeat;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;std::strcmp(*argv,&nbsp;&quot;automatic&quot;)&nbsp;==&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;std::atoi(*argv)&nbsp;&gt;&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;=&nbsp;std::atoi(*argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argv++;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;std::atoi(*argv)&nbsp;&gt;&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;size&nbsp;=&nbsp;std::atoi(*argv++);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;---------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;minimum&nbsp;time&nbsp;for&nbsp;test&nbsp;(repeat&nbsp;until&nbsp;this&nbsp;much&nbsp;time)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;time_min&nbsp;=&nbsp;1.;<br>
+#&nbsp;ifdef&nbsp;_OPENMP<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;n_thread&nbsp;&gt;&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;omp_set_dynamic(0);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;off&nbsp;dynamic&nbsp;thread&nbsp;adjust<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;omp_set_num_threads(n_thread);&nbsp;//&nbsp;set&nbsp;the&nbsp;number&nbsp;of&nbsp;threads&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;now&nbsp;determine&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;threads<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_thread&nbsp;=&nbsp;omp_get_max_threads();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;n_thread&nbsp;&gt;&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;inform&nbsp;the&nbsp;user&nbsp;of&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;threads<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;OpenMP:&nbsp;version&nbsp;=&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&lt;&nbsp;_OPENMP;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;,&nbsp;max&nbsp;number&nbsp;of&nbsp;threads&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;n_thread&nbsp;&lt;&lt;&nbsp;endl;<br>
+#&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;_OPENMP&nbsp;is&nbsp;not&nbsp;defined,&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;running&nbsp;in&nbsp;single&nbsp;tread&nbsp;mode&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_thread&nbsp;=&nbsp;1;<br>
+#&nbsp;endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Correctness&nbsp;check&nbsp;(store&nbsp;result&nbsp;in&nbsp;ok)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;*a&nbsp;=&nbsp;new&nbsp;float[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;*b&nbsp;=&nbsp;new&nbsp;float[size];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;size;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;float(i);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n&nbsp;=&nbsp;size;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a1(n,&nbsp;a,&nbsp;b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;1;&nbsp;i&nbsp;&lt;&nbsp;size&nbsp;;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;2.&nbsp;*&nbsp;b[i]&nbsp;-&nbsp;a[i]&nbsp;-&nbsp;a[i-1]&nbsp;)&nbsp;&lt;=&nbsp;1e-6;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;b;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;repeat&nbsp;&gt;&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;user&nbsp;specified&nbsp;the&nbsp;number&nbsp;of&nbsp;times&nbsp;to&nbsp;repeat&nbsp;the&nbsp;test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test(size,&nbsp;repeat);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;automatic&nbsp;determination&nbsp;of&nbsp;number&nbsp;of&nbsp;times&nbsp;to&nbsp;repeat&nbsp;test<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;speed&nbsp;test&nbsp;uses&nbsp;a&nbsp;SimpleVector&nbsp;with&nbsp;size_t&nbsp;elements<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;size_t&gt;&nbsp;size_vec(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_vec[0]&nbsp;=&nbsp;size;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;size_t&gt;&nbsp;rate_vec&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::speed_test(test,&nbsp;size_vec,&nbsp;time_min);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;report&nbsp;results<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;size_vec[0]&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;repeats&nbsp;per&nbsp;sec&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;rate_vec[0]&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Correctness&nbsp;Test&nbsp;Passed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Correctness&nbsp;Test&nbsp;Failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;static_cast&lt;int&gt;(&nbsp;!&nbsp;ok&nbsp;);<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: openmp/example_a11c.cpp
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Reverse Mode Jacobian Sparsity: Example and Test</title>
+<meta name="description" id="description" content="Reverse Mode Jacobian Sparsity: Example and Test"/>
+<meta name="keywords" id="keywords" content=" Revsparsejac example sparsity reverse test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_revsparsejac.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>ADFun</option>
+<option>FunEval</option>
+<option>Sparse</option>
+<option>RevSparseJac</option>
+<option>RevSparseJac.cpp</option>
+</select>
+</td>
+<td><a href="revsparsejac.xml" target="_top">Prev</a>
+</td><td><a href="revsparsehes.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>omp_max_thread</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>FunEval-&gt;</option>
+<option>Forward</option>
+<option>Reverse</option>
+<option>Sparse</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Sparse-&gt;</option>
+<option>ForSparseJac</option>
+<option>RevSparseJac</option>
+<option>RevSparseHes</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>RevSparseJac-&gt;</option>
+<option>RevSparseJac.cpp</option>
+</select>
+</td>
+<td>RevSparseJac.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Reverse Mode Jacobian Sparsity: Example and Test</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+namespace&#xA0;{&#xA0;//&#xA0;-------------------------------------------------------------<br/>
+//&#xA0;define&#xA0;the&#xA0;template&#xA0;function&#xA0;RevSparseJacCases&lt;Vector&gt;&#xA0;in&#xA0;empty&#xA0;namespace<br/>
+template&#xA0;&lt;typename&#xA0;Vector&gt;&#xA0;<br/>
+bool&#xA0;RevSparseJacCases(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;X(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;0.;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[1]&#xA0;=&#xA0;1.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[0]&#xA0;=&#xA0;X[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[1]&#xA0;=&#xA0;X[0]&#xA0;*&#xA0;X[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[2]&#xA0;=&#xA0;X[1];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;create&#xA0;f:&#xA0;X&#xA0;-&gt;&#xA0;Y&#xA0;and&#xA0;stop&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(X,&#xA0;Y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;sparsity&#xA0;pattern&#xA0;for&#xA0;the&#xA0;identity&#xA0;matrix<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;s(m&#xA0;*&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i,&#xA0;j;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;m;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;s[&#xA0;i&#xA0;*&#xA0;m&#xA0;+&#xA0;j&#xA0;]&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;s[&#xA0;i&#xA0;*&#xA0;m&#xA0;+&#xA0;i&#xA0;]&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;sparsity&#xA0;pattern&#xA0;for&#xA0;F'(x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Vector&#xA0;r(m&#xA0;*&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r&#xA0;=&#xA0;f.RevSparseJac(m,&#xA0;s);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;check&#xA0;values<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(r[&#xA0;0&#xA0;*&#xA0;n&#xA0;+&#xA0;0&#xA0;]&#xA0;==&#xA0;true);&#xA0;&#xA0;//&#xA0;Y[0]&#xA0;does&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;depend&#xA0;on&#xA0;X[0]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(r[&#xA0;0&#xA0;*&#xA0;n&#xA0;+&#xA0;1&#xA0;]&#xA0;==&#xA0;false);&#xA0;//&#xA0;Y[0]&#xA0;does&#xA0;not&#xA0;depend&#xA0;on&#xA0;X[1]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(r[&#xA0;1&#xA0;*&#xA0;n&#xA0;+&#xA0;0&#xA0;]&#xA0;==&#xA0;true);&#xA0;&#xA0;//&#xA0;Y[1]&#xA0;does&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;depend&#xA0;on&#xA0;X[0]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(r[&#xA0;1&#xA0;*&#xA0;n&#xA0;+&#xA0;1&#xA0;]&#xA0;==&#xA0;true);&#xA0;&#xA0;//&#xA0;Y[1]&#xA0;does&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;depend&#xA0;on&#xA0;X[1]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(r[&#xA0;2&#xA0;*&#xA0;n&#xA0;+&#xA0;0&#xA0;]&#xA0;==&#xA0;false);&#xA0;//&#xA0;Y[2]&#xA0;does&#xA0;not&#xA0;depend&#xA0;on&#xA0;X[0]<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(r[&#xA0;2&#xA0;*&#xA0;n&#xA0;+&#xA0;1&#xA0;]&#xA0;==&#xA0;true);&#xA0;&#xA0;//&#xA0;Y[2]&#xA0;does&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;depend&#xA0;on&#xA0;X[1]<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+}&#xA0;//&#xA0;End&#xA0;empty&#xA0;namespace<br/>
+#&#xA0;include&#xA0;&lt;vector&gt;<br/>
+#&#xA0;include&#xA0;&lt;valarray&gt;<br/>
+bool&#xA0;RevSparseJac(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Run&#xA0;with&#xA0;Vector&#xA0;equal&#xA0;to&#xA0;four&#xA0;different&#xA0;cases<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;all&#xA0;of&#xA0;which&#xA0;are&#xA0;Simple&#xA0;Vectors&#xA0;with&#xA0;elements&#xA0;of&#xA0;type&#xA0;bool.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;RevSparseJacCases&lt;&#xA0;CppAD::vectorBool&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;RevSparseJacCases&lt;&#xA0;CppAD::vector&#xA0;&#xA0;&lt;bool&gt;&#xA0;&gt;();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;RevSparseJacCases&lt;&#xA0;std::vector&#xA0;&#xA0;&#xA0;&#xA0;&lt;bool&gt;&#xA0;&gt;();&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;RevSparseJacCases&lt;&#xA0;std::valarray&#xA0;&#xA0;&lt;bool&gt;&#xA0;&gt;();&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/rev_sparse_jac.cpp
+
+</body>
+</html>

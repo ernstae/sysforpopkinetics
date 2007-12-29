@@ -1,0 +1,168 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Printing During Forward Mode: Example and Test</title>
+<meta name="description" id="description" content="Printing During Forward Mode: Example and Test"/>
+<meta name="keywords" id="keywords" content=" forward mode print example "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_printfor.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>Convert</option>
+<option>PrintFor</option>
+<option>PrintFor.cpp</option>
+</select>
+</td>
+<td><a href="printfor.xml" target="_top">Prev</a>
+</td><td><a href="var2par.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Convert-&gt;</option>
+<option>Value</option>
+<option>Integer</option>
+<option>Output</option>
+<option>PrintFor</option>
+<option>Var2Par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>PrintFor-&gt;</option>
+<option>PrintFor.cpp</option>
+</select>
+</td>
+<td>PrintFor.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Program</option>
+<option>Output</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Printing During Forward Mode: Example and Test</big></big></b></center>
+<br/>
+<b><big><a name="Program" id="Program">Program</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+<br/>
+int&#xA0;main(void)<br/>
+{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;CppAD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;std::cout;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;std::endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;independent&#xA0;variable&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;X(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[0]&#xA0;=&#xA0;0.;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;X[1]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(X);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;print&#xA0;a&#xA0;VecAD&lt;double&gt;::reference&#xA0;object<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;VecAD&lt;double&gt;&#xA0;V(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;Zero(0);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;V[Zero]&#xA0;=&#xA0;X[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;PrintFor(&quot;x[0]&#xA0;=&#xA0;&quot;,&#xA0;V[Zero]);&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;dependent&#xA0;variable&#xA0;vector&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[0]&#xA0;=&#xA0;V[Zero]&#xA0;+&#xA0;X[1];<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;First&#xA0;print&#xA0;a&#xA0;newline&#xA0;to&#xA0;separate&#xA0;this&#xA0;from&#xA0;previous&#xA0;output,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;then&#xA0;print&#xA0;an&#xA0;AD&lt;double&gt;&#xA0;object.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;PrintFor(&#xA0;&#xA0;&quot;\nx[0]&#xA0;+&#xA0;x[1]&#xA0;=&#xA0;&quot;,&#xA0;Y[0]);&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;define&#xA0;f:&#xA0;x&#xA0;-&gt;&#xA0;y&#xA0;and&#xA0;stop&#xA0;tape&#xA0;recording<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ADFun&lt;double&gt;&#xA0;f(X,&#xA0;Y);&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;zero&#xA0;order&#xA0;forward&#xA0;with&#xA0;x[0]&#xA0;=&#xA0;1&#xA0;and&#xA0;x[1]&#xA0;=&#xA0;1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;x(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[1]&#xA0;=&#xA0;1.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;x[0]&#xA0;=&#xA0;1&quot;&#xA0;&lt;&lt;&#xA0;endl;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;x[0]&#xA0;+&#xA0;x[1]&#xA0;=&#xA0;2&quot;&#xA0;&lt;&lt;&#xA0;endl;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cout&#xA0;&lt;&lt;&#xA0;&quot;Test&#xA0;passes&#xA0;if&#xA0;two&#xA0;lines&#xA0;above&#xA0;repeat&#xA0;below:&quot;&#xA0;&lt;&lt;&#xA0;endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f.Forward(0,&#xA0;x);&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;print&#xA0;a&#xA0;new&#xA0;line&#xA0;after&#xA0;output<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;0;<br/>
+}<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="Output" id="Output">Output</a></big></b>
+<br/>
+Executing the program above generates the following output:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;+&#xA0;x[1]&#xA0;=&#xA0;2<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Test&#xA0;passes&#xA0;if&#xA0;two&#xA0;lines&#xA0;above&#xA0;repeat&#xA0;below:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;=&#xA0;1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x[0]&#xA0;+&#xA0;x[1]&#xA0;=&#xA0;2<br/>
+</span>
+</font></code>
+
+<hr/>Input File: print_for/print_for.cpp
+
+</body>
+</html>

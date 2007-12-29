@@ -1,0 +1,204 @@
+<html><head>
+<title>Adolc Speed: Gradient of Determinant Using Expansion by Minors</title>
+<meta name="description" id="description" content="Adolc Speed: Gradient of Determinant Using Expansion by Minors">
+<meta name="keywords" id="keywords" content=" adolc speed minor compute_det_minor ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_adolc_det_minor.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_adolc</option>
+<option>adolc_det_minor.cpp</option>
+</select>
+</td>
+<td><a href="speed_adolc.htm" target="_top">Prev</a>
+</td><td><a href="adolc_det_lu.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>speed_adolc-&gt;</option>
+<option>adolc_det_minor.cpp</option>
+<option>adolc_det_lu.cpp</option>
+<option>adolc_poly.cpp</option>
+</select>
+</td>
+<td>adolc_det_minor.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Operation Sequence</option>
+<option>compute_det_minor</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Adolc Speed: Gradient of Determinant Using Expansion by Minors</big></big></b></center>
+<br>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br>
+Note that the expansion by minors 
+<a href="glossary.htm#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&nbsp;sequence</span></a>
+
+does not depend on the matrix being factored.
+Hence we use the same tape recording for all the matrices.
+
+<br>
+<br>
+<b><big><a name="compute_det_minor" id="compute_det_minor">compute_det_minor</a></big></b>
+
+<br>
+Routine that computes the gradient of determinant using Adolc:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cppad/vector.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/det_by_minor.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;cppad/speed/uniform_01.hpp&gt;<br>
+<br>
+#&nbsp;include&nbsp;&lt;adolc/adouble.h&gt;<br>
+#&nbsp;include&nbsp;&lt;adolc/interfaces.h&gt;<br>
+<br>
+void&nbsp;compute_det_minor(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;matrix&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::vector&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;gradient&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;setup<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;tag&nbsp;&nbsp;=&nbsp;0;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;tape&nbsp;identifier<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;keep&nbsp;=&nbsp;1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;keep&nbsp;forward&nbsp;mode&nbsp;results&nbsp;in&nbsp;buffer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;dependent&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;size*size;&nbsp;//&nbsp;number&nbsp;of&nbsp;independent&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;f;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;function&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;j;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;temporary&nbsp;index<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;object&nbsp;for&nbsp;computing&nbsp;determinant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;adouble&nbsp;&nbsp;&nbsp;&nbsp;ADScalar;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;ADScalar*&nbsp;&nbsp;ADVector;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::det_by_minor&lt;ADScalar&gt;&nbsp;Det(size);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&nbsp;value&nbsp;of&nbsp;determinant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADScalar&nbsp;&nbsp;&nbsp;detA;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&nbsp;version&nbsp;of&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADVector&nbsp;&nbsp;&nbsp;A&nbsp;=&nbsp;new&nbsp;ADScalar[n];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vectors&nbsp;of&nbsp;reverse&nbsp;mode&nbsp;weights&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*u&nbsp;=&nbsp;new&nbsp;double[m];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u[0]&nbsp;=&nbsp;1.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vector&nbsp;with&nbsp;matrix&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*mat&nbsp;=&nbsp;new&nbsp;double[n];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;vector&nbsp;to&nbsp;receive&nbsp;gradient&nbsp;result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*grad&nbsp;=&nbsp;new&nbsp;double[n];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;choose&nbsp;a&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::uniform_01(n,&nbsp;mat);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;declare&nbsp;independent&nbsp;variables<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trace_on(tag,&nbsp;keep);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[j]&nbsp;&lt;&lt;=&nbsp;mat[j];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;AD&nbsp;computation&nbsp;of&nbsp;the&nbsp;determinant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detA&nbsp;=&nbsp;Det(A);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;function&nbsp;object&nbsp;f&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;detA<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detA&nbsp;&gt;&gt;=&nbsp;f;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trace_off();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while(repeat--)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;get&nbsp;the&nbsp;next&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::uniform_01(n,&nbsp;mat);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;the&nbsp;determinant&nbsp;at&nbsp;the&nbsp;new&nbsp;matrix&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zos_forward(tag,&nbsp;m,&nbsp;n,&nbsp;keep,&nbsp;mat,&nbsp;&amp;f);&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;and&nbsp;return&nbsp;gradient&nbsp;using&nbsp;reverse&nbsp;mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fos_reverse(tag,&nbsp;m,&nbsp;n,&nbsp;u,&nbsp;grad);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;matrix&nbsp;and&nbsp;gradient<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;matrix[j]&nbsp;=&nbsp;mat[j];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gradient[j]&nbsp;=&nbsp;grad[j];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;tear&nbsp;down<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;grad;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;mat;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;u;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;A;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: speed/adolc/det_minor.cpp
+
+</body>
+</html>

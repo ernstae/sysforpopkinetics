@@ -1,0 +1,275 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>exp_eps: CppAD Forward and Reverse Sweeps</title>
+<meta name="description" id="description" content="exp_eps: CppAD Forward and Reverse Sweeps"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_exp_eps_cppad_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Introduction</option>
+<option>exp_eps</option>
+<option>exp_eps_cppad</option>
+</select>
+</td>
+<td><a href="exp_eps_rev2.cpp.xml" target="_top">Prev</a>
+</td><td><a href="exp_apx_main.cpp.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Introduction-&gt;</option>
+<option>get_started.cpp</option>
+<option>exp_2</option>
+<option>exp_eps</option>
+<option>exp_apx_main.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>exp_eps-&gt;</option>
+<option>exp_eps.hpp</option>
+<option>exp_eps.cpp</option>
+<option>exp_eps_for0</option>
+<option>exp_eps_for1</option>
+<option>exp_eps_rev1</option>
+<option>exp_eps_for2</option>
+<option>exp_eps_rev2</option>
+<option>exp_eps_cppad</option>
+</select>
+</td>
+<td>exp_eps_cppad</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Purpose</option>
+<option>Exercises</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>exp_eps: CppAD Forward and Reverse Sweeps</big></big></b></center>
+.
+
+<br/>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+Use CppAD forward and reverse modes to compute the
+partial derivative with respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+,
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>.5</mn>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x0025B;</mi>
+<mo stretchy="false">=</mo>
+<mn>.2</mn>
+</mrow></math>
+
+,
+of the function 
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;exp_eps(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>as defined by the <a href="exp_eps.hpp.xml" target="_top"><span style='white-space: nowrap'>exp_eps.hpp</span></a>
+ include file.
+
+<br/>
+<br/>
+<b><big><a name="Exercises" id="Exercises">Exercises</a></big></b>
+
+<ol type="1"><li>
+Create and test a modified version of the routine below that computes
+the same order derivatives with respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+,
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>.1</mn>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x0025B;</mi>
+<mo stretchy="false">=</mo>
+<mn>.2</mn>
+</mrow></math>
+
+,
+of the function 
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;exp_eps(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code></li><li>
+Create and test a modified version of the routine below that computes
+partial derivative with respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+,
+at the point 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>.1</mn>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x0025B;</mi>
+<mo stretchy="false">=</mo>
+<mn>.2</mn>
+</mrow></math>
+
+,
+of the function corresponding to the operation sequence 
+for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>.5</mn>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='normal'>&#x0025B;</mi>
+<mo stretchy="false">=</mo>
+<mn>.2</mn>
+</mrow></math>
+
+.
+Hint: you could define a vector u with two components and use
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>.Forward(0,&#xA0;</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>to run zero order forward mode at a point different
+form the point where the operation sequence corresponding to
+<i>f</i> was recorded.
+</li></ol>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;&#xA0;&#xA0;//&#xA0;http://www.coin-or.org/CppAD/&#xA0;<br/>
+#&#xA0;include&#xA0;&quot;exp_eps.hpp&quot;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;our&#xA0;example&#xA0;exponential&#xA0;function&#xA0;approximation<br/>
+bool&#xA0;exp_eps_cppad(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::vector;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;can&#xA0;use&#xA0;any&#xA0;simple&#xA0;vector&#xA0;template&#xA0;class<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::NearEqual;&#xA0;//&#xA0;checks&#xA0;if&#xA0;values&#xA0;are&#xA0;nearly&#xA0;equal<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;domain&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;&#xA0;//&#xA0;dimension&#xA0;of&#xA0;the&#xA0;domain&#xA0;space<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;U(n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;U[0]&#xA0;=&#xA0;.5;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;value&#xA0;of&#xA0;x&#xA0;for&#xA0;this&#xA0;operation&#xA0;sequence<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;U[1]&#xA0;=&#xA0;.2;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;value&#xA0;of&#xA0;e&#xA0;for&#xA0;this&#xA0;operation&#xA0;sequence<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;declare&#xA0;independent&#xA0;variables&#xA0;and&#xA0;start&#xA0;recording&#xA0;operation&#xA0;sequence<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::Independent(U);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;our&#xA0;exponential&#xA0;approximation<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;x&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;U[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;epsilon&#xA0;=&#xA0;U[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;double&gt;&#xA0;apx&#xA0;=&#xA0;exp_eps(x,&#xA0;epsilon);&#xA0;&#xA0;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;range&#xA0;space&#xA0;vector<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;1;&#xA0;&#xA0;//&#xA0;dimension&#xA0;of&#xA0;the&#xA0;range&#xA0;space<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;&#xA0;AD&lt;double&gt;&#xA0;&gt;&#xA0;Y(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Y[0]&#xA0;=&#xA0;apx;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;variable&#xA0;that&#xA0;represents&#xA0;only&#xA0;range&#xA0;space&#xA0;component<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Create&#xA0;f:&#xA0;U&#xA0;-&gt;&#xA0;Y&#xA0;corresponding&#xA0;to&#xA0;this&#xA0;operation&#xA0;sequence<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;and&#xA0;stop&#xA0;recording.&#xA0;This&#xA0;also&#xA0;executes&#xA0;a&#xA0;zero&#xA0;order&#xA0;forward&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;mode&#xA0;sweep&#xA0;using&#xA0;values&#xA0;in&#xA0;U&#xA0;for&#xA0;x&#xA0;and&#xA0;e.<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::ADFun&lt;double&gt;&#xA0;f(U,&#xA0;Y);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;first&#xA0;order&#xA0;forward&#xA0;mode&#xA0;sweep&#xA0;that&#xA0;computes&#xA0;partial&#xA0;w.r.t&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;du(n);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;differential&#xA0;in&#xA0;domain&#xA0;space<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;dy(m);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;differential&#xA0;in&#xA0;range&#xA0;space<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;du[0]&#xA0;=&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;x&#xA0;direction&#xA0;in&#xA0;domain&#xA0;space<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;du[1]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dy&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(1,&#xA0;du);&#xA0;&#xA0;//&#xA0;partial&#xA0;w.r.t.&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;check&#xA0;=&#xA0;1.5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dy[0],&#xA0;check,&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;first&#xA0;order&#xA0;reverse&#xA0;mode&#xA0;sweep&#xA0;that&#xA0;computes&#xA0;the&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;&#xA0;w(m);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;weights&#xA0;for&#xA0;components&#xA0;of&#xA0;the&#xA0;range<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;dw(n);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;derivative&#xA0;of&#xA0;the&#xA0;weighted&#xA0;function<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;w[0]&#xA0;=&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;there&#xA0;is&#xA0;only&#xA0;one&#xA0;weight&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dw&#xA0;&#xA0;&#xA0;=&#xA0;f.Reverse(1,&#xA0;w);&#xA0;&#xA0;&#xA0;//&#xA0;derivative&#xA0;of&#xA0;w[0]&#xA0;*&#xA0;exp_eps(x,&#xA0;epsilon)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;check&#xA0;=&#xA0;1.5;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;partial&#xA0;w.r.t.&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dw[0],&#xA0;check,&#xA0;1e-10,&#xA0;1e-10);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;check&#xA0;=&#xA0;0.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;partial&#xA0;w.r.t.&#xA0;epsilon<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dw[1],&#xA0;check,&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;order&#xA0;forward&#xA0;sweep&#xA0;that&#xA0;computes<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;partial&#xA0;of&#xA0;exp_eps(x,&#xA0;epsilon)&#xA0;w.r.t.&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;x2(n);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;order&#xA0;Taylor&#xA0;coefficients<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;double&gt;&#xA0;y2(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x2[0]&#xA0;=&#xA0;0.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;partial&#xA0;w.r.t&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x2[1]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y2&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Forward(2,&#xA0;x2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;check&#xA0;=&#xA0;0.5&#xA0;*&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Taylor&#xA0;coef&#xA0;is&#xA0;1/2&#xA0;second&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(y2[0],&#xA0;check,&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;second&#xA0;order&#xA0;reverse&#xA0;sweep&#xA0;that&#xA0;computes<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;derivative&#xA0;of&#xA0;partial&#xA0;of&#xA0;exp_eps(x,&#xA0;epsilon)&#xA0;w.r.t.&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dw.resize(2&#xA0;*&#xA0;n);&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;space&#xA0;for&#xA0;first&#xA0;and&#xA0;second&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;dw&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;f.Reverse(2,&#xA0;w);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;check&#xA0;=&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;result&#xA0;should&#xA0;be&#xA0;second&#xA0;derivative<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;NearEqual(dw[0*2+1],&#xA0;check,&#xA0;1e-10,&#xA0;1e-10);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: introduction/exp_apx/exp_eps_cppad.cpp
+
+</body>
+</html>

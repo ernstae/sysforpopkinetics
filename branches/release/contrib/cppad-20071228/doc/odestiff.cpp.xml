@@ -1,0 +1,421 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>A Stiff Ode: Example and Test</title>
+<meta name="description" id="description" content="A Stiff Ode: Example and Test"/>
+<meta name="keywords" id="keywords" content=" stiff ode example test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_odestiff.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Example</option>
+<option>General</option>
+<option>OdeStiff.cpp</option>
+</select>
+</td>
+<td><a href="hesludet.cpp.xml" target="_top">Prev</a>
+</td><td><a href="ode_taylor.cpp.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Example-&gt;</option>
+<option>General</option>
+<option>ExampleUtility</option>
+<option>ListAllExamples</option>
+<option>test_vector</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>General-&gt;</option>
+<option>Interface2C.cpp</option>
+<option>JacMinorDet.cpp</option>
+<option>JacLuDet.cpp</option>
+<option>HesMinorDet.cpp</option>
+<option>HesLuDet.cpp</option>
+<option>OdeStiff.cpp</option>
+<option>ode_taylor.cpp</option>
+<option>ode_taylor_adolc.cpp</option>
+<option>StackMachine.cpp</option>
+<option>mul_level</option>
+</select>
+</td>
+<td>OdeStiff.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>A Stiff Ode: Example and Test</big></big></b></center>
+Define 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">:</mo>
+<mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mrow><mstyle mathvariant='bold'><mi mathvariant='bold'>R</mi>
+</mstyle></mrow>
+<mn>2</mn>
+</msup>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>x</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mn>1</mn>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>x</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mn>0</mn>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msubsup><mi mathvariant='italic'>x</mi>
+<mn>0</mn>
+<mo stretchy="false">&#x02032;</mo>
+</msubsup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<msub><mi mathvariant='italic'>x</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msubsup><mi mathvariant='italic'>x</mi>
+<mn>1</mn>
+<mo stretchy="false">&#x02032;</mo>
+</msubsup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mo stretchy="false">+</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<msub><mi mathvariant='italic'>x</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>1</mn>
+</msub>
+<msub><mi mathvariant='italic'>x</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr></mtable>
+</mrow></math>
+
+If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">&#x0226B;</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">&gt;</mo>
+<mn>0</mn>
+</mrow></math>
+
+, this is a stiff Ode and 
+the analytic solution is
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>x</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mi>exp</mi>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<msub><mi mathvariant='italic'>x</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">[</mo>
+<mi>exp</mi>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>1</mn>
+</msub>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">-</mo>
+<mi>exp</mi>
+<mo stretchy="false">(</mo>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">/</mo>
+<mo stretchy="false">(</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">-</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">)</mo>
+</mtd></mtr></mtable>
+</mrow></math>
+
+The example tests Rosen34 using the relations above:
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;&#xA0;<br/>
+<br/>
+//&#xA0;To&#xA0;print&#xA0;the&#xA0;comparision,&#xA0;change&#xA0;the&#xA0;0&#xA0;to&#xA0;1&#xA0;on&#xA0;the&#xA0;next&#xA0;line.<br/>
+#&#xA0;define&#xA0;CppADOdeStiffPrint&#xA0;0<br/>
+<br/>
+namespace&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;--------------------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;class&#xA0;Fun&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;a;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun(const&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&amp;&#xA0;a_)&#xA0;:&#xA0;a(a_)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;f(t,&#xA0;x)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;Ode(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;t,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;x,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;f)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;f[0]&#xA0;&#xA0;=&#xA0;-&#xA0;a[0]&#xA0;*&#xA0;x[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f[1]&#xA0;&#xA0;=&#xA0;+&#xA0;a[0]&#xA0;*&#xA0;x[0]&#xA0;-&#xA0;a[1]&#xA0;*&#xA0;x[1];&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;partial&#xA0;of&#xA0;f(t,&#xA0;x)&#xA0;w.r.t.&#xA0;t&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;Ode_ind(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;t,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;x,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;f_t)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;f_t[0]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_t[1]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;compute&#xA0;partial&#xA0;of&#xA0;f(t,&#xA0;x)&#xA0;w.r.t.&#xA0;x&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;Ode_dep(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;t,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;x,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;f_x)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;f_x[0]&#xA0;=&#xA0;-a[0];&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_x[1]&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_x[2]&#xA0;=&#xA0;+a[0];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;f_x[3]&#xA0;=&#xA0;-a[1];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;--------------------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;class&#xA0;RungeMethod&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&#xA0;F;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;RungeMethod(const&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;a_)&#xA0;:&#xA0;F(a_)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;step(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ta&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;tb&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;xa&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;xb&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;eb&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;xb&#xA0;=&#xA0;CppAD::Runge45(F,&#xA0;1,&#xA0;ta,&#xA0;tb,&#xA0;xa,&#xA0;eb);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;order(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;5;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;};<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;class&#xA0;RosenMethod&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;private:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&#xA0;F;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;public:<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;constructor<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;RosenMethod(const&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;a_)&#xA0;:&#xA0;F(a_)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;void&#xA0;step(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ta&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;tb&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;xa&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;xb&#xA0;,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;&amp;eb&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;xb&#xA0;=&#xA0;CppAD::Rosen34(F,&#xA0;1,&#xA0;ta,&#xA0;tb,&#xA0;xa,&#xA0;eb);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;order(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;4;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;};<br/>
+}<br/>
+<br/>
+bool&#xA0;OdeStiff(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;true;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initial&#xA0;return&#xA0;value<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;a(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a[0]&#xA0;=&#xA0;1e3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a[1]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;RosenMethod&#xA0;rosen(a);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;RungeMethod&#xA0;runge(a);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Fun&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;gear(a);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;xi(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xi[0]&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xi[1]&#xA0;=&#xA0;0.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;eabs(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;eabs[0]&#xA0;=&#xA0;1e-6;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;eabs[1]&#xA0;=&#xA0;1e-6;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;ef(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;xf(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CPPAD_TEST_VECTOR&lt;double&gt;&#xA0;maxabs(2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;nstep;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;k;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(k&#xA0;=&#xA0;0;&#xA0;k&#xA0;&lt;&#xA0;3;&#xA0;k++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;M&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;ti&#xA0;&#xA0;&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;tf&#xA0;&#xA0;&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;smin&#xA0;=&#xA0;1e-7;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;sini&#xA0;=&#xA0;1e-7;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;smax&#xA0;=&#xA0;1.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;scur&#xA0;=&#xA0;.5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;erel&#xA0;=&#xA0;0.;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;char&#xA0;*method;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;k&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;method&#xA0;=&#xA0;&quot;Rosen34&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xf&#xA0;=&#xA0;CppAD::OdeErrControl(rosen,&#xA0;ti,&#xA0;tf,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xi,&#xA0;smin,&#xA0;smax,&#xA0;scur,&#xA0;eabs,&#xA0;erel,&#xA0;ef,&#xA0;maxabs,&#xA0;nstep);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;if(&#xA0;k&#xA0;==&#xA0;1&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;method&#xA0;=&#xA0;&quot;Runge45&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xf&#xA0;=&#xA0;CppAD::OdeErrControl(runge,&#xA0;ti,&#xA0;tf,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xi,&#xA0;smin,&#xA0;smax,&#xA0;scur,&#xA0;eabs,&#xA0;erel,&#xA0;ef,&#xA0;maxabs,&#xA0;nstep);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;if(&#xA0;k&#xA0;==&#xA0;2&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;method&#xA0;=&#xA0;&quot;Gear5&quot;;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xf&#xA0;=&#xA0;CppAD::OdeGearControl(gear,&#xA0;M,&#xA0;ti,&#xA0;tf,<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;xi,&#xA0;smin,&#xA0;smax,&#xA0;sini,&#xA0;eabs,&#xA0;erel,&#xA0;ef,&#xA0;maxabs,&#xA0;nstep);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x0&#xA0;=&#xA0;exp(-a[0]*tf);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(x0,&#xA0;xf[0],&#xA0;0.,&#xA0;eabs[0]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(0.,&#xA0;ef[0],&#xA0;0.,&#xA0;eabs[0]);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x1&#xA0;=&#xA0;a[0]&#xA0;*&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(exp(-a[1]*tf)&#xA0;-&#xA0;exp(-a[0]*tf))/(a[0]&#xA0;-&#xA0;a[1]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(x1,&#xA0;xf[1],&#xA0;0.,&#xA0;eabs[1]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;CppAD::NearEqual(0.,&#xA0;ef[1],&#xA0;0.,&#xA0;eabs[0]);<br/>
+#&#xA0;if&#xA0;CppADOdeStiffPrint<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;method&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;method&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;nstep&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;nstep&#xA0;&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;x0&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;x0&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;xf[0]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;xf[0]&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;x0&#xA0;-&#xA0;xf[0]&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;x0&#xA0;-&#xA0;xf[0]&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;ef[0]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;ef[0]&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;x1&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;x1&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;xf[1]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;xf[1]&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;x1&#xA0;-&#xA0;xf[1]&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;x1&#xA0;-&#xA0;xf[1]&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;ef[1]&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;ef[1]&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+#&#xA0;endif<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: example/ode_stiff.cpp
+
+</body>
+</html>

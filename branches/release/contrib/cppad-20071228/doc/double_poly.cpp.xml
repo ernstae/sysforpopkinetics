@@ -1,0 +1,135 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Double Speed: Evaluate a Polynomial</title>
+<meta name="description" id="description" content="Double Speed: Evaluate a Polynomial"/>
+<meta name="keywords" id="keywords" content=" cppad speed polynomial compute_poly "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_double_poly.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>Appendix</option>
+<option>speed</option>
+<option>speed_double</option>
+<option>double_poly.cpp</option>
+</select>
+</td>
+<td><a href="double_det_lu.cpp.xml" target="_top">Prev</a>
+</td><td><a href="speed_adolc.xml" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>Appendix-&gt;</option>
+<option>Faq</option>
+<option>speed</option>
+<option>Theory</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>whats_new</option>
+<option>include_deprecated</option>
+<option>License</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>speed-&gt;</option>
+<option>speed_main</option>
+<option>speed_utility</option>
+<option>speed_double</option>
+<option>speed_adolc</option>
+<option>speed_cppad</option>
+<option>speed_fadbad</option>
+<option>speed_sacado</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>speed_double-&gt;</option>
+<option>double_det_minor.cpp</option>
+<option>double_det_lu.cpp</option>
+<option>double_poly.cpp</option>
+</select>
+</td>
+<td>double_poly.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>compute_poly</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Double Speed: Evaluate a Polynomial</big></big></b></center>
+<br/>
+<b><big><a name="compute_poly" id="compute_poly">compute_poly</a></big></b>
+
+<br/>
+Routine that computes the second derivative of a polynomial using CppAD:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cppad/cppad.hpp&gt;<br/>
+#&#xA0;include&#xA0;&lt;cppad/speed/uniform_01.hpp&gt;<br/>
+<br/>
+void&#xA0;compute_poly(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;repeat&#xA0;&#xA0;&#xA0;,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;a&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;&#xA0;//&#xA0;coefficients&#xA0;of&#xA0;polynomial<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;z&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;,&#xA0;&#xA0;//&#xA0;polynomial&#xA0;argument&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;double&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;p&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;)&#xA0;&#xA0;//&#xA0;second&#xA0;derivative&#xA0;w.r.t&#xA0;z&#xA0;&#xA0;<br/>
+{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;-----------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;setup<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;------------------------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(repeat--)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;get&#xA0;the&#xA0;next&#xA0;argument&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::uniform_01(1,&#xA0;z);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;evaluate&#xA0;the&#xA0;polynomial&#xA0;at&#xA0;the&#xA0;new&#xA0;argument&#xA0;value<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;p[0]&#xA0;=&#xA0;CppAD::Poly(0,&#xA0;a,&#xA0;z[0]);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return;<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: speed/double/poly.cpp
+
+</body>
+</html>

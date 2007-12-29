@@ -1,0 +1,159 @@
+<html><head>
+<title>Complex Polynomial: Example and Test</title>
+<meta name="description" id="description" content="Complex Polynomial: Example and Test">
+<meta name="keywords" id="keywords" content=" complex polynomial example test ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_complexpoly.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>CppAD</option>
+<option>AD</option>
+<option>base_require</option>
+<option>base_complex.hpp</option>
+<option>ComplexPoly.cpp</option>
+</select>
+</td>
+<td><a href="base_complex.hpp.htm" target="_top">Prev</a>
+</td><td><a href="not_complex_ad.cpp.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>Install</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>preprocessor</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Default</option>
+<option>ad_copy</option>
+<option>Convert</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+<option>base_require</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>base_require-&gt;</option>
+<option>base_complex.hpp</option>
+<option>base_adolc.hpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>base_complex.hpp-&gt;</option>
+<option>ComplexPoly.cpp</option>
+<option>not_complex_ad.cpp</option>
+</select>
+</td>
+<td>ComplexPoly.cpp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>See Also</option>
+<option>Poly</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Complex Polynomial: Example and Test</big></big></b></center>
+<br>
+<b><big><a name="See Also" id="See Also">See Also</a></big></b>
+
+<br>
+<a href="not_complex_ad.cpp.htm" target="_top"><span style='white-space: nowrap'>not_complex_ad.cpp</span></a>
+
+
+<br>
+<br>
+<b><big><a name="Poly" id="Poly">Poly</a></big></b>
+<br>
+Select this link to view specifications for <a href="poly.htm" target="_top"><span style='white-space: nowrap'>Poly</span></a>
+:
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;cppad/cppad.hpp&gt;<br>
+#&nbsp;include&nbsp;&lt;complex&gt;<br>
+<br>
+bool&nbsp;complex_poly(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;deg&nbsp;=&nbsp;4;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::AD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppAD::Poly;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::complex&lt;double&gt;&nbsp;Complex;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;polynomial&nbsp;coefficients<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;Complex&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;(deg&nbsp;+&nbsp;1);&nbsp;//&nbsp;coefficients&nbsp;for&nbsp;p(z)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;Complex&gt;&nbsp;&gt;&nbsp;A&nbsp;&nbsp;&nbsp;(deg&nbsp;+&nbsp;1);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;=&nbsp;deg;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[i]&nbsp;=&nbsp;a[i]&nbsp;=&nbsp;Complex(i,&nbsp;i);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;independent&nbsp;variable&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;Complex&gt;&nbsp;&gt;&nbsp;Z(1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Complex&nbsp;z&nbsp;=&nbsp;Complex(1.,&nbsp;2.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;z;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Independent(Z);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;dependent&nbsp;variable&nbsp;vector&nbsp;and&nbsp;indices<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;&nbsp;AD&lt;Complex&gt;&nbsp;&gt;&nbsp;P(1);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;dependent&nbsp;variable&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P[0]&nbsp;=&nbsp;Poly(0,&nbsp;A,&nbsp;Z[0]);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;create&nbsp;f:&nbsp;Z&nbsp;-&gt;&nbsp;P&nbsp;and&nbsp;vectors&nbsp;used&nbsp;for&nbsp;derivative&nbsp;calculations<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD::ADFun&lt;Complex&gt;&nbsp;f(Z,&nbsp;P);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;Complex&gt;&nbsp;v(&nbsp;f.Domain()&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPAD_TEST_VECTOR&lt;Complex&gt;&nbsp;w(&nbsp;f.Range()&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;first&nbsp;derivative&nbsp;w.r.t&nbsp;z<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(1,&nbsp;v);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Complex&nbsp;p&nbsp;=&nbsp;Poly(1,&nbsp;a,&nbsp;z);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;w[0]&nbsp;&nbsp;==&nbsp;p&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;second&nbsp;derivative&nbsp;w.r.t&nbsp;z&nbsp;is&nbsp;2&nbsp;times&nbsp;its&nbsp;second&nbsp;order&nbsp;Taylor&nbsp;coeff<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[0]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;f.Forward(2,&nbsp;v);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;Poly(2,&nbsp;a,&nbsp;z);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(&nbsp;2.&nbsp;*&nbsp;w[0]&nbsp;&nbsp;==&nbsp;p&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+<br>
+</span></font></code>
+<hr>Input File: example/complex_poly.cpp
+
+</body>
+</html>
