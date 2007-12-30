@@ -160,16 +160,16 @@ AC_CHECK_LIB(pvm3,pvm_parent,[
 # FIXME: Replace `main' with a function in `-lQN01Box':
 # NOTE:  This should be changed to use AC_CHECK_LIB (aernst)
 #AC_CHECK_FILE([/usr/local/spk/lib/libQN01Box.a],[LIBS="$LIBS -lQN01Box"],[
-AC_CHECK_LIB([QN01Box], [main], [], [
-echo \
-"----------------------------------------------------------------------
-ERROR: It appears as though libQN01Box is missing.  You cannot sanely
-try to build SPK without the SPK Optimizer (libQN01Box).  It must be
-installed prior to installing this library, and is included in the 
-source distribution of SPK
------------------------------------------------------------------------"
-exit
-])
+#AC_CHECK_LIB([QN01Box], [main], [], [
+#echo \
+#"----------------------------------------------------------------------
+#ERROR: It appears as though libQN01Box is missing.  You cannot sanely
+#try to build SPK without the SPK Optimizer (libQN01Box).  It must be
+#installed prior to installing this library, and is included in the 
+#source distribution of SPK
+#-----------------------------------------------------------------------"
+#exit
+#])
 
 # FIXME: Replace `main' with a function in `-lnon_par':
 AC_CHECK_LIB([non_par], [main], [LIBS="$LIBS -lnon_par"], AC_MSG_ERROR(libnon_par not found))
