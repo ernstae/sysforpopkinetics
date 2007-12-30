@@ -175,7 +175,7 @@ testall_SOURCES = \
 	mapTildeTest.cpp \
 	mapTildeTest.h \
 	matabsTest.cpp \
-	mapabsTest.h \
+	matabsTest.h \
 	matmaxTest.cpp \
 	matmaxTest.h \
 	matminTest.cpp \
