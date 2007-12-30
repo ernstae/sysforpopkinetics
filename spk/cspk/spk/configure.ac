@@ -21,14 +21,15 @@ AC_PREFIX_DEFAULT([/usr/local/spk])
 
 # For backwards compatibility with the old way of installing SPK, we need to
 # support POSTFIX (e.g. /usr/local/bin/spktest)
-#AC_ARG_WITH(postfix,
-#	AC_HELP_STRING( [--with-postfix=spktest], [provides a postfix directory for installation to \$PREFIX/bin/\$POSTFIX] ),
-#	[postfix=TRUE],
-#	[postfix=FALSE]
-#)
+AC_ARG_WITH(postfix, AC_HELP_STRING ( [--with-postfix=], [provides a postfix for installation to \prefix/bin/\$postfix] ), [ postfix="$withval" ], [ postfix=FALSE] )
 
-#AM_CONDITIONAL(SPK_POSTFIX, test $postfix = TRUE )
+AM_CONDITIONAL(SPK_POSTFIX, test $postfix != FALSE )
 
+if test $postfix != FALSE; then
+   	AC_DEFINE(SPK_POSTFIX, 1, "using postfix directory name")
+	spk_postfixdir=$postfix
+	AC_SUBST(spk_postfixdir)
+fi
 
 # Set an extra command line option "--enable-release-build" to 'configure'.
 # if the user specifies this option, a variable "release_build" gets set to TRUE

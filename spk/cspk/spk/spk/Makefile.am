@@ -1,31 +1,15 @@
 # Static libraries
 lib_LIBRARIES   = libspk.a
 
-#INST_BASE     = /usr/local
-#libdir        = $(INST_BASE)/lib/spktest
-#pkgincludedir = $(INST_BASE)/include/spktest/spk
+AM_CPPLAGS = -I. \
+		-I$(top_builddir) \
+		-I$(top_builddir)/../QN01Box/lib \
+		-I$(includedir) \
+		-I$(includedir)/$(SPK_POSTFIX)
 
-#AM_CPPFLAGS = -I. \
-#		-I$(top_builddir) \
-#		-I$(INST_BASE)/include/spktest \
-#		-I$(PVM_ROOT)/include \
-#		$(all_includes)
+INCLUDES = -I$(top_srcdir) -I$(top_builddir)/../QN01Box  -I$(includedir) $(PVM_INCLUDES)
 
-
-INCLUDES = -I$(top_srcdir) -I$(includedir) $(PVM_INCLUDES)
-
-# Set C++ compiler flags
-#if SPK_RELEASE
-#AM_CXXFLAGS = -O3 -Dspk_release -DNDEBUG $(EXTRA_LIBS)
-#else
-#AM_CXXFLAGS = -g  -Dspk_debug $(EXTRA_LIBS)
-#endif
-#if SPK_PROFILE
-#AM_CXXFLAGS += -pg -Dspk_profiling
-#endif
-
-# Set F77 compiler flags
-#AM_FFLAGS = -g
+libspk_a_LIBADD = $(all_libraries)
 
 libspk_a_SOURCES = \
 	ABA_x.cpp \
