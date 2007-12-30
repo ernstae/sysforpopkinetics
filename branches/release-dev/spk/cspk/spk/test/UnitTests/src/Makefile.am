@@ -1,17 +1,15 @@
 noinst_PROGRAMS = testall
 
-INST_BASE = /usr/local
-
-libdir = $(INST_BASE)/lib/spktest
+testall_LDADD = $(all_libraries)
 
 # Set C pre-processor flags
 AM_CPPFLAGS = \
 	-I. \
 	-I$(top_builddir) \
 	-I$(top_builddir)/spk \
-	-I$(INST_BASE)/include/spktest \
-	-I/$(INST_BASE)/cppunit/include \
-	-I/usr/share/pvm3/include
+	-I$(top_builddir)/../QN01Box \
+	-I$(includedir) \
+	-I$(includedir)/$(spk_postfixdir)
 
 # Set C++ compiler flags
 if SPK_RELEASE 
@@ -25,11 +23,12 @@ endif
 
 # Set linker flags
 AM_LDFLAGS  = \
+	$(all_libraries) \
+	-L$(top_builddir)/../QN01Box/lib \
 	-L/usr/local/lib \
 	-L/usr/lib/atlas \
-	-L$(INST_BASE)/lib/spktest \
-	-L/usr/share/pvm3/lib/LINUX \
-	-L/usr/share/pvm3/lib/LINUX64 \
+	-L$(libdir) \
+	$(PVM_LIBS) $(EXTRA_LIBS) \
 	$(top_builddir)/spk/libspk.a \
 	-lnon_par \
 	-lmat2cpp \
