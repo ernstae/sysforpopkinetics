@@ -321,7 +321,8 @@ public class NearEqual {
                     }
                 }
                 else
-                    msg.append("\nLength of THETA is wrong.");
+                    msg.append("\nLength of THETA is wrong." +
+                               "\n    Old value: " + oldOutput.theta.length + "     New value: " + newOutput.theta.length);
             }
             else
                 msg.append("\nTHETA is missing.");
@@ -511,37 +512,44 @@ public class NearEqual {
         {
             if(newOutput.dataAll != null)
             {
-                if(oldOutput.dataAll.length == newOutput.dataAll.length && oldOutput.dataAll[0].length == newOutput.dataAll[0].length)
+                if(oldOutput.dataAll.length == newOutput.dataAll.length)
                 {
                     int indexDV = oldOutput.dataItems.indexOf("DV");
                     int indexF = oldOutput.dataItems.indexOf("F");
                     for(int i = 0; i < oldOutput.dataAll.length; i++)
                     {
-                        for(int j = 0; j < oldOutput.dataAll[0].length; j++)
+                        if(oldOutput.dataAll[i].length == newOutput.dataAll[i].length)
                         {
-                            double rTol = rErr;
-                            double aTol = aErr;
-                            String label = (String)oldOutput.dataItems.get(j);
-                            if(label.endsWith(")") && !label.startsWith("THETA("))
-                                rTol = rErr * pdfm;
-                            if(label.endsWith("RES") && !label.endsWith("WRES") && label.indexOf("WETARES(") == -1)
+                            for(int j = 0; j < oldOutput.dataAll[i].length; j++)
                             {
-                                double DV = oldOutput.dataAll[i][indexDV];
-                                double F = oldOutput.dataAll[i][indexF];
-//                                double s = DV - F == 0 ?  1 : oldOutput.dataAll[i][j] / (DV - F);
-//                                aTol = s * (rErr * (Math.abs(DV) + Math.abs(F)) + aErr);
-                                aTol = rErr * (Math.abs(DV) + Math.abs(F));
-                                rTol = 0;
-                            }
-                            if(!label.endsWith("WRES") && label.indexOf("WETARES(") == -1 &&
-                               !checkNumber(oldOutput.dataAll[i][j], newOutput.dataAll[i][j], aTol, rTol))
-                                msg.append("\nValue of presentation data at row " + (i + 1) + ", column " + (j + 1) + ", " + label +", is different." +
+                                double rTol = rErr;
+                                double aTol = aErr;
+                                String label = (String)oldOutput.dataItems.get(j);
+                                if(label.endsWith(")") && !label.startsWith("THETA("))
+                                    rTol = rErr * pdfm;
+                                if(label.endsWith("RES") && !label.endsWith("WRES") && label.indexOf("WETARES(") == -1)
+                                {
+                                    double DV = oldOutput.dataAll[i][indexDV];
+                                    double F = oldOutput.dataAll[i][indexF];
+//                                    double s = DV - F == 0 ?  1 : oldOutput.dataAll[i][j] / (DV - F);
+//                                    aTol = s * (rErr * (Math.abs(DV) + Math.abs(F)) + aErr);
+                                    aTol = rErr * (Math.abs(DV) + Math.abs(F));
+                                    rTol = 0;
+                                }
+                                if(!label.endsWith("WRES") && label.indexOf("WETARES(") == -1 &&
+                                   !checkNumber(oldOutput.dataAll[i][j], newOutput.dataAll[i][j], aTol, rTol))
+                                    msg.append("\nValue of presentation data at row " + (i + 1) + ", column " + (j + 1) + ", " + label +", is different." +
                                            "\n    Old value: " + oldOutput.dataAll[i][j] + "     New value: " + newOutput.dataAll[i][j]);
+                            }
                         }
+                        else
+                            msg.append("\nNumber of columns at row  " + (i + 1) + " of presentation data is wrong." +
+                               "\n    Old value: " + oldOutput.dataAll[i].length + "     New value: " + newOutput.dataAll[i].length);
+                            
                     }
                 }
                 else
-                    msg.append("\nDimension of presentation data is wrong." +
+                    msg.append("\nNumber of rows of presentation data is wrong." +
                                "\n    Old value: " + oldOutput.dataAll.length + "     New value: " + newOutput.dataAll.length);
             }
             else
@@ -553,45 +561,51 @@ public class NearEqual {
         {
             if(newOutput.alpha != null)
             {
-                if(oldOutput.alpha.length == newOutput.alpha.length && oldOutput.alpha[0].length == newOutput.alpha[0].length)
+                if(oldOutput.alpha.length == newOutput.alpha.length)
                 {
                     for(int i = 0; i < 2; i++)
                     {
                         String which = i == 0? "center" : "step";
-                        for(int j = 0; j < nTheta; j++)
-                            if(!checkVector(new String[]{oldOutput.alpha[i][j]}, new String[]{newOutput.alpha[i][j]}))
-                                msg.append("\nValue of alpha " + which + " for THETA " + (j + 1) + " is different." + values());
-                        int start = nTheta;
-                        for(int j = 0; j < nOmega.length; j++)
+                        if(oldOutput.alpha[i].length == newOutput.alpha[i].length)
                         {
-                            String[] oldOmega = new String[nOmega[j]];
-                            String[] newOmega = new String[nOmega[j]];
-                            for(int k = 0; k < nOmega[j]; k++)
+                            for(int j = 0; j < nTheta; j++)
+                                if(!checkVector(new String[]{oldOutput.alpha[i][j]}, new String[]{newOutput.alpha[i][j]}))
+                                    msg.append("\nValue of alpha " + which + " for THETA " + (j + 1) + " is different." + values());
+                            int start = nTheta;
+                            for(int j = 0; j < nOmega.length; j++)
                             {
-                                oldOmega[k] = oldOutput.alpha[i][start + k];
-                                newOmega[k] = newOutput.alpha[i][start + k];
+                                String[] oldOmega = new String[nOmega[j]];
+                                String[] newOmega = new String[nOmega[j]];
+                                for(int k = 0; k < nOmega[j]; k++)
+                                {
+                                    oldOmega[k] = oldOutput.alpha[i][start + k];
+                                    newOmega[k] = newOutput.alpha[i][start + k];
+                                }
+                                if(!checkVector(oldOmega, newOmega))
+                                    msg.append("\nValue of alpha " + which + " for OMEGA block" + (j + 1) + " is different.  index = " + index + values());
+                                start += nOmega[j];
                             }
-                            if(!checkVector(oldOmega, newOmega))
-                                msg.append("\nValue of alpha " + which + " for OMEGA block" + (j + 1) + " is different.  index = " + index + values());
-                            start += nOmega[j];
-                        }
-                        for(int j = 0; j < nSigma.length; j++)
-                        {
-                            String[] oldSigma = new String[nSigma[j]];
-                            String[] newSigma = new String[nSigma[j]];
-                            for(int k = 0; k < nSigma[j]; k++)
+                            for(int j = 0; j < nSigma.length; j++)
                             {
-                                oldSigma[k] = oldOutput.alpha[i][start + k];
-                                newSigma[k] = newOutput.alpha[i][start + k];
+                                String[] oldSigma = new String[nSigma[j]];
+                                String[] newSigma = new String[nSigma[j]];
+                                for(int k = 0; k < nSigma[j]; k++)
+                                {
+                                    oldSigma[k] = oldOutput.alpha[i][start + k];
+                                    newSigma[k] = newOutput.alpha[i][start + k];
+                                }
+                                if(!checkVector(oldSigma, newSigma))
+                                    msg.append("\nValue of alpha " + which + " for SIGMA block" + (j + 1) + " is different.  index = " + index + values());
+                                start += nSigma[j];
                             }
-                            if(!checkVector(oldSigma, newSigma))
-                                msg.append("\nValue of alpha " + which + " for SIGMA block" + (j + 1) + " is different.  index = " + index + values());
-                            start += nSigma[j];
                         }
+                        else
+                            msg.append("\nNumber of alpha " + which + " elements is wrong." +
+                                       "\n    Old value: " + oldOutput.alpha[i].length + "     New value: " + newOutput.alpha[i].length);
                     }
                 }
                 else
-                    msg.append("\nNumber of alpha is wrong." +
+                    msg.append("\nNumber of alpha vectors is wrong." +
                                "\n    Old value: " + oldOutput.alpha.length + "     New value: " + newOutput.alpha.length);
             }
             else
@@ -606,6 +620,7 @@ public class NearEqual {
                 if(oldOutput.likelihood.length == newOutput.likelihood.length && newOutput.likelihood[0].length == 3)
                 {
                     for(int i = 0; i < newOutput.likelihood.length; i++)
+                    {
                         for(int j = 0; j < 3; j++)
                         {
                             String which = "center";
@@ -614,6 +629,7 @@ public class NearEqual {
                             if(!checkVector(new String[]{oldOutput.likelihood[i][j]}, new String[]{newOutput.likelihood[i][j]}))
                                 msg.append("\nValue of likelihood " + which + " " + (i + 1) + " is different." + values());
                         }
+                    }
                 }
                 else
                     msg.append("\nNumber of likelihood is wrong." +
@@ -631,6 +647,7 @@ public class NearEqual {
                 if(oldOutput.likelihood_std.length == newOutput.likelihood_std.length && newOutput.likelihood_std[0].length == 3)
                 {
                     for(int i = 0; i < newOutput.likelihood_std.length; i++)
+                    {
                         for(int j = 0; j < 3; j++)
                         {
                             String which = "center";
@@ -639,6 +656,7 @@ public class NearEqual {
                             if(!checkVector(new String[]{oldOutput.likelihood_std[i][j]}, new String[]{newOutput.likelihood_std[i][j]}))
                                 msg.append("\nValue of likelihood standard error " + which + " " + (i + 1) + " is different." + values());
                         }
+                    }
                 }
                 else
                     msg.append("\nNumber of likelihood standard error is wrong." +
