@@ -1,0 +1,13 @@
+January 2008 marks the first public release of SPK as an installable
+product for users who would like to create their own Service for 
+Population Kinetics.
+
+As such, please be aware that the installed user base is quite small
+and while we have tried to streamline the install process, we would like
+to solicit requests for improvement, and wherever possible, code contributions
+to help the install of SPK to be as seamless on operating systems other than
+Red Hat Enterprise Linux (3,4,5) and Fedora (tested: 5,6,7,8)
+
+Please feel free to make requests to our developers via e-mail at spk-dev@rfpk.washington.edu
+
+* The names Red Hat and Fedora are owned by their respective trademark owners.

@@ -1,13 +1,28 @@
 # Static libraries
-lib_LIBRARIES   = libspk.a
+
+if SPK_POSTFIX
+mylibdir = ${libdir}/${spk_postfixdir}
+myincludedir = ${includedir}/${spk_postfixdir}
+mybindir = ${bindir}/${spk_postfixdir}
+else
+mylibdir = ${libdir}
+mybindir = ${bindir}
+myincludedir = ${includedir}
+endif
+
+mylib_LIBRARIES   = libspk.a
 
 AM_CPPLAGS = -I. \
 		-I$(top_builddir) \
 		-I$(top_builddir)/../QN01Box/lib \
 		-I$(includedir) \
-		-I$(includedir)/$(SPK_POSTFIX)
+	        -I$(includedir)/$(spk_postfixdir)
 
-INCLUDES = -I$(top_srcdir) -I$(top_builddir)/../QN01Box  -I$(includedir) $(PVM_INCLUDES)
+INCLUDES = -I$(top_srcdir) \
+		-I$(top_builddir)/../QN01Box \
+		-I$(includedir) \
+		-I$(includedir)/$(spk_postfixdir)
+		$(PVM_INCLUDES) $(EXTRA_INCLUDES)
 
 libspk_a_LIBADD = $(all_libraries)
 
