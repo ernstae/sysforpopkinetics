@@ -27,8 +27,13 @@ AM_CONDITIONAL(SPK_POSTFIX, test $postfix != FALSE )
 
 if test $postfix != FALSE; then
    	AC_DEFINE(SPK_POSTFIX, 1, "using postfix directory name")
+	AC_MSG_CHECKING( [postfix directory defined] )
 	spk_postfixdir=$postfix
 	AC_SUBST(spk_postfixdir)
+else
+	AC_DEFINE(SPK_POSTFIX, 0, "not using a postfix name")
+	spk_postfixdir=""
+	AC_MSG_CHECKING( [postfix directory undefined] )
 fi
 
 # Set an extra command line option "--enable-release-build" to 'configure'.

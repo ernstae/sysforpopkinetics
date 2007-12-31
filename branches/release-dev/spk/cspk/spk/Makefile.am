@@ -1,12 +1,3 @@
-if SPK_POSTFIX
-  mybindir = ${bindir}/${spk_postfixdir}
-  mylibdir = ${libdir}/${spk_postfixdir}
-  myincludedir = $(includedir)/$(spk_postfixdir)
-  INST_BASE = $(libdir)
-else
-  INST_BASE=$(prefix)
-endif
-
 # Set C++ compiler flags
 if SPK_RELEASE
 AM_CXXFLAGS = -O3 -Dspk_release -DNDEBUG 
@@ -22,5 +13,5 @@ endif
 AM_FFLAGS = -g  
 
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = spk test doc 
+SUBDIRS = spk doc 
 pkginclude_HEADERS = config.h
