@@ -533,7 +533,7 @@ public class NearEqual {
                                     double F = oldOutput.dataAll[i][indexF];
 //                                    double s = DV - F == 0 ?  1 : oldOutput.dataAll[i][j] / (DV - F);
 //                                    aTol = s * (rErr * (Math.abs(DV) + Math.abs(F)) + aErr);
-                                    aTol = rErr * (Math.abs(DV) + Math.abs(F));
+                                    aTol = rErr * (Math.abs(DV) + Math.abs(F)) + aErr;
                                     rTol = 0;
                                 }
                                 if(!label.endsWith("WRES") && label.indexOf("WETARES(") == -1 &&
