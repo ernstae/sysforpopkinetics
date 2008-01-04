@@ -1114,8 +1114,8 @@ void quasiNewtonAnyBox(
     if ( nMaxIterAnyBox > 0 )
     {
       // Set the initial value for the trust region radius
-      // equal to one half of the radius of the box.
-      rScaled = 0.5;
+      // small so we take small steps at first
+      rScaled = 0.01;
   
       // Calculate an initial value for the approximate Hessian.
       initHessApprox( nObjParFree, gScaled, hScaled );
@@ -1228,7 +1228,7 @@ void quasiNewtonAnyBox(
   // The optimizer's convergence criterion is based on the infinity
   // norm (element with the maximum absolute value) of the scaled
   // projected gradient.
-  double delta = epsilon / 10.0;
+  double delta = epsilon / 50.0;
 # ifndef SPK_CALIBRATE
   The_preprocessor_symbol_SPK_CALIBRATE_is_not_defined
 # endif
@@ -2064,7 +2064,7 @@ void initHessApprox(
   // Calculate approximations for the diagonals of the Hessian.
   for ( i = 0; i < n; i++ )
   {
-    h[i * n + i] = 2.0 * fabs( gCurr[i] );
+    h[i * n + i] = 1.0 * fabs( gCurr[i] );
 
     // Save the largest diagonal absolute value.
     if ( fabs( h[i * n + i] ) > hDiagMax )
