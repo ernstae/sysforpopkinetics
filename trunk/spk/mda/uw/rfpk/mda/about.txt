@@ -1,0 +1,15 @@
+
+  The System for Population Kinetics (SPK) software was developed by the
+  University of Washington's Resource Facility for Population Kinetics (RFPK),
+  through support from the National Institute of Biomedical Imaging and
+  Bioengineering (NIBIB) at the United States National Institutes of Health
+  (NIH).
+
+  A Beta Release of the SPK source code is now available to interested
+  parties. Please contact us if you wish to obtain the SPK source code under
+  the Beta Release agreement.
+
+  The SPK software system is independent of the NONMEM(R) software system.
+  NONMEM(R) is a registered trademark of the Regents of the University of
+  California. The software NONMEM(R) is licensed by ICON Development
+  Solutions, Ellicott City, MD 21043, USA, http://www.icondevsolutions.com/.
