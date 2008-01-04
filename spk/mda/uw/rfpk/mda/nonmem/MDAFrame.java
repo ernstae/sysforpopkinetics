@@ -336,6 +336,9 @@ public class MDAFrame extends JFrame
         jScrollPane11 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         buttonGroup4 = new javax.swing.ButtonGroup();
+        aboutDialog = new javax.swing.JDialog();
+        jScrollPane14 = new javax.swing.JScrollPane();
+        jTextArea11 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         jTextPane1 = new javax.swing.JTextPane();
         jTextPane2 = new javax.swing.JTextPane();
@@ -462,6 +465,7 @@ public class MDAFrame extends JFrame
         jSeparator1 = new javax.swing.JSeparator();
         useMDAMenu = new javax.swing.JMenuItem();
         useRMenu = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
 
         archiveDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -1616,6 +1620,14 @@ public class MDAFrame extends JFrame
 
         indIDDialog.getContentPane().add(jScrollPane11, java.awt.BorderLayout.CENTER);
 
+        aboutDialog.setTitle("About SPK");
+        jTextArea11.setColumns(20);
+        jTextArea11.setEditable(false);
+        jTextArea11.setRows(5);
+        jScrollPane14.setViewportView(jTextArea11);
+
+        aboutDialog.getContentPane().add(jScrollPane14, java.awt.BorderLayout.CENTER);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(0, 204, 204));
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -2432,6 +2444,19 @@ public class MDAFrame extends JFrame
 
         jMenuBar1.add(jMenu1);
 
+        jMenu5.setText("About");
+        jMenu5.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                jMenu5MenuSelected(evt);
+            }
+        });
+
+        jMenuBar1.add(jMenu5);
+
         jInternalFrame1.setJMenuBar(jMenuBar1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -2449,6 +2474,26 @@ public class MDAFrame extends JFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jMenu5MenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_jMenu5MenuSelected
+        InputStream in = getClass().getResourceAsStream("/uw/rfpk/mda/about.txt");
+        StringBuffer buffer = new StringBuffer();
+        byte[] b = new byte[4096];
+        try
+        {
+            for(int n; (n = in.read(b)) != -1;)
+                buffer.append(new String(b, 0, n));
+        }
+        catch(IOException e)
+        {
+            System.out.println(e);
+            return;
+        }
+        jTextArea11.setText(buffer.toString());
+        aboutDialog.setSize(500, 300);
+        aboutDialog.setLocationRelativeTo(jMenu5);
+        aboutDialog.setVisible(true);
+    }//GEN-LAST:event_jMenu5MenuSelected
 
     private void jTextArea10KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea10KeyTyped
         if(jTextArea10.getText().length() == 100)
@@ -4063,7 +4108,7 @@ public class MDAFrame extends JFrame
         jobMethodClass = "";        
 
         // Get report
-        String[] reports = server.getOutput(jobId).getProperty("report").split("<spkreport");
+        String[] reports = server.getOutput(jobInfo.id).getProperty("report").split("<spkreport");
         
         // Use the last report
         if(reports.length > 2)
@@ -4073,12 +4118,12 @@ public class MDAFrame extends JFrame
         String report = "<?xml version=\"1.0\">\n<spkreport" + reports[reports.length - 1];
         if(report.indexOf("<error_message>") != -1)
         {
-            JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + jobId + ", has error.",
+            JOptionPane.showMessageDialog(null, "The parent job, Job ID = " + jobInfo.id + ", has error.",
                                           "Input Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         hasSimulation = text.indexOf("<simulation ") != -1;
-        text = Likelihood.changeInput(text, report, jobId, isLibrary);
+        text = Likelihood.changeInput(text, report, jobInfo.id, isLibrary);
         textArea.setText(text);
         textArea.setCaretPosition(0);
         isChanged = false;
@@ -4298,7 +4343,7 @@ public class MDAFrame extends JFrame
             }
         }
         
-        if(jobId != 0) jTextArea10.setText(jobInfo.jobAbstract); 
+        if(jobInfo != null) jTextArea10.setText(jobInfo.jobAbstract); 
         jCheckBox1.setSelected(false);
         jCheckBox2.setSelected(false);
         jCheckBox2.setEnabled(jobMethodCode.equals("eh") || jobMethodCode.equals("la") || jobMethodClass.equals("le"));
@@ -4309,8 +4354,8 @@ public class MDAFrame extends JFrame
     }
     
     private void WriteInputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WriteInputButtonActionPerformed
-        jobId = 0;
-        iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, jobId);
+        jobInfo = null;
+        iterator = new MDAIterator(server, isOnline, this, isTester, isDeveloper, files, 0);
         writeInput(iterator);
     }//GEN-LAST:event_WriteInputButtonActionPerformed
 
@@ -4781,10 +4826,9 @@ public class MDAFrame extends JFrame
         
         // Get job parent
         long jobParent = 0;
-        if(jobId != 0)
+        if(jobInfo != null && jobInfo.isParentJob)
         {
-            jobParent = jobId;
-            jobId = 0;
+            jobParent = jobInfo.id;
         }
 
         int nTasks = 0;
@@ -5504,6 +5548,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JButton SubmitJobButton;
     private javax.swing.JMenuItem ThetaMenu;
     private javax.swing.JButton WriteInputButton;
+    private javax.swing.JDialog aboutDialog;
     private javax.swing.JDialog archiveDialog;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
@@ -5583,6 +5628,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu9;
@@ -5634,6 +5680,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JScrollPane jScrollPane13;
+    private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -5654,6 +5701,7 @@ public class MDAFrame extends JFrame
     private javax.swing.JTable jTable3;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea10;
+    private javax.swing.JTextArea jTextArea11;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
@@ -5743,7 +5791,7 @@ public class MDAFrame extends JFrame
     protected boolean isDeveloper = false;    
     
     /** The current job id. */
-    protected long jobId = 0;
+//    protected long jobId = 0;
     
     // Job method class
     private String jobMethodClass = null;
@@ -5847,8 +5895,8 @@ public class MDAFrame extends JFrame
     // Timer for refreshing the job list dialog
     private Timer timer = null;
     
-    // Job infomation
-    private JobInfo jobInfo = null;
+    /** The current JobInfo object. */
+    protected JobInfo jobInfo = null;
     
     // Has simulation in the source
     private boolean hasSimulation = false;

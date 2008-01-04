@@ -755,6 +755,12 @@ public class JobInfo extends javax.swing.JFrame {
         jCheckBox3.setFont(new java.awt.Font("Dialog", 0, 12));
         jCheckBox3.setSelected(true);
         jCheckBox3.setText("Set the current job as the parent job of the new job.");
+        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox3ActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 13;
@@ -1024,8 +1030,13 @@ public class JobInfo extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
+        isParentJob = jCheckBox3.isSelected();
+    }//GEN-LAST:event_jCheckBox3ActionPerformed
+
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         if(jButton15.getText().startsWith("Unshare"))
         {
             if(!frame.server.setJobShareWith(id, ""))
@@ -1059,19 +1070,23 @@ public class JobInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        frame.jobInfo = this;
         input(true, true);
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
+        frame.jobInfo = this;
         input(true, false);
     }//GEN-LAST:event_jButton13ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        frame.jobInfo = this;
         output(true);
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         if(!frame.server.setJobAbstract(id, jTextField9.getText()))
             JOptionPane.showMessageDialog(null, "The job abstract cannot be updated.");
         setCursor(null);
@@ -1118,11 +1133,12 @@ public class JobInfo extends javax.swing.JFrame {
             cov = "";
         }
         Properties spkInput = frame.server.getInput(id);
-        frame.jobId = id;
-        String source = spkInput.getProperty("source");
-        String dataset = spkInput.getProperty("dataset");
-        String model = spkInput.getProperty("model");
+        source = spkInput.getProperty("source");
+        dataset = spkInput.getProperty("dataset");
+        model = spkInput.getProperty("model");
         String report = frame.server.getOutput(id).getProperty("report");
+        setRecentModel(spkInput.getProperty("modelLog"));
+        setRecentDataset(spkInput.getProperty("datasetLog"));
         
         // Modify source.
         source = Likelihood.convertToPopulationAnalysis(source);
@@ -1163,6 +1179,7 @@ public class JobInfo extends javax.swing.JFrame {
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         jRadioButton1.setSelected(true);
         jRadioButton6.setSelected(true);
         jRadioButton8.setSelected(true);
@@ -1204,15 +1221,20 @@ public class JobInfo extends javax.swing.JFrame {
     
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         Properties spkInput = frame.server.getInput(id);
-        frame.jobId = id;
-        frame.likelihoodJob(spkInput.getProperty("source") + spkInput.getProperty("dataset") +
-                            "\n" + XMLWriter.setModel(spkInput.getProperty("model")));
+        source = spkInput.getProperty("source");
+        model = spkInput.getProperty("model");
+        dataset = spkInput.getProperty("dataset");
+        setRecentModel(spkInput.getProperty("modelLog"));
+        setRecentDataset(spkInput.getProperty("datasetLog"));
+        frame.likelihoodJob(source + dataset + "\n" + XMLWriter.setModel(model));
         setCursor(null);
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         if(frame.server.abortJob(id))
             JOptionPane.showMessageDialog(null, "Job " + id + " has been added to aborting queue");
         else
@@ -1320,14 +1342,16 @@ public class JobInfo extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         Properties spkInput = frame.server.getInput(id);
-        frame.jobId = id;
         if(spkInput != null)
         {
             // Get SPK input file
             source = spkInput.getProperty("source");
             model = spkInput.getProperty("model");
             dataset = spkInput.getProperty("dataset");
+            setRecentModel(spkInput.getProperty("modelLog"));
+            setRecentDataset(spkInput.getProperty("datasetLog"));
             jTextArea7.setText(jobAbstract);
             int beginIndex = model.indexOf("MAXEVALS=", model.indexOf("$ESTIMATION")) + 9;
             int endIndex = Math.min(model.indexOf(" ", beginIndex), (model + "\n").indexOf("\n", beginIndex));
@@ -1345,6 +1369,7 @@ public class JobInfo extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         if(jobParent != 0)
             new JobInfo(frame, jobParent, isLibrary, true);
         else
@@ -1355,6 +1380,7 @@ public class JobInfo extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         String[] header = {"Event Time", "State Code", "Host"};
         String[][] history = frame.server.getHistory(id);
         if(history != null)
@@ -1373,6 +1399,7 @@ public class JobInfo extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        frame.jobInfo = this;
         output(false);
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -1466,31 +1493,16 @@ public class JobInfo extends javax.swing.JFrame {
     private void input(boolean isWizard, boolean isContinue)
     {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         Properties spkInput = frame.server.getInput(id);
-        frame.jobId = jCheckBox3.isSelected() ? id : 0;
         if(spkInput != null)
         {
             // Get SPK input file
             source = spkInput.getProperty("source");
             model = spkInput.getProperty("model");
             dataset = spkInput.getProperty("dataset");
-            if(jobOwner.equals(frame.myName))
-            {
-                frame.recentModel.id = modelId;
-                frame.recentModel.name = modelName;
-                frame.recentModel.text = model;
-                frame.recentModel.version = modelVersion;
-                frame.recentModel.description = modelAbstract;
-                frame.recentModel.log = spkInput.getProperty("modelLog");
-                frame.recentDataset.id = datasetId;
-                frame.recentDataset.name = datasetName;
-                frame.recentDataset.text = dataset;
-                frame.recentDataset.version = datasetVersion;
-                frame.recentDataset.description = datasetAbstract;
-                frame.recentDataset.log = spkInput.getProperty("datasetLog");
-            }
-            else
-                frame.recentModel.name = null;
+            setRecentModel(spkInput.getProperty("modelLog"));
+            setRecentDataset(spkInput.getProperty("datasetLog"));
             
             // Handle the input file
             if(isWizard)
@@ -1603,6 +1615,7 @@ public class JobInfo extends javax.swing.JFrame {
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         Properties archive = frame.server.getJobArchive(id, "data");
         if(archive != null)
         {
@@ -1610,29 +1623,20 @@ public class JobInfo extends javax.swing.JFrame {
             frame.saveFile();
                 
             // Display the file content and name
-            String text = archive.getProperty("text");
-            frame.setEditorText(XMLReader.parseDataXML(text, true)); 
+            dataset = archive.getProperty("text");
+            frame.setEditorText(XMLReader.parseDataXML(dataset, true)); 
             frame.setEditorCaretPosition(0);
             frame.setEditorTitle(archive.getProperty("name") + "." +
                                  archive.getProperty("version"));   
             frame.file = null;
-            if(jobOwner.equals(frame.myName))
-            {
-                frame.recentDataset.id = datasetId;
-                frame.recentDataset.name = datasetName;
-                frame.recentDataset.text = text;            
-                frame.recentDataset.version = datasetVersion;
-                frame.recentDataset.description = datasetAbstract;
-                frame.recentDataset.log = archive.getProperty("log");
-            }
-            else
-                frame.recentDataset.name = null;
+            setRecentDataset(archive.getProperty("log"));
         }
         setCursor(null);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
         Properties archive = frame.server.getJobArchive(id, "model");
         if(archive != null)
         {
@@ -1640,27 +1644,47 @@ public class JobInfo extends javax.swing.JFrame {
             frame.saveFile();
                 
             // Display the file content and name
-            String text = archive.getProperty("text");
-            frame.setEditorText(text); 
+            model = archive.getProperty("text");
+            frame.setEditorText(model); 
             frame.setEditorCaretPosition(0);
             frame.setEditorTitle(archive.getProperty("name") + "." +
                                  archive.getProperty("version"));   
             frame.file = null;
-            if(jobOwner.equals(frame.myName))
-            {
-                frame.recentModel.id = modelId;
-                frame.recentModel.name = modelName;
-                frame.recentModel.text = text;
-                frame.recentModel.version = modelVersion;
-                frame.recentModel.description = modelAbstract;
-                frame.recentModel.log = archive.getProperty("log");
-            }
-            else
-                frame.recentModel.name = null;
+            setRecentModel(archive.getProperty("log"));
         }
         setCursor(null);        
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    
+    private void setRecentModel(String log)
+    {
+        if(jobOwner.equals(frame.myName))
+        {
+            frame.recentModel.id = modelId;
+            frame.recentModel.name = modelName;
+            frame.recentModel.text = model;
+            frame.recentModel.version = modelVersion;
+            frame.recentModel.description = modelAbstract;
+            frame.recentModel.log = log;
+        }
+        else
+            frame.recentModel.name = null;
+    }
+    
+    private void setRecentDataset(String log)
+    {
+        if(jobOwner.equals(frame.myName))
+        {
+            frame.recentDataset.id = datasetId;
+            frame.recentDataset.name = datasetName;
+            frame.recentDataset.text = dataset;
+            frame.recentDataset.version = datasetVersion;
+            frame.recentDataset.description = datasetAbstract;
+            frame.recentDataset.log = log;
+        }
+        else
+            frame.recentDataset.name = null;
+    }
     
     /** Exit the Application */
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1827,4 +1851,7 @@ public class JobInfo extends javax.swing.JFrame {
     
     /** Sub-report */
     protected String subReport = "";
+    
+    /** Is paraent job */
+    protected boolean isParentJob = true;
 }
