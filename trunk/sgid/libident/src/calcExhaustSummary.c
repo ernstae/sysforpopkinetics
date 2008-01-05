@@ -280,6 +280,10 @@
  * The return value will be the number of exhaustive summary
  * polynomials nExhaustSummPoly.
  *
+ * If the return value is equal to -1, then the exhaustive summary
+ * polynomials were not calculated because the system-experiment model
+ * is not algebraically observable.  In this case the memory pointed
+ * to by exhaustSummaryPolyOut will not be allocated.
  */
 /*************************************************************************/
 
@@ -498,6 +502,85 @@ int calcExhaustSummary( int         level,
     }
     printf( "\n" );
   }
+
+
+  //----------------------------------------------------------
+  // Determine if the model is algebraically observable.
+  //----------------------------------------------------------
+
+  int nCompDerivStringChar = 20;
+
+  // Allocate more than enough memory for the string used to look 
+  // for the compartments' time derivatives.
+  char* compDerivString_p = 
+    (char*) malloc( nCompDerivStringChar * sizeof( char ) );
+
+  bav_variable compDerivVar_p;
+
+  int p;
+
+  // Determine if this system-experiment model is not algebraically
+  // observable by looking for the occurrence of any order time
+  // derivative of any compartment amount, i.e.
+  //
+  //     A1[T], A1[T,T], A1[T,T,T], ... ,
+  //     A2[T], A2[T,T], A2[T,T,T], ... ,
+  //       .  ,   .    ,   .      ,  .  ,
+  //       .  ,   .    ,   .      ,  .  ,
+  //       .  ,   .    ,   .      ,  .  ,
+  //
+  // in any of the polynomials in the characteristic set.
+  for ( k = 0; k < nCharSetPoly; k++ )
+  {
+    // Look in this characteristic set polynomial for the first 
+    // order time derivative of any compartment amount, i.e.,
+    //
+    //     A1[T], A2[T], A3[T], ... , AP[T]  ,
+    //
+    // where P = nIdentComp.
+    //
+    // Note:  this code currently assumes that any higher order 
+    // derivatives will be accompanied by a first order derivative
+    // in at least one of the characteristic set polynomials.
+    for ( p = 0; p < nIdentComp; p++ )
+    {
+      // Set this compartment amount first order derivative string
+      // using snprintf() to make sure the allocated buffer is not
+      // overwritten.
+      snprintf(
+        compDerivString_p,
+        nCompDerivStringChar,
+        "A%d[T]",
+        p + 1 );
+
+      // Set this compartment amount first order derivative.
+      ba0_sscanf2( compDerivString_p, "%v", &compDerivVar_p );
+
+      // Look for any dependence on the first order time derivative
+      // in this characteristic set polynomial.
+      if ( bap_depend_polynom_mpz(
+             charSetRegChain.decision_system.tab[k],
+             compDerivVar_p ) )
+      {
+        // Undo the last call to bav_R_push_ordering().
+        bav_R_pull_ordering();
+        
+        // This function restores the value of the free pointer.
+        ba0_restore( &memoryMarker );
+        
+        // Call the BLAD library termination function.
+        bad_terminate( ba0_init_level );
+  
+        // Return -1 as the number of exhaustive summary polynomials 
+        // to indicate that the exhaustive summary was not calculated
+        // because the system is not algebraically observable.
+        return -1;
+      }
+    }
+  }
+
+  // Free the string.
+  free( compDerivString_p );
 
 
   //----------------------------------------------------------
@@ -875,8 +958,8 @@ int calcExhaustSummary( int         level,
   *exhaustSummaryPolyOut = 
       (char**) malloc( nExhaustSummPoly * sizeof( char* ) );
 
-  char* exhaustSummaryPolyString;
-  int nExhaustSummPolyChar;
+  char* exhaustSummaryPolyString_m;
+  int nExhaustSummPolyChar_m;
 
   int m;
 
@@ -904,7 +987,7 @@ int calcExhaustSummary( int         level,
     // used to allocate the proper amount of memory.
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
-    exhaustSummaryPolyString = ba0_new_printf(
+    exhaustSummaryPolyString_m = ba0_new_printf(
       "%Az",
       exhaustSumm->tab[m] );
 
@@ -912,15 +995,15 @@ int calcExhaustSummary( int         level,
     // the string not including the null termination, allocate enough
     // memory for the exhaustive summary polynomial output string with an
     // extra character for the null termination.
-    nExhaustSummPolyChar = strlen( exhaustSummaryPolyString ) + 1;
+    nExhaustSummPolyChar_m = strlen( exhaustSummaryPolyString_m ) + 1;
     (*exhaustSummaryPolyOut)[m] = 
-      (char*) malloc( nExhaustSummPolyChar * sizeof( char ) );
+      (char*) malloc( nExhaustSummPolyChar_m * sizeof( char ) );
     
     // Set the exhaustive summary output string.
     strncpy(
       (*exhaustSummaryPolyOut)[m],
-      exhaustSummaryPolyString,
-      nExhaustSummPolyChar );
+      exhaustSummaryPolyString_m,
+      nExhaustSummPolyChar_m );
   }
 
 
@@ -944,7 +1027,7 @@ int calcExhaustSummary( int         level,
   // Call the BLAD library termination function.
   bad_terminate( ba0_init_level );
 
-  // Return the number exhaustive summary polynomials.
+  // Return the number of exhaustive summary polynomials.
   return nExhaustSummPoly;
 }
 
