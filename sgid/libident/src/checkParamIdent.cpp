@@ -482,6 +482,9 @@ and
  * THETA parameter has an infinite number of solutions and is
  * nonidentifiable.
  *
+ * If the number of solutions is equal to -2, then the
+ * system-experiment model is not algebraically observable.
+ *
  * If the number of solutions is equal to -3, then the identifiability
  * of the individual's THETA parameter could not be determined.
  *
@@ -1205,6 +1208,30 @@ int checkParamIdent( int                                level,
 
 
   //----------------------------------------------------------
+  // Handle the case where the model is not algebraically observable.
+  //----------------------------------------------------------
+
+  // If the system-experiment model is not algebraically observable,
+  // then there is no need to solve its Groebner basis.
+  if ( nExhaustSummPoly == -1 )
+  {
+    // Set the proper status string.
+    identStatus = "Nonidentifiable (Not Algebraically Observable)";
+
+    if ( level > 0 )
+    {
+      outputStream << "This system-experiment model is not algebraically" << endl;
+      outputStream << "observable because their are derivatives of the" << endl;
+      outputStream << "compartment amounts in its characteristic set." << endl;
+    }
+
+    // Return zero to indicate there were no solutions of the systems
+    // of nonlinear polynomials for each of the Groebner bases.
+    return -2;
+  }
+
+
+  //----------------------------------------------------------
   // Set the exhaustive summary polynomials.
   //----------------------------------------------------------
 
@@ -1236,8 +1263,8 @@ int checkParamIdent( int                                level,
   // Free the memory for pointers to the C style strings.
   free( exhaustSummPolyCStrOut );
 
-  // If the exhaustive is empty, the model is not identifiable.
-  // There is no need to calculate and solve its Groebner basis.
+  // If the exhaustive summary is empty, the model is not
+  // identifiable.  There is no need to solve its Groebner basis.
   if ( nExhaustSummPoly == 0 )
   {
     // Set the proper status string.
@@ -1378,6 +1405,9 @@ int checkParamIdent( int                                level,
   }
   singularInputStream << ";" << endl;
   singularInputStream << endl;
+  singularInputStream << "// Get the number of polynomials in the exhaustive summary." << endl;
+  singularInputStream << "int nExhaustSummPoly = size( exhaustSummary );" << endl;
+  singularInputStream << endl;
   singularInputStream << "// This will be the number of polynomials in the exhaustive summary" << endl;
   singularInputStream << "// Groebner basis." << endl;
   singularInputStream << "int nExhaustSummGroebnerBasisPoly;" << endl;
@@ -1388,6 +1418,8 @@ int checkParamIdent( int                                level,
   singularInputStream << endl;
   singularInputStream << "// Set the option for computing a reduced Groebner basis" << endl;
   singularInputStream << "option( redSB );" << endl;
+  singularInputStream << endl;
+  singularInputStream << "int nExhaustSummGroebnerBasisSoln;" << endl;
   singularInputStream << endl;
   singularInputStream << "// Calculate the Groebner basis for the exhaustive summary" << endl;
   singularInputStream << "// with a time limit for the calculation." << endl;
@@ -1524,7 +1556,6 @@ int checkParamIdent( int                                level,
   singularInputStream << endl;
   singularInputStream << "list exhaustSummGroebnerBasisSolnPolyList;" << endl;
   singularInputStream << endl;
-  singularInputStream << "int nExhaustSummGroebnerBasisSoln;" << endl;
   singularInputStream << "int nExhaustSummGroebnerBasisSolnPoly_k;" << endl;
   singularInputStream << endl;
   singularInputStream << "string relnString_m;" << endl;
@@ -1537,37 +1568,51 @@ int checkParamIdent( int                                level,
   singularInputStream << "nExhaustSummGroebnerBasisGroebnerBasisPoly = size( exhaustSummGroebnerBasisGroebnerBasis );" << endl;
   singularInputStream << endl;
   singularInputStream << "// Print the number of solutions for the exhaustive summary Groebner basis." << endl;
-  singularInputStream << "if ( nVariable > nExhaustSummGroebnerBasisPoly )" << endl;
+  singularInputStream << "if ( nVariable > nExhaustSummPoly )" << endl;
   singularInputStream << "{" << endl;
   singularInputStream << "  write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
-  singularInputStream << "  write( singularOutputFileName, \"polynomials in the basis (\" + string( nExhaustSummGroebnerBasisPoly ) + \") than there are parameters (\" + string( nVariable ) + \").\" );" << endl;
+  singularInputStream << "  write( singularOutputFileName, \"polynomials in the exhaustive summary (\" + string( nExhaustSummPoly ) + \") than there are parameters (\" + string( nVariable ) + \").\" );" << endl;
   singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
   singularInputStream << "}" << endl;
   singularInputStream << "else" << endl;
   singularInputStream << "{" << endl;
-  singularInputStream << "  if ( nVariable > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
+  singularInputStream << "  if ( nVariable > nExhaustSummGroebnerBasisPoly )" << endl;
   singularInputStream << "  {" << endl;
   singularInputStream << "    write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
-  singularInputStream << "    write( singularOutputFileName, \"polynomials in its solution (\" + string( nExhaustSummGroebnerBasisGroebnerBasisPoly ) + \") than there are parameters (\" + string( nVariable ) + \").\" );" << endl;
-  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"polynomials in the basis (\" + string( nExhaustSummGroebnerBasisPoly ) + \") than there are parameters (\" + string( nVariable ) + \").\" );" << endl;
+  singularInputStream << "    write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "  }" << endl;
+  singularInputStream << "  else" << endl;
+  singularInputStream << "  {" << endl;
+  singularInputStream << "    if ( nVariable > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
+  singularInputStream << "    {" << endl;
+  singularInputStream << "      write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
+  singularInputStream << "      write( singularOutputFileName, \"polynomials in its solution (\" + string( nExhaustSummGroebnerBasisGroebnerBasisPoly ) + \") than there are parameters (\" + string( nVariable ) + \").\" );" << endl;
+  singularInputStream << "      write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "    }" << endl;
+  singularInputStream << "    else" << endl;
+  singularInputStream << "    {" << endl;
+  singularInputStream << "      if ( nExhaustSummGroebnerBasisPoly > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
+  singularInputStream << "      {" << endl;
+  singularInputStream << "        write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
+  singularInputStream << "        write( singularOutputFileName, \"polynomials in its solution (\" + string( nExhaustSummGroebnerBasisGroebnerBasisPoly ) + \") than there are in the basis (\" + string( nExhaustSummGroebnerBasisPoly ) + \").\" );" << endl;
+  singularInputStream << "        write( singularOutputFileName, \"\" );" << endl;
+  singularInputStream << "      }" << endl;
+  singularInputStream << "    }" << endl;
   singularInputStream << "  }" << endl;
   singularInputStream << "}" << endl;
-  singularInputStream << "if ( nExhaustSummGroebnerBasisPoly > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
-  singularInputStream << "{" << endl;
-  singularInputStream << "  write( singularOutputFileName, \"The Groebner basis has infinite solutions because there are fewer \" );" << endl;
-  singularInputStream << "  write( singularOutputFileName, \"polynomials in its solution (\" + string( nExhaustSummGroebnerBasisGroebnerBasisPoly ) + \") than there are in the basis (\" + string( nExhaustSummGroebnerBasisPoly ) + \").\" );" << endl;
-  singularInputStream << "  write( singularOutputFileName, \"\" );" << endl;
-  singularInputStream << "}" << endl;
   singularInputStream << endl;
-  singularInputStream << "// If there are more variables than polymials (an underdetermined system)," << endl;
-  singularInputStream << "// or if there are more polymials than exhaustive summary Groebner basis" << endl;
-  singularInputStream << "// polynomials, or if there are more variables than exhaustive summary" << endl;
-  singularInputStream << "// Groebner basis polynomials, then the numerical solution finder " << endl;
-  singularInputStream << "// triang_solve won't be able to find a solution." << endl;
+  singularInputStream << "// If there are more variables than polymials in the exhaustive summary" << endl;
+  singularInputStream << "// or its Groebner basis (an underdetermined system), or if there are" << endl;
+  singularInputStream << "// more polymials than exhaustive summary Groebner basis polynomials, or" << endl;
+  singularInputStream << "// if there are more variables than exhaustive summary Groebner basis" << endl;
+  singularInputStream << "// polynomials, then the numerical solution finder triang_solve won't be" << endl;
+  singularInputStream << "// able to find a solution." << endl;
   singularInputStream << "//" << endl;
   singularInputStream << "// In this case, use the Groebner basis for the exhaustive summary Groebner" << endl;
   singularInputStream << "// basis as the parameter relationships." << endl;
-  singularInputStream << "if ( nVariable                     > nExhaustSummGroebnerBasisPoly              ||" << endl;
+  singularInputStream << "if ( nVariable                     > nExhaustSummPoly                           ||" << endl;
+  singularInputStream << "     nVariable                     > nExhaustSummGroebnerBasisPoly              ||" << endl;
   singularInputStream << "     nExhaustSummGroebnerBasisPoly > nExhaustSummGroebnerBasisGroebnerBasisPoly ||" << endl;
   singularInputStream << "     nVariable                     > nExhaustSummGroebnerBasisGroebnerBasisPoly )" << endl;
   singularInputStream << "{" << endl;
