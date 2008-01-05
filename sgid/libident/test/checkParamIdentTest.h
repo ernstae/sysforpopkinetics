@@ -42,6 +42,8 @@ private:
   void paperTwoCompExample_globallyIdent_Test();
   void paperTwoCompExample_realNumberPrinting_Test();
 
+  void paperThreeCompAppendixExample_notAlgebraicallyObserv_Test();
+
   void oralAbsorpTwoCompModel_twoSolutions_Test();
 
   void multipleGroebnerBasis_eightSolutions_Test();
@@ -50,7 +52,7 @@ private:
 
   void noExhaustSummModel_zeroSolutions_Test();
 
-  void threeCompModel_unknownSolutions_Test();
+  void threeCompModel_infiniteSolutions_Test();
 };
 
 #endif

@@ -83,6 +83,9 @@ Test* checkParamIdentTest::suite()
       "paperTwoCompExample_realNumberPrinting_Test", &checkParamIdentTest::paperTwoCompExample_realNumberPrinting_Test));
 
     suiteOfTests->addTest(new TestCaller<checkParamIdentTest>(
+      "paperThreeCompAppendixExample_notAlgebraicallyObserv_Test", &checkParamIdentTest::paperThreeCompAppendixExample_notAlgebraicallyObserv_Test));
+
+    suiteOfTests->addTest(new TestCaller<checkParamIdentTest>(
       "oralAbsorpTwoCompModel_twoSolutions_Test", &checkParamIdentTest::oralAbsorpTwoCompModel_twoSolutions_Test));
 
     suiteOfTests->addTest(new TestCaller<checkParamIdentTest>(
@@ -94,14 +97,8 @@ Test* checkParamIdentTest::suite()
     suiteOfTests->addTest(new TestCaller<checkParamIdentTest>(
       "noExhaustSummModel_zeroSolutions_Test", &checkParamIdentTest::noExhaustSummModel_zeroSolutions_Test));
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // [Revisit - Unit Test is not Currently being Run - Mitch]
-    // Once this test works, uncomment it.
-    /*
     suiteOfTests->addTest(new TestCaller<checkParamIdentTest>(
-      "threeCompModel_unknownSolutions_Test", &checkParamIdentTest::threeCompModel_unknownSolutions_Test));
-    */
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      "threeCompModel_infiniteSolutions_Test", &checkParamIdentTest::threeCompModel_infiniteSolutions_Test));
 
     return suiteOfTests;
 }
@@ -665,6 +662,191 @@ void checkParamIdentTest::paperTwoCompExample_realNumberPrinting_Test()
   //
   // It has infinite solutions, which means a value of -1 here.
   int nGroebnerBasisSolnKnown = -1;
+
+
+  //------------------------------------------------------------
+  // Compare the calculated and known values.
+  //------------------------------------------------------------
+
+  // Compare the calculated and known number of Groebner basis.
+  CPPUNIT_ASSERT_MESSAGE( 
+    "The calculated and known values for the number of Groebner bases do not agree.",
+    nGroebnerBasisSolnKnown == nGroebnerBasisSoln );
+
+}
+
+
+/*************************************************************************
+ *
+ * Function: paperThreeCompAppendixExample_notAlgebraicallyObserv_Test
+ *
+ *
+ * This three compartment test is not algebraically observable.
+ * 
+ * It is based on the example in Appendix A(2) from the following paper:
+ *
+ *     S. Audoly, G. Bella, L. D'Angio, M. P. Saccomani, and C. Cobelli,
+ *     "Global Identifiability of Nonlinear Models of Biological Systems,"
+ *     IEEE Transactions on Biomedical Engineering, Vol. 48, pp. 55 - 65,
+ *     January 2001.
+ *
+ *************************************************************************/
+
+void checkParamIdentTest::paperThreeCompAppendixExample_notAlgebraicallyObserv_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+
+  //----------------------------------------------------------
+  // Prepare the parameters that will be checked to be identifiable.
+  //----------------------------------------------------------
+
+  // Set the number of THETA elements.
+  int nTheta = 4;
+
+  char* thetaNameCStr[] = { "p1", "p2", "p3", "p4" };
+
+  std::vector< std::string > thetaName( nTheta );
+
+  int r;
+
+  // Set the name for each THETA element.
+  for ( r = 0; r < nTheta; r++ )
+  {
+    thetaName[r] = thetaNameCStr[r];
+  }
+
+  // Set the seed to use for the random generator that will be used to
+  // calculate a random value for THETA.
+  int thetaSeed = 0;
+
+
+  //----------------------------------------------------------
+  // Prepare quantities related to observations and dosing.
+  //----------------------------------------------------------
+
+  // Set the number of observation types, i.e., the number of
+  // different data streams that have measured values.
+  //
+  // If there is more than one type of observation, then they will be
+  // labeled
+  //
+  //     Y1, Y2, ..., YV,
+  //
+  // in the differential polynomials that make up the
+  // system-experiment model, where
+  //
+  //     V = nObservType  .
+  //
+  // If there is only one observation type, then it will be simply
+  // labeled
+  //
+  //     Y.
+  //
+  int nObservType = 2;
+
+  // Set the number of dose types, i.e., the number of different
+  // compartments that will receive doses.
+  //
+  // If there is more than one type of dose, then they will be
+  // labeled
+  //
+  //     U1, U2, ..., UQ  ,
+  //
+  // in the differential polynomials that make up the
+  // system-experiment model, where
+  //
+  //     Q = nDoseType  .
+  //
+  // If there is only dose type, then it will be simply labeled
+  //
+  //     U.
+  //
+  int nDoseType = 0;
+  
+
+  //----------------------------------------------------------
+  // Set the differential equations and observation equations.
+  //----------------------------------------------------------
+
+  // Set the number of compartments.
+  int nComp = 3;
+
+  std::vector< std::string > compOde( nComp );
+
+  // Set the differential equations for each compartment.
+  compOde[0] = "A1[T] = p1*A1 - p4";
+  compOde[1] = "A2[T] = p2*A1*A2 + p3*A3";
+  compOde[2] = "A3[T] = p1*A1*A3";
+
+  std::vector< std::string > observEqn( nObservType );
+
+  // Set the observation equations.
+  observEqn[0] = "Y1 = A1";
+  observEqn[1] = "Y2 = A3";
+
+
+  //----------------------------------------------------------
+  // Prepare the remaining inputs.
+  //----------------------------------------------------------
+
+  // Set this so that intermediate quantities and the Groebner basis
+  // are not printed.
+  int level = 0;
+
+  // This will be the status string for the indentifiability
+  // calculation.
+  std::string identStatus;
+
+
+  //------------------------------------------------------------
+  // Calculate the Groebner basis solutions.
+  //------------------------------------------------------------
+
+  // This will be the number of Groebner basis solutions that were
+  // found.
+  int nGroebnerBasisSoln;
+
+  try
+  {
+    // Calculate the number of Groebner basis solutions for the
+    // exhaustive summary.
+    nGroebnerBasisSoln = checkParamIdent(
+      level,
+      nTheta,
+      thetaName,
+      thetaSeed,
+      nComp,
+      nObservType,
+      nDoseType,
+      compOde,
+      observEqn,
+      identStatus );
+  }
+  catch( const IdentException& e )
+  {
+    CPPUNIT_ASSERT_MESSAGE( "checkParamIdent failed!", false );
+  }
+  catch( ... )
+  {
+    CPPUNIT_ASSERT_MESSAGE( "checkParamIdent failed for unknown reasons!", false);
+  }
+
+
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  // Set the known number of Groebner basis solutions for 
+  // this system-experiment model.
+  //
+  // It is not algebraically observable, which means a value of -2
+  // here.
+  int nGroebnerBasisSolnKnown = -2;
 
 
   //------------------------------------------------------------
@@ -1389,15 +1571,15 @@ void checkParamIdentTest::noExhaustSummModel_zeroSolutions_Test()
 
 /*************************************************************************
  *
- * Function: threeCompModel_unknownSolutions_Test
+ * Function: threeCompModel_infiniteSolutions_Test
  *
  *
- * This test's model has three compartments and an unknown number of
+ * This test's model has three compartments and an infinite number of
  * solutions.
  *
  *************************************************************************/
 
-void checkParamIdentTest::threeCompModel_unknownSolutions_Test()
+void checkParamIdentTest::threeCompModel_infiniteSolutions_Test()
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1548,8 +1730,8 @@ void checkParamIdentTest::threeCompModel_unknownSolutions_Test()
   // Set the known number of Groebner basis solutions for 
   // this system-experiment model.
   //
-  // It has an unknown number of solutions.
-  int nGroebnerBasisSolnKnown = 0;
+  // It has infinite solutions, which means a value of -1 here.
+  int nGroebnerBasisSolnKnown = -1;
 
 
   //------------------------------------------------------------
