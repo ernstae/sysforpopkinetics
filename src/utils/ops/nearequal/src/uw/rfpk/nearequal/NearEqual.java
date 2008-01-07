@@ -536,7 +536,7 @@ public class NearEqual {
                                     aTol = rErr * (Math.abs(DV) + Math.abs(F)) + aErr;
                                     rTol = 0;
                                 }
-                                if(!label.endsWith("WRES") && label.indexOf("WETARES(") == -1 &&
+                                if(!label.endsWith("WRES") && label.indexOf("WETARES(") == -1 && !label.startsWith("THETA(") &&
                                    !checkNumber(oldOutput.dataAll[i][j], newOutput.dataAll[i][j], aTol, rTol))
                                     msg.append("\nValue of presentation data at row " + (i + 1) + ", column " + (j + 1) + ", " + label +", is different." +
                                            "\n    Old value: " + oldOutput.dataAll[i][j] + "     New value: " + newOutput.dataAll[i][j]);
