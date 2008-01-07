@@ -344,11 +344,11 @@ int calcGroebnerBasis( int         level,
   // Preliminaries.
   //----------------------------------------------------------
 
-  // Call the BLAD library initialization function with no limits for
-  // the time but a limit on the memory that can be used during the
+  // Call the BLAD library initialization function with a 30 minute
+  // time limit and a limit on the memory that can be used during the
   // calculations.
-  ba0_int_p timeLimit   = 0;     // Seconds.
-  ba0_int_p memoryLimit = 1000;  // Megabytes.
+  ba0_int_p timeLimit   = 30 * 60;  // Seconds.
+  ba0_int_p memoryLimit = 1000;     // Megabytes.
   bad_restart( timeLimit, memoryLimit );
 
   // This is a marker used by the BLAD library to manage memory
@@ -451,9 +451,13 @@ int calcGroebnerBasis( int         level,
       {
         printf( "because too much computer memory was used. \n" );
       }
+      else if ( ba0_mesgerr == BA0_ERRALR )
+      {
+        printf( "because it could not be completed in less than 30 minutes. \n" );
+      }
       else if ( ba0_mesgerr == BA0_ERRALG )
       {
-        printf( "because a BLAD library internal algebra error occurred. \n" );
+        printf( "because a BLAD library internal error occurred. \n" );
         printf( "\n" );
         printf( "Please submit a bug report.\n" );
       }
@@ -578,9 +582,13 @@ int calcGroebnerBasis( int         level,
       {
         printf( "because too much computer memory was used. \n" );
       }
+      else if ( ba0_mesgerr == BA0_ERRALR )
+      {
+        printf( "because it could not be completed in less than 30 minutes. \n" );
+      }
       else if ( ba0_mesgerr == BA0_ERRALG )
       {
-        printf( "because a BLAD library internal algebra error occurred. \n" );
+        printf( "because a BLAD library internal error occurred. \n" );
         printf( "\n" );
         printf( "Please submit a bug report.\n" );
       }
@@ -1035,9 +1043,13 @@ int calcGroebnerBasis( int         level,
       {
         printf( "because too much computer memory was used. \n" );
       }
+      else if ( ba0_mesgerr == BA0_ERRALR )
+      {
+        printf( "because it could not be completed in less than 30 minutes. \n" );
+      }
       else if ( ba0_mesgerr == BA0_ERRALG )
       {
-        printf( "because a BLAD library internal algebra error occurred. \n" );
+        printf( "because a BLAD library internal error occurred. \n" );
         printf( "\n" );
         printf( "Please submit a bug report.\n" );
       }
