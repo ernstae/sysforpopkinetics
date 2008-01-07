@@ -1221,7 +1221,7 @@ int checkParamIdent( int                                level,
     if ( level > 0 )
     {
       outputStream << "This system-experiment model is not algebraically" << endl;
-      outputStream << "observable because their are derivatives of the" << endl;
+      outputStream << "observable because there are derivatives of the" << endl;
       outputStream << "compartment amounts in its characteristic set." << endl;
     }
 
