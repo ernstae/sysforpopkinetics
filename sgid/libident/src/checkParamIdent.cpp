@@ -1208,13 +1208,15 @@ int checkParamIdent( int                                level,
 
 
   //----------------------------------------------------------
-  // Handle the case where the model is not algebraically observable.
+  // Handle the exhaustive summary special cases.
   //----------------------------------------------------------
 
-  // If the system-experiment model is not algebraically observable,
-  // then there is no need to solve its Groebner basis.
+  // Handle the exhaustive summary calculation special cases.
   if ( nExhaustSummPoly == -1 )
   {
+    // If the system-experiment model is not algebraically observable,
+    // then there is no need to solve its Groebner basis.
+    //
     // Set the proper status string.
     identStatus = "Nonidentifiable (Not Algebraically Observable)";
 
@@ -1225,9 +1227,30 @@ int checkParamIdent( int                                level,
       outputStream << "compartment amounts in its characteristic set." << endl;
     }
 
-    // Return zero to indicate there were no solutions of the systems
-    // of nonlinear polynomials for each of the Groebner bases.
+    // Return -2 as the number of exhaustive summary Groebner basis
+    // solutions to indicate that the system-experiment model is not
+    // algebraically observable.
     return -2;
+  }
+  else if ( nExhaustSummPoly == -2 )
+  {
+    // If the exhaustive summary polynomials could not be calculated,
+    // then the system-experiment model's Groebner basis can not be
+    // calculated.
+    //
+    // Set the status string.
+    identStatus = "Identifiability Not Determined";
+
+    if ( level > 0 )
+    {
+      outputStream << "The identifiability of this system-experiment model" << endl;
+      outputStream << "could not be determined." << endl;
+    }
+
+    // Return -3 as the number of exhaustive summary Groebner basis
+    // solutions to indicate that the identifiability could not be
+    // determined.
+    return -3;
   }
 
 
