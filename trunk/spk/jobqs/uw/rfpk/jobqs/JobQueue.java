@@ -300,7 +300,7 @@ public class JobQueue
 	try
         {
             stmt = JobQueue.conn.createStatement();
-            String sql = "select job_id from job where state_code != 'end' limit 1";
+            String sql = "select job_id from job where state_code != 'end' order by job_id limit 1";
             ResultSet rs = stmt.executeQuery(sql);
             if(rs.next())
             {
