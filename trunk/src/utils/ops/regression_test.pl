@@ -20,7 +20,7 @@ my %file_to_compare = ( 'cerr' => 'compilation_error.xml',
 my $config_file = "regression_test.xml";
 
 my %opt = ();
-GetOptions (\%opt, 'help', 'man', 'pvm', 'parallel', 'dump-config', 'ignore-candidate', 'relative-error=s', 'absolute-error=s', 'norm-code=s', 'config-file=s') 
+GetOptions (\%opt, 'help', 'man', 'pvm', 'parallel', 'dump-config', 'ignore-candidate', 'relative-error=s', 'absolute-error=s', 'norm-code=s', 'parameter-only', 'config-file=s') 
     or pod2usage(-verbose => 0);
 pod2usage(-verbose => 1)  if (defined $opt{'help'});
 pod2usage(-verbose => 2)  if (defined $opt{'man'});
