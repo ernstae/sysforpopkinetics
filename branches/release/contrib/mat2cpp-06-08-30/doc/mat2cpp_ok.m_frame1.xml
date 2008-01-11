@@ -1,0 +1,69 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Run Matlab or Octave Version of Examples</title>
+<meta name="description" id="description" content="Run Matlab or Octave Version of Examples"/>
+<meta name="keywords" id="keywords" content=" "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="mat2cpp.hpp.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="mat2cpp_ok.cpp.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="mat2cpp_ok.m.xml" target="_top">section</a>, <a href="mat2cpp_ok.m_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Run Matlab or Octave Version of Examples</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+function&#xA0;mat2cpp_ok()<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;true;<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('add_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('cholesky_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('diag_prod_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('element_div_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('element_prod_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('element_unary_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('extend_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('matrix_div_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('matrix_prod_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('max_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('min_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('ones_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('rand_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('randn_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('scalar_div_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('scalar_prod_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('size_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('slice_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('sub_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('sum_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('transpose_ok');<br/>
+ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test('zeros_ok');<br/>
+if&#xA0;ok<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;'All&#xA0;tests&#xA0;passed'<br/>
+else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;'At&#xA0;least&#xA0;one&#xA0;test&#xA0;failed'<br/>
+end<br/>
+return<br/>
+------------------------------------<br/>
+function&#xA0;[ok]&#xA0;=&#xA0;run_test(test_name)<br/>
+ok&#xA0;=&#xA0;feval(test_name);<br/>
+if(&#xA0;ok&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;['ok:&#xA0;&#xA0;&#xA0;&#xA0;',&#xA0;test_name]<br/>
+else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;['error:&#xA0;',&#xA0;test_name]<br/>
+end<br/>
+return<br/>
+</span>
+</font></code>
+
+<hr/>Input File: mat/mat2cpp_ok.m
+
+</body>
+</html>

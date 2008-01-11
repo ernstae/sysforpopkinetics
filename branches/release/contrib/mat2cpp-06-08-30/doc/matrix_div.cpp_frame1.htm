@@ -1,0 +1,85 @@
+<html><head>
+<title>Matrix Division Source Code</title>
+<meta name="description" id="description" content="Matrix Division Source Code">
+<meta name="keywords" id="keywords" content=" "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="matrix_div.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="matrix_prod.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="matrix_div.cpp.htm" target="_top">section</a>, <a href="matrix_div.cpp_frame1.htm" target="_top">frame</a></div>
+<hr>
+
+
+<center><b><big><big>Matrix Division Source Code</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cassert&gt;<br>
+#&nbsp;include&nbsp;&lt;mat2cpp.hpp&gt;<br>
+namespace&nbsp;mat2cpp&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Linkage&nbsp;for&nbsp;Fortran&nbsp;version&nbsp;of&nbsp;the&nbsp;Lapack&nbsp;routine&nbsp;dgesv<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extern&nbsp;&quot;C&quot;&nbsp;fortran_subroutine&nbsp;dgesv_(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;&nbsp;&nbsp;*n,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;&nbsp;&nbsp;*nrhs,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_double&nbsp;&nbsp;&nbsp;&nbsp;*a,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;&nbsp;&nbsp;*lda,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;&nbsp;&nbsp;*ipv,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_double&nbsp;&nbsp;&nbsp;&nbsp;*b,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;&nbsp;&nbsp;*ldb,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;&nbsp;&nbsp;*info<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;matrix_div<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(const&nbsp;matrix&lt;double&gt;&nbsp;&amp;x,&nbsp;const&nbsp;matrix&lt;double&gt;&nbsp;&amp;y,&nbsp;size_t&nbsp;&amp;rank)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;x.size1()&nbsp;==&nbsp;x.size2()&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;x.size2()&nbsp;==&nbsp;y.size1()&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;y.size1();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;y.size2();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_double&nbsp;&nbsp;*a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;new&nbsp;fortran_double&nbsp;&nbsp;[m&nbsp;*&nbsp;m];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_double&nbsp;&nbsp;*b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;new&nbsp;fortran_double&nbsp;&nbsp;[m&nbsp;*&nbsp;n];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;*ipv&nbsp;&nbsp;&nbsp;=&nbsp;new&nbsp;fortran_integer&nbsp;[m];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;m;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[&nbsp;i&nbsp;+&nbsp;j&nbsp;*&nbsp;m&nbsp;]&nbsp;=&nbsp;x(i,&nbsp;j);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[&nbsp;i&nbsp;+&nbsp;j&nbsp;*&nbsp;m&nbsp;]&nbsp;=&nbsp;y(i,&nbsp;j);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;lda&nbsp;&nbsp;=&nbsp;fortran_integer(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;ldb&nbsp;&nbsp;=&nbsp;fortran_integer(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;fm&nbsp;&nbsp;&nbsp;=&nbsp;fortran_integer(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;fn&nbsp;&nbsp;&nbsp;=&nbsp;fortran_integer(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fortran_integer&nbsp;info;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dgesv_(&amp;fm,&nbsp;&amp;fn,&nbsp;a,&nbsp;&amp;lda,&nbsp;ipv,&nbsp;b,&nbsp;&amp;ldb,&nbsp;&amp;info);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;info&nbsp;&gt;=&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;info&nbsp;==&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rank&nbsp;=&nbsp;m;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;rank&nbsp;=&nbsp;size_t(info&nbsp;-&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;z(m,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z(i,&nbsp;j)&nbsp;=&nbsp;b[&nbsp;i&nbsp;+&nbsp;j&nbsp;*&nbsp;m&nbsp;];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;ipv;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete&nbsp;[]&nbsp;a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;z;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: lib/matrix_div.cpp
+
+</body>
+</html>

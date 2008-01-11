@@ -1,0 +1,123 @@
+<html><head>
+<title>Elementwise Addition</title>
+<meta name="description" id="description" content="Elementwise Addition">
+<meta name="keywords" id="keywords" content=" element add "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="elementwise.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="element_div.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="add.htm" target="_top">section</a>, <a href="add_frame1.htm" target="_top">frame</a></div>
+<hr><center><b><big><big>Elementwise Addition</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i>
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i>
+</td></tr>
+</table>
+<br>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br>
+If <i>x</i> and <i>y</i> are a <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;&nbsp;\times&nbsp;n</span></code>
+ matrices,
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>sets <i>z</i> to the <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;\times&nbsp;n</span></code>
+ matrix with 
+the <code>
+<span style='white-space: nowrap'>&nbsp;(i,j)</span></code>
+ element given by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z_{i,j}&nbsp;=&nbsp;x_{i,j}&nbsp;+&nbsp;y_{i,j}<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function&nbsp;[ok]&nbsp;=&nbsp;add_ok()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m&nbsp;&nbsp;&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;=&nbsp;rand(m,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;=&nbsp;rand(m,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;-------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;x&nbsp;+&nbsp;y;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;-------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[m,&nbsp;n]&nbsp;=&nbsp;size(z);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(m&nbsp;==&nbsp;3);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(n&nbsp;==&nbsp;2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;i&nbsp;=&nbsp;[1&nbsp;:&nbsp;m]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;j&nbsp;=&nbsp;[1&nbsp;:&nbsp;n]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zij&nbsp;=&nbsp;x(i,&nbsp;j)&nbsp;+&nbsp;y(i,&nbsp;j);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;abs(z(i,&nbsp;j)&nbsp;-&nbsp;zij)&nbsp;&lt;&nbsp;1e-10;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;<br>
+</span></font></code><br>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br>
+The corresponding C++ syntax is
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>where <i>x</i>, <i>y</i>, and <i>z</i> are 
+ublas <code><font color="blue">matrix&lt;double&gt;</font></code> objects
+with size <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;\times&nbsp;n</span></code>
+.
+
+<br>
+<br>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;cmath&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;mat2cpp.hpp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;add_ok(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;mat2cpp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j,&nbsp;m(3),&nbsp;n(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;x&nbsp;=&nbsp;rand(m,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;y&nbsp;=&nbsp;rand(m,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;z&nbsp;=&nbsp;x&nbsp;+&nbsp;y;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(z.size1()&nbsp;==&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(z.size2()&nbsp;==&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;zij&nbsp;=&nbsp;x(i,j)&nbsp;+&nbsp;y(i,j);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(z(i,&nbsp;j)&nbsp;-&nbsp;zij)&nbsp;&lt;&nbsp;1e-10;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span></font></code>
+<hr>Input File: omh/add.omh
+
+</body>
+</html>

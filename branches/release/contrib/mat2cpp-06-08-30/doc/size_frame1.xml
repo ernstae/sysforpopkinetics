@@ -1,0 +1,99 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Matrix Size</title>
+<meta name="description" id="description" content="Matrix Size"/>
+<meta name="keywords" id="keywords" content=" size "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="randn.cpp.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="slice.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="size.xml" target="_top">section</a>, <a href="size_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Matrix Size</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"><span style='white-space: nowrap'>[</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>]&#xA0;=&#xA0;size(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>.size1()</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>.size2()</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br/>
+If <i>x</i> is a matrix,
+the Matlab or Octave syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;[</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>]&#xA0;=&#xA0;size(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>returns the row dimension <i>m</i> and column dimension <i>n</i>
+of the matrix <i>x</i>.
+
+<br/>
+<br/>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;function&#xA0;[ok]&#xA0;=&#xA0;size_ok()<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;[&#xA0;1&#xA0;2&#xA0;3&#xA0;;&#xA0;4&#xA0;5&#xA0;6&#xA0;];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;----------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;[m,&#xA0;n]&#xA0;&#xA0;=&#xA0;size(x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;----------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(m&#xA0;==&#xA0;2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(n&#xA0;==&#xA0;3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return<br/>
+</span></font></code><br/>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br/>
+The corresponding C++ syntax is
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>.size1()<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>.size2()<br/>
+</span></font></code>where <i>x</i> is a ublas <code><font color="blue">matrix&lt;double&gt;</font></code> and
+<i>m</i>, <i>n</i> are <code><font color="blue">size_t</font></code> objects.
+
+<br/>
+<br/>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;mat2cpp.hpp&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;size_ok(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;mat2cpp;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m(2),&#xA0;n(3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;x(m,&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;--------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x.size1()&#xA0;==&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x.size2()&#xA0;==&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;--------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+</span></font></code>
+<hr/>Input File: omh/size.omh
+
+</body>
+</html>

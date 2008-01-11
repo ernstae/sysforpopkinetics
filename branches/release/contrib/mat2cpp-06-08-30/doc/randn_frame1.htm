@@ -1,0 +1,139 @@
+<html><head>
+<title>Normal Random Matrix</title>
+<meta name="description" id="description" content="Normal Random Matrix">
+<meta name="keywords" id="keywords" content=" randn matrix normal simulate Gaussian "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="rand.cpp.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="randn.cpp.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="randn.htm" target="_top">section</a>, <a href="randn_frame1.htm" target="_top">frame</a></div>
+<hr><center><b><big><big>Normal Random Matrix</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;randn(</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;randn(</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br>
+If <i>m</i> and <i>n</i> are integer scalars,
+the Matlab or Octave syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;randn(</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>sets <i>x</i> to an <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;\times&nbsp;n</span></code>
+ matrix each entry
+drawn from an independent normally distribution with mean 
+zero and variance one.
+
+<br>
+<br>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function&nbsp;[ok]&nbsp;=&nbsp;randn_ok()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;100;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;11;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;-------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;randn(m,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;-------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[m_,&nbsp;n_]=&nbsp;size(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(m&nbsp;==&nbsp;m_);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(n&nbsp;==&nbsp;n_);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;m&nbsp;*&nbsp;n;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum_&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;sum(&nbsp;sum(x)&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sumsq&nbsp;&nbsp;&nbsp;=&nbsp;sum(&nbsp;sum(&nbsp;x&nbsp;.*&nbsp;x&nbsp;)&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;avg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;sum_&nbsp;/&nbsp;N;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;sumsq&nbsp;/&nbsp;N&nbsp;-&nbsp;&nbsp;avg&nbsp;*&nbsp;avg;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;abs(&nbsp;avg&nbsp;)&nbsp;&lt;&nbsp;2&nbsp;/&nbsp;sqrt(N);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;The&nbsp;variance&nbsp;of&nbsp;N&nbsp;independent&nbsp;chi-squares&nbsp;is&nbsp;2&nbsp;/&nbsp;N<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;abs(var&nbsp;-&nbsp;1.)&nbsp;&lt;&nbsp;2&nbsp;*&nbsp;sqrt(&nbsp;2.&nbsp;/&nbsp;N&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return<br>
+</span></font></code><br>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br>
+The following is a C++ implementation of the 
+Matlab or Octave <code><font color="blue">randn</font></code> function with the syntax:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;randn(</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>where <i>m</i> and <i>n</i> are <code><font color="blue">size_t</font></code> values
+and <i>x</i> is an <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;\times&nbsp;n</span></code>
+ 
+ublas <code><font color="blue">matrix&lt;double&gt;</font></code> object.
+You must first call the standard library function
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::srand(</span></font></code><i><span style='white-space: nowrap'>seed</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>where <i>seed</i> is an <code><font color="blue">unsigned int</font></code>
+to initialize the random number generator <code><font color="blue">std::rand()</font></code>.
+
+<br>
+<br>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;mat2cpp.hpp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;cstdlib&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;cmath&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;randn_ok(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;mat2cpp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j,&nbsp;m(10),&nbsp;n(11);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;---------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned&nbsp;int&nbsp;seed&nbsp;=&nbsp;5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::srand(seed);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;x&nbsp;=&nbsp;randn(m,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;---------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(x.size1()&nbsp;==&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(x.size2()&nbsp;==&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sumsq&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;&nbsp;&nbsp;+=&nbsp;x(i,&nbsp;j);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sumsq&nbsp;+=&nbsp;x(i,&nbsp;j)&nbsp;*&nbsp;x(i,&nbsp;j);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;N&nbsp;&nbsp;&nbsp;=&nbsp;double(&nbsp;m&nbsp;*&nbsp;n&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;avg&nbsp;=&nbsp;sum&nbsp;/&nbsp;N;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;var&nbsp;=&nbsp;sumsq&nbsp;/&nbsp;N&nbsp;-&nbsp;avg&nbsp;*&nbsp;avg;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(avg)&nbsp;&lt;&nbsp;2.&nbsp;/&nbsp;std::sqrt(N);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;The&nbsp;variance&nbsp;of&nbsp;N&nbsp;independent&nbsp;chi-squares&nbsp;is&nbsp;2&nbsp;/&nbsp;N<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(var&nbsp;-&nbsp;1.)&nbsp;&lt;&nbsp;2.&nbsp;*&nbsp;std::sqrt(&nbsp;2.&nbsp;/&nbsp;N&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span></font></code><br>
+<b><a name="C++.Source" id="C++.Source">Source</a></b>
+<br>
+The file <a href="randn.cpp.htm" target="_top"><span style='white-space: nowrap'>randn.cpp</span></a>
+ contains the 
+C++ source code for this operation.
+
+
+<hr>Input File: omh/randn.omh
+
+</body>
+</html>

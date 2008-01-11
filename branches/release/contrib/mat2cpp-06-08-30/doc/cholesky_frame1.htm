@@ -1,0 +1,146 @@
+<html><head>
+<title>Cholesky Factor a Matrix Division</title>
+<meta name="description" id="description" content="Cholesky Factor a Matrix Division">
+<meta name="keywords" id="keywords" content=" cholesky matrix "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="diag_prod.cpp.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="cholesky.cpp.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="cholesky.htm" target="_top">section</a>, <a href="cholesky_frame1.htm" target="_top">frame</a></div>
+<hr><code>
+<span style='white-space: nowrap'>&nbsp;\newcommand{\T}{{\rm&nbsp;T}}</span></code>
+
+
+
+
+
+
+<center><b><big><big>Cholesky Factor a Matrix Division</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"><span style='white-space: nowrap'>[</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>]&nbsp;=&nbsp;chol(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;cholesky(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br>
+If <i>x</i> is an <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;&nbsp;\times&nbsp;m</span></code>
+ matrix
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;chol(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>sets <i>z</i> to the 
+upper triangular <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;\times&nbsp;m</span></code>
+ matrix such that
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;y^\T&nbsp;*&nbsp;y<br>
+\]&nbsp;</span></code>
+
+If <i>r</i> is not zero, then the matrix <i>x</i>
+is singular and <i>r</i> is the rank of the largest non-singular
+principal minor.
+
+<br>
+<br>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function&nbsp;[ok]&nbsp;=&nbsp;cholesky_ok()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m&nbsp;&nbsp;&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;=&nbsp;rand(m,&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;=&nbsp;a'&nbsp;*&nbsp;a;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;-------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[y,&nbsp;r]&nbsp;&nbsp;=&nbsp;chol(x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%&nbsp;-------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[m,&nbsp;n]&nbsp;=&nbsp;size(y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(m&nbsp;==&nbsp;3);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(n&nbsp;==&nbsp;3);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;all&nbsp;(&nbsp;all(&nbsp;abs(y'&nbsp;*&nbsp;y&nbsp;-&nbsp;x)&nbsp;&lt;&nbsp;1e-10&nbsp;)&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;i&nbsp;=&nbsp;1&nbsp;:&nbsp;m<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;j&nbsp;=&nbsp;1&nbsp;:&nbsp;(i-1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(y(i,j)&nbsp;==&nbsp;0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;(r&nbsp;==&nbsp;0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;<br>
+</span></font></code><br>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br>
+The corresponding C++ syntax is
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;cholesky(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>rank</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>where <i>x</i> and <i>y</i> are 
+ublas <code><font color="blue">matrix&lt;double&gt;</font></code> objects. 
+The size of <i>x</i> and <i>y</i> are <code>
+<span style='white-space: nowrap'>&nbsp;m&nbsp;\times&nbsp;m</span></code>
+,
+The return value of the <code><font color="blue">size_t</font></code> argument <i>rank</i> is the rank
+of the largest principal minor of <i>x</i>.
+
+<br>
+<br>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;boost/numeric/ublas/matrix.hpp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;mat2cpp.hpp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;cholesky_ok(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;mat2cpp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j,&nbsp;m(3);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;a&nbsp;=&nbsp;rand(m,&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;x&nbsp;=&nbsp;prod(trans(a),&nbsp;a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;---------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;rank;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;y&nbsp;=&nbsp;cholesky(x,&nbsp;rank);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;---------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(rank&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(y.size1()&nbsp;==&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(y.size2()&nbsp;==&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matrix&lt;double&gt;&nbsp;check&nbsp;=&nbsp;prod(trans(y),&nbsp;y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;m;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;check(i,&nbsp;j)&nbsp;-&nbsp;x(i,j)&nbsp;)&nbsp;&lt;&nbsp;1e-10;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;m;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;i;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;(y(i,&nbsp;j)&nbsp;==&nbsp;0.);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span></font></code><br>
+<b><a name="C++.Source" id="C++.Source">Source</a></b>
+<br>
+The file <a href="cholesky.cpp.htm" target="_top"><span style='white-space: nowrap'>cholesky.cpp</span></a>
+ contains the 
+C++ source code for these functions.
+
+
+<hr>Input File: omh/cholesky.omh
+
+</body>
+</html>

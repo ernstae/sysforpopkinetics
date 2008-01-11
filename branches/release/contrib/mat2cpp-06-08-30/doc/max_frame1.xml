@@ -1,0 +1,124 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Maximum Element of a Matrix</title>
+<meta name="description" id="description" content="Maximum Element of a Matrix"/>
+<meta name="keywords" id="keywords" content=" max "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="scalar_valued.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="max.cpp.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="max.xml" target="_top">section</a>, <a href="max_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Maximum Element of a Matrix</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;max(&#xA0;max(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)&#xA0;)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;max(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br/>
+If <i>x</i> is an 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+ matrix,
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;max(&#xA0;max(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)&#xA0;)<br/>
+</span></font></code>sets <i>y</i> to the maximum element in the matrix <i>x</i>.
+If either <i>m</i> or <i>n</i> is equal to one,
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;max(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>also sets <i>y</i> to the maximum element in the matrix <i>x</i>.
+
+<br/>
+<br/>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;function&#xA0;[ok]&#xA0;=&#xA0;max_ok()<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;m&#xA0;&#xA0;&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n&#xA0;&#xA0;&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x&#xA0;&#xA0;&#xA0;=&#xA0;rand(m,&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;=&#xA0;max(&#xA0;max(x)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;[m,&#xA0;n]&#xA0;=&#xA0;size(y);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(m&#xA0;==&#xA0;1)&#xA0;&amp;&#xA0;(n&#xA0;==&#xA0;1);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;all(&#xA0;all&#xA0;(&#xA0;x&#xA0;&lt;=&#xA0;y&#xA0;)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;~&#xA0;all(&#xA0;all&#xA0;(&#xA0;x&#xA0;&lt;&#xA0;y&#xA0;)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return<br/>
+</span></font></code><br/>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br/>
+The following is a C++ implementation of the 
+Matlab or Octave syntax above:
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;max(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>where <i>x</i> is a non-empty 
+(non-zero row and column size)
+ublas <code><font color="blue">matrix&lt;double&gt;</font></code> object
+and <i>y</i> is a <code><font color="blue">double</font></code>.
+
+<br/>
+<br/>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;mat2cpp.hpp&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;max_ok(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;mat2cpp;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i,&#xA0;j,&#xA0;m(2),&#xA0;n(3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;x&#xA0;=&#xA0;rand(m,&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;---------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;y&#xA0;=&#xA0;max(x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;---------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;less&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&amp;=&#xA0;x(i,j)&#xA0;&lt;=&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;less&#xA0;&amp;=&#xA0;x(i,j)&#xA0;&lt;&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;!&#xA0;less;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+</span></font></code><br/>
+<b><a name="C++.Source" id="C++.Source">Source</a></b>
+<br/>
+The file <a href="max.cpp.xml" target="_top"><span style='white-space: nowrap'>max.cpp</span></a>
+ contains the 
+C++ source code for this operation.
+
+
+<hr/>Input File: omh/max.omh
+
+</body>
+</html>

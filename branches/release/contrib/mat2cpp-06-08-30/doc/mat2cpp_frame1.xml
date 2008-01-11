@@ -1,0 +1,157 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Example Conversion of Matlab or Octave to C++ using Ublas</title>
+<meta name="description" id="description" content="Example Conversion of Matlab or Octave to C++ using Ublas"/>
+<meta name="keywords" id="keywords" content=" library mat2cpp link "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>previous&#xA0;&#xA0;<a href="_contents.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="mat2cpp.xml" target="_top">section</a>, <a href="mat2cpp_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Example Conversion of Matlab or Octave to C++ using Ublas</big></big></b></center>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+The purpose of this package is to provide an example of converting
+<a href="http://www.mathworks.com/" target="_top"><span style='white-space: nowrap'>Matlab</span></a>
+
+or
+<a href="http://www.gnu.org/software/octave/" target="_top"><span style='white-space: nowrap'>Octave</span></a>
+
+to C++
+with the aid of 
+<a href="http://www.boost.org/libs/numeric/ublas/doc/overview.htm" target="_top"><span style='white-space: nowrap'>ublas</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Test and Install" id="Test and Install">Test and Install</a></big></b>
+
+<ol type="1"><li>
+Download the file
+<a href="mat2cpp-06-08-30.tar.gz" target="_top"><span style='white-space: nowrap'>mat2cpp-06-08-30.tar.gz</span></a>
+.
+
+</li><li>
+
+Extract the distribution in to the <code><font color="blue">mat2cpp-06-08-30</font></code> subdirectory
+with the command
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;tar&#xA0;-xvzf&#xA0;mat2cpp-06-08-30.tar.gz<br/>
+</span>
+</font></code>
+</li><li>
+Build the library and test program with the command
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cd&#xA0;mat2cpp-06-08-30<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;./configure&#xA0;--prefix=</span></font></code><i><span style='white-space: nowrap'>prefix_dir</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;BOOST_DIR=</span></font></code><i><span style='white-space: nowrap'>boost_dir</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;make<br/>
+</span></font></code>where <i>prefix</i> is the prefix for this installation
+and <i>boost_dir</i> is the directory where the file
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>boost_dir</span></i><code><font color="blue"><span style='white-space: nowrap'>/boost/numeric/ublas/matrix.hpp<br/>
+</span></font></code>is located.
+
+
+</li><li>
+
+Test the installation of the Matlab and Octave files with the commands
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cd&#xA0;mat<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;octave<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;mat2cpp_ok<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;quit<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cd&#xA0;..<br/>
+</span>
+</font></code>
+The <code><font color="blue">mat2cpp_ok</font></code> program should have responded 
+that all the tests passed
+(you can also run the program in Matlab).
+
+</li><li>
+
+Test the installation of the C++ files with the commands
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cd&#xA0;cpp<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;./mat2cpp_ok<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cd&#xA0;..<br/>
+</span>
+</font></code>
+The <code><font color="blue">mat2cpp_ok</font></code> program should have responded 
+that all the tests passed.
+(you can also run the program in Matlab).
+
+
+</li><li>
+
+Install the <code><font color="blue">mat2cpp</font></code> library and include file in the standard locations
+with the following commands
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;su<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;make&#xA0;install<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;exit<br/>
+</span>
+</font></code>
+(note you will have to entry the root password for the su command).
+
+</li><li>
+ 
+Compile and run the <a href="getstarted.xml" target="_top"><span style='white-space: nowrap'>getstarted</span></a>
+ example with the following commands:
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;cd&#xA0;cpp<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;g++&#xA0;getstarted.cpp&#xA0;-o&#xA0;getstarted&#xA0;\<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;-I</span></font></code><i><span style='white-space: nowrap'>boost_dir</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;-L</span></font></code><i><span style='white-space: nowrap'>prefix_dir</span></i><code><font color="blue"><span style='white-space: nowrap'>/lib&#xA0;-lmat2cpp&#xA0;-llapack<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;./getstarted<br/>
+</span></font></code></li></ol>
+<br/>
+<b><big><a name="mat2cpp.hpp" id="mat2cpp.hpp">mat2cpp.hpp</a></big></b>
+
+
+<br/>
+The include file <a href="mat2cpp.hpp.xml" target="_top"><span style='white-space: nowrap'>mat2cpp.hpp</span></a>
+ includes the 
+<a href="http://www.boost.org/libs/numeric/ublas/doc/index.htm" target="_top"><span style='white-space: nowrap'>C++</span></a>
+
+header file
+<a href="http://www.boost.org/libs/numeric/ublas/doc/matrix.htm" target="_top"><span style='white-space: nowrap'>matrix.hpp</span></a>
+.
+It then declares some library routines for that aid in converting
+from the Matlab or Octave languages to C++. 
+
+
+<br/>
+<br/>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br/>
+<div><a href="_contents.xml" target="_top">Table&#xA0;of&#xA0;Contents</a><br/>
+<a href="license.xml" target="_top">The&#xA0;mat2cpp&#xA0;Software&#xA0;License</a><br/>
+<a href="getstarted.xml" target="_top">Getting&#xA0;Started</a><br/>
+<a href="operation.xml" target="_top">Elementary&#xA0;Operations</a><br/>
+<a href="mat2cpp.hpp.xml" target="_top">The&#xA0;Matlab&#xA0;or&#xA0;Octave&#xA0;to&#xA0;C++&#xA0;Using&#xA0;Ublas&#xA0;Include&#xA0;File</a><br/>
+<a href="mat2cpp_ok.m.xml" target="_top">Run&#xA0;Matlab&#xA0;or&#xA0;Octave&#xA0;Version&#xA0;of&#xA0;Examples</a><br/>
+<a href="mat2cpp_ok.cpp.xml" target="_top">Run&#xA0;C++&#xA0;Version&#xA0;of&#xA0;Examples</a><br/>
+<a href="news.xml" target="_top">The&#xA0;mat2cpp&#xA0;News&#xA0;file</a><br/>
+<a href="library.xml" target="_top">Adding&#xA0;a&#xA0;New&#xA0;Routine&#xA0;to&#xA0;the&#xA0;Mat2cpp&#xA0;Library</a><br/>
+<a href="_reference.xml" target="_top">Alphabetic&#xA0;Listing&#xA0;of&#xA0;Cross&#xA0;Reference&#xA0;Tags</a><br/>
+<a href="_index.xml" target="_top">Keyword&#xA0;Index</a><br/>
+<a href="_search.xml" target="_top">Search&#xA0;This&#xA0;Web&#xA0;Site</a><br/>
+<a href="_external.xml" target="_top">External&#xA0;Internet&#xA0;References</a><br/>
+</div>
+<hr/>Input File: mat2cpp.omh
+
+</body>
+</html>
