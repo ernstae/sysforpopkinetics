@@ -45,7 +45,7 @@ my $parameter_only = "0";
 $relative_error = $opt{'relative-error'} if (defined $opt{'relative-error'});
 $absolute_error = $opt{'absolute-error'} if (defined $opt{'absolute-error'});
 $norm_code = $opt{'norm-code'} if (defined $opt{'norm-code'});
-$parameter_only = $opt{'parameter-only'} if (defined $opt{'parameter-only'});
+$parameter_only = 1 if (defined $opt{'parameter-only'});
 $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
 my $config = XMLin($config_file, ForceArray => 1);
@@ -85,9 +85,9 @@ $? == 0
     or die "could not execute '/etc/rc.d/init.d/jobqtestd stop'\n";
 print "\t\t\t\tOK\n";
 
-my $job =  $config->{'cerr'}[0]{'job'};
+my $job =  $config->{'srun'}[0]{'job'};
 my @alljobs = @$job;
-$job =  $config->{'srun'}[0]{'job'};
+$job =  $config->{'cerr'}[0]{'job'};
 push @alljobs, @$job;
 
 my $cmd = "take_snapshot.pl " . join " ", @alljobs;
@@ -390,9 +390,9 @@ Specify the absolute error.  Default is 1e-4.
 
 Specify the norm code.  1: max|xi|; 2:sum|xi|; 3: sqrt(sum(xi*xi)); 4: passng any of 1,2,3.  Default is 3.
 
-=item B<--parameter-only=n>
+=item B<--parameter-only>
 
-Specify checking parameter only.  1: true; 0: false.  Default is 0.
+Specify checking parameter only.
 
 =item B<--config-file=file>
 
