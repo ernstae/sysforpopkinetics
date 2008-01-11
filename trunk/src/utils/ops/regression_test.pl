@@ -41,10 +41,11 @@ if ($parallel == 1) {
 my $relative_error = "1e-3";
 my $absolute_error = "1e-4";
 my $norm_code = "3";
+my $parameter_only = "0";
 $relative_error = $opt{'relative-error'} if (defined $opt{'relative-error'});
 $absolute_error = $opt{'absolute-error'} if (defined $opt{'absolute-error'});
 $norm_code = $opt{'norm-code'} if (defined $opt{'norm-code'});
-
+$parameter_only = $opt{'parameter-only'} if (defined $opt{'parameter-only'});
 $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
 my $config = XMLin($config_file, ForceArray => 1);
@@ -254,7 +255,7 @@ for ('cerr', 'srun') {
 	        push @args, "$base_dir/$_/spkruntest-job-$job_id/result.xml";
 	        push @args, "/usr/local/spk/share/working/spktest/spkjob-$job_id/result.xml";            
                 push @args, "$base_dir/$_/spkruntest-job-$job_id/source.xml";
-	        push @args, $relative_error, $absolute_error, $norm_code;
+	        push @args, $relative_error, $absolute_error, $norm_code, $parameter_only;
 
 #	    @args = ("ssh",$cluster,"/usr/local/bin/regression_near_equals.sh");
 ##	    @args = ("/usr/local/bin/NearEqual");
@@ -388,6 +389,10 @@ Specify the absolute error.  Default is 1e-4.
 =item B<--norm-code=n>
 
 Specify the norm code.  1: max|xi|; 2:sum|xi|; 3: sqrt(sum(xi*xi)); 4: passng any of 1,2,3.  Default is 3.
+
+=item B<--parameter-only=n>
+
+Specify checking parameter only.  1: true; 0: false.  Default is 0.
 
 =item B<--config-file=file>
 

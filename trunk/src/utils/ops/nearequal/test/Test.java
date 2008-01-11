@@ -39,6 +39,7 @@ public class Test {
         String aErr = "1e-4";
         String className = "uw/rfpk/nearequal/NearEqual";
         String norm;
+        String paramOnly = "0";
         String pdfm = "1";
         Process process = null;
         String string = null;
@@ -201,7 +202,7 @@ public class Test {
                 int j = 0;
                 boolean ok =true;
                 norm = String.valueOf(i);
-                String[] command = {"java", "-cp", cp, className, oldResult, newResult, oldSource, rErr, aErr, norm, pdfm};
+                String[] command = {"java", "-cp", cp, className, oldResult, newResult, oldSource, rErr, aErr, norm, paramOnly, pdfm};
                 process = Runtime.getRuntime().exec(command);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 while ((string = stdInput.readLine()) != null) {
