@@ -11,11 +11,14 @@ my @programs = qw ( QN01Box
 		    xerces-c
 		    xerces-c-devel
 		    gmp
+                    gsl
+                    gsl-devel
                     cppunit
                     cppunit-devel
 		    boost
 		    boost-devel
 		    pvm
+                    perl-CPAN
 		    perl-MIME-Lite
 		    perl-Daemon
 		    perl
@@ -45,6 +48,8 @@ my @programs = qw ( QN01Box
 		    perl-Digest-HMAC
 		    perl-libwww-perl
 		    bison
+                    docbook-utils
+                    doxygen
                     compat-gcc-34-g77
                     mysql-server
                     mysql
