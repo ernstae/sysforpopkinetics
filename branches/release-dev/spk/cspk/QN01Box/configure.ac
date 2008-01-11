@@ -1,15 +1,18 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.61)
-AC_INIT(QN01Box, 07-09-21, bradbell@apl.washington.edu)
+AC_PREREQ(2.59)
+AC_INIT(QN01Box, 08-01-10, bradbell@apl.washington.edu)
 AC_CONFIG_SRCDIR([header.h])
 AC_CONFIG_HEADER([config.h])
+AM_INIT_AUTOMAKE
 
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
+AC_PROG_F77
+AC_PROG_RANLIB
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-llapack':
