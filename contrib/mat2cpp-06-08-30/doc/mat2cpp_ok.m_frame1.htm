@@ -1,0 +1,66 @@
+<html><head>
+<title>Run Matlab or Octave Version of Examples</title>
+<meta name="description" id="description" content="Run Matlab or Octave Version of Examples">
+<meta name="keywords" id="keywords" content=" "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="mat2cpp.hpp.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="mat2cpp_ok.cpp.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="mat2cpp_ok.m.htm" target="_top">section</a>, <a href="mat2cpp_ok.m_frame1.htm" target="_top">frame</a></div>
+<hr><center><b><big><big>Run Matlab or Octave Version of Examples</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+function&nbsp;mat2cpp_ok()<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;true;<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('add_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('cholesky_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('diag_prod_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('element_div_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('element_prod_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('element_unary_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('extend_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('matrix_div_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('matrix_prod_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('max_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('min_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('ones_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('rand_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('randn_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('scalar_div_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('scalar_prod_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('size_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('slice_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('sub_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('sum_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('transpose_ok');<br>
+ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test('zeros_ok');<br>
+if&nbsp;ok<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'All&nbsp;tests&nbsp;passed'<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'At&nbsp;least&nbsp;one&nbsp;test&nbsp;failed'<br>
+end<br>
+return<br>
+------------------------------------<br>
+function&nbsp;[ok]&nbsp;=&nbsp;run_test(test_name)<br>
+ok&nbsp;=&nbsp;feval(test_name);<br>
+if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['ok:&nbsp;&nbsp;&nbsp;&nbsp;',&nbsp;test_name]<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['error:&nbsp;',&nbsp;test_name]<br>
+end<br>
+return<br>
+</span>
+</font></code>
+
+<hr>Input File: mat/mat2cpp_ok.m
+
+</body>
+</html>

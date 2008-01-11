@@ -1,0 +1,101 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Run C++ Version of Examples</title>
+<meta name="description" id="description" content="Run C++ Version of Examples"/>
+<meta name="keywords" id="keywords" content=" "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="mat2cpp_ok.m.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="news.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="mat2cpp_ok.cpp.xml" target="_top">section</a>, <a href="mat2cpp_ok.cpp_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Run C++ Version of Examples</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;iostream&gt;<br/>
+#&#xA0;include&#xA0;&lt;cstdlib&gt;<br/>
+<br/>
+extern&#xA0;bool&#xA0;add_ok(void);<br/>
+extern&#xA0;bool&#xA0;cholesky_ok(void);<br/>
+extern&#xA0;bool&#xA0;diag_prod_ok(void);<br/>
+extern&#xA0;bool&#xA0;element_div_ok(void);<br/>
+extern&#xA0;bool&#xA0;element_prod_ok(void);<br/>
+extern&#xA0;bool&#xA0;element_unary_ok(void);<br/>
+extern&#xA0;bool&#xA0;extend_ok(void);<br/>
+extern&#xA0;bool&#xA0;matrix_div_ok(void);<br/>
+extern&#xA0;bool&#xA0;matrix_prod_ok(void);<br/>
+extern&#xA0;bool&#xA0;max_ok(void);<br/>
+extern&#xA0;bool&#xA0;min_ok(void);<br/>
+extern&#xA0;bool&#xA0;ones_ok(void);<br/>
+extern&#xA0;bool&#xA0;rand_ok(void);<br/>
+extern&#xA0;bool&#xA0;randn_ok(void);<br/>
+extern&#xA0;bool&#xA0;scalar_ok(void);<br/>
+extern&#xA0;bool&#xA0;scalar_div_ok(void);<br/>
+extern&#xA0;bool&#xA0;scalar_prod_ok(void);<br/>
+extern&#xA0;bool&#xA0;size_ok(void);<br/>
+extern&#xA0;bool&#xA0;slice_ok(void);<br/>
+extern&#xA0;bool&#xA0;sub_ok(void);<br/>
+extern&#xA0;bool&#xA0;sum_ok(void);<br/>
+extern&#xA0;bool&#xA0;transpose_ok(void);<br/>
+extern&#xA0;bool&#xA0;zeros_ok(void);<br/>
+<br/>
+bool&#xA0;run_test(bool&#xA0;test(void),&#xA0;char&#xA0;*name)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;=&#xA0;test();<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;ok&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;ok:&#xA0;&#xA0;&#xA0;&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;name&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;error:&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;name&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+int&#xA0;main()<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;initialize&#xA0;the&#xA0;random&#xA0;number&#xA0;generator<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;unsigned&#xA0;seed&#xA0;=&#xA0;5;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::srand(seed);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;run&#xA0;all&#xA0;the&#xA0;tests<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(add_ok,&#xA0;&quot;add_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(cholesky_ok,&#xA0;&quot;cholesky_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(diag_prod_ok,&#xA0;&quot;diag_prod_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(element_div_ok,&#xA0;&quot;element_div_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(element_prod_ok,&#xA0;&quot;element_prod_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(element_unary_ok,&#xA0;&quot;element_unary_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(extend_ok,&#xA0;&quot;extend_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(matrix_div_ok,&#xA0;&quot;matrix_div_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(matrix_prod_ok,&#xA0;&quot;matrix_prod_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(max_ok,&#xA0;&quot;max_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(min_ok,&#xA0;&quot;min_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(ones_ok,&#xA0;&quot;ones_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(rand_ok,&#xA0;&quot;rand_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(randn_ok,&quot;randn_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(scalar_ok,&#xA0;&quot;scalar_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(scalar_div_ok,&#xA0;&quot;scalar_div_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(scalar_prod_ok,&#xA0;&quot;scalar_prod_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(size_ok,&#xA0;&quot;size_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(slice_ok,&#xA0;&quot;slice_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(sub_ok,&#xA0;&quot;sub_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(sum_ok,&#xA0;&quot;sum_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(transpose_ok,&#xA0;&quot;transpose_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;run_test(zeros_ok,&#xA0;&quot;zeros_ok&quot;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;ok&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;All&#xA0;tests&#xA0;passed&quot;&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;&quot;At&#xA0;least&#xA0;one&#xA0;test&#xA0;failed&quot;&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: cpp/mat2cpp_ok.cpp
+
+</body>
+</html>
