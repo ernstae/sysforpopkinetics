@@ -291,10 +291,10 @@ public class NearEqual {
     }
     
     // Compare old output with new output, and if difference is found put message in standard out.
-    private static void compare(Output oldOutput, Output newOutput)
+    private static void compare(Output oldOutput, Output newOutput, boolean paramOnly)
     {   
         // Check objective
-        if(oldOutput.objective != null)
+        if(!paramOnly && oldOutput.objective != null)
         {
             if(newOutput.objective != null)
             {
@@ -383,7 +383,7 @@ public class NearEqual {
         }
         
         // Check standard error vector
-        if(oldOutput.stdErrVector != null)
+        if(!paramOnly && oldOutput.stdErrVector != null)
         {
             if(newOutput.stdErrVector != null)
             {
@@ -405,7 +405,7 @@ public class NearEqual {
         }
         
         // Check covariance
-        if(oldOutput.covariance != null)
+        if(!paramOnly && oldOutput.covariance != null)
         {
             if(newOutput.covariance != null)
             {
@@ -423,7 +423,7 @@ public class NearEqual {
         }
         
         // Check inverse covariance
-        if(oldOutput.invCovariance != null)
+        if(!paramOnly && oldOutput.invCovariance != null)
         {
             if(newOutput.invCovariance != null)
             {
@@ -443,7 +443,7 @@ public class NearEqual {
         }
         
         // Check correlation
-        if(oldOutput.correlation != null)
+        if(!paramOnly && oldOutput.correlation != null)
         {
             if(newOutput.correlation != null)
             {
@@ -461,7 +461,7 @@ public class NearEqual {
         }
         
         // Check coefficient of variation
-        if(oldOutput.coefVariation != null)
+        if(!paramOnly && oldOutput.coefVariation != null)
         {
             if(newOutput.coefVariation != null)
             {
@@ -482,7 +482,7 @@ public class NearEqual {
         }
         
         // Check confidence interval
-        if(oldOutput.confInterval != null)
+        if(!paramOnly && oldOutput.confInterval != null)
         {
             if(newOutput.confInterval != null)
             {
@@ -508,7 +508,7 @@ public class NearEqual {
         }
         
         // Check presentation data
-        if(oldOutput.dataAll != null)
+        if(!paramOnly && oldOutput.dataAll != null)
         {
             if(newOutput.dataAll != null)
             {
@@ -683,6 +683,7 @@ public class NearEqual {
      *              relative error limit;<br>
      *              absolute error limit;<br>
      *              norm type: 1 as max|xi|, 2 as sum|xi|, 3 as sqrt(sum(xi*xi)), 4 passng any of 1,2,3.
+     *              1 for checking fixed effect parameters only, 0 for otherwise.
      *              optional precision degradation factor for comparing matrix, 10 as the default.
      */
     public static void main(String[] args)
@@ -693,8 +694,9 @@ public class NearEqual {
         rErr = Double.parseDouble(args[3]);
         aErr = Double.parseDouble(args[4]);
         norm = Integer.parseInt(args[5]);
+        boolean paramOnly = args[6].equals("1");
         pdfm = 10;
-        if(args.length == 7) pdfm = Double.parseDouble(args[6]);
+        if(args.length == 8) pdfm = Double.parseDouble(args[7]);
         
         Output oldOutput = new Output();
         Output newOutput = new Output();
@@ -704,7 +706,7 @@ public class NearEqual {
         if(oldOutput.alpha != null && newOutput.alpha != null)
             parseSource(openFile(srcFile));
         
-        compare(oldOutput, newOutput);
+        compare(oldOutput, newOutput, paramOnly);
     }
     
     // Open a file by passing in the file path-name and return the text of the file.
