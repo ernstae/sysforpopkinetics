@@ -8,11 +8,11 @@ DATABASE=spkdb
 DBHOST=dbserver
 DBUSER=daemon
 DBPASSWD=daemon
-BIN=/usr/local/spk/bin
+BIN=/usr/local/bin/spkprod
 MODE=prod
 SHOST=jobqserver
 SPORT=9000
-MAXPROCS=4
+MAXPROCS=16
 if [ -z $2 ]; then
    PVM=off
 else
