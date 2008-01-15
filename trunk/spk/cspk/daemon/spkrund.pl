@@ -239,7 +239,10 @@ my $alert = 'ernst@u.washington.edu,jjdu@u.washington.edu';
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://bugzilla.rfpk.washington.edu/";
 
-$max_concurrent = &getNumProcs() unless defined $max_concurrent;
+if($pvm eq "off") {
+    $max_concurrent = &getNumProcs();
+}
+# $max_concurrent = &getNumProcs() unless defined $max_concurrent;
 
 syslog("info","maximum concurrent jobs == $max_concurrent");
 
