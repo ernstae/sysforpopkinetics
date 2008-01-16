@@ -87,7 +87,7 @@ elseif ( $row->state_code == 'end' )
       <? } // end of error block ?>
      <b>Solutions Found</b>:
   <ul>
-     <pre><?= $xml['number_of_solutions'] ?> <?= $xml['status_of_the_solutions'] ?></pre>
+	<pre><?= ($xml['number_of_solutions'] >= 0) ? $xml['number_of_solutions'] : "" ?> <?= $xml['status_of_the_solutions'] ?></pre>
      </ul>
      <b>Processing Time</b>:
   <ul><pre><?= $xml['elapsed_seconds'] ?> second(s)</pre></ul>
