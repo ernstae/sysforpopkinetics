@@ -323,6 +323,11 @@ function error_check( &$TDATA ) {
 	{
 	  add_error('parse', 'Variables and parameters may not start with numbers.  I found ' . $val);
 	}
+      // error on the existence of "i" as a variable (bug #819)
+      if ( eregi("^[iI]$", $val, $pregs ))
+	{
+	  add_error('parse', "The variable '" . $val . "' is reserved.  Please change to another letter and try again.");
+	}
     }
 }
 
