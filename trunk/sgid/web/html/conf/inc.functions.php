@@ -286,7 +286,6 @@ function error_check( &$TDATA ) {
   else
     { add_error('parse_in', "You have not defined any inputs."); }
   
-
   // validate the outputs (bug 756)
   if ( sizeof($TDATA['outputs']) == 1 ) {
     if ( array_search ( "Y", $TDATA['outputs'] ) === FALSE ) {
@@ -311,7 +310,13 @@ function error_check( &$TDATA ) {
   else
     { add_error('parse_out', "You have not defined any outputs."); }
     
-    
+
+  // fix for bug #823
+  if ( sizeof($TDATA['param_list']) < 1 ) {
+    add_error('parse', "You have not defined any parameters.  Please check your equations and ensure at least one parameter");
+  }
+
+  
   // look for illegal characters
   foreach ( $TDATA['elements'] as $key => $val )
     {
