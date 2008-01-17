@@ -6,6 +6,8 @@
     <job>288</job><ntasks>7</ntasks><!-- Likelihood eval, Analytic, based on 296 -->
   </cerr>
   <srun>
+    <job>36</job><ntasks>10</ntasks><!-- Population, FOCE, CAD BSV 2 FULL ADDITIVE POP003 -->
+    <job>38</job><ntasks>10</ntasks><!-- Population, FOCE INT, CAD, BSD 1 DIAG PROP POP002 -->
     <job>273</job><ntasks>7</ntasks><!-- Likelihood eval, MC, based on 294 -->
     <job>274</job><ntasks>7</ntasks><!-- Likelihood eval, Miser, based on 294 -->
     <job>275</job><ntasks>7</ntasks><!-- Likelihood eval, Grid, based on 294 -->
@@ -18,8 +20,6 @@
     <job>286</job><ntasks>7</ntasks><!-- Likelihood eval, Miser, based on 296 -->
     <job>287</job><ntasks>7</ntasks><!-- Likelihood eval, Grid, based on 296 -->
     <job>390</job><ntasks>6</ntasks><!-- Population, LAPLACE, RAIL POP001 -->
-    <job>38</job><ntasks>10</ntasks><!-- Population, FOCE INT, CAD, BSD 1 DIAG PROP POP002 -->
-    <job>36</job><ntasks>10</ntasks><!-- Population, FOCE, CAD BSV 2 FULL ADDITIVE POP003 -->
     <job>464</job><ntasks>10</ntasks><!-- Population, FOCE, CAD BSV 2 DIAG ADDITIVVE POP007 -->
     <job>457</job><ntasks>26</ntasks><!-- Population, LAPLACE, oxboys1 BSV 3 FULL POP008 -->
     <job>487</job><ntasks>26</ntasks><!-- Population, LAPLACE, oxboys2 BSV 3 DIAG POP009 -->
