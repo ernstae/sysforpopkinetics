@@ -45,7 +45,7 @@ my $parameter_only = "0";
 $relative_error = $opt{'relative-error'} if (defined $opt{'relative-error'});
 $absolute_error = $opt{'absolute-error'} if (defined $opt{'absolute-error'});
 $norm_code = $opt{'norm-code'} if (defined $opt{'norm-code'});
-$parameter_only = 1 if (defined $opt{'parameter-only'});
+$parameter_only = "1" if (defined $opt{'parameter-only'});
 $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
 my $config = XMLin($config_file, ForceArray => 1);
@@ -302,7 +302,7 @@ regression_test.pl -- test a candidate before deployment
 
 =head1 SYNOPSIS
 
-regression_test.pl [--help] [--man] [--pvm] [--parallel] [--dump-config] [--ignore-candidate] [--relative-error=r] [--absolute-error=a] [--norm-code=n] [--config-file=file]
+regression_test.pl [--help] [--man] [--pvm] [--parallel] [--dump-config] [--ignore-candidate] [--relative-error=r] [--absolute-error=a] [--norm-code=n] [--parameter-only] [--config-file=file]
 
 =head1 ABSTRACT
 

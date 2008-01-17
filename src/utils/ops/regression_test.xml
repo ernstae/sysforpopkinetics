@@ -6,6 +6,8 @@
     <job>288</job><!-- Likelihood eval, Analytic, based on 296 -->
   </cerr>
   <srun>
+    <job>36</job><!--  Population, FOCE, CAD BSV 2 FULL ADDITIVE POP003 -->
+    <job>38</job><!--  Population, FOCE INT, CAD, BSD 1 DIAG PROP POP002 -->
     <job>294</job><!-- Population, FO, Brad's linear model -->
     <job>273</job><!-- Likelihood eval, MC, based on 294 -->
     <job>274</job><!-- Likelihood eval, Miser, based on 294 -->
@@ -33,8 +35,6 @@
     <job>581</job><!-- Individual, ECKERLE4 IND013 -->
     <job>604</job><!-- Individual, BOXBOD IND015 -->
     <job>390</job><!-- Population, LAPLACE, RAIL POP001 -->
-    <job>38</job> <!-- Population, FOCE INT, CAD, BSD 1 DIAG PROP POP002 -->
-    <job>36</job> <!-- Population, FOCE, CAD BSV 2 FULL ADDITIVE POP003 -->
     <job>526</job><!-- Population, FO, CAD BSV 2 FULL ADDITIVE POP004 -->
     <job>462</job><!-- Population, FO, CAD BSV 2 DIAG ADDITIVE POP005-->
     <job>463</job><!-- Population, FO, CAD BSV 1 DIAG PROP POP006 -->
