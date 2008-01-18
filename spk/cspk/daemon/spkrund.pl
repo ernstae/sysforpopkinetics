@@ -239,14 +239,16 @@ my $alert = 'ernst@u.washington.edu,jjdu@u.washington.edu';
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://bugzilla.rfpk.washington.edu/";
 
+my $nprocessor = &getNumProcs();
 if($pvm eq "off") {
-    $max_concurrent = &getNumProcs();
+    $max_concurrent = $nprocessor;
 }
 # $max_concurrent = &getNumProcs() unless defined $max_concurrent;
 
 syslog("info","maximum concurrent jobs == $max_concurrent");
 
 my $concurrent = 0;
+my $ncompilation = 0;
 
 my $service_root = "spkrun";
 my $bugzilla_product = "SPK";
@@ -371,6 +373,7 @@ sub fork_driver {
             $ntasks = 1;
         }
     }
+    $ncompilation++;
 
     # Add ntasks of the job to concurrent ntasks
     $concurrent += $ntasks;
@@ -420,7 +423,6 @@ sub fork_driver {
 	}
     }
     # Fork the process into parent and child
-
   FORK: {
       if ($pid = fork) {
 	  # This is the parent (fork returned a nonzero value)
@@ -453,7 +455,6 @@ sub fork_driver {
 #		  die;
 #	      };
 	  # Compile and link the runner
-
           if ($mode =~ "test"){
               if($pvm eq "on" && $parallel == 1) {
                   @args = ($pathname_make, "-f", $filename_makefile, "test_parallel");
@@ -474,12 +475,14 @@ sub fork_driver {
 	      $! = 101;
 	      die;
 	  }
+
 	  # Redirect Standard output to a file
 #          open STDOUT, ">$filename_optimizer_trace";
 
 	  # Redirect Standard Error to a file
 #          open STDERR, ">$filename_serr";
 
+          kill('ALRM', getppid);
 	  # execute the job driver
           if($pvm eq "on") {
               if($parallel == 1) {
@@ -1116,6 +1119,9 @@ $SIG{'QUIT'} = 'IGNORE';
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
+# Define a handler for the "alarm" signal
+$SIG{'ALRM'} = sub { $ncompilation-- };
+
 # rerun any jobs that were interrupted when we last terminated
 #my $job_array = &get_run_jobs($dbh);
 #syslog('info', "looking for interrupted computational runs");
@@ -1151,7 +1157,7 @@ syslog('info', "processing new computational runs");
 while(1) {
 #    eval {
     # if there is a job queued-to-run, fork the driver
-    if ($concurrent < $max_concurrent) {
+    if ($concurrent < $max_concurrent && $ncompilation < $nprocessor) {
         print $sh "get-q2r\n";
         $jobid = <$sh>;
         if (defined $jobid) {
