@@ -701,8 +701,7 @@ public class NearEqual {
             System.out.println(msg.toString());
             if(paramOnly)
             {
-                System.out.println(getParamReport(oldOutput, "\n\nReport for Old Job"));
-                System.out.println(getParamReport(newOutput, "\n\nReport for New Job"));
+                System.out.println(getParamReport(oldOutput, newOutput));
             }
             System.exit(1);
         }
@@ -821,182 +820,125 @@ public class NearEqual {
         return "\n    Old value: " + oldValue + "     New value: " + newValue;
     }
     
-    private static String getParamReport(Output output, String title)
-    {
-        // Preparation
-        DecimalFormat f = (DecimalFormat)NumberFormat.getInstance(java.util.Locale.ENGLISH);
-        f.applyPattern("0.00E00");
-        
-        String par = "", ser = "", rse = "", sd = "", cv = "", n, lb = "", ub = ""; 
-        String NA = "   N/A";
-        
-        if(output.objective == null)
-            output.objective = NA;
-        String theta = ""; 
-        String omega = "";
-        String sigma = "";
+    private static String getParamReport(Output oldOutput, Output newOutput)
+    {  
+        String n, oldPar = "", oldSer = "", newPar = "", newSer = "";
         int k = 0;
-        // Write theta
-        if(output.theta != null)
+        
+        String theta = "";
+        if(oldOutput.theta != null)
         {
             theta = "THETA\n";
-            for(int i = 0; i < output.theta.length; i++)
+            for(int i = 0; i < oldOutput.theta.length; i++)
             {
-                n = String.valueOf(i + 1);        
-                par = output.theta[i] != null && !output.theta[i].equals("nan") && !output.theta[i].endsWith("inf")  ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.theta[i]))) : NA;
-                ser = output.stdErrTheta != null && output.stdErrTheta[i] != null && !output.stdErrTheta[i].equals("nan") && !output.stdErrTheta[i].endsWith("inf") ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.stdErrTheta[i]))) : NA;
-                rse = output.coefVariation != null && output.coefVariation[i] != null && !output.coefVariation[i].equals("nan") && !output.coefVariation[i].endsWith("inf") ? 
-                      Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[i]))) : NA;
-                lb = output.confInterval != null && output.confInterval[0][i] != null && !output.confInterval[0][i].equals("nan") && !output.confInterval[0][i].endsWith("inf") ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][i]))) : NA;
-                ub = output.confInterval != null && output.confInterval[1][i] != null && !output.confInterval[1][i].equals("nan") && !output.confInterval[1][i].endsWith("inf") ? 
-                     Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][i]))) : NA;
-                theta = theta + getSpace(5 - n.length()) + n + "     " + par + getSpace(12 - par.length()) + ser +
-                        getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub + "\n";  
+                n = String.valueOf(i + 1);
+                oldPar = oldOutput.theta[i];
+                oldSer = oldOutput.stdErrTheta[i];
+                newPar = newOutput.theta[i];
+                newSer = newOutput.stdErrTheta[i];
+                theta = theta + getSpace(5 - n.length()) + n + "       " + 
+                        oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
+                        newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
                 k++;
             }
         }
         
-        // Write omega
-        if(output.omega != null && output.omegaStruct != null)
+        String omega = "";
+        if(oldOutput.omega != null && oldOutput.omegaStruct != null)
         {
-            for(int l = 0; l < output.omega.length; l++)
+            for(int l = 0; l < oldOutput.omega.length; l++)
             {
-                omega += "OMEGA\n";
-                if(output.omegaStruct[l].equals("block"))
+                omega = "OMEGA\n";
+                if(oldOutput.omegaStruct[l].equals("block"))
                 {
-                    for(int j = 1; j < output.omega[l].length + 1; j++)
+                    for(int j = 1; j < oldOutput.omega[l].length + 1; j++)
                     {
-                        for(int i = j - 1; i < output.omega[l].length; i++)  
+                        for(int i = j - 1; i < oldOutput.omega[l].length; i++)  
+                       {
+                           n = j + "," + (i + 1);
+                           oldPar = oldOutput.omega[l][i][j];
+                           oldSer = oldOutput.stdErrOmega[l][i][j];
+                           newPar = newOutput.omega[l][i][j];
+                           newSer = newOutput.stdErrOmega[l][i][j];
+                           omega = omega + getSpace(5 - n.length()) + n + "       " + 
+                                   oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
+                                   newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
+                           k++;
+                       }
+                   }
+               }
+            
+               if(oldOutput.omegaStruct[l].equals("diagonal"))
+               {
+                   for(int i = 0; i < oldOutput.omega[l].length; i++)
+                   {
+                       n = (i + 1) + "," + (i + 1);
+                       oldPar = oldOutput.omega[l][i][i + 1];
+                       oldSer = oldOutput.stdErrOmega[l][i][i + 1];
+                       newPar = newOutput.omega[l][i][i + 1];
+                       newSer = newOutput.stdErrOmega[l][i][i + 1];
+                       omega = omega + getSpace(5 - n.length()) + n + "       " + 
+                               oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
+                               newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
+                       k++;
+                   }
+               }
+           }
+        }
+                
+        String sigma = "";
+        if(oldOutput.sigma != null && oldOutput.sigmaStruct != null)
+        {
+            for(int l = 0; l < oldOutput.sigma.length; l++)
+            {
+                sigma = "SIGMA\n";
+                if(oldOutput.sigmaStruct[l].equals("block"))
+                {
+                    for(int j = 1; j < oldOutput.sigma[l].length + 1; j++)
+                    {
+                        for(int i = j - 1; i < oldOutput.sigma[l].length; i++)  
                         {
-                            par = output.omega[l][i][j] != null && !output.omega[l][i][j].equals("nan") && !output.omega[l][i][j].endsWith("inf") ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][j]))) : NA;
-                            ser = output.stdErrOmega != null && output.stdErrOmega[l][i][j] != null && !output.stdErrOmega[l][i][j].equals("nan") && !output.stdErrOmega[l][i][j].endsWith("inf") ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][j]))) : NA;
-                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
-                            cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
-                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
-                            omega = omega + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                                    getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;
-                            if(j == i + 1)
-                                omega += getSpace(14 - ub.length()) + cv;                    
-                            omega += "\n";
+                            n = j + "," + (i + 1);
+                            oldPar = oldOutput.sigma[l][i][j];
+                            oldSer = oldOutput.stdErrSigma[l][i][j];
+                            newPar = newOutput.sigma[l][i][j];
+                            newSer = newOutput.stdErrSigma[l][i][j];
+                            sigma = sigma + getSpace(5 - n.length()) + n + "       " + 
+                                    oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
+                                    newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
                             k++;
                         }
                     }
                 }
-
-                if(output.omegaStruct[l].equals("diagonal"))
+            
+                if(oldOutput.sigmaStruct[l].equals("diagonal"))
                 {
-                    for(int i = 0; i < output.omega[l].length; i++)
+                    for(int i = 0; i < oldOutput.sigma[l].length; i++)
                     {
-                        par = output.omega[l][i][i + 1] != null && !output.omega[l][i][i + 1].equals("nan") && !output.omega[l][i][i + 1].endsWith("inf") ?
-                              Utility.formatData(6, f.format(Double.parseDouble(output.omega[l][i][i + 1]))) : NA;
-                        ser = output.stdErrOmega != null && output.stdErrOmega[l][i][i + 1] != null && !output.stdErrOmega[l][i][i + 1].equals("nan")  && !output.stdErrOmega[l][i][i + 1].endsWith("inf") ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.stdErrOmega[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
-                        cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
-                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
-                        omega = omega + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                                getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
-                                getSpace(14 - ub.length()) + cv + "\n";
+                        n = (i + 1) + "," + (i + 1);
+                        oldPar = oldOutput.sigma[l][i][i + 1];
+                        oldSer = oldOutput.stdErrSigma[l][i][i + 1];
+                        newPar = newOutput.sigma[l][i][i + 1];
+                        newSer = newOutput.stdErrSigma[l][i][i + 1];
+                        sigma = sigma + getSpace(5 - n.length()) + n + "       " + 
+                                oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
+                                newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
                         k++;
                     }
                 }
             }
         }
-        
-        // Write sigma
-        if(output.sigma != null && output.sigmaStruct != null)
-        {
-            for(int l = 0; l < output.sigma.length; l++)
-            {
-                sigma += "SIGMA\n";                
-                if(output.sigmaStruct[l].equals("block"))
-                {            
-                    for(int j = 1; j < output.sigma[l].length + 1; j++)
-                    {
-                        for(int i = j - 1; i < output.sigma[l].length; i++)  
-                        {                        
-                            par = output.sigma[l][i][j] != null && !output.sigma[l][i][j].equals("nan") && !output.sigma[l][i][j].endsWith("inf") ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][j]))) : NA;
-                            ser = output.stdErrSigma != null && output.stdErrSigma[l][i][j] != null && !output.stdErrSigma[l][i][j].equals("nan") && !output.stdErrSigma[l][i][j].endsWith("inf") ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][j]))) : NA;   
-                            rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
-                                  Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                            lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                            ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
-                                 Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
-                            sd = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
-                                 Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
-                            sigma = sigma + "  " + j + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +               
-                                    getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub;                   
-                            if(j == i + 1)
-                                sigma += getSpace(14 - ub.length()) + sd;
-                            sigma += "\n";
-                            k++;
-                        }
-                    }
-                }
- 
-                if(output.sigmaStruct[l].equals("diagonal"))
-                {
-                    for(int i = 0; i < output.sigma[l].length; i++)
-                    {
-                        par = output.sigma[l][i][i + 1] != null && !output.sigma[l][i][i + 1].equals("nan") && !output.sigma[l][i][i + 1].endsWith("inf") ?
-                              Utility.formatData(6, f.format(Double.parseDouble(output.sigma[l][i][i + 1]))) : NA;
-                        ser = output.stdErrSigma != null && output.stdErrSigma[l][i][i + 1] != null && !output.stdErrSigma[l][i][i + 1].equals("nan") && !output.stdErrSigma[l][i][i + 1].endsWith("inf") ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.stdErrSigma[l][i][i + 1]))) : NA;
-                        rse = output.coefVariation != null && output.coefVariation[k] != null && !output.coefVariation[k].equals("nan") && !output.coefVariation[k].endsWith("inf") ? 
-                              Utility.formatData(6, f.format(Double.parseDouble(output.coefVariation[k]))) : NA;
-                        lb = output.confInterval != null && output.confInterval[0][k] != null && !output.confInterval[0][k].equals("nan") && !output.confInterval[0][k].endsWith("inf") ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[0][k]))) : NA;
-                        ub = output.confInterval != null && output.confInterval[1][k] != null && !output.confInterval[1][k].equals("nan") && !output.confInterval[1][k].endsWith("inf") ? 
-                             Utility.formatData(6, f.format(Double.parseDouble(output.confInterval[1][k]))) : NA;
-                        cv = !par.equals(NA) && Double.parseDouble(par) >= 0 ? 
-                             Utility.formatData(6, f.format(Math.sqrt(Double.parseDouble(par)))) : NA;
-                        sigma = sigma + "  " + (i + 1) + "," + (i + 1) + "     " + par + getSpace(12 - par.length()) + ser +                            
-                                getSpace(13 - ser.length()) + rse + getSpace(14 - rse.length()) + lb + getSpace(12 - lb.length()) + ub +
-                                getSpace(14 - ub.length()) + cv + "\n";
-                        k++;
-                    }
-                }
-            }
-        }
-        
+                
         // Write summary
-        StringBuffer summary = new StringBuffer(title);
+        StringBuffer summary = new StringBuffer();
         
-        if(output.theta != null)
-        {
-            summary.append("\n\nParameter Estimation Result: ");
-            String variability = "*This column indicates RUV in standard deviation units.";
-            if(output.analysis.equals("population"))
-                variability = "*For OMEGA, this column indicates BSV in standard deviation units.\n" +
-                              " For SIGMA, this column indicates RUV in standard deviation units.";
-            summary.append("\n")
-                   .append("=====================================================================================\n\n")
-                   .append("Parameter  Estimate  Std. Error  Coef. of Var.  95% Confidence Interval  Variability*\n")
-                   .append("                                                  L-bound     U-bound\n")
-                   .append(theta).append("\n").append(omega).append("\n");
-            if(output.analysis.equals("population"))             
-                summary.append(sigma).append("\n");
-            summary.append(variability).append("\n\n")
-                   .append("=====================================================================================");                    
-        }
+        summary.append("\n\nParameter Estimation Result:\n");
+        summary.append("=====================================================================================\n\n")
+               .append("Parameter   Old Estimate      Old Std. Error    New Estimate      New Std. Error\n")
+               .append(theta).append("\n").append(omega).append("\n");
+        if(oldOutput.analysis.equals("population"))             
+            summary.append(sigma).append("\n");
+         summary.append("=====================================================================================");                    
 
         return summary.toString();
     }
