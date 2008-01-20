@@ -823,7 +823,6 @@ public class NearEqual {
     private static String getParamReport(Output oldOutput, Output newOutput)
     {  
         String n, oldPar = "", oldSer = "", newPar = "", newSer = "", relErr = "";
-        int k = 0;
         
         String theta = "";
         if(oldOutput.theta != null)
@@ -841,7 +840,6 @@ public class NearEqual {
                         oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
                         newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
                         relErr + "\n";
-                k++;
             }
         }
         
@@ -867,7 +865,6 @@ public class NearEqual {
                                    oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
                                    newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
                                    relErr + "\n";
-                           k++;
                        }
                    }
                }
@@ -886,7 +883,6 @@ public class NearEqual {
                                oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
                                newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
                                relErr + "\n";
-                       k++;
                    }
                }
            }
@@ -914,7 +910,6 @@ public class NearEqual {
                                     oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
                                     newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
                                     relErr + "\n";
-                            k++;
                         }
                     }
                 }
@@ -933,7 +928,6 @@ public class NearEqual {
                                 oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
                                 newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
                                 relErr + "\n";
-                        k++;
                     }
                 }
             }
