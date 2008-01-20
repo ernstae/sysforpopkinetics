@@ -822,7 +822,7 @@ public class NearEqual {
     
     private static String getParamReport(Output oldOutput, Output newOutput)
     {  
-        String n, oldPar = "", oldSer = "", newPar = "", newSer = "";
+        String n, oldPar = "", oldSer = "", newPar = "", newSer = "", relErr = "";
         int k = 0;
         
         String theta = "";
@@ -832,13 +832,15 @@ public class NearEqual {
             for(int i = 0; i < oldOutput.theta.length; i++)
             {
                 n = String.valueOf(i + 1);
-                oldPar = oldOutput.theta[i];
-                oldSer = oldOutput.stdErrTheta[i];
-                newPar = newOutput.theta[i];
-                newSer = newOutput.stdErrTheta[i];
-                theta = theta + getSpace(5 - n.length()) + n + "       " + 
-                        oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
-                        newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
+                oldPar = setLength(oldOutput.theta[i]);
+                oldSer = setLength(oldOutput.stdErrTheta[i]);
+                newPar = setLength(newOutput.theta[i]);
+                newSer = setLength(newOutput.stdErrTheta[i]);
+                relErr = getRelErr(oldOutput.theta[i], newOutput.theta[i]);
+                theta = theta + getSpace(5 - n.length()) + n + "      " + 
+                        oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
+                        newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
+                        relErr + "\n";
                 k++;
             }
         }
@@ -856,13 +858,15 @@ public class NearEqual {
                         for(int i = j - 1; i < oldOutput.omega[l].length; i++)  
                        {
                            n = j + "," + (i + 1);
-                           oldPar = oldOutput.omega[l][i][j];
-                           oldSer = oldOutput.stdErrOmega[l][i][j];
-                           newPar = newOutput.omega[l][i][j];
-                           newSer = newOutput.stdErrOmega[l][i][j];
-                           omega = omega + getSpace(5 - n.length()) + n + "       " + 
-                                   oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
-                                   newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
+                           oldPar = setLength(oldOutput.omega[l][i][j]);
+                           oldSer = setLength(oldOutput.stdErrOmega[l][i][j]);
+                           newPar = setLength(newOutput.omega[l][i][j]);
+                           newSer = setLength(newOutput.stdErrOmega[l][i][j]);
+                           relErr = getRelErr(oldOutput.omega[l][i][j], newOutput.omega[l][i][j]);
+                           omega = omega + getSpace(5 - n.length()) + n + "      " + 
+                                   oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
+                                   newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
+                                   relErr + "\n";
                            k++;
                        }
                    }
@@ -873,13 +877,15 @@ public class NearEqual {
                    for(int i = 0; i < oldOutput.omega[l].length; i++)
                    {
                        n = (i + 1) + "," + (i + 1);
-                       oldPar = oldOutput.omega[l][i][i + 1];
-                       oldSer = oldOutput.stdErrOmega[l][i][i + 1];
-                       newPar = newOutput.omega[l][i][i + 1];
-                       newSer = newOutput.stdErrOmega[l][i][i + 1];
-                       omega = omega + getSpace(5 - n.length()) + n + "       " + 
-                               oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
-                               newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
+                       oldPar = setLength(oldOutput.omega[l][i][i + 1]);
+                       oldSer = setLength(oldOutput.stdErrOmega[l][i][i + 1]);
+                       newPar = setLength(newOutput.omega[l][i][i + 1]);
+                       newSer = setLength(newOutput.stdErrOmega[l][i][i + 1]);
+                       relErr = getRelErr(oldOutput.omega[l][i][i + 1], newOutput.omega[l][i][i + 1]);
+                       omega = omega + getSpace(5 - n.length()) + n + "      " + 
+                               oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
+                               newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
+                               relErr + "\n";
                        k++;
                    }
                }
@@ -899,13 +905,15 @@ public class NearEqual {
                         for(int i = j - 1; i < oldOutput.sigma[l].length; i++)  
                         {
                             n = j + "," + (i + 1);
-                            oldPar = oldOutput.sigma[l][i][j];
-                            oldSer = oldOutput.stdErrSigma[l][i][j];
-                            newPar = newOutput.sigma[l][i][j];
-                            newSer = newOutput.stdErrSigma[l][i][j];
-                            sigma = sigma + getSpace(5 - n.length()) + n + "       " + 
-                                    oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
-                                    newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
+                            oldPar = setLength(oldOutput.sigma[l][i][j]);
+                            oldSer = setLength(oldOutput.stdErrSigma[l][i][j]);
+                            newPar = setLength(newOutput.sigma[l][i][j]);
+                            newSer = setLength(newOutput.stdErrSigma[l][i][j]);
+                            relErr = getRelErr(oldOutput.sigma[l][i][j], newOutput.sigma[l][i][j]);
+                            sigma = sigma + getSpace(5 - n.length()) + n + "      " + 
+                                    oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
+                                    newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
+                                    relErr + "\n";
                             k++;
                         }
                     }
@@ -916,13 +924,15 @@ public class NearEqual {
                     for(int i = 0; i < oldOutput.sigma[l].length; i++)
                     {
                         n = (i + 1) + "," + (i + 1);
-                        oldPar = oldOutput.sigma[l][i][i + 1];
-                        oldSer = oldOutput.stdErrSigma[l][i][i + 1];
-                        newPar = newOutput.sigma[l][i][i + 1];
-                        newSer = newOutput.stdErrSigma[l][i][i + 1];
-                        sigma = sigma + getSpace(5 - n.length()) + n + "       " + 
-                                oldPar + getSpace(18 - oldPar.length()) + oldSer + getSpace(18 - oldSer.length()) +
-                                newPar + getSpace(18 - newPar.length()) + newSer + getSpace(18 - newSer.length()) + "\n";
+                        oldPar = setLength(oldOutput.sigma[l][i][i + 1]);
+                        oldSer = setLength(oldOutput.stdErrSigma[l][i][i + 1]);
+                        newPar = setLength(newOutput.sigma[l][i][i + 1]);
+                        newSer = setLength(newOutput.stdErrSigma[l][i][i + 1]);
+                        relErr = getRelErr(oldOutput.sigma[l][i][i + 1], newOutput.sigma[l][i][i + 1]);
+                        sigma = sigma + getSpace(5 - n.length()) + n + "      " + 
+                                oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
+                                newPar + getSpace(15 - newPar.length()) + newSer + getSpace(15 - newSer.length()) + 
+                                relErr + "\n";
                         k++;
                     }
                 }
@@ -934,13 +944,25 @@ public class NearEqual {
         
         summary.append("\n\nParameter Estimation Result:\n");
         summary.append("=====================================================================================\n\n")
-               .append("Parameter   Old Estimate      Old Std. Error    New Estimate      New Std. Error\n")
+               .append("Parameter  Old Estimate   Old Std-Error  New Estimate   New Std-Error  Relative Error\n")
                .append(theta).append("\n").append(omega).append("\n");
         if(oldOutput.analysis.equals("population"))             
             summary.append(sigma).append("\n");
          summary.append("=====================================================================================");                    
 
         return summary.toString();
+    }
+    
+    private static String setLength(String str)
+    {
+        if(str.length() > 14)
+            str = str.substring(0, 14);
+        return str;
+    }
+    
+    private static String getRelErr(String oldP, String newP)
+    {
+        return setLength(String.valueOf(Double.parseDouble(newP) / Double.parseDouble(oldP) - 1));
     }
     
     // This function return spaces.
