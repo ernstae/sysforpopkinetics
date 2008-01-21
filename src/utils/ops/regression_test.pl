@@ -268,7 +268,7 @@ for ('cerr', 'srun') {
 #	    push @args, "1e-3", "1e-4";
 #	    system(@args);
 	        if (system(@args) == 0) {
-		    print "\t\t\t\t\tOK";
+		    print "\tOK";
 	        }
 	        else {
                     print "\t\t\t\t\tFailed";
