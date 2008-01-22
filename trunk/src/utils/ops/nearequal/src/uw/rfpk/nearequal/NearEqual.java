@@ -33,9 +33,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
-import uw.rfpk.mda.nonmem.Utility;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 /**  This class defines static methods to check computational results in a new result.xml
  *   file against an old result.xml file in the sense of near-equal.  The MDA output 
