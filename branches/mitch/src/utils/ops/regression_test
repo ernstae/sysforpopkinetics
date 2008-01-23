@@ -1,0 +1,13 @@
+#!/bin/bash
+CONFIG_FILE=/usr/local/spk/ops/regression_test/config/regression_test.xml
+
+for arg in $*
+do
+	if [ "$arg" = "--parallel" ]
+	then
+		CONFIG_FILE=/usr/local/spk/ops/regression_test/config/regression_test_parallel.xml
+		break
+	fi
+done
+
+/usr/bin/perl /usr/local/bin/regression_test.pl --config-file=$CONFIG_FILE $*

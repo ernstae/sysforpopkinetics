@@ -1,0 +1,1615 @@
+%{
+/**
+ * @file explang.cpp
+ * This file is generated from the YACC (BISON) syntax analyzer 
+ * specification file, nonmem/explang.ypp, which defines the nm_parse() for NONMEM.
+ * @ingroup nonmem
+ */
+
+#include <iostream>
+#include <fstream>
+#include <string.h>
+#include <cassert>
+#include "../SymbolTable.h"
+#include "../SpkCompilerException.h"
+
+/**
+ * @var int gSpkExpErrors = 0
+ * The global counter for errors encountered during the expression parsing.
+ * 
+ * The expression lexical analyzier (nm_lex()) and the parser (nm_parse())
+ * increment this counter when they encounter syntax errors.
+ * The counter is initialized to zero at the beginning of run-time process.
+ */
+int gSpkExpErrors = 0;
+
+/**
+ * @var int gSpkExpLines = 0
+ * The global counter for lines that have been read so far during the expression parsing.
+ *
+ * The expression parser (nm_parse()) increments this counter.
+ *
+ * This counter is initialized to zero at the beginning of run-time process.
+ */
+int gSpkExpLines  = 0;	
+
+/**
+ * @var char* gSpkExpErrorMessages = 0
+ * The global placeholder for syntax error messages.
+ *
+ * The expression lexcal analyizer (nm_lex()) and the parser (nm_parse())
+ * store messages when they diagnose syntax errors.
+ * This pointer is initialized to NULL at the beginning of run-time process
+ * and it is the user's responsibly to allocate and deallocate 
+ * the memory.
+ */
+char * gSpkExpErrorMessages = 0;
+
+/**
+ * The global pointer to a FILE handler to which output is redirected.
+ */
+FILE * gSpkExpOutput;
+
+/**
+ * @var SymbolTable * gSpkExpSymbolTable
+ *
+ * The global symbol table.
+ *
+ * This pointer is initialized to NULL at the beginning of 
+ * run-time process and it is the user's responsibility
+ * to allocate and deallocate the memory.
+ *
+ * The names of variables that are considered System-variable
+ * (i.e. predefined/keyword) must be in the symbol table
+ * prior to a call.
+ *
+ * @note If the pointer is found to be pointing to NULL at
+ * the very beginning of parsing, nm_parse() will call
+ * nm_error() which in turn forces nm_parse() to return immediately with
+ * a non-zero value.
+ */
+SymbolTable * gSpkExpSymbolTable;
+
+
+/**
+ * @var bool gSpkIsTInRhs
+ *
+ * The global flag indicating as to whether a variable T appear in the right
+ * hand side of assignment statements.
+ *
+ */
+bool gSpkIsTInRhs = false;
+
+extern "C"{
+   /**
+    * This parser converts "algebraic expressions + control statements"
+    *  written in
+    * the NONMEM Abbriviated language to C++ language.
+    * The input expressions must be
+    * stored in an open readable file pointed by a FILE handler, @a nm_in.
+    * The generated C++ source code is appended to an open writable
+    * file pointed by a FILE handler, gSpkExpOut.
+    * output to a file pointed by yet another file handler, gSpkExpOutput.
+    * The grobal counter, gSpkExpErrors, shall be incremented
+    * as nm_parse() or nm_lex() encounters syntax errors.
+    * 
+    * @note The code for this function is generated from
+    * a YACC (BISON) specification file, explang.ypp.  
+    * 
+    * The source language allows only the following statements:
+    * - assignment
+    * - if conditional statement in the form of either if-assign or if-then-else
+    *
+    * The functions and operators it supports are:
+    * - abs, acos, asin,atan, atan2, cos, cosh, exp, log, log10, max, min, mod, sin sinh, sqrt, tan tanh
+    * - + (addition), - (subtraction), * (multiplication), / (division), ** (power)
+    *
+    * The primitive data types it supports are:
+    * - real (eq. float)
+    * - double real (eq. double)
+    * - integer (eq. int) for indexing arrays
+    * - logical (eq. bool)
+    *
+    * The types of data containers allowed are:
+    * - scalar
+    * - one dimensional array
+    * - two dimensional array (not supported as of 09/24/03)
+    *
+    * The methods to access array elements of a dimensional space are:
+    * - by constant scalar indexing
+    * - by providing constant start and end indeces (not supported as of 09/24/03)
+    * - by providing constant start and end indeces and a stride (not supported as of 09/24/03)
+    * (thus, for a vector, you have a(start:end:stride) and for a matrix, A(start:end:stride, start:end:stride).
+    *
+    */
+    int nm_parse(void);
+
+   /**
+    * The lexical analyzer for NONMEM Abbriviated code.
+    * The input string stream nm_lex() reads in is assumed to 
+    * be pointed by a FILE handler, @a nm_in.
+    *
+    * @note The code for this function is generated from
+    * a LEX (FLEX) specification file, lex_explang.l.
+    */
+    int nm_lex(void);
+
+   /**
+    * The file hander pointing to the input file to read in.  It must be open & readable.
+    */
+    //FILE * nm_in;
+
+    int nm_wrap();
+
+   /**
+    * The error handler used by nm_parse() when it finds an error.  
+    * Currently, it is only to display an error message and
+    * and return from nm_parse() with a value -1.
+    *
+    * @todo This error handler forces nm_parse() to immediately return.
+    * It probably want to do more than that.
+    *
+    */
+    int nm_error( char * err_message );
+
+   /**
+    * The handler used to terminate the parser. 
+    */
+    void nm_terminate( );
+  
+};
+
+int nm_wrap()
+{
+      return 1;
+}
+
+int nm_error( char * err_message )
+{ 
+  ++gSpkExpErrors;
+  assert( gSpkExpErrors != 0 );
+
+  char a_errors[256];
+  snprintf( a_errors, 256, "%d", gSpkExpErrors );
+  int len_error = strlen( a_errors );
+  char a_lines[256];
+  snprintf( a_lines,   256, "%d", gSpkExpLines );
+  int len_line  = strlen( a_lines );
+  int len_mess  = strlen( err_message );
+  int len_whole = len_error + len_line + len_mess + strlen( "!!! Error () at line : \n\t\n" );
+
+  char m[ len_whole + 1 ];
+  snprintf( m, len_whole, 
+           "!!! Error (%d) at line %d: \n\t%s\n", 
+           gSpkExpErrors, gSpkExpLines, err_message );
+
+  int len_original = ( gSpkExpErrorMessages != 0 ? strlen( gSpkExpErrorMessages ) : 0 );
+
+  if( gSpkExpErrorMessages == 0 )
+  {
+     int len =  ( SpkCompilerError::maxMessageLen() >= len_original+len_whole+1 ? 
+	SpkCompilerError::maxMessageLen() : len_original + len_whole + 1 );
+     gSpkExpErrorMessages = new char[ len ];
+     strcpy( gSpkExpErrorMessages, m );
+  }
+  else
+  {
+     char tmp[ len_original + 1 ];
+     strcpy( tmp, gSpkExpErrorMessages );
+     int len = ( SpkCompilerError::maxMessageLen() >= len_original+len_whole+1 ? 
+	SpkCompilerError::maxMessageLen() : len_original + len_whole + 1 );
+     gSpkExpErrorMessages = new char[ len ];
+     snprintf( gSpkExpErrorMessages, len, "%s%s", tmp, m );
+  }
+
+  return -1;
+}
+
+void nm_terminate( )
+{
+  fprintf( stderr, "The Expression Parser was terminated abnormally.\n" );
+  return;
+}
+namespace{
+   const char * const STR_TYPE     = "type";
+   const char * const STR_VALUE    = "value";
+   const char * const STR_NAME     = "name";
+   const char * const STR_OPERATOR = "operator";
+   const char * const STR_OPERAND  = "operand";
+   const char * const STR_SIGN     = "sign";
+   const char * const STR_ROWS     = "rows";
+   const char * const STR_COLS     = "cols";
+   const char * const STR_LHS      = "lhs";
+   const char * const STR_RHS      = "rhs";
+   const char * const STR_BINARY   = "binary";
+   const char * const STR_UNARY    = "unary";
+   const char * const STR_FUNCTION = "function";
+   const char * const STR_ARGC     = "argc";
+   const char * const STR_STRUCTURE= "structure";
+   const char * const STR_INDEX    = "index";
+   const char * const STR_START    = "start";
+   const char * const STR_END      = "end";
+   const char * const STR_STRIDE   = "stride";
+   const char * const STR_CONSTANT = "constant";
+   const char * const STR_TRUE     = "true";
+   const char * const STR_FALSE    = "false";
+   const char * const STR_COMMENT  = "comment";
+   const char * const STR_EXIT     = "exit";
+
+   const char * const STR_ASSIGN   = "assign";
+   const char * const STR_ARRAY_ELEMENT_LIST = "array_element_list";
+   const char * const STR_VARIABLE = "variable";
+   const char * const STR_PRIORITIZED = "prioritized";
+   const char * const STR_IF       = "if";
+   const char * const STR_ELSE     = "else";
+   const char * const STR_THEN     = "then";
+   const char * const STR_CONDITION= "condition";
+   const char * const STR_BLOCK    = "block";
+
+   const char * const STR_ABS      = "abs";
+   const char * const STR_ACOS     = "acos";
+   const char * const STR_ASIN     = "asin";
+   const char * const STR_ATAN     = "atan";
+   const char * const STR_ATAN2    = "atan2";
+   const char * const STR_COS      = "cos";
+   const char * const STR_COSH     = "cosh";
+   const char * const STR_EXP      = "exp";
+   const char * const STR_LOG      = "log";
+   const char * const STR_LOG10    = "log10";
+   const char * const STR_MAX      = "max";
+   const char * const STR_MIN      = "min";
+   const char * const STR_MOD      = "mod";
+   const char * const STR_SIN      = "sin";
+   const char * const STR_SINH     = "sinh";
+   const char * const STR_SQRT     = "sqrt";
+   const char * const STR_TAN      = "tan";
+   const char * const STR_TANH     = "tanh";
+
+   const char * const STR_LININTERP= "lininterp";
+
+   const char * const STR_ADD      = "add";
+   const char * const STR_SUBTRACT = "subtract";
+   const char * const STR_MULTIPLY = "multiply";
+   const char * const STR_DIVIDE   = "divide";
+   const char * const STR_POWER    = "power";
+   const char * const STR_MINUS    = "minus";
+   const char * const STR_PLUS     = "plus";
+
+   const char * const STR_EQ       = "eq";
+   const char * const STR_NE       = "ne";
+   const char * const STR_LT       = "lt";  
+   const char * const STR_LE       = "le";
+   const char * const STR_GT       = "gt";
+   const char * const STR_GE       = "ge";
+   const char * const STR_NXOR     = "nxor";
+   const char * const STR_XOR      = "xor";
+   const char * const STR_OR       = "or";
+   const char * const STR_AND      = "and";
+   const char * const STR_NEGATE   = "negate";
+
+   const char * const STR_SEMICOLON= ";";
+   const char * const STR_NEWLINE  = "\n";
+   const char * const STR_TAB      = "\t";
+
+   bool inRHS = false;
+};
+%}
+
+%union{
+  /**
+   * A type of those tokens which return a character.
+   */
+  char   ch;
+
+  /**
+   * A type of those tokens which return a character string.
+   */
+  char*  c_str;
+}
+
+//==========================================
+// Char* type terminals
+//==========================================
+%token <c_str>  NAME 
+%token <c_str>  OPEN_ARRAY_ELEM_LIST
+%token <c_str>  CLOSE_ARRAY_ELEM_LIST
+%token <c_str>  POWER_OP
+%token <c_str>  DEFINED_UNARY_FUNCTION
+%token <c_str>  DEFINED_BINARY_FUNCTION
+%token <c_str>  DIGIT_STRING
+%token <c_str>  ENG_NOTATION
+%token <c_str>  SIGNIFICAND
+%token <c_str>  COMMENT
+
+//==========================================
+// char type terminals
+//==========================================
+%token <ch>   EQ_OP
+%token <ch>   NE_OP
+%token <ch>   LT_OP
+%token <ch>   LE_OP
+%token <ch>   GT_OP
+%token <ch>   GE_OP
+%token <ch>   AND_OP
+%token <ch>   OR_OP
+%token <ch>   NOT_OP
+%token <ch>   EQV_OP
+%token <ch>   NEQV_OP
+%token <ch>   EXIT
+%token <ch>   IF
+%token <ch>   THEN
+%token <ch>   ELSE
+%token <ch>   ENDIF
+%token <ch>   TRUE FALSE
+%token <ch>   EOF_MARKER
+
+//==========================================
+// char* type non-terminals
+//==========================================
+%type  <c_str> input
+%type  <c_str> statement
+%type  <c_str> if_stmt_or_block
+%type  <c_str> if_construct
+%type  <c_str> if_then_stmt
+%type  <c_str> if_then_clause
+%type  <c_str> else_clause
+%type  <c_str> block
+%type  <c_str> line
+%type  <c_str> assignment_stmt
+%type  <c_str> variable
+%type  <c_str> whole_object
+%type  <c_str> subobject
+%type  <c_str> literal_constant
+%type  <c_str> int_literal_constant 
+%type  <c_str> real_literal_constant
+%type  <c_str> logical_constant
+%type  <c_str> int_expr 
+%type  <c_str> start_subscript 
+%type  <c_str> end_subscript 
+%type  <c_str> stride
+%type  <c_str> slice
+%type  <c_str> vector_section_variable 
+%type  <c_str> matrix_section_variable
+%type  <c_str> relational_expr
+%type  <c_str> logical_expr
+%type  <c_str> if_stmt 
+%type  <c_str> expr
+%type  <c_str> arithmatic_expr
+%type  <c_str> primary 
+%type  <c_str> array_constructor 
+%type  <c_str> array_element_list 
+%type  <c_str> function_ref
+%type  <c_str> exit_stmt
+
+//====================================================
+// Terminals that have precedence and associativity
+// (compliant to
+//  ISO/IEC 1539-1:1997(E) 7.4 Preceden of operators)
+// 
+// Precedence: The order in which the following
+// operators appear is in the assending 
+// order (lowest to highest).
+//
+// Associativity: The assignment (=) and exponential
+// operators are right associative.  
+//     x = y = z   is same as x = (y = z)
+//     x ** y ** z is same as x ** (y ** z)
+// The binary arithmatic operators (*/+-) are left.
+//     a + b + c   is same as (a + b) + c
+// 
+//====================================================
+%right '='
+%nonassoc EQV_OP NEQV_OP
+%nonassoc OR_OP
+%nonassoc AND_OP
+%nonassoc NOT_OP
+%nonassoc EQ_OP NE_OP LT_OP LE_OP GT_OP GE_OP
+%left '+' '-'
+%nonassoc SIGN
+%left '*' '/'
+%right POWER_OP
+
+//==========================================
+// The start non-terminal
+//==========================================
+%start input
+
+%%
+//==================================================================================
+//
+// input
+//
+// This is the fundamental unit that this parser accepts.
+// An input becomes the root of the parse tree and
+// can be composed of any number of *line*s (each of which is an assignment statement)
+// or if_stmt_or_block (which is either an if-stmt or if-construct).
+//
+// Only at this level, a line or an if_stmt_or_block is printed out to the
+// file pointed by gSpkExpOutput with a newline character at the end of 
+// the statement/block.
+//
+//==================================================================================*/
+input: 
+//
+// A unit can be empty.
+// Return NULL.
+//
+/* empty */ {
+
+gSpkExpLines  = 0;
+gSpkExpErrors = 0;
+   $$ = NULL;
+}
+| 
+//
+// A unit can contain lines.
+// Unless the left hand side, "input", is empty, concatinate
+// the right hand side, "line", which is terminated with a new line character.
+// If "input" is empty, just return the "line".
+//
+input line {
+  
+//   printf( "%s", $2 ); 
+   fprintf( gSpkExpOutput, "%s", $2 );
+   delete $2;
+   $$ = NULL;
+}
+|
+//
+// A unit can contain if-constructs (if-then-else).
+// Unless the left hand side, "input", is empty, concatinate
+// the right hand side, "if_stmt_or_block", which is termianted
+// with a new line character.
+// If "input" is empty, just return the block.
+// 
+input if_stmt_or_block {
+
+//   printf( "%s", $2 );
+   fprintf( gSpkExpOutput, "%s", $2 );
+   delete $2;
+   $$ = NULL;
+}
+|
+//
+// End of file detected.
+//
+input EOF_MARKER {
+
+  YYACCEPT;
+}
+
+;
+
+//==================================================================================
+//
+// if_stmt_or_block
+//
+// Either an if statement or a set of if-then-else clauses.
+// One might argue an if statement is a statement, therefore it should be
+// part of "statement" non-terminal. It is true.  However, Bison, wich uses only 
+// a single lookahead token, cannot distinguish if-stmt and if-construct since
+// both begin with the IF token.  This is to trick Bison so that it won't 
+// produce a shift/reduce conflict.
+//
+//==================================================================================
+if_stmt_or_block :
+if_stmt {
+   
+   $$ = $1;
+}
+| if_construct 
+{
+   $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// line
+//
+// A sequence of (may be empty) strings terminated by a new line character ('\n').
+// When a legal "line" is detected, the line count is incremented by one.
+//
+//==================================================================================
+line : 
+
+//
+// An empty line.  
+//  
+'\n'  { 
+  gSpkExpLines++; 
+  char buf[2];
+  sprintf( buf, "\n" );
+  $$ = (char*)strdup(buf);
+} 
+| 
+//
+// A comment only line.
+// Replace the comment marker with C++ equivalent.
+// Increment the line counter and return the comment terminated
+// with a new line character.
+//
+COMMENT '\n' {
+  gSpkExpLines++;
+  
+  char buf[ strlen( $1 ) + strlen( "// " ) + strlen( STR_NEWLINE ) + 1 ];
+  sprintf( buf, "// %s\n", $1 );
+  delete $1;
+  $$ = (char*)strdup(buf);
+}
+|
+statement '\n' {
+  gSpkExpLines++;
+  char buf[ strlen( $1 ) + strlen( STR_NEWLINE ) + 1 ];
+  sprintf( buf, "%s\n", $1 );
+  delete $1;
+  $$ = (char*)strdup(buf);
+}
+|
+//
+// A statement followed by a comment.
+// Replace the comment marker in COMMENT and concatinate
+// it to "statement", and return the string.
+// 
+statement COMMENT '\n' {
+
+  gSpkExpLines++;
+
+  char buf[ strlen( $1 ) + strlen( STR_TAB ) + strlen( "// " ) 
+          + strlen( STR_NEWLINE ) + strlen( $2 ) + 1 ];
+  sprintf( buf, "%s\t// %s\n", $1, $2 );
+  delete $1;
+  delete $2;
+  $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// statement
+//
+// A statement may be an assignement_stmt, if_stmt or exit_stmt.
+//
+//==================================================================================
+statement : 
+assignment_stmt {
+  $$ = $1;
+}
+|
+exit_stmt {
+
+  char buf[ strlen( $1 ) + 1 ];
+  sprintf( buf, "%s;", $1 );
+  delete $1;
+  $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// exit_stmt
+//
+// An exit_stmt has three forms; 1) the terminal EXIT only, 2) the terminal
+// followed by a number and 3) the terminal followed by two numbers.
+//
+//
+// The first number is a PRED exit code (default 1 or 2) and
+// the second number is the user error code, which must be 0-999.  The default is 0.
+// 
+// Attention!  The NONMEM abbriviated code's EXIT means something different from
+// that of Fortran.
+//
+// NONMEM's EXIT statement shall cause an immediate exit from the routine,
+// and, if PREDPP is being used, an immediate exit from PREDPP.  
+// It is typically used in an IF statement to avoid computing further.
+// (see p79, NONMEM User's Guide Part VIII for complete specification)
+//
+// This construct produces code like:
+//
+//   nonmem_exit( int pred_exit_code, int user_exit_code );
+//
+// The above function, nonmem_exit(), must be defined in the domain.
+//
+//==================================================================================
+exit_stmt :
+EXIT {
+   
+   char *buf = "nonmem_exit( 1, 0 );";
+   $$ = (char*)strdup(buf);
+}
+|
+EXIT DIGIT_STRING {
+
+   char buf[ strlen( $2 ) + strlen("nonmem_exit( , 0 );") + 1 ];
+   sprintf( buf, "nonmem_exit( %s, 0 );", $2 );
+   delete $2;
+   $$ = (char*)strdup(buf);
+}
+|
+EXIT DIGIT_STRING DIGIT_STRING {
+
+   char buf[ strlen( $2 ) + strlen( $3 ) + strlen("nonmem_exit( ,  );") + 1 ];
+   sprintf( buf, "nonmem_exit( %s, %s );", $2, $3 );
+   delete $2;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// assignment_stmt
+//
+//==================================================================================
+assignment_stmt :
+{inRHS=false;} variable {inRHS=false;} '=' {inRHS=true;} expr {inRHS=false;} {
+   
+   if( strcmp( $2, "SIGMA") == 0 ||
+       strcmp( $2, "OMEGA") == 0 ||
+       strcmp( $2, "THETA") == 0 ||
+       strcmp( $2, "ETA") == 0 ||
+       strcmp( $2, "EPS") == 0 )
+   {
+      char buf[128];
+      sprintf( buf, "%s is a reserved word.", $2 );
+      nm_error( buf );
+   }
+
+   char buf[ strlen($2) + strlen(" = ") + strlen($6) + strlen(";") + 1 ];
+   sprintf( buf, "%s = %s;", $2, $6 );
+   delete $2;
+   delete $6;
+   $$ = (char*)strdup(buf);
+
+}
+;
+
+//==================================================================================
+//
+// variable
+//
+// A variable is a named object that may represents a whole object or
+// subset of a whole object.
+//
+//==================================================================================
+variable :
+whole_object { 
+
+  $$ = $1; 
+} // this includes scalar objects and whole array (vector/matrix) objects
+|
+subobject {
+
+  $$ = $1;
+}
+;
+whole_object :
+NAME { 
+ if( gSpkExpSymbolTable->find( $1 ) == Symbol::empty() )
+  {
+     if( inRHS )
+     {
+        char buf[128];
+        sprintf( buf, "%s is not defined in the symbol table.", $1 );
+        nm_error( buf );
+     }
+     else
+     {
+        // Variables that appear on the left hand side of assignment
+        // statements are either user defined or system defined.
+        // System defined variables are assumed to have been registered already.
+        gSpkExpSymbolTable->insertScalar( $1, Symbol::USER, Symbol::READWRITE );
+     }
+  }
+  else
+  {
+    if( inRHS )
+    {
+       if ( strcmp( $1, "T" ) == 0 )
+          gSpkIsTInRhs = true;
+    }
+  }
+  $$ = $1;
+}
+;
+
+subobject :
+vector_section_variable {
+  $$ = $1;
+}
+|
+matrix_section_variable {
+  $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// vector_section_variable
+//
+// A variable that is a subset of a vector.
+//
+// NOTE!!!  Indexing is only allowed by arithmatic expressions for now,
+//          No valarray slice or gslice!!!
+// 
+//==================================================================================
+vector_section_variable :
+NAME '(' DIGIT_STRING ')' {
+   if( !inRHS && strcmp( $1, "DADT") != 0 && strcmp( $1, "P") != 0 )
+   {
+      char buf[128];
+      sprintf( buf, "%s(%s) cannot be in the left handside of an equation.", $1, $3 );
+      nm_error( buf );
+   }
+   else if( inRHS && strcmp( $1, "THETA") != 0 &&
+       strcmp( $1, "ETA") != 0 &&
+       strcmp( $1, "EPS") != 0 &&
+       strcmp( $1, "P") != 0 &&
+       strcmp( $1, "A") != 0 &&
+       strcmp( $1, "DADT") != 0 )
+   {
+      char buf[128];
+      sprintf( buf, "%s is not a predefined parameter name.", $1 );
+      nm_error( buf );
+   }
+   else if( atoi($3) == 0 )
+   {
+      char buf[128];
+      sprintf( buf, "%s cannot have a zero or negative index.", $1 );
+      nm_error( buf );
+   }
+
+   char buf[ strlen( $1 ) + strlen( "[ (  ) - 1 ]" ) + 1 ];
+   sprintf( buf, "%s[ ( %s ) - 1 ]", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+NAME '(' slice ')' { 
+   if( !inRHS && strcmp( $1, "DADT") != 0 && strcmp( $1, "P") != 0 )
+   {
+      char buf[128];
+      sprintf( buf, "%s(%s) cannot be in the left handside of an equation.", $1, $3 );
+      nm_error( buf );
+   }
+   else if( inRHS && strcmp( $1, "THETA") != 0 &&
+       strcmp( $1, "ETA") != 0 &&
+       strcmp( $1, "EPS") != 0 &&
+       strcmp( $1, "P") != 0 &&
+       strcmp( $1, "A") != 0 &&
+       strcmp( $1, "DADT") != 0 )
+   {
+      char buf[128];
+      sprintf( buf, "%s is not a predefined parameter name.", $1 );
+      nm_error( buf );
+   }
+   else if( gSpkExpSymbolTable->find( $1 ) == Symbol::empty() )
+   {
+      if( inRHS )
+      {
+         char buf[128];
+         sprintf( buf, "%s is not defined in the symbol table.", $1 );
+         nm_error( buf );
+      }
+      else
+      {
+	// As of August 24, 2005, users are not allowed to use/create
+        // arbitrary vector variables.  All vector variables appearing on
+        // the left hand side must be pre-registered by the caller.
+        //gSpkExpSymbolTable->insertVector( $1, Symbol::USER, Symbol::READWRITE, 1 );
+    	char err[128];
+      	sprintf( err, "%s is a vector variable.  All vector variables need to be pre-registered in the symbol table!\n", $1 );
+      	nm_error( err );
+      }
+   }
+
+   //
+   // Assumption: $3 is an arithmatic expression or a mere integer for now.
+   //
+   char buf[ strlen( $1 ) + strlen( "[ (  ) - 1 ]" ) + 1 ];
+   sprintf( buf, "%s[ ( %s ) - 1 ]", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// matrix_section_variable
+//
+// A variable that is a subset of a matrix.
+// 
+// NOTE!!!  Not supported for now!
+//==================================================================================
+matrix_section_variable :
+NAME '(' slice ',' slice ')' {
+
+      char buf[128];
+      sprintf( buf, "%s is in wrong format.", $1 );
+      nm_error( buf );
+
+   // NOT SUPPORTED YET!
+   $$ = (char*)strdup("not supported");
+}
+;
+
+
+//==================================================================================
+//
+// slice
+//
+// A slice is a tree describing how to access an array (both vector and matrix).
+//
+//==================================================================================
+slice :
+int_expr { 
+
+   $$ = $1;
+}
+|
+start_subscript ':' end_subscript { 
+
+      char buf[128];
+      sprintf( buf, "not supported");
+      nm_error( buf );
+
+   // NOT SUPPORTED YET!
+   $$ = (char*)strdup("not supported");
+}
+|
+start_subscript ':' end_subscript ':' stride {
+
+      char buf[128];
+      sprintf( buf, "not supported");
+      nm_error( buf );
+
+   // NOT SUPPORTED YET!
+   $$ = (char*)strdup("not supported");
+}
+;
+
+//==================================================================================
+//
+// start_subscript
+//
+// A start_subscript is an int_expr.
+//
+//==================================================================================
+start_subscript :
+int_expr {
+ 
+  $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// end_subscript
+//
+// An end_subscript is an int_expr.
+//
+//==================================================================================
+end_subscript :
+int_expr {
+
+  $$ = $1;
+}
+;
+
+//==================================================================================
+// 
+// stride
+//
+// A stride is an int_expr.
+//
+//==================================================================================
+stride :
+int_expr {
+
+  $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// int_expr
+//
+// An int_expr is an expression of type integer.
+//
+//==================================================================================
+int_expr : 
+arithmatic_expr {
+
+  $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// primary
+//
+// A primary object is one of the followings:
+//
+// 1) literal_constant (ex. 1234, 1234.56)
+// 2) variable (ex. A, A(i:j), A(i:j:h, i:j:h))
+// 3) array_constructor (ex. (/1,2,3/))
+// 4) function_ref (ex. log(a))
+// 5) parenthesized expression (i.e. ( expr ) )
+//
+// In the form (5), the expression tree is appended as the only child of 
+// "prioritized" tree which is going to be returned by this production.
+//
+//==================================================================================
+primary :
+literal_constant { 
+
+   $$ = $1; 
+}
+|
+variable { 
+
+   $$ = $1; 
+}
+|
+array_constructor { 
+
+      char buf[128];
+      sprintf( buf, "not supported");
+      nm_error( buf );
+
+   $$ = (char*)strdup("not supported"); 
+}
+|
+function_ref {
+ 
+   $$ = $1; 
+}
+|
+'(' expr ')' { 
+
+   char buf[ strlen( $2 ) + strlen( "(  )" ) + 1 ];
+   sprintf( buf, "( %s )", $2 );
+   delete $2;
+   $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// expr
+//
+// An "expr" is a logical_expr.
+//
+//==================================================================================
+expr :
+logical_expr { 
+  $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// if_stmt
+//
+//
+//==================================================================================
+if_stmt :
+IF '(' logical_expr ')' assignment_stmt { 
+
+   //
+   // A logical_expr can be an arithmatic_expr by syntactic rule
+   // but here we expect only an expression that evaluates to true or false.
+   // FORTRAN does not treat a numeric value (like 0 or 1) as a logical value.
+   // So, we kicks out arithmatic expressions here.
+   // 
+   char buf[ strlen( "if(  ){}" ) + strlen( STR_NEWLINE ) * 3 + strlen( $3 ) + strlen( $5 ) + 1 ];
+   sprintf( buf, "if( %s )\n{\n%s\n}", $3, $5 );
+   delete $3;
+   delete $5;
+   $$ = (char*)strdup(buf);
+
+}
+|
+IF '(' logical_expr ')' if_stmt { 
+
+   char buf[ strlen( "if(  ){}" ) + strlen( STR_NEWLINE ) * 3 + strlen( $3 ) + strlen( $5 ) + 1 ];
+   sprintf( buf, "if( %s )\n{\n%s\n}", $3, $5 );
+   delete $3;
+   delete $5;
+   $$ = (char*)strdup(buf);
+
+}
+;
+//==================================================================================
+//
+// if_construct
+//
+//==================================================================================
+
+if_construct :
+if_then_clause ENDIF '\n' { 
+  gSpkExpLines++;
+  char buf[ strlen( $1 ) + strlen( STR_NEWLINE ) + 1 ];
+  sprintf( buf, "%s\n", $1 );
+  delete $1;
+  $$ = (char*)strdup(buf); 
+} 
+
+| if_then_clause else_clause ENDIF '\n' {
+  gSpkExpLines++;
+  char buf[ strlen( $1 ) + strlen( $2 ) + strlen( STR_NEWLINE) + 1 ];
+  sprintf( buf, "%s%s\n", $1, $2 );
+  delete $1;
+  delete $2;
+  $$ = (char*)strdup(buf);
+}
+;
+
+if_then_clause :
+if_then_stmt '\n' block {
+  gSpkExpLines++;
+  char buf[ strlen( $1 ) + strlen( "{}" ) + strlen( STR_NEWLINE ) * 2 + strlen( $3 ) + 1 ];
+  sprintf( buf, "%s\n{\n%s}", $1, $3 );
+  delete $1;
+  delete $3;
+
+  $$ = (char*)strdup(buf);
+}
+;
+else_clause :
+ELSE '\n' block {
+  gSpkExpLines++;
+  char buf[ strlen( "else" ) + strlen( STR_NEWLINE ) * 3 + strlen( "{}" ) + strlen( $3 ) + 1 ];
+  sprintf( buf, "\nelse\n{\n%s}", $3 );
+  delete $3;
+  $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// if_then_stmt
+//
+// An if_then_stmt is a portion of if_construct that extracts and returns 
+// the conditional statement.
+//
+//==================================================================================
+if_then_stmt :
+IF '(' logical_expr ')' THEN { 
+  //
+  // A logical_expr can be an arithmatic_expr by syntactic rule
+  // but here we expect only an expression that evaluates to true or false.
+  // FORTRAN does not treat a numeric value (like 0 or 1) as a logical value.
+  // So, we kicks out arithmatic expressions here.
+  // 
+  char buf[ strlen( "if(  )" ) + strlen( $3 ) + 1 ];
+  sprintf( buf, "if( %s )", $3 );
+  delete $3;
+  $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// block
+//
+// A block is a set of expressions and blank lines. it can be made of only blanks.
+//
+//==================================================================================
+block :
+/* empty */
+{ 
+   $$ = NULL;
+}
+|
+block line {
+
+   if( $1 == NULL )
+   {
+      char buf[ strlen( $2 ) + 1 ];
+      sprintf( buf, "%s", $2 );
+      delete $2; 
+      $$ = (char*)strdup(buf);
+   }	
+   else
+   {
+      char buf[ strlen( $1 ) + strlen( $2 ) + 1 ];
+      sprintf( buf, "%s%s", $1, $2 );
+      delete $1;
+      delete $2; 
+      $$ = (char*)strdup(buf);
+   }
+}
+|
+block if_stmt {
+
+   if( $1 == NULL )
+   {
+      char buf[ strlen( $2 ) + 1 ];
+      sprintf( buf, "%s", $2 );
+      delete $2; 
+      $$ = (char*)strdup(buf);
+   }	
+   else
+   {
+      char buf[ strlen( $1 ) + strlen( $2 ) + 1 ];
+      sprintf( buf, "%s%s", $1, $2 );
+      delete $1;
+      delete $2; 
+      $$ = (char*)strdup(buf);
+   }
+}
+|
+block if_construct {
+
+   if( $1 == NULL )
+   {
+      char buf[ strlen( $2 ) + 1 ];
+      sprintf( buf, "%s", $2 );
+      delete $2; 
+      $$ = (char*)strdup(buf);
+   }	
+   else
+   {
+      char buf[ strlen( $1 ) + strlen( $2 ) + 1 ];
+      sprintf( buf, "%s%s", $1, $2 );
+      delete $1;
+      delete $2; 
+      $$ = (char*)strdup(buf);
+   }
+}
+;
+
+//==================================================================================
+//
+// literal_constant
+//
+// A literal_constant can be either integer type or real type.
+//
+//==================================================================================
+literal_constant :
+int_literal_constant  { 
+  $$ = $1; 
+}
+|
+real_literal_constant { 
+  $$ = $1; 
+}
+;
+
+//==================================================================================
+//
+// int_literal_constant
+//
+// An int_literal_constant is a literal constant (ex. 1234) of type integer.
+//
+//==================================================================================
+int_literal_constant :
+DIGIT_STRING { 
+
+  //
+  // This is an integer constant.  
+  //
+  $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// real_literal_constant
+//
+// An real_literal_constant is a literal constant (ex. 12.34) of type real.
+//
+//==================================================================================
+real_literal_constant :
+SIGNIFICAND { 
+  //
+  // This is a real constant in the form of "0.0".
+  //
+  $$ = $1;
+}
+|
+ENG_NOTATION { 
+  // 
+  // This is a real constant in the form of "0.0E0"
+  //
+  $$ = $1;
+}
+;
+
+//==================================================================================
+//
+// logical_constant
+//
+// A logical_constant is a literal constant of type logical (boolean).
+// It has two values: TRUE or FALSE.
+//
+//==================================================================================
+logical_constant :
+TRUE { 
+  //
+  // This is a boolean value "true".
+  //  
+  $$ = (char*)strdup("true");
+}
+|
+FALSE {
+  //
+  // This is a boolean value "false".
+  //
+  $$ = (char*)strdup("false");
+}
+;
+
+
+//==================================================================================
+//
+// array_constructor
+//
+// An array_constructor is a list of array initials enclosed by "(/" and "/)".
+//
+//==================================================================================
+array_constructor :
+OPEN_ARRAY_ELEM_LIST array_element_list CLOSE_ARRAY_ELEM_LIST {
+  
+      char buf[128];
+      sprintf( buf, "not supported");
+      nm_error( buf );
+
+  // NOT SUPPORTED YET!
+  $$ = (char*)strdup("not supported");  
+}
+;
+
+//==================================================================================
+//
+// array_element_list
+//
+// An array_element_list is a list of values or expressions that initialize
+// an array.  
+// 
+//==================================================================================
+array_element_list :
+expr {
+
+      char buf[128];
+      sprintf( buf, "not supported");
+      nm_error( buf );
+
+   // NOT SUPPORTED YET!
+   $$ = (char*)strdup("not supported");
+}
+|
+array_element_list ',' expr {
+
+      char buf[128];
+      sprintf( buf, "not supported");
+      nm_error( buf );
+
+   // NOT SUPPORTED YET!
+   $$ = (char*)strdup("not supported");
+}
+;
+
+//==================================================================================
+//
+// function_ref
+//
+// A function_ref is a reference to an existing function.
+// NONMEM abbriviated code supports only sqrt, exp, log and log10.
+// SPK Compiler will support the following extra functions:
+//   abs, acos, asin, atan, atan2, cos, cosh, exp, log, log10, max, min
+//   mod, sin sinh, sqrt, tan tanh
+// Plus, a binary function:
+//   lininterp
+//
+//==================================================================================
+function_ref :
+DEFINED_UNARY_FUNCTION '(' arithmatic_expr ')' { 
+
+   //
+   // allocate for the longest string.
+   //
+   int n = strlen( $1 ); 
+   char buf[ n + strlen( "(  )" ) + strlen( $3 ) + 1 ];
+   char lowercase[ n + 1 ];
+   strcpy( lowercase, $1 );
+   for( int i=0; i<n; i++ )
+      lowercase[ i ] = tolower( lowercase[i] );
+
+   if( strcmp( lowercase, STR_LOG ) == 0 )
+       sprintf( buf, "log( %s )",   $3 );
+   else if( strcmp( lowercase, STR_LOG10 ) == 0 )
+       sprintf( buf, "log10( %s )", $3 );
+   else if( strcmp( lowercase, STR_EXP ) == 0 )
+       sprintf( buf, "exp( %s )",   $3 );
+   else if( strcmp( lowercase, STR_SQRT ) == 0 )
+       sprintf( buf, "sqrt( %s )",  $3 );
+   else if( strcmp( lowercase, STR_SIN ) == 0 )
+       sprintf( buf, "sin( %s )",  $3 );
+   else if( strcmp( lowercase, STR_COS ) == 0 )
+       sprintf( buf, "cos( %s )",  $3 );
+
+   else if( strcmp( lowercase, STR_ABS ) == 0 )
+       sprintf( buf, "abs( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ACOS ) == 0 )
+       sprintf( buf, "acos( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ASIN ) == 0 )
+       sprintf( buf, "asin( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ATAN ) == 0 )
+       sprintf( buf, "atan( %s )",  $3 );
+   else if( strcmp( lowercase, STR_ATAN2 ) == 0 )
+       sprintf( buf, "atan2( %s )",  $3 );
+   else if( strcmp( lowercase, STR_COSH ) == 0 )
+       sprintf( buf, "cosh( %s )",  $3 );
+   else if( strcmp( lowercase, STR_MAX ) == 0 )
+       sprintf( buf, "max( %s )",  $3 );
+   else if( strcmp( lowercase, STR_MIN ) == 0 )
+       sprintf( buf, "min( %s )",  $3 );
+   else if( strcmp( lowercase, STR_MOD ) == 0 )
+       sprintf( buf, "mod( %s )",  $3 );
+   else if( strcmp( lowercase, STR_SINH ) == 0 )
+       sprintf( buf, "sinh( %s )",  $3 );
+   else if( strcmp( lowercase, STR_TAN ) == 0 )
+       sprintf( buf, "tan( %s )",  $3 );
+   else if( strcmp( lowercase, STR_TANH ) == 0 )
+       sprintf( buf, "tanh( %s )",  $3 );
+   else if( strcmp( lowercase, STR_LININTERP ) == 0 )
+       sprintf( buf, "lininterp( \"%s\" )",  $3 );
+   else
+   {
+      char err[128];
+      sprintf( err, "%s is not a supported operation!\n", lowercase );
+      nm_error( err );
+   }
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+DEFINED_BINARY_FUNCTION '(' variable ',' variable ')' {
+
+   int n = strlen( $1 ); 
+   char buf[ n + strlen( "(  )" ) + strlen( $3 ) + 1 ];
+   char lowercase[ n + 1 ];
+   strcpy( lowercase, $1 );
+   for( int i=0; i<n; i++ )
+   lowercase[ i ] = tolower( lowercase[i] );
+
+   char err[128];
+   sprintf( err, "%s is not a supported operation!\n", lowercase );
+   nm_error( err );
+
+   delete $3;
+   delete $5;
+   $$ = (char*)strdup(buf);
+}
+;
+
+//==================================================================================
+//
+// arithmatic_expr
+//
+// An arithmatic_expr is an expression that evalutes to a numerical value.
+// 
+// The precedence is 
+//
+// 4) a + b (addition),  a - b (subtraction)
+// 3) +a (plus), -a (minus)
+// 2) a * b (multiplication), a / b (division)
+// 1) a ** b (power).
+// 
+//==================================================================================
+arithmatic_expr :
+arithmatic_expr '+' arithmatic_expr {
+
+   char buf[ strlen( $1 ) + strlen( " + " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s + %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+arithmatic_expr '-' arithmatic_expr { 
+
+   char buf[ strlen( $1 ) + strlen( " - " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s - %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+'-' arithmatic_expr %prec SIGN {
+
+   char buf[ strlen( "-" ) + strlen( $2 ) + 1 ];
+   sprintf( buf, "-%s", $2 );
+   delete $2;
+   $$ = (char*)strdup(buf);
+}
+|
+'+' arithmatic_expr %prec SIGN {
+
+   char buf[ strlen( "+" ) + strlen( $2 ) + 1 ];
+   sprintf( buf, "+%s", $2 );
+   delete $2;
+
+   $$ = (char*)strdup(buf);
+}
+|
+arithmatic_expr '*' arithmatic_expr {
+
+   char buf[ strlen( $1 ) + strlen( " * " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s * %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+arithmatic_expr '/' arithmatic_expr {
+
+   char buf[ strlen( $1 ) + strlen( " / " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s / %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+arithmatic_expr POWER_OP arithmatic_expr {
+
+   char buf[ strlen( "pow( ,  )" ) + strlen( $1 ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "pow( %s, %s )", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+primary {
+   $$ = $1; 
+}
+;
+
+//==================================================================================
+//
+// relational_expr
+//
+// A relational_expr is an operator that compares the magnitudes or quantities of
+// lhs and rhs and evaluates to true or false.
+//
+// Although a relational_expr, by syntactic rule, accepts an appearance of 
+// arithmatic_expr by itself, a numerical value resulted from evaluating an 
+// arithmatic expression, by FORTRAN's specification, is NOT interpreted 
+// as true or false at all.  So, the clients of this production should
+// check the type of the expression when necessarily.
+//  
+//==================================================================================
+relational_expr :
+relational_expr EQ_OP relational_expr {
+
+   char buf[ strlen( $1 ) + strlen( " == " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s == %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+relational_expr NE_OP relational_expr { 
+
+   char buf[ strlen( $1 ) + strlen( " != " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s != %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+relational_expr LT_OP relational_expr { 
+
+   char buf[ strlen( $1 ) + strlen( " < " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s < %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+relational_expr LE_OP relational_expr {
+
+   char buf[ strlen( $1 ) + strlen( " <= " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s <= %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+relational_expr GT_OP relational_expr {
+
+   char buf[ strlen( $1 ) + strlen( " > " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s > %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+relational_expr GE_OP relational_expr {
+
+   char buf[ strlen( $1 ) + strlen( " >= " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s >= %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+arithmatic_expr {
+  $$ = $1;
+}
+|
+logical_constant { 
+  $$ = $1; 
+}
+;
+
+//==================================================================================
+//
+// logical_expr
+//
+// A logical_expr is an operator that computes logical expressions.
+// The operand(s) of such an operator must evaluete to true or false
+// and the operator further evaluates to true or false.
+//
+//
+// Although a logical_expr, by syntactic rule, accepts an appearance of 
+// arithmatic_expr by itself, a numerical value resulted from evaluating an 
+// arithmatic expression, by FORTRAN's specification, is NOT interpreted 
+// as true or false at all.  So, the clients of this production should
+// check the type of the expression when necessarily.
+// 
+//==================================================================================
+logical_expr :
+logical_expr EQV_OP logical_expr {
+
+   char buf[ strlen( $1 ) + strlen( " == " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s == %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+logical_expr NEQV_OP logical_expr {
+
+   char buf[ strlen( $1 ) + strlen( " != " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s != %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+logical_expr OR_OP logical_expr {
+
+   char buf[ strlen( $1 ) + strlen( " || " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s || %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+logical_expr AND_OP logical_expr {
+
+   char buf[ strlen( $1 ) + strlen( " && " ) + strlen( $3 ) + 1 ];
+   sprintf( buf, "%s && %s", $1, $3 );
+   delete $1;
+   delete $3;
+   $$ = (char*)strdup(buf);
+}
+|
+NOT_OP logical_expr {
+   
+   char buf[ strlen( $2 ) + strlen( " !(  ) " ) + 1 ];
+   sprintf( buf, "!( %s )", $1 );
+   delete $2;
+   $$ = (char*)strdup(buf);
+}
+|
+relational_expr {
+   $$ = $1;
+}
+;
+%%

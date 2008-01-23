@@ -1,0 +1,94 @@
+<!--
+/**********************************************************************
+From:   Resource Facility for Population Kinetics                    
+        Department of Bioengineering Box 352255                      
+        University of Washington                                     
+        Seattle, WA 98195-2255                                       
+
+This file is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution.
+**********************************************************************/
+author: Jiaji Du
+-->
+
+<project name="webapps" default="all" basedir=".">
+  <description>Build web server of SPK</description>
+
+  <target name="init">
+    <delete dir="user/WEB-INF/classes"/>
+    <mkdir dir="user/WEB-INF/classes" />
+    <copy todir="user">
+      <fileset dir="../mda" includes="MDAn.jar" />
+    </copy>
+  </target>
+
+<!-- ALL BUILDING -->
+  <target name="all" depends="compile, javadoc" />
+
+<!-- COMPILE BUILDING -->
+  <target name="compile" depends="init" description="Compile web application">
+    <javac srcdir="src" destdir="user/WEB-INF/classes" compiler="javac1.4">
+      <classpath>
+        <pathelement location="classes" />
+        <pathelement location="../dbapi/dbAPI.jar" />
+        <pathelement location="user/WEB-INF/lib/servlet-api.jar" />
+        <pathelement location="user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar" />
+      </classpath>
+    </javac>
+  </target>
+
+<!-- JAVADOC BUILDING -->
+  <target name="javadoc">
+
+    <property name="jdk-docs-location" value="http://java.sun.com/j2se/1.4/docs/api"/>
+    <property name="local-package-list" value="file:////opt/jdk1.4/docs/api"/>
+    <delete dir="javadoc-tmp"/>
+    <mkdir dir="javadoc-tmp"/>
+    <copy todir="javadoc-tmp">
+      <fileset dir="src" includes="**/*.java" />
+    </copy>
+    <delete dir="javadoc"/>
+    <mkdir dir="javadoc"/>
+    <javadoc packagenames="*"
+       sourcepath="javadoc-tmp"
+       destdir="javadoc"
+       windowTitle="Web Application"
+       public="true">
+      <classpath>
+        <pathelement location="classes" />
+        <pathelement location="../dbapi/dbAPI.jar" />
+        <pathelement location="user/WEB-INF/lib/servlet-api.jar" />
+        <pathelement location="user/WEB-INF/lib/mysql-connector-java-3.0.10-stable-bin.jar" />
+      </classpath>
+       <link href="${jdk-docs-location}"
+             offline="true"
+             packagelistLoc="${local-package-list}" />
+    </javadoc>
+    <delete dir="javadoc-tmp"/>
+  </target>
+
+<!-- CLEAN ALL -->
+  <target name="clean" depends="init">
+    <delete dir="javadoc" />
+    <delete dir="classes" />
+    <delete>
+      <fileset dir=".">
+        <include name="**/*.class"/>
+        <include name="*.jar"/>
+      </fileset>	
+    </delete>
+  </target>
+
+</project>
+
+
+

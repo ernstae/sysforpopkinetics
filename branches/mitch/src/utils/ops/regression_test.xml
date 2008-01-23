@@ -1,0 +1,70 @@
+<regression_test>
+  <cerr>
+    <job>56</job>
+    <job>276</job><!-- Likelihood eval, Analytic, based on 294 -->
+    <job>284</job><!-- Likelihood eval, Analytic, based on 296 -->
+    <job>288</job><!-- Likelihood eval, Analytic, based on 296 -->
+  </cerr>
+  <srun>
+    <job>36</job><!--  Population, FOCE, CAD BSV 2 FULL ADDITIVE POP003 -->
+    <job>38</job><!--  Population, FOCE INT, CAD, BSD 1 DIAG PROP POP002 -->
+    <job>294</job><!-- Population, FO, Brad's linear model -->
+    <job>273</job><!-- Likelihood eval, MC, based on 294 -->
+    <job>274</job><!-- Likelihood eval, Miser, based on 294 -->
+    <job>275</job><!-- Likelihood eval, Grid, based on 294 -->
+    <job>296</job><!-- Population, FOCE, Brad's linear model -->
+    <job>281</job><!-- Likelihood eval, MC, based on 296 -->
+    <job>282</job><!-- Likelihood eval, Miser, based on 296 -->
+    <job>283</job><!-- Likelihood eval, Grid, based on 296 -->
+    <job>295</job><!-- Population, LAPLACE, Brad's linear model -->
+    <job>285</job><!-- Likelihood eval, MC, based on 295 -->
+    <job>286</job><!-- Likelihood eval, Miser, based on 296 -->
+    <job>287</job><!-- Likelihood eval, Grid, based on 296 -->
+    <job>382</job><!-- Individual, MISRA1A IND001 -->
+    <job>385</job><!-- Individual, CHWIRUT2 IND002 -->
+    <job>386</job><!-- Individual, CHWIRUT1 IND003 -->
+    <job>392</job><!-- Individual, GAUSS1 IND004 -->
+    <job>401</job><!-- Individual, GAUSS2 IND005 -->
+    <job>407</job><!-- Individual, DANWOOD IND006 -->
+    <job>515</job><!-- Individual, LINEAR1 IND007 -->
+    <job>490</job><!-- Individual, STUDY0A IND008 -->
+    <job>545</job><!-- Individual, STUDY0B IND009 -->
+    <job>548</job><!-- Individual, STUDY0C IND010 -->
+    <job>549</job><!-- Individual, STUDY0D IND011 -->
+    <job>553</job><!-- Individual, MGH09 IND013 -->
+    <job>581</job><!-- Individual, ECKERLE4 IND013 -->
+    <job>604</job><!-- Individual, BOXBOD IND015 -->
+    <job>390</job><!-- Population, LAPLACE, RAIL POP001 -->
+    <job>526</job><!-- Population, FO, CAD BSV 2 FULL ADDITIVE POP004 -->
+    <job>462</job><!-- Population, FO, CAD BSV 2 DIAG ADDITIVE POP005-->
+    <job>463</job><!-- Population, FO, CAD BSV 1 DIAG PROP POP006 -->
+    <job>464</job><!-- Population, FOCE, CAD BSV 2 DIAG ADDITIVVE POP007 -->
+    <job>457</job><!-- Population, LAPLACE, oxboys1 BSV 3 FULL POP008 -->
+    <job>487</job><!-- Population, LAPLACE, oxboys2 BSV 3 DIAG POP009 -->
+    <job>493</job><!-- Population, LAPLACE, CAD BSV 2 FULL ADDITIVE POP010 -->
+    <job>505</job><!-- Population, FO, mares POP011 -->
+    <job>506</job><!-- Population, LAPLACE, mares POP012 -->
+    <job>543</job><!-- Population, FO, MATRIX=R, orangetrees POP017 -->
+    <!--job>987</job--><!-- Population POP033, Indomethicin TWO COMPARTMENT ODE -->
+    <!--job>988</job--><!-- Population POP034, Indomethicin TWO COMPARTMENT ODE -->
+    <!--job>991</job--><!-- Population POP035, Indomethicin TWO COMPARTMENT ODE -->
+    <job>992</job><!-- Population POP036, Indomethicin TWO COMPARTMENT ODE -->
+    <!--job>960</job--><!-- Population POP040, Argatroban 1 cpt ODE -->
+    <!--job>972</job--><!-- Population POP041, Argatroban 1 cpt ODE -->
+    <!--job>961</job--><!-- Population POP042, Argatroban 1 cpt ODE -->
+    <!--job>969</job--><!-- Very expensive! 30 minutes! Population POP043, Argatroban 1 cpt ODE -->
+    <job>1947</job><!-- Population POP065, Ketorolac 2 cpt ODE -->
+    <job>962</job><!-- Population POP045, Argatroban 1 cpt ODE -->
+    <job>993</job><!-- Individual IND035, 2 Comp ODE -->  
+    <job>1401</job><!-- 1000 point Vegas: True likelihood is 99.4385 -->
+    <job>1405</job><!-- 32 by 32 Grid: True likelihood is 99.4385 -->
+    <job>1413</job><!-- Population, Standard Two-Stage (STS), Rail -->
+    <job>4071</job><!-- Population, Iterative Two-Stage (ITS), Rail -->
+    <job>1418</job><!-- Population, Standard Two-Stage (STS), Argatroban 1 cpt ODE -->
+    <job>1516</job><!-- Population, Iterative Two-Stage (ITS), Argatroban 1 cpt Analytic -->
+    <job>1519</job><!-- Population, Global Two-Stage (GTS), Argatroban 1 cpt Analytic -->
+    <ignore>elapsedtime</ignore>
+  </srun>
+  <serr>
+  </serr>
+</regression_test>

@@ -1,0 +1,167 @@
+$begin jobid2source$$
+$spell
+	ps
+	efl
+	grep
+	utester
+	ptester
+	scp
+	spkruntest
+	chown
+	mysql
+	spktest
+	Spk
+	bradbell
+	apl
+	Jiaji
+	jjdu
+	edu
+	Sachiko
+	Mitch
+	ssh
+	whitechuck
+	su
+	rc
+	init
+	spkcmptestd
+	cspk
+	Du
+	Watrous
+	tmp
+	spkruntestd
+$$
+
+$section Get Spk Source Code Corresponding to a Job Id Number$$
+
+$head Description$$
+The following commands will put the source code corresponding to job number
+$italic JobIdNumber$$ on the machine $code whitechuck$$ and in the directory
+$syntax%
+	~%UserId%/spkruntest-job-%JobIdNumber%
+%$$.
+
+$list number$$
+Send an e-mail message with the subject field equal to
+$codep
+	Test environment is in use
+$$
+to the following e-mail addresses:
+$codep
+	Brad Bell <bradbell@apl.washington.edu>
+	Jiaji Du <jjdu@u.washington.edu>
+	Sachiko Honda <honda99@u.washington.edu>
+	Mitch <watrous@u.washington.edu>
+$$
+
+$lnext
+Log onto whitechuck and change user to root,
+and make sure that demon is stopped:
+$syntax%
+	ssh whitechuck
+	su -
+	%whitechuck-root-password%
+	cd /tmp
+	/etc/rc.d/init.d/spkcmptestd stop
+	ps -efl | grep spktest
+%$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
+
+$lnext
+In a separate window, log onto cspk and change user to root,
+and make sure that demon is stopped:
+$syntax%
+	ssh cspk
+	su -
+	%cspk-root-password%
+	cd /tmp
+	 /etc/rc.d/init.d/spkruntestd stop
+	ps -efl | grep spktest
+%$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
+
+$lnext
+In the $code whitechuck$$ window,
+load the test data base with the information for the job of interest
+and start the demon:
+$syntax%
+	take_snapshot.pl %JobIdNumber%
+	load_spktest.pl
+	/etc/rc.d/init.d/spkcmptestd start
+	ps -efl | grep spktest
+%$$
+Now there should be two lines of output,
+one for the $code ps$$ command and one for the $code spkcmptestd$$ command.
+
+$lnext
+In the $code cspk$$ window,
+start the demon:
+$syntax%
+	/etc/rc.d/init.d/spkruntestd start
+	ps -efl | grep spktest
+%$$
+Now there should be two lines of output,
+one for the $code ps$$ command and one for the $code spkruntestd$$ command.
+
+$lnext
+In the $code whitechuck$$ window,
+make sure the demons are done by executing the command
+$syntax%
+	mysql -utester -ptester spktest
+	select job_id, abstract, state_code, end_code from job;
+%$$
+The state code should be either 
+$code q2c$$, $code q2r$$, $code run$$, or $code end$$.
+If it is not yet $code end$$, 
+repeat the second command until it is $code end$$.
+
+$lnext
+In the $code whitechuck$$ window,
+quit $code mysql$$ and stop the demon.
+$syntax%
+	quit
+	/etc/rc.d/init.d/spkcmptestd stop
+	ps -efl | grep spktest
+%$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
+
+$lnext
+In the $code cspk$$ window, stop the demon. 
+$syntax%
+	/etc/rc.d/init.d/spkruntestd stop
+	ps -efl | grep spktest
+%$$
+There should be only one output line and it should correspond
+to the $code ps$$ command itself.
+
+$lnext
+In the $code whitechuck$$ window,
+copy the resulting source code directory to your home directory.
+Then change the owner of the directory.
+$syntax%
+	scp -r cspk:/tmp/spkruntest-job-%JobIdNumber% ~%UserId%
+	chown -R %UserId% ~%UserId%/spkruntest-job-%JobIdNumber%
+%$$
+
+$lnext
+Send an e-mail message with the subject field equal to
+$codep
+	Test environment is free
+$$
+to the following e-mail addresses:
+$codep
+	Brad Bell <bradbell@apl.washington.edu>
+	Jiaji Du <jjdu@u.washington.edu>
+	Sachiko Honda <honda99@u.washington.edu>
+	Mitch <watrous@u.washington.edu>
+$$
+
+	
+$lend
+
+
+
+
+$end

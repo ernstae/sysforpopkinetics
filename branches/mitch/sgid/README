@@ -1,0 +1,51 @@
+            I d e n t i f i a b i l i t y   L i b r a r y
+
+                       a n d   D r i v e r
+
+
+
+This library (libident) and driver (check_ident) perform parameter
+identifiability calculations.
+
+
+Directory Structure
+-------------------
+
+Here is the structure for the directories for the library, the driver,
+and their tests.
+
+
+    /identifiability
+  
+      configure.ac
+      Makefile.am
+    
+      /libident          <----[library]
+        /doc
+        /src
+        /test
+
+      /check_ident       <----[driver]
+        /doc
+        /src
+        /test
+
+
+Installation to a particular directory
+--------------------------------------
+
+In order to have the library and driver install to a path with a
+particular prefix, do the following
+
+    ./configure --prefix=PREFIX_FOR_INSTALLATION_PATH
+
+
+Building with debugging turned on
+---------------------------------
+
+In order to have the library and driver be compiled with debugging
+symbols turned on, do the following
+
+    ./configure --enable-debug=yes
+
+

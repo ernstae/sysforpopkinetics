@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Init file for production tomcat
+#
+# chkconfig: 2345 64 37
+# description: tomcat server for port 8080
+#
+JAVA_HOME=/usr/java/j2sdk1.4.2_03
+CATALINA_HOME=/usr/local/tomcat/jakarta-tomcat-5.0.18
+CATALINA_BASE=$CATALINA_HOME/../instance/test
+export JAVA_HOME CATALINA_HOME CATALINA_BASE
+
+exec $CATALINA_HOME/bin/catalina.sh $*

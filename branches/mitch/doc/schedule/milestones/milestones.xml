@@ -1,0 +1,594 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>Spk Version 0.1 Milestones</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+	<revnumber>1.0</revnumber>
+	<date>November 17, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.01</revnumber>
+	<date>December 5, 2003</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>The "Model and Data" spec was split into two specs.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.02</revnumber>
+	<date>May 18, 2004</date>
+	<authorinitials>afw</authorinitials>
+	<revremark>Modified to reflect reassignment of tasks.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+	This document describes a set of milestones which will
+	be reached by the Spk Software Team, on the way to 
+	releasing version 0.1 of the new Internet friendly Spk.
+	A description of each milestone is provided, along with
+	the name of the team member with primary responsibility
+	for achieving it, and the estimated date of completion.
+	As each milestone is reached, the actual date of 
+	completion will be added.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>Introduction</title>
+    <para>
+      Spk is being developed as an open source project. One of the
+      important benefits of this approach is that it makes available
+      to us a broad array of free tools and it enables us to 
+      incorporate much free software. The tools and free software
+      have accelerated our project substantially and will continue
+      to do so. Given our limited resources, it would be impossible
+      to accomplish this project in the time-frame required without
+      these free assets.
+    </para>
+    <para>
+      Having access to a wealth of free tools and software changes
+      the nature of the the development process.  It places a premium
+      on the ability to quickly evaluate, learn to use and to 
+      assimilate new products.  It also introduces a scheduling
+      uncertainty.  Because we are learning so much in the process
+      of development, it is difficult to know exactly how long
+      any given task will take.
+    </para>
+    <para>
+      We have a commitment to deliver a usable system by the end
+      of the second quarter of 2004.  We are convinced that we can
+      do this.  Instead of attempting to do finely textured task
+      scheduling, we have decided to focus on a set of milestones.
+    </para>
+    <para>
+      Milestones have been defined and divided up among the four
+      developers.  Many of the milestones require significant
+      collaboration between two or more team members but, 
+      nevertheless, a single developer has accepted primary 
+      responsibility for each milestone.  Each developer has 
+      provided a good-faith schedule for the milestones for which
+      he or she is responsible, fully acknowledging that these 
+      estimates may include significant error.
+    </para>
+    <para>
+      In spite of the variation in the individual estimates, we
+      believe that the cumulative effect will be to reach our goal
+      on schedule.  This document is meant both to show where
+      we are going and to demonstrate the progress that we have
+      made.
+    </para>
+  </sect1>
+  <sect1 id='milestone_table'>
+    <title>Milestone Table</title>
+    <para>
+      <table frame='all'><title>Spk Version 0.1 Milestones</title>
+	<tgroup cols='4' align='left' colsep='1' rowsep='1'>
+	  <colspec colwidth="5*" align='left' colname='c1'/>
+	  <colspec colwidth="3*" align='left' colname='c2'/>
+	  <colspec colwidth="2*" align='center' colname='c3'/>
+	  <colspec colwidth="2*" align='center' colname='c4'/>
+	  <thead>
+	    <row>
+	      <entry>Milestone Description</entry>
+	      <entry>Responsible Developer</entry>
+	      <entry>Estimated Date of Completion</entry>
+	      <entry>Actual Date of Completion</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry><link linkend="job_history">Job History Model</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>07/31/2003</entry>
+	      <entry>07/31/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="model_cap">Model Capabilities Spec</link></entry>
+	      <entry>Mitch Watrous</entry>
+	      <entry>10/22/2003</entry>
+	      <entry>10/22/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="xml_source">XML Models and Parameters</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>11/04/2003</entry>
+	      <entry>11/04/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="er_model">Database E-R Model</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>11/17/2003</entry>
+	      <entry>11/17/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="results">XML Results</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>11/20/2003</entry>
+	      <entry>12/05/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="sql_schema">Database Schema</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>11/21/2003</entry>
+	      <entry>11/19/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="xml_data">XML Data</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>12/05/2003</entry>
+	      <entry>12/05/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="optimizer">Optimizer Replacement</link></entry>
+	      <entry>Mitch Watrous</entry>
+	      <entry>12/08/2003</entry>
+	      <entry>01/12/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="comp_out">Aspk Compiler Output (C++)</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>12/08/2003</entry>
+	      <entry>12/17/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="api_spec">Database API</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>12/12/2003</entry>
+	      <entry>12/02/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="perl_binding">Database API, Perl Binding</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>12/18/2003</entry>
+	      <entry>12/24/2003</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="out_opt">User Output Spec</link></entry>
+	      <entry>Jiaji Du</entry>
+	      <entry>01/05/2004</entry>
+	      <entry>01/08/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="out_imp">User Output</link></entry>
+	      <entry>Jiaji Du</entry>
+	      <entry>02/02/2004</entry>
+	      <entry>02/02/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="java_binding">Database API, Java Binding</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>02/09/2004</entry>
+	      <entry>02/09/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="build_imp">Cspk Object Build</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>02/29/2004</entry>
+	      <entry>04/30/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="comp_ind">Askp Compiler Output (Ind)</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>02/19/2004</entry>
+	      <entry>05/10/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="submit">MDA Submits Jobs</link></entry>
+	      <entry>Jiaji Du</entry>
+	      <entry>02/23/2004</entry>
+	      <entry>03/01/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="net_spec">Network Security Spec</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>03/01/2004</entry>
+	      <entry>04/08/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="run">Cspk Builds and Runs Jobs</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>05/17/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="web_spec">Web Site Functional Spec</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>03/12/2004</entry>
+	      <entry>04/30/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="report">Cspk Generates Report</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>05/30/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="net_security">Network Security</link></entry>
+	      <entry>Alan Westhagen</entry>
+	      <entry>03/26/2004</entry>
+	      <entry>03/14/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="open">All Open Source</link></entry>
+	      <entry>Mitch Watrous</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>03/15/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="web_site">Web Site</link></entry>
+	      <entry>Jiaji Du</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>03/28/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="pred">Cspk Pred Class</link></entry>
+	      <entry>Mitch Watrous</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>05/05/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="covariance">Cspk Covariance Class</link></entry>
+	      <entry>Mitch Watrous</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>06/04/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="comp_pop">Aspk Compiler Output (Pop)</link></entry>
+	      <entry>Sachiko Honda</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>06/04/2004</entry>
+	    </row>
+	    <row>
+	      <entry><link linkend="mda_pop">MDA Presents Results (Pop)</link></entry>
+	      <entry>Jiaji Du</entry>
+	      <entry>03/29/2004</entry>
+	      <entry>06/04/2004</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Description of Milestones</title>
+    <para>
+      In this section, the individual milestones are described.
+    </para>
+    <sect2 id="open">
+      <title>All Open Source</title>
+      <para>
+	All of the proprietary code in the Spk library is replaced with
+	open source code.
+      </para>
+    </sect2>
+    <sect2 id="comp_out">
+      <title>Aspk Compiler Output (C++)</title>
+      <para>
+	The Aspk compiler transforms model specifications submitted 
+	by the MDA into C++ source code and places this code in
+	the run queue, for subsequent retrieval by the Cspk for
+	building and execution.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="../../specs/sourceCpp/sourceCpp.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="comp_ind">
+      <title>Aspk Compiler Output for Individual Analysis</title>
+      <para>
+	The Aspk compiler takes jobs from the compiler queue of the database,
+	compiles them, and places in the database the archive of files
+	needed by computational servers to perform population analysis.
+	The compiler outputs the files required by computational servers
+	to perform individual analysis.
+      </para>
+    </sect2>
+    <sect2 id="comp_pop">
+      <title>Aspk Compiler Output for Population Analysis</title>
+      <para>
+	The Aspk compiler takes jobs from the compiler queue of the database,
+	compiles them, and places in the database the archive of files
+	needed by computational servers to perform population analysis.
+	The compiler outputs the files required by computational servers
+	to perform population analysis.
+      </para>
+    </sect2>
+    <sect2 id="run">
+      <title>Cspk Builds and Runs Jobs</title>
+      <para>
+	The Cspk removes source files from the run queue that were place 
+	there by the Aspk compiler.  It builds the source into executable
+	objects and then runs them.
+      </para>
+    </sect2>
+    <sect2 id="report">
+      <title>Cspk Generates Report</title>
+      <para>
+	Cspk generates the user's output report, and stores it in the
+	database for eventual retrieval by the MDA.
+      </para>
+    </sect2>
+    <sect2 id="build_imp">
+      <title>Cspk Object Build</title>
+      <para>
+	This milestone builds object code, ready for execution, from source
+	code received from the Aspk compiler.
+      </para>
+    </sect2>
+    <sect2 id="api_spec">
+      <title>Database API</title>
+      <para>
+	The application programming interface (API) defines a set of 
+	functions that can be used by software processes to interact
+	with the database.  This specification is language independent.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../../specs/dbAPI/dbAPI.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="java_binding">
+      <title>Database API, Java Binding</title>
+      <para>
+	The Java binding is an implementation of the API for use by
+	processes programmed in the Java language.
+      </para>
+      <para>
+	This milestone is now complete. Documentation can be viewed 
+	<ulink url="../../specs/dbAPIjava/index.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="perl_binding">
+      <title>Database API, Perl Binding</title>
+      <para>
+	The Perl binding is an implementation of the API for use by
+	processes programmed in the Perl language.
+      </para>
+      <para>
+	This milestone document is now complete. Documentation can be viewed
+	<ulink url="../..//specs/dbAPIperl/Spkdb.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="er_model">
+      <title>Database Entity-Relationship Model</title>
+      <para>
+	Spk is implemented as a set of independent processes, which
+	communicate with each other by means of a relation database.
+	The entity-relationship model is the high-level design document
+	for this database.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="../..//specs/erModel/erModel.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="sql_schema">
+      <title>Database Schema</title>
+      <para>
+	The schema is a sequence of statements in the Data Definition
+	Language (DDL) which is a subset of the Structured Query Language
+	(SQL).  The schema can be executed by the MySQL relational database
+	management system to create a working database that implements
+	the entity-relationship model.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="../../specs/dbSchema/dbSchema.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="job_history">
+      <title>Job History Model</title>
+      <para>
+	From a usability standpoint, Spk is organized around the notion of
+	a <emphasis>job</emphasis>. In order to run a population kinetics
+	model against a set of data, the user employs the MDA to
+	submit model, data, and certain directives to Spk for processing.
+	Taken together,	the model, data and directives 
+	comprise a new job. On its route to completion,
+	the job passes through a sequence of states, which constitute
+	its history.  The Job History Model defines the set of job state
+	sequences that are possible.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../..//specs/jobHistory/jobHistory.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="submit">
+      <title>MDA Submits Jobs</title>
+      <para>
+	The MDA submits jobs, by using the Java API to place XML versions
+	of a model and data into the Aspk compiler input queue.
+      </para>
+    </sect2>
+    <sect2 id="model_cap">
+      <title>Model Capabilities Specification</title>
+      <para>
+	A medium-term goal of the Spk project is to provide support for
+	population kinetic modeling that is fully equivalent to that 
+	provided by Nonmem.  Version 0.1 will support only of limited
+	subset of these capabilities, as detailed in this specification.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../../specs/modelCap/html/modelCap.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="net_security">
+      <title>Network Security Implementation</title>
+      <para>
+	This milestone is the implementation of the Network Security
+	Specification.
+      </para>
+    </sect2>
+    <sect2 id="net_spec">
+      <title>Network Security Specification</title>
+      <para>
+	This specification lays out the requirements for network 
+	security and describes a practical solution which meets
+	the requirements.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../..//specs/netSecure/netSecure.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="optimizer">
+      <title>Replacement of the NAG Optimizer</title>
+      <para>
+	The Spk function library contains a proprietary optimizer from an 
+	organization called NAG.  Since version 0.1 will be licensed as
+	open source, it is necessary to replace the NAG optimizer with
+	one developed by the RFPK Mathematics Team. This milestone consists
+	of integrating the new optimizer with the Spk library and testing
+	it on against the Spk test suites.
+      </para>
+    </sect2>
+    <sect2 id="out_imp">
+      <title>User Output Options Implemented</title>
+      <para>
+	User output options are implemented in the MDA.
+      </para>
+    </sect2>
+    <sect2 id="out_opt">
+      <title>User Output Options Specification</title>
+      <para>
+	The output that comes back to the MDA from the computational 
+	server is XML.  This specification describes what the 
+	MDA will do in terms of transforming this data into input for
+	other analysis tools as well as doing a simple presentation
+	of data on the user's screen.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../../specs/userOutput/userOutput.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="web_spec">
+      <title>Web Site Functional Specification</title>
+      <para>
+	The functional specification describes the web site from the 
+	point of view of the services and usability.  It does not
+	specify visual design.
+      </para>
+      <para>
+	This document is now complete and can be viewed
+	<ulink url="../../specs/website/website.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="web_site">
+      <title>Web Site Implementation</title>
+      <para>
+	This milestone is the implementation of a web site which conforms
+	to the Web Site Functional Specification.
+      </para>
+    </sect2>
+    <sect2 id="xml_data">
+      <title>XML Representations of Data Set</title>
+      <para>
+	A data set is submitted as part of a job.  This data is structured
+	as XML and is stored in the <emphasis>xml_data</emphasis> field of
+	the <emphasis>job</emphasis> table of the database. 
+      </para>
+      <para>
+	This document is available for viewing
+	<ulink url="../../specs/dataML/dataML.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="xml_source">
+      <title>XML Representations of Models and Control Parameters</title>
+      <para>
+	A job contains specifications from which the ASpk Compiler creates
+	a C++ program.  The MDA submits these specifications in the form 
+	of an XML representation of a model and associated control 
+	parameters.  This XML file is stored in the 
+	<emphasis>xml_source</emphasis> field of the <emphasis>job</emphasis>
+	table of the database.
+      </para>
+      <para>
+	This document is available for viewing
+	<ulink url="../../specs/sourceML/sourceML.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2 id="results">
+      <title>XML Representation of Spk Results and Other Reports</title>
+      <para>
+	When an Spk job runs to completion, whether successfully or
+	not, a report is formatted as XML and is stored in the 
+	<emphasis>report</emphasis> field of the <emphasis>job</emphasis>
+	table of the database.
+      </para>
+      <para>
+	This document is now available for viewing
+	<ulink url="../../specs/reportML/reportML.html">here</ulink>.
+	Return to <link linkend="milestone_table">table</link>.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="pred">Cspk Pred Class</title>
+      <para>
+	C++ class which represents the part of the mixed-effects model
+	which remains the same, from model to model.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="covariance">Cspk Covariance Class</title>
+      <para>
+	Software to calculate and return the covariance.
+      </para>
+    </sect2>
+    <sect2>
+      <title id="mda_pop">MDA Presents Population Results</title>
+      <para>
+	The MDA presents results to a user for a population model.
+      </para>
+    </sect2>
+  </sect1>
+</article>
+
+<!--  LocalWords:  colwidth colname colspec thead tbody linkend Westhagen xml
+ -->
+<!--  LocalWords:  Watrous Sachiko er sql SQL Aspk api API Cspk perl Jiaji Askp
+ -->
+<!--  LocalWords:  MDA tgroup Nonmem DDL MySQL RFPK
+ -->

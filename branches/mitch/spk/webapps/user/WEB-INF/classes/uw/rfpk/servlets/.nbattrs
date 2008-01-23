@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
+<attributes version="1.0">
+    <fileobject name="AbortJob.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="AbortJob"/>
+    </fileobject>
+    <fileobject name="ExitMDATest.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="ExitMDATest"/>
+    </fileobject>
+    <fileobject name="GetArchive.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetArchive"/>
+    </fileobject>
+    <fileobject name="GetGroupUsers.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetGroupUsers"/>
+    </fileobject>
+    <fileobject name="GetHistory.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetHistory"/>
+    </fileobject>
+    <fileobject name="GetInput.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetInput"/>
+    </fileobject>
+    <fileobject name="GetJnlp.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetJnlp"/>
+    </fileobject>
+    <fileobject name="GetJobArchive.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetJobArchive"/>
+    </fileobject>
+    <fileobject name="GetJobInfo.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetJobInfo"/>
+    </fileobject>
+    <fileobject name="GetLastVersion.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetLastVersion"/>
+    </fileobject>
+    <fileobject name="GetOutput.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetOutput"/>
+    </fileobject>
+    <fileobject name="GetVersions.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="GetVersions"/>
+    </fileobject>
+    <fileobject name="InitMDATest.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="InitMDATest"/>
+    </fileobject>
+    <fileobject name="SubmitJob.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="SubmitJob"/>
+    </fileobject>
+    <fileobject name="TestConnection.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="TestConnection"/>
+    </fileobject>
+    <fileobject name="UserDatasets.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserDatasets"/>
+    </fileobject>
+    <fileobject name="UserJobs.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserJobs"/>
+    </fileobject>
+    <fileobject name="UserModels.java">
+        <attr name="class_dependency_javax.servlet.http.HttpServlet" stringvalue="UserModels"/>
+    </fileobject>
+</attributes>

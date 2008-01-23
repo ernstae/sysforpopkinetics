@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"[
+  <!ENTITY uw "University of Washington">
+  <!ENTITY dept "Department of Bioengineering">
+]>
+<article><title>XML Representation of Model and Control Parameters</title>
+ <articleinfo>
+    <revhistory>
+      <revision>
+         <revnumber>1.9</revnumber>
+         <date>Apr 13, 2005</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Added a nonmem compatable source.xml as an example.</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.8</revnumber>
+         <date>Aug 24, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Removed "simonly" option.</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.7</revnumber>
+         <date>May 21, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Changed the dafault values for the statistics computation requests
+                    from "no" to "yes" throughout.</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.6</revnumber>
+         <date>April 30, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Took out "ML" from "sourceML".</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.5</revnumber>
+         <date>April 7, 2004</date>
+         <authorinitials>honda</authorinitials>
+         <revremark>Moved from r2/src/apps/spk/aspk/spkcompiler/doc.</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.4</revnumber>
+         <date>Jaunary 6, 2004</date>
+         <authorinitials>alan</authorinitials>
+         <revremark>Changed version of Docbook DTD from 4.1.2 to 4.2 in all .xml files</revremark>
+      </revision>
+      <revision>
+         <revnumber>1.3</revnumber>
+         <date>January 5, 2004</date>
+         <authorinitials>alan</authorinitials>
+         <revremark>Clean up.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.2</revnumber>
+	<date>December 12, 2003</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Seperated out the data set section.</revremark>
+      </revision>
+      <revision>
+	<revnumber>1.1</revnumber>
+	<date>December 9, 2003</date>
+	<authorinitials>sh</authorinitials>
+	<revremark>Initial version.</revremark>
+      </revision>
+    </revhistory>
+  <abstract>
+      <para>
+      All the user provided information other than the data set is captured in an instance
+      of SpkSourceML.  This document defines SpkSourceML.
+      </para>
+  </abstract>
+ </articleinfo>
+  <sect1>
+    <title>
+       <ulink url="nonmem/html/elt-spksource.html">NONMEM</ulink>
+    </title>
+    <para></para>
+  </sect1>
+  <sect1>
+    <title>SAAM-II</title>
+      <!-- programlisting>
+        <inlinegraphic entityref="spkoutml_nonmem"></inlinegraphic>
+      </programlisting -->
+      <para>
+      </para>
+  </sect1>
+  <sect1>
+    <title>Generic</title>
+      <!-- programlisting>
+        <inlinegraphic entityref="spkoutml_nonmem"></inlinegraphic>
+      </programlisting -->
+      <para>
+      </para>
+  </sect1>
+</article>
