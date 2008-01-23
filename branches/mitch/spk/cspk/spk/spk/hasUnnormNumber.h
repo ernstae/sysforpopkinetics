@@ -21,20 +21,21 @@
 */
 /*************************************************************************
  *
- * File: isUnnormNumber.h
+ * File: hasUnnormNumber.h
  *
  *
- * Checks to see if a value is unnormalized, i.e., less than (or
- * greater) than the largest (or smallest) normalized value.
+ * Checks to see if a vector contains a value that is unnormalized,
+ * i.e., less than (or greater) than the largest (or smallest)
+ * normalized value.
  *
  * Author: Mitch Watrous
  *
  *************************************************************************/
 
-#ifndef ISUNNORMNUMBER_H
-#define ISUNNORMNUMBER_H
+#ifndef HASUNNORMNUMBER_H
+#define HASUNNORMNUMBER_H
 
-template<class ValueType>
-bool isUnnormNumber( const ValueType& value );
+template<class VectorType>
+bool hasUnnormNumber( const VectorType& vector );
 
 #endif

@@ -120,6 +120,8 @@ testall_SOURCES = \
 	getRowTest.h \
 	getSubblockTest.cpp \
 	getSubblockTest.h \
+	hasUnnormNumberTest.cpp \
+	hasUnnormNumberTest.h \
 	identityTest.cpp \
 	identityTest.h \
 	IkronBtimesCTest.cpp \
@@ -287,6 +289,7 @@ pkginclude_HEADERS = \
 	getMulRowsTest.h \
 	getRowTest.h \
 	getSubblockTest.h \
+	hasUnnormNumberTest.h \
 	identityTest.h \
 	IkronBtimesCTest.h \
 	IndInputDataPackageTest.h \
