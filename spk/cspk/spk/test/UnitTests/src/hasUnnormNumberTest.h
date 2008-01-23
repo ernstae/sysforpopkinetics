@@ -21,20 +21,32 @@
 */
 /*************************************************************************
  *
- * File: isUnnormNumber.h
+ * File: hasUnnormNumberTest.h
  *
  *
- * Checks to see if a value is unnormalized, i.e., less than (or
- * greater) than the largest (or smallest) normalized value.
+ * Unit test for the function hasUnnormNumber.
  *
  * Author: Mitch Watrous
  *
  *************************************************************************/
 
-#ifndef ISUNNORMNUMBER_H
-#define ISUNNORMNUMBER_H
+#ifndef HASUNNORMNUMBER_TEST_H
+#define HASUNNORMNUMBER_TEST_H
 
-template<class ValueType>
-bool isUnnormNumber( const ValueType& value );
+#include <cppunit/TestFixture.h>
+#include <cppunit/Test.h>
+
+class hasUnnormNumberTest : public CppUnit::TestFixture
+{
+public: 
+  // CppUnit framework functions.
+  static CppUnit::Test* suite();
+  void setUp();
+  void tearDown();
+
+private:
+  // Test cases for this unit test.
+  void basicTest();
+};
 
 #endif

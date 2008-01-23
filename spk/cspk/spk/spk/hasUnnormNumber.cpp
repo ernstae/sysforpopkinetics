@@ -21,11 +21,12 @@
 */
 /*************************************************************************
  *
- * File: isUnnormNumber.cpp
+ * File: hasUnnormNumber.cpp
  *
  *
- * Checks to see if a value is unnormalized, i.e., less than (or
- * greater) than the largest (or smallest) normalized value.
+ * Checks to see if a vector contains a value that is unnormalized,
+ * i.e., less than (or greater) than the largest (or smallest)
+ * normalized value.
  *
  * Author: Mitch Watrous
  *
@@ -33,7 +34,7 @@
 
 /*************************************************************************
  *
- * Function: isUnnormNumber
+ * Function: hasUnnormNumber
  *
  *************************************************************************/
 
@@ -42,20 +43,20 @@
  *------------------------------------------------------------------------*/
 /*
 
-$begin isUnnormNumber$$
+$begin hasUnnormNumber$$
 
 $spell
 $$
 
-$section Checking for Values that are Unnormalized$$
+$section Checking for Values in a Vector that are Unnormalized$$
 
-$index isUnnormNumber$$
-$cindex \Checking \for \Values \that \are Unnormalized$$
+$index hasUnnormNumber$$
+$cindex \Checking \for \Values \in \a Vector \that \are Unnormalized$$
 
 $table
 $bold Prototype:$$ $cend
-$syntax/template<class ValueType>
-bool isUnnormNumber( const ValueType& /value/ )
+$syntax/template<class VectorType>
+bool hasUnnormNumber( const VectorType& /vector/ )
 /$$
 $tend
 
@@ -70,8 +71,9 @@ $pre
 $$
 $head Description$$
 
-Returns true if $italic value$$ is unnormalized, i.e., less than (or
-greater) than the largest (or smallest) normalized value.
+Returns true if $italic vector$$ contains a value that is
+unnormalized, i.e., less than (or greater) than the largest (or
+smallest) normalized value.
 
 $end
 */
@@ -81,10 +83,9 @@ $end
  *------------------------------------------------------------------------*/
 
 // SPK library header files.
+#include "hasUnnormNumber.h"
 #include "isUnnormNumber.h"
-
-// Standard library header files.
-#include <limits>
+#include "SpkValarray.h"
 
 // CppAD header files.
 #include <CppAD/CppAD.h>
@@ -92,13 +93,15 @@ $end
 // GiNaC computer algebra library header files.
 #include <ginac/ginac.h>
 
+using SPK_VA::valarray;
+
 
 /*------------------------------------------------------------------------
  * Function definition
  *------------------------------------------------------------------------*/
 
-template<class ValueType>
-bool isUnnormNumber( const ValueType& value )
+template<class VectorType>
+bool hasUnnormNumber( const VectorType& vector )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -108,50 +111,28 @@ bool isUnnormNumber( const ValueType& value )
 
 
   //------------------------------------------------------------
-  // Set the limits for the range of values that are normalized.
+  // Get the number of elements in the vector.
   //------------------------------------------------------------
 
-  ValueType minAllowed;
-  ValueType maxAllowed;
-
-  if ( numeric_limits<ValueType>::is_bounded )
-  {
-    maxAllowed = numeric_limits<ValueType>::max();
-    minAllowed = - maxAllowed;
-  }
-  else
-  {
-    ValueType one  = ValueType( 1 );
-    ValueType zero = ValueType( 0 );
-
-    maxAllowed = one / zero;
-    minAllowed = - maxAllowed;
-  }
+  int nElem = vector.size();
 
 
   //------------------------------------------------------------
-  // Check to see if the value is unnormalized.
+  // Look for a value that is unnormalized.
   //------------------------------------------------------------
 
-  if ( value > minAllowed && value < maxAllowed )
+  int i;
+
+  // Return true if an unnormalized value is found.
+  for ( i = 0; i < nElem; i++ )
   {
-    // This value is not unnormalized.
-    return false;
-  }
-  else
-  {
-    // This value is less than (or greater) than the largest (or smallest)
-    // normalized value, so it is unnormalized.
-    return true;
+    if ( isUnnormNumber( vector[i] ) )
+    {
+      return true;
+    }
   }
 
-}
-
-template<>
-bool isUnnormNumber( const GiNaC::ex& value )
-{
-  // There are no unnormalized numbers in GiNaC, so always return a
-  // value of false.
+  // Return false because an unnormalized value was not found.
   return false;
 }
 
@@ -160,13 +141,9 @@ bool isUnnormNumber( const GiNaC::ex& value )
  * Template Function Instantiations.
  *------------------------------------------------------------------------*/
 
-template bool isUnnormNumber<double>( const double& value );
+template bool hasUnnormNumber< valarray<double> >( const valarray<double>& vector );
 
-template bool isUnnormNumber< CppAD::AD<double> >( const CppAD::AD<double> & value );
+template bool hasUnnormNumber< valarray< CppAD::AD<double> > >( const valarray< CppAD::AD<double> >& vector );
 
-template bool isUnnormNumber< CppAD::AD< CppAD::AD<double> > >( const CppAD::AD< CppAD::AD<double> > & value );
-
-template bool isUnnormNumber< CppAD::AD< CppAD::AD< CppAD::AD<double> > > >( const CppAD::AD< CppAD::AD< CppAD::AD<double> > > & value );
-
-template bool isUnnormNumber<GiNaC::ex>( const GiNaC::ex& value );
+template bool hasUnnormNumber< valarray<GiNaC::ex> >( const valarray<GiNaC::ex>& vector );
 

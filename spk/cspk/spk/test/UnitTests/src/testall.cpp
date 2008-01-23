@@ -40,6 +40,7 @@
 #include "getMulRowsTest.h"
 #include "getRowTest.h"
 #include "getSubblockTest.h"
+#include "hasUnnormNumberTest.h"
 #include "identityTest.h"
 #include "IkronBtimesCTest.h"
 #include "IndInputDataPackageTest.h"
@@ -166,6 +167,7 @@ int main( int argc, const char * argv[] )
   master_list_of_tests[ "getMulRowsTest" ]                   = getMulRowsTest::suite();
   master_list_of_tests[ "getRowTest" ]                       = getRowTest::suite();
   master_list_of_tests[ "getSubblockTest" ]                  = getSubblockTest::suite();
+  master_list_of_tests[ "hasUnnormNumberTest" ]              = hasUnnormNumberTest::suite();
   master_list_of_tests[ "identityTest" ]                     = identityTest::suite();
   master_list_of_tests[ "IkronBtimesCTest" ]                 = IkronBtimesCTest::suite();
   master_list_of_tests[ "IndInputDataPackageTest" ]          = IndInputDataPackageTest::suite();

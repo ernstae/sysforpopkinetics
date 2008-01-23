@@ -533,6 +533,7 @@ for $code firstOrderOpt$$.
 $end
 */
 
+# include <iostream>
 # include <valarray>
 # include <vector>
 # include <sstream>
@@ -543,6 +544,8 @@ $end
 # include "cppad/cppad.hpp"
 # include "mapOpt.h"
 # include "WarningsManager.h"
+# include "intToOrdinalString.h"
+# include "hasUnnormNumber.h"
 
 // SPK optimizer header files.
 #include <QN01Box/QuasiNewton01Box.h>
@@ -630,12 +633,126 @@ private:
 			if( i < j )
 				R[j + i * Ni] += sum; 
 		}
+		// Check R for NaN's before calling LuSolve.
+		if( CppAD::hasnan(R) )
+		{	// Get the original value for R.
+			model->dataVariance(R);
+			// Check R, D, and f_b for NaN's.
+			if( CppAD::hasnan(R) )
+			{	// R has a NaN.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because \nthe covariance matrix for the %s individual's data contained a value \nthat was Not a Number (NaN).",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+			else if( CppAD::hasnan(D) )
+			{	// D has a NaN.
+				SPK_PROGRAMMER_ERROR(
+					"The First Order (FO) objective function could not be calculated because \nthe individual parameter covariance matrix contained a value that was \nNot a Number (NaN)."
+				);
+			}
+			else if( CppAD::hasnan(f_b) )
+			{	// f_b has a NaN.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because \nthe derivative of the mean of the %s individual's data with respect to \nthe individual parameter contained a value that was Not a Number (NaN).",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+			else
+			{	// The combination of D and f_b has a NaN.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because it \ndepended on the individual parameter covariance matrix and the derivative \nof the mean of the %s individual's data with respect to the individual \nparameter in a way that contained a value that was Not a Number (NaN).",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+		}
+		// Check R for infinite values before calling LuSolve.
+		//
+		// Note that hasnan was called first because NaN's are
+		// also detected as unnormalized numbers.
+		if( hasUnnormNumber(R) )
+		{	// Get the original value for R.
+			model->dataVariance(R);
+			// Check R, D, and f_b for infinite values.
+			if( hasUnnormNumber(R) )
+			{	// R has an infinite value.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because \nthe covariance matrix for the %s individual's data contained a value \nthat was infinite.",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+			else if( hasUnnormNumber(D) )
+			{	// D has an infinite value.
+				SPK_PROGRAMMER_ERROR(
+					"The First Order (FO) objective function could not be calculated because \nthe individual parameter covariance matrix contained a value that was \ninfinite."
+				);
+			}
+			else if( hasUnnormNumber(f_b) )
+			{	// f_b has an infinite value.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because \nthe derivative of the mean of the %s individual's data with respect to \nthe individual parameter contained a value that was infinite.",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+			else
+			{	// f_b * D * f_b' has an infinite value.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because \nthe individual parameter covariance matrix and/or the derivative of the \n%s individual's data mean with respect to the individual parameter \nhad values that were too large.",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+		}
 		// compute R^{-1} * r
 		Scalar logdet;
 		int signdet = CppAD::LuSolve(Ni, 1, R, r, Rinv_r, logdet);
-		if( signdet != 1 ) SPK_PROGRAMMER_ERROR(
-			"firstOrder: R + f_b * D * f_b' not positive definite."
-		);
+		if( signdet != 1 )
+		{	// If there was a problem in LuSolve, then get
+			// the original value for R.
+			model->dataVariance(R);
+			// Pivot row and column order in the matrices.
+			std::vector<size_t> ipR(Ni);
+			std::vector<size_t> jpR(Ni);
+			std::vector<size_t> ipD(n_);
+			std::vector<size_t> jpD(n_);
+			// Check R and D to see if they can be
+			// inverted.
+			if( CppAD::LuFactor(ipR, jpR, R) != 1 )
+			{	// R cannot be inverted.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because \nthe covariance matrix for the %s individual's data was not invertable.",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+			else if( CppAD::LuFactor(ipD, jpD, D) != 1 )
+			{	// D cannot be inverted.
+				SPK_PROGRAMMER_ERROR(
+					"The First Order (FO) objective function could not be calculated because \nthe individual parameter covariance matrix was not invertable."
+				);
+			}
+			else
+			{	// The combination of D and f_b cannot be inverted.
+				const int max = SpkError::maxMessageLen();
+				char message[max];
+				snprintf( message, max,
+					"The First Order (FO) objective function could not be calculated because it \ndepended on the individual parameter covariance matrix and the covariance \nmatrix for the %s individual's data in a way that was not invertable.",
+					intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+				SPK_PROGRAMMER_ERROR( message );
+			}
+		}
 		// 1/2 * log( det( 2 * pi * R ) ) + 1/2 * r' * R^{-1} * r
 		double pi = 4. * std::atan(1.);
 		logdet = logdet + Ni * log( 2 * pi );
