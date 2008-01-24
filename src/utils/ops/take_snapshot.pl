@@ -147,7 +147,7 @@ close(FH);
 $lockfile_exists = 1;
 
 # Connect to spktmp
-my $spktmp_dbh = &connect($spktmpname, "localhost", $dbuser, $dbpass)
+my $spktmp_dbh = &connect($spktmpname, "dbserver", $dbuser, $dbpass)
     or die("Could not connect to database $spktmpname\n");
 
 # Prepare a select statement to get the history row for a given job_id that was generated when

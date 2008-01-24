@@ -110,7 +110,7 @@ if ($parallel == 1) {
     $ntasks =  $config->{'srun'}[0]{'ntasks'};
     push @allntasks, @$ntasks;
 
-    my $dbh = &connect("spktest", "localhost", "tester", "tester");
+    my $dbh = &connect("spktest", "dbserver", "tester", "tester");
     my $i = 0;
     for my $job_id (@alljobs) {
         &set_parallel($dbh, $job_id, $allntasks[$i++]);
@@ -159,7 +159,7 @@ for my $job_id (@alljobs) {
 
 print "waiting for jobs to complete -- (this will take a while) ";
 
-my $dbh = &connect("spktest", "localhost", "reader", "reader");
+my $dbh = &connect("spktest", "dbserver", "reader", "reader");
 
 my $active_jobs = @alljobs;
 
