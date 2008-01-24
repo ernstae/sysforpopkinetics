@@ -316,7 +316,7 @@ for my $user_id (keys %user_list) {
 $sth_in->finish;  # free statement handle, no longer needed
 
 # Call on mysqldump to extract userdata.sql from spktmp
-system("$mysqldump -h$dbserver -u$dbuser -p$dbpass -tc $spktmpname --tables "
+system("$mysqldump -h$dbhost -u$dbuser -p$dbpass -tc $spktmpname --tables "
        . "dataset history job model user > userdata.sql") == 0
     or death("mysqldump failed");
 
