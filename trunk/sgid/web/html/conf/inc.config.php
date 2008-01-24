@@ -16,7 +16,7 @@ $OPTIONS = array (
 		  'debug'       => false,
 		  'operators'   => '+-/*',
 		  'DSN'         => array ('phptype'  => 'mysql',
-					  'hostspec' => 'whitechuck.rfpk.washington.edu',
+					  'hostspec' => 'dbserver.rfpk.washington.edu',
 					  'database' => 'SGID',
 					  'username' => 'sgid',
 					  'password' => 'sgid_web' ),
