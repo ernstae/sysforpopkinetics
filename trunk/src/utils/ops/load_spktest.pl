@@ -107,7 +107,7 @@ my $mysqldump = "/usr/bin/mysqldump";
 my $dbuser = "tester";
 my $dbpass = "tester";
 my $dbname = "spktest";
-my $dbhost = "localhost";
+my $dbhost = "dbserver";
 my $dbd    = "mysql";
 
 my %file = ();

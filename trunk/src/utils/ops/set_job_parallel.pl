@@ -26,6 +26,6 @@ use Spkdb ('connect', 'disconnect', 'set_parallel');
 
 my $job_id = shift;
 my $ntasks = shift;
-my $dbh = &connect("spktest", "localhost", "tester", "tester");
+my $dbh = &connect("spktest", "dbserver", "tester", "tester");
 &set_parallel($dbh, $job_id, $ntasks);
 &disconnect($dbh);
