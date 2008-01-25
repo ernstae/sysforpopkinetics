@@ -50,6 +50,11 @@ $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
 my $config = XMLin($config_file, ForceArray => 1);
 
+# modded by Andrew 20080124
+if ( $config->{history_directory} ne '' ) {
+    $base_dir = $config->{history_directory};
+}
+
 if (defined $opt{'dump-config'}) {
     print Dumper($config);
     exit 0;
