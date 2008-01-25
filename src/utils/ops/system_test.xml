@@ -1,4 +1,5 @@
 <regression_test>
+  <history_directory>/usr/local/spk/share/tests/system_test</history_directory>
   <cerr>
   </cerr>
   <srun>
