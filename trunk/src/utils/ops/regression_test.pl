@@ -48,11 +48,12 @@ $norm_code = $opt{'norm-code'} if (defined $opt{'norm-code'});
 $parameter_only = "1" if (defined $opt{'parameter-only'});
 $config_file = $opt{'config-file'} if (defined $opt{'config-file'});
 
-my $config = XMLin($config_file, ForceArray => 1);
+my $xml = new XML::Simple;
+my $config = $xml->XMLin($config_file, ForceArray => 1);
 
 # modded by Andrew 20080124
-if ( $config->{history_directory} ne '' ) {
-    $base_dir = $config->{history_directory};
+if ( $config->{'history_directory'}[0] ne '' ) {
+    $base_dir = $config->{'history_directory'}[0];
 }
 
 if (defined $opt{'dump-config'}) {
@@ -92,8 +93,11 @@ print "\t\t\t\tOK\n";
 
 my $job =  $config->{'srun'}[0]{'job'};
 my @alljobs = @$job;
-$job =  $config->{'cerr'}[0]{'job'};
-push @alljobs, @$job;
+if ( $job =  $config->{'cerr'}[0]{'job'} ) {
+    push @alljobs, @$job;
+}
+
+
 
 my $cmd = "take_snapshot.pl " . join " ", @alljobs;
 print "taking a snapshot of selected jobs in the production database";
