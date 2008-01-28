@@ -828,10 +828,10 @@ public class NearEqual {
             for(int i = 0; i < oldOutput.theta.length; i++)
             {
                 n = String.valueOf(i + 1);
-                oldPar = setLength(oldOutput.theta[i]);
-                oldSer = setLength(oldOutput.stdErrTheta[i]);
-                newPar = setLength(newOutput.theta[i]);
-                newSer = setLength(newOutput.stdErrTheta[i]);
+                oldPar = setLength(oldOutput.theta[i], 14);
+                oldSer = setLength(oldOutput.stdErrTheta[i], 14);
+                newPar = setLength(newOutput.theta[i], 14);
+                newSer = setLength(newOutput.stdErrTheta[i], 14);
                 relErr = getRelErr(oldOutput.theta[i], newOutput.theta[i]);
                 theta = theta + getSpace(5 - n.length()) + n + "      " + 
                         oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
@@ -853,10 +853,10 @@ public class NearEqual {
                         for(int i = j - 1; i < oldOutput.omega[l].length; i++)  
                        {
                            n = j + "," + (i + 1);
-                           oldPar = setLength(oldOutput.omega[l][i][j]);
-                           oldSer = setLength(oldOutput.stdErrOmega[l][i][j]);
-                           newPar = setLength(newOutput.omega[l][i][j]);
-                           newSer = setLength(newOutput.stdErrOmega[l][i][j]);
+                           oldPar = setLength(oldOutput.omega[l][i][j], 14);
+                           oldSer = setLength(oldOutput.stdErrOmega[l][i][j], 14);
+                           newPar = setLength(newOutput.omega[l][i][j], 14);
+                           newSer = setLength(newOutput.stdErrOmega[l][i][j], 14);
                            relErr = getRelErr(oldOutput.omega[l][i][j], newOutput.omega[l][i][j]);
                            omega = omega + getSpace(5 - n.length()) + n + "      " + 
                                    oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
@@ -871,10 +871,10 @@ public class NearEqual {
                    for(int i = 0; i < oldOutput.omega[l].length; i++)
                    {
                        n = (i + 1) + "," + (i + 1);
-                       oldPar = setLength(oldOutput.omega[l][i][i + 1]);
-                       oldSer = setLength(oldOutput.stdErrOmega[l][i][i + 1]);
-                       newPar = setLength(newOutput.omega[l][i][i + 1]);
-                       newSer = setLength(newOutput.stdErrOmega[l][i][i + 1]);
+                       oldPar = setLength(oldOutput.omega[l][i][i + 1], 14);
+                       oldSer = setLength(oldOutput.stdErrOmega[l][i][i + 1], 14);
+                       newPar = setLength(newOutput.omega[l][i][i + 1], 14);
+                       newSer = setLength(newOutput.stdErrOmega[l][i][i + 1], 14);
                        relErr = getRelErr(oldOutput.omega[l][i][i + 1], newOutput.omega[l][i][i + 1]);
                        omega = omega + getSpace(5 - n.length()) + n + "      " + 
                                oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
@@ -898,10 +898,10 @@ public class NearEqual {
                         for(int i = j - 1; i < oldOutput.sigma[l].length; i++)  
                         {
                             n = j + "," + (i + 1);
-                            oldPar = setLength(oldOutput.sigma[l][i][j]);
-                            oldSer = setLength(oldOutput.stdErrSigma[l][i][j]);
-                            newPar = setLength(newOutput.sigma[l][i][j]);
-                            newSer = setLength(newOutput.stdErrSigma[l][i][j]);
+                            oldPar = setLength(oldOutput.sigma[l][i][j], 14);
+                            oldSer = setLength(oldOutput.stdErrSigma[l][i][j], 14);
+                            newPar = setLength(newOutput.sigma[l][i][j], 14);
+                            newSer = setLength(newOutput.stdErrSigma[l][i][j], 14);
                             relErr = getRelErr(oldOutput.sigma[l][i][j], newOutput.sigma[l][i][j]);
                             sigma = sigma + getSpace(5 - n.length()) + n + "      " + 
                                     oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
@@ -916,10 +916,10 @@ public class NearEqual {
                     for(int i = 0; i < oldOutput.sigma[l].length; i++)
                     {
                         n = (i + 1) + "," + (i + 1);
-                        oldPar = setLength(oldOutput.sigma[l][i][i + 1]);
-                        oldSer = setLength(oldOutput.stdErrSigma[l][i][i + 1]);
-                        newPar = setLength(newOutput.sigma[l][i][i + 1]);
-                        newSer = setLength(newOutput.stdErrSigma[l][i][i + 1]);
+                        oldPar = setLength(oldOutput.sigma[l][i][i + 1], 14);
+                        oldSer = setLength(oldOutput.stdErrSigma[l][i][i + 1], 14);
+                        newPar = setLength(newOutput.sigma[l][i][i + 1], 14);
+                        newSer = setLength(newOutput.stdErrSigma[l][i][i + 1], 14);
                         relErr = getRelErr(oldOutput.sigma[l][i][i + 1], newOutput.sigma[l][i][i + 1]);
                         sigma = sigma + getSpace(5 - n.length()) + n + "      " + 
                                 oldPar + getSpace(15 - oldPar.length()) + oldSer + getSpace(15 - oldSer.length()) +
@@ -934,26 +934,26 @@ public class NearEqual {
         StringBuffer summary = new StringBuffer();
         
         summary.append("\n\nParameter Estimation Result:\n");
-        summary.append("=====================================================================================\n\n")
-               .append("Parameter  Old Estimate   Old Std-Error  New Estimate   New Std-Error  Relative Error\n")
+        summary.append("================================================================================\n\n")
+               .append("Parameter  Old Estimate   Old Std-Error  New Estimate   New Std-Error  Rel-Error\n")
                .append(theta).append("\n").append(omega).append("\n");
         if(oldOutput.analysis.equals("population"))             
             summary.append(sigma).append("\n");
-         summary.append("=====================================================================================");                    
+         summary.append("================================================================================");                    
 
         return summary.toString();
     }
     
-    private static String setLength(String str)
+    private static String setLength(String str, int n)
     {
-        if(str.length() > 14)
-            str = str.substring(0, 14);
+        if(str.length() > n)
+            str = str.substring(0, n);
         return str;
     }
     
     private static String getRelErr(String oldP, String newP)
     {
-        return setLength(String.valueOf(Double.parseDouble(newP) / Double.parseDouble(oldP) - 1));
+        return setLength(String.valueOf(Double.parseDouble(newP) / Double.parseDouble(oldP) - 1), 9);
     }
     
     // This function return spaces.
