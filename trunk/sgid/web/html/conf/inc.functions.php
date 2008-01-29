@@ -312,7 +312,7 @@ function error_check( &$TDATA ) {
     
 
   // fix for bug #823
-  if ( sizeof($TDATA['param_list']) < 1 ) {
+  if ( sizeof($TDATA['paramater_list']) < 1 ) {
     add_error('parse', "You have not defined any parameters.  Please check your equations and ensure at least one parameter");
   }
 
