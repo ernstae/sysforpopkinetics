@@ -305,13 +305,17 @@ for my $user_id (keys %user_list) {
     $sth_in->execute($user_id)
 	or death("execute of 'select * from user' failed");
     my $row = $sth_in->fetchrow_hashref();
-    my $sql = "insert into user ("
+    my $company = $row->{'company'};
+    delete $row->{'company'};
+    my $sql = "insert into user (company,"
 	. (join ",", keys %$row)
-	. ") values ('"
+	. ") values (?,'"
 	. (join "','", values %$row)
 	. "');";
-    $spktmp_dbh->do($sql)
-	or death("failed to do '$sql'");
+    my $user_sth = $spktmp_dbh->prepare($sql)
+        or death("prepare of '$sql' failed");
+    $user_sth->execute($company);
+    $user_sth->finish;
 }
 $sth_in->finish;  # free statement handle, no longer needed
 
