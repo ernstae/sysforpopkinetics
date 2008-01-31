@@ -26,19 +26,20 @@ import java.sql.*;
 import java.net.Socket;
 import rfpk.spk.spkdb.*;
 import uw.rfpk.beans.UserInfo;
+import java.text.SimpleDateFormat;
 
-/** This servlet sets the job share_with field of the job specified by the client.
- * The servlet receives a String array containing three String objects from the client.
- * The first String object is the secret code to identify the client.  The second String  
- * object is the job_id.  The third String is the username of the user to share this job with.  The servlet uses database
- * API method setJobShareWith to update the share_with field of the given job in the database. 
- * The servlet sends back two String objects.  The first String object contains the error 
- * message if there is an error or an empty String if there is not any error.  The secod
- * String object is a text "true" if this operation is successful, "false" otherwise.
+/** This servlet sends back the current optimization trace text of the specified job. 
+ * The servlet receives a String array containing two String objects from the client.
+ * The first String object is the secret code to identify the client.  The second String 
+ * is the job_id.  The servlet first checks if the job_id belongs to the user, then gets 
+ * the current optimization trace text of the specified job from the trace server. 
+ * The servlet sends back two objects.  The first object is a String containing the error 
+ * message if there is an error or an empty String if there is not any error.  The second 
+ * object is a String object containing the optimization trace text of the job.
  *
  * @author Jiaji Du
  */
-public class SetJobShareWith extends HttpServlet
+public class GetTrace extends HttpServlet
 {
     /**
      * Dispatches client requests to the protected service method.
@@ -51,98 +52,106 @@ public class SetJobShareWith extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
 	throws ServletException, IOException
     {
-        // Get the user ID of the session
+        // Get UserInfo of the session
         UserInfo user = (UserInfo)req.getSession().getAttribute("validUser");
-        long userId = Long.parseLong(user.getUserId());  
         
         // Database connection
         Connection con = null;
-        Statement userStmt = null;
-
+        Statement jobStmt = null;
+       
         // Prepare output message
         String messageOut = "";
-        String success = "false";
- 
+        String trace = ""; 
+
         // Get the input stream for reading data from the client
         ObjectInputStream in = new ObjectInputStream(req.getInputStream());  
-       
+        
         // Set the content type we are sending
         resp.setContentType("application/octet-stream");
         
         // Data will always be written to a byte array buffer so
         // that we can tell the server the length of the data
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-      
+        
         // Create the output stream to be used to write the data
         // to our buffer
         ObjectOutputStream out = new ObjectOutputStream(byteOut);
-
+        
         try
         {
             // Read the data from the client 
             String[] messageIn = (String[])in.readObject();
-            String secret = messageIn[0];
-            if(secret.equals((String)req.getSession().getAttribute("SECRET")))             
-            {                        
+            String secret = messageIn[0]; 
+            if(secret.equals((String)req.getSession().getAttribute("SECRET")))               
+            {
                 long jobId = Long.parseLong(messageIn[1]);
-                String shareWithName = messageIn[2];
-
+                
                 // Connect to the database
                 ServletContext context = getServletContext();
                 con = Spkdb.connect(context.getInitParameter("database_name"),
                                     context.getInitParameter("database_host"),
                                     context.getInitParameter("database_username"),
                                     context.getInitParameter("database_password"));
+                 
+                // Get job for the job_id
+                ResultSet jobRS = Spkdb.getJob(con, jobId);
+                jobStmt = jobRS.getStatement();
+                jobRS.next();
+                
+                // Get job's owner
+                long userId = jobRS.getLong("user_id");
 
-                // Find user_id of the user to share the job with
-                long shareWithId = 0;
-                if(!shareWithName.equals(""))
+                // Check if the job belongs to the user in the group, belongs to the library
+                // or is shared with this user
+                if((Long.parseLong(user.getUserId()) == userId))
                 {
-                    ResultSet userRS = Spkdb.getUser(con, shareWithName);
-                    userStmt = userRS.getStatement();
-                    if(userRS.next())
+                    Socket socket = new Socket(context.getInitParameter("trace_server_host"),
+                                               Integer.parseInt(context.getInitParameter("trace_server_port")));
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    writer.println(jobId);
+                    String line;
+                    while((line = reader.readLine()) != null)
+                        trace += line + "\n";
+                    trace = trace.trim();
+                    if(trace.length() == 0)
                     {
-                        shareWithId = userRS.getLong("user_id");
+                        trace = null;
+                        messageOut = "Cannot get the optimization trace for the job.";
                     }
-                    else
-                    {
-                        // Write the outgoing messages
-                        messageOut = "Username was not valid.";
-                    }
+                    reader.close();
+                    writer.close();
+                    socket.close();
                 }
                 else
                 {
                     // Write the outgoing messages
-                    messageOut = "Username was not found.";
+                    messageOut = "Authorization error.";                    
                 }
-                
-                // Set job share_with
-                if(shareWithId != 0 && Spkdb.setJobShareWith(con, userId, jobId, shareWithId))
-                    success = "true";
             }
             else
             {
                 // Write the outgoing messages
                 messageOut = "Authentication error.";              
-            }           
-        }      
+            }            
+        }
         catch(SQLException e)
         {
             messageOut = e.getMessage();
-        }    
+        }
         catch(SpkdbException e)
         {
             messageOut = e.getMessage();
-        }
+        }        
         catch(ClassNotFoundException e)
         {
             messageOut = e.getMessage();
-        } 
+        }
         finally
         {
             try
             {
-                if(userStmt != null) userStmt.close();
+                if(jobStmt != null) jobStmt.close();
                 if(con != null) Spkdb.disconnect(con);
             }
             catch(SQLException e){messageOut += "\n" + e.getMessage();}
@@ -151,23 +160,22 @@ public class SetJobShareWith extends HttpServlet
         // Write the data to our internal buffer
         out.writeObject(messageOut);
         if(messageOut.equals(""))
-            out.writeObject(success);
+            out.writeObject(trace);
         
         // Flush the contents of the output stream to the byte array
         out.flush();
-
+        
         // Get the buffer that is holding our response
         byte[] buf = byteOut.toByteArray();
-
+        
         // Notify the client how much data is being sent
         resp.setContentLength(buf.length);
-
+        
         // Send the buffer to the client
         ServletOutputStream servletOut = resp.getOutputStream();
         
         // Wrap up
         servletOut.write(buf);
-
         servletOut.close();
     }
 }
