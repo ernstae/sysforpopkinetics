@@ -236,13 +236,20 @@ public class Des extends javax.swing.JPanel implements WizardStep {
             String title = getStepTitle();
             if(!record.equals(""))
             {
-                if(!Utility.checkCharacter(record, title)) return false;              
+                if(!Utility.checkCharacter(record, title))
+                {
+                    JOptionPane.showMessageDialog(null, "Number of equations and number of unknowns are not equal.",
+                                                  "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }              
                 // Eliminate comments
                 code = Utility.eliminateComments(record);
+                // Check number of ODEs
+                if(Utility.find(code, "DADT") != Utility.find(code, "A")) return false;
                 // Check P on left handside
                 if(!Utility.checkPonLeft(code)) return false;
                 // Check index
-                if(!Utility.checkIndex(code, "A", "DADT")) return false;
+                if(!Utility.checkIndex(code, 1, "A", "DADT")) return false;
                 // Check ENDIF syntax
                 if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility

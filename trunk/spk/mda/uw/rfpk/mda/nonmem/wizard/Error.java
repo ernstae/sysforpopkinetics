@@ -236,7 +236,16 @@ public class Error extends javax.swing.JPanel implements WizardStep {
                 // Check P on left handside
                 if(!Utility.checkPonLeft(code)) return false;
                 // Check index
-                if(!Utility.checkIndex(code, "ETA", "EPS")) return false;
+                int nEtaPK = 0;
+                if(iterator.analysis.equals("population"))
+                {
+                    MDAObject object = (MDAObject)wizard.getCustomizedObject();
+                    String pkCode = Utility.eliminateComments(object.getRecords().getProperty("PK"));
+                    if(pkCode != null)
+                        nEtaPK = Utility.find(pkCode, "ETA");
+                }
+                if(!Utility.checkIndex(code, nEtaPK + 1, "ETA")) return false;
+                if(!Utility.checkIndex(code, 1, "EPS")) return false;
                 // Check ENDIF syntax
                 if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility

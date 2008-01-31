@@ -262,7 +262,7 @@ public class Pred extends javax.swing.JPanel implements WizardStep {
                 // Check P on left handside
                 if(!Utility.checkPonLeft(code)) return false;
                 // Check index
-                if(!Utility.checkIndex(code, "THETA", "ETA", "EPS")) return false;
+                if(!Utility.checkIndex(code, 1, "THETA", "ETA", "EPS")) return false;
                 // Check ENDIF syntax
                 if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility

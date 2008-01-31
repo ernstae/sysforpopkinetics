@@ -25,6 +25,7 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import javax.help.*;
 import uw.rfpk.mda.nonmem.MDAFrame;
+import uw.rfpk.mda.nonmem.Utility;
 
 /** This class defines default model dialog.
  *
@@ -189,6 +190,13 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
                 parameter = Model.parameterList.get(i);
                 if(parameter.name.matches("FF\\d+"))
                     continue;
+                if(data[j][1].toString().equals("true"))
+                {
+                    String[] code = {new String(parameter.value)};
+                    k = Utility.resetIndex(code, "THETA", ++k);
+                    l = Utility.resetIndex(code, "ETA", ++l);
+                    parameter.value = code[0];
+                }
                 if(data[j][2].toString().equals("true"))
                     parameter.value = parameter.name + "=THETA(" + ++k + ")";
                 if(data[j][3].toString().equals("true"))
@@ -207,6 +215,12 @@ public class DefaultModelDialog extends javax.swing.JDialog implements TableMode
                 parameter = Model.parameterList.get(i);
                 if(parameter.name.matches("FF\\d+"))
                     continue;
+                if(data[j][1].toString().equals("true"))
+                {
+                    String[] code = {new String(parameter.value)};
+                    k = Utility.resetIndex(code, "THETA", ++k);
+                    parameter.value = code[0];
+                }
                 if(data[j][2].toString().equals("true"))
                     parameter.value = parameter.name + "=THETA(" + ++k + ")";
                 j++;

@@ -279,7 +279,7 @@ public class PK extends javax.swing.JPanel implements WizardStep {
                 // Check P on left handside
                 if(!Utility.checkPonLeft(code)) return false;
                 // Check index
-                if(!Utility.checkIndex(code, "THETA", "ETA")) return false;
+                if(!Utility.checkIndex(code, 1, "THETA", "ETA")) return false;
                 // Check ENDIF syntax
                 if(!Utility.checkENDIF(code, title)) return false;
                 // Check NONMEM compatibility

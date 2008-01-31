@@ -149,7 +149,7 @@ public class Server {
                                           "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }
-        return success.equals("true");
+        return success != null && success.equals("true");
     }
     
     /** Send a message to the server to set job abstract.
@@ -178,7 +178,7 @@ public class Server {
                                           "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }
-        return success.equals("true");
+        return success != null && success.equals("true");
     }
     
     /** Send a message to the server to set job share_with.
@@ -207,7 +207,7 @@ public class Server {
                                           "Network Error",         
                                           JOptionPane.ERROR_MESSAGE);
         }
-        return success.equals("true");
+        return success != null && success.equals("true");
     }
     
     /** Get a sequence of jobs for a given user.
@@ -389,7 +389,39 @@ public class Server {
         }
         return spkOutput;            
     }
-
+    
+    /** Get job optimization trace. 
+     * @param jobId id number of the job.    
+     * @return a String object containing the job optimization trace.
+     *         null if failed.
+     */
+    public String getTrace(long jobId)
+    {
+        // Put secret and arguments in a String array
+        String[] messageOut = new String[2];
+        messageOut[0] = secret;
+        messageOut[1] = String.valueOf(jobId);
+                
+        // Prepare for the return
+        String trace = null;
+        
+        try
+        {
+            // Talk to the server
+            Network network = new Network("https://" + serverHost + ":" + serverPort + 
+                                          "/user/servlet/uw.rfpk.servlets.GetTrace",
+                                          sessionId);
+            trace = (String)network.talk(messageOut); 
+        }
+        catch(Exception e)
+	{
+            JOptionPane.showMessageDialog(null, "Session expired or other server problem encountered",    
+                                          "Network Error",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return trace;            
+    }
+    
     /** Get job history. 
      * @param jobId id number of the job.    
      * @return a String[][] object containing the job history including event time, 

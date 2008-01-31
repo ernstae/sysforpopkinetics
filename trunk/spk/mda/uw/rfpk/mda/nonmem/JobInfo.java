@@ -126,6 +126,8 @@ public class JobInfo extends javax.swing.JFrame {
             jButton15.setText("Unshare it");
             jButton15.setEnabled(true);
         }
+        jButton16.setEnabled(methodCode.equals("fo") || methodCode.equals("eh") ||
+                             methodCode.equals("la") || methodCode.equals("ia"));
         setTitle("Job Information - " + jobOwner);
         setVisible(true);
     }
@@ -192,6 +194,7 @@ public class JobInfo extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jButton16 = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         jTextArea3 = new javax.swing.JTextArea();
@@ -670,8 +673,11 @@ public class JobInfo extends javax.swing.JFrame {
 
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 3));
 
-        jButton5.setText("Job History");
+        jButton5.setText("History");
         jButton5.setToolTipText("Job processing history");
+        jButton5.setMaximumSize(new java.awt.Dimension(82, 25));
+        jButton5.setMinimumSize(new java.awt.Dimension(82, 25));
+        jButton5.setPreferredSize(new java.awt.Dimension(82, 25));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -680,11 +686,11 @@ public class JobInfo extends javax.swing.JFrame {
 
         jPanel5.add(jButton5);
 
-        jButton6.setText("Job Parent");
+        jButton6.setText("Parent");
         jButton6.setToolTipText("Parent job of this job");
-        jButton6.setMaximumSize(new java.awt.Dimension(104, 25));
-        jButton6.setMinimumSize(new java.awt.Dimension(104, 25));
-        jButton6.setPreferredSize(new java.awt.Dimension(104, 25));
+        jButton6.setMaximumSize(new java.awt.Dimension(82, 25));
+        jButton6.setMinimumSize(new java.awt.Dimension(82, 25));
+        jButton6.setPreferredSize(new java.awt.Dimension(82, 25));
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -693,12 +699,24 @@ public class JobInfo extends javax.swing.JFrame {
 
         jPanel5.add(jButton6);
 
-        jButton12.setText("Job Results");
+        jButton16.setText("Trace");
+        jButton16.setMaximumSize(new java.awt.Dimension(82, 25));
+        jButton16.setMinimumSize(new java.awt.Dimension(82, 25));
+        jButton16.setPreferredSize(new java.awt.Dimension(82, 25));
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton16ActionPerformed(evt);
+            }
+        });
+
+        jPanel5.add(jButton16);
+
+        jButton12.setText("Results");
         jButton12.setToolTipText("All job results and summary report");
         jButton12.setMargin(new java.awt.Insets(2, 1, 2, 1));
-        jButton12.setMaximumSize(new java.awt.Dimension(104, 25));
-        jButton12.setMinimumSize(new java.awt.Dimension(104, 25));
-        jButton12.setPreferredSize(new java.awt.Dimension(104, 25));
+        jButton12.setMaximumSize(new java.awt.Dimension(82, 25));
+        jButton12.setMinimumSize(new java.awt.Dimension(82, 25));
+        jButton12.setPreferredSize(new java.awt.Dimension(82, 25));
         jButton12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton12ActionPerformed(evt);
@@ -1029,6 +1047,13 @@ public class JobInfo extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        frame.jobInfo = this;
+        new TraceShow(frame, id);
+        setCursor(null);
+    }//GEN-LAST:event_jButton16ActionPerformed
 
     private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
         isParentJob = jCheckBox3.isSelected();
@@ -1701,6 +1726,7 @@ public class JobInfo extends javax.swing.JFrame {
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
+    protected javax.swing.JButton jButton16;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

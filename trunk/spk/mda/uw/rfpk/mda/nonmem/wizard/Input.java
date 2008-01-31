@@ -864,6 +864,35 @@ public class Input extends javax.swing.JPanel implements WizardStep {
                 JOptionPane.showMessageDialog(null, "Data was missing.", "Input Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+            
+            // Check time sequence
+            int indexTime = indexOf(input, "TIME");
+            if(indexTime != -1)
+            {
+                double time, t;
+                for(int i = 0; i < data.size(); i++)
+                {
+                    Vector<String[]> indData = data.get(i);
+                    if(indData.size() >= 1)
+                    {
+                        time = Double.parseDouble(indData.get(0)[indexTime]);
+                        for(int j = 1; j < indData.size(); j++)
+                        {
+                            t = Double.parseDouble(indData.get(j)[indexTime]);
+                            if(t >= time)
+                            {
+                                time = t;
+                            }
+                            else
+                            {
+                                JOptionPane.showMessageDialog(null, "TIME is out of sequence in individual " + (i + 1) + ".", 
+                                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
             return true;
         }
         

@@ -67,7 +67,7 @@ public class Utility {
     } 
         
     /** Find substrings that has the patten of s(i), where s is a character string 
-     * i is an integer number.  Than find the largest i among all the substrings.
+     * i is an integer number.  Then, find the largest i among all the substrings.
      * @param input a String object containing the text to search in.
      * @param s a String object containing the character string described above. 
      * @return an int, the largest number found as described above.
@@ -88,27 +88,72 @@ public class Utility {
         return list.size();
     }
     
+    /** Find substrings that has the patten of s(i), where s is a character string 
+     * i is an integer number.  Then, replace each distinct i with a sequential number
+     * starting from a specified integer, and return the ending integer.
+     * @param input a String object containing the text to search in.
+     * @param s a String object containing the character string described above.
+     * @param startingIndex the starting index to set
+     * @return an int, the ending index. 
+     */
+    public static int resetIndex(String[] input, String s, int startingIndex)
+    {
+        String regExp = "\\b" + s + "\\(?(\\d+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
+        Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
+        Matcher matcher = pattern.matcher(" " + input[0].toUpperCase());
+        Vector<String> list = new Vector<String>();
+        if(matcher.find())
+        {
+            list.add(matcher.group(1));
+            while(matcher.find())
+                if(list.indexOf(matcher.group(1)) == -1)
+                    list.add(matcher.group(1));
+        }
+        int j = startingIndex;
+        for(int i = 0; i < list.size(); i++)
+            input[0] = input[0].replaceAll("\\b" + s + "\\(" + list.get(i), s + "(" + j++);
+        return j - 1;
+    }
+    
     /** Find substrings that has the patten of s(i), where s is a character string,
      * and check if i is an integer.
      * @param input a String object containing the text to search in.
      * @param s String objects each containing the character string described above. 
      * @return true if the index is an integer, false otherwise.
      */
-    public static boolean checkIndex(String input, String... s)
+    public static boolean checkIndex(String input, int startingIndex, String... s)
     {
         for(int i = 0; i < s.length; i++)
         {
             String regExp = "\\b" + s[i] + "\\s*\\(?([\\.[^\\)]]+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
             Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
             Matcher matcher = pattern.matcher(" " + input.toUpperCase());
+            Vector<String> list = new Vector<String>();
             while(matcher.find())
-                if(!isPosIntNumber(matcher.group(1)))
+            {
+                if(isPosIntNumber(matcher.group(1)))
                 {
-                    JOptionPane.showMessageDialog(null, "The index of " + s[i] + " must be an positive integer.",  
+                    if(list.indexOf(matcher.group(1)) == -1)
+                        list.add(matcher.group(1));
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "The index of " + s[i] + " must be an positive integer.",
                                                   "Input Error",            
                                                   JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
+            }
+            for(int j = startingIndex; j < startingIndex + list.size(); j++)
+            {
+                if(list.indexOf(String.valueOf(j)) == -1)
+                {
+                    JOptionPane.showMessageDialog(null, s[i] + "(" + j + ") is missing.",
+                                                  "Input Error",            
+                                                  JOptionPane.ERROR_MESSAGE);
+                    return false;
+                } 
+            }
         }
         return true;
     }
@@ -1452,7 +1497,11 @@ public class Utility {
      */    
     public static void main(String[] args)
     {
-        System.out.println(checkPonLeft("\nP = A\n"));
+        System.out.println(checkIndex("ETA(2)+ETA(3)", 1, "ETA"));
+/*        String[] code = {"ETA(1)+ETA(3)+ETA(1)"};
+        System.out.println("Ending index = " + resetIndex(code, "ETA", 4));
+        System.out.println(code[0]);*/
+//        System.out.println(checkPonLeft("\nP = A\n"));
 //        System.out.println(checkIndex("ETA(1)", "ETA"));
 //        System.out.println(checkIndex("ETA(.1)", "ETA"));
 //        System.out.println(checkIndex("ETA(A)", "ETA"));
