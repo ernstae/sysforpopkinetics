@@ -191,6 +191,18 @@
         <param-value></param-value>
     </context-param>
 
+<context-param>
+        <description>The host of the trace server</description>
+        <param-name>trace_server_host</param-name>
+        <param-value></param-value>
+    </context-param>
+
+    <context-param>
+        <description>The port of the trace server</description>
+        <param-name>trace_server_port</param-name>
+        <param-value>9003</param-value>
+    </context-param>
+
     <!-- Session expiration -->
     <session-config>
         <session-timeout>
