@@ -4037,7 +4037,7 @@ public class MDAFrame extends JFrame
 
     private void summaryMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summaryMenuActionPerformed
 //        saveFile();
-        String summary = Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable);
+        String summary = Summary.makeSummary(output, isOnline, isDeveloper, methodTable);
         if(summary != null)
         {
             textArea.setText(summary);
@@ -5200,7 +5200,7 @@ public class MDAFrame extends JFrame
                                       "MDA Status Information",             
                                       JOptionPane.INFORMATION_MESSAGE);
 //        saveFile();
-        textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, jobMethodCode, methodTable));
+        textArea.setText(Summary.makeSummary(output, isOnline, isDeveloper, methodTable));
         textArea.setCaretPosition(0);
         jInternalFrame1.setTitle("Summary Report: Job-" + output.jobId);
         file = null;

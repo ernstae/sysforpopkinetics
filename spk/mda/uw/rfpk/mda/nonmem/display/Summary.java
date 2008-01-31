@@ -42,7 +42,7 @@ public class Summary {
      * @return a String object containing the text of the summary report generated. 
      */
     public static String makeSummary(Output output, boolean isOnline, boolean isDeveloper, 
-                                     String jobMethodCode, HashMap methodTable) 
+                                     HashMap methodTable) 
     {
         if(output == null)
         {
@@ -227,10 +227,10 @@ public class Summary {
         String submissionTime = output.submissionTime != null ? formatTime(output.submissionTime) : NA;
         String completionTime = output.completionTime != null ? formatTime(output.completionTime) : NA;        
         String analysis = output.analysis != null ? output.analysis : NA;
-        String jobMethod = NA + " due to offline (Job Code: " + output.methodCode + ")";
+        String jobMethod = NA + " due to offline (Method Code: " + output.methodCode + ")";
         if(isOnline)
         {
-            jobMethod = output.methodCode != null ? ((String[])methodTable.get(output.methodCode))[0] : NA;
+            jobMethod = ((String[])methodTable.get(output.methodCode))[0];
         }           
         String modelName = output.modelName != null ? output.modelName : NA;
         String modelVersion = output.modelVersion != null ? output.modelVersion : NA;
@@ -247,14 +247,20 @@ public class Summary {
         String objectiveItem = null;
         String objStdErrItem = "";
         String nEvaluationItem = "";
-        if(!((String[])methodTable.get(output.methodCode))[1].equals("le"))
-            objectiveItem = "\n\nMinimum Value of Objective Function: " + objective;
-        else
+        if(output.objective != null)
         {
-            objectiveItem = "\n\nEstimate for Likelihood Function: " + likelihood;
-            objStdErrItem = "\nStandard Error in Likelihood Function: " + objStdErr;
-            nEvaluationItem = "\nNumber of Evaluations: " + nEvaluation;
+            if(output.nEvaluation != null)
+            {
+                objectiveItem = "\n\nEstimate for Likelihood Function: " + likelihood;
+                objStdErrItem = "\nStandard Error in Likelihood Function: " + objStdErr;
+                nEvaluationItem = "\nNumber of Evaluations: " + nEvaluation;
+            }
+            else
+            {
+                objectiveItem = "\n\nMinimum Value of Objective Function: " + objective;
+            }
         }
+        
         String identifyStatus = output.identifyStatus != null ? output.identifyStatus : NA;
         String identifySolutions = output.identifySolutions != null ? output.identifySolutions : NA;
         if(identifySolutions.trim().equals("0") || identifySolutions.trim().equals("1"))

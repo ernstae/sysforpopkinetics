@@ -679,7 +679,7 @@ public class Plotter extends JPanel
             }
             legendWidth = nameWidth + 54;
             legendHeight = 8 + name.length * 12;
-            if(nCurve == 1) legendHeight -= 12;
+            if(nCurve == 1 && !isHistogram) legendHeight -= 12;
             if(legendLocation.equals("Inside"))
             {
                 width = d.width - rightInset - leftInset;
@@ -1075,6 +1075,7 @@ public class Plotter extends JPanel
         gc2D.setColor(fg);
         gc2D.draw(legendArea);
         int j = nCurve > 1? 0 : 1;
+        if(isHistogram) j = 0;
         for(int i = j; i < name.length; i++)
         {
             int x = (int)legendArea.getMinX() + 26;
@@ -1163,7 +1164,7 @@ public class Plotter extends JPanel
                 }
                 legendWidth = nameWidth + 54;
                 legendHeight = 8 + name.length * 12;            
-                if(nCurve == 1) legendHeight -= 12;
+                if(nCurve == 1 && !isHistogram) legendHeight -= 12;
                 if(legendLocation.equals("Inside"))
                 {
                     width = d.width - rightInset - leftInset;
@@ -1812,7 +1813,7 @@ public class Plotter extends JPanel
     private static double[] calcDivisions(int maxSteps, double min, double max, int a)
     {
         double diff = max - min;
-        double adjMax, adjMin;
+        double adjMax, adjMin, adjDiff;
         int numSteps;
         if(diff == 0)
         {
@@ -1843,15 +1844,16 @@ public class Plotter extends JPanel
             double stepSize = Math.pow(10, ld) / a;
             adjMax = Math.ceil(max / stepSize) * stepSize;
             adjMin = Math.floor(min / stepSize) * stepSize;
-            double adjDiff = adjMax - adjMin;
+            adjDiff = adjMax - adjMin;
             numSteps = (int)(adjDiff / stepSize + .1);
             while(numSteps > maxSteps)
             {
                 stepSize = Math.pow(10, ++ld) / a;
+                adjMax = Math.ceil(max / stepSize) * stepSize;
+                adjMin = Math.floor(min / stepSize) * stepSize;
+                adjDiff = adjMax - adjMin;
                 numSteps = (int)(adjDiff / stepSize + .1);
             }
-            adjMin = Math.floor(min / stepSize) * stepSize;
-            adjMax = Math.ceil(max / stepSize) * stepSize;
         }
         double[] list = {adjMin, adjMax, numSteps};
         
