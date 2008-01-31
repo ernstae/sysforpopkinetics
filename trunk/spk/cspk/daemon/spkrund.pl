@@ -811,8 +811,10 @@ sub reaper {
 	read(FH, $err_rpt, -s FH);
 	close(FH);
 
-	$end_code = "serr";
-	$err_msg .= "software bug caught as assertion; ";
+        if($end_code ne "abrt") {
+	    $end_code = "serr";
+	    $err_msg .= "software bug caught as assertion; ";
+        }
     }
     # Remove the empty STDERR captured file
     else {
