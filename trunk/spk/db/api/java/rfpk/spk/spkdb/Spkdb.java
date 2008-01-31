@@ -279,6 +279,7 @@ public abstract class Spkdb {
             }
             sql += ")";
         }
+        sql += " order by job_id";
 //	sql += " order by job_id desc limit " + maxNum + ";";
 	Statement stmt = conn.createStatement();
 	ResultSet rs = stmt.executeQuery(sql);
