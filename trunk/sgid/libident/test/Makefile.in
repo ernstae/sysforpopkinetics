@@ -56,7 +56,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am_test_libident_OBJECTS = calcexhaustsummaryTest.$(OBJEXT) \
+am_test_libident_OBJECTS = calcExhaustSummaryTest.$(OBJEXT) \
 	calcGroebnerBasisTest.$(OBJEXT) checkParamIdentTest.$(OBJEXT) \
 	test_libident.$(OBJEXT)
 test_libident_OBJECTS = $(am_test_libident_OBJECTS)
@@ -220,10 +220,10 @@ AM_LDFLAGS = \
 
 
 # Set the files that make up the set of unit tests.
-test_libident_SOURCES = calcexhaustsummaryTest.cpp \
+test_libident_SOURCES = calcExhaustSummaryTest.cpp \
 	calcGroebnerBasisTest.cpp \
 	checkParamIdentTest.cpp \
-	calcexhaustsummaryTest.h \
+	calcExhaustSummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h \
 	test_libident.cpp
@@ -231,7 +231,7 @@ test_libident_SOURCES = calcexhaustsummaryTest.cpp \
 
 # Set the header files for the set of unit tests.
 noinst_HEADERS = ${top_builddir}/config.h \
-	calcexhaustsummaryTest.h \
+	calcExhaustSummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h
 
@@ -285,8 +285,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcExhaustSummaryTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcGroebnerBasisTest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calcexhaustsummaryTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkParamIdentTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_libident.Po@am__quote@
 
