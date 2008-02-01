@@ -14,6 +14,17 @@
 
 @SET_MAKE@
 
+#*************************************************************************
+#
+# File: Makefile.am
+#
+# This file can be used with automake to generate the Makefile for the
+# unit tests for the identifiability library.
+#
+# Author: Mitch Watrous
+#
+#*************************************************************************
+
 
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
@@ -209,8 +220,7 @@ AM_LDFLAGS = \
 
 
 # Set the files that make up the set of unit tests.
-test_libident_SOURCES = \
-	calcexhaustsummaryTest.cpp \
+test_libident_SOURCES = calcexhaustsummaryTest.cpp \
 	calcGroebnerBasisTest.cpp \
 	checkParamIdentTest.cpp \
 	calcexhaustsummaryTest.h \
@@ -220,8 +230,7 @@ test_libident_SOURCES = \
 
 
 # Set the header files for the set of unit tests.
-noinst_HEADERS = \
-	${top_builddir}/config.h \
+noinst_HEADERS = ${top_builddir}/config.h \
 	calcexhaustsummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h
@@ -484,7 +493,6 @@ uninstall-am:
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
-\#*************************************************************************
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
