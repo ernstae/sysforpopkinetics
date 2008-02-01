@@ -31,7 +31,7 @@ endif
 # Set the flags for the linker.
 AM_LDFLAGS = \
 	-L/usr/lib \
-	-L../../libident \
+	-L../../libident/src \
 	-lcln \
 	-lginac \
 	-lbad \
