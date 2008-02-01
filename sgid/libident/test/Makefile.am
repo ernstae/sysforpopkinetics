@@ -1,4 +1,4 @@
-\#*************************************************************************
+#*************************************************************************
 #
 # File: Makefile.am
 #
@@ -33,7 +33,7 @@ AM_LDFLAGS = \
 	-lbap \
 	-lbav \
 	-lba0 \
- 	-lcppunit \
+	-lcppunit \
 	-lxerces-c \
 	-lm \
 	-ldl
@@ -54,3 +54,5 @@ noinst_HEADERS = \
 	calcexhaustsummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h
+
+
