@@ -49,7 +49,7 @@ test_libident_SOURCES = \
 	test_libident.cpp
 
 # Set the header files for the set of unit tests.
-noinst_HEADERS =
+noinst_HEADERS = \
 	${top_builddir}/config.h \
 	calcexhaustsummaryTest.h \
 	calcGroebnerBasisTest.h \
