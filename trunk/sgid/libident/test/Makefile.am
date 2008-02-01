@@ -39,17 +39,17 @@ AM_LDFLAGS = \
 	-ldl
 
 # Set the files that make up the set of unit tests.
-test_libident_SOURCES = calcexhaustsummaryTest.cpp \
+test_libident_SOURCES = calcExhaustSummaryTest.cpp \
 	calcGroebnerBasisTest.cpp \
 	checkParamIdentTest.cpp \
-	calcexhaustsummaryTest.h \
+	calcExhaustSummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h \
 	test_libident.cpp
 
 # Set the header files for the set of unit tests.
 noinst_HEADERS = ${top_builddir}/config.h \
-	calcexhaustsummaryTest.h \
+	calcExhaustSummaryTest.h \
 	calcGroebnerBasisTest.h \
 	checkParamIdentTest.h
 
