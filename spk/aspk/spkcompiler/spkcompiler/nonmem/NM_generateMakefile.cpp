@@ -11,6 +11,10 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
 
+// Use this to fix bug number 585
+// (will no longer need this once bug is fixed in GSL)
+# define SPK_REPLACE_MISER 1
+
 using namespace std;
 using namespace xercesc;
 //=============================================================================
@@ -219,10 +223,18 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tGsl2SpkError.h" << endl;
       oMakefile << endl;
 
+# if SPK_REPLACE_MISER
+      oMakefile << "prod : miser.o adapt.o pow_ii.o "           << endl;
+# else
       oMakefile << "prod : adapt.o pow_ii.o "           << endl;
+# endif
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
+# if SPK_REPLACE_MISER
+      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) miser.o adapt.o pow_ii.o -o driver ";
+# else
       oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o driver ";
+# endif
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
@@ -240,7 +252,11 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(PROD_DIR)/ml/* ." << endl;
       oMakefile << "\tmake -f Makefile.SPK prod" << endl;
+# if SPK_REPLACE_MISER
+      oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) miser.o adapt.o pow_ii.o -o alpDriver ";
+# else
       oMakefile << "\tg++ $(CXX_FLAGS_PROD) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o alpDriver ";
+# endif
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(PROD_DIR) ";
@@ -254,10 +270,18 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
+# if SPK_REPLACE_MISER
+      oMakefile << "test : miser.o adapt.o pow_ii.o"           << endl;
+# else
       oMakefile << "test : adapt.o pow_ii.o"           << endl;
+# endif
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
+# if SPK_REPLACE_MISER
+      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) miser.o adapt.o pow_ii.o -o driver ";
+# else
       oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o driver ";
+# endif
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
@@ -275,7 +299,11 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
       oMakefile << "\tmake -f Makefile.SPK test" << endl;
+# if SPK_REPLACE_MISER
+      oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) miser.o adapt.o pow_ii.o -o alpDriver ";
+# else
       oMakefile << "\tg++ $(CXX_FLAGS_TEST) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o alpDriver ";
+# endif
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
@@ -289,10 +317,18 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
 
+# if SPK_REPLACE_MISER
+      oMakefile << "debug : miser.o adapt.o pow_ii.o "           << endl;
+# else
       oMakefile << "debug : adapt.o pow_ii.o "           << endl;
+# endif
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
+# if SPK_REPLACE_MISER
+      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) miser.o adapt.o pow_ii.o -o driver ";
+# else
       oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) monteDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o driver ";
+# endif
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
@@ -310,7 +346,11 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << "\tmake -f Makefile.SPK monte_clean" << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/* . " << endl;
       oMakefile << "\tmake -f Makefile.SPK debug" << endl;
+# if SPK_REPLACE_MISER
+      oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) miser.o adapt.o pow_ii.o -o alpDriver ";
+# else
       oMakefile << "\tg++ $(CXX_FLAGS_DEBUG) $(CXX_FLAGS) monteAlpDriver.cpp $(MONTE_CPP) adapt.o pow_ii.o -o alpDriver ";
+# endif
       oMakefile << "-L/usr/local/lib ";
       oMakefile << "-L/usr/lib/atlas ";
       oMakefile << "-L/usr/local/lib/$(TEST_DIR) ";
@@ -323,6 +363,14 @@ void NonmemTranslator::generateMakefile() const
       oMakefile << " -L/usr/share/pvm3/lib/LINUX64 ";
       oMakefile << "$(LIBS)" << endl;
       oMakefile << endl;
+
+# if SPK_REPLACE_MISER
+      oMakefile << "miser.o : "                       << endl;
+      oMakefile << "\tsed -e '184,184s/>=/>/g' -e'31,31d'  > miser.c ";
+      oMakefile << "/usr/local/src/$(TEST_DIR)/ml/gsl-1.10-miser.c" << endl; 
+      oMakefile << "\tgcc $(CXX_FLAGS) -c miser.c"   << endl;
+      oMakefile << endl;
+# endif
 
       oMakefile << "adapt.o : "                       << endl;
       oMakefile << "\tcp /usr/local/src/$(TEST_DIR)/ml/adapt.c ." << endl;

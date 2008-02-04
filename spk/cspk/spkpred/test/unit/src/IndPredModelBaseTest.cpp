@@ -2455,7 +2455,7 @@ void IndPredModelBaseTest::RailExample_OptimizerBackup_Test()
 
   // Set the values for optimization of the individual objective
   // functions.
-  double indEpsilon = 1.e-3; 
+  double indEpsilon = 1.e-4; 
   int indNMaxIter   = 50; 
   int indLevel      = 0;
 

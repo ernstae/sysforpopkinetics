@@ -442,10 +442,10 @@ void firstOrderOptTest::firstOrderOptAnalyticTest()
   ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+1) ) < 1e-4;
   ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+2) ) < 1e-4;
   ok_L &= fabs(*(dmatLtilde_alp_alpOut.data()+3) / Hessian_11 - 1) < 1e-4;
-  // do not require much relative accuracy on derivatives because are zero
+  // do use relative accuracy on derivatives because are zero
   // at the true minimizer.
-  ok_L &= fabs(*(drowLtilde_alpOut.data()+0) / Ltilde_alp_0 - 1 ) < 1e-2;
-  ok_L &= fabs(*(drowLtilde_alpOut.data()+1) / Ltilde_alp_1 - 1 ) < 1e-2;
+  ok_L &= fabs(*(drowLtilde_alpOut.data()+0) - Ltilde_alp_0 ) < 1e-8;
+  ok_L &= fabs(*(drowLtilde_alpOut.data()+1) - Ltilde_alp_1 ) < 1e-8;
   CPPUNIT_ASSERT_MESSAGE(
       "firstOrderOptAnalyticTest: Ltilde or its derivative is not correct.",
       ok_L
