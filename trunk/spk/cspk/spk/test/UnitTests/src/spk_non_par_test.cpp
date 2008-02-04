@@ -346,7 +346,9 @@ void one_fit(
 	// --------------------- epsilon ---------------------
 	DoubleMatrix epsilon(5, 1);
 	ptr = epsilon.data();
-	ptr[0] = 1e-7;
+	if( fit_variance )
+		ptr[0] = 1e-3;
+	else	ptr[0] = 1e-4;
 	ptr[1] = 1e-4;
 	ptr[2] = 1e-4;
 	ptr[3] = 1e-13;

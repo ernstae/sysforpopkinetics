@@ -18,6 +18,8 @@ install : \
 	MapMonte.h \
 	MontePopObj.h \
 	\
+	gsl-1.10-miser.c \
+	\
 	AdaptIntegral.cpp \
 	adapt.c \
 	GridIntegral.cpp \

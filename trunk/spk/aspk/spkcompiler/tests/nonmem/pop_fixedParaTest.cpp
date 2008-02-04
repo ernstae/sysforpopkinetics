@@ -1098,7 +1098,8 @@ void pop_fixedParaTest::testReportML()
 	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
 	if( x_val != NULL )
 	  inv_cov_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_inv_cov[i], inv_cov_val[i], scale );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_inv_cov[i], inv_cov_val[i], 
+		100.*scale);
       }
     }
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1140,7 +1141,7 @@ void pop_fixedParaTest::testReportML()
 	const XMLCh * x_val = value->getFirstChild()->getNodeValue();
 	if( x_val != NULL )
 	  cv_val[i] = atof( XMLString::transcode( x_val ) );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cv[i], cv_val[i], scale );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( nm_cv[i], cv_val[i], 10. * scale );
       }
     }
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
