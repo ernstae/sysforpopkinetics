@@ -276,15 +276,7 @@ regression_test --ignore-candidate --pvm --parallel
 	  <para>
 	    In your <emphasis>aspkserver</emphasis> root window:
 	    <screen>
-/etc/rc.d/init.d/spkcmptestd stop
-	    </screen>
-	    and in your root window to <emphasis>cspkserver</emphasis>
-	    <screen>
-/etc/rc.d/init.d/spkruntestd stop
-	    </screen>
-	    and in your root window to <emphasis>jobqserver</emphasis>
-	    <screen>
-/etc/rc.d/init.d/jobqtestd stop
+spkinit.sh spktest stop
 	    </screen>
 	  </para>
 	</listitem>
@@ -397,24 +389,9 @@ dump_spktest.pl
 	    Start the Job-queue server and the daemons, so that the jobs will compile and run.
 	  </para>
 	  <para>
-	    In your root window to <emphasis>jobqserver</emphasis>:
+	    In your root window to <emphasis>aspkserver</emphasis>:
 	    <screen>
-/etc/rc.d/init.d/jobqtestd start
-	    </screen>
-            then wait for the server initialization.  The length of the initialization time
-            depends on the total number of jobs in the test database.  To check the status,
-            enter a command in your root window to <emphasis>jobqserver</emphasis>:
-            <screen>
-/usr/local/bin/spktest/pingjobqtestd
-            </screen>
-	    After the initialization is completed, 
-            in your root window to <emphasis>aspkserver</emphasis>:
-	    <screen>
-/etc/rc.d/init.d/spkcmptestd start
-	    </screen>
-	    and in your root window to <emphasis>cspkserver</emphasis>:
-	    <screen>
-/etc/rc.d/init.d/spkruntestd start
+spkinit.sh spktest start
 	    </screen>
 	  </para>
 	  <para>
