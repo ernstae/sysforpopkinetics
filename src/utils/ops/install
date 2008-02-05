@@ -33,6 +33,9 @@ cp regression_test /usr/local/bin
 chmod +x release_notes
 cp release_notes /usr/local/bin
 
+chmod +x spkinit.sh 
+cp spkinit.sh /usr/local/bin
+
 cp regression_test.xml /usr/local/spk/ops/regression_test/config
 cp regression_test_parallel.xml /usr/local/spk/ops/regression_test/config
 cp system_test.xml /usr/local/spk/ops/regression_test/config
