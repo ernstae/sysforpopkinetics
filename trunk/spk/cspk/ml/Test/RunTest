@@ -18,8 +18,10 @@ do
 		-e "s/method *= *[a-z]*/method = $method/" \
 		-e "s/\[ *nEval *\] *= *{ *[0-9]* *}/[ nEval ] = { $neval }/"
 	make monteDriver
-	echo "./monteDriver | sed  -n '/^ *[0-9.e+-]* *\$/p'  > monteDriver.$job"
-	./monteDriver | sed  -n '/^ *[0-9.e+-]* *$/p'  > monteDriver.$job 
+	echo "./monteDriver"
+	echo "cat result.xml | sed  -n '/^ *[0-9.e+-]* *\$/p'  > monteDriver.$job"
+	./monteDriver
+	cat result.xml | sed  -n '/^ *[0-9.e+-]* *$/p'  > monteDriver.$job 
 	sed -n '/^ *[0-9.e+-]* *$/p'  < result-$job.xml > result.$job
 	if ./NearEqual monteDriver.$job result.$job 1e-3 1e-3
 	then

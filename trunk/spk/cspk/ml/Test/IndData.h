@@ -8,6 +8,23 @@
 #include <spk/cholesky.h>
 #include <spk/multiply.h>
 #include <CppAD/CppAD.h>
+#include <ginac/ginac.h>
+
+template<class Scalar>
+Scalar undefinedValue()
+{
+  // The default undefined value is a NaN (Not a Number).
+  double zero = 0.0;
+  return zero / zero;
+}
+
+template<>
+GiNaC::ex undefinedValue< GiNaC::ex >()
+{
+  // The undefined value for double values used in GiNaC expressions
+  // is -99999.0 because GiNaC does not accept NaN's.
+  return -99999.0;
+}
 
 template <class spk_ValueType>
 class IndData{
@@ -91,7 +108,10 @@ protected:
    SPK_VA::valarray<double> measurements;
 private:
    const int nRecords; // the number of data records.
+   void assign( double&, const CppAD::AD< CppAD::AD< CppAD::AD<double> > >& ) const;
+   void assign( double&, const CppAD::AD< CppAD::AD<double> >& ) const;
    void assign( double&, const CppAD::AD<double>& ) const;
+   void assign( double&, const GiNaC::ex& ) const;
    void assign( double&, double ) const;
    /////////////////////////////////////////////////////////
    //      original                     y
@@ -173,23 +193,25 @@ Y( nRecordsIn )
    }
    measurements.resize( nY );
    //
-   // Initialize scalar variables
+   // Initialize scalar variables with a value that indicates
+   // undefined values. 
    //
-fill( CPRED.begin(), CPRED.end(), -99999 );
-fill( CRES.begin(), CRES.end(), -99999 );
-fill( CWRES.begin(), CWRES.end(), -99999 );
-fill( F.begin(), F.end(), -99999 );
-fill( IPRED.begin(), IPRED.end(), -99999 );
-fill( IRES.begin(), IRES.end(), -99999 );
-fill( IWRES.begin(), IWRES.end(), -99999 );
-fill( ORGDV.begin(), ORGDV.end(), -99999 );
-fill( PPRED.begin(), PPRED.end(), -99999 );
-fill( PRED.begin(), PRED.end(), -99999 );
-fill( PRES.begin(), PRES.end(), -99999 );
-fill( PWRES.begin(), PWRES.end(), -99999 );
-fill( RES.begin(), RES.end(), -99999 );
-fill( WRES.begin(), WRES.end(), -99999 );
-fill( Y.begin(), Y.end(), -99999 );
+   spk_ValueType undefVal = undefinedValue<spk_ValueType>();
+   fill( CPRED.begin(), CPRED.end(), undefVal );
+   fill( CRES.begin(), CRES.end(), undefVal );
+   fill( CWRES.begin(), CWRES.end(), undefVal );
+   fill( F.begin(), F.end(), undefVal );
+   fill( IPRED.begin(), IPRED.end(), undefVal );
+   fill( IRES.begin(), IRES.end(), undefVal );
+   fill( IWRES.begin(), IWRES.end(), undefVal );
+   fill( ORGDV.begin(), ORGDV.end(), undefVal );
+   fill( PPRED.begin(), PPRED.end(), undefVal );
+   fill( PRED.begin(), PRED.end(), undefVal );
+   fill( PRES.begin(), PRES.end(), undefVal );
+   fill( PWRES.begin(), PWRES.end(), undefVal );
+   fill( RES.begin(), RES.end(), undefVal );
+   fill( WRES.begin(), WRES.end(), undefVal );
+   fill( Y.begin(), Y.end(), undefVal );
 
 copy( DV.begin(), DV.end(), ORGDV.begin() );
 
@@ -201,9 +223,9 @@ copy( DV.begin(), DV.end(), ORGDV.begin() );
    for( int j=0, jPrime=0; j<nRecords; j++ )
    {
       THETA[j].resize( 1 );
-      fill( THETA[j].begin(), THETA[j].end(), -99999 );
+      fill( THETA[j].begin(), THETA[j].end(), undefVal );
       ETA[j].resize( 1 );
-      fill( ETA[j].begin(), ETA[j].end(), -99999 );
+      fill( ETA[j].begin(), ETA[j].end(), undefVal );
       ETARES[j].resize( 1 );
       WETARES[j].resize( 1 );
       IETARES[j].resize( 1 );
@@ -212,16 +234,16 @@ copy( DV.begin(), DV.end(), ORGDV.begin() );
       PWETARES[j].resize( 1 );
       CETARES[j].resize( 1 );
       CWETARES[j].resize( 1 );
-      fill( ETARES[j].begin(), ETARES[j].end(), -99999 );
-      fill( WETARES[j].begin(), WETARES[j].end(), -99999 );
-      fill( IETARES[j].begin(), IETARES[j].end(), -99999 );
-      fill( IWETARES[j].begin(), IWETARES[j].end(), -99999 );
-      fill( PETARES[j].begin(), PETARES[j].end(), -99999 );
-      fill( PWETARES[j].begin(), PWETARES[j].end(), -99999 );
-      fill( CETARES[j].begin(), CETARES[j].end(), -99999 );
-      fill( CWETARES[j].begin(), CWETARES[j].end(), -99999 );
+      fill( ETARES[j].begin(), ETARES[j].end(), undefVal );
+      fill( WETARES[j].begin(), WETARES[j].end(), undefVal );
+      fill( IETARES[j].begin(), IETARES[j].end(), undefVal );
+      fill( IWETARES[j].begin(), IWETARES[j].end(), undefVal );
+      fill( PETARES[j].begin(), PETARES[j].end(), undefVal );
+      fill( PWETARES[j].begin(), PWETARES[j].end(), undefVal );
+      fill( CETARES[j].begin(), CETARES[j].end(), undefVal );
+      fill( CWETARES[j].begin(), CWETARES[j].end(), undefVal );
       EPS[j].resize( 1 );
-      fill( EPS[j].begin(), EPS[j].end(), -99999 );
+      fill( EPS[j].begin(), EPS[j].end(), undefVal );
         if( MDV[j] == 0 )
         {
            assign( measurements[jPrime], DV[j] );
@@ -552,9 +574,31 @@ void IndData<spk_ValueType>::replaceCWEtaRes( const SPK_VA::valarray<double>& cW
 }
 
 template <class spk_ValueType>
+void IndData<spk_ValueType>::assign( double & d, const CppAD::AD< CppAD::AD< CppAD::AD<double> > >& addd ) const
+{
+   d = CppAD::Value( CppAD::Value( CppAD::Value( addd ) ) );
+   return;
+}
+
+template <class spk_ValueType>
+void IndData<spk_ValueType>::assign( double & d, const CppAD::AD< CppAD::AD<double> >& add ) const
+{
+   d = CppAD::Value( CppAD::Value( add ) );
+   return;
+}
+
+template <class spk_ValueType>
 void IndData<spk_ValueType>::assign( double & d, const CppAD::AD<double>& ad ) const
 {
    d = CppAD::Value( ad );
+   return;
+}
+
+template <class spk_ValueType>
+void IndData<spk_ValueType>::assign( double & d, const GiNaC::ex& ex ) const
+{
+   using namespace GiNaC;
+   d = ex_to<numeric>( ex ).to_double();
    return;
 }
 
