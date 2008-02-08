@@ -7,9 +7,12 @@ AM_CPPFLAGS = \
 	-c \
 	-I.. \
 	-I. \
-	-I/usr/local/include/spktest/ 
+	-I/usr/local/include/spktest/ \
+	-I/usr/share/pvm3/include
 #
-AM_LDFLAGS = -L/usr/local/lib/spktest 
+AM_LDFLAGS = -L/usr/local/lib/spktest \
+             -L/usr/share/pvm3/lib/LINUX \
+	     -L/usr/lib/atlas
 #
 LDADD = \
 	-lspkpred \
@@ -21,7 +24,9 @@ LDADD = \
 	-latlas \
 	-lpthread \
 	-lm \
-	-lxerces-c 
+	-lxerces-c \
+	-lpvm3 \
+	-lginac
 #
 monteDriver_SOURCES  = \
 	AdaptIntegral.cpp \
