@@ -42,7 +42,7 @@ public class ErrorModelDialog extends javax.swing.JDialog {
         this.modelExpression = modelExpression;
         this.isPopulation = isPopulation;
         initComponents();
-        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
+//        helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
         CSH.setHelpIDString(helpButton, "Residual_Unknown_Variability_Model_Graphical_Editor_");
         if(!isPopulation)
             jTextArea1.setText("Select a residual unknown variability (RUV) model:\n  - F denotes the model function vector\n  - DV denotes the observed data vector\n  - Y, a random variable, represents the predcted observation\n  - Model must contain RUV parameter ETA\n  - Enter appropriate number in () following ETA (e.g. ETA(1))");
@@ -381,9 +381,9 @@ public class ErrorModelDialog extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String text = userDefinedTextField.getText();
-        String eqns = eqnTextArea.getText();
-        String name = nameTextField.getText();
+        String text = userDefinedTextField.getText().trim().toUpperCase();
+        String eqns = eqnTextArea.getText().trim().toUpperCase();
+        String name = nameTextField.getText().trim().toUpperCase();
         if(!text.replaceAll(" ", "").startsWith("Y="))
         {
             JOptionPane.showMessageDialog(null, "\"Y=\" is missing in the model.",

@@ -663,7 +663,7 @@ public class MixedModelDialog extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String text = userDefinedTextArea.getText().trim();
+        String text = userDefinedTextArea.getText().trim().toUpperCase();
         if(userDefinedTextArea.isEditable())
         {
             if(Pattern.compile("\\bIF\\b", Pattern.UNIX_LINES).matcher(text).find())

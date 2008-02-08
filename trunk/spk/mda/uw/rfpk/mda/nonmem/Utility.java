@@ -125,12 +125,13 @@ public class Utility {
     {
         for(int i = 0; i < s.length; i++)
         {
-            String regExp = "\\b" + s[i] + "\\s*\\(?([\\.[^\\)]]+)\\)?[\\s|\\)|+|-|*|/|\n|$]";
+            String regExp = "\\b" + s[i] + "\\s*\\(([\\.[^\\)]]+)\\)[\\s|\\)|+|-|*|/|\n|$]";
             Pattern pattern = Pattern.compile(regExp, Pattern.UNIX_LINES);
             Matcher matcher = pattern.matcher(" " + input.toUpperCase());
             Vector<String> list = new Vector<String>();
             while(matcher.find())
             {
+                String number = matcher.group(1);
                 if(isPosIntNumber(matcher.group(1)))
                 {
                     if(list.indexOf(matcher.group(1)) == -1)
