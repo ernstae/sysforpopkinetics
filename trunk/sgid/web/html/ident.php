@@ -46,8 +46,8 @@ case 0:
 <input type="hidden" name="step" value="<?= $step ?>">
 <fieldset>
 <legend><?= $steps[$step] ?></legend>
-<label for="equations">Equations:</label>
-<textarea name="equations" rows="10" cols="50"><?= $_SESSION['equations'] ?>
+Equations:
+<textarea name="equations" rows="25" cols="75"><?= $_SESSION['equations'] ?>
 </textarea>
 <br />
 <label for="seed">Seed:</label><input type="text" id="seed" value="<?= $_SESSION['seed'] > 0 ? $_SESSION['seed'] : rand(1000,9999) ?>" name="seed" maxlength="4">
