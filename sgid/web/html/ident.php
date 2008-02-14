@@ -104,13 +104,13 @@ review.email_address.disabled = true;
 <fieldset>
 <legend><?= $steps[$step] ?></legend>
 <ol>
-Input Equations: (<?= sizeof($_SESSION['TDATA_web']['input_eq']) ?>):<br />
+System Equations: (<?= sizeof($_SESSION['TDATA_web']['input_eq']) ?>):<br />
 <ul>
 <pre>
 <?= htmlentities($eq_array['input_eq']) ?>
 </pre>
 </ul>
-Output Equations: (<?= sizeof($_SESSION['TDATA_web']['out_eq']) ?>):<br />
+Measurement Equations: (<?= sizeof($_SESSION['TDATA_web']['out_eq']) ?>):<br />
 <ul>
 <pre>
 <?= htmlentities($eq_array['out_eq']) ?>
