@@ -151,7 +151,7 @@ import java.awt.Dimension;
                 {
                     fluxes.remove(flux);
                     parameterList.remove(flux.flowRate);
-                    tool.updateParameterList(flux.flowRate, true);
+                    tool.updateParameterList(parameterList, flux.flowRate, true);
                     i--;
                 }
                 if(flux.element1 != element && flux.element2 == element)
@@ -165,7 +165,7 @@ import java.awt.Dimension;
                     }
                     fluxes.remove(flux);
                     parameterList.remove(flux.flowRate);
-                    tool.updateParameterList(flux.flowRate, true);
+                    tool.updateParameterList(parameterList, flux.flowRate, true);
                     i--;
                 }
             }
@@ -210,12 +210,12 @@ import java.awt.Dimension;
             {
                 Parameter parameter = (Parameter)compartment.parameters.get(iterator.next());
                 parameterList.remove(parameter);
-                tool.updateParameterList(parameter, true);
+                tool.updateParameterList(parameterList, parameter, true);
             }
             if(compartment.force != null)
             {
                 parameterList.remove(compartment.force);
-                tool.updateParameterList(compartment.force, true);
+                tool.updateParameterList(parameterList, compartment.force, true);
             }
             renumberElements(element);
         }
@@ -228,13 +228,13 @@ import java.awt.Dimension;
                 {
                     fluxes.remove(i--);
                     parameterList.remove(flux.flowRate);
-                    tool.updateParameterList(flux.flowRate, true);
+                    tool.updateParameterList(parameterList, flux.flowRate, true);
                 }
             }
             elements.remove(element);
             Parameter parameter = ((Element.Delay)element).delayTime;
             parameterList.remove(parameter);
-            tool.updateParameterList(parameter, true);
+            tool.updateParameterList(parameterList, parameter, true);
             renumberElements(element);
         }
         if(element instanceof Element.Flux)
@@ -242,7 +242,7 @@ import java.awt.Dimension;
             fluxes.remove(element);
             Element.Flux flux = (Element.Flux)element;
             parameterList.remove(flux.flowRate);
-            tool.updateParameterList(flux.flowRate, true);
+            tool.updateParameterList(parameterList, flux.flowRate, true);
             if(flux.element1 instanceof Element.Delay)
             {
                 Element.Delay delay = (Element.Delay)flux.element1;
@@ -250,7 +250,7 @@ import java.awt.Dimension;
                 delay.compartments.remove(index);
                 delay.fractions.remove(index);
                 parameterList.remove(delay.delayTime);
-                tool.updateParameterList(delay.delayTime, true);
+                tool.updateParameterList(parameterList, delay.delayTime, true);
             }
         }
         if(element instanceof Element.Input)
@@ -311,7 +311,7 @@ import java.awt.Dimension;
                 {
                     comp.force.name = "FF" + comp.number;
                     comp.force.value = "FF" + comp.number + comp.force.value.substring(comp.force.value.indexOf("="));
-                    tool.updateParameterList(comp.force, false);
+                    tool.updateParameterList(parameterList, comp.force, false);
                 }
                 Iterator iterator = comp.parameters.keySet().iterator();
                 while(iterator.hasNext())
@@ -337,7 +337,7 @@ import java.awt.Dimension;
                         lines[3] = parameter.name + lines[3].substring(lines[1].indexOf("="));
                         parameter.value = parameter.value.substring(0, indexIF) + lines[0] + lines[1] + lines[2] + lines[3] + lines[4];
                     }       
-                    tool.updateParameterList(parameter, false);
+                    tool.updateParameterList(parameterList, parameter, false);
                 }
             }
             else if(elem instanceof Element.Delay)
@@ -359,7 +359,7 @@ import java.awt.Dimension;
                     lines[3] = delay.delayTime.name + lines[3].substring(lines[1].indexOf("="));
                     delay.delayTime.value = delay.delayTime.value.substring(0, indexIF) + lines[0] + lines[1] + lines[2] + lines[3] + lines[4];
                 }
-                tool.updateParameterList(delay.delayTime, false);
+                tool.updateParameterList(parameterList, delay.delayTime, false);
             }
             for(Element.Flux flux: fluxes)
             {
@@ -417,7 +417,7 @@ import java.awt.Dimension;
                             lines[3] = flux.flowRate.name + lines[3].substring(lines[1].indexOf("="));
                             flux.flowRate.value = flux.flowRate.value.substring(0, indexIF) + lines[0] + lines[1] + lines[2] + lines[3] + lines[4];
                         }
-                        tool.updateParameterList(flux.flowRate, false);
+                        tool.updateParameterList(parameterList, flux.flowRate, false);
                     }
                 }
             }

@@ -211,7 +211,7 @@ public class Reload {
                 else
                     delay.delayTime = new Parameter(sides[0], helperEqn + condition + pkLines[i] + "\nENDIF");
                 Model.parameterList.add(delay.delayTime);
-                tool.updateParameterList(delay.delayTime, false);
+                tool.updateParameterList(Model.parameterList, delay.delayTime, false);
             }
             else if(sides[0].matches("[S|F|R|D]\\d+"))
             {
@@ -224,7 +224,7 @@ public class Reload {
                 ((Element.Compartment)Model.elements.get(Integer.parseInt(sides[0].substring(1)) - 1))
                 .parameters.put(sides[0], parameter);
                 Model.parameterList.add(parameter);
-                tool.updateParameterList(parameter, false);
+                tool.updateParameterList(Model.parameterList, parameter, false);
             }
             else if(sides[0].matches("ALAG\\d+"))
             {
@@ -237,7 +237,7 @@ public class Reload {
                 ((Element.Compartment)Model.elements.get(Integer.parseInt(sides[0].substring(4)) - 1))
                 .parameters.put(sides[0], parameter);
                 Model.parameterList.add(parameter);
-                tool.updateParameterList(parameter, false);
+                tool.updateParameterList(Model.parameterList, parameter, false);
             }
             else if(sides[0].matches("FF\\d+"))
             {
@@ -246,7 +246,7 @@ public class Reload {
                 ((Element.Compartment)Model.elements.get(Integer.parseInt(sides[0].substring(2)) - 1))
                 .force = parameter;
                 Model.parameterList.add(parameter);
-                tool.updateParameterList(parameter, false);
+                tool.updateParameterList(Model.parameterList, parameter, false);
             }
             else if(sides[0].matches("K\\d+") || sides[0].matches("K\\d+T\\d+"))
             {
@@ -275,7 +275,7 @@ public class Reload {
                     flux.flowRate.value = helperEqn + pkLines[i];
                 else
                     flux.flowRate.value = helperEqn + condition + pkLines[i] + "\nENDIF";
-                tool.updateParameterList(flux.flowRate, false);
+                tool.updateParameterList(Model.parameterList, flux.flowRate, false);
                 Model.fluxes.add(flux);
             }
 //            else if(Pattern.compile("\\bTHETA\\(\\d+\\)", Pattern.UNIX_LINES).matcher(sides[1]).find())
@@ -289,7 +289,7 @@ public class Reload {
                     variable = new Variable(sides[0], helperEqn + condition + pkLines[i] + "\nENDIF");
                 variable.refCount = 0;
                 Model.parameterList.add(variable);
-                tool.updateParameterList(variable, false);
+                tool.updateParameterList(Model.parameterList, variable, false);
             }
 /*            else
             {
@@ -297,7 +297,7 @@ public class Reload {
                 Parameter parameter = new Parameter(sides[0], pkLines[i]);
                 Model.equationList.add(parameter);
                 Model.parameterList.add(parameter);
-                tool.updateParameterList(parameter, false);
+                tool.updateParameterList(Model.parameterList, parameter, false);
             }*/
             helperEqn = "";
             condition = "";
