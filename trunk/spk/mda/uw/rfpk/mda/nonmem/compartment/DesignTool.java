@@ -1359,7 +1359,7 @@ public class DesignTool extends javax.swing.JFrame {
      * @param isRemove true for parameter has been removed, false otherwise.
      * return true if new variable is added to the parameter list, otherwise false.
      */
-    protected boolean updateParameterList(Parameter parameter, boolean isRemove)
+    protected boolean updateParameterList(ArrayList<Parameter> parameterList, Parameter parameter, boolean isRemove)
     {
         // update parameter list after removing a parameter
         if(isRemove)
@@ -1368,7 +1368,7 @@ public class DesignTool extends javax.swing.JFrame {
             {
                 variable.refCount--;
                 if(variable.refCount == 0)
-                    Model.parameterList.remove(variable);
+                    parameterList.remove(variable);
             }
             return false;
         }
@@ -1428,7 +1428,7 @@ public class DesignTool extends javax.swing.JFrame {
                 if(var.refCount == 0)
                 {
                     parameter.dependVariables.remove(var);
-                    Model.parameterList.remove(var);
+                    parameterList.remove(var);
                 }
             }
         }
@@ -1446,11 +1446,11 @@ public class DesignTool extends javax.swing.JFrame {
             }
             if(isNew)
             {
-                Variable variable = checkVariableExist(name);
+                Variable variable = checkVariableExist(parameterList, name);
                 if(variable == null)
                 {
                     variable = new Variable(name, name + "=");
-                    Model.parameterList.add(Model.parameterList.indexOf(parameter), variable);
+                    parameterList.add(parameterList.indexOf(parameter), variable);
                     isNewVariableAdded = true;
                 }
                 parameter.dependVariables.add(variable);
@@ -1459,9 +1459,9 @@ public class DesignTool extends javax.swing.JFrame {
         return isNewVariableAdded;
     }
     
-    private Variable checkVariableExist(String name)
+    private Variable checkVariableExist(ArrayList<Parameter> parameterList, String name)
     {
-        for(Parameter parameter : Model.parameterList)
+        for(Parameter parameter : parameterList)
         {
             if(parameter instanceof Variable)
             {
@@ -1483,7 +1483,11 @@ public class DesignTool extends javax.swing.JFrame {
         return false;
     }*/
     
-    private boolean checkVariableName(String name)
+    /** Check variable name.
+     * @param name variable name to check.
+     * @return true if the variable name is not reserved word or data label, otherwise false.
+     */
+    protected boolean checkVariableName(String name)
     {
         name = name.toUpperCase();
         String[] functions = {"", "ABS", "COS", "SIN", "ACOS", "ASIN", "ATAN", "ATAN2", "COSH",

@@ -1306,7 +1306,7 @@ public class Diagram extends javax.swing.JPanel {
             if(Utility.isPosFloatNumber(delayTimeTextField.getText()))
             {
                 delay.delayTime.value = "TLAG" + delay.number + "=" + delayTimeTextField.getText();
-                tool.updateParameterList(delay.delayTime, false);
+                tool.updateParameterList(Model.parameterList, delay.delayTime, false);
             }
             else
             {
@@ -1319,7 +1319,7 @@ public class Diagram extends javax.swing.JPanel {
         else
         {
             delay.delayTime.value = delayModelTextArea.getText();
-            tool.updateParameterList(delay.delayTime, false);
+            tool.updateParameterList(Model.parameterList, delay.delayTime, false);
         }
         delay.nDelayComps = nDelayCompsComboBox.getSelectedIndex() + 2;
         for(int i = 0; i < fractListModel.size(); i++)
@@ -1409,14 +1409,14 @@ public class Diagram extends javax.swing.JPanel {
             {
                 Parameter parameter = comp.parameters.get(param);
                 parameter.value = value;
-                tool.updateParameterList(parameter, false);
+                tool.updateParameterList(Model.parameterList, parameter, false);
             }
             else
             {
                 Parameter parameter = new Parameter(param, value);
                 comp.parameters.put(param, parameter);
                 Model.parameterList.add(parameter);
-                tool.updateParameterList(parameter, false);
+                tool.updateParameterList(Model.parameterList, parameter, false);
             }
         }
         else
@@ -1425,7 +1425,7 @@ public class Diagram extends javax.swing.JPanel {
             if(parameter != null)
             {
                 Model.parameterList.remove(parameter);
-                tool.updateParameterList(parameter, true);
+                tool.updateParameterList(Model.parameterList, parameter, true);
             }
         }
         tool.setRecords();
@@ -1495,7 +1495,7 @@ public class Diagram extends javax.swing.JPanel {
             flux.flowRate.value = flux.name + "=" + fluxValueTextField.getText();
         else
             flux.flowRate.value = fluxModelTextArea.getText();
-        tool.updateParameterList(flux.flowRate, false);
+        tool.updateParameterList(Model.parameterList, flux.flowRate, false);
         tool.setRecords();
         fluxDialog.setVisible(false);
         setCursor(null);
@@ -1575,7 +1575,7 @@ public class Diagram extends javax.swing.JPanel {
                 if(comp.force != null)
                 {
                     Model.parameterList.remove(comp.force);
-                    tool.updateParameterList(comp.force, true);
+                    tool.updateParameterList(Model.parameterList, comp.force, true);
                     comp.force = null;
                 }
             }
@@ -1590,7 +1590,7 @@ public class Diagram extends javax.swing.JPanel {
                     comp.force = new Parameter("FF" + comp.number, "FF" + comp.number + "=" + forceEqTextArea.getText());
                     Model.parameterList.add(comp.force);
                 }
-                tool.updateParameterList(comp.force, false);
+                tool.updateParameterList(Model.parameterList, comp.force, false);
             }
             else
             {

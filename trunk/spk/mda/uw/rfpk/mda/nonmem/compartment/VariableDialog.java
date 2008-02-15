@@ -53,6 +53,7 @@ public class VariableDialog extends javax.swing.JDialog {
         helpButton.addActionListener(new CSH.DisplayHelpFromSource(MDAFrame.getHelpBroker()));
         CSH.setHelpIDString(helpButton, "Parameters");
         jList1.setModel(listModel);
+        copyParameterList();
         setVariableList();
         jList1.setCellRenderer(new MyCellRenderer());
         setSize(400, 350);
@@ -60,10 +61,41 @@ public class VariableDialog extends javax.swing.JDialog {
         setVisible(true);
     }
     
+    private void copyParameterList()
+    {
+        for(int i = 0; i < Model.parameterList.size(); i++)
+        {
+            Parameter modelParameter = Model.parameterList.get(i);
+            if(modelParameter instanceof Variable)
+            {
+                Variable variable = new Variable(modelParameter.name, modelParameter.value);
+                variable.refCount = ((Variable)modelParameter).refCount;
+                parameterList.add(variable);
+            }
+            else
+            {
+                Parameter parameter = new Parameter(modelParameter.name, modelParameter.value);
+                parameterList.add(parameter);
+            }
+        }
+        for(int i = 0; i < parameterList.size(); i++)
+        {
+            Parameter parameter = parameterList.get(i);
+            Parameter modelParameter = Model.parameterList.get(i);
+            ArrayList<Variable> modelDependVariables = modelParameter.dependVariables;
+            for(int j = 0; j < modelDependVariables.size(); j++)
+            {
+                int index = Model.parameterList.indexOf(modelDependVariables.get(j));
+                Variable variable = (Variable)parameterList.get(index);
+                parameter.dependVariables.add(variable);
+            }
+        }
+    }
+    
     private void setVariableList()
     {
         listModel.removeAllElements();
-        for(Parameter parameter : Model.parameterList)
+        for(Parameter parameter : parameterList)
             listModel.addElement(parameter.value);
     }
     
@@ -74,15 +106,22 @@ public class VariableDialog extends javax.swing.JDialog {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
-        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
         modelButton = new javax.swing.JButton();
+        addButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Parameter List");
@@ -95,13 +134,28 @@ public class VariableDialog extends javax.swing.JDialog {
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 12));
         jLabel1.setText("Select an item to modify or to change order");
-        getContentPane().add(jLabel1, java.awt.BorderLayout.NORTH);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 2, 6);
+        getContentPane().add(jLabel1, gridBagConstraints);
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(259, 200));
+        jScrollPane1.setMaximumSize(new java.awt.Dimension(263, 263));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(263, 263));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(263, 263));
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jList1);
 
-        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 12, 6);
+        getContentPane().add(jScrollPane1, gridBagConstraints);
+
+        jPanel2.setLayout(new java.awt.GridLayout(0, 1, 0, 4));
 
         upButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/icons/up.png")));
         upButton.setPreferredSize(new java.awt.Dimension(50, 25));
@@ -111,7 +165,7 @@ public class VariableDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.add(upButton);
+        jPanel2.add(upButton);
 
         downButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/uw/rfpk/mda/nonmem/wizard/icons/down.png")));
         downButton.setPreferredSize(new java.awt.Dimension(50, 25));
@@ -121,7 +175,7 @@ public class VariableDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.add(downButton);
+        jPanel2.add(downButton);
 
         modelButton.setText("Model");
         modelButton.setPreferredSize(new java.awt.Dimension(75, 25));
@@ -131,30 +185,118 @@ public class VariableDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.add(modelButton);
+        jPanel2.add(modelButton);
 
-        helpButton.setText("Help");
-        helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        jPanel1.add(helpButton);
-
-        jButton1.setText("Close");
-        jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addButtonActionPerformed(evt);
             }
         });
 
-        jPanel1.add(jButton1);
+        jPanel2.add(addButton);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
+        deleteButton.setText("Delete");
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(deleteButton);
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(okButton);
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(cancelButton);
+
+        helpButton.setText("Help");
+        helpButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        jPanel2.add(helpButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 12, 12);
+        getContentPane().add(jPanel2, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        int index = jList1.getSelectedIndex();
+        if(index >= 0)
+        {
+            Parameter parameter = parameterList.get(index);
+            if(tool.checkVariableName(parameter.name))
+            {
+                parameterList.remove(index);
+                tool.updateParameterList(parameterList, parameter, true);
+                setVariableList();
+            }
+            else
+                JOptionPane.showMessageDialog(null, "The parameter is not deletable.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+        setCursor(null);
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        String name = JOptionPane.showInputDialog("Enter parameter name.");
+        if(name != null && name.length() != 0)
+        {
+            name = name.toUpperCase();
+            if(tool.checkVariableName(name))
+            {
+                Parameter parameter = new Parameter(name, name + "=");
+                parameterList.add(parameter);
+                int[] isOK = {1};
+                if(tool.iterator.analysis.equals("population"))
+                    new MixedModelDialog(null, parameter, tool.object.getDataLabels(), isOK);
+                else
+                    new IndModelDialog(null, parameter, tool.object.getDataLabels(), isOK);
+                if(isOK[0] == 0)
+                {
+                    setCursor(null);
+                    return;
+                }
+                tool.updateParameterList(parameterList, parameter, false);
+                setVariableList();
+            }
+            else
+                JOptionPane.showMessageDialog(null, "The parameter name is invalid.",
+                                              "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+        setCursor(null);
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        Model.parameterList = parameterList;
+        tool.setRecords();
         setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
+        setCursor(null);
+    }//GEN-LAST:event_okButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void modelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelButtonActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -164,7 +306,7 @@ public class VariableDialog extends javax.swing.JDialog {
             setCursor(null);
             return;
         }
-        Parameter parameter = Model.parameterList.get(index);
+        Parameter parameter = parameterList.get(index);
         if(parameter.name.matches("FF\\d+"))
         {
             parameter.value = JOptionPane.showInputDialog(null, "Enter forcing function:                        ", 
@@ -190,23 +332,21 @@ public class VariableDialog extends javax.swing.JDialog {
             setCursor(null);
             return;
         }
-        tool.updateParameterList(parameter, false);
+        tool.updateParameterList(parameterList, parameter, false);
         setVariableList();
-        tool.setRecords();
         setCursor(null);
     }//GEN-LAST:event_modelButtonActionPerformed
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         int index = jList1.getSelectedIndex();
-        if(index < listModel.size() - 1)
+        if(index >= 0 && index < listModel.size() - 1)
         {
-            Parameter parameter = Model.parameterList.get(index);
-            Model.parameterList.set(index, Model.parameterList.get(index + 1));
-            Model.parameterList.set(index + 1, parameter);
+            Parameter parameter = parameterList.get(index);
+            parameterList.set(index, parameterList.get(index + 1));
+            parameterList.set(index + 1, parameter);
             setVariableList();
             jList1.setSelectedIndex(index + 1);
-            tool.setRecords();
         }
         setCursor(null);
     }//GEN-LAST:event_downButtonActionPerformed
@@ -216,12 +356,11 @@ public class VariableDialog extends javax.swing.JDialog {
         int index = jList1.getSelectedIndex();
         if(index > 0)
         {
-            Parameter parameter = Model.parameterList.get(index);
-            Model.parameterList.set(index, Model.parameterList.get(index - 1));
-            Model.parameterList.set(index - 1, parameter);
+            Parameter parameter = parameterList.get(index);
+            parameterList.set(index, parameterList.get(index - 1));
+            parameterList.set(index - 1, parameter);
             setVariableList();
             jList1.setSelectedIndex(index - 1);
-            tool.setRecords();
         }
         setCursor(null);
     }//GEN-LAST:event_upButtonActionPerformed
@@ -241,19 +380,23 @@ public class VariableDialog extends javax.swing.JDialog {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addButton;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton deleteButton;
     private javax.swing.JButton downButton;
     private javax.swing.JButton helpButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList jList1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton modelButton;
+    private javax.swing.JButton okButton;
     private javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
 
     private DefaultListModel listModel = new DefaultListModel();
     private DesignTool tool;
+    private ArrayList<Parameter> parameterList = new ArrayList<Parameter>();
 }
 
 class MyCellRenderer extends JPanel implements ListCellRenderer
