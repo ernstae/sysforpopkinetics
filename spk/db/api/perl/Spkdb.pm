@@ -29,11 +29,11 @@ use Sys::Hostname;
 use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = (
-    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 'set_state_code', 'set_parallel',
+    'connect', 'disconnect', 'new_job', 'get_job', 'job_status', 'user_jobs', 'set_state_code', 
     'de_q2c', 'de_q2ac', 'get_q2c_job', 'get_job_ids', 'get_cmp_jobs', 'get_run_jobs', 'en_q2r', 
     'de_q2r', 'de_q2ar', 'get_q2r_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
-    'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
-    'new_model', 'get_model', 'update_model', 'user_models',
+    'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets', 'set_parallel',
+    'new_model', 'get_model', 'update_model', 'user_models', 'set_tolerance', 'set_sig_digits',
     'new_user', 'update_user', 'get_user', 'set_mail_notice', 'get_mail_notice', 'email_for_job'
     );
 
@@ -373,7 +373,7 @@ sub job_status() {
     $errstr = "";
 
     my $sql = "select state_code, event_time, end_code "
-	      . "from job where job_id='$job_id';";
+	      . "from job where job_id=$job_id;";
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
 	$err = $PREPARE_FAILED;
@@ -479,7 +479,7 @@ sub set_state_code() {
     $dbh->begin_work;
 
     my $sql = "update job set state_code='$state_code',event_time='$event_time' "
-              . "where job_id='$job_id';";
+              . "where job_id=$job_id;";
 
     unless ($dbh->do($sql)) {
 	$err = $UPDATE_FAILED;
@@ -606,7 +606,7 @@ sub get_q2c_job() {
     $dbh->begin_work;
 
     my $sql = "select dataset_id, dataset_version, xml_source from job "
-	      . "where job_id='$job_id' for update;";
+	      . "where job_id=$job_id for update;";
 
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
@@ -994,7 +994,7 @@ sub get_q2r_job() {
     $dbh->begin_work;
 
     my $sql = "select cpp_source, checkpoint, parallel from job "
-	      . "where job_id='$job_id' for update;";
+	      . "where job_id=$job_id for update;";
 
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
@@ -2082,7 +2082,7 @@ sub set_parallel() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "update job set parallel=$parallel where job_id='$job_id';";
+    my $sql = "update job set parallel=$parallel where job_id=$job_id;";
 
     my $nrows = $dbh->do($sql);
     unless ($nrows)
@@ -2126,7 +2126,7 @@ sub set_mail_notice() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "update job set mail=$email where job_id='$job_id';";
+    my $sql = "update job set mail=$email where job_id=$job_id;";
 
     my $nrows = $dbh->do($sql);
     unless ($nrows)
@@ -2166,7 +2166,7 @@ sub get_mail_notice() {
     $err = 0;
     $errstr = "";
 
-    my $sql = "select mail from job where job_id='$job_id';";
+    my $sql = "select mail from job where job_id=$job_id;";
     my $sth = $dbh->prepare($sql);
     unless ($sth) {
 	$err = $PREPARE_FAILED;
@@ -2237,7 +2237,133 @@ sub email_for_job() {
     return $row->{"email"};
 }
 
+=head2 set_tolerance -- set ODE integration tolerance
+ 
+Set the ODE integration tolerance of a specified job. 
 
+    $r = &Spkdb::set_tolerance($dbh, $job_id, $tolerance);
+
+$dbh is the handle to an open database connection.
+
+$job_id is the key to the job table
+
+$tolerance is the tolerance to set.
+
+Returns
+
+  success: 1 if tolerance of the job is set, 0 otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED
+
+=cut
+
+sub set_tolerance() {
+    my $dbh = shift;
+    my $job_id = shift;
+    my $tolerance = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select xml_source from job where job_id=$job_id;";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+        return undef;
+    }
+    unless ($sth->rows == 1) {
+	return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    $sth->finish;
+    my $source = $row->{"xml_source"};
+
+    $source =~ s/ tolerance="\d*"/ tolerance="$tolerance"/;
+
+    $dbh->begin_work;
+    $sql = "update job set xml_source='$source' where job_id=$job_id;";
+
+    unless ($dbh->do($sql)) {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;
+	return undef;
+    }
+    $dbh->commit;
+    return 1;
+}
+
+=head2 set_sig_digits -- set significant digits of optimization
+ 
+Set the significant digits of optimization of a specified job. 
+
+    $r = &Spkdb::set_sig_digits($dbh, $job_id, $sig_digits);
+
+$dbh is the handle to an open database connection.
+
+$job_id is the key to the job table
+
+$sig_digits is the significant digits to set.
+
+Returns
+
+  success: 1 if tolerance of the job is set, 0 otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED
+
+=cut
+
+sub set_sig_digits() {
+    my $dbh = shift;
+    my $job_id = shift;
+    my $sig_digits = shift;
+    $err = 0;
+    $errstr = "";
+
+    my $sql = "select xml_source from job where job_id=$job_id;";
+    my $sth = $dbh->prepare($sql);
+    unless ($sth) {
+	$err = $PREPARE_FAILED;
+	$errstr = "could not prepare statement: $sql";
+	return undef;
+    }
+    unless ($sth->execute())
+    {
+	$err = $EXECUTE_FAILED;
+	$errstr = "could not execute state: $sql; error returned "
+	    . $sth->errstr;
+        return undef;
+    }
+    unless ($sth->rows == 1) {
+	return undef;
+    }
+    my $row = $sth->fetchrow_hashref();
+    $sth->finish;
+    my $source = $row->{"xml_source"};
+
+    $source =~ s/ sig_digits="\d*"/ sig_digits="$sig_digits"/;
+
+    $dbh->begin_work;
+    $sql = "update job set xml_source='$source' where job_id=$job_id;";
+
+    unless ($dbh->do($sql)) {
+	$err = $UPDATE_FAILED;
+	$errstr = "could not execute $sql; error returned ";
+	$dbh->rollback;
+	return undef;
+    }
+    $dbh->commit;
+    return 1;
+}
 
 # local subroutines
 
