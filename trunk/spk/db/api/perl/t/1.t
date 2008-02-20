@@ -2,14 +2,14 @@
 
 use strict;
 
-use Test::Simple tests => 66;  # number of ok() tests
+use Test::Simple tests => 68;  # number of ok() tests
 
 use Spkdb (
     'connect', 'disconnect', 'new_job', 'job_status', 
     'de_q2c', 'set_state_code', 'set_parallel', 'de_q2ac', 'de_q2ar', 'get_q2c_job', 'get_q2r_job', 'get_job_ids',
     'en_q2r', 'de_q2r', 'get_job', 'end_job', 'job_report', 'job_checkpoint', 'job_history',
     'new_dataset', 'get_dataset', 'update_dataset', 'user_datasets',
-    'new_model', 'get_model', 'update_model', 'user_models',
+    'new_model', 'get_model', 'update_model', 'user_models', 'set_tolerance', 'set_sig_digits',
     'new_user', 'update_user', 'get_user', 'set_mail_notice', 'get_mail_notice', 'email_for_job'
 	   );
 my $rv;
@@ -293,6 +293,15 @@ ok(@jobs && $jobs[0] == 1 && $jobs[1] == 2, "get_job_ids");
 
 $row_array = &job_history($dbh, 2);
 ok (@$row_array == 12, "job_history");
+
+my $source = "<model tolerance=\"5\">\n<pop_analysis sig_digits=\"3\"";
+$job_id = &new_job($dbh, 1, "Job 4", 22, "1.01", 33, "2.2", $source);
+&set_tolerance($dbh, $job_id, 6);
+$row = &Spkdb::get_job($dbh, $job_id);
+ok($row->{"xml_source"} eq "<model tolerance=\"6\">\n<pop_analysis sig_digits=\"3\"", "set_tolerance");
+&set_sig_digits($dbh, $job_id, 4);
+$row = &Spkdb::get_job($dbh, $job_id);
+ok($row->{"xml_source"} eq "<model tolerance=\"6\">\n<pop_analysis sig_digits=\"4\"", "set_sig_digits");
 
 ok(!defined &disconnect($dbh), "disconnect");			 
 
