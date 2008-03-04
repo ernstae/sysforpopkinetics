@@ -11,13 +11,13 @@ $errors =
 	    'parse_in_consecutive'
 	    => 'Inputs must be consecutive',
 	    'parse_in_U1missing'
-	    => 'With multiple inputs, U or U1 must be present.',
+	    => 'Your system-experiment model has multiple inputs.  When there are multiple inputs, they must be named {U1, U2, ..., Un}.',
 	    'parse_in_Umissing'
-	    => 'Your system-experiment model has only a single input. When there is only a single input, it must be named U.   Try this model again with U for your input.  I found',
+	    => 'Your system-experiment model has only a single input. When there is only a single input, it must be named U. Try this model again with U for your input. I found:',
 	    'parse_illegal'
 	    => 'The following illegal character was found',
 	    'parse_out_Ymissing'
-	    => 'Your system-experiment model has only a single output.  When there is only a single output, it must be named Y.',
+	    => 'Your system-experiment model has only a single measurement. When there is only a single measurement, it must be named Y. Try this model again with Y for your measurement. I found:',
 	    'parse_out_Ymulti'
 	    => 'Your system-experiment model has multiple outputs.  When there are multiple outputs, they must be named {Y1, Y2, Y3, .., Yn}.',
 	    'parse_out'
