@@ -333,7 +333,9 @@ function send_report ( $job ) {
   $message = "Thank you for using the " . $GLOBALS['OPTIONS']['site_name'] . " provided by " . $GLOBALS['OPTIONS']['service_of'] . "\n\n";
   $message .= "The results of your job are as follows\n\n";
   $message .= $sep . "Job Number: " . $job['id'] . "\n";
-  $message .= "Job ID: " . $job['jobid'] . "\n" . "Solutions found: " . ($xml['number_of_solutions'] >= 0) ? $xml['number_of_solutions'] : "" . "\n" . $xml['status_of_the_solutions'] . "\n\n\n";
+  $message .= "Job ID: " . $job['jobid'] . "\n";
+  $message .= ($xml['number_of_solutions'] >= 0) ? "Solutions found: " . $xml['number_of_solutions'] . "\n" : "\n"; 
+  $message .= $xml['status_of_the_solutions'] . "\n\n\n";
 
   if ( strlen($xml['error_messages']) ) {
     $message .= $sep;
