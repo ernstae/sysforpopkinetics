@@ -141,6 +141,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_or_IdentPred_h << endl;
 
   oOdePred_or_IdentPred_h << "#include <vector>" << endl;
+  oOdePred_or_IdentPred_h << "#include <sstream>" << endl;
   oOdePred_or_IdentPred_h << "#include <string>" << endl;
   oOdePred_or_IdentPred_h << "#include <spkpred/" << className << "Base.h>" << endl;
   oOdePred_or_IdentPred_h << "#include <CppAD/CppAD.h>" << endl;
@@ -216,6 +217,7 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   // -----------------------
   // Public member functions
   // -----------------------
+  oOdePred_or_IdentPred_h << "   void getVariableInfo( std::string& messageStr ) const;" << endl;
   oOdePred_or_IdentPred_h << "   int getNObservs( int ) const;" << endl;
   oOdePred_or_IdentPred_h << "   int getNRecords( int ) const;" << endl;
   oOdePred_or_IdentPred_h << "   const spk_ValueType lininterp( const std::string & depVar );" << endl;
@@ -491,6 +493,94 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
   oOdePred_or_IdentPred_h << "template <class spk_ValueType>" << endl;
   oOdePred_or_IdentPred_h << "" << className << "<spk_ValueType>::~" << className << "()" << endl;
   oOdePred_or_IdentPred_h << "{" << endl;
+  oOdePred_or_IdentPred_h << "}" << endl;
+  oOdePred_or_IdentPred_h << endl;
+
+  // -------------
+  // getVariableInfo()
+  // -------------
+  oOdePred_or_IdentPred_h << "template <class spk_ValueType>" << endl;
+  oOdePred_or_IdentPred_h << "void OdePred<spk_ValueType>::getVariableInfo( std::string& messageStr ) const" << endl;
+  oOdePred_or_IdentPred_h << "{" << endl;
+  oOdePred_or_IdentPred_h << "  using namespace std;" << endl;
+  oOdePred_or_IdentPred_h << endl;
+  oOdePred_or_IdentPred_h << "  ostringstream message;" << endl;
+  oOdePred_or_IdentPred_h << endl;
+  oOdePred_or_IdentPred_h << "  int k;" << endl;
+  oOdePred_or_IdentPred_h << endl;
+
+  //
+  // Put variables and their values into the message stream.
+  //
+  for( pT = t->begin(); pT != t->end(); pT++ )
+  {
+    const string varName            = pT->second.name;
+    enum Symbol::ObjectType objType = pT->second.object_type;
+    
+    if( objType == Symbol::MATRIX )
+    {
+      continue;
+    }
+    else if( varName == nonmem::WRES ||
+             varName == nonmem::ETARES ||
+             varName == nonmem::WETARES ||
+             varName == nonmem::CPRED ||
+             varName == nonmem::CRES ||
+             varName == nonmem::CWRES ||
+             varName == nonmem::CETARES ||
+             varName == nonmem::CWETARES ||
+             varName == nonmem::IPRED ||
+             varName == nonmem::IRES ||
+             varName == nonmem::IWRES ||
+             varName == nonmem::IETARES ||
+             varName == nonmem::IWETARES ||
+             varName == nonmem::PPRED ||
+             varName == nonmem::PRES ||
+             varName == nonmem::PWRES ||
+             varName == nonmem::PETARES ||
+             varName == nonmem::PWETARES )
+    {
+      continue;
+    }
+    else if( varName == nonmem::DADT ||
+             varName == nonmem::P ||
+             varName == nonmem::A ||
+             varName == nonmem::THETA ||
+             varName == nonmem::ETA ||
+             varName == nonmem::EPS )
+    {
+      if( varName == nonmem::A || varName == nonmem::DADT )
+      {
+        oOdePred_or_IdentPred_h << "  for ( k = 0; k < this->getNComp(); k++ )" << endl;
+      }
+      else if( varName == nonmem::P )
+      {
+        oOdePred_or_IdentPred_h << "  for ( k = 0; k < spk_p.size(); k++ )" << endl;
+      }
+      else if( varName == nonmem::THETA )
+      {
+        oOdePred_or_IdentPred_h << "  for ( k = 0; k < " << myThetaLen << "; k++ )" << endl;
+      }
+      else if( varName == nonmem::ETA )
+      {
+        oOdePred_or_IdentPred_h << "  for ( k = 0; k < " << myEtaLen << "; k++ )" << endl;
+      }
+      else if( varName == nonmem::EPS )
+      {
+        oOdePred_or_IdentPred_h << "  for ( k = 0; k < " << myEpsLen << "; k++ )" << endl;
+      }
+      oOdePred_or_IdentPred_h << "  {" << endl;
+      oOdePred_or_IdentPred_h << "    message << \"" << varName << "[\" << k + 1 << \"] = \" << " << varName << "[k] << endl;" << endl;
+      oOdePred_or_IdentPred_h << "  }" << endl;
+    }
+    else // Scalars
+    {
+      oOdePred_or_IdentPred_h << "  message << \"" << varName << " = \" << " << varName << " << endl;" << endl;
+    }
+  }
+
+  oOdePred_or_IdentPred_h << "  // Set the string containing the variable information." << endl;
+  oOdePred_or_IdentPred_h << "  messageStr = message.str();" << endl;
   oOdePred_or_IdentPred_h << "}" << endl;
   oOdePred_or_IdentPred_h << endl;
 
