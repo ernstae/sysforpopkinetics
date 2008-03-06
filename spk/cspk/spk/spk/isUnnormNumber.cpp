@@ -21,7 +21,7 @@
 */
 /*************************************************************************
  *
- * File: isUnnormnumber.cpp
+ * File: isUnnormNumber.cpp
  *
  *
  * Checks to see if a value is unnormalized, i.e., less than (or

@@ -2170,7 +2170,7 @@ void ppkaOpt(
       // If the matrix of b values for each 
       // individual needs to be recalculated, then compute them both 
       // with a single call to lTilde.
-      if ( recalcBBest && !popOptInfo.getIsTooManyIter() )
+      if ( recalcBBest )
       {
           double* pdNull = 0;
       
@@ -2276,7 +2276,7 @@ void ppkaOpt(
 
   // Compute the second derivative of the population objective 
   // function at the final alp value, if necessary.
-  if ( pdmatLTilde_alp_alpOut && !popOptInfo.getIsTooManyIter() )
+  if ( pdmatLTilde_alp_alpOut )
   {
     // [Revisit - trancendiff for LTilde_alp_alp - Mitch:  The version
     // of trancendiff that is currently located in this file and that 
@@ -2367,33 +2367,33 @@ void ppkaOpt(
   //------------------------------------------------------------
 
   // Set the final alp value, if necessary.
-  if ( pdvecAlpOut && !popOptInfo.getIsTooManyIter() )
+  if ( pdvecAlpOut )
   {
         *pdvecAlpOut = dvecAlpOutTemp;
   }
 
   // Set the matrix of final b values, if necessary.
-  if ( pdmatBOut && !popOptInfo.getIsTooManyIter() )
+  if ( pdmatBOut )
   {
     *pdmatBOut = dmatBOutTemp;
   }
 
   // Set the final population objective function value, if necessary.
-  if ( pdLTildeOut && !popOptInfo.getIsTooManyIter() )
+  if ( pdLTildeOut )
   {
         *pdLTildeOut = dLTildeOutTemp;
   }
 
   // Set the first derivative of the population objective 
   // function at the final alp value, if necessary.
-  if ( pdrowLTilde_alpOut && !popOptInfo.getIsTooManyIter() )
+  if ( pdrowLTilde_alpOut )
   {
     *pdrowLTilde_alpOut = drowLTilde_alpOutTemp;
   }
     
   // Set the second derivative of the population objective 
   // function at the final alp value, if necessary.
-  if ( pdmatLTilde_alp_alpOut && !popOptInfo.getIsTooManyIter() )
+  if ( pdmatLTilde_alp_alpOut )
   {
     *pdmatLTilde_alp_alpOut = dmatLTilde_alp_alpOutTemp;
   }

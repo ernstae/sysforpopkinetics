@@ -1805,6 +1805,8 @@ protected:
 
     int p;
 
+    Value timePrev;
+
     // Get all of the experiment design information for 
     // the current individual.
     int j;
@@ -1816,6 +1818,26 @@ protected:
 
       // Get the data items for the current data record.
       readDataRecord( i, j );
+
+      // Check that the time values do not decrease.
+      if ( j > 0 && time < timePrev )
+      {
+        ostringstream message;
+
+        message << "The " << intToOrdinalString( j, ZERO_IS_FIRST_INT )
+                << " data record for the "
+                << intToOrdinalString( i, ZERO_IS_FIRST_INT )
+                << " individual had a time value that was \nless than the time value for the previous data record.";
+
+        throw SpkException(
+          SpkError::SPK_USER_INPUT_ERR, 
+          message.str().c_str(),
+          __LINE__, 
+          __FILE__ );
+      }
+
+      // Save the current time to check the next record.
+      timePrev = time;
 
       // Evaluate the current values for the PK parameters because the
       // rates and durations of zero-order bolus doses can be set in
@@ -2581,7 +2603,7 @@ protected:
     {
       string message = "The proper number of break points could not be determined for the \n" + 
         intToOrdinalString( i, ZERO_IS_FIRST_INT ) +
-        " individuals data records.";
+        " individual\'s data records.";
 
       throw SpkException(
         SpkError::SPK_USER_INPUT_ERR, 
