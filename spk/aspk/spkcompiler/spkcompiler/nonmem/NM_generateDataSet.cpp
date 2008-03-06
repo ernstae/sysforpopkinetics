@@ -739,9 +739,9 @@ void NonmemTranslator::generateDataSet( ) const
   oDataSet_h << "void DataSet<spk_ValueType>::replaceAllMeasurements( const SPK_VA::valarray<double> & yy )" << endl;
   oDataSet_h << "{" << endl;
   oDataSet_h << "   const int n= data.size();" << endl;
-  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NRecords[i++] )" << endl;
+  oDataSet_h << "   for( int i=0, k=0; i<n; k+=NObservs[i++] )" << endl;
   oDataSet_h << "   {" << endl;
-  oDataSet_h << "      data[i]->replaceMeasurements( yy[ SPK_VA::slice(k, NRecords[i], 1) ] );" << endl;
+  oDataSet_h << "      data[i]->replaceMeasurements( yy[ SPK_VA::slice(k, NObservs[i], 1) ] );" << endl;
   oDataSet_h << "   }" << endl;
   oDataSet_h << "   measurements = yy;" << endl;
   oDataSet_h << "}" << endl;
