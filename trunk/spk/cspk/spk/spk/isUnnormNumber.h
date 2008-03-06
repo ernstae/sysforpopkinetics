@@ -21,7 +21,7 @@
 */
 /*************************************************************************
  *
- * File: isUnnormnumber.h
+ * File: isUnnormNumber.h
  *
  *
  * Checks to see if a value is unnormalized, i.e., less than (or

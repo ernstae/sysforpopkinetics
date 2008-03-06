@@ -88,6 +88,16 @@ namespace{
   //
   const valarray<double> nmS( const valarray<double> & g_x, int nX )
   {
+    // Check the number of parameters.
+    if ( nX == 0 )
+    {
+      throw SpkException(
+        SpkError::SPK_STATISTICS_ERR,
+        "Failed to calculate the cross product gradient approximation for the \ninformation matrix because there were no free parameter elements.\n",
+        __LINE__,
+        __FILE__ );
+    }
+
     int nF = g_x.size() / nX;
     assert( g_x.size() == nX * nF );
     
@@ -108,6 +118,16 @@ namespace{
   const valarray<double> nmInvR(  const valarray<double> & h_x_x,
 					 int nX )
   {
+    // Check the number of parameters.
+    if ( nX == 0 )
+    {
+      throw SpkException(
+        SpkError::SPK_STATISTICS_ERR,
+        "Failed to invert the Hessian approximation for the information matrix \nbecause there were no free parameter elements.\n",
+        __LINE__,
+        __FILE__ );
+    }
+
     int nF = h_x_x.size() / nX / nX;
     assert( nF == 1 );
     assert( h_x_x.size() == nX * nX * nF ); 
@@ -1342,6 +1362,17 @@ void popStatistics( const valarray<bool>           & mask,
 {
    const int nAlp = alp.size();
    const int nY   = y.size();
+
+    // Check the number of parameters.
+    if ( nAlp == 0 )
+    {
+      throw SpkException(
+        SpkError::SPK_STATISTICS_ERR,
+        "The statistics calculation failed because the parameter vector had zero \nelements.\n",
+        __LINE__,
+        __FILE__ );
+    }
+
    const int nInd = indObj_alp.size() / nAlp;
    assert( nInd * nAlp == indObj_alp.size() );
                                                                                                         

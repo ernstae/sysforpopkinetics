@@ -84,6 +84,27 @@ public:
   {
   }
 
+
+  /***********************************************************************
+   *
+   * Function: getVariableInfo
+   *
+   *//**
+   * Gets a string containing information about the variables that are
+   * members of this class and their current values.
+   *
+   * An improved version of this default version should be implemented
+   * in the subclasses of this base class.
+   */
+  /***********************************************************************/
+
+public:
+  virtual void getVariableInfo( std::string& messageStr ) const
+  {
+    messageStr = "No variable information is currently available.";
+  }
+
+
   /***********************************************************************
    *
    * Function: eval

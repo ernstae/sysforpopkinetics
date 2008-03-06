@@ -418,6 +418,324 @@ namespace // [Begin: unnamed namespace]
 
   //**********************************************************************
   //
+  // Class:  NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred
+  //
+  //
+  // This class provides an ODE-based version of the Pred block
+  // expression evaluator.
+  //
+  // For this test there is a single bolus at time zero, and one of the
+  // data record's time values is out of order.
+  //
+  // In particular, it evaluates PK, DES, and ERROR block expressions
+  // that correspond to a single exponential for the mean of the
+  // individuals' data without any eta elements,
+  //
+  //           ds * exp[ - theta(0) * T ]
+  //    f  =  ----------------------------  ,
+  //               [theta(1) * w]
+  //
+  // and model based weighting of the data using an exponential 
+  // parameterization,
+  //
+  //    y  =  f * exp[ eps(0) ]  .
+  //
+  //**********************************************************************
+
+  template<class Value>
+  class NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred : public OdePredBase<Value>
+  {
+  public:
+
+    //------------------------------------------------------------
+    // Constructor.
+    //------------------------------------------------------------
+
+  public:
+    NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred( 
+      int                        nY_iIn,
+      bool                       isPkBlockAFuncOfTIn,
+      int                        nCompIn,
+      int                        defaultDoseCompIn,
+      int                        defaultObservCompIn,
+      const std::valarray<bool>& compInitialOffIn,
+      const std::valarray<bool>& compNoOffIn,
+      const std::valarray<bool>& compNoDoseIn,
+      double                     tolRelIn )
+    :
+    OdePredBase<Value> ( isPkBlockAFuncOfTIn,
+                         nCompIn,
+                         defaultDoseCompIn,
+                         defaultObservCompIn,
+                         compInitialOffIn,
+                         compNoOffIn,
+                         compNoDoseIn,
+                         tolRelIn ),
+    nY_i               ( nY_iIn ),
+    nComp              ( nCompIn )
+    {}
+
+    ~NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred(){}
+
+
+    //------------------------------------------------------------
+    // Model related quantities.
+    //------------------------------------------------------------
+
+  private:
+    const int nY_i;
+    const int nComp;
+
+  public:
+    Value ds;
+    Value w;
+    Value ke;
+
+
+    //**********************************************************
+    // 
+    // Function: readDataRecord
+    //
+    //**********************************************************
+
+    void readDataRecord( int i, int j )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace oneexpf_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the predefined data items.
+      //--------------------------------------------------------
+
+      // Set an arbitrary value for the observed value.
+      this->setDV( 123456789.0 );
+    
+      // Set the type of event.
+      if ( j == 0 )
+      {
+        //------------------------------------------------------
+        // Instantaneous bolus dose event.
+        //------------------------------------------------------
+
+        // If this is the first time point, set these flags to
+        // indicate this is a dose event.
+        this->setMDV ( 1 );
+        this->setEVID( this->DOSE_EVENT );
+
+        // Save the values for the weighted dose and the weight.
+        ds = dose * wt;
+        w = wt;
+
+        // Set the amount for this instantaneous bolus dose.
+        this->setAMT( ds );
+      }
+      else
+      {
+        //------------------------------------------------------
+        // Observation events.
+        //------------------------------------------------------
+
+        // Set these flags to indicate this is an observation event.
+        this->setMDV ( 0 );
+        this->setEVID( this->OBSERV_EVENT );
+      }
+
+      // Set the compartment number.
+      this->setCMT( 1 );
+
+      // Set the time.
+      if ( j != 2 )
+      {
+        this->setTIME( timeStep * j );
+      }
+      else
+      {
+        // Set this data record's time equal to a value slightly
+        // before the previous time to force an error in
+        // getExpDesign().
+        this->setTIME( timeStep * ( j - 1 ) - timeStep * 0.01 );
+      }
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalPk
+    //
+    //**********************************************************
+
+    void evalPk(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace oneexpf_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the Pk block parameters.
+      //--------------------------------------------------------
+
+      int p = 0;
+      Value compScaleParam_p;
+
+      // Calculate the PK parameters for
+      //
+      //           ds * exp[ - theta(0) * T ]
+      //    f  =  ----------------------------  .
+      //                [theta(1) * w]
+      //
+      ke               = indepVar[thetaOffset + 0];
+      compScaleParam_p = indepVar[thetaOffset + 1] * w;
+
+      setCompScaleParam( p, compScaleParam_p );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalDes
+    //
+    //**********************************************************
+
+    void evalDes(
+      int thetaOffset, int thetaLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace oneexpf_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Evaluate the differential equations.
+      //--------------------------------------------------------
+
+      // Get the current amount in compartment 1.
+      int p = 0;
+      Value compAmount_p;
+      getCompAmount( p, compAmount_p );
+
+      // Since
+      //
+      //              ds * exp[ - theta(0) * T ]
+      //    f(T)  =  ----------------------------  ,
+      //                   [theta(1) * w]
+      //
+      // the derivative with respect to T of f is equal to
+      //
+      //     d                 - theta(0) * ds * exp[ - theta(0) * T ]
+      //    -------- f(T)  =  --------------------------------------------  
+      //     d T                         [theta(1) * w]
+      //
+      //                   =  - theta(0) * f(T)
+      //
+      //                   =  - ke * f(T)
+      //
+      // Note that f represents the amount in compartment 1 as a
+      // function of T,
+      //
+      //    f(T)  =  A (T) .
+      //              1
+      //
+      Value compAmount_t_p;
+      compAmount_t_p = - ke * compAmount_p;
+      setCompAmount_t( p, compAmount_t_p );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: evalError
+    //
+    //**********************************************************
+
+    void evalError(
+      int thetaOffset, int thetaLen,
+      int etaOffset,   int etaLen,
+      int epsOffset,   int epsLen,
+      int i,
+      int j,
+      const std::vector<Value>& indepVar )
+    {
+      //--------------------------------------------------------
+      // Preliminaries.
+      //--------------------------------------------------------
+
+      using namespace oneexpf_onebolus_odepredbasetest;
+
+
+      //--------------------------------------------------------
+      // Set the current values for the intra-individual error.
+      //--------------------------------------------------------
+
+      Value f_i_j;
+      Value y_i_j;
+
+      getF( f_i_j );
+
+      // Set
+      //
+      //    y  =  f * exp[ eps(0) ]  .
+      //
+      y_i_j = f_i_j * CppAD::exp(indepVar[epsOffset + 0]);
+      setY( y_i_j );
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNRecords
+    //
+    //**********************************************************
+
+  public:
+    virtual int getNRecords( int i ) const
+    {
+      return 1     +   // Instantanous bolus dose records.
+             nY_i;     // Observation records.
+    }
+
+
+    //**********************************************************
+    // 
+    // Function: getNObservs
+    //
+    //**********************************************************
+
+    int getNObservs( int i ) const
+    {
+      return nY_i;     // Observation records.
+    }
+
+
+    //------------------------------------------------------------
+    // Disallowed, implicitly generated member functions.
+    //------------------------------------------------------------
+
+  protected:
+    NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred(){}
+    NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred( const NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred& ){}
+    NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred & operator=( const NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred& ){}
+  };
+
+
+  //**********************************************************************
+  //
   // Class:  OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_OdePred
   //
   //
@@ -2750,6 +3068,10 @@ Test* OdePredBaseTest::suite()
     &OdePredBaseTest::NoEta_OneExpF_OneBolus_ModelBasedExpY_Test ));
 
   suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
+    "NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_Test", 
+    &OdePredBaseTest::NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_Test ));
+
+  suiteOfTests->addTest(new TestCaller<OdePredBaseTest>(
     "OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test", 
     &OdePredBaseTest::OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test ));
 
@@ -3362,6 +3684,223 @@ void OdePredBaseTest::NoEta_OneExpF_OneBolus_ModelBasedExpY_Test()
     popParUpKnown,
     "popParUp",
     tol );
+}
+
+
+/*************************************************************************
+ *
+ * Function: NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_Test
+ *
+ *
+ * The goal of this test is to check that the ODE-based version of the
+ * Pred block expression evaluator works for the case of
+ *
+ *     NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred.
+ *
+ *************************************************************************/
+
+void OdePredBaseTest::NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  using namespace oneexpf_onebolus_odepredbasetest;
+
+  int j;
+  int k;
+
+
+  //------------------------------------------------------------
+  // Prepare the Pred block expression evaluator.
+  //------------------------------------------------------------
+
+  // Set the number of data values for this individual.
+  int nY_iKnown = 3;
+
+  // Set this equal to false since the PK block expressions are not
+  // functions of T.
+  bool isPkBlockAFuncOfTime = false;
+
+  // Set the number of compartments, including the output compartment.
+  int nComp = 2;
+
+  // Set the default compartments for doses and observations.
+  int defaultDoseComp   = 1;
+  int defaultObservComp = 1;
+
+  // These flags indicate which compartments are initially off, cannot
+  // be turned off, and cannot receive a dose.
+  std::valarray<bool> compInitialOff( nComp );
+  std::valarray<bool> compNoOff     ( nComp );
+  std::valarray<bool> compNoDose    ( nComp );
+
+  // Set the flags for compartment 1.
+  compInitialOff[1 - 1] = false;
+  compNoOff     [1 - 1] = false;
+  compNoDose    [1 - 1] = false;
+
+  // Set the flags for compartment 2 (the output compartment).
+  compInitialOff[2 - 1] = true;
+  compNoOff     [2 - 1] = false;
+  compNoDose    [2 - 1] = true;
+
+  // Set the relative tolerance for the ODE integration.
+  double tolRel = 1.0e-6;
+
+  // Construct the ODE-based versions of the Pred block evaluator.
+  NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred< double > predEvaluator( 
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred< AD<double> > predEvaluatorAD( 
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+  NoEta_OneExpF_OneBolus_OutOfOrderTimeRecord_ModelBasedExpY_OdePred< AD< AD<double> > > predEvaluatorADAD( 
+    nY_iKnown,
+    isPkBlockAFuncOfTime,
+    nComp,
+    defaultDoseComp,
+    defaultObservComp,
+    compInitialOff,
+    compNoOff,
+    compNoDose,
+    tolRel );
+
+
+  //------------------------------------------------------------
+  // Prepare the variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of independent variables.
+  const int nTheta = 2;
+  const int nEta   = 0;
+  const int nEps   = 1;
+
+  // Set the current value for theta.
+  valarray<double> thetaCurr( nTheta );
+  thetaCurr[0] = 3.0;
+  thetaCurr[1] = 0.08;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = -20.0;
+  thetaUp [0] = 100.0;
+  thetaLow[1] = 0.005;
+  thetaUp [1] = 0.7;
+
+  // Set the current value for eta.
+  valarray<double> etaCurr( nEta );
+
+
+  //------------------------------------------------------------
+  // Initialize quantities related to the covariance matrices.
+  //------------------------------------------------------------
+
+  // Set the structure of omega, the covariance matrix for eta.
+  covStruct omegaStruct = DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nOmegaPar = nEta;
+
+  // Set the diagonal elements for the current value for omega.
+  valarray<double> omegaMinRep( nOmegaPar );
+
+  // Set the structure of sigma, the covariance matrix for eps.
+  covStruct sigmaStruct = DIAGONAL;
+
+  // Set the number elements for this parameterization.
+  int nSigmaPar = nEps;
+
+  // Set the diagonal elements for the current value for sigma.
+  valarray<double> sigmaMinRep( nSigmaPar );
+  sigmaMinRep[0] = 0.25;
+
+
+  //------------------------------------------------------------
+  // Construct the population level Pred model.
+  //------------------------------------------------------------
+
+  PopPredModel model(
+    predEvaluator,
+    predEvaluatorAD,
+    predEvaluatorADAD,
+    nTheta,
+    thetaLow,
+    thetaUp,
+    thetaCurr,
+    nEta,
+    etaCurr,
+    nEps,
+    omegaStruct,
+    omegaMinRep,
+    sigmaStruct,
+    sigmaMinRep );
+
+
+  //------------------------------------------------------------
+  // Get information related to the individual.
+  //------------------------------------------------------------
+
+  // Get the number elements in the population parameter.
+  int nPopPar = model.getNPopPar();
+
+  // Get the number of observations for this individual.
+  int iCurr = 0;
+  int nY_i = predEvaluator.getNObservs( iCurr );
+
+
+  //------------------------------------------------------------
+  // Prepare various quantities for the test.
+  //------------------------------------------------------------
+
+  valarray<double> dataMean( nY_i );
+
+  // Evaluate the data mean, which will cause the ODE's to be solved
+  // and an exception to occur due to the time values being out of
+  // order for one of the records.
+  try
+  {
+    model.dataMean( dataMean );
+  }
+  catch( SpkException& e )
+  {
+    // Uncomment this line to see the list of exceptions.
+    //cout << "e = " << e << endl;
+
+    // See if there was an error during the solution of the ODE's.
+    if ( e.find( SpkError::SPK_USER_INPUT_ERR ) < 0 )
+    {
+      CPPUNIT_ASSERT_MESSAGE( 
+        "An expected SPK exception(SPK_ODE_SOLN_ERR) did not occur during the evaluation of the data mean.",
+        false );
+    }
+  }
+  catch( ... )
+  {
+    CPPUNIT_ASSERT_MESSAGE( 
+      "An unexpected exception occurred during the evaluation of the data mean.",
+      false );
+  }
+
 }
 
 

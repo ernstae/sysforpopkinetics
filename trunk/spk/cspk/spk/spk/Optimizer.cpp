@@ -1696,6 +1696,73 @@ $end
 
 /* 
 -------------------------------------------------------------
+   Get the current objective function value
+-------------------------------------------------------------
+$begin getObj$$
+
+$spell
+  const 
+  getObj
+  Optimizer
+  obj
+$$
+
+$section Get the current objective function value$$
+
+$index Optimizer, current objective, getObj$$
+
+$table
+$bold Prototype$$ $cend
+$syntax/void Optimizer::getObj( double& /objOut/ ) const
+/$$
+$rend
+$tend
+
+$fend 20$$
+
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$pre
+$$
+$head Description$$
+This function gets the current objective function value.
+
+$head Arguments$$
+$syntax/
+/objOut/
+/$$
+This will be set equal to the value for the objective function 
+at the end of the last successful iteration.
+If the optimizer failed during an iteration, then this will be 
+set equal to the objective value at the beginning of the iteration that
+failed.
+
+$end
+*/
+
+void Optimizer::getObj( double& objOut ) const
+{
+  // Check that there is stored state information to use to get the
+  // current objective function value.
+  if ( stateInfo.n == 0 )
+  {
+    throw SpkException( 
+      SpkError::SPK_USER_INPUT_ERR,
+      "There is no current objective function value to get.",
+      __LINE__,
+      __FILE__ );
+  }
+
+  // Set the output value equal to the current objective value.
+  objOut = stateInfo.f;
+}
+
+
+/* 
+-------------------------------------------------------------
    Get the current objective function parameter value
 -------------------------------------------------------------
 $begin getPar$$
@@ -1714,7 +1781,7 @@ $index Optimizer, current parameter, getPar$$
 
 $table
 $bold Prototype$$ $cend
-$syntax/void Optimizer::getPar( SPK_VA::valarray<double>& parOut ) const
+$syntax/void Optimizer::getPar( SPK_VA::valarray<double>& /parOut/ ) const
 /$$
 $rend
 $tend

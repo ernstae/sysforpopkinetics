@@ -139,6 +139,8 @@ private:
   //------------------------------------------------------------
 
 public:
+  void getObj( double& objOut ) const;
+
   void getPar( SPK_VA::valarray<double>& parOut ) const;
 
   void getStateInfo(

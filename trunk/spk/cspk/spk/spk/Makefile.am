@@ -74,6 +74,7 @@ libspk_a_SOURCES = \
 	getMulRows.cpp \
 	getRow.cpp \
 	getSubblock.cpp \
+	hasUnnormNumber.cpp \
 	identity.cpp \
 	IkronBtimesC.cpp \
 	IndInputDataPackage.cpp \
@@ -196,8 +197,9 @@ libspk_a_SOURCES = \
 	getMulRows.h \
 	getRow.h \
 	getSubblock.h \
-	IkronBtimesC.h \
+	hasUnnormNumber.h \
 	identity.h \
+	IkronBtimesC.h \
 	IndDataPackage.h \
 	indOptPvm.h \
 	indResiduals.h \
@@ -331,6 +333,7 @@ pkginclude_HEADERS = \
 	getMulRows.h \
 	getRow.h \
 	getSubblock.h \
+	hasUnnormNumber.h \
 	identity.h \
 	IkronBtimesC.h \
 	IndDataPackage.h \
