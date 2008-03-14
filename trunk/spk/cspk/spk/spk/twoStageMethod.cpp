@@ -486,6 +486,9 @@ vector that is an estimate for $math%bHat_i%$$, the minimizer
 of $math%MapObj(b)%$$ with respect to $math%b_i%$$. 
 The value $math%epsilon(1)%$$ is used for accepting the minimizers with 
 respect to the individual parameters.
+If an optimal parameter value can not be determined for the 
+$th i$$ individual, then $math%bOut_i%$$ will be set equal 
+to Not a Number (NaN).
 
 $syntax/
 
@@ -549,6 +552,7 @@ $end
 #include "indStatistics.h"
 #include "intToOrdinalString.h"
 #include "isLessThanOrEqualTo.h"
+#include "isUnnormNumber.h"
 #include "inverse.h"
 #include "mapOpt.h"
 #include "mapObjDiff.h"
@@ -853,6 +857,8 @@ void twoStageMethod( SpkModel<double>&    model,
   const int nInd = dvecN  .nr();
   const int nB   = dmatBIn.nr();
 
+  int popLevel = popOptInfo.getLevel();
+
 
   //------------------------------------------------------------
   // Set indOptInfo as a sub-level optimizer. 
@@ -1090,6 +1096,8 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
   const int nInd = dvecN  .nr();
   const int nB   = dmatBIn.nr();
 
+  int popLevel = popOptInfo.getLevel();
+
 
   //------------------------------------------------------------
   // Prepare the objects to hold the output values.
@@ -1144,6 +1152,9 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
   DoubleMatrix dvecBOut_i   ( nB, 1 );
   DoubleMatrix dvecBOut_iSum( nB, 1 );
 
+  // Send the output to standard cout.
+  std::ostream& outputStream = std::cout;
+
 
   //------------------------------------------------------------
   // Perform the Standard Two-Stage (STS) method.
@@ -1154,6 +1165,10 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
   bool isFO = false;
 
   int i;
+
+  int nIndOptOk = 0;
+  vector<bool> indOptOk( nInd );
+  vector<int> indOptFailedIndex;
 
   try
   {
@@ -1175,21 +1190,21 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
     // the individual parameter estimates.
     for ( i = 0; i < nInd; i++ )
     {
+      // Set the current individual's index for the model.
+      twoStageModel.selectIndividual( i );
+
+      // Get the number of data values for this individual.
+      nY_i = static_cast<int>( pdNData[i] );
+
+      // Get this individual's data values.
+      dvecY_i = getSubblock( dvecY, nYTotal, 0, nY_i, 1 );
+      nYTotal += nY_i;
+
+      // Get this individual's initial parameter value.
+      dvecBIn_i = getCol( dmatBIn, i );
+
       try
       {
-        // Set the current individual's index for the model.
-        twoStageModel.selectIndividual( i );
-
-        // Get the number of data values for this individual.
-        nY_i = static_cast<int>( pdNData[i] );
-
-        // Get this individual's data values.
-        dvecY_i = getSubblock( dvecY, nYTotal, 0, nY_i, 1 );
-        nYTotal += nY_i;
-
-        // Get this individual's initial parameter value.
-        dvecBIn_i = getCol( dmatBIn, i );
-
         // Determine this individual's final parameter estimate.    
         mapOpt(
           twoStageModel,
@@ -1208,28 +1223,46 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
           pdmatNull,
           &dvecBMeanIn );
 
+        // If the individual optimized without throwing an exception,
+        // then increment the counter.
+        nIndOptOk++;
+  
+        // Set the flag for this individual.
+        indOptOk[i] = true;
+
         // Add in this individual's parameter estimate.
         dvecBOut_iSum = add( dvecBOut_iSum, dvecBOut_i );
-
-        // Set this individual's final parameter estimate in the
-        // matrix of estimates for each individual, if necessary.
-        if ( pdmatBOut )
-        {
-          replaceJth( dmatBOutTemp, i, dvecBOut_i);
-        }
       }
       catch( SpkException& e )
       {         
-        const int max = SpkError::maxMessageLen();
-        char message[max];
-        snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's contribution to the population mean.",
-                  intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-      
-        throw e.push(
-          SpkError::SPK_UNKNOWN_ERR, 
-          message,
-          __LINE__, 
-          __FILE__ );
+        // Check to see if there were any standard errors.
+        if ( e.find( SpkError::SPK_STD_ERR ) <  0 )
+        {
+          // If no standard errors, then set the individual's
+          // parameter equal to Not a Number (NaN).
+          double zero = 0.0;
+          dvecBOut_i.fill( zero / zero );
+    
+          // Add this individual's index to the list.
+          indOptFailedIndex.push_back( i );
+
+          // Set the flag to indicate this individual's optimal
+          // parameter could not be determined.
+          indOptOk[i] = false;
+        }
+        else
+        {
+          const int max = SpkError::maxMessageLen();
+          char message[max];
+          snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's contribution to the population mean.",
+                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+        
+          throw e.push(
+            SpkError::SPK_UNKNOWN_ERR, 
+            message,
+            __LINE__, 
+            __FILE__ );
+        }
       }
       catch( const std::exception& stde )
       {
@@ -1257,21 +1290,69 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
           __LINE__,
           __FILE__ );
       }
+        
+      // Set this individual's final parameter estimate in the
+      // matrix of estimates for each individual, if necessary.
+      if ( pdmatBOut )
+      {
+        replaceJth( dmatBOutTemp, i, dvecBOut_i);
+      }
+    }
+
+    // Get the number of individuals that failed to optimize.
+    int nIndOptFailed = indOptFailedIndex.size();
+    assert( nInd == nIndOptOk + nIndOptFailed );
+
+    // Issue a warning if any individual optimizations failed.
+    if(  nIndOptFailed > 0 )
+    {
+      std::ostringstream message;
+      int commaCounter = 0;
+      int j;
+      message << "The following individuals were removed from the Two-Stage calculation \nbecause their optimal parameter value could not be determined:  \n";
+      for ( j = 0; j < nIndOptFailed; j++ )
+      {
+        message << indOptFailedIndex[j] + 1 << ( commaCounter++ < nIndOptFailed - 1 ? ", " : "" );
+      }
+      message << ".";
+
+      WarningsManager::addWarning(
+          message.str(),
+          __LINE__,
+          __FILE__ );
+
+      if ( popLevel > 0 )
+      {
+        outputStream << endl;
+        outputStream << message << endl;
+        outputStream << endl;
+      }
+    }
+
+    // Check to see if less than two individuals optimized
+    // successfully.
+    if( nIndOptOk < 2 )
+    {
+      throw SpkException(
+        SpkError::SPK_UNKNOWN_ERR,
+        "The Two-Stage method failed because less than two individuals optimized \nsuccessfully.",
+        __LINE__,
+        __FILE__ );
     }
 
     // Divide by the number of individuals to get the population mean of
     // the parameter estimates,
     //
-    //                            nInd
-    //                            ----
-    //          (STS)       1     \    
-    //     bMean       =  ------  /     bOut   .
-    //                     nInd   ----      i
-    //                            i = 1 
+    //                                 nIndOptOk
+    //                                   ----
+    //          (STS)          1         \    
+    //     bMean       =  -----------    /     bOut   .
+    //                     nIndOptOk     ----      i
+    //                                   i = 1 
     //
     // This expression is based on the "Standard Two Stage" section of
     // Schumitzky (1995).
-    divByScalar( dvecBOut_iSum, nInd, dvecBMeanOutTemp );
+    divByScalar( dvecBOut_iSum, nIndOptOk, dvecBMeanOutTemp );
 
 
     //--------------------------------------------------------
@@ -1292,6 +1373,12 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
       // covariance of the individual parameter estimates.
       for ( i = 0; i < nInd; i++ )
       {
+        // Skip this individual if they didn't optimize.
+        if ( !indOptOk[i] )
+        {
+          continue;
+        }
+
         // Get this individual's final parameter value.
         dvecBOut_i = getCol( dmatBOutTemp, i );
 
@@ -1324,16 +1411,16 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
       // Divide by the number of individuals to get the population
       // covariance,
       //
-      //                           nInd
-      //                           ----
-      //         (STS)       1     \                                           T
-      //     bCov       =  ------  /      ( bOut  -  bMean ) ( bOut  -  bMean )   .
-      //                    nInd   ----         i                  i       
-      //                           i = 1 
+      //                               nIndOptOk
+      //                                 ----
+      //         (STS)          1        \                                           T
+      //     bCov       =  -----------   /      ( bOut  -  bMean ) ( bOut  -  bMean )   .
+      //                    nIndOptOk    ----         i                  i       
+      //                                 i = 1 
       //
       // This expression is based on the "Standard Two Stage" section of
       // Schumitzky (1995).
-      divByScalar( dmatBOut_iMinusBMeanCrossProdSum, nInd, dmatBCovOutTemp );
+      divByScalar( dmatBOut_iMinusBMeanCrossProdSum, nIndOptOk, dmatBCovOutTemp );
     }
   }
   catch( SpkException& e )
@@ -1520,6 +1607,48 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
       __FILE__ );
   }
 
+  int i;
+  int j;
+  int k;
+
+  DoubleMatrix dvecBOutSTS_i( nB );
+  const double* pdBOutSTS_iData;
+  double bOutSTS_i_j;
+
+  int nIndOptOk = 0;
+  vector<bool> indOptOk( nInd );
+  vector<int> indParCovFailedIndex;
+
+  // Look for individuals whose optimal individual parameters could
+  // not be calculated during the STS.
+  for ( i = 0; i < nInd; i++ )
+  {
+    // Get this individual's parameter value from the STS method.
+    dvecBOutSTS_i = getCol( dmatBOutSTS, i );
+    pdBOutSTS_iData = dvecBOutSTS_i.data();
+
+    // Initially assume this individual's optimal parameter value
+    // was determined during the STS method.
+    indOptOk[i] = true;
+    nIndOptOk++;
+
+    // See if the individual didn't optimize, i.e. if each element
+    // in its parameter is equal to NaN.
+    for ( j = 0; j < nB; j++ )
+    {
+      bOutSTS_i_j = pdBOutSTS_iData[j];
+
+      if( isUnnormNumber( bOutSTS_i_j ) )
+      {
+        // Set this to indicate the individual's optimal parameter
+        // value was not determined during the STS method.
+        indOptOk[i] = false;
+        nIndOptOk--;
+        break;
+      }
+    }
+  }
+
 
   //------------------------------------------------------------
   // Prepare to perform the Iterative Two-Stage (ITS) method.
@@ -1593,10 +1722,6 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
   const double* pdBOutSTSData = dmatBOutSTS.data();
   const double* pdNData       = dvecN.data();
 
-  int i;
-  int j;
-  int k;
-
   double* pdNull = 0;
   DoubleMatrix* pdmatNull = 0;
   valarray<double>* pVANull = 0;
@@ -1637,6 +1762,10 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
 
       k++;
 
+      // Reset the number of individual that were optimized
+      // successfully during the STS method.
+      nIndOptOk = 0;
+
 
       //----------------------------------------------------------
       // Calculate the current set of individual parameter estimates.
@@ -1664,6 +1793,18 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
       //
       dmatBInSTS     = dmatBOutSTS;
       dvecBMeanInSTS = dvecBMeanOutSTS;
+
+      // Look for individuals whose optimal individual parameters could
+      // not be calculated during the STS.
+      for ( i = 0; i < nInd; i++ )
+      {
+        if ( !indOptOk[i] )
+        {
+          // Set this individual's initial parameter value equal to
+          // the mean value.
+          replaceJth( dmatBInSTS, i, dvecBMeanInSTS );
+        }
+      }
 
       // Do a Standard Two-Stage (STS) analysis using the value for the
       // covariance of the individual parameters that was just set.
@@ -1700,6 +1841,36 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
                         pdvecBMeanOutSTS,
                         pdmatBCovOutSTS );
 
+      // Look for individuals whose optimal individual parameters could
+      // not be calculated during the STS.
+      for ( i = 0; i < nInd; i++ )
+      {
+        // Get this individual's parameter value from the STS method.
+        dvecBOutSTS_i = getCol( dmatBOutSTS, i );
+        pdBOutSTS_iData = dvecBOutSTS_i.data();
+    
+        // Initially assume this individual's optimal parameter value
+        // was determined during the STS method.
+        indOptOk[i] = true;
+        nIndOptOk++;
+    
+        // See if the individual didn't optimize, i.e. if each element
+        // in its parameter is equal to NaN.
+        for ( j = 0; j < nB; j++ )
+        {
+          bOutSTS_i_j = pdBOutSTS_iData[j];
+    
+          if( isUnnormNumber( bOutSTS_i_j ) )
+          {
+            // Set this to indicate the individual's optimal parameter
+            // value was not determined during the STS method.
+            indOptOk[i] = false;
+            nIndOptOk--;
+            break;
+          }
+        }
+      }
+
       pdBInSTSData  = dmatBInSTS.data();
       pdBOutSTSData = dmatBOutSTS.data();
 
@@ -1718,6 +1889,13 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
       i = 0;
       while ( isWithinTol && i < nInd )
       {
+        // Skip this individual if they didn't optimize.
+        if ( !indOptOk[i] )
+        {
+          i++;
+          continue;
+        }
+
         j = 0;
         while ( isWithinTol && j < nB )
         {
@@ -1756,7 +1934,7 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
       // Calculate the sum of the covariances of the individual
       // parameter estimates,
       //
-      //                     nInd
+      //                   nIndOptOk
       //                     ----
       //                     \   
       //     bOutCov Sum  =  /      P     ,
@@ -1793,6 +1971,12 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
           // Set this individual's parameter value in the model.
           twoStageModel.setIndPar( dvecBOut_i.toValarray() );
 
+          // Skip this individual if they didn't optimize.
+          if ( !indOptOk[i] )
+          {
+            continue;
+          }
+
           // Get the Hessian of this individual's objective function.
           mapObjDiff(
             twoStageModel,
@@ -1827,16 +2011,36 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
         }
         catch( SpkException& e )
         {         
-          const int max = SpkError::maxMessageLen();
-          char message[max];
-          snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's \ncontribution to the sum of the covariances for the parameter estimates.",
-                    intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-        
-          throw e.push(
-            SpkError::SPK_UNKNOWN_ERR, 
-            message,
-            __LINE__, 
-            __FILE__ );
+          // Check to see if there were any standard errors.
+          if ( e.find( SpkError::SPK_STD_ERR ) <  0 )
+          {
+            // If no standard errors, then set the individual's
+            // parameter covariance equal to Not a Number (NaN).
+            double zero = 0.0;
+            dmatBOutCov_i.fill( zero / zero );
+
+            // Add this individual's index to the list.
+            indParCovFailedIndex.push_back( i );
+    
+            // Set the flag to indicate this individual's optimal
+            // parameter could not be determined, which is the reason
+            // that their parameter covariance could be calculated.
+            indOptOk[i] = false;
+            nIndOptOk--;
+          }
+          else
+          {
+            const int max = SpkError::maxMessageLen();
+            char message[max];
+            snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's \ncontribution to the sum of the covariances for the parameter estimates.",
+                      intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
+          
+            throw e.push(
+              SpkError::SPK_UNKNOWN_ERR, 
+              message,
+              __LINE__, 
+              __FILE__ );
+          }
         }
         catch( const std::exception& stde )
         {
@@ -1866,19 +2070,61 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
         }
       }
 
+      // Get the number of individuals that failed to have their
+      // parameter covariance calculate.
+      int nIndParCovFailed = indParCovFailedIndex.size();
+
+      // Issue a warning if any individuals failed to have their
+      // parameter covariance calculate.
+      if(  nIndParCovFailed > 0 )
+      {
+        std::ostringstream message;
+        int commaCounter = 0;
+        int j;
+        message << "The following individuals were removed from the Two-Stage calculation \nbecause the covariance of their optimal parameter value could not be \ndetermined:  ";
+        for ( j = 0; j < nIndParCovFailed; j++ )
+        {
+          message << indParCovFailedIndex[j] + 1 << ( commaCounter++ < nIndParCovFailed - 1 ? ", " : "" );
+        }
+        message << ".";
+    
+        WarningsManager::addWarning(
+            message.str(),
+            __LINE__,
+            __FILE__ );
+    
+        if ( popLevel > 0 )
+        {
+          outputStream << endl;
+          outputStream << message << endl;
+          outputStream << endl;
+        }
+      }
+    
+      // Check to see if less than two individuals optimized
+      // successfully.
+      if( nIndOptOk < 2 )
+      {
+        throw SpkException(
+          SpkError::SPK_UNKNOWN_ERR,
+          "The Two-Stage method failed because less than two individuals optimized \nsuccessfully.",
+          __LINE__,
+          __FILE__ );
+      }
+
       // Calculate the mean of the covariances of the individual
       // parameter estimates,
       //
-      //                              nInd
-      //                              ----
-      //                        1     \   
-      //     bOutCov Mean  =  ------  /     bOutCov   .
-      //            i          nInd   ----         i
-      //                              i = 1
+      //                                  nIndOptOk
+      //                                    ----   
+      //                           1        \      
+      //     bOutCov Mean  =  -----------   /        bOutCov   .
+      //            i          nIndOptOk    ----            i
+      //                                    i = 1  
       //
       // Note that this sum corresponds to the mean of the first term
       // from Equation (17b) of Schumitzky (1995).
-      divByScalar( dmatBOutCov_iSum, nInd, dmatBOutCov_iMean );
+      divByScalar( dmatBOutCov_iSum, nIndOptOk, dmatBOutCov_iMean );
 
   
       //----------------------------------------------------------
@@ -1892,19 +2138,19 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
       // parameters that will be used for the next iteration (k + 1 )
       // is given by Equation (17b) of Schumitzky (1995),
       //
-      //                       nInd
-      //                       ----    -                                                 -
-      //                 1     \      |                                                T  |
-      //     bCov   =  ------  /      |  P     +  ( bOut  -  bMean ) ( bOut  -  bMean )   |
-      //         k      nInd   ----   |   i,k           i                  i              |
-      //                       i = 1   -                                                 -
+      //                           nIndOptOk
+      //                             ----      -                                                 -
+      //                    1        \        |                                                T  |
+      //     bCov   =  -----------   /        |  P     +  ( bOut  -  bMean ) ( bOut  -  bMean )   |
+      //         k      nIndOptOk    ----     |   i,k           i                  i              |
+      //                             i = 1     -                                                 -
       //
-      //                       nInd                          nInd   
-      //                       ----    -      -              ----    -                                        - 
-      //                 1     \      |        |       1     \      |                                       T  |
-      //            =  ------  /      |  P     |  +  ------  /      |  ( bOut  -  bMean ) ( bOut  -  bMean )   |
-      //                nInd   ----   |   i,k  |      nInd   ----   |        i                  i              |
-      //                       i = 1   -      -              i = 1   -                                        - 
+      //                           nIndOptOk                             nIndOptOk  
+      //                             ----      -      -                    ----      -                                        - 
+      //                    1        \        |        |          1        \        |                                       T  |
+      //            =  -----------   /        |  P     |  +  -----------   /        |  ( bOut  -  bMean ) ( bOut  -  bMean )   |
+      //                nIndOptOk    ----     |   i,k  |      nIndOptOk    ----     |        i                  i              |
+      //                             i = 1     -      -                    i = 1     -                                        - 
       //
       //                                    (STS)
       //            =  bOutCov Mean  +  bCov      .
@@ -2134,6 +2380,48 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
       __FILE__ );
   }
 
+  int i;
+  int j;
+  int k;
+
+  DoubleMatrix dvecBOutSTS_i( nB );
+  const double* pdBOutSTS_iData;
+  double bOutSTS_i_j;
+
+  int nIndOptOk = 0;
+  vector<bool> indOptOk( nInd );
+  vector<int> indParCovInvFailedIndex;
+
+  // Look for individuals whose optimal individual parameters could
+  // not be calculated during the STS.
+  for ( i = 0; i < nInd; i++ )
+  {
+    // Get this individual's parameter value from the STS method.
+    dvecBOutSTS_i = getCol( dmatBOutSTS, i );
+    pdBOutSTS_iData = dvecBOutSTS_i.data();
+
+    // Initially assume this individual's optimal parameter value
+    // was determined during the STS method.
+    indOptOk[i] = true;
+    nIndOptOk++;
+
+    // See if the individual didn't optimize, i.e. if each element
+    // in its parameter is equal to NaN.
+    for ( j = 0; j < nB; j++ )
+    {
+      bOutSTS_i_j = pdBOutSTS_iData[j];
+
+      if( isUnnormNumber( bOutSTS_i_j ) )
+      {
+        // Set this to indicate the individual's optimal parameter
+        // value was not determined during the STS method.
+        indOptOk[i] = false;
+        nIndOptOk--;
+        break;
+      }
+    }
+  }
+
 
   //------------------------------------------------------------
   // Prepare to perform the Global Two-Stage (GTS) method.
@@ -2243,10 +2531,6 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
 
   const double* pdNData = dvecN.data();
 
-  int i;
-  int j;
-  int k;
-
   double* pdNull = 0;
   DoubleMatrix* pdmatNull = 0;
   valarray<double>* pVANull = 0;
@@ -2286,6 +2570,12 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
       // Set this individual's parameter value in the model.
       twoStageModel.setIndPar( dvecBOut_i.toValarray() );
 
+      // Skip this individual if they didn't optimize.
+      if ( !indOptOk[i] )
+      {
+        continue;
+      }
+
       // Get the Hessian of this individual's objective function.
       mapObjDiff(
         twoStageModel,
@@ -2324,16 +2614,36 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
     }
     catch( SpkException& e )
     {         
-      const int max = SpkError::maxMessageLen();
-      char message[max];
-      snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's \nparameter estimate covariance inverse.",
+      // Check to see if there were any standard errors.
+      if ( e.find( SpkError::SPK_STD_ERR ) <  0 )
+      {
+        // If no standard errors, then set the individual's parameter
+        // covariance inverse equal to Not a Number (NaN).
+        double zero = 0.0;
+        bOutCovInv_i = ( zero / zero );
+
+        // Add this individual's index to the list.
+        indParCovInvFailedIndex.push_back( i );
+
+        // Set the flag to indicate this individual's optimal
+        // parameter could not be determined, which is the reason that
+        // their parameter covariance inverse could be calculated.
+        indOptOk[i] = false;
+        nIndOptOk--;
+      }
+      else
+      {
+        const int max = SpkError::maxMessageLen();
+        char message[max];
+        snprintf( message, max, "The Two-Stage method failed during the calculation of the %s individual's \nparameter estimate covariance inverse.",
                 intToOrdinalString( i, ZERO_IS_FIRST_INT ).c_str() );
-    
-      throw e.push(
-        SpkError::SPK_UNKNOWN_ERR, 
-        message,
-        __LINE__, 
-        __FILE__ );
+      
+        throw e.push(
+          SpkError::SPK_UNKNOWN_ERR, 
+          message,
+          __LINE__, 
+          __FILE__ );
+      }
     }
     catch( const std::exception& stde )
     {
@@ -2361,6 +2671,48 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
         __LINE__,
         __FILE__ );
     }
+  }
+
+  // Get the number of individuals that failed to have their
+  // parameter covariance inverse calculate.
+  int nIndParCovInvFailed = indParCovInvFailedIndex.size();
+
+  // Issue a warning if any individuals failed to have their
+  // parameter covariance inverse calculate.
+  if(  nIndParCovInvFailed > 0 )
+  {
+    std::ostringstream message;
+    int commaCounter = 0;
+    int j;
+    message << "The following individuals were removed from the Two-Stage calculation \nbecause the inverse of their optimal parameter covariance could not be \ndetermined:  ";
+    for ( j = 0; j < nIndParCovInvFailed; j++ )
+    {
+      message << indParCovInvFailedIndex[j] + 1 << ( commaCounter++ < nIndParCovInvFailed - 1 ? ", " : "" );
+    }
+    message << ".";
+
+    WarningsManager::addWarning(
+        message.str(),
+        __LINE__,
+        __FILE__ );
+
+    if ( popLevel > 0 )
+    {
+      outputStream << endl;
+      outputStream << message.str() << endl;
+      outputStream << endl;
+    }
+  }
+
+  // Check to see if less than two individuals optimized
+  // successfully.
+  if( nIndOptOk < 2 )
+  {
+    throw SpkException(
+      SpkError::SPK_UNKNOWN_ERR,
+      "The Two-Stage method failed because less than two individuals optimized \nsuccessfully.",
+      __LINE__,
+      __FILE__ );
   }
 
   
@@ -2444,6 +2796,12 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
       // bOut_i.
       for ( i = 0; i < nInd; i++ )
       {
+        // Skip this individual if they didn't optimize.
+        if ( !indOptOk[i] )
+        {
+          continue;
+        }
+
         try
         {
           // Get the inverse of the covariance of this individual's
@@ -2555,6 +2913,13 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
       i = 0;
       while ( isWithinTol && i < nInd )
       {
+        // Skip this individual if they didn't optimize.
+        if ( !indOptOk[i] )
+        {
+          i++;
+          continue;
+        }
+
         j = 0;
         while ( isWithinTol && j < nB )
         {
@@ -2589,14 +2954,14 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
       // parameters that will be used for the next iteration (k + 1 )
       // using Equation (15a) of Schumitzky (1995),
       //
-      //                        nInd
-      //                        ---- 
-      //                  1     \    
-      //     bMean   =  ------  /      q     .
-      //          k      nInd   ----    i,k
-      //                        i = 1
+      //                            nIndOptOk
+      //                              ----   
+      //                     1        \      
+      //     bMean   =  -----------   /        q     .
+      //          k      nIndOptOk    ----      i,k
+      //                              i = 1  
       //
-      divByScalar( dvecQ_i_kSum, nInd, dvecBMeanCurr );
+      divByScalar( dvecQ_i_kSum, nIndOptOk, dvecBMeanCurr );
 
 
       //----------------------------------------------------------
@@ -2605,16 +2970,16 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
 
       // Calculate the mean of the auxiliary covariances,
       //
-      //                          nInd
-      //                          ---- 
-      //                    1     \    
-      //     P   Mean  =  ------  /      P     .
-      //      i,k          nInd   ----    i,k
-      //                          i = 1
+      //                              nIndOptOk
+      //                                ----   
+      //                       1        \      
+      //     P   Mean  =  -----------   /        P     .
+      //      i,k          nIndOptOk    ----      i,k
+      //                                i = 1  
       //
       // Note that this sum corresponds to the mean of the first term
       // from Equation (15b) of Schumitzky (1995).
-      divByScalar( dmatP_i_kSum, nInd, dmatP_i_kMean );
+      divByScalar( dmatP_i_kSum, nIndOptOk, dmatP_i_kMean );
 
       // Initially set this equal to zero.
       dmatQ_i_kMinusBMeanCrossProdSum.fill( 0.0 );
@@ -2623,17 +2988,23 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
       // between the auxiliary means and the current mean of the
       // individual parameters,
       //
-      //                       nInd
-      //                       ----    -                                        -
-      //                 1     \      |                                       T  |
-      //     bCov   =  ------  /      |  ( q     -  bMean ) ( q     -  bMean )   |  .
-      //         k      nInd   ----   |     i,k                i,k               |
-      //                       i = 1   -                                        -
+      //                          nIndOptOk
+      //                            ----      -                                        -
+      //                   1        \        |                                       T  |
+      //     bCov   = -----------   /        |  ( q     -  bMean ) ( q     -  bMean )   |  .
+      //         k     nIndOptOk    ----     |     i,k                i,k               |
+      //                            i = 1     -                                        -
       //
       // Note that this sum corresponds to the mean of the second term
       // from Equation (15b) of Schumitzky (1995).
       for ( i = 0; i < nInd; i++ )
       {
+        // Skip this individual if they didn't optimize.
+        if ( !indOptOk[i] )
+        {
+          continue;
+        }
+
         // Get this individual's auxiliary mean.
         dvecQ_i_k = getCol( dmatQCurr, i );
 
@@ -2662,7 +3033,7 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
           dmatQ_i_kMinusBMeanCrossProdSum,
           dmatQ_i_kMinusBMeanCrossProd );
       }
-      divByScalar( dmatQ_i_kMinusBMeanCrossProdSum, nInd, dmatQ_i_kCov );
+      divByScalar( dmatQ_i_kMinusBMeanCrossProdSum, nIndOptOk, dmatQ_i_kCov );
 
       // Calculate the updated value for the model for the covariance of
       // the individual parameters.
@@ -2671,19 +3042,19 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
       // parameters that will be used for the next iteration (k + 1) is
       // given by Equation (15b) of Schumitzky (1995),
       //
-      //                       nInd
-      //                       ----    -                                                 -
-      //                 1     \      |                                                T  |
-      //     bCov   =  ------  /      |  P     +  ( q     -  bMean ) ( q     -  bMean )   |
-      //         k      nInd   ----   |   i,k        i,k                i,k               |
-      //                       i = 1   -                                                 -
+      //                           nIndOptOk
+      //                             ----      -                                                 -
+      //                    1        \        |                                                T  |
+      //     bCov   =  -----------   /        |  P     +  ( q     -  bMean ) ( q     -  bMean )   |
+      //         k      nIndOptOk    ----     |   i,k        i,k                i,k               |
+      //                             i = 1     -                                                 -
       //
-      //                       nInd                          nInd   
-      //                       ----    -      -              ----    -                                        - 
-      //                 1     \      |        |       1     \      |                                       T  |
-      //            =  ------  /      |  P     |  +  ------  /      |  ( q     -  bMean ) ( q     -  bMean )   |
-      //                nInd   ----   |   i,k  |      nInd   ----   |     i,k                i,k               |
-      //                       i = 1   -      -              i = 1   -                                        - 
+      //                           nIndOptOk                             nIndOptOk  
+      //                             ----      -      -                    ----      -                                        - 
+      //                    1        \        |        |          1        \        |                                       T  |
+      //            =  -----------   /        |  P     |  +  -----------   /        |  ( q     -  bMean ) ( q     -  bMean )   |
+      //                nIndOptOk    ----     |   i,k  |      nIndOptOk    ----     |     i,k                i,k               |
+      //                             i = 1     -      -                    i = 1     -                                        - 
       //
       dmatBCov_k = add( dmatP_i_kMean, dmatQ_i_kCov );
     }
@@ -2853,7 +3224,14 @@ void checkIndPar(
           indOptimizer.getEpsilon() * ( pdBUpData[k] - pdBLowData[k] );
     
         bOut_i_k = pdBOutData[k + i * nB];
-    
+
+        // Skip this parameter element if its value is equal to NaN,
+        // i.e. if the individual didn't optimize.
+        if( isUnnormNumber( bOut_i_k ) )
+        {
+          continue;
+        }
+
         // Give a warning if the value is within the maximum distance of
         // either bound.
         if ( bOut_i_k     - pdBLowData[k] <= maxDistFromBound_k ||
@@ -3082,6 +3460,13 @@ bool checkOptStatus( Optimizer&           popOptInfo,
       
           bOut_i_j = pdBCurrData[j + i * nB];
       
+          // Skip this parameter element if its value is equal to NaN,
+          // i.e. if the individual didn't optimize.
+          if( isUnnormNumber( bOut_i_j ) )
+          {
+            continue;
+          }
+
           // Give a warning if the value is within the maximum distance of
           // either bound.
           if ( bOut_i_j     - pdBLowData[j] <= maxDistFromBound_j ||

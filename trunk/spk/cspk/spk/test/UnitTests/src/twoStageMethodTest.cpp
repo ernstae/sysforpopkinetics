@@ -54,6 +54,8 @@
 #include "../../../spk/getCol.h"
 #include "../../../spk/identity.h"
 #include "../../../spk/isDmatEpsEqual.h"
+#include "../../../spk/isNotANumber.h"
+#include "../../../spk/isUnnormNumber.h"
 #include "../../../spk/mapOpt.h"
 #include "../../../spk/matabs.h"
 #include "../../../spk/mulByScalar.h"
@@ -229,6 +231,173 @@ namespace // [Begin: unnamed namespace]
   };
 
 
+  //**********************************************************************
+  //
+  // Class:  RailExampleModel_twoIndWillNotOpt
+  //
+  //
+  // This class is an SpkModel subclasse with model functions that
+  // correspond to the Rail Example that is included in the NLME
+  // distribution.
+  //
+  // The data mean model has been modified so that two of the
+  // individuals will not optimize.
+  //
+  // The PRED block for the Rail Example after it has been converted
+  // to individual notation for this two-stage method test is
+  //
+  //     $PRED 
+  //     F = THETA(1)
+  //     Y = F + ETA(1)
+  //
+  //**********************************************************************
+
+  class RailExampleModel_twoIndWillNotOpt : public SpkModel<double>
+  {
+    valarray<double> _a, _b;
+    int _i;
+    const int _nA;
+    const int _nB;
+    const int _nYi;
+  public:
+    RailExampleModel_twoIndWillNotOpt(int nA, int nB, int nYi)
+      : _nA(nA), _nB(nB), _nYi(nYi), _a(nA), _b(nB)
+    {}; 
+    ~RailExampleModel_twoIndWillNotOpt(){};
+  private:
+    void doSelectIndividual(int inx)
+    {
+        _i = inx;
+    }
+    void doSetPopPar(const valarray<double>& aval)
+    {
+      assert(aval.size() == _nA);
+        _a = aval;
+    }
+    void doSetIndPar(const  valarray<double>& bval)
+    {
+      assert(bval.size() == _nB);
+        _b = bval;
+    }
+    void doIndParVariance( valarray<double>& ret ) const
+    {
+        //
+        //     D(alp) = I  .
+        //
+        ret.resize(_nB * _nB);
+        identity( _nB, ret );
+    }
+    bool doIndParVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        //    D_alp(alp) = 0  .
+        //
+        ret.resize(_nB * _nB * _nA);
+        ret = 0.0;
+        return false;
+    }
+    void doDataMean( valarray<double>& ret ) const
+    {
+        //
+        //                 / b(1) \ 
+        //     f(alp, b) = | b(1) |  ,
+        //                 \ b(1) /
+        //
+        // where
+        //                          
+        //         / theta(1) \
+        //     b = |          |  .
+        //         \ omegaPar /
+        //                          
+        ret.resize(_nYi);
+
+        // Return a data mean model that evaluates to a Not a Number
+        // (NaN) for individuals at positions 2 and 8 so that they
+        // won't be able to be optimized.
+        if ( _i == 1 || _i == 7 )
+        {
+          double zero = 0.0;
+          ret = zero / zero;
+        }
+        else
+        {
+          ret = _b[0];
+        }
+    }
+    bool doDataMean_popPar( valarray<double>& ret ) const
+    {
+        //
+        //     f_alp(alp, b) = 0  .
+        //
+        ret.resize(_nYi * _nA);
+        ret = 0.0;
+        return false;
+    }
+    bool doDataMean_indPar( valarray<double>& ret ) const
+    {
+        //
+        //                   / 1   0 \ 
+        //     f_b(alp, b) = | 1   0 |  .
+        //                   \ 1   0 /
+        //
+        ret.resize(_nYi * _nB);
+        ret = 0.0;
+        ret[0] = 1.0;
+        ret[1] = 1.0;
+        ret[2] = 1.0;
+        return true;
+    }
+    void doDataVariance( valarray<double>& ret ) const
+    {
+        //
+        //                 / exp[2 b(2)]      0           0      \ 
+        //     R(alp, b) = |      0      exp[2 b(2)]      0      |  ,
+        //                 \      0           0      exp[2 b(2)] / 
+        //
+        // where
+        //                          
+        //         / theta(1) \
+        //     b = |          |  .
+        //         \ omegaPar /
+        //                          
+        ret.resize(_nYi * _nYi);
+        ret = 0.0;
+        ret[0] = exp( 2.0 * _b[1] );
+        ret[4] = exp( 2.0 * _b[1] );
+        ret[8] = exp( 2.0 * _b[1] );
+    }
+    bool doDataVariance_popPar( valarray<double>& ret ) const
+    {
+        //
+        //    R_alp(alp, b) = 0  .
+        //
+        ret.resize(_nYi * _nYi * _nA);
+        ret = 0.0;
+        return false;
+    }
+    bool doDataVariance_indPar( valarray<double>& ret ) const
+    {
+        //
+        //                   /  0      2 exp[2 b(2)] \ 
+        //                   |  0             0      | 
+        //                   |  0             0      | 
+        //                   |  0             0      | 
+        //     R_b(alp, b) = |  0      2 exp[2 b(2)] |   .
+        //                   |  0             0      | 
+        //                   |  0             0      | 
+        //                   |  0             0      | 
+        //                   \  0      2 exp[2 b(2)] / 
+        //
+        ret.resize(_nYi * _nYi * _nB);
+        ret = 0.0;
+        ret[0 + _nYi * _nYi] = 2.0 * exp( 2.0 * _b[1] );
+        ret[4 + _nYi * _nYi] = 2.0 * exp( 2.0 * _b[1] );
+        ret[8 + _nYi * _nYi] = 2.0 * exp( 2.0 * _b[1] );
+        return true;
+    }   
+  };
+
+
 } // [End: unnamed namespace]
 
 
@@ -259,6 +428,15 @@ Test* twoStageMethodTest::suite()
 
     suiteOfTests->addTest(new TestCaller<twoStageMethodTest>(
       "railExampleGTSTest", &twoStageMethodTest::railExampleGTSTest));
+
+    suiteOfTests->addTest(new TestCaller<twoStageMethodTest>(
+      "railExampleSTS_twoIndWillNotOpt_Test", &twoStageMethodTest::railExampleSTS_twoIndWillNotOpt_Test));
+
+    suiteOfTests->addTest(new TestCaller<twoStageMethodTest>(
+      "railExampleITS_twoIndWillNotOpt_Test", &twoStageMethodTest::railExampleITS_twoIndWillNotOpt_Test));
+
+    suiteOfTests->addTest(new TestCaller<twoStageMethodTest>(
+      "railExampleGTS_twoIndWillNotOpt_Test", &twoStageMethodTest::railExampleGTS_twoIndWillNotOpt_Test));
 
     return suiteOfTests;
 }
@@ -530,10 +708,9 @@ void twoStageMethodTest::railExampleSTSTest()
 
   // Calculate the known values for the means for the individuals'
   // parameters,
-  //
-  //                       nInd
-  //                       ----
-  //                 1     \    
+  //                       nInd 
+  //                       ---- 
+  //                  1    \    
   //     bMean  =  ------  /      b   .
   //                nInd   ----    i
   //                       i = 1 
@@ -1251,6 +1428,1103 @@ void twoStageMethodTest::railExampleGTSTest()
 
 /*************************************************************************
  *
+ * Function: railExampleSTS_twoIndWillNotOpt_Test
+ *
+ *
+ * This test uses SpkModel subclasses with model functions that
+ * correspond to the Rail Example that is included in the NLME
+ * distribution.
+ *
+ * The data mean model has been modified so that two of the
+ * individuals will not optimize.
+ *
+ * The PRED block for the Rail Example after it has been converted
+ * to individual notation for this two-stage method test is
+ *
+ *     $PRED 
+ *     F = THETA(1)
+ *     Y = F + ETA(1)
+ *
+ *************************************************************************/
+
+void twoStageMethodTest::railExampleSTS_twoIndWillNotOpt_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i;
+  int j;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population.
+  //------------------------------------------------------------
+
+  // Set the number of individuals.
+  //
+  // Note that the data mean model for the second and eighth
+  // individuals evaluates to infinity so that they won't be able to
+  // be optimized.
+  const int nInd = 6 + 2;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Set the number of data values per individual.
+  const int nY_i = 3;
+
+  // Set the number of data values for all of the individuals. 
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) nY_i );
+
+  // Set the data values for all of the individuals.
+  //
+  // Note that the data mean model for two of the individuals
+  // evaluates to infinity so that they won't be able to be optimized.
+  DoubleMatrix dvecY( nInd * nY_i, 1 );
+  double* pdYData = dvecY.data();
+  pdYData[ 0] = 5.5000E+01;
+  pdYData[ 1] = 5.3000E+01;
+  pdYData[ 2] = 5.4000E+01;
+  pdYData[ 3] = 4.0000E+01;    // Individual that will fail.
+  pdYData[ 4] = 5.1000E+01;    // Individual that will fail.
+  pdYData[ 5] = 4.6000E+01;    // Individual that will fail.
+  pdYData[ 6] = 2.6000E+01;
+  pdYData[ 7] = 3.7000E+01;
+  pdYData[ 8] = 3.2000E+01;
+  pdYData[ 9] = 7.8000E+01;
+  pdYData[10] = 9.1000E+01;
+  pdYData[11] = 8.5000E+01;
+  pdYData[12] = 9.2000E+01;
+  pdYData[13] = 1.0000E+02;
+  pdYData[14] = 9.6000E+01;
+  pdYData[15] = 4.9000E+01;
+  pdYData[16] = 5.1000E+01;
+  pdYData[17] = 5.0000E+01;
+  pdYData[18] = 8.0000E+01;
+  pdYData[19] = 8.5000E+01;
+  pdYData[20] = 8.3000E+01;
+  pdYData[21] = 8.0000E+01;    // Individual that will fail.
+  pdYData[22] = 8.5000E+01;    // Individual that will fail.
+  pdYData[23] = 8.3000E+01;    // Individual that will fail.
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population parameter, alp.
+  //------------------------------------------------------------
+
+  // There are no population parameters for this test.
+  const int nAlp = 0;
+
+
+  //------------------------------------------------------------
+  // Prepare the individual model variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of individual model independent variables.
+  const int nTheta = 1;
+  const int nEta   = 1;
+
+  // Set the initial value for theta.
+  valarray<double> theta( nTheta );
+  theta[0] = 72.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = 7.2;
+  thetaUp[0]  = 720.0;
+
+  // Set the number elements for the parameterization of omega, the
+  // covariance matrix for eta.
+  int nOmegaPar = 1;
+
+  // Set the initial minimal representation.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 32.0;
+
+  // Set the initial omega parameters.
+  valarray<double> omegaPar( nOmegaPar );
+  omegaPar[0] = std::log( omegaMinRep[0] ) / 2.0;
+
+  // Set the limits for omega.
+  valarray<double> omegaParLow( nOmegaPar );
+  valarray<double> omegaParUp ( nOmegaPar );
+  omegaParLow[0] = std::log( omegaMinRep[0] / 100.0 ) / 2.0;
+  omegaParUp[0]  = std::log( omegaMinRep[0] * 100.0 ) / 2.0;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters, b.
+  //------------------------------------------------------------
+
+  // Set the number of individual parameters.
+  const int nB = nTheta + nOmegaPar;
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+  DoubleMatrix dmatBIn  ( nB, nInd );
+
+  double* pdBLowData  = dvecBLow .data();
+  double* pdBUpData   = dvecBUp  .data();
+  double* pdBStepData = dvecBStep.data();
+  double* pdBInData   = dmatBIn  .data();
+
+  // Set the initial values for the individual parameters for all of
+  // the individuals.
+  for ( i = 0; i < nInd; i++ )
+  {
+    pdBInData[0 + i * nB] = theta[0];
+    pdBInData[1 + i * nB] = omegaPar[0];
+  }
+
+  // Set the limits for the individual parameters.
+  pdBLowData[0] = thetaLow[0];
+  pdBUpData [0] = thetaUp[0];
+  pdBLowData[1] = omegaParLow[0];
+  pdBUpData [1] = omegaParUp[0];
+
+  // Set the step sizes for the individual parameters.
+  pdBStepData[0] = ( thetaUp[0] - thetaLow[0] ) / 1000.0;
+  pdBStepData[1] = ( omegaParUp[0] - omegaParLow[0] ) / 1000.0;
+
+
+  //------------------------------------------------------------
+  // Construct the SPK model.
+  //------------------------------------------------------------
+
+  // Construct the individual level model that will be applied to all
+  // of the individuals' data sets.
+  RailExampleModel_twoIndWillNotOpt model( nAlp, nB, nY_i );
+
+
+  //------------------------------------------------------------
+  // Prepare the output variables for the two-stage method.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBOut    ( nB, nB );
+  DoubleMatrix dvecBMeanOut( nB, 1 );
+  DoubleMatrix dmatBCovOut ( nB, nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to twoStageMethod.
+  //------------------------------------------------------------
+
+  // Choose the two-stage method to use.
+  enum Objective method = STANDARD_TWO_STAGE;
+
+  // Set the flag that indiciates if the Map Bayesian terms should be
+  // included in the individual objective function MapObj(b).
+  bool withD;
+  if( method == STANDARD_TWO_STAGE  ||
+      method == ITERATIVE_TWO_STAGE ||
+      method == GLOBAL_TWO_STAGE )
+  {
+    withD = false;
+  }
+  else
+  {
+    withD = true;
+  }
+
+  // Set the values for optimization of the individual objective
+  // functions.
+  double indEpsilon = 1.e-3; 
+  int indNMaxIter   = 50; 
+  int indLevel      = 0;
+  Optimizer indOptInfo( indEpsilon, indNMaxIter, indLevel ); 
+
+  // Set the values for optimization of the population objective
+  // function.
+  double popEpsilon = 1.e-3; 
+  int popNMaxIter   = 50; 
+  int popLevel      = 0;
+  Optimizer popOptInfo( popEpsilon, popNMaxIter, popLevel ); 
+
+
+  //------------------------------------------------------------
+  // Perform the two-stage method.
+  //------------------------------------------------------------
+
+  try
+  {
+    twoStageMethod( model,
+                    method,
+                    dvecN,
+                    dvecY,
+                    popOptInfo,
+                    indOptInfo,
+                    dvecBLow,
+                    dvecBUp,
+                    dmatBIn,
+                    &dmatBOut,
+                    dvecBStep,
+                    &dvecBMeanOut,
+                    &dmatBCovOut );
+  }
+  catch( const SpkException& e )
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed!", false );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed for unknown reasons!", false);
+  }
+
+
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  DoubleMatrix dvecBKnown_i           ( nB, 1 );
+  DoubleMatrix dmatBKnown             ( nB, nInd );
+  DoubleMatrix dvecBKnown_iSum        ( nB, 1 );
+  DoubleMatrix dvecBMeanKnown         ( nB, 1 );
+  DoubleMatrix dvecBDiff_i            ( nB, 1 );
+  DoubleMatrix dvecBDiff_iTrans       ( nB, 1 );
+  DoubleMatrix dmatBDiff_iCrossProd   ( nB, nB );
+  DoubleMatrix dmatBDiff_iCrossProdSum( nB, nB );
+  DoubleMatrix dmatBCovKnown          ( nB, nB );
+
+  DoubleMatrix dvecY_i  ( nY_i, 1 );
+  DoubleMatrix dvecBIn_i( nB,   1 );
+
+  double* pdvecY_iData = dvecY_i.data();
+  double* pdvecYData   = dvecY.data();
+
+  // Initially set these all equal to zero.
+  dvecBKnown_iSum        .fill( 0.0 );
+  dmatBDiff_iCrossProdSum.fill( 0.0 );
+
+  double* pdNull = 0;
+  DoubleMatrix* pDmatNull = 0;
+
+  int k;
+
+  double bOut_i_k;
+  DoubleMatrix dvecBOut_i   ( nB, 1 );
+  const double* pdBOut_iData;
+  int nIndOptOk = 0;
+  vector<bool> indOptOk( nInd );
+
+  // Look for individuals whose optimal individual parameters could
+  // not be calculated.
+  for ( i = 0; i < nInd; i++ )
+  {
+    // Get this individual's parameter value from the STS method.
+    dvecBOut_i = getCol( dmatBOut, i );
+    pdBOut_iData = dvecBOut_i.data();
+
+    // Initially assume this individual's optimal parameter value
+    // was determined during the STS method.
+    indOptOk[i] = true;
+    nIndOptOk++;
+
+    // See if the individual didn't optimize, i.e. if each element
+    // in its parameter is equal to NaN.
+    for ( k = 0; k < nB; k++ )
+    {
+      bOut_i_k = pdBOut_iData[k];
+
+      if( isUnnormNumber( bOut_i_k ) )
+      {
+        // Set this to indicate the individual's optimal parameter
+        // value was not determined during the STS method.
+        indOptOk[i] = false;
+        nIndOptOk--;
+        break;
+      }
+    }
+  }
+
+  // Calculate the known values for the means for the individuals'
+  // parameters,
+  //
+  //                            nIndOptOk 
+  //                              ----    
+  //                    1         \       
+  //     bMean  =  -----------    /         b   .
+  //                nIndOptOk     ----       i
+  //                              i = 1    
+  //
+  for ( i = 0; i < nInd; i++ )
+  {
+    // Skip this individual if they didn't optimize.
+    if ( !indOptOk[i] )
+    {
+      continue;
+    }
+
+    // Set the current individual's index in the model.
+    model.selectIndividual( i );
+  
+    // Get this individual's data values.
+    pdvecY_iData[0] = pdvecYData[0 + i * nY_i];
+    pdvecY_iData[1] = pdvecYData[1 + i * nY_i];
+    pdvecY_iData[2] = pdvecYData[2 + i * nY_i];
+    
+    // Get this individual's initial parameter value.
+    dvecBIn_i = getCol( dmatBIn, i );
+
+    // Calculate this individual's optimal parameter value.
+    mapOpt(
+      model,
+      dvecY_i,
+      indOptInfo,
+      dvecBLow,
+      dvecBUp,
+      dvecBIn_i,
+      &dvecBKnown_i,
+      dvecBStep,
+      pdNull,
+      pDmatNull,
+      pDmatNull,
+      withD );
+
+    // Set this individual's optimal parameter value in the matrix.
+    replaceJth( dmatBKnown, i, dvecBKnown_i );
+
+    // Add in this individual's parameter value.
+    dvecBKnown_iSum = add( dvecBKnown_iSum, dvecBKnown_i );
+
+  }
+  divByScalar( dvecBKnown_iSum, nIndOptOk, dvecBMeanKnown );
+
+  // Calculate the known value for the covariance of the individuals'
+  // parameters,
+  //
+  //               
+  //                            nIndOptOk
+  //                              ----                                    T
+  //     bCov   =       1         \        ( b  -  bMean ) ( b  -  bMean )   .
+  //               -----------    /           i               i
+  //                nIndOptOk     ----    
+  //                                  i = 1  
+  for ( i = 0; i < nInd; i++ )
+  {
+    // Skip this individual if they didn't optimize.
+    if ( !indOptOk[i] )
+    {
+      continue;
+    }
+
+    // Get this individual's optimal parameter value.
+    dvecBKnown_i = getCol( dmatBKnown, i );
+
+    // Calculate the difference of between this individual's parameter
+    // value and the mean value.
+    subtract( dvecBKnown_i, dvecBMeanKnown, dvecBDiff_i );
+
+    // Calculate this individual's cross-product.
+    dvecBDiff_iTrans     = transpose( dvecBDiff_i );
+    dmatBDiff_iCrossProd = multiply( dvecBDiff_i, dvecBDiff_iTrans );
+
+    // Add in this individual's cross-product value.
+    dmatBDiff_iCrossProdSum = add( dmatBDiff_iCrossProdSum, dmatBDiff_iCrossProd );
+  }
+  divByScalar( dmatBDiff_iCrossProdSum, nIndOptOk, dmatBCovKnown );
+
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest( popEpsilon,
+             dvecBLow,
+             dvecBUp,
+             dmatBOut,
+             dmatBKnown,
+             dvecBMeanOut,
+             dvecBMeanKnown,
+             dmatBCovOut,
+             dmatBCovKnown );
+  
+}
+
+
+/*************************************************************************
+ *
+ * Function: railExampleITS_twoIndWillNotOpt_Test
+ *
+ *
+ * This test uses SpkModel subclasses with model functions that
+ * correspond to the Rail Example that is included in the NLME
+ * distribution.
+ *
+ * The data mean model has been modified so that two of the
+ * individuals will not optimize.
+ *
+ * The PRED block for the Rail Example after it has been converted
+ * to individual notation for this two-stage method test is
+ *
+ *     $PRED 
+ *     F = THETA(1)
+ *     Y = F + ETA(1)
+ *
+ *************************************************************************/
+
+void twoStageMethodTest::railExampleITS_twoIndWillNotOpt_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i;
+  int j;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population.
+  //------------------------------------------------------------
+
+  // Set the number of individuals.
+  //
+  // Note that the data mean model for the second and eighth
+  // individuals evaluates to infinity so that they won't be able to
+  // be optimized.
+  const int nInd = 6 + 2;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Set the number of data values per individual.
+  const int nY_i = 3;
+
+  // Set the number of data values for all of the individuals. 
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) nY_i );
+
+  // Set the data values for all of the individuals.
+  //
+  // Note that the data values for the first and fifth individuals
+  // were modified from their original values.
+  //
+  // Note that the data mean model for two of the individuals
+  // evaluates to infinity so that they won't be able to be optimized.
+  DoubleMatrix dvecY( nInd * nY_i, 1 );
+  double* pdYData = dvecY.data();
+  pdYData[ 0] = 4.0000E+01;
+  pdYData[ 1] = 5.1000E+01;
+  pdYData[ 2] = 4.6000E+01;
+  pdYData[ 3] = 4.0000E+01;    // Individual that will fail.
+  pdYData[ 4] = 5.1000E+01;    // Individual that will fail.
+  pdYData[ 5] = 4.6000E+01;    // Individual that will fail.
+  pdYData[ 6] = 2.6000E+01;
+  pdYData[ 7] = 3.7000E+01;
+  pdYData[ 8] = 3.2000E+01;
+  pdYData[ 9] = 7.8000E+01;
+  pdYData[10] = 9.1000E+01;
+  pdYData[11] = 8.5000E+01;
+  pdYData[12] = 9.2000E+01;
+  pdYData[13] = 1.0000E+02;
+  pdYData[14] = 9.6000E+01;
+  pdYData[15] = 7.0000E+01;
+  pdYData[16] = 7.5000E+01;
+  pdYData[17] = 7.3000E+01;
+  pdYData[18] = 8.0000E+01;
+  pdYData[19] = 8.5000E+01;
+  pdYData[20] = 8.3000E+01;
+  pdYData[21] = 8.0000E+01;    // Individual that will fail.
+  pdYData[22] = 8.5000E+01;    // Individual that will fail.
+  pdYData[23] = 8.3000E+01;    // Individual that will fail.
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population parameter, alp.
+  //------------------------------------------------------------
+
+  // There are no population parameters for this test.
+  const int nAlp = 0;
+
+
+  //------------------------------------------------------------
+  // Prepare the individual model variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of individual model independent variables.
+  const int nTheta = 1;
+  const int nEta   = 1;
+
+  // Set the initial value for theta.
+  valarray<double> theta( nTheta );
+  theta[0] = 72.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = 7.2;
+  thetaUp[0]  = 720.0;
+
+  // Set the number elements for the parameterization of omega, the
+  // covariance matrix for eta.
+  int nOmegaPar = 1;
+
+  // Set the initial minimal representation.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 32.0;
+
+  // Set the initial omega parameters.
+  valarray<double> omegaPar( nOmegaPar );
+  omegaPar[0] = std::log( omegaMinRep[0] ) / 2.0;
+
+  // Set the limits for omega.
+  valarray<double> omegaParLow( nOmegaPar );
+  valarray<double> omegaParUp ( nOmegaPar );
+  omegaParLow[0] = std::log( omegaMinRep[0] / 100.0 ) / 2.0;
+  omegaParUp[0]  = std::log( omegaMinRep[0] * 100.0 ) / 2.0;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters, b.
+  //------------------------------------------------------------
+
+  // Set the number of individual parameters.
+  const int nB = nTheta + nOmegaPar;
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+  DoubleMatrix dmatBIn  ( nB, nInd );
+
+  double* pdBLowData  = dvecBLow .data();
+  double* pdBUpData   = dvecBUp  .data();
+  double* pdBStepData = dvecBStep.data();
+  double* pdBInData   = dmatBIn  .data();
+
+  // Set the initial values for the individual parameters for all of
+  // the individuals.
+  for ( i = 0; i < nInd; i++ )
+  {
+    pdBInData[0 + i * nB] = theta[0];
+    pdBInData[1 + i * nB] = omegaPar[0];
+  }
+
+  // Set the limits for the individual parameters.
+  pdBLowData[0] = thetaLow[0];
+  pdBUpData [0] = thetaUp[0];
+  pdBLowData[1] = omegaParLow[0];
+  pdBUpData [1] = omegaParUp[0];
+
+  // Set the step sizes for the individual parameters.
+  pdBStepData[0] = ( thetaUp[0] - thetaLow[0] ) / 1000.0;
+  pdBStepData[1] = ( omegaParUp[0] - omegaParLow[0] ) / 1000.0;
+
+
+  //------------------------------------------------------------
+  // Construct the SPK model.
+  //------------------------------------------------------------
+
+  // Construct the individual level model that will be applied to all
+  // of the individuals' data sets.
+  RailExampleModel_twoIndWillNotOpt model( nAlp, nB, nY_i );
+
+
+  //------------------------------------------------------------
+  // Prepare the output variables for the two-stage method.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBOut    ( nB, nB );
+  DoubleMatrix dvecBMeanOut( nB, 1 );
+  DoubleMatrix dmatBCovOut ( nB, nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to twoStageMethod.
+  //------------------------------------------------------------
+
+  // Choose the two-stage method to use.
+  enum Objective method = ITERATIVE_TWO_STAGE;
+
+  // Set the flag that indiciates if the Map Bayesian terms should be
+  // included in the individual objective function MapObj(b).
+  bool withD;
+  if( method == STANDARD_TWO_STAGE  ||
+      method == ITERATIVE_TWO_STAGE ||
+      method == GLOBAL_TWO_STAGE )
+  {
+    withD = false;
+  }
+  else
+  {
+    withD = true;
+  }
+
+  // Set the values for optimization of the individual objective
+  // functions.
+  double indEpsilon = 1.e-6; 
+  int indNMaxIter   = 50; 
+  int indLevel      = 0;
+  Optimizer indOptInfo( indEpsilon, indNMaxIter, indLevel ); 
+
+  // Set the values for optimization of the population objective
+  // function.
+  double popEpsilon = 1.e-3; 
+  int popNMaxIter   = 50; 
+  int popLevel      = 0;
+  Optimizer popOptInfo( popEpsilon, popNMaxIter, popLevel ); 
+
+
+  //------------------------------------------------------------
+  // Perform the two-stage method.
+  //------------------------------------------------------------
+
+  try
+  {
+    twoStageMethod( model,
+                    method,
+                    dvecN,
+                    dvecY,
+                    popOptInfo,
+                    indOptInfo,
+                    dvecBLow,
+                    dvecBUp,
+                    dmatBIn,
+                    &dmatBOut,
+                    dvecBStep,
+                    &dvecBMeanOut,
+                    &dmatBCovOut );
+  }
+  catch( const SpkException& e )
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed!", false );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed for unknown reasons!", false);
+  }
+
+
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBKnown    ( nB, nInd );
+  DoubleMatrix dvecBMeanKnown( nB, 1 );
+  DoubleMatrix dmatBCovKnown ( nB, nB );
+
+  double* pdBKnownData     = dmatBKnown    .data();
+  double* pdBMeanKnownData = dvecBMeanKnown.data();
+  double* pdBCovKnownData  = dmatBCovKnown .data();
+
+  // Set the known values.
+  //
+  // Note that the following values were calculated using R.
+  //     
+  //     [1] "DD"  (bCov)
+  //
+  //               [,1]        [,2]
+  //     [1,] 512.855962 -2.48689687
+  //     [2,]  -2.486897  0.03563247
+  //     
+  //     theta_i    (b_i_1): 45.90834 32.12237 84.45908 95.81735 72.67466 82.60276
+  //     omegaPar_i (b_i_2): 1.421344 1.479556 1.299462 1.168821 1.233321 1.187630
+  //     
+  //     [1] "omegaParMean =  1.29835582063139"  (bMean_2)
+  //     
+  //     [1] "THETA1 =  68.930759775187"         (bMean_1)
+  //     [1] "OMEGA11 =  508.307879473506"
+  //     [1] "SIGMA =  13.7975614035972"
+  //
+  double zero = 0.0;
+  double notANumber = zero / zero;
+  pdBKnownData[0 + 0 * nB] = 45.90834;
+  pdBKnownData[0 + 1 * nB] = notANumber;    // Individual that will fail.
+  pdBKnownData[0 + 2 * nB] = 32.12237;
+  pdBKnownData[0 + 3 * nB] = 84.45908;
+  pdBKnownData[0 + 4 * nB] = 95.81735;
+  pdBKnownData[0 + 5 * nB] = 72.67466;
+  pdBKnownData[0 + 6 * nB] = 82.60276;
+  pdBKnownData[0 + 7 * nB] = notANumber;    // Individual that will fail.
+  pdBKnownData[1 + 0 * nB] = 1.421344;
+  pdBKnownData[1 + 1 * nB] = notANumber;    // Individual that will fail.
+  pdBKnownData[1 + 2 * nB] = 1.479556;
+  pdBKnownData[1 + 3 * nB] = 1.299462;
+  pdBKnownData[1 + 4 * nB] = 1.168821;
+  pdBKnownData[1 + 5 * nB] = 1.233321;
+  pdBKnownData[1 + 6 * nB] = 1.187630;
+  pdBKnownData[1 + 7 * nB] = notANumber;    // Individual that will fail.
+
+  pdBMeanKnownData[0] = 68.930759775187;
+  pdBMeanKnownData[1] =  1.298355820631;
+
+  pdBCovKnownData[0 + 0 * nB] = 512.855962;
+  pdBCovKnownData[0 + 1 * nB] =  -2.486897;
+  pdBCovKnownData[1 + 0 * nB] =  -2.48689687;
+  pdBCovKnownData[1 + 1 * nB] =   0.03563247;
+
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest( popEpsilon,
+             dvecBLow,
+             dvecBUp,
+             dmatBOut,
+             dmatBKnown,
+             dvecBMeanOut,
+             dvecBMeanKnown,
+             dmatBCovOut,
+             dmatBCovKnown );
+  
+}
+
+
+
+/*************************************************************************
+ *
+ * Function: railExampleGTS_twoIndWillNotOpt_Test
+ *
+ *
+ * This test uses SpkModel subclasses with model functions that
+ * correspond to the Rail Example that is included in the NLME
+ * distribution.
+ *
+ * The data mean model has been modified so that two of the
+ * individuals will not optimize.
+ *
+ * The PRED block for the Rail Example after it has been converted
+ * to individual notation for this two-stage method test is
+ *
+ *     $PRED 
+ *     F = THETA(1)
+ *     Y = F + ETA(1)
+ *
+ *************************************************************************/
+
+void twoStageMethodTest::railExampleGTS_twoIndWillNotOpt_Test()
+{
+  //------------------------------------------------------------
+  // Preliminaries.
+  //------------------------------------------------------------
+
+  using namespace std;
+
+  int i;
+  int j;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population.
+  //------------------------------------------------------------
+
+  // Set the number of individuals.
+  //
+  // Note that the data mean model for two of the individuals
+  // evaluates to infinity so that they won't be able to be optimized.
+  const int nInd = 6 + 2;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the data vector, y.
+  //------------------------------------------------------------
+
+  // Set the number of data values per individual.
+  const int nY_i = 3;
+
+  // Set the number of data values for all of the individuals. 
+  DoubleMatrix dvecN( nInd, 1 );
+  dvecN.fill( (double) nY_i );
+
+  // Set the data values for all of the individuals.
+  //
+  // Note that the data mean model for two of the individuals
+  // evaluates to infinity so that they won't be able to be optimized.
+  DoubleMatrix dvecY( nInd * nY_i, 1 );
+  double* pdYData = dvecY.data();
+  pdYData[ 0] = 5.5000E+01;
+  pdYData[ 1] = 5.3000E+01;
+  pdYData[ 2] = 5.4000E+01;
+  pdYData[ 3] = 4.0000E+01;    // Individual that will fail.
+  pdYData[ 4] = 5.1000E+01;    // Individual that will fail.
+  pdYData[ 5] = 4.6000E+01;    // Individual that will fail.
+  pdYData[ 6] = 2.6000E+01;
+  pdYData[ 7] = 3.7000E+01;
+  pdYData[ 8] = 3.2000E+01;
+  pdYData[ 9] = 7.8000E+01;
+  pdYData[10] = 9.1000E+01;
+  pdYData[11] = 8.5000E+01;
+  pdYData[12] = 9.2000E+01;
+  pdYData[13] = 1.0000E+02;
+  pdYData[14] = 9.6000E+01;
+  pdYData[15] = 4.9000E+01;
+  pdYData[16] = 5.1000E+01;
+  pdYData[17] = 5.0000E+01;
+  pdYData[18] = 8.0000E+01;
+  pdYData[19] = 8.5000E+01;
+  pdYData[20] = 8.3000E+01;
+  pdYData[21] = 8.0000E+01;    // Individual that will fail.
+  pdYData[22] = 8.5000E+01;    // Individual that will fail.
+  pdYData[23] = 8.3000E+01;    // Individual that will fail.
+
+
+  //------------------------------------------------------------
+  // Quantities related to the population parameter, alp.
+  //------------------------------------------------------------
+
+  // There are no population parameters for this test.
+  const int nAlp = 0;
+
+
+  //------------------------------------------------------------
+  // Prepare the individual model variables that appear in the Pred block.
+  //------------------------------------------------------------
+
+  // Set the number of individual model independent variables.
+  const int nTheta = 1;
+  const int nEta   = 1;
+
+  // Set the initial value for theta.
+  valarray<double> theta( nTheta );
+  theta[0] = 72.0;
+
+  // Set the limits for theta.
+  valarray<double> thetaLow( nTheta );
+  valarray<double> thetaUp ( nTheta );
+  thetaLow[0] = 7.2;
+  thetaUp[0]  = 720.0;
+
+  // Set the number elements for the parameterization of omega, the
+  // covariance matrix for eta.
+  int nOmegaPar = 1;
+
+  // Set the initial minimal representation.
+  valarray<double> omegaMinRep( nOmegaPar );
+  omegaMinRep[0] = 32.0;
+
+  // Set the initial omega parameters.
+  valarray<double> omegaPar( nOmegaPar );
+  omegaPar[0] = std::log( omegaMinRep[0] ) / 2.0;
+
+  // Set the limits for omega.
+  valarray<double> omegaParLow( nOmegaPar );
+  valarray<double> omegaParUp ( nOmegaPar );
+  omegaParLow[0] = std::log( omegaMinRep[0] / 100.0 ) / 2.0;
+  omegaParUp[0]  = std::log( omegaMinRep[0] * 100.0 ) / 2.0;
+
+
+  //------------------------------------------------------------
+  // Quantities related to the individual parameters, b.
+  //------------------------------------------------------------
+
+  // Set the number of individual parameters.
+  const int nB = nTheta + nOmegaPar;
+
+  DoubleMatrix dvecBLow ( nB, 1 );
+  DoubleMatrix dvecBUp  ( nB, 1 );
+  DoubleMatrix dvecBStep( nB, 1 );
+  DoubleMatrix dmatBIn  ( nB, nInd );
+
+  double* pdBLowData  = dvecBLow .data();
+  double* pdBUpData   = dvecBUp  .data();
+  double* pdBStepData = dvecBStep.data();
+  double* pdBInData   = dmatBIn  .data();
+
+  // Set the initial values for the individual parameters for all of
+  // the individuals.
+  for ( i = 0; i < nInd; i++ )
+  {
+    pdBInData[0 + i * nB] = theta[0];
+    pdBInData[1 + i * nB] = omegaPar[0];
+  }
+
+  // Set the limits for the individual parameters.
+  pdBLowData[0] = thetaLow[0];
+  pdBUpData [0] = thetaUp[0];
+  pdBLowData[1] = omegaParLow[0];
+  pdBUpData [1] = omegaParUp[0];
+
+  // Set the step sizes for the individual parameters.
+  pdBStepData[0] = ( thetaUp[0] - thetaLow[0] ) / 1000.0;
+  pdBStepData[1] = ( omegaParUp[0] - omegaParLow[0] ) / 1000.0;
+
+
+  //------------------------------------------------------------
+  // Construct the SPK model.
+  //------------------------------------------------------------
+
+  // Construct the individual level model that will be applied to all
+  // of the individuals' data sets.
+  RailExampleModel_twoIndWillNotOpt model( nAlp, nB, nY_i );
+
+
+  //------------------------------------------------------------
+  // Prepare the output variables for the two-stage method.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBOut    ( nB, nB );
+  DoubleMatrix dvecBMeanOut( nB, 1 );
+  DoubleMatrix dmatBCovOut ( nB, nB );
+
+
+  //------------------------------------------------------------
+  // Remaining inputs to twoStageMethod.
+  //------------------------------------------------------------
+
+  // Choose the two-stage method to use.
+  enum Objective method = GLOBAL_TWO_STAGE;
+
+  // Set the flag that indiciates if the Map Bayesian terms should be
+  // included in the individual objective function MapObj(b).
+  bool withD;
+  if( method == STANDARD_TWO_STAGE  ||
+      method == ITERATIVE_TWO_STAGE ||
+      method == GLOBAL_TWO_STAGE )
+  {
+    withD = false;
+  }
+  else
+  {
+    withD = true;
+  }
+
+  // Set the values for optimization of the individual objective
+  // functions.
+  double indEpsilon = 1.e-6; 
+  int indNMaxIter   = 50; 
+  int indLevel      = 0;
+  Optimizer indOptInfo( indEpsilon, indNMaxIter, indLevel ); 
+
+  // Set the values for optimization of the population objective
+  // function.
+  double popEpsilon = 1.e-3; 
+  int popNMaxIter   = 50; 
+  int popLevel      = 0;
+  Optimizer popOptInfo( popEpsilon, popNMaxIter, popLevel ); 
+
+
+  //------------------------------------------------------------
+  // Perform the two-stage method.
+  //------------------------------------------------------------
+
+  try
+  {
+    twoStageMethod( model,
+                    method,
+                    dvecN,
+                    dvecY,
+                    popOptInfo,
+                    indOptInfo,
+                    dvecBLow,
+                    dvecBUp,
+                    dmatBIn,
+                    &dmatBOut,
+                    dvecBStep,
+                    &dvecBMeanOut,
+                    &dmatBCovOut );
+  }
+  catch( const SpkException& e )
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed!", false );
+  }
+  catch(...)
+  {
+    CPPUNIT_ASSERT_MESSAGE( "twoStageMethod failed for unknown reasons!", false);
+  }
+
+
+  //------------------------------------------------------------
+  // Calculate the known values.
+  //------------------------------------------------------------
+
+  DoubleMatrix dmatBKnown    ( nB, nInd );
+  DoubleMatrix dvecBMeanKnown( nB, 1 );
+  DoubleMatrix dmatBCovKnown ( nB, nB );
+
+  double* pdBKnownData     = dmatBKnown    .data();
+  double* pdBMeanKnownData = dvecBMeanKnown.data();
+  double* pdBCovKnownData  = dmatBCovKnown .data();
+
+  // Set the known values.
+  //
+  // Note that the following values were calculated using R.
+  //     
+  //     [1] D ( bCov )
+  //
+  //               [,1]      [,2]
+  //     [1,] 510.56611 5.0945202
+  //     [2,]   5.09452 0.4072278
+  //
+  //     [1] mu ( bMean )
+  //
+  //                [,1]
+  //     [1,] 66.5239521
+  //     [2,]  0.7786256
+  //
+  //          theta_i      omegaPar_i  omega_i
+  //
+  //          (b    )       (b    )
+  //            i(1)          i(2)
+  //
+  //     [1] 54.00181991  0.07015188   1.15062327
+  //     [1] 32.256252    1.163502    10.247198
+  //     [1] 84.463966    1.443051    17.923306
+  //     [1] 95.803746    1.147627     9.926954
+  //     [1] 50.00372897  0.05744019   1.12173925
+  //     [1] 82.6164265   0.7899683    4.8546478
+  //
+  //         thetaMean    omegaParMean  omegaMean
+  //
+  //     [1] 66.5243233   0.7786234    7.5374114
+  //
+  double zero = 0.0;
+  double notANumber = zero / zero;
+  pdBKnownData[0 + 0 * nB] = 54.00181991;
+  pdBKnownData[0 + 1 * nB] = notANumber;    // Individual that will fail.
+  pdBKnownData[0 + 2 * nB] = 32.256252;
+  pdBKnownData[0 + 3 * nB] = 84.463966;
+  pdBKnownData[0 + 4 * nB] = 95.803746;
+  pdBKnownData[0 + 5 * nB] = 50.00372897;
+  pdBKnownData[0 + 6 * nB] = 82.6164265;
+  pdBKnownData[0 + 7 * nB] = notANumber;    // Individual that will fail.
+  pdBKnownData[1 + 0 * nB] = 0.07015188;
+  pdBKnownData[1 + 1 * nB] = notANumber;    // Individual that will fail.
+  pdBKnownData[1 + 2 * nB] = 1.163502;
+  pdBKnownData[1 + 3 * nB] = 1.443051;
+  pdBKnownData[1 + 4 * nB] = 1.147627;
+  pdBKnownData[1 + 5 * nB] = 0.05744019;
+  pdBKnownData[1 + 6 * nB] = 0.7899683;
+  pdBKnownData[1 + 7 * nB] = notANumber;    // Individual that will fail.
+
+  pdBMeanKnownData[0] = 66.5239521;
+  pdBMeanKnownData[1] =  0.7786256;
+
+  pdBCovKnownData[0 + 0 * nB] = 510.56611;
+  pdBCovKnownData[0 + 1 * nB] = 5.0945202;
+  pdBCovKnownData[1 + 0 * nB] = 5.0945202;
+  pdBCovKnownData[1 + 1 * nB] = 0.4072278;
+
+
+  //------------------------------------------------------------
+  // Do the test.
+  //------------------------------------------------------------
+
+  doTheTest( popEpsilon,
+             dvecBLow,
+             dvecBUp,
+             dmatBOut,
+             dmatBKnown,
+             dvecBMeanOut,
+             dvecBMeanKnown,
+             dmatBCovOut,
+             dmatBCovKnown );
+  
+}
+
+
+/*************************************************************************
+ *
  * Function: doTheTest
  *
  *************************************************************************/
@@ -1309,8 +2583,11 @@ void twoStageMethodTest::doTheTest(
   {
     for ( j = 0; j < nB; j++ )
     {
-      if ( fabs(pdBOutData[ j + i * nB ] - pdBKnownData[ j + i * nB  ]) > 
-        epsilon * (pdBUpData[ j ] - pdBLowData[ j ]) )
+      if ( ( fabs(pdBOutData[ j + i * nB ] - pdBKnownData[ j + i * nB  ]) > 
+             epsilon * (pdBUpData[ j ] - pdBLowData[ j ]) )
+           ||
+           ( !isNotANumber( pdBOutData[ j + i * nB ] ) && 
+             isNotANumber( pdBKnownData[ j + i * nB ] ) ) )
       {
         isConverged = false;
       }
@@ -1360,7 +2637,7 @@ void twoStageMethodTest::doTheTest(
     for ( k = 0; k < nB; k++ )
     {
       if ( fabs(pdBCovOutData[ j + k * nB ] - pdBCovKnownData[ j + k * nB  ]) > 
-	   epsilon * sqrt( (pdBUpData[ j ] - pdBLowData[ j ]) * (pdBUpData[ k ] - pdBLowData[ k ]) ) )
+           epsilon * sqrt( (pdBUpData[ j ] - pdBLowData[ j ]) * (pdBUpData[ k ] - pdBLowData[ k ]) ) )
       {
         isConverged = false;
       }

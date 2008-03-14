@@ -252,6 +252,7 @@ void predTwoStageMethod( PopPredModel&                    popModel,
   }
 
   int i;
+  int j;
 
   //===============[Begin: Vector lengths validation]===============
   if( nY != nMeasurementsAll.sum() )
@@ -420,12 +421,48 @@ void predTwoStageMethod( PopPredModel&                    popModel,
                   &dvecBMeanOut,
                   &dmatBCovOut );
 
+  DoubleMatrix dvecBOut_i( nB );
+  const double* pdBOut_iData;
+  double bOut_i_j;
+
+  int nIndOptOk = 0;
+  vector<bool> indOptOk( nInd );
+
+  // Look for individuals whose optimal individual parameters could
+  // not be calculated during the two-stage method.
+  for ( i = 0; i < nInd; i++ )
+  {
+    // Get this individual's parameter value from the two-stage method method.
+    dvecBOut_i = getCol( dmatBAllOut, i );
+    pdBOut_iData = dvecBOut_i.data();
+
+    // Initially assume this individual's optimal parameter value
+    // was determined during the two-stage method method.
+    indOptOk[i] = true;
+    nIndOptOk++;
+
+    // See if the individual didn't optimize, i.e. if each element
+    // in its parameter is equal to NaN.
+    for ( j = 0; j < nB; j++ )
+    {
+      bOut_i_j = pdBOut_iData[j];
+
+      if( isUnnormNumber( bOut_i_j ) )
+      {
+        // Set this to indicate the individual's optimal parameter
+        // value was not determined during the two-stage method method.
+        indOptOk[i] = false;
+        nIndOptOk--;
+        break;
+      }
+    }
+  }
+
 
   //------------------------------------------------------------
   // Get the means and covariance of the individual model parameters.
   //------------------------------------------------------------
 
-  DoubleMatrix dvecBOut_i           ( nB,        1 );
   DoubleMatrix dvecThetaIndMean     ( nThetaInd, 1 );
   DoubleMatrix dmatThetaIndCov      ( nThetaInd, nThetaInd );
   DoubleMatrix dmatOmegaInd_i       ( nEtaInd,   nEtaInd );
@@ -447,14 +484,16 @@ void predTwoStageMethod( PopPredModel&                    popModel,
   //
   // Get the mean value for the individuals' values for theta,
   //
-  //                              nInd
-  //                              ----
-  //                        1     \    
-  //     thetaIndMean  =  ------  /     thetaInd   ,
-  //                       nInd   ----          i
-  //                              i = 1 
+  //                                  nIndOptOk
+  //                                    ----   
+  //                           1        \      
+  //     thetaIndMean  =  -----------   /       thetaInd   ,
+  //                       nIndOptOk    ----            i
+  //                                    i = 1   
   //
-  // and the covariance of the individuals' values for theta,
+  // where nIndOptOk is the number of individuals that were optimized
+  // successfully, and get the covariance of the individuals' values
+  // for theta,
   //
   //     thetaIndCov   =  cov[ thetaInd , thetaInd  ]  .
   //                                   i          i
@@ -467,18 +506,25 @@ void predTwoStageMethod( PopPredModel&                    popModel,
 
   // Calculate the mean value for the individuals' values for Omega,
   //
-  //                              nInd
-  //                              ----
-  //                        1     \    
-  //     OmegaIndMean  =  ------  /     OmegaInd   .
-  //                       nInd   ----          i
-  //                              i = 1 
-  //
+  //                                  nIndOptOk
+  //                                    ----   
+  //                           1        \      
+  //     OmegaIndMean  =  -----------   /       OmegaInd   .
+  //                       nIndOptOk    ----            i
+  //                                    i = 1   
+  // where nIndOptOk is the number of individuals that were optimized
+  // successfully.
   for ( i = 0; i < nInd; i++ )
   {
+    // Skip this individual if they didn't optimize.
+    if ( !indOptOk[i] )
+    {
+      continue;
+    }
+
     // Get this individual's parameter value.
     dvecBOut_i = getCol( dmatBAllOut, i );
-    
+
     // Set the current individual and their parameter value.
     indModelWithPopData.selectIndividual( i );
     indModelWithPopData.setIndPar( dvecBOut_i.toValarray() );
@@ -491,8 +537,9 @@ void predTwoStageMethod( PopPredModel&                    popModel,
     dmatOmegaInd_iSum = add( dmatOmegaInd_iSum, dmatOmegaInd_i );
   }
 
-  // Divide by the number of individuals to get the mean value.
-  divByScalar( dmatOmegaInd_iSum, nInd, dmatOmegaIndMean );
+  // Divide by the number of individuals that were optimized
+  // successfully to get the mean value.
+  divByScalar( dmatOmegaInd_iSum, nIndOptOk, dmatOmegaIndMean );
 
 
   //------------------------------------------------------------

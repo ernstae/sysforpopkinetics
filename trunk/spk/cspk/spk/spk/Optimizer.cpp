@@ -1749,11 +1749,9 @@ void Optimizer::getObj( double& objOut ) const
   // current objective function value.
   if ( stateInfo.n == 0 )
   {
-    throw SpkException( 
-      SpkError::SPK_USER_INPUT_ERR,
-      "There is no current objective function value to get.",
-      __LINE__,
-      __FILE__ );
+    // Set the output value equal to a Not a Number (NaN).
+    double zero = 0.0;
+    objOut = zero / zero;
   }
 
   // Set the output value equal to the current objective value.
@@ -1823,11 +1821,10 @@ void Optimizer::getPar( valarray<double>& parOut ) const
   // current objective function parameter.
   if ( stateInfo.n == 0 )
   {
-    throw SpkException( 
-      SpkError::SPK_USER_INPUT_ERR,
-      "There is no current objective function parameter value to get.",
-      __LINE__,
-      __FILE__ );
+    // Set the output value equal to a Not a Number (NaN).
+    double zero = 0.0;
+    parOut = zero / zero;
+    return;
   }
 
 

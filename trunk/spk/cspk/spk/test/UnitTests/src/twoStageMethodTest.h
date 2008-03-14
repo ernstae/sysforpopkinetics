@@ -51,6 +51,10 @@ private:
   void railExampleITSTest();
   void railExampleGTSTest();
 
+  void railExampleSTS_twoIndWillNotOpt_Test();
+  void railExampleITS_twoIndWillNotOpt_Test();
+  void railExampleGTS_twoIndWillNotOpt_Test();
+
   // Helper functions.
   void doTheTest(
     double              epsilon,
