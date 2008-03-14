@@ -542,6 +542,11 @@ void NonmemTranslator::generateOdePred( const char* fPkEqn_cpp,
     {
       continue;
     }
+    else if( varName == nonmem::EPS &&
+             ( getApproximation() == STD_TWO_STAGE || getApproximation() == GLOBAL_TWO_STAGE || getApproximation() == ITERATIVE_TWO_STAGE ) )
+    {
+      continue;
+    }
     else if( varName == nonmem::DADT ||
              varName == nonmem::P ||
              varName == nonmem::A ||

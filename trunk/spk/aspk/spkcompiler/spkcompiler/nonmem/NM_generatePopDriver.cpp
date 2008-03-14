@@ -1128,7 +1128,14 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << endl;
   oPopDriver << "               // Get the variable information." << endl;
   oPopDriver << "               string varInfoMessage;" << endl;
-  oPopDriver << "               mPred.getVariableInfo( varInfoMessage );" << endl;
+  oPopDriver << "               if( !isTwoStageMethod && !isNonparamMethod )" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  mPred.getVariableInfo( varInfoMessage );" << endl;
+  oPopDriver << "               }" << endl;
+  oPopDriver << "               else" << endl;
+  oPopDriver << "               {" << endl;
+  oPopDriver << "                  predForDisposal.getVariableInfo( varInfoMessage );" << endl;
+  oPopDriver << "               }" << endl;
   oPopDriver << endl;
   oPopDriver << "	       // Send the variable information to the trace." << endl;
   oPopDriver << "               cout << endl;" << endl;
