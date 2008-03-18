@@ -114,7 +114,9 @@ $syntax%
 which sets the vector $italic g$$ equal to
 $latex G^k(x)$$.
 
-$subhead g$$
+$syntax%
+%g%
+%$$
 The argument $italic g$$ to $syntax%%eval%.Break%$$ 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
@@ -124,7 +126,9 @@ The input value of its elements does not matter.
 The output value of its elements is equal to 
 $latex G^k(x)$$.
 
-$subhead k$$
+$syntax%
+%k%
+%$$
 The argument $italic k$$ to $syntax%%eval%.Break%$$
 has prototype
 $syntax%
@@ -148,7 +152,9 @@ $latex F^k (t, x)$$ where
 $italic k$$ corresponds to the previous call to
 $syntax%%eval%.Break(%k%, %x%, %g%)%$$.
 
-$subhead f$$
+$syntax%
+%f%
+%$$
 The argument $italic f$$ to $syntax%%eval%.Ode%$$ 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
@@ -171,7 +177,9 @@ $latex \partial_t F^k (t, x)$$ where
 $italic k$$ corresponds to the previous call to
 $syntax%%eval%.Break(%k%, %x%, %g%)%$$.
 
-$subhead f_ind$$
+$syntax%
+%f_ind%
+%$$
 The argument $italic f_ind$$ to $syntax%%eval%.Ode_ind%$$ 
 is a vector with $latex N$$ elements and has prototype
 $syntax%
@@ -182,6 +190,9 @@ The output value of its elements is equal to
 $latex \partial_t F^k (t, x)$$
 where $latex k$$ corresponds to the previous call to 
 $syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+If $syntax%%eval%.Ode_ind%$$ is called, $syntax%%eval%.Ode_dep%$$
+will be called directly after it with the same values
+for the arguments $italic t$$ and $italic x$$.
 
 $subhead eval.Ode_dep$$
 The object $italic eval$$ must also have a member function
@@ -194,7 +205,9 @@ $latex \partial_x F^k (t, x)$$ where
 $italic k$$ corresponds to the previous call to
 $syntax%%eval%.Break(%k%, %x%, %g%)%$$.
 
-$subhead f_dep$$
+$syntax%
+%f_dep%
+%$$
 The argument $italic f_dep$$ to $syntax%%eval%.Ode_dep%$$ 
 is a vector with $latex N^2$$ elements and has prototype
 $syntax%
@@ -207,6 +220,9 @@ $latex \[
 \] $$
 where $latex k$$ corresponds to the previous call to 
 $syntax%%eval%.Break(%k%, %x%, %g%)%$$.
+If $syntax%%eval%.Ode_dep%$$ is called, $syntax%%eval%.Ode_ind%$$
+was called directly before it with the same values
+for the arguments $italic t$$ and $italic x$$.
 
 $subhead t$$
 The argument $italic t$$ to 
