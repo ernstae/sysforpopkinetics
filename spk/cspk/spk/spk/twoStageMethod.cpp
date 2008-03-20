@@ -769,7 +769,9 @@ namespace // [Begin: unnamed namespace]
                          DoubleMatrix*        pdmatBOut,
                          const DoubleMatrix&  dvecBStep,
                          DoubleMatrix*        pdvecBMeanOut,
-                         DoubleMatrix*        pdmatBCovOut );
+                         DoubleMatrix*        pdmatBCovOut,
+                         enum Objective       method = STANDARD_TWO_STAGE,
+                         int                  iterNumber = 0 );
 
   void iterativeTwoStage( TwoStageModel&       twoStageModel,
                           const DoubleMatrix&  dvecN,
@@ -1085,7 +1087,9 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
                        DoubleMatrix*        pdmatBOut,
                        const DoubleMatrix&  dvecBStep,
                        DoubleMatrix*        pdvecBMeanOut,
-                       DoubleMatrix*        pdmatBCovOut )
+                       DoubleMatrix*        pdmatBCovOut,
+                       enum Objective       method,
+                       int                  iterNumber )
 {
   //------------------------------------------------------------
   // Preliminaries.
@@ -1309,12 +1313,34 @@ void standardTwoStage( TwoStageModel&       twoStageModel,
       std::ostringstream message;
       int commaCounter = 0;
       int j;
-      message << "The following individuals were removed from the Two-Stage calculation \nbecause their optimal parameter value could not be determined:  \n";
+
+      if ( method == ITERATIVE_TWO_STAGE && iterNumber == 0 )
+      {
+        message << "The following individuals were removed from the Standard Two-Stage \ncalculation before the Iterative Two-Stage method because their optimal \nparameter value could not be determined:  \n";
+      }
+      else if ( method == ITERATIVE_TWO_STAGE )
+      {
+        message << "The following individuals were removed from iteration " << iterNumber << " of the \nIterative Two-Stage method because their optimal parameter value \ncould not be determined:  \n";
+      }
+      else if ( method == GLOBAL_TWO_STAGE )
+      {
+        message << "The following individuals were removed from the Standard Two-Stage \ncalculation before the Global Two-Stage method because their optimal \nparameter value could not be determined:  \n";
+      }
+      else
+      {
+        message << "The following individuals were removed from the Standard Two-Stage \ncalculation because their optimal parameter value could not be determined:  \n";
+      }
+
       for ( j = 0; j < nIndOptFailed; j++ )
       {
         message << indOptFailedIndex[j] + 1 << ( commaCounter++ < nIndOptFailed - 1 ? ", " : "" );
       }
       message << ".";
+
+      if ( method == ITERATIVE_TWO_STAGE && iterNumber == 0 )
+      {
+        message << "\n\nThese individuals will be returned to calculation during the \nIterative Two-Stage method.";
+      }
 
       WarningsManager::addWarning(
           message.str(),
@@ -1579,7 +1605,9 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
                       pdmatBOutSTS,
                       dvecBStep,
                       pdvecBMeanOutSTS,
-                      pdmatBCovOutSTS );
+                      pdmatBCovOutSTS,
+                      ITERATIVE_TWO_STAGE,
+                      0 );
   }
   catch( SpkException& e )
   {         
@@ -1839,7 +1867,9 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
                         pdmatBOutSTS,
                         dvecBStep,
                         pdvecBMeanOutSTS,
-                        pdmatBCovOutSTS );
+                        pdmatBCovOutSTS,
+                        ITERATIVE_TWO_STAGE,
+                        k );
 
       // Look for individuals whose optimal individual parameters could
       // not be calculated during the STS.
@@ -2081,7 +2111,9 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
         std::ostringstream message;
         int commaCounter = 0;
         int j;
-        message << "The following individuals were removed from the Two-Stage calculation \nbecause the covariance of their optimal parameter value could not be \ndetermined:  ";
+
+        message << "The following individuals were removed from the Iterative Two-Stage \ncalculation during iteration " << k << " because the covariance of their \noptimal parameter value could not be determined:  \n";
+
         for ( j = 0; j < nIndParCovFailed; j++ )
         {
           message << indParCovFailedIndex[j] + 1 << ( commaCounter++ < nIndParCovFailed - 1 ? ", " : "" );
@@ -2182,6 +2214,21 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
       "An unknown exception was thrown during the iteration for the Two-Stage method.",
       __LINE__, 
       __FILE__ );
+  }
+
+  // Issue a warning if any individuals were not included in the final
+  // results.
+  if(  nIndOptOk != nInd )
+  {
+    std::ostringstream message;
+    int commaCounter = 0;
+    int j;
+
+    message << "Not all of the individuals were included in the final results for \nthe Iterative Two-Stage method.";
+    WarningsManager::addWarning(
+        message.str(),
+        __LINE__,
+        __FILE__ );
   }
 
 
@@ -2352,7 +2399,8 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
                       pdmatBOutSTS,
                       dvecBStep,
                       pdvecBMeanOutSTS,
-                      pdmatBCovOutSTS );
+                      pdmatBCovOutSTS,
+                      GLOBAL_TWO_STAGE );
   }
   catch( SpkException& e )
   {         
@@ -2684,7 +2732,9 @@ void globalTwoStage( TwoStageModel&       twoStageModel,
     std::ostringstream message;
     int commaCounter = 0;
     int j;
-    message << "The following individuals were removed from the Two-Stage calculation \nbecause the inverse of their optimal parameter covariance could not be \ndetermined:  ";
+
+    message << "The following individuals were removed from the Global Two-Stage calculation \nbecause the inverse of their optimal parameter covariance could not be determined:  \n";
+
     for ( j = 0; j < nIndParCovInvFailed; j++ )
     {
       message << indParCovInvFailedIndex[j] + 1 << ( commaCounter++ < nIndParCovInvFailed - 1 ? ", " : "" );
