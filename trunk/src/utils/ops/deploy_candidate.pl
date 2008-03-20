@@ -63,7 +63,7 @@ my $log_file_dir = "/etc/spk";
 my $log_file = "$log_file_dir/deployment_log";
 my $rotate_conf = "rotate.conf";
 
-my $scp_command = "/usr/bin/scp";
+my $scp_command = "/usr/bin/rsync";
 my $logrotate_command = "/usr/sbin/logrotate";
 
 my $tmp_dir = "/tmp/deploy_candidate-$$";
@@ -140,28 +140,14 @@ foreach my $s ("aspkserver", "cspkserver") {
     }
 
     foreach my $f (<$sdir/*>) {
-	@args = ($scp_command, "-r", "$f", $ddir);
+	@args = ($scp_command, "-rvl", "$f", $ddir);
         system(@args);
         my $exit_status = $? >> 8;
 	if ($exit_status != 0) {
-	    die "'scp -r $f $ddir' failed: $!\n";
+	    die "'$scp_command  -rvl $f $ddir' failed: $!\n";
 	}
     }
 }
-#my $sdir =  "webserver/usr/local/tomcat/instance/prodssl/webapps";
-#if ($test) {
-#   $ddir = "$tmp_dir/webserver/usr/local/tomcat/instance/prodssl/webapps";
-#   &make_directory($ddir);
-#}
-#else {
-#   $ddir = "webserver:/usr/local/tomcat/instance/prodssl/webapps";
-#}
-#my @args = ($scp_command, "-r", "$sdir/user.war", "$ddir/user.war");
-#system(@args);
-#my $exit_status = $? >> 8;
-#if ($exit_status != 0) {
-#    die "'scp -r $sdir/user.war $ddir/user.war' failed\n";
-#}
 
 exit 0 if (not $test);
 
@@ -188,23 +174,14 @@ foreach my $s ("aspkserver", "cspkserver") {
     }
 
     foreach my $f (<$sdir/*>) {
-        @args = ($scp_command, "-r", "$f", $ddir);
+        @args = ($scp_command, "-rvl", "$f", $ddir);
         system(@args);
         my $exit_status = $? >> 8;
 	if ($exit_status != 0) {
-	    die "'scp -r $f $ddir' failed\n";
+	    die "'$scp_command -rvl $f $ddir' failed\n";
 	}
     }
 }
-
-#$sdir = "$tmp_dir/webserver/usr/local/tomcat/instance/prodssl/webapps";
-#$ddir =  "webserver/usr/local/tomcat/instance/prodssl/webapps";
-#@args = ($scp_command, "-r", "$sdir/user.war", "$ddir/user.war");
-#system(@args);
-#$exit_status = $? >> 8;
-#if ($exit_status != 0) {
-#    die "'scp -r $sdir/user.war $ddir/user.war' failed\n";
-#}
 
 File::Path::rmtree($tmp_dir, 0, 0);
 
