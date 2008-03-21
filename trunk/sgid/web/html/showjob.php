@@ -30,9 +30,11 @@ if ( PEAR::isError($results) ) {
   add_error("DB", $results->getMessage());
  }
 
+if ( strlen($result_xml) <=  0 ) {
+  add_error("DB", "There were no results recorded to the database for your job.  PLease try again later.");
+ }
+
 ?>
-
-
 
 <? include ('includes/header.php'); ?>
 
@@ -40,12 +42,18 @@ if ( PEAR::isError($results) ) {
 <h3><?= $GLOBALS['OPTIONS']['site_name'] ?></h3>
 
 <? 
+
   $show_results = false;
 
   if ( $results->numRows() > 0 ) 
     {
       $row = $results->fetchRow();
+      if ( strlen($row->result_xml) > 0 ) {
       $xml = SGID_getXML($row->result_xml);
+      }
+      else {
+	$xml = "";
+      }
       $job_id = $row->id;  
       $show_results = true;
     }
@@ -81,7 +89,7 @@ elseif ( $row->state_code == 'end' )
     ?>
     <b>Errors Were Detected: </b>
       <ul>
-      <pre><?= $xml['error_messages'] ?></pre>
+      <pre><?= $xml['error_messages'] ?>  <?= show_errors(); ?></pre>
       </ul>
       
       <? } // end of error block ?>
