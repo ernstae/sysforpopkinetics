@@ -389,7 +389,7 @@ function clean_equations ( &$equations ) {
   
   
   // strip out the whitespace
-  $equations = eregi_replace("[ ]+", "", $equations);
+  $equations = eregi_replace("[ \,]+", "", $equations);  
   
   // strip the equations of comments
   $equations = preg_replace("/\#(.*?)\n/", "", $equations);
