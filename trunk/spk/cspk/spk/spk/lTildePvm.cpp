@@ -487,6 +487,7 @@ void lTildePvm(
 	    )
 {
     using namespace std;
+  
     //
     // The version of FO method that treats a population problem as a big individual problem
     // shall never reach here.  It goes from fitPopulation() -> firstOrderOpt() -> mapOpt().
@@ -510,7 +511,6 @@ void lTildePvm(
     assert( num_b   > 0 );
     assert( num_y   > 0 );
     assert( num_subjects > 0 );
-
     assert( dmatBin_forAll.nc() == num_subjects );
     assert( dvecBlow.nr()       == num_b );
     assert( dvecBstep.nr()      == num_b );
@@ -537,10 +537,11 @@ void lTildePvm(
     {
         sum += static_cast<int>( pdNy[i] );
     }
+
     assert( sum == num_y );
 #endif
 
-    // check the values
+    // check the val
     assert( allTrue( bband((dvecBup >= 0.0), (dvecBlow <= 0.0) ) ) );
     assert( allTrue( dvecBstep >= 0.0 ) );
     assert( optimizer.getEpsilon() > 0 );
@@ -614,6 +615,9 @@ void lTildePvm(
 
         if(first)
         {
+            // Add input to input list
+            inputAll.push_back(std_str);
+
             if(i < num_tasks)
             {
                 // Spawn a PVM task
@@ -631,6 +635,9 @@ void lTildePvm(
         }
         else
         {
+            // Store input to input list
+            inputAll[i] = std_str;
+
             // Send input to indDriver
             char* str = const_cast<char*>(input);
             pvm_initsend(PvmDataDefault);
@@ -639,7 +646,8 @@ void lTildePvm(
             ind_iid[i % num_tasks] = i;
         }
         inx_yi0 += num_y_i;
-    
+        SpkException e;
+        bool isException = false;
         if((i + 1) % num_tasks == 0 || i + 1 == num_subjects)
         {
             int ndone = 0;
@@ -700,8 +708,8 @@ void lTildePvm(
                     pvm_upkstr(output);
                     string str(output);
                     istringstream iStringStream(str);
-                    SpkException e;
                     iStringStream >> e;
+                    isException = true;
             
                     // Get warnings
                     pvm_upkstr(output);
@@ -709,8 +717,14 @@ void lTildePvm(
                     WarningsManager::addWarningList(output, nWarnings);
 
                     delete [] output;
-                    throw e;
+                    ndone++;
+                    if(ndone == num_tasks) break;
                 }
+            }
+            if(isException)
+            {
+                delete [] resultsAll;
+                throw e;
             }
         }
     }
