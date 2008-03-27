@@ -432,7 +432,7 @@ int main(int argc, const char *argv[])
 		MethodName = "adapt";
 		if( NonmemPars::nEta < 2 )
 		{	msg = "monteAlpDriver\n"
-		      	"Method is adapt and nEta < 2"; 
+		      	"Method is adapt and nEta is less than 2"; 
 			OutputErrorMsg(msg, USER_INPUT_ERROR);
 			fclose(stderr);
 			return USER_INPUT_ERROR;

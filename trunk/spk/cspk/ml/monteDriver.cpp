@@ -631,7 +631,7 @@ int main(int argc, const char *argv[])
 		MethodName = "adapt";
 		if( NonmemPars::nEta < 2 )
 		{	msg = "monteDriver\n"
-		      	"Method is adapt and nEta < 2";
+		      	"Method is adapt and nEta is less than 2";
 			OutputErrorMsg( msg );
 			if(nPvmTasks > 0) finish( USER_INPUT_ERROR );
 			fout.close();
