@@ -56,6 +56,8 @@ The program expects the following arguments:
         The using PVM indicator being "on" for using PVM, 'off' otherwise
     $max_concurrent
         Maximum number of concurrent running jobs
+    $max_ntasks
+        Maximum number of tasks for a job
 
 =head2 OPERATION
 
@@ -231,6 +233,7 @@ my $shost    = shift;
 my $sport    = shift;
 my $pvm      = shift;
 my $max_concurrent = shift;
+my $max_ntasks = shift;
 
 my $hostname = hostname();
 my $from = 'rfpksoft@u.washington.edu';
@@ -364,6 +367,9 @@ sub fork_driver {
             my $available = $max_concurrent - $concurrent;
             if($ntasks > $available) {
                 $ntasks = $available;
+                if($ntasks > $max_ntasks) {
+                    $ntasks = $max_ntasks;
+                }
             }
             if($ntasks > 1) {
                 $parallel = 1;
