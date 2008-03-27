@@ -13,6 +13,7 @@ MODE=prod
 SHOST=jobqserver
 SPORT=9000
 MAXPROCS=16
+MAXTASKS=4
 if [ -z $2 ]; then
    PVM=off
 else
@@ -26,7 +27,7 @@ LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 ulimit -c 10000000  # this enables a core dump if the compiler crashes
 
 start() {
-    $BIN/${SERVICE_NAME}.pl $DATABASE $DBHOST $DBUSER $DBPASSWD $MODE $SHOST $SPORT $PVM $MAXPROCS
+    $BIN/${SERVICE_NAME}.pl $DATABASE $DBHOST $DBUSER $DBPASSWD $MODE $SHOST $SPORT $PVM $MAXPROCS $MAXTASKS
     echo "started"
 }
 stop() {
