@@ -770,6 +770,11 @@ sub reaper {
         $err_msg .= "an unknown failure occured during residual calculation; ";
         $submit_to_bugzilla &= 1;
     }
+    elsif($child_exit_value ==  119) {
+        $end_code = "omif"; #optimization max iter failure
+        $err_msg .= "optimization maximum iteration failure; ";
+        $submit_to_bugzilla &= 0;
+    }
     elsif($child_exit_value ==  200) {
         $end_code = "pose"; #post-optimality error
         $err_msg .= "a known error was detected during post-optimality; ";
@@ -777,13 +782,28 @@ sub reaper {
     }
     elsif($child_exit_value ==  202) {
         $end_code = "optm"; #optimization max iter error
-        $err_msg .= "optimization maximum number of iteration reached; ";
+        $err_msg .= "optimization maximum number of iteration error; ";
+        $submit_to_bugzilla &= 0;
+    }
+    elsif($child_exit_value ==  203) {
+        $end_code = "mise"; #optimization max iter reached, statistics error
+        $err_msg .= "optimization maximum number of iteration reached, statistics error; ";
+        $submit_to_bugzilla &= 0;
+    }
+    elsif($child_exit_value ==  208) {
+        $end_code = "mire"; #optimization max iter reached, residual error
+        $err_msg .= "optimization maximum number of iteration reached, residual error; ";
         $submit_to_bugzilla &= 0;
     }
     elsif($child_exit_value ==  300) {
         $end_code = "posf"; #post-optimality failure
         $err_msg .= "an unknown failure occured during post-optimality; ";
         $submit_to_bugzilla &= 1;
+    }
+    elsif($child_exit_value ==  301) {
+        $end_code = "omir"; #optimization max iter reached
+        $err_msg .= "optimization maximum number of iteration reached; ";
+        $submit_to_bugzilla &= 0;
     }
 
     if ($child_signal_number == SIGABRT) {
