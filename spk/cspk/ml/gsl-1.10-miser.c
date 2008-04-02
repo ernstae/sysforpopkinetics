@@ -28,7 +28,10 @@
 /* Author: MJB */
 /* Modified by Brian Gough 12/2000 */
 
-#include <config.h>
+// Begin Patch: Brad Bell 22-03-2008 
+// Comment out this include so that miser.c will compile separately
+// #include <config.h>
+// End Patch
 #include <math.h>
 #include <stdlib.h>
 
@@ -181,7 +184,14 @@ gsl_monte_miser_integrate (gsl_monte_function * f,
 
     for (i = 0; i < dim; i++)
       {
-        if (sigma_l[i] >= 0 && sigma_r[i] >= 0)
+// Begin Patch: Brad Bell 22-03-2008 
+// Protect against the case where both sigma_l and sigma_r are zero.
+// This case leads to weight_l = 0, weight_r = 0, and
+// values calls_l and calls_r are conversion of nan to int.
+        if ( (sigma_l[i] >= 0 && sigma_r[i] >= 0) 
+          && (sigma_l[i] != 0 || sigma_r[i] != 0) 
+        )
+// End Patch
           {
             /* estimates are okay */
             double var = pow (sigma_l[i], beta) + pow (sigma_r[i], beta);
