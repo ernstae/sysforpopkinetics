@@ -13,11 +13,13 @@ my @programs = qw ( QN01Box
 		    gmp
                     gsl
                     gsl-devel
+		    cppad-devel
                     cppunit
                     cppunit-devel
 		    boost
 		    boost-devel
 		    pvm
+		    perl-IPC-Shareable
                     perl-CPAN
 		    perl-MIME-Lite
 		    perl-Daemon
