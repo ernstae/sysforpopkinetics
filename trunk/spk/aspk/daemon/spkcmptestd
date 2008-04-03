@@ -12,6 +12,7 @@ BIN=/usr/local/bin/spktest
 MODE=test
 SHOST=jobqserver
 SPORT=9001
+MAX_CONCURRENT=4
 
 SERVICE_ROOT=spkcmp
 SERVICE_NAME=${SERVICE_ROOT}testd
@@ -20,7 +21,7 @@ LOCKFILE_PATH=/tmp/lock_$SERVICE_NAME
 ulimit -c 10000000  # this enables a core dump if the compiler crashes
 
 start() {
-    $BIN/${SERVICE_ROOT}d.pl $DATABASE $DBHOST $DBUSER $DBPASSWD $MODE $SHOST $SPORT
+    $BIN/${SERVICE_ROOT}d.pl $DATABASE $DBHOST $DBUSER $DBPASSWD $MODE $SHOST $SPORT $MAX_CONCURRENT
     echo "started"
 }
 stop() {

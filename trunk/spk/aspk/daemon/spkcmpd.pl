@@ -53,6 +53,8 @@ The program expects the following arguments:
         The host on which the job-queue server resides
     $sport
         The port number of the job-queue server uses 
+    $max_concurrent
+        The maximum number of jobs that can be compiled at one time.
 
 The first thing that spkcmp.pl does after starting up is to call
 Proc::Daemon::Init to make it into a daemon, by shedding its 
@@ -170,6 +172,7 @@ my $dbpasswd = shift;
 my $mode     = shift;
 my $shost    = shift;
 my $sport    = shift;
+my $max_concurrent = shift;
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://192.168.1.101:8081/";
@@ -200,7 +203,7 @@ my $tmp_dir = "/tmp";
 my $spk_library_path = "/usr/local/lib/spkprod";
 my $cpath = "/usr/local/include/spkprod";
 
-if ($mode =~ "test") {
+if ($mode =~ "test" ) {
     $submit_to_bugzilla = !$bugzilla_production_only;
     $service_root .= "test";
     $bugzilla_product = "TestProduct";
@@ -841,67 +844,76 @@ use POSIX ":sys_wait_h";
 my $child_pid;
 my $jobid;
 my $time = 0;
+my $concurrent = 0;
+
 syslog('info', "compiling jobs from the queue");
 
 while(1) {
-    # If there is a job queued-to-compile, fork the compiler
-    print $sh "get-q2c\n";
-    $jobid = <$sh>;
-    if (defined $jobid) {
-        chop($jobid);
-        if ($jobid ne "none") {
-            $row = &get_q2c_job($dbh, $jobid);
-            if (defined $row && $row) {
-	        &fork_compiler($row, $jobid)
-            }
-            else {
-	        death("emerg", "error reading database: $Spkdb::errstr");
-            }
-        }
+    eval{
+    if ( $concurrent < $max_concurrent ) {
+	# If there is a job queued-to-compile, fork the compiler
+	print $sh "get-q2c\n";
+	$jobid = <$sh>;
+	if (defined $jobid) {
+	    chop($jobid);
+	    if ($jobid ne "none") {
+		$row = &get_q2c_job($dbh, $jobid);
+		if (defined $row && $row) {
+		    $concurrent++;
+		    &fork_compiler($row, $jobid)
+		    }
+		else {
+		    death("emerg", "error reading database: $Spkdb::errstr");
+		}
+	    }
+	}
+	else {
+	    death("emerg", "error reading job-queue to get q2c job");
+	}
     }
-    else {
-        death("emerg", "error reading job-queue to get q2c job");
-    }
-
-    # If there is a job queued-to-abort-compile, kill the process
+    
+    
+# If there is a job queued-to-abort-compile, kill the process
     print $sh "get-q2ac\n";
     $jobid = <$sh>;
     if (defined $jobid) {
-        chop($jobid);
-        if ($jobid ne "none") {
-            if (&set_state_code($dbh, $jobid, "acmp") == 1) {
-                if (exists $jobid_pid{$jobid}) {
-                    my $cpid = $jobid_pid{$jobid};
-                    kill('KILL', $cpid);
-                }
-                else {
-                    abort_job($jobid);
-                }
-            }
-            else {
-	        death("emerg", "error reading database: $Spkdb::errstr");
-            }
-        }
+	chop($jobid);
+	if ($jobid ne "none") {
+	    if (&set_state_code($dbh, $jobid, "acmp") == 1) {
+		if (exists $jobid_pid{$jobid}) {
+		    my $cpid = $jobid_pid{$jobid};
+		    kill('KILL', $cpid);
+		}
+		else {
+		    abort_job($jobid);
+		}
+	    }
+	    else {
+		death("emerg", "error reading database: $Spkdb::errstr");
+	    }
+	}
     }
     else {
-        death("emerg", "error reading job-queue to get q2ac job");
+	death("emerg", "error reading job-queue to get q2ac job");
     }
-
+    
     # Process any child processes which have terminated
     while (($child_pid = waitpid(-1, &WNOHANG)) > 0) {   
 	reaper($child_pid, $?);
-
-        # Get the job_id from the child pid
-        my %pid_jobid = reverse %jobid_pid;
-        $jobid = $pid_jobid{$child_pid};
-        delete($jobid_pid{$jobid});
+	
+	# Get the job_id from the child pid
+	my %pid_jobid = reverse %jobid_pid;
+	$jobid = $pid_jobid{$child_pid};
+	delete($jobid_pid{$jobid});
+	$concurrent--;
     }
     # Sleep for a second
     sleep(1); # DO NOT REMOVE THIS LINE 
-              # or else this daemon will burn all your CPU cycles!
+    # or else this daemon will burn all your CPU cycles!
     $time++;
     if ($time == 3600) {
-        &job_status($dbh, 1);
-        $time = 0;
+	&job_status($dbh, 1);
+	$time = 0;
     }
+}
 };
