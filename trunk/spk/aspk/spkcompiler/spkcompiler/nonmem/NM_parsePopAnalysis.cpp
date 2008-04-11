@@ -1038,7 +1038,7 @@ void NonmemTranslator::parsePopAnalysis( const DOMElement* pop_analysis )
       }
  
 
-    sigma_in = dynamic_cast<DOMElement*>( sigma_in_list->item(ii) );
+    sigma_in = dynamic_cast<DOMElement*>( sigma_in_list->item(0) );
 
     //
     // Sigma specification contains the minimal representation of the matrix.

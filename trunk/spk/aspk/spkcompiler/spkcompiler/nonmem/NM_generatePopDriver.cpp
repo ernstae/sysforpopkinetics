@@ -245,7 +245,7 @@ void NonmemTranslator::generatePopDriver() const
   oPopDriver << "                   OPT_MAX_ITER_FAILURE     = 119," << endl;
   oPopDriver << "                   OPT_MAX_ITER_STAT_ERROR  = 203," << endl;
   oPopDriver << "                   OPT_MAX_ITER_RESID_ERROR = 208," << endl;
-  oPopDriver << "                   OPT_MAX_ITER_REACHED     = 300" << endl;
+  oPopDriver << "                   OPT_MAX_ITER_REACHED     = 301" << endl;
   oPopDriver << "                 };"       << endl;
   oPopDriver << endl;
 
