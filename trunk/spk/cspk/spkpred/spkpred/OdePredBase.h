@@ -949,13 +949,21 @@ public:
             // Get the observation index for this data record.
             int m = dataRecObservIndex[j];
     
-            // Set f_i_j equal to the input f value,
-            //
-            //     f_i_j  =  fIn    (theta, eta)  .
-            //                  i(m)
-            //
-            f_i_j = fIn[m];
+            // Get the compartment index for this ODE solution.
+            p = compIndex( odeSolnComp[ s ] );
     
+            // Set f equal to the scaled amount in the observation
+            // compartment,
+            //
+            //                  compAmount ( theta, eta )
+            //                            p   
+            //     f_i_j  =  -------------------------------  .
+            //                compScaleParam ( theta, eta )
+            //                              p
+            //
+            f_i_j = compAmountAllOdeSoln[p + s * nComp] /
+              compScaleParam[p];
+
             // Evaluate the intra-individual error model using the just
             // set value for f_i_j so that y_i_j may be a function of
             // fIn_i_m,
