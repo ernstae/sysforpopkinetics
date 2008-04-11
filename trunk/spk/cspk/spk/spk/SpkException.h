@@ -120,7 +120,7 @@ public:
 
  private:
     // a fixed length list of Error objects
-    SpkError _error_list[16]; // MAX_ERRORS=16
+    SpkError _error_list[32]; // MAX_ERRORS=32
 
     // counting the number of errors added to the list so far
     int _cnt;
