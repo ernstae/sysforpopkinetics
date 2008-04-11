@@ -421,7 +421,7 @@ static const char *const substr(const char * begin, const char * end, char * buf
 /*------------------------------------------------------------------------
  * Static member variables
  *------------------------------------------------------------------------*/
-const int SpkException::MAX_ERRORS        = 16;
+const int SpkException::MAX_ERRORS        = 32;
 const int SpkException::MAX_ERRORS_DIGITS =  2;
 const int SpkException::EXCEPTION_SIZE    = MAX_ERRORS_DIGITS 
                                           + /*strlen("count\n")*/ 6 
