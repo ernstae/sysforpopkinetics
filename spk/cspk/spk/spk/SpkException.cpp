@@ -215,7 +215,8 @@ $syntax/
 SpkException& push( const SpkError& /e/) throw()
 /$$
 Appends $italic e$$ to the list of errors.  If the list is already full,
-it aborts the execution.  You can determine the maximum
+issues a warning message but does not add the exception to the list.  
+You can determine the maximum
 number of errors an exception object can hold with
 $code static SpkException::maxErrorcodes()$$ or test whether it is full or not with
 $code SpkException::full()$$.
@@ -224,7 +225,8 @@ $syntax/
 SpkException& push( enum SpkError::ErrorCode /code/, const char* /message/, unsigned int /line/, const char* /filename/) throw()
 /$$
 Create a $xref/SpkError//SpkError/$$ object and append it to the list of errors.  If the list is already full,
-it aborts the execution.  You can determine the maximum
+issues a warning message but does not add the exception to the list.  
+You can determine the maximum
 number of errors an exception object can hold with
 $code static SpkException::maxErrorcodes()$$ or test whether it is full or not with
 $code SpkException::full()$$.
@@ -391,6 +393,7 @@ $end
 #include <xercesc/framework/MemBufInputSource.hpp>
 
 #include "SpkException.h"
+#include "WarningsManager.h"
 
 /*------------------------------------------------------------------------
  * Namespaces used
@@ -446,10 +449,11 @@ SpkException::SpkException( enum SpkError::ErrorCode code, const char* message, 
 {
     if( full() )
     {
-      cerr << "Unrecoverable error occured at " << __LINE__ << " in " << __FILE__ << endl;
-      cerr << "The error list is full." << endl;
-      cerr << "System terminates..." << endl;
-      abort();
+      WarningsManager::addWarning(
+        "An error message was lost because the error list is full.",
+        __LINE__,
+        __FILE__ );
+      return;
     }
     initXmlParser();
     SpkError e(code, message, line, filename);
@@ -462,10 +466,11 @@ SpkException::SpkException( const std::exception& stde, const char* message, uns
 {
     if( full() )
     {
-      cerr << "Unrecoverable error occured at " << __LINE__ << " in " << __FILE__ << endl;
-      cerr << "The error list is full." << endl;
-      cerr << "System terminates..." << endl;
-      abort();
+      WarningsManager::addWarning(
+        "An error message was lost because the error list is full.",
+        __LINE__,
+        __FILE__ );
+      return;
     }
     initXmlParser();
     SpkError e(stde, message, line, filename);
@@ -477,10 +482,11 @@ SpkException::SpkException( const SpkError& e ) throw()
 {
     if( full() )
     {
-      cerr << "Unrecoverable error occured at " << __LINE__ << " in " << __FILE__ << endl;
-      cerr << "The error list is full." << endl;
-      cerr << "System terminates..." << endl;
-      abort();
+      WarningsManager::addWarning(
+        "An error message was lost because the error list is full.",
+        __LINE__,
+        __FILE__ );
+      return;
     }
     initXmlParser();
     _error_list[_cnt] = e;
@@ -566,10 +572,11 @@ SpkException& SpkException::push( const SpkError& e ) throw()
 {
     if( full() )
     {
-      cerr << "Unrecoverable error occured at " << __LINE__ << " in " << __FILE__ << endl;
-      cerr << "The error list is full." << endl;
-      cerr << "System terminates..." << endl;
-      abort();
+      WarningsManager::addWarning(
+        "An error message was lost because the error list is full.",
+        __LINE__,
+        __FILE__ );
+      return *this;
     }
     try{
         _error_list[_cnt] = e;
