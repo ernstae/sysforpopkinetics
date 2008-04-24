@@ -365,12 +365,12 @@ sub fork_driver {
         $ntasks = $jrow->{'parallel'};
         if($ntasks > 0) {
             my $available = $max_concurrent - $concurrent;
-            if($ntasks > $available) {
-                $ntasks = $available;
-                if($ntasks > $max_ntasks) {
-                    $ntasks = $max_ntasks;
-                }
-            }
+	    if ( $available >= $max_ntasks ) {
+		$ntasks = $max_ntasks;
+	    }
+	    else {
+		$ntasks = $available;
+	    }
             if($ntasks > 1) {
                 $parallel = 1;
             }
