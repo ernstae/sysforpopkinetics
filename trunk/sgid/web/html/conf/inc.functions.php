@@ -558,6 +558,7 @@ function SGID_getXML ( $xml_string ) {
   return ($us->getUnserializedData());
 }
 
+
 // go through the equations and replace all equivalents.
 function  SGID_replaceEquivalent( &$TDATA ) {
 
@@ -580,7 +581,7 @@ function  SGID_replaceEquivalent( &$TDATA ) {
 	  // if we're not looking at ourself...
 	  {
 	    // handles if it is in the first line.
-	    $src[1] = preg_replace("/(^|[^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/", "\\1" . $target[1] . "\\2", $src[1]);
+	    $src[1] = preg_replace("/(^|[^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/", "\\1(" . $target[1] . ")\\2", $src[1]);
 	    //	    $src[1] = preg_replace("/([^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/", "\\1"  . $target[1] . "\\2", $src[1]);
 	    //	    $src[1] = preg_replace("/([^A-Z0-9])" . $target[0] . "([^A-Z0-9])/", "\\1"  . $target[1] . "\\2", $src[1]);
 	    $alg_val = $src[0] . "=" . $src[1];
@@ -604,13 +605,14 @@ function  SGID_replaceEquivalent( &$TDATA ) {
 	  foreach ( $TDATA['alg_eq'] as $t_key => $t_val )
 	    {
 	      $target = explode( "=", $t_val );
-	      $regexp = "/(^|[^A-Z0-9])" . $target[0] . "([^A-Z0-9]|$)/";
-	      $src[1] = preg_replace($regexp, "\\1[" . $target[1] . "]\\2",  $src[1]);
+	      $regexp = "/(|[^A-Z0-9])" . $target[0] . "([^A-Z0-9]|)/";
+	      $src[1] = preg_replace($regexp, "\\1(" . $target[1] . ")\\2",  $src[1]);
 	      //$TDATA[$block] = $src[0] . "=" . preg_replace("/" . $target[0] . "/", $target[1], $src[1] );
 	      //$TDATA['ernst'][] = $src[0] . "=" . preg_replace("/" . $target[0] . "/", $target[1], $src[1] );
 	    }
 	  // preg_replace was to fix bug #754
-	  $equation = $src[0] . "=" . preg_replace("/[\[\]]/", "", $src[1]);
+	  //	  	  	  $equation = $src[0] . "=" . preg_replace("/[\[\]]/", "", $src[1]);
+			  $equation = $src[0] . "=" . $src[1];
 	}
 
     }
