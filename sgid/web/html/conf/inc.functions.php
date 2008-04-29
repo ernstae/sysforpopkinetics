@@ -113,7 +113,7 @@ $TDATA = array( 'input_eq' => array(),
       isolate_elements( $elements, $I_elements, $not_params );
       
       $TDATA['input_eq'][] = $toks[$i];
-      echo "  is an input equation<br />\n";
+      if ( $GLOBALS['OPTIONS']['debug'] >0 ) echo "  is an input equation<br />\n"; 
     }
     elseif ( eregi ("^(Y.*)\=(.*)$", $toks[$i], $regs )) {
       // if the equation starts with Y it is an output equation.
@@ -124,7 +124,7 @@ $TDATA = array( 'input_eq' => array(),
       isolate_elements( $ae, $I_elements, $not_params);
 
       $TDATA['out_eq'][] = $toks[$i];
-      echo "  is an output equation<br />\n";
+      if ( $GLOBALS['OPTIONS']['debug'] > 0 ) echo "  is an output equation<br />\n";
     }    elseif ( eregi ("^([A-Z][A-Z0-9]{0,100})[ ]{0,10}\=(.*)$", $toks[$i], $regs ) ) {
       $ae = $regs[2];
 
@@ -135,7 +135,7 @@ $TDATA = array( 'input_eq' => array(),
 
       // store the equivalents in the data structure.
       $TDATA['alg_eq'][] = $toks[$i];
-      echo "  is an algebraic equation<br />\n";
+      if ( $GLOBALS['OPTIONS']['debug'] >0 ) echo "  is an algebraic equation<br />\n";
     }
 
     else {
