@@ -1794,6 +1794,10 @@ void iterativeTwoStage( TwoStageModel&       twoStageModel,
       // successfully during the STS method.
       nIndOptOk = 0;
 
+      // Clear the list of individuals whose covariance matrix
+      // calculation failed.
+      indParCovFailedIndex.clear();
+
 
       //----------------------------------------------------------
       // Calculate the current set of individual parameter estimates.

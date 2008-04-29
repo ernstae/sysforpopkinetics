@@ -198,7 +198,6 @@ PopPredModelBase<Scalar>::PopPredModelBase(
     // minimal representation passed to this constructor.
     valarray<Scalar> omegaTemp( nEta * nEta );
     pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaTemp );
-    assert( omegaMinRepIn.size() == nOmegaPar );
   
     // Set the omega value maintained by the covariance class.
     pOmegaCurr->setCov( omegaTemp );
@@ -270,7 +269,6 @@ PopPredModelBase<Scalar>::PopPredModelBase(
     // to the minimal representation passed to this constructor.
     sigmaCurr.resize( nEps * nEps );
     pSigmaCurr->expandCovMinRep( sigmaMinRepIn, sigmaCurr );
-    assert( sigmaMinRepIn.size() == nSigmaPar );
   
     // Set the sigma value maintained by the covariance class.
     pSigmaCurr->setCov( sigmaCurr );
@@ -545,7 +543,6 @@ PopPredModelBase<Scalar>::PopPredModelBase(
     // minimal representation passed to this constructor.
     valarray<Scalar> omegaTemp( nEta * nEta );
     pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaTemp );
-    assert( omegaMinRepIn.size() == nOmegaPar );
   
     // Set the omega value maintained by the covariance class.
     pOmegaCurr->setCov( omegaTemp );
@@ -617,7 +614,6 @@ PopPredModelBase<Scalar>::PopPredModelBase(
     // to the minimal representation passed to this constructor.
     sigmaCurr.resize( nEps * nEps );
     pSigmaCurr->expandCovMinRep( sigmaMinRepIn, sigmaCurr );
-    assert( sigmaMinRepIn.size() == nSigmaPar );
   
     // Set the sigma value maintained by the covariance class.
     pSigmaCurr->setCov( sigmaCurr );
@@ -907,7 +903,6 @@ PopPredModelBase<Scalar>::PopPredModelBase(
     // minimal representation passed to this constructor.
     valarray<Scalar> omegaTemp( nEta * nEta );
     pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaTemp );
-    assert( omegaMinRepIn.size() == nOmegaPar );
   
     // Set the omega value maintained by the covariance class.
     pOmegaCurr->setCov( omegaTemp );
@@ -987,7 +982,6 @@ PopPredModelBase<Scalar>::PopPredModelBase(
     // to the minimal representation passed to this constructor.
     sigmaCurr.resize( nEps * nEps );
     pSigmaCurr->expandCovMinRep( sigmaMinRepIn, sigmaCurr );
-    assert( sigmaMinRepIn.size() == nSigmaPar );
   
     // Set the sigma value maintained by the covariance class.
     pSigmaCurr->setCov( sigmaCurr );
@@ -4077,8 +4071,6 @@ void PopPredModelBase<Scalar>::getEps( SPK_VA::valarray<Scalar>& ret ) const
 template<class Scalar>
 void PopPredModelBase<Scalar>::getOmega( SPK_VA::valarray<Scalar>& ret ) const
 {
-  ret.resize( pOmegaCurr->getNPar() );
-
   // Get the current value for omega.
   valarray<Scalar> omegaTemp( nEta * nEta );
   pOmegaCurr->cov( omegaTemp );
@@ -4100,8 +4092,6 @@ void PopPredModelBase<Scalar>::getOmega( SPK_VA::valarray<Scalar>& ret ) const
 template<class Scalar>
 void PopPredModelBase<Scalar>::getSigma( SPK_VA::valarray<Scalar>& ret ) const
 {
-  ret.resize( pSigmaCurr->getNPar() );
-
   // Get the current value for sigma.
   pSigmaCurr->cov( sigmaCurr );
 

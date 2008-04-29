@@ -168,7 +168,6 @@ IndPredModelBase<Scalar>::IndPredModelBase(
     // Save the omega value maintained by this class.
     omegaCurr.resize( nEta * nEta );
     pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
-    assert( omegaMinRepIn.size() == nOmegaPar );
     
     // Set the omega value maintained by the covariance class.
     pOmegaCurr->setCov( omegaCurr );
@@ -384,7 +383,6 @@ IndPredModelBase<Scalar>::IndPredModelBase(
     // Save the omega value maintained by this class.
     omegaCurr.resize( nEta * nEta );
     pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
-    assert( omegaMinRepIn.size() == nOmegaPar );
     
     // Set the omega value maintained by the covariance class.
     pOmegaCurr->setCov( omegaCurr );
@@ -608,7 +606,6 @@ IndPredModelBase<Scalar>::IndPredModelBase(
     // Save the omega value maintained by this class.
     omegaCurr.resize( nEta * nEta );
     pOmegaCurr->expandCovMinRep( omegaMinRepIn, omegaCurr );
-    assert( omegaMinRepIn.size() == nOmegaPar );
     
     // Set the omega value maintained by the covariance class.
     pOmegaCurr->setCov( omegaCurr );

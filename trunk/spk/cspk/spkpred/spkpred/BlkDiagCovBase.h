@@ -85,7 +85,7 @@ public:
                   const SPK_VA::valarray<bool>&  minRepFixedIn,
                   const SPK_VA::valarray<covStruct>&  blockStruct,
                   const SPK_VA::valarray<int>&   blockDims,
-                  const SPK_VA::valarray<bool>&  blockSameAsPrev );
+                  const SPK_VA::valarray<bool>&  blockSameAsPrevIn );
 
   ~BlkDiagCovBase( void );
   //------------------------------------------------------------
@@ -133,6 +133,9 @@ public:
   //public:
   //int nBlocks; 
   //std::vector<Cov *> block;
+
+private:
+  const SPK_VA::valarray<bool> blockSameAsPrev;
 
 
   //------------------------------------------------------------

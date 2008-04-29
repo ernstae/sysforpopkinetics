@@ -68,9 +68,10 @@ BlkDiagCovBase<Scalar>::BlkDiagCovBase( int nRowIn,
                         const SPK_VA::valarray<bool>&  minRepFixedIn,
                         const SPK_VA::valarray<covStruct>&  blockStruct,
                         const SPK_VA::valarray<int>&   blockDims,
-                        const SPK_VA::valarray<bool>&  blockSameAsPrev )
+                        const SPK_VA::valarray<bool>&  blockSameAsPrevIn )
   :
-  Cov<Scalar>( nRowIn, minRepFixedIn.size() ) 
+  Cov<Scalar>( nRowIn, minRepFixedIn.size() ) ,
+  blockSameAsPrev( blockSameAsPrevIn )
 {
   Cov<Scalar>::parFixed = minRepFixedIn;
   Cov<Scalar>::nBlocks =  blockDims.size();
@@ -80,7 +81,27 @@ BlkDiagCovBase<Scalar>::BlkDiagCovBase( int nRowIn,
   for (int i = 0; i <Cov<Scalar>::nBlocks; i++) 
   {
     int nRow_i = blockDims[i];
-    if ( blockStruct[i] == DIAGONAL )
+
+    // Add this block to the vector of blocks unless it is the same as
+    // the previous one.
+    if ( blockSameAsPrev[i] )
+    {
+      // Check that this is not the first block.
+      if ( i == 0 )
+      {
+        throw SpkException(
+         SpkError::SPK_USER_INPUT_ERR, 
+         "The first covariance matrix block was specified to be the same as the \nprevious block, which is not allowed.",
+         __LINE__, 
+         __FILE__ );
+      }
+
+      // Because this block uses the same parameters as the previous
+      // block, subtract its number of parameters from the number of
+      // parameters for the whole covariance matrix.
+      Cov<Scalar>::nPar -= nPar_i;
+    }
+    else if ( blockStruct[i] == DIAGONAL )
     {
       nPar_i = nRow_i;
       parFixed_i.resize( nPar_i );
@@ -122,9 +143,15 @@ BlkDiagCovBase<Scalar>::BlkDiagCovBase( int nRowIn,
 template<class Scalar>
 BlkDiagCovBase<Scalar>::~BlkDiagCovBase( void )
 { 
+  int notSameCount = 0;
   for( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    delete Cov<Scalar>::block[i];
+    // Delete this block from the vector of blocks unless it is the
+    // same as the previous.
+    if ( !blockSameAsPrev[i] )
+    {
+      delete Cov<Scalar>::block[notSameCount++];
+    }
   }
 }
 /*************************************************************************
@@ -156,13 +183,19 @@ void BlkDiagCovBase<Scalar>::setPar( const SPK_VA::valarray<Scalar>& parIn )
     valarray<Scalar> parIn_i;
     int start = 0;
     int nPar_i;
+    int notSameCount = 0;
     for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
     {
-      nPar_i = Cov<Scalar>::block[i]->getNPar();
-      parIn_i.resize( nPar_i );
-      parIn_i = parIn[ slice( start, nPar_i, 1)];
-      Cov<Scalar>::block[i]->setPar( parIn_i );
-      start += nPar_i;
+      // Don't set this block if it is the same as the previous.
+      if ( !blockSameAsPrev[i] )
+      {
+        nPar_i = Cov<Scalar>::block[notSameCount]->getNPar();
+        parIn_i.resize( nPar_i );
+        parIn_i = parIn[ slice( start, nPar_i, 1)];
+        Cov<Scalar>::block[notSameCount]->setPar( parIn_i );
+        start += nPar_i;
+        notSameCount++;
+      }
     }
 
   }
@@ -225,13 +258,18 @@ void BlkDiagCovBase<Scalar>::cov( SPK_VA::valarray<Scalar>& covOut ) const
   int nRow_i;
   valarray<Scalar> covCurr_i;
 
+  int notSameCount = 0;
   for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    covCurr_i.resize( nRow_i * nRow_i );
-    Cov<Scalar>::block[i]->cov( covCurr_i );
-    start_i = 0;
+    if ( !blockSameAsPrev[i] )
+    {
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      covCurr_i.resize( nRow_i * nRow_i );
+      Cov<Scalar>::block[notSameCount]->cov( covCurr_i );
+      notSameCount++;
+    }
 
+    start_i = 0;
     //loop through rows of current block
     for ( int j = 0; j < nRow_i; j++ )
     {
@@ -311,32 +349,68 @@ void BlkDiagCovBase<Scalar>::cov_par( SPK_VA::valarray<double>& cov_parOut ) con
   int start = 0;
   int startTmp;
   int start_i;
+  int startCopy = 0;
   int nRow_i;
   int nPar_i;
   valarray<double> cov_parCurr_i;
 
+  int notSameCount = 0;
   for ( int i = 0; i < Cov<Scalar>::nBlocks; i++ )
   {
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    nPar_i  = Cov<Scalar>::block[i]->getNPar();
-    cov_parCurr_i.resize( nRow_i * nRow_i * nPar_i );
-    Cov<Scalar>::block[i]->cov_par( cov_parCurr_i );
-
-    start_i = 0;
-    //loop through columns of current block
-    for ( int j = 0; j < nPar_i; j++ )
+    if ( !blockSameAsPrev[i] )
     {
-      startTmp = start;
-      for ( int k = 0; k < nRow_i; k++ )
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      nPar_i  = Cov<Scalar>::block[notSameCount]->getNPar();
+      cov_parCurr_i.resize( nRow_i * nRow_i * nPar_i );
+      Cov<Scalar>::block[notSameCount]->cov_par( cov_parCurr_i );
+      notSameCount++;
+
+      // Set the position for the first copy of this block.
+      startCopy = start + (Cov<Scalar>::nRow + 1) * nRow_i;
+
+      start_i = 0;
+      //loop through columns of current block
+      for ( int j = 0; j < nPar_i; j++ )
       {
-        assert( Cov<Scalar>::cov_parCurr.size() >= startTmp + nRow_i );
-        Cov<Scalar>::cov_parCurr[ slice( startTmp, nRow_i, 1) ] = cov_parCurr_i[ slice( start_i, nRow_i, 1) ];
-        start_i += nRow_i;
-        startTmp += Cov<Scalar>::nRow;
+        startTmp = start;
+        for ( int k = 0; k < nRow_i; k++ )
+        {
+          assert( Cov<Scalar>::cov_parCurr.size() >= startTmp + nRow_i );
+          Cov<Scalar>::cov_parCurr[ slice( startTmp, nRow_i, 1) ] = cov_parCurr_i[ slice( start_i, nRow_i, 1) ];
+          start_i += nRow_i;
+          startTmp += Cov<Scalar>::nRow;
+        }
+        // Advance this to start of the next column's derivative.
+        start  += nCov_parRow;
       }
-      start  += nCov_parRow;
+
+      // Advance this to the first nonzero element of the next block's
+      // first column's derivative.
+      start  += (Cov<Scalar>::nRow + 1) * nRow_i;
     }
-    start  += (Cov<Scalar>::nRow + 1) * nRow_i;
+    else
+    {
+      // Advance this to the first nonzero element of the next block's
+      // first column's derivative.
+      start  += (Cov<Scalar>::nRow + 1) * nRow_i;
+
+      start_i = 0;
+      //loop through columns of current block
+      for ( int j = 0; j < nPar_i; j++ )
+      {
+        startTmp = startCopy;
+        for ( int k = 0; k < nRow_i; k++ )
+        {
+          assert( Cov<Scalar>::cov_parCurr.size() >= startTmp + nRow_i );
+          Cov<Scalar>::cov_parCurr[ slice( startTmp, nRow_i, 1) ] = cov_parCurr_i[ slice( start_i, nRow_i, 1) ];
+          start_i += nRow_i;
+          startTmp += Cov<Scalar>::nRow;
+        }
+        // Advance this to start of the next column's derivative.
+        startCopy  += nCov_parRow;
+      }
+    }
+
    }     
 
 
@@ -405,13 +479,18 @@ void BlkDiagCovBase<Scalar>::inv( SPK_VA::valarray<Scalar>& invOut ) const
   int nRow_i;
   valarray<Scalar> invCurr_i;
 
+  int notSameCount = 0;
   for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    invCurr_i.resize( nRow_i * nRow_i );
-    Cov<Scalar>::block[i]->inv( invCurr_i );
-    start_i = 0;
+    if ( !blockSameAsPrev[i] )
+    {
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      invCurr_i.resize( nRow_i * nRow_i );
+      Cov<Scalar>::block[notSameCount]->inv( invCurr_i );
+      notSameCount++;
+    }
 
+    start_i = 0;
     //loop through rows of current block
     for ( int j = 0; j < nRow_i; j++ )
     {
@@ -490,33 +569,70 @@ void BlkDiagCovBase<Scalar>::inv_par( SPK_VA::valarray<double>& inv_parOut ) con
   int start = 0;
   int startTmp;
   int start_i;
+  int startCopy = 0;
   int nRow_i;
   int nPar_i;
   valarray<double> inv_parCurr_i;
 
+  int notSameCount = 0;
   for ( int i = 0; i < Cov<Scalar>::nBlocks; i++ )
   {
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    nPar_i  = Cov<Scalar>::block[i]->getNPar();
-    inv_parCurr_i.resize( nRow_i * nRow_i * nPar_i );
-    Cov<Scalar>::block[i]->inv_par( inv_parCurr_i );
-
-    start_i = 0;
-    //loop through rows of current block
-    for ( int j = 0; j < nPar_i; j++ )
+    if ( !blockSameAsPrev[i] )
     {
-      startTmp = start;
-      for ( int k = 0; k < nRow_i; k++ )
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      nPar_i  = Cov<Scalar>::block[notSameCount]->getNPar();
+      inv_parCurr_i.resize( nRow_i * nRow_i * nPar_i );
+      Cov<Scalar>::block[notSameCount]->inv_par( inv_parCurr_i );
+      notSameCount++;
+
+      // Set the position for the first copy of this block.
+      startCopy = start + (Cov<Scalar>::nRow + 1) * nRow_i;
+
+      start_i = 0;
+      //loop through columns of current block
+      for ( int j = 0; j < nPar_i; j++ )
       {
-        assert( Cov<Scalar>::cov_parCurr.size() >= startTmp + nRow_i );
-        Cov<Scalar>::inv_parCurr[ slice( startTmp, nRow_i, 1) ] = inv_parCurr_i[ slice( start_i, nRow_i, 1) ];
-        start_i += nRow_i;
-        startTmp += Cov<Scalar>::nRow;
+        startTmp = start;
+        for ( int k = 0; k < nRow_i; k++ )
+        {
+          assert( Cov<Scalar>::inv_parCurr.size() >= startTmp + nRow_i );
+          Cov<Scalar>::inv_parCurr[ slice( startTmp, nRow_i, 1) ] = inv_parCurr_i[ slice( start_i, nRow_i, 1) ];
+          start_i += nRow_i;
+          startTmp += Cov<Scalar>::nRow;
+        }
+        // Advance this to start of the next column's derivative.
+        start  += nInv_parRow;
       }
-      start  += nInv_parRow;
+
+      // Advance this to the first nonzero element of the next block's
+      // first column's derivative.
+      start  += (Cov<Scalar>::nRow + 1) * nRow_i;
     }
-    start  += (Cov<Scalar>::nRow + 1) *nRow_i;
-   }     
+     else
+    {
+      // Advance this to the first nonzero element of the next block's
+      // first column's derivative.
+      start  += (Cov<Scalar>::nRow + 1) * nRow_i;
+
+      start_i = 0;
+      //loop through columns of current block
+      for ( int j = 0; j < nPar_i; j++ )
+      {
+        startTmp = startCopy;
+        for ( int k = 0; k < nRow_i; k++ )
+        {
+          assert( Cov<Scalar>::inv_parCurr.size() >= startTmp + nRow_i );
+          Cov<Scalar>::inv_parCurr[ slice( startTmp, nRow_i, 1) ] = inv_parCurr_i[ slice( start_i, nRow_i, 1) ];
+          start_i += nRow_i;
+          startTmp += Cov<Scalar>::nRow;
+        }
+        // Advance this to start of the next column's derivative.
+        startCopy  += nInv_parRow;
+      }
+    }
+
+  }     
+
 
   //------------------------------------------------------------
   // Finish up.
@@ -576,19 +692,25 @@ void BlkDiagCovBase<Scalar>::getParLimits(
   int start = 0;
   valarray<double> parLow_i;
   valarray<double> parUp_i;
+  int notSameCount = 0;
   for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    nPar_i = Cov<Scalar>::block[i]->getNPar();
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    parLow_i.resize( nPar_i );
-    parUp_i.resize ( nPar_i );
+    if ( !blockSameAsPrev[i] )
+    {
+      nPar_i = Cov<Scalar>::block[notSameCount]->getNPar();
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      parLow_i.resize( nPar_i );
+      parUp_i.resize ( nPar_i );
  
-    //call getParLimits for block i
-    Cov<Scalar>::block[i]->getParLimits( parLow_i, parUp_i );
+      //call getParLimits for block i
+      Cov<Scalar>::block[notSameCount]->getParLimits( parLow_i, parUp_i );
+    
+      parLow[ slice( start, nPar_i, 1 ) ] = parLow_i;
+      parUp[  slice( start, nPar_i, 1 ) ] = parUp_i;
+      start += nPar_i;    
 
-    parLow[ slice( start, nPar_i, 1 ) ] = parLow_i;
-    parUp[  slice( start, nPar_i, 1 ) ] = parUp_i;
-    start += nPar_i;    
+      notSameCount++;
+    }
   }
 
 }
@@ -610,7 +732,7 @@ void BlkDiagCovBase<Scalar>::calcPar(
   SPK_VA::valarray<Scalar>&       parOut ) const
 {
   //------------------------------------------------------------
-  // Preliminaries.   <<
+  // Preliminaries.
   //------------------------------------------------------------
 
   // Set the number of rows in the covariance matrix.
@@ -634,15 +756,19 @@ void BlkDiagCovBase<Scalar>::calcPar(
   int start_i;
   valarray<Scalar> par_i;
   valarray<Scalar> covIn_i;
+  int notSameCount = 0;
   for ( int i = 0; i < Cov<Scalar>::nBlocks; i++ )
   {
-    nPar_i = Cov<Scalar>::block[i]->getNPar();
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    par_i.resize( nPar_i );
-    covIn_i.resize( nRow_i * nRow_i );
-    start_i = 0;
+    if ( !blockSameAsPrev[i] )
+    {
+      nPar_i = Cov<Scalar>::block[notSameCount]->getNPar();
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      par_i.resize( nPar_i );
+      covIn_i.resize( nRow_i * nRow_i );
+    }
 
     //loop through rows in block to get rows
+    start_i = 0;
     for ( int j = 0; j < nRow_i; j++ )
     {
       covIn_i[ slice( start_i, nRow_i, 1) ] = covIn[ slice( start, nRow_i, 1) ];
@@ -650,12 +776,17 @@ void BlkDiagCovBase<Scalar>::calcPar(
       start  += Cov<Scalar>::nRow;
     }
     start  += nRow_i;
- 
-    //call calcPar for block i
-    Cov<Scalar>::block[i]->calcPar( covIn_i, par_i );
+    
+    if ( !blockSameAsPrev[i] )
+    {
+      //call calcPar for block i
+      Cov<Scalar>::block[notSameCount]->calcPar( covIn_i, par_i );
+    
+      parOut[ slice( startPar, nPar_i, 1 ) ] = par_i;
+      startPar += nPar_i;    
 
-    parOut[ slice( startPar, nPar_i, 1 ) ] = par_i;
-    startPar += nPar_i;    
+      notSameCount++;
+    }
   }
 
 }
@@ -705,14 +836,18 @@ void BlkDiagCovBase<Scalar>::calcCovMinRep(
   int start_i;
   valarray<Scalar> minRep_i;
   valarray<Scalar> covIn_i;
+  int notSameCount = 0;
   for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    nPar_i = Cov<Scalar>::block[i]->getNPar();
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    minRep_i.resize( nPar_i );
-    covIn_i.resize( nRow_i * nRow_i );
-    start_i = 0;
+    if ( !blockSameAsPrev[i] )
+    {
+      nPar_i = Cov<Scalar>::block[notSameCount]->getNPar();
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      minRep_i.resize( nPar_i );
+      covIn_i.resize( nRow_i * nRow_i );
+    }
 
+    start_i = 0;
     //loop through rows in block to get rows
     for ( int j = 0; j < nRow_i; j++ )
     {
@@ -721,12 +856,17 @@ void BlkDiagCovBase<Scalar>::calcCovMinRep(
       start  += Cov<Scalar>::nRow;
     }
     start  += nRow_i;
- 
-    //call calcPar for block i
-    Cov<Scalar>::block[i]->calcCovMinRep( covIn_i, minRep_i );
+  
+    if ( !blockSameAsPrev[i] )
+    {
+      //call calcPar for block i
+      Cov<Scalar>::block[notSameCount]->calcCovMinRep( covIn_i, minRep_i );
 
-    covMinRepOut[ slice( startPar, nPar_i, 1 ) ] = minRep_i;
-    startPar += nPar_i;    
+      covMinRepOut[ slice( startPar, nPar_i, 1 ) ] = minRep_i;
+      startPar += nPar_i;    
+
+      notSameCount++;
+    }
   }
 
 }
@@ -775,41 +915,57 @@ void BlkDiagCovBase<Scalar>::calcCovMinRep_par(
   int nPar_i;
   int nRow_i;
 
+  int notSameCount = 0;
   for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    nPar_i  = Cov<Scalar>::block[i]->getNPar();
-    cov_parIn_i.resize( nRow_i * nRow_i* nPar_i );
-    
-    start_i = 0;
-    //loop over columns of cov_parIn - parse into cov_parIn_i (for current block)
-    for ( int j = 0; j < nPar_i; j++ )
+    if ( !blockSameAsPrev[i] )
     {
-      startTmp = start;
-      for ( int k = 0; k < nRow_i; k++ )
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      nPar_i  = Cov<Scalar>::block[notSameCount]->getNPar();
+      cov_parIn_i.resize( nRow_i * nRow_i* nPar_i );
+
+      start_i = 0;
+      //loop over columns of cov_parIn - parse into cov_parIn_i (for current block)
+      for ( int j = 0; j < nPar_i; j++ )
       {
-        assert( cov_parIn.size() >= startTmp + nRow_i );
-        cov_parIn_i[ slice( start_i, nRow_i, 1) ] = cov_parIn[ slice( startTmp, nRow_i, 1) ];
-        start_i += nRow_i;
-        startTmp += Cov<Scalar>::nRow;
-      }    
-      start  += nCov_parRow;
+        startTmp = start;
+        for ( int k = 0; k < nRow_i; k++ )
+        {
+          assert( cov_parIn.size() >= startTmp + nRow_i );
+          cov_parIn_i[ slice( start_i, nRow_i, 1) ] = cov_parIn[ slice( startTmp, nRow_i, 1) ];
+          start_i += nRow_i;
+          startTmp += Cov<Scalar>::nRow;
+        }    
+        // Advance this to start of the next column's derivative.
+        start  += nCov_parRow;
+      }
+      // Advance this to the first nonzero element of the next block's
+      // first column's derivative.
+      start += (Cov<Scalar>::nRow + 1) *nRow_i;
+
+      // compute covMinRep_parOut_i for current block
+      covMinRep_parOut_i.resize( nPar_i * nPar_i );
+      Cov<Scalar>::block[notSameCount]->calcCovMinRep_par( cov_parIn_i, nPar_i, covMinRep_parOut_i );
+
+      start_i = 0;
+      //loop over columns of covMinRep_parOut_i  to produce covMinRep_parOut.
+      for ( int k = 0; k < nPar_i; k++ )
+      {
+        covMinRep_parOut[ slice( start2, nPar_i, 1 ) ] = covMinRep_parOut_i[ slice( start_i, nPar_i, 1 ) ];
+        start_i += nPar_i;
+        start2 += nCovInPar;
+      }
+      start2 += nPar_i;                                     
+
+      notSameCount++;
     }
-    start += (Cov<Scalar>::nRow + 1) *nRow_i;
-
-    // compute covMinRep_parOut_i for current block
-    covMinRep_parOut_i.resize( nPar_i * nPar_i );
-    Cov<Scalar>::block[i]->calcCovMinRep_par( cov_parIn_i, nPar_i, covMinRep_parOut_i );
-
-    start_i = 0;
-    //loop over columns of covMinRep_parOut_i  to produce covMinRep_parOut.
-    for ( int k = 0; k < nPar_i; k++ )
+    else
     {
-      covMinRep_parOut[ slice( start2, nPar_i, 1 ) ] = covMinRep_parOut_i[ slice( start_i, nPar_i, 1 ) ];
-      start_i += nPar_i;
-      start2 += nCovInPar;
+      // Advance this to the first nonzero element of the next block's
+      // first column's derivative.
+      start += (Cov<Scalar>::nRow + 1) * nRow_i;
     }
-    start2 += nPar_i;                                     
+
   }  
 
 }
@@ -855,15 +1011,21 @@ void  BlkDiagCovBase<Scalar>::calcCovMinRepMask(
   valarray<bool> parMaskIn_i;
   valarray<bool> covMinRepMaskOut_i;
 
+  int notSameCount = 0;
   for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    nPar_i = Cov<Scalar>::block[i]->getNPar();
-    parMaskIn_i.resize( nPar_i );
-    covMinRepMaskOut_i.resize( nPar_i);
-    parMaskIn_i = parMaskIn[ slice( start, nPar_i, 1) ];
-    Cov<Scalar>::block[i]->calcCovMinRepMask( parMaskIn_i, covMinRepMaskOut_i);
-    covMinRepMaskOut[ slice( start, nPar_i, 1) ] = covMinRepMaskOut_i;
-    start += nPar_i;
+    if ( !blockSameAsPrev[i] )
+    {
+      nPar_i = Cov<Scalar>::block[notSameCount]->getNPar();
+      parMaskIn_i.resize( nPar_i );
+      covMinRepMaskOut_i.resize( nPar_i);
+      parMaskIn_i = parMaskIn[ slice( start, nPar_i, 1) ];
+      Cov<Scalar>::block[notSameCount]->calcCovMinRepMask( parMaskIn_i, covMinRepMaskOut_i);
+      covMinRepMaskOut[ slice( start, nPar_i, 1) ] = covMinRepMaskOut_i;
+      start += nPar_i;
+
+      notSameCount++;
+    }
   }
 
 }
@@ -929,18 +1091,27 @@ void BlkDiagCovBase<Scalar>::expandCovMinRep(
   valarray<double> minRepIn_i;
   valarray<Scalar> covCurr_i;
 
+  int notSameCount = 0;
   for ( int i = 0; i <Cov<Scalar>::nBlocks; i++ )
   {
-    //get min rep for current block
-    nPar_i = Cov<Scalar>::block[i]->getNPar();
-    minRepIn_i.resize( nPar_i );
-    minRepIn_i = covMinRepIn[ slice ( startPar, nPar_i, 1 ) ];
-    startPar += nPar_i;
+    if ( !blockSameAsPrev[i] )
+    {
+      //get min rep for current block
+      nPar_i = Cov<Scalar>::block[notSameCount]->getNPar();
+      minRepIn_i.resize( nPar_i );
+      minRepIn_i = covMinRepIn[ slice ( startPar, nPar_i, 1 ) ];
 
-    //expand min rep for current block
-    nRow_i = Cov<Scalar>::block[i]->getNRow();
-    covCurr_i.resize( nRow_i * nRow_i );
-    Cov<Scalar>::block[i]->expandCovMinRep( minRepIn_i, covCurr_i );
+      //expand min rep for current block
+      nRow_i = Cov<Scalar>::block[notSameCount]->getNRow();
+      covCurr_i.resize( nRow_i * nRow_i );
+      Cov<Scalar>::block[notSameCount]->expandCovMinRep( minRepIn_i, covCurr_i );
+
+      notSameCount++;
+    }
+
+    // Note that the minimal representation passed in includes the
+    // same as previous elements.
+    startPar += nPar_i;
 
     start_i = 0;
     //loop through rows of current block to create Cov

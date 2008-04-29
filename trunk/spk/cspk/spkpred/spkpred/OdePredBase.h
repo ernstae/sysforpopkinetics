@@ -1593,7 +1593,10 @@ private:
   std::vector<int>   odeSolnComp;                 ///< ODE solution compartments.
   std::vector<int>   odeSolnBreakIndex;           ///< ODE solution break point indices.
   std::vector<Value> odeSolnTime;                 ///< ODE solution times.
+  std::vector<int>   odeSolnOccasionIndex;        ///< ODE solution occasion indices.
   std::vector<bool>  odeSolnIsLeftCont;           ///< Indicates if ODE solution is left continuous.
+
+  int nOccasion;                                  ///< Number of occasions.
 
   int nObserv;                                    ///< Number of observations.
   int nDosePred;                                  ///< Number of predictions at dose times.
@@ -1604,21 +1607,33 @@ private:
   public:
     BreakInfo()
     :
-    time( Value( 0 ) ), isDataRec( false ), indDataRecIndex( 0 )
+    time( Value( 0 ) ), isDataRec( false ), indDataRecIndex( 0 ), occasionIndex( 0 )
     {
     }
-    BreakInfo( const Value& timeIn, bool isDataRecIn, int indDataRecIndexIn )
+    BreakInfo( const Value& timeIn, bool isDataRecIn, int indDataRecIndexIn, int occasionIndexIn )
     :
-    time( timeIn ), isDataRec( isDataRecIn ), indDataRecIndex( indDataRecIndexIn )
+    time( timeIn ), isDataRec( isDataRecIn ), indDataRecIndex( indDataRecIndexIn ), occasionIndex( occasionIndexIn )
     {
     }
 
     bool operator<( const BreakInfo& right ) const
     {
-      return time < right.time;
+      if ( occasionIndex < right.occasionIndex )
+      {
+        return true;
+      }
+      else if ( occasionIndex > right.occasionIndex )
+      {
+        return false;
+      }
+      else
+      {
+        return time < right.time;
+      }
     }
 
     Value time;                                   ///< Break point time.
+    int   occasionIndex;                          ///< Break point occasion index.
     bool  isDataRec;                              ///< Indicates if break point corresponds to a data record.
     int   indDataRecIndex;                        ///< Current individual's data record index.
 
@@ -1647,21 +1662,33 @@ private:
   public:
     InfusOffInfo()
     :
-    time( Value( 0 ) ), infusIndex( 0 )
+    time( Value( 0 ) ), infusIndex( 0 ), occasionIndex( 0 )
     {
     }
-    InfusOffInfo( const Value& timeIn, int infusIndexIn )
+    InfusOffInfo( const Value& timeIn, int infusIndexIn, int occasionIndexIn )
     :
-    time( timeIn ), infusIndex( infusIndexIn )
+    time( timeIn ), infusIndex( infusIndexIn ), occasionIndex( occasionIndexIn )
     {
     }
 
     bool operator<( const InfusOffInfo& right ) const
     {
-      return time < right.time;
+      if ( occasionIndex < right.occasionIndex )
+      {
+        return true;
+      }
+      else if ( occasionIndex > right.occasionIndex )
+      {
+        return false;
+      }
+      else
+      {
+        return time < right.time;
+      }
     }
 
     Value time;                                   ///< Regular infusion dose off time.
+    int   occasionIndex;                          ///< Break point occasion index.
     int   infusIndex;                             ///< Regular infusion dose index.
 
   };
@@ -1680,21 +1707,33 @@ private:
   public:
     ZeroOrderBolusOffInfo()
     :
-    time( Value( 0 ) ), zeroOrderBolusIndex( 0 )
+    time( Value( 0 ) ), zeroOrderBolusIndex( 0 ), occasionIndex( 0 )
     {
     }
-    ZeroOrderBolusOffInfo( const Value& timeIn, int zeroOrderBolusIndexIn )
+    ZeroOrderBolusOffInfo( const Value& timeIn, int zeroOrderBolusIndexIn, int occasionIndexIn )
     :
-    time( timeIn ), zeroOrderBolusIndex( zeroOrderBolusIndexIn )
+    time( timeIn ), zeroOrderBolusIndex( zeroOrderBolusIndexIn ), occasionIndex( occasionIndexIn )
     {
     }
 
     bool operator<( const ZeroOrderBolusOffInfo& right ) const
     {
-      return time < right.time;
+      if ( occasionIndex < right.occasionIndex )
+      {
+        return true;
+      }
+      else if ( occasionIndex > right.occasionIndex )
+      {
+        return false;
+      }
+      else
+      {
+        return time < right.time;
+      }
     }
 
     Value time;                                   ///< Zero-order bolus dose off time.
+    int   occasionIndex;                          ///< Break point occasion index.
     int   zeroOrderBolusIndex;                    ///< Zero-order bolus dose index.
 
   };
@@ -1704,6 +1743,7 @@ private:
 
   std::vector<int>   turnOnOrOffComp;             ///< Compartments to be turned on or off.
   std::vector<Value> turnOnOrOffTime;             ///< Times to turn the compartments on or off.
+  std::vector<int>   turnOnOrOffOccasionIndex;    ///< Occasion indices for times to turn compartments on or off.
 
   static bool issuedStartTimeWarning;
 
@@ -1778,6 +1818,10 @@ protected:
     nDosePred       = 0;
     nNonObservPred  = 0;
 
+    // There is always at least one occasion.  There can be multiple
+    // occasions if there is a reset event record for this individual.
+    nOccasion = 1;
+
     odeSolnComp         .resize( 0 );
     odeSolnTime         .resize( 0 );
     odeSolnIsLeftCont   .resize( 0 );
@@ -1827,23 +1871,30 @@ protected:
       // Get the data items for the current data record.
       readDataRecord( i, j );
 
+      // Check for reset event records.
+      if ( evid == RESET_EVENT )
+      { 
+        // Increment this counter because each reset event marks the
+        // start of a new occasion.
+        nOccasion++;
+      }
       // Check that the time values do not decrease.
-      if ( j > 0 && time < timePrev )
+      else if ( j > 0 && time < timePrev )
       {
         ostringstream message;
-
+      
         message << "The " << intToOrdinalString( j, ZERO_IS_FIRST_INT )
                 << " data record for the "
                 << intToOrdinalString( i, ZERO_IS_FIRST_INT )
                 << " individual had a time value that was \nless than the time value for the previous data record.";
-
+      
         throw SpkException(
           SpkError::SPK_USER_INPUT_ERR, 
           message.str().c_str(),
           __LINE__, 
           __FILE__ );
       }
-
+  
       // Save the current time to check the next record.
       timePrev = time;
 
@@ -1937,6 +1988,9 @@ protected:
         // Set the time.
         odeSolnTime.push_back( time );
 
+        // Set the occasion index.
+        odeSolnOccasionIndex.push_back( nOccasion - 1 );
+
         // The ODE solution should be left continuous unless there is
         // already an instantaneous bolus dose at the same time, which
         // means that the bolus data record came before this one.
@@ -1950,6 +2004,9 @@ protected:
           // Set the compartment and time.
           turnOnOrOffComp.push_back( odeSolnComp.back() );
           turnOnOrOffTime.push_back( time );
+
+          // Set the occasion index.
+          turnOnOrOffOccasionIndex.push_back( nOccasion - 1 );
         }
 
         // Set this data record's index in the vector of
@@ -1963,7 +2020,7 @@ protected:
         nObserv++;
 
         // Add a break point for this observation event.
-        breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j ) );
+        breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j, nOccasion - 1 ) );
       }
 
 
@@ -2018,7 +2075,7 @@ protected:
             compAbsorpLagTime[ compIndex( bolusComp.back() ) ] );
 
           // Add a break point for this dose.
-          breakPoint.push_back( BreakInfo( bolusTime.back(), true, j ) );
+          breakPoint.push_back( BreakInfo( bolusTime.back(), true, j, nOccasion - 1 ) );
         }
 
         //------------------------------------------------------
@@ -2068,12 +2125,12 @@ protected:
   
           // Add a break point at the beginning of this regular
           // infusion dose.
-          breakPoint.push_back( BreakInfo( infusTime.back(), true, j ) );
+          breakPoint.push_back( BreakInfo( infusTime.back(), true, j, nOccasion - 1 ) );
 
           // Add a break point at the end of this regular infusion
           // dose that does not correspond to a date record .
           breakPoint.push_back( BreakInfo( infusTime.back() +
-                                           infusDurat.back(), false, j ) );
+                                           infusDurat.back(), false, j, nOccasion - 1 ) );
         }
 
         //------------------------------------------------------
@@ -2142,12 +2199,12 @@ protected:
   
           // Add a break point at the beginning of this zero-order
           // bolus dose.
-          breakPoint.push_back( BreakInfo( zeroOrderBolusTime.back(), true, j ) );
+          breakPoint.push_back( BreakInfo( zeroOrderBolusTime.back(), true, j, nOccasion - 1 ) );
 
           // Add a break point at the end of this zero-order bolus
           // dose that does not correspond to a date record .
           breakPoint.push_back( BreakInfo( zeroOrderBolusTime.back() +
-                                           zeroOrderBolusDurat.back(), false, j ) );
+                                           zeroOrderBolusDurat.back(), false, j, nOccasion - 1 ) );
         }
 
         //------------------------------------------------------
@@ -2182,6 +2239,9 @@ protected:
           // Set the time.
           odeSolnTime.push_back( time );
 
+          // Set the occasion index.
+          odeSolnOccasionIndex.push_back( nOccasion - 1 );
+
           // The ODE solution should be left continuous unless there is
           // already an instantaneous bolus dose at the same time, which
           // means that the bolus data record came before this one.
@@ -2197,7 +2257,7 @@ protected:
           // Add another break point for this nonobservation
           // prediction evaluation event.  There are now two break
           // points at the same time for this dose.
-          breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j ) );
+          breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j, nOccasion - 1 ) );
         }
 
       }
@@ -2240,6 +2300,9 @@ protected:
           // Set the compartment and the time.
           turnOnOrOffComp.push_back( cmt );
           turnOnOrOffTime.push_back( time );
+
+          // Set the occasion index.
+          turnOnOrOffOccasionIndex.push_back( nOccasion - 1 );
         }
 
         //------------------------------------------------------
@@ -2275,6 +2338,9 @@ protected:
           // Set the time.
           odeSolnTime.push_back( time );
   
+          // Set the occasion index.
+          odeSolnOccasionIndex.push_back( nOccasion - 1 );
+
           // The ODE solution should be left continuous unless there is
           // already an instantaneous bolus dose at the same time, which
           // means that the bolus data record came before this one.
@@ -2289,9 +2355,20 @@ protected:
 
           // Add a break point for this nonobservation prediction
           // evaluation event.
-          breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j ) );
+          breakPoint.push_back( BreakInfo( odeSolnTime.back(), true, j, nOccasion - 1 ) );
         }
 
+      }
+
+
+      //--------------------------------------------------------
+      // Handle reset events.
+      //--------------------------------------------------------
+
+      if ( evid == RESET_EVENT )
+      {
+        // Add a break point at the beginning of this occasion.
+        breakPoint.push_back( BreakInfo( time, true, j, nOccasion - 1 ) );
       }
 
 
@@ -2312,9 +2389,10 @@ protected:
         {
           // If the last two ODE solution times are equal, then remove
           // the last one.
-          odeSolnTime      .pop_back();
-          odeSolnComp      .pop_back();
-          odeSolnIsLeftCont.pop_back();
+          odeSolnTime         .pop_back();
+          odeSolnComp         .pop_back();
+          odeSolnIsLeftCont   .pop_back();
+          odeSolnOccasionIndex.pop_back();
 
           nOdeSoln--;
           nOdeSolnRemoved++;
@@ -2454,10 +2532,14 @@ protected:
       for ( q = 0; q < nInfus; q++ )
       {
         infusOffPoint.push_back( 
-          InfusOffInfo( ( infusTime[q] + infusDurat[q] ), q ) );
+          InfusOffInfo( ( infusTime[q] + infusDurat[q] ), q, nOccasion - 1 ) );
       }
 
-      // Sort the off times.        
+      // Sort the off times.
+      //
+      // Note that the less than operators have been modified so that
+      // the times will be grouped by occasion and then sorted in
+      // nondecreasing order.
       sort( infusOffPoint.begin(), infusOffPoint.end() );
     }
 
@@ -2476,10 +2558,14 @@ protected:
       for ( q = 0; q < nZeroOrderBolus; q++ )
       {
         zeroOrderBolusOffPoint.push_back( 
-          ZeroOrderBolusOffInfo( ( zeroOrderBolusTime[q] + zeroOrderBolusDurat[q] ), q ) );
+          ZeroOrderBolusOffInfo( ( zeroOrderBolusTime[q] + zeroOrderBolusDurat[q] ), q, nOccasion - 1 ) );
       }
 
       // Sort the off times.        
+      //
+      // Note that the less than operators have been modified so that
+      // the times will be grouped by occasion and then sorted in
+      // nondecreasing order.
       sort( zeroOrderBolusOffPoint.begin(), zeroOrderBolusOffPoint.end() );
     }
 
@@ -2491,6 +2577,10 @@ protected:
     // Sort the break point information in order by break point times
     // because the break point handler expects the break point times
     // to be in nondecreasing order.
+    //
+    // Note that the less than operators have been modified so that
+    // the times will be grouped by occasion and then sorted in
+    // nondecreasing order.
     sort( breakPoint.begin(), breakPoint.end() );
 
     int odeSolnCounter           = 0;
@@ -2603,7 +2693,8 @@ protected:
                                     infusOnCounter           +
                                     infusOffCounter          +
                                     zeroOrderBolusOnCounter  +
-                                    zeroOrderBolusOffCounter    ||
+                                    zeroOrderBolusOffCounter +
+                                    nOccasion - 1               ||
          infusOnCounter          != infusOffCounter             ||
          nInfus                  != infusOnCounter              ||
          zeroOrderBolusOnCounter != zeroOrderBolusOffCounter    ||
@@ -2622,24 +2713,45 @@ protected:
 
 
     //----------------------------------------------------------
-    // Remove any break point times beyond the last ODE solution time.
+    // Remove break point times beyond each occasion's last solution time.
     //----------------------------------------------------------
 
+    int b;
+
     // Delete any break point times that are greater than or equal to
-    // the last ODE solution time because the break point handler
-    // expects the last break point time to be less than the last ODE
-    // solution time.
-    while ( nBreak > 0 )
+    // the last ODE solution time for each occasion because the break
+    // point handler expects the last break point time to be less than
+    // the last ODE solution time for each occasion.
+    k = 0;
+    s = 0;
+    for ( b = 0; b < nOccasion; b++ )
     {
-      if ( breakPoint[nBreak - 1].time >= odeSolnTime[nOdeSoln - 1] )
+      // Find the last ODE solution time for this occasion.
+      while ( s < nOdeSoln && odeSolnOccasionIndex[s] == b )
       {
-        breakPoint.pop_back();
-        nBreak--;
+        s++;
       }
-      else
+      s--;
+
+      // Look for break points for this occasion that have times
+      // greater than the last ODE solution time for this occasion.
+      while ( k < nBreak && breakPoint[k].occasionIndex == b )
       {
-        break;
+        if ( breakPoint[k].time >= odeSolnTime[s] )
+        {
+          // Delete this break point if its time is too great. 
+          breakPoint.erase( breakPoint.begin() + k );
+          nBreak--;
+        }
+        else
+        {
+          // Go on to the next break point.
+          k++;
+        }
       }
+
+      // Go on to the first ODE solution from the next occasion.
+      s++;
     }
 
     // Set the vector of break times for OdeBreak().
@@ -2767,6 +2879,25 @@ public:
 
       // Get the data items for the current data record.
       readDataRecord( iCurr, jCurr );
+
+      // Check for reset event records.
+      if ( evid == RESET_EVENT )
+      { 
+        // Set initial values for the parameters associated with
+        // each of the compartments.
+        int p;
+        for ( p = 0; p < nComp; p++ )
+        {
+          compAmount       [p] = Value( 0 );
+          compAmount_t     [p] = Value( 0 );
+        
+          compInfusRate    [p] = Value( 0 );
+          compInfusDurat   [p] = Value( 0 );
+        
+          compIsOff        [p] = compInitialOff  [p];
+        }
+      }
+
     }
 
 
@@ -2860,15 +2991,15 @@ public:
     //----------------------------------------------------------
 
     // Find any compartments that need to be turned on or off at the
-    // current break point.  This loop assumes the turn-compartments-on-
-    // or-off times are in nondecreasing order.
+    // current break point.
     q = 0;
-    while ( q < nTurnOnOrOff && turnOnOrOffTime[q] <= breakTime[kCurr] )
+    while ( q < nTurnOnOrOff )
     {
-      // If this turn-compartment-on-or-off time is at the beginning
-      // of the current break point, then turn on or off the
-      // appropriate compartment.
-      if ( turnOnOrOffTime[q] == breakTime[kCurr] )
+      // If this turn-compartment-on-or-off event is for the current
+      // break point's time and occasion index, then turn on or off
+      // the appropriate compartment.
+      if ( turnOnOrOffTime[q]          == breakPoint[kCurr].time          && 
+           turnOnOrOffOccasionIndex[q] == breakPoint[kCurr].occasionIndex )
       {
         p = compIndex( turnOnOrOffComp[q] );
 
@@ -3252,6 +3383,9 @@ private:
     // Calculate all of the amounts for all of the compartments.
     //----------------------------------------------------------
 
+    int b;
+    int k;
+
     // Set the Eval class for OdeBreak to be this class so that the
     // functions Break() and Ode() will have access to this class's
     // functions and members.
@@ -3274,29 +3408,167 @@ private:
     {
       std::string method = "Runge45";
 
-      if ( isOutputCompUsed )
+      //--------------------------------------------------------
+      // Handle a single occasion.
+      //--------------------------------------------------------
+
+      if ( nOccasion == 1 )
       {
-        OdeBreak(
-          odeBreakEvalClass,
-          compAmountAllOdeSoln,
-          method,
-          breakTime,
-          odeSolnTime,
-          odeSolnIsLeftCont,
-          tolAbs,
-          tolRel );
+        if ( isOutputCompUsed )
+        {
+          OdeBreak(
+            odeBreakEvalClass,
+            compAmountAllOdeSoln,
+            method,
+            breakTime,
+            odeSolnTime,
+            odeSolnIsLeftCont,
+            tolAbs,
+            tolRel );
+        }
+        else
+        {
+          OdeBreak(
+            odeBreakEvalClass,
+            compAmountAllOdeSolnNoOutputComp,
+            method,
+            breakTime,
+            odeSolnTime,
+            odeSolnIsLeftCont,
+            tolAbs,
+            tolRel );
+        }
       }
+
+      //--------------------------------------------------------
+      // Handle multiple occasions.
+      //--------------------------------------------------------
+
       else
       {
-        OdeBreak(
-          odeBreakEvalClass,
-          compAmountAllOdeSolnNoOutputComp,
-          method,
-          breakTime,
-          odeSolnTime,
-          odeSolnIsLeftCont,
-          tolAbs,
-          tolRel );
+        std::vector<Value> breakTime_b;
+        std::vector<Value> compAmountAllOdeSoln_b;
+        std::vector<Value> compAmountAllOdeSolnNoOutputComp_b;
+        std::vector<Value> odeSolnTime_b;
+
+        std::vector<bool>  odeSolnIsLeftCont_b;
+
+        int nOdeSoln_b;
+        int odeSolnCounter = 0;
+
+        int s;
+        int ss;
+
+        // Calculate the solutions for each occasion.
+        k = 0;
+        s = 0;
+        for ( b = 0; b < nOccasion; b++ )
+        {
+          // Get the break times for this occasion.
+          breakTime_b.clear();
+          while ( k < nBreak )
+          {
+            // Add this break time if it's from this occasion.
+            if ( breakPoint[k].occasionIndex == b )
+            {
+              breakTime_b.push_back( breakPoint[k].time );
+              k++;
+            }
+            else
+            {
+              // Go on if this break time is from another occasion.
+              break;
+            }
+          }
+  
+          // Get the ODE solution times for this occasion.
+          odeSolnTime_b      .clear();
+          odeSolnIsLeftCont_b.clear();
+          while ( s < nOdeSoln )
+          {
+            // Add this ODE solution time if it's from this occasion.
+            if ( odeSolnOccasionIndex[s] == b )
+            {
+              odeSolnTime_b      .push_back( odeSolnTime[s] );
+              odeSolnIsLeftCont_b.push_back( odeSolnIsLeftCont[s] );
+              s++;
+            }
+            else
+            {
+              // Go on if this ODE solution time is from another occasion.
+              break;
+            }
+          }
+
+          // Get the number of solution times for this occasion.
+          nOdeSoln_b = odeSolnTime_b.size();
+  
+          // Skip the call the OdeBreak() for occasions without
+          // ODE solution times.
+          if ( nOdeSoln_b > 0 )
+          {
+            if ( isOutputCompUsed )
+            {
+              // Resize the matrix of amounts for this occasion in all of
+              // compartments for all of the ODE solution times.
+              compAmountAllOdeSoln_b.resize( nComp * nOdeSoln_b );
+    
+              OdeBreak(
+                odeBreakEvalClass,
+                compAmountAllOdeSoln_b,
+                method,
+                breakTime_b,
+                odeSolnTime_b,
+                odeSolnIsLeftCont_b,
+                tolAbs,
+                tolRel );
+  
+              // Put this occasion's amounts onto the vector with all of
+              // the amounts for all of the ODE solution times.
+              for ( p = 0; p < nComp; p++ )
+              {
+                for ( ss = 0; ss < nOdeSoln_b; ss++ )
+                {
+                  compAmountAllOdeSoln[p + ( odeSolnCounter + ss ) * nComp] = 
+                    compAmountAllOdeSoln_b[p + ss * nComp];
+                }
+              }
+            }
+            else
+            {
+              // Resize the matrix of amounts for this occasion in all of
+              // compartments for all of the ODE solution times except for 
+              // the output compartment .
+              compAmountAllOdeSolnNoOutputComp_b.resize( nCompToSolve * nOdeSoln_b );
+    
+              OdeBreak(
+                odeBreakEvalClass,
+                compAmountAllOdeSolnNoOutputComp_b,
+                method,
+                breakTime_b,
+                odeSolnTime_b,
+                odeSolnIsLeftCont_b,
+                tolAbs,
+                tolRel );
+  
+              // Put this occasion's amounts onto the vector with all of
+              // the amounts for all of the ODE solution times except for 
+              // the output compartment .
+              for ( p = 0; p < nCompToSolve; p++ )
+              {
+                for ( ss = 0; ss < nOdeSoln_b; ss++ )
+                {
+                  compAmountAllOdeSolnNoOutputComp[p + ( odeSolnCounter + ss ) * nCompToSolve] = 
+                    compAmountAllOdeSolnNoOutputComp_b[p + ss * nCompToSolve];
+                }
+              }
+            }
+          }
+
+          // Add the number of ODE solutions that were in this
+          // occasion.
+          odeSolnCounter += nOdeSoln_b;
+        }
       }
     }
     catch( SpkException& e )

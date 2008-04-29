@@ -66,6 +66,8 @@ private:
   void isCachingProperlyTest();
   void blockThreeByThreeCovTest();
   void blockFourByFourCovTest();
+  void blockFourByFourCov_oneByOneDiagSameAsPrev_Test();
+  void blockFourByFourCov_twoByTwoFullSameAsPrev_Test();
 };
 
 #endif
