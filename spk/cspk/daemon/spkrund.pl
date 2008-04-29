@@ -251,7 +251,6 @@ if($pvm eq "off") {
 syslog("info","maximum concurrent jobs == $max_concurrent");
 
 my $concurrent = 0;
-my $ncompilation = 0;
 
 my $service_root = "spkrun";
 my $bugzilla_product = "SPK";
@@ -365,12 +364,12 @@ sub fork_driver {
         $ntasks = $jrow->{'parallel'};
         if($ntasks > 0) {
             my $available = $max_concurrent - $concurrent;
-	    if ( $available >= $max_ntasks ) {
-		$ntasks = $max_ntasks;
-	    }
-	    else {
-		$ntasks = $available;
-	    }
+            if($ntasks > $available) {
+                $ntasks = $available;
+            }
+            if($ntasks > $max_ntasks) {
+                $ntasks = $max_ntasks;
+            }
             if($ntasks > 1) {
                 $parallel = 1;
             }
@@ -379,7 +378,6 @@ sub fork_driver {
             $ntasks = 1;
         }
     }
-    $ncompilation++;
 
     # Add ntasks of the job to concurrent ntasks
     $concurrent += $ntasks;
@@ -488,7 +486,6 @@ sub fork_driver {
 	  # Redirect Standard Error to a file
 #          open STDERR, ">$filename_serr";
 
-          kill('ALRM', getppid);
 	  # execute the job driver
           if($pvm eq "on") {
               if($parallel == 1) {
@@ -1147,9 +1144,6 @@ $SIG{'QUIT'} = 'IGNORE';
 # Designate a handler for the "terminate" signal
 $SIG{'TERM'} = \&stop;
 
-# Define a handler for the "alarm" signal
-$SIG{'ALRM'} = sub { $ncompilation-- };
-
 # rerun any jobs that were interrupted when we last terminated
 #my $job_array = &get_run_jobs($dbh);
 #syslog('info', "looking for interrupted computational runs");
@@ -1185,6 +1179,8 @@ syslog('info', "processing new computational runs");
 while(1) {
 #    eval {
     # if there is a job queued-to-run, fork the driver
+    my @a = ("ps -e|grep cc1plus|wc -l");
+    my $ncompilation = `@a`;
     if ($concurrent < $max_concurrent && $ncompilation < $nprocessor) {
         print $sh "get-q2r\n";
         $jobid = <$sh>;
@@ -1220,6 +1216,7 @@ while(1) {
                 if (exists $jobid_pid{$jobid}) {
                     my $cpid = $jobid_pid{$jobid};
                     kill('KILL', $cpid);
+                    delete($jobid_pid{$jobid});
                 }
                 else {
                     abort_job($jobid);
