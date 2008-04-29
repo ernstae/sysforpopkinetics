@@ -71,6 +71,8 @@ private:
   void FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AdditiveY_Test();
   void FourComp_MultInfus_NoCompWithZeroMassAtFirstObserv_AmountAndDerivNanAndInf_AdditiveY_Test();
   void FourComp_MultInfus_SomeCompWithZeroMassAtFirstObserv_AdditiveY_Test();
+
+  void ThreeOccasions_OneExpF_OneBolus_NonObservPred_AdditivePlusThetaDepY_Test();
 };
 
 #endif
