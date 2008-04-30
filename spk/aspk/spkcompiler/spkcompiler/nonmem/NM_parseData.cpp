@@ -389,10 +389,20 @@ void NonmemTranslator::parseData()
 			      "Individual analysis was requested with a population data set!", __LINE__, __FILE__ );
         }
 
-      if( nSubjects != getPopSize() || nSubjects != tmp_ids.size() )
+      if( nSubjects != getPopSize())
+        {
+
+          char m[ SpkCompilerError::maxMessageLen() ];
+          snprintf( m, 
+		SpkCompilerError::maxMessageLen(),
+		"The number of subjects in the data file (%d) did not match the number of unique IDs (%d)!\n", getPopSize(), nSubjects );
+          throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR,m, __LINE__, __FILE__ );
+        }
+      
+      if( nSubjects != tmp_ids.size() )
         {
           throw SpkCompilerException( SpkCompilerError::ASPK_USER_ERR, 
-			      "The number of subjects in the data file did not match the expected number!", __LINE__, __FILE__ );
+			      "The number of subjects in the data file did not match the expected number!nSubjects != tmp_ids.size()", __LINE__, __FILE__ );
         }
 
       N.resize( nSubjects );
