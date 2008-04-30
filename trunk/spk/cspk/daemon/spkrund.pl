@@ -777,7 +777,7 @@ sub reaper {
         $err_msg .= "a known error was detected during post-optimality; ";
         $submit_to_bugzilla &= 0;
     }
-    elsif($child_exit_value ==  202) {
+    elsif($child_exit_value ==  202 || $child_exit_value == 19) {
         $end_code = "optm"; #optimization max iter error
         $err_msg .= "optimization maximum number of iteration error; ";
         $submit_to_bugzilla &= 0;
