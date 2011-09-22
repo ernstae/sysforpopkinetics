@@ -1,0 +1,64 @@
+$begin spkcompiler$$
+$spell
+	aspk
+	nonmem
+	spkpred
+	spk
+	apps
+	autogen
+	cspk
+	cvs
+	makefiles
+	spkcompiler
+	src
+	sudo
+	testall
+$$
+
+$section  Install Spkcompiler$$
+
+$head Dependence$$
+The Spkcompiler library depends on
+$xref/xerces/$$, $xref/cppunit/$$, $xref/cppad/$$,
+$xref/spk/$$, $xref/spkpred/$$, and $xref/ml/$$ being installed.
+
+$head Checkout r2$$
+The r2 repository was checked out with the following command:
+$codep
+	cvs checkout -P r2
+$$
+
+$head Makefiles$$
+The makefiles were configured with the following commands:
+$codep
+	cd r2/src/apps/spk/aspk/spkcompiler
+	./autogen.sh
+$$
+
+$head Build$$
+The Spkcompiler library and unit tests were built with the following command:
+$codep
+	make
+$$
+
+$head Run Tests$$
+The unit tests were run with the following command:
+$codep
+	cd tests/nonmem
+	./testall
+$$
+
+$head Installing Spkpred$$
+The Spkpred library was then installed with the following command:
+$codep
+	sudo make install
+$$
+The install hung when it got to the 
+$codep
+	Making install in doc
+$$
+but this does not matter
+(because we do not have permissive keys set up at the root level).
+
+
+$end

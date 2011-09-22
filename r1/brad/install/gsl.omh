@@ -1,0 +1,39 @@
+$begin gsl$$
+$spell
+	devel
+	gsl gsl
+	sudo
+$$
+
+$section Install GSL$$
+
+$head Run Up2date$$
+The GSL library was installed with the $code up2date$$ command as follows:
+$codep
+	sudo bash
+	up2date gsl gsl-devel
+	exit
+$$
+The following output resulted:
+$nospell
+$codep
+Fetching Obsoletes list for channel: rhel-i386-as-4...
+########################################
+Fetching Obsoletes list for channel: rhel-i386-as-4-extras...
+########################################
+Fetching Obsoletes list for channel: dries...
+Fetching rpm headers...
+########################################
+Name                                    Version        Rel
+----------------------------------------------------------
+gsl-devel                               1.5            2.rhel4           i386
+Testing package set / solving RPM inter-dependencies...
+########################################
+gsl-devel-1.5-2.rhel4.i386. ########################## Done.
+Preparing              ########################################### [100%]
+Installing...
+   1:gsl-devel              ########################################### [100%]
+$$
+$$
+
+$end

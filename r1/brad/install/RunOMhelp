@@ -1,0 +1,8 @@
+# /bin/bash
+if [ -e Doc ]
+then
+	rm -r Doc
+fi
+mkdir Doc
+cd Doc
+omhelp ../install.omh -debug

@@ -1,0 +1,551 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+# O-Matrix (c) Harmonic Software Inc. 1997, All rights reserved.
+#
+#
+# Description: 
+# minimize f(x) subject to 0 <= x <= 1 using the conjugate gradient method.
+#
+# usage: Cg01Box(function fval, xin, eps, delta, mitr, level, xout, fout)
+#
+# fval(x, f_out, g_out)
+# The vector ~x has the same type and dimension as ~xin.
+# It specifies the point at which to evaluate ~f(x).
+# The input value of f_out is either true of false.
+# If it is true, its output value is the value of ~f(x).
+# Otherwise it is unchanged. The input value of ~g_out is
+# either true or false. If it is true, its output value is
+# a vector with the same type and length as ~x and equal
+# to the gradient (or derivative) of f at x 
+# (the i-th element of the output
+# value is equal to the derivative of ~f with respect to the
+# i-th component of ~x). If the input value of ~g_out is
+# false, it is unchanged. The return value of ~fval is true,
+# if it succeeds and false otherwise.
+#
+# xin
+# The real or double-precision column vector ~xin specifies the 
+# initial estimate for the argument that minimizes the function ~f.
+#
+# eps
+# Is a scalar, greater than zero, with the same type as ~xin. 
+# Convergence is accepted when the absolute change in ~x(i) 
+# between iterations is less than ~eps for all i 
+# (and the set of active constraints does not change between iterations).
+# The value ~eps is also used as the initial step size for the line search
+# as a distance in the vector ~x space.
+#
+# delta
+# Is a scalar, greater than zero, with the same type as ~xin.
+# Convergence is accepted when the the absolute change in ~f(x) is
+# less than ~delta.
+#
+# mitr
+# The integer scalar ~mitr specifies the maximum number of 
+# iterations to attempt before giving up on convergence.
+# If ~mitr is zero, convergence is accepted the initial value, ~xin
+# and ~cg01box returns true provied that ~fout and its gradient can be
+# evaluated at ~xin. If ~mitr is nonzero, and convergence is not
+# obtained in ~mitr iterations, ~cg01box returns false (unless level >= 1
+# in which case it returns true and displays a message about not
+# converging in the status and control windows.
+#
+# level
+# The integer scalar level specifies the amount of tracing that is
+# done in the command window
+# if level >= 1, trace the current iteration number as "itr",
+#                the value of the objective function as "f",
+#                and the norm of minus the gradient projected
+#                into the feasible region as "|g|". The norm of
+#                the change in ~x between iterations as "|dx|",
+#                the number of conjugate direction for each
+#                iteration as "ndir", the elapsed time in seconds
+#                as "time". All these values are also traced in a status
+#                dialog. In addition, the current value of 
+#                ~x and ~g are printed in the command window but are not 
+#                traced in the status dialog. The status dialog
+#                is automaticaly dismissed before ~cg01box returns
+#                unless convergence fails, in which case an error message 
+#                is placed in the status window and it can be dismissed 
+#                using its close button.
+# if level >= 2, trace the value of ~x at each iteration as "x", and
+#                the gradient (not projected) as "g".
+# if level >= 3, trace the line search step size as "alp", and the 
+#                corresponding objective values as "f". In addition
+#                the objective value and final ~x value at the end
+#                of each line search are traced as "x" and "f" respectively
+# if level >= 4, the analytic of the objective function with respect to the
+#                optimization parameters is compared with its numerical value
+#                before the optimization process is started. The step size
+#                ~eps is used for central difference approximation of the
+#                derivatives of ~f(x) with respect to ~x.
+#
+# xout
+# The input value of ~xout is either true of false. If it is true,
+# the output value of ~xout has the same type and dimension as ~xin.
+# It contains the value of ~x that minimizes ~f(x) subject to
+# 0 <= x <= 1. If the input value of ~xout is false, it is
+# unchanged.
+#
+# fout
+# The input value of ~fout is either true or false. If it is true,
+# the output value of ~fout is a row vector containing the value
+# of the objective function at each iteration. The value ~fout(j)
+# is the objective function at the begining of the j-th iteration.
+#
+# The return value for cg01box is either true or false. If it is true,
+# the algorithm converged with ~mitr or fewer iterations. Otherwise
+# it failed to converge
+#
+# If ~level >= 1, the status of the optimization procedure is displayed using
+# the routines ~CreateStatusDialog and ~SetStatusDialog in lib\status.oms
+#
+#------------------------------------------------------------------------------
+include chkgrad.oms
+# include any
+include colsum.oms
+# include all
+include status.oms
+include fullprec.oms
+local function active(xcur, gcur) begin
+	lower = xcur == 0 and gcur >= 0
+	upper = xcur == 1 and gcur <= 0
+	return lower or upper
+end
+local function sameLimits(x1, x2) begin
+	limit1 = x1 == 0d0 or x1 == 1d0
+	limit2 = x2 == 0d0 or x2 == 1d0
+	return not any((limit1 or limit2) and x1 <> x2)
+end
+local function callfval(function fval, x, fout) begin
+	lower = x <= 0
+	upper = x >= 1
+	ok = not lower and not upper
+	x = x % ok + upper
+	gout = false
+	ok = fval(x, fout, gout)
+	if not ok then return false
+	if not isfinite(fout) then ...
+		fout = 1. / 0.
+	if not fullprec(fout) then ...
+		fout = 1. / 0.
+	return true
+end
+local function line(function fval, xin, fin, dir, eps, level, xout, minf) begin
+	if type(xin) == "real" then ...
+		epsilon = REAL_EPSILON
+	else	epsilon = DOUBLE_EPSILON
+	#
+	x0 = xin
+	f0 = fin
+	if level >= 3 then begin
+		print "f0 =", f0, "dir =", dir'
+	end
+	#
+	# minimize f flag
+	minf = false
+	#
+	# initial step size for line search
+	alp = eps / 3
+	#
+	# next value of f 
+	x1 = x0 + alp * dir
+	f1 = true
+	ok = callfval(function fval, x1, f1)
+	if not ok then begin
+		stop
+		xout = xin
+		return false
+	end
+	if level >= 3 then begin
+		print "alp =", alp, "f1 =", f1
+	end
+	#
+	# if function is increasing, reverse direction
+	if f1 > f0 then begin
+		#
+		f0  = f1 
+		x0  = x1
+		#
+		x1  = xin
+		f1  = fin
+		#
+		dir = -dir
+	end
+	#
+	x3 = x0 + 3 * alp * dir
+	f3 = true
+	ok = callfval(function fval, x3, f3)
+	if not ok then begin
+		stop
+		xout = x1
+		return false
+	end
+	if level >= 3 then begin
+		print "alp =", alp, "f3 =", f3
+	end
+	#
+	count = 0 
+	while f1 > f3 begin 
+		count= count + 1
+		if count > 20 then begin
+			if level > 0 then begin
+				print "line search failed"
+			end
+			return false
+		end
+		alp = 2 * alp
+		#
+		x0 = x1
+		f0 = f1 
+		#
+		x1 = x3
+		f1 = f3
+		# 
+		x3 = x0 + 3 * alp * dir
+		f3 = true 
+		ok = callfval(function fval, x3, f3)
+		if not ok then begin
+			stop
+			xout = x1
+			return false
+		end
+		if level >= 3 then begin
+			print "alp =", alp, "f3 =", f3, "x3 =", x3'
+		end
+	end
+	#
+	# define h(t) to be the the quadratic function such that
+	# h(t) = f(x0 + t * alp * dir) for t = 0, 1, 3
+	#
+	# h(t) = f0 * (1 - t) * (3 - t) / 3
+	#      + f1 * (t - 0) * (3 - t) / 2
+	#      + f3 * (t - 0) * (t - 1) / 6
+	#
+	#      = f0 * (+ t^2 - 4 * t + 3) / 3
+	#      + f1 * (- t^2 + 3 * t + 0) / 2
+	#      + f3 * (+ t^2 - 1 * t + 0) / 6
+	#
+	# h'(0)
+	hp  = - 4d0 * f0 / 3d0 + 3d0 * f1 / 2d0 - 1d0 * f3 / 6d0
+	#
+	# h''(0)
+	hpp = 2d0 * (+ f0 / 3d0 - f1 / 2d0 + f3 / 6d0)
+	#
+	# determine the argument that minimizes h(t)
+	# (should be between 0 and 3)     
+	if |hpp| <= |hp| / 3d0 then ...
+		t = 0d0
+	else	t = - hp / hpp
+	#
+	xtmp = x0 + t * alp * dir
+	ftmp = true
+	ok = callfval(function fval, xtmp, ftmp)
+	if not ok then begin
+		stop
+		xout = x1
+		return false
+	end
+	#
+	# return value 
+	if f1 > ftmp then begin
+		xout = xtmp
+		minf = (t <> 0d0 or hp == 0d0) and sameLimits(xout, xin)
+		if level >= 3 then begin
+			print "f  =", ftmp
+			print "x' =", xout'
+		end
+		return true
+	end	
+	#
+	xout = x1
+	if level >= 3 then begin
+			print "f  =", f1
+			print "x' =", xout'
+	end
+	return true
+end
+function Cg01Box(function fval, ...
+	xin, eps, delta, mitr, level, xout, fout) begin
+	#
+	t0     = time                # starting time for optimization
+	nx     = rowdim(xin)         # dimension of x space
+	xcur   = xin                 # current x
+	fcur   = true                # current f
+	gcur   = true                # current gradient of f
+	epsline= .1                  # initial epsilon in line search
+	gOk = fval(xcur, fcur, gcur)
+	if rowdim(gcur) == 1 then gcur = gcur'
+	if not gOk then ...
+		return false
+	#
+	fhis   = fcur                # history of f values
+	#
+	# check the gradient
+	if level >= 4 then begin
+		chkgrad(function fval, fcur, gcur, xcur, fill(eps, nx, 1))
+	end
+	#
+	# initialize output values
+	if fout then fout = fhis
+	if xout then xout = xcur
+	#
+	# trace input state
+	gtmp = gcur % (not active(xcur, gcur))
+	if level >= 1 then begin
+		#
+		print "itr =", 0, "f =", fcur, "|g| =", |gtmp|, "time =", time - t0
+		print "x'  =", xcur'
+		print "g'  =", gcur'
+		#
+	end
+	#
+	if mitr == 0 then return true
+	#
+	caption = "Optimization Status"
+	nr      = 8
+	nc      = 30
+	option  = "enable"
+	if level >= 1 then begin
+		CreateStatusDialog(caption, nr, nc, option)
+		status = { ["itr  = 0"], ...
+	          ["f    = ", ntoa(fcur)], ...
+	          ["|g|  = ", ntoa(|gtmp|)], ...
+	          ["time = ", ntoa(time - t0)] ...
+		}
+		dt = 1.
+		SetStatusDialog(status, dt)
+	end
+	#
+	for itr = 1 to mitr begin
+		# begin next iteration
+		#
+		# counter for number of conjugate directions
+		j     = 0
+		#
+		# initial values for this iteration
+		xitr = xcur
+		fitr = fcur
+		gitr = gcur
+		#
+		# initial set of free components for this iteration
+		free  = not active(xitr, gitr)
+		#
+		# directions only involve free compoents
+		dcur = - gitr.row(free)
+		#
+		# convergence checks done before iteration
+		if any(free) then ...
+			converge = max(abs(dcur)) < DOUBLE_MIN
+		else	converge = true
+		#	
+		if converge then begin
+			if level >= 1 then begin
+				DeleteStatusDialog
+				gtmp  = gcur % (not active(xcur, gcur))
+				print "x'  =", xcur'
+				print "g'  =", gcur'
+				print "cg01box converged on input values"
+			end
+			return true
+		end
+		#
+		itrdone = false
+		lineOk  = novalue
+		while not itrdone begin
+			# increment direction counter
+			j = j + 1
+			#
+			# line search direction from current point
+			dir            = fill(0, nx, 1)
+			dmax           = max(abs(dcur))
+			dir.row(free)  = (1d0 + eps) * dcur / dmax
+			#			
+			xnew = novalue
+			fnew = true
+			gnew = true
+			minf = novalue
+			lineOk = line(function fval, ...
+				xcur, fcur, dir, epsline, level, xnew, minf)
+			if lineOk then ...
+				gOk = fval(xnew, fnew, gnew)
+			else	gOk = false
+			if not gOk then begin
+				# terminate iteration
+				if j == 1 and epsline <= eps then begin
+					# terminate optimization procedure
+					if level >= 1 then begin
+						status = { status, ...
+						[ "cg01box cannot evaluate gradient at iteration", ntoa(itr)] ...
+						}
+						print status.row(rowdim(status))
+						dt = 1.
+						SetStatusDialog(status, dt)
+					end
+					return false
+				end
+				itrdone = true
+			end else begin
+				if rowdim(gnew) == 1 then ...
+					gnew = gnew'
+				# compute next direction using Fletcher-Reeves Method, page 182 of
+				# Introduction to Linear and Nonlinear Programming by Luenberger
+				gnewfree  = gnew.row(free)
+				gcurfree  = gcur.row(free)
+				beta      = (gnewfree' * gnewfree) / (gcurfree' * gcurfree)
+				dcur      = - gnewfree + beta * dcur
+				#
+				# save the difference between ~x values
+				dx = xnew - xcur
+				#
+				# check that we minimized f during the line search
+				itrdone = false
+				minf    = minf or epsline <= eps
+				if not minf then begin
+					if level >= 1 then begin
+						print "line search not optimal"
+					end
+					itrdone = true
+				end
+				#
+				# check for direction to small
+				if |dcur| < |gitr| * 1e-14 then begin
+					if level >= 1 then begin
+						print "search direction to small"
+					end
+					itrdone = true
+				end
+				#
+				# check for gradient to small
+				if |gnewfree| < |gitr| * 1e-14 then begin
+					if level >= 1 then begin
+						print "gradient is to small"
+					end
+					itrdone = true
+				end
+				#
+				# check for change in ~x to small
+				if |dx| < eps * 1e-3 then begin
+					if level >= 1 then begin
+						print "change in x to small"
+					end
+					itrdone = true
+				end
+				#
+				# check for maximum number of directions
+				itrdone = itrdone or j >= colsum(free) + 1
+				itrdone = itrdone or j >= 20
+				#
+				# advance xcur, fcur and gcur
+				xcur = xnew
+				fcur = fnew
+				gcur = gnew
+				#
+				# display status
+				df    = fitr - fcur
+				if level >= 1 then begin
+					status = { ...
+						["itr   = ", ntoa(itr)], ...
+						["ndir  = ", ntoa(j)], ...	
+						["f     = ", ntoa(fcur)], ...
+						["|g|   = ", ntoa(|gcur|)], ...
+						["|dx|  = ", ntoa(|xcur - xitr|)], ...
+						["df    = ", ntoa(df)], ...
+						["time  = ", ntoa(time - t0)] ...
+					}
+					dt = 1.
+					SetStatusDialog(status, dt)
+				end
+				#
+				# check for change of active set
+				if any(free <> not active(xcur, gcur)) then begin
+					if level >= 1 then ...
+						print "Active set changed"
+					itrdone = true
+				end	
+			end
+		end
+		# done with this iteration
+		#
+		# check if the constraint set changed
+		change = any(free <> not active(xcur, gcur))
+		#
+		dx    = xcur - xitr
+		gtmp  = gcur % (not active(xcur, gcur))
+		df    = fitr - fcur
+		if level >= 1 then begin
+			print ...
+			"itr    =", itr, ...
+			"f      =", fcur, ...
+			"|g|    =", |gtmp|, ...
+			"|dx|   =", |dx|, ...
+			"df     =", df, ...
+			"epsline=", epsline, ...
+			"ndir   =", j, ...
+			"change =", change, ...
+			"time   =", time - t0
+		end
+		converge = all(abs(dx) <= eps) and epsline == eps
+		converge = converge or abs(df) <= delta
+		converge = converge and (not change) and lineOk and minf
+		last     = converge or itr == mitr
+		if level >= 2 then begin
+			print "x'  =", xcur'
+			print "g'  =", gcur'
+		end
+		#
+		fhis = [fhis, fcur]
+		#
+		# update output values
+		if type(fout) <> "logical" then fout = fhis
+		if type(xout) <> "logical" then xout = xcur
+		#
+		if converge then begin
+			if level >= 1 then begin
+				DeleteStatusDialog
+				gtmp  = gcur % (not active(xcur, gcur))
+				print "x'  =", xcur'
+				print "g'  =", gcur'
+				print "cg01box converged"
+			end
+			return true
+		end
+		#
+		# set epsline for next iteration
+		if not lineOk or not gOk or not minf then ...
+			epsline = epsline / 10.
+		else	epsline = |dx| / 5.
+		if epsline < eps then epsline = eps
+	end   
+	# done with all iteration
+	#
+	if level >= 1 then begin
+		status = { status, ...
+			[ "No convergence in ", ntoa(mitr), " iterations"] ...
+		}
+		print status.row(rowdim(status))
+		dt = 0.
+		SetStatusDialog(status, dt)
+		return true
+	end
+	return false
+end

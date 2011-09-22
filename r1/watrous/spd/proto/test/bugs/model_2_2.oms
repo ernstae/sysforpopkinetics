@@ -1,0 +1,229 @@
+# Generated Model file from Mathematica 
+
+clear List
+clear RList
+clear Problem
+clear Model
+
+# this converts the annoying Fortran syntax of List(...0) to {...}
+function [ list ] = List() begin
+	list = zeros(arg(0),rowdim(arg(1)))
+	for i = 1 to arg(0) begin
+		list.row(i) = arg(i)
+	end
+end
+
+# this converts the annoying Fortran syntax of List(...0) to [...]
+function [ list ] = RList() begin
+	list = zeros(rowdim(arg(1)),arg(0))
+	for i = 1 to arg(0) begin
+		list.col(i) = arg(i)
+	end
+end
+
+# define the problem
+function Problem (problem, output_file, xStep, xLow, xUp, xIn, alpStep, alpIn, alpLow, alpUp, K, eps, delta, mitr, level, covariates, bLength, alpLength, xLength) begin
+	
+	problem = "Laplace test 2.2"
+	output_file = "output_2_2"
+
+  #[Remove]========================
+  #
+	#xLow = List(1d0,1d0,1d0) 
+	#xUp = List(91d0,91d0,91d0)
+	#xIn = List(91d0,9.38d0,1.d0)
+	xLow = List(1d0,1d0,1d0) 
+	xUp = List(91d0,91d0,91d0)
+	xIn = List(1.2d0,1.1d0,1.d0)
+  #
+  #[Remove]========================
+	xStep = List(1d-3,1d-3,1d-3) 
+
+	eps = List(1d-4,1d-4)
+	delta = List(1d-10,10d-10)
+
+	alpStep = List(1d-3,1d-3,1d-3,1d-3,1d-3,1d-3,1d-3,1d-3)
+
+	covariates = List(0d0)
+
+  #[Remove]========================
+  #
+	#mitr = int( List(20,20) )
+	mitr = int( List(0,0) )
+  #
+  #[Remove]========================
+	level = int( List(0,1) )
+
+	K = int( List(3) )
+
+	bLength = int( 4 )
+	alpLength = int( 8 )
+	
+#	xLength = int( 1 )
+	xLength = rowdim( xLow )
+
+	ap1 = List(12.142d0,0.442d0,8.24d0,0.04373d0,2.2d0,0.021d0,1.53d0,2.66d-4) 
+	ap2 = ap1 % 0.01d0
+
+	kludgey_constant = 1.5d0
+
+	if "normal" == "uniform" then begin
+		# for the Uniform case, we'll assume that we don't want to search for alphas outside the distribution bound
+		alpIn = List(abs(12.142d0 + (-12.142d0 + ap1 % 0.01d0)/2.0),abs(0.442d0 + (-0.442d0 + ap1 % 0.01d0)/2.0),abs(8.24d0 + (-8.24d0 + ap1 % 0.01d0)/2.0),abs(0.04373d0 + (-0.04373d0 + ap1 % 0.01d0)/2.0),abs(2.2d0 + (-2.2d0 + ap1 % 0.01d0)/2.0),abs(0.021d0 + (-0.021d0 + ap1 % 0.01d0)/2.0),abs(1.53d0 + (-1.53d0 + ap1 % 0.01d0)/2.0),abs(2.66d-4 + (-2.66d-4 + ap1 % 0.01d0)/2.0)) 
+		alpUp = ap1 % 0.01d0 - 2.0d0 % kludgey_constant % alpStep
+		alpLow = List(12.142d0,0.442d0,8.24d0,0.04373d0,2.2d0,0.021d0,1.53d0,2.66d-4) + 2.0d0 % kludgey_constant % alpStep
+
+	end else begin
+		# for the Gaussians, start at the mean
+		alpIn = List(12.142d0,0.442d0,8.24d0,0.04373d0,2.2d0,0.021d0,1.53d0,2.66d-4) 
+		# the low and high should be set to mean(+/-)SD%C, where
+		# C is really quite arbitrary
+		alpUp = List(12.142d0,0.442d0,8.24d0,0.04373d0,2.2d0,0.021d0,1.53d0,2.66d-4) % kludgey_constant 
+		alpLow = List(12.142d0,0.442d0,8.24d0,0.04373d0,2.2d0,0.021d0,1.53d0,2.66d-4) / kludgey_constant 
+
+		# for the lognormal case, we should temper the low bounds to
+		# exclude negative values
+		if "normal" == "lognormal" then begin
+			alpLow = rowmax([ zeros(alpLength,1), alpLow ]) 
+		end
+	end
+
+	# some foolishness I pulled from derivative analysis of the model
+	if ( 1 == 0 ) then begin
+
+		xIn = double ( zeros( xLength, 1) )
+		xPossible = double ( List(-0.41657224114228103,-0.07147082051366915,-0.4165722411422777,-0.07147082051366922) )
+
+		n_poss = rowdim(xPossible)
+
+		# check for sign reversal
+		xPossible = xPossible % sign(xPossible)
+
+		# so let's slap some of the possibles into the design guess
+		j = 1
+		for i = 1 to xLength begin
+			if j > n_poss then j = 1
+
+			# bounds checking
+			if xPossible(j) > xUp(i) then xIn(i) = xUp(i)
+			else if xPossible(j) < xLow(i) then xIn(i) = xLow(i)
+			else xIn(i) = xPossible(j)
+
+			j = j +1
+		end
+
+		print "WARNING: using the (highly suspect) experimental design guess algorithm."
+		print "Guess for the design:"
+		print xIn
+	end	
+
+end
+
+# define the model function
+function Model (i, x, alpha, b, fOut, f_xOut, f_alpOut, f_bOut, f_b_xOut, f_b_alpOut, ROut, R_xOut, R_alpOut, R_bOut, DOut, D_alpOut, palpOut, palp_alpOut) begin
+
+	n_bpop = 4
+	n_x = rowdim(x)
+	n_b = 4
+	n_alp = 8
+	n_d = 4
+
+	bpop = alpha.row(1,n_bpop)
+	d = alpha.row(n_bpop+1,n_d)
+
+	ap1 = List(12.142d0,0.442d0,8.24d0,0.04373d0,2.2d0,0.021d0,1.53d0,2.66d-4) 
+	ap2 = ap1 % 0.01d0
+
+	covariates = List(0d0)
+
+	if type(i) == "novalue" then begin
+		#print "WARNING: Model() called without individual index."
+		i = 1
+	end
+
+	# for this individual
+	a = covariates.row(i)
+
+	if fOut or ROut or R_xOut or R_alpOut or R_bOut then ...
+		fOut = log(exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))/log(1d1)
+
+	if f_xOut then ...
+		f_xOut = diag ( (exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%(-b(3) - bpop(3)) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%(-b(4) - bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)) )
+
+	if f_alpOut or R_alpOut then ...
+		f_alpOut = RList(exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),-((exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%x)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1))),-((exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%x)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1))),double(zeros(n_x,1)),double(zeros(n_x,1)),double(zeros(n_x,1)),double(zeros(n_x,1)))
+
+
+	if f_bOut or R_bOut then ...
+		f_bOut = RList(exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),-((exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%x)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1))),-((exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%x)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1))))
+
+
+	if f_b_xOut then begin
+		f_b_xOut = RList((exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%(-b(3) - bpop(3)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)) - (exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%(exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%(-b(3) - bpop(3)) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%(-b(4) - bpop(4))))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1)),-((exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%(exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%(-b(3) - bpop(3)) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%(-b(4) - bpop(4))))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1))) + (exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%(-b(4) - bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),-(exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1))) - (exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%x%(-b(3) - bpop(3)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)) + (exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%x%(exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%(-b(3) - bpop(3)) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%(-b(4) - bpop(4))))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1)),-(exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1))) + (exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%x%(exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%(-b(3) - bpop(3)) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%(-b(4) - bpop(4))))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1)) - (exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%x%(-b(4) - bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)))
+
+		calc = f_b_xOut
+		f_b_xOut=double(zeros(n_b%n_x,n_x))
+		for j = 1 to n_x begin
+			f_b_xOut.blk(1+(j-1)%n_b,j,n_b,1) = calc.row(j)'
+		end
+	end
+
+	if f_b_alpOut then begin
+		f_b_alpOut = RList(-(exp(2%b(1) + 2%bpop(1) - 2%x%(b(3) + bpop(3)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1))) + exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),-(exp(2%b(2) + 2%bpop(2) - 2%x%(b(4) + bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),-((exp(2%b(1) + 2%bpop(1) - 2%x%(b(3) + bpop(3)))%x^2)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1))) + (exp(b(1) + bpop(1) - x%(b(3) + bpop(3)))%x^2)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),-((exp(2%b(2) + 2%bpop(2) - 2%x%(b(4) + bpop(4)))%x^2)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))^2%log(1d1))) + (exp(b(2) + bpop(2) - x%(b(4) + bpop(4)))%x^2)/((exp(b(1) + bpop(1) - x%(b(3) + bpop(3))) + exp(b(2) + bpop(2) - x%(b(4) + bpop(4))))%log(1d1)),double(zeros(n_x,1)),double(zeros(n_x,1)),double(zeros(n_x,1)),double(zeros(n_x,1)))
+
+		calc = f_b_alpOut
+		f_b_alpOut=double(zeros(n_b%n_x,n_alp))
+		for j = 1 to n_x begin
+			f_b_alpOut.blk(1+(j-1)%n_b,1,n_b,n_bpop) = diag(calc.blk(j,1,1,n_bpop))
+		end
+	end
+
+	if ROut then ...
+		ROut = diag( double(0.267d0^2) % double(ones(n_x,1)) )
+
+	if R_xOut then begin
+		R_xOut = double( zeros(n_x,n_x) )
+
+		calc = R_xOut
+		R_xOut=zeros(n_x%n_x,n_x)
+		for j = 1 to n_x begin
+			R_xOut.col(j) = reshape( diag(calc.col(j)), n_x%n_x, 1)
+		end
+	end
+
+	if R_alpOut then begin
+		R_alpOut = double( zeros(n_x,n_alp) )
+
+		calc = R_alpOut
+		R_alpOut=zeros(n_x%n_x,n_alp)
+		for j = 1 to n_alp begin
+			R_alpOut.col(j) = reshape( diag(calc.col(j)), n_x%n_x, 1)
+		end
+	end
+
+	if R_bOut then begin
+		R_bOut = double( zeros(n_x,n_b) )
+
+		calc = R_bOut
+		R_bOut=zeros(n_x%n_x,n_b)
+		for j = 1 to n_b begin
+			R_bOut.col(j) = reshape( diag(calc.col(j)), n_x%n_x, 1)
+		end
+	end
+
+	if DOut then ...
+		DOut = diag( d ) 
+
+	if D_alpOut then ...
+		D_alpOut = double( zeros(n_b^2,n_alp) ) 
+
+	if palpOut then ...
+		palpOut = exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))/(16.%pi^4%ap2(1)%ap2(2)%ap2(3)%ap2(4)%ap2(5)%ap2(6)%ap2(7)%ap2(8))
+
+	if palp_alpOut then ...
+		palp_alpOut = RList(-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(1) + bpop(1)))/(16.%pi^4%ap2(1)^3%ap2(2)%ap2(3)%ap2(4)%ap2(5)%ap2(6)%ap2(7)%ap2(8)),-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(2) + bpop(2)))/(16.%pi^4%ap2(1)%ap2(2)^3%ap2(3)%ap2(4)%ap2(5)%ap2(6)%ap2(7)%ap2(8)),-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(3) + bpop(3)))/(16.%pi^4%ap2(1)%ap2(2)%ap2(3)^3%ap2(4)%ap2(5)%ap2(6)%ap2(7)%ap2(8)),-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(4) + bpop(4)))/(16.%pi^4%ap2(1)%ap2(2)%ap2(3)%ap2(4)^3%ap2(5)%ap2(6)%ap2(7)%ap2(8)),-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(5) + d(1)))/(16.%pi^4%ap2(1)%ap2(2)%ap2(3)%ap2(4)%ap2(5)^3%ap2(6)%ap2(7)%ap2(8)),-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - ...
+    (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(6) + d(2)))/(16.%pi^4%ap2(1)%ap2(2)%ap2(3)%ap2(4)%ap2(5)%ap2(6)^3%ap2(7)%ap2(8)),-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(7) + d(3)))/(16.%pi^4%ap2(1)%ap2(2)%ap2(3)%ap2(4)%ap2(5)%ap2(6)%ap2(7)^3%ap2(8)),-(exp(-(-ap1(1) + bpop(1))^2/(2.%ap2(1)^2) - (-ap1(2) + bpop(2))^2/(2.%ap2(2)^2) - (-ap1(3) + bpop(3))^2/(2.%ap2(3)^2) - (-ap1(4) + bpop(4))^2/(2.%ap2(4)^2) - (-ap1(5) + d(1))^2/(2.%ap2(5)^2) - (-ap1(6) + d(2))^2/(2.%ap2(6)^2) - (-ap1(7) + d(3))^2/(2.%ap2(7)^2) - (-ap1(8) + d(4))^2/(2.%ap2(8)^2))%(-ap1(8) + d(4)))/(16.%pi^4%ap2(1)%ap2(2)%ap2(3)%ap2(4)%ap2(5)%ap2(6)%ap2(7)%ap2(8)^3))
+
+	return true
+end
+

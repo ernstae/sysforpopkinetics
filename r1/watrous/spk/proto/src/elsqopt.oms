@@ -1,0 +1,457 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+
+#begin##
+$begin ElsqOpt$$
+$escape #$$
+
+$spell
+	Rval
+	fval
+	Elsq
+	Info
+	ok
+	exp
+	mitr
+	eps
+	diag
+	Obj
+	Kronecker
+	oms
+$$
+
+$section Optimizing The Extended Least Squares Objective Function$$
+
+$cindex extended least squares optimization$$
+$index ElsqOpt$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/ElsqOpt( ...
+function /Model/, ...
+/y/, ...
+/eps/, ...
+/delta/, ...
+/mitr/, ...
+/level/, ...
+/bIn/, /bLow/, /bUp/, /bOut/, /bStep/, ...
+/ElsqObjOut/, /ElsqObj_bOut/, /ElsqObj_b_bOut/, ...
+/InfoOut/ ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Minimizes the extended least squares objective function. To be specific,
+$math%
+	#minimize ElsqObj(b) #subject #to bLow #le b #le bUp
+%$$
+where the function $math%ElsqObj(b)%$$ is defined by
+$math%
+            1 %          %            1          T    -1
+ElsqObj(b) = - #logdet[ 2 #pi R(b) ] + - [y - f(b)] R(b) [y - f(b)]
+            2 %          %            2
+%$$
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $code ElsqOpt$$ is true if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/b/, /fOut/, /f_bOut/, /ROut/, /R_bOut/)
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the parameter vector 
+and has the same length as $italic bIn$$.
+The $xref/glossary/Output Value/output value/$$ $italic fOut$$
+is a double-precision column vector equal to $math%f(b)%$$.
+The output value $italic f_bOut$$
+is a double-precision matrix equal to $math%f_b(b)%$$.
+The output value $italic ROut$$
+is a double-precision column vector equal to $math%R(b)%$$.
+The output value $italic R_bOut$$
+is a double-precision matrix equal to $math%R_b(b)%$$.
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector containing the data vector.
+$syntax/
+
+/eps/
+/$$
+is a double-precision scalar greater than zero. 
+A parameter value $math%bOut%$$ is accepted when an approximation for
+$math%abs(bOut - bHat)%$$ is element-by-element less than or equal
+$math%eps (bUp - bLow)%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%bHat%$$ is the true minimizer of the objective function.
+The approximation mentioned above is quick to
+calculate during the optimization procedure.
+A more accurate approximation of the distance
+to the solution can be calculated using the first and second
+derivatives of the objective function at $math%bOut%$$.
+$syntax/
+
+/delta/
+/$$
+is a double-precision scalar greater than zero.
+A parameter value $math%bOut%$$ is accepted when 
+$math%
+	ElsqObj(bOut) - ElsqObj(bHat) #le delta
+%$$
+where $math%bHat%$$ is its true minimizer of $math%ElsqObj(b)%$$.
+$syntax/
+
+/mitr/
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+$syntax/
+
+/level/
+/$$
+this integer scalar specifies the amount of tracing.
+$math%
+level #ge 1
+%$$
+the current value of the objective is printed
+with the label $code f$$ and the norm of the gradient is
+printed with the label $code |g|$$ 
+(not including the constrained directions in the gradient).
+In addition, the total time between calling $code mapOpt$$ and its
+return is printed.
+$math%
+level #ge 2
+%$$
+the current value of $math%b%$$ is 
+printed with the label $code x$$, and the gradient of the
+objective is printed with the label $code g$$
+(not including the constrained directions in the gradient).
+$math%
+level #ge 3
+%$$
+the step size and function values are traced
+during each line search procedure.
+$math%
+level #ge 4
+%$$
+the analytic of the objective function with respect to the
+$math%b%$$ is compared with its numerical approximation.
+$syntax/
+
+/bIn/
+/$$
+The double-precision column vector $italic bIn$$
+specifies the initial value for the parameter vector 
+during the optimization procedure.
+$syntax/
+
+/bLow/
+/$$
+The double-precision column vector $italic bLow$$
+specifies the lower limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bUp/
+/$$
+The double-precision column vector $italic bUp$$
+specifies the upper limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bOut/
+/$$
+the output value $italic bOut$$
+is a double-precision column vector containing the 
+approximately optimal value for $math%b%$$.
+$syntax/
+
+/bStep/
+/$$
+The double-precision column vector $italic bStep$$
+specifies the step size used for approximating
+the derivative of $math%ElsqObj_b(b)%$$.
+This is not used unless 
+the input value of $italic ElsqObj_b_bOut%$$ is true.
+$syntax/
+
+/ElsqObjOut/
+/$$
+the output value $italic ElsqObjOut$$
+is a row vector containing the value of the objective function
+at each iteration of the optimizer.
+$syntax/
+
+/ElsqObj_bOut/
+/$$
+the output value $italic ElsqObj_bOut$$
+is a row vector containing the derivative of the objective function; i.e.,
+$math%ElsqObj_b(b)%$$.
+$syntax/
+
+/ElsqObj_b_bOut/
+/$$
+the output value $italic ElsqObj_b_bOut$$
+is a matrix containing an approximation for second 
+derivative of the objective function; i.e.,
+$math%ElsqObj_b_b(b)%$$
+This approximation is formed using central
+differences of the function $math%ElsqObj_b(b)%$$ with
+step sizes specified by $italic bStep$$.
+$syntax/
+
+/InfoOut/
+/$$
+the output value $italic InfoOut$$ 
+is a matrix containing the information matrix 
+corresponding to $italic bOut$$; i.e., it is equal to
+$math%
+	1       T     -1     -1                       -1
+	- R_b(b) [ R(b) @ R(b) ] R_b(b)  +  f_b(b) R(b)  f_b(b)
+	2
+%$$
+where $math%b%$$ is equal to $italic bOut$$ and $math%@%$$ 
+denotes the Kronecker product of matrices.
+$head Example$$
+Suppose that
+$math%
+       /  #exp[b(1)]     0  \ 
+R(b) = |  %      %          | 
+       \  0      #exp[b(1)] /
+
+       / b(2) \        / 1 \
+f(b) = |      |   y =  |   |
+       \ b(2) /        \ 3 /
+%$$
+It follows that
+$math%                         
+	ElsqObj(b) = #log{2 #pi #exp[b(1)]} 
+	           + (1/2) [1 - b(2)]^2 #exp[-b(1)]
+	           + (1/2) [3 - b(2)]^2 #exp[-b(1)]
+%$$
+The gradient of $math%ElsqObj(b)%$$ is equal to
+$math%
+/ 1 - (1/2) {[1 - b(2)]^2 + [3 - b(2)]^2} #exp[-b(1)] \
+|                                         %           |
+\     -{[1 - b(2)] + [3 - b(2)]} #exp[-b(1)]          /
+%$$
+The first order necessary condition for a minimum is 
+that the gradient is zero. This is true when
+$math%b(2) = 2%$$ and $math%b(1) = 0%$$.
+$pre
+
+$$
+Taking the derivative of the gradient above,
+and evaluating at $math%b(2) = 2%$$ and $math%b(1) = 0%$$, we obtain
+$math%
+                 / 1   0 \
+ElsqObj_b_b(b) = |       |
+                 \ 0   2 /
+%$$
+$pre
+
+$$
+If you enter
+$codep
+
+clear
+include ElsqOpt.oms
+#
+function Model(b, fOut, f_bOut, ROut, R_bOut) begin
+	if fOut then ...
+		fOut = {b(2), b(2)}
+	if f_bOut then ...
+		f_bOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 1 ] ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ exp(b(1)) ,   0   ], ...
+		[ 0    ,  exp(b(1)) ] ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		[ exp(b(1)) , 0 ], ...
+		[ 0         , 0 ], ...
+		[ 0         , 0 ], ...
+		[ exp(b(1)) , 0 ] ...
+	}
+	return true
+end
+y             = {1, 3}
+eps           = 1e-3
+delta         = 1e-7
+mitr          = 40
+level         = 0
+bIn           = {2., 2.}
+bUp           = {4., 4.}
+bLow          = -{4., 4.}
+bOut          = true
+bStep         = {1e-3, 1e-3}
+ElsqObjOut     = true
+ElsqObj_bOut   = true
+ElsqObj_b_bOut = true
+InfoOut        = true
+ok = ElsqOpt( ...
+	function Model, y, ...
+	eps, delta, mitr, level, ...
+	bIn, bLow, bUp, bOut, bStep, ...
+	ElsqObjOut, ElsqObj_bOut, ElsqObj_b_bOut, ...
+	InfoOut ...
+)
+print "ok              =", ok
+print "bOut'           =", bOut'
+print "ElsqObj_bOut    =", ElsqObj_bOut
+print "ElsqObj_b_bOut  =", ElsqObj_b_bOut
+print "InfoOut         =", InfoOut
+
+$$
+O-Matrix will respond
+$codep
+	ok              = T 
+	bOut'           = [ 2.14153e-006 , 2 ] 
+	ElsqObj_bOut    = [ 2.14153e-006 , 0 ] 
+	ElsqObj_b_bOut  = {
+	[ 0.999998 , 0 ]
+	[ 0 , 2 ]
+	}
+
+	InfoOut         = {
+	[ 1 , 0 ]
+	[ 0 , 2 ]
+	}
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+include ElsqObj.oms
+include cganybox.oms
+#
+local Ok = novalue
+local function ElsqObjGradient(function Model, y, b) begin
+	value = true
+	if Ok then ...
+		Ok = ElsqObj(function Model, y, b, false, value)
+	if Ok then ...
+		return value'
+	zero = fill(0, rowdim(b), 1)
+	return zero
+end
+function ElsqOpt( ...
+	function Model, ...
+	y,  ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	bIn, ...
+	bLow, ...
+	bUp, ...
+	bOut, ...
+	bStep, ...
+	ElsqObjOut, ...
+	ElsqObj_bOut, ...
+	ElsqObj_b_bOut, ...
+	InfoOut ...
+) begin
+	#
+	# arguments for CgAnyBox
+	function fval = ElsqObj(Model, y)
+	xOut          = true
+	# eps = eps
+	# delta = delta
+	# mitr  = mitr
+	# xLow  = bLow
+	# xUp   = bUp
+	# xIn   = bIn
+	# fOut  = ElsqObjOut
+	# level = level
+	#
+	Ok = CgAnyBox( ...
+		function fval, ...
+		eps, ...
+		delta, ...
+		mitr, ...
+		bLow, ...
+		bUp, ...
+		bIn, ...
+		xOut, ...
+		ElsqObjOut, ...
+		level ...
+	)
+	if not Ok then begin
+		stop
+		return false
+	end
+	#
+	if bOut then ...
+		bOut = xOut
+	if ElsqObj_bOut then ...
+		Ok = ElsqObj(function Model, y, xOut, false, ElsqObj_bOut)
+	if not Ok then begin
+		stop
+		return false
+	end
+	if ElsqObj_b_bOut then begin
+		function F    = ElsqObjGradient(Model, y)
+		x             = xOut
+		h             = bStep
+		ElsqObj_b_bOut = cendiff(function F, x, h)'
+	end
+	if not Ok then begin
+		stop
+		return false
+	end
+	if InfoOut then begin
+		f   = false
+		f_b = true
+		R   = true
+		R_b = true   
+		Ok = Model(xOut, f, f_b, R, R_b)
+		Ri  = inv(R)
+		InfoOut = .5d0 * R_b' * AkronBtimesC(Ri, Ri, R_b) + f_b' * Ri * f_b
+	end
+	return Ok
+end
+
+end # blocking for automatic include

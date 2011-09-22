@@ -1,0 +1,285 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+
+#begin##
+$begin MapObjDiff$$
+$escape #$$
+
+$spell
+	Rval
+	fval
+	Bayesian
+	ok
+	Diff
+	Obj
+$$
+
+$section Central Differences Of Map Bayesian Objective Function$$
+
+$index MapObj$$
+$cindex central difference #of map Bayesian objective function$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/MapObjDiff( ...
+function /Model/, ...
+/D/, ...
+/y/,  ...
+/bStep/, ...
+/b/, ...
+/MapObj_bOut/, /MapObj_b_bOut/, ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Evaluates central differences of the map Bayesian objective function
+and its derivative. To be specific, the map Bayesian objective is
+$math%
+            1 %          %            1          T   -1
+MapObj(b) = - #logdet[ 2 #pi R(b) ] + - [y - f(b)] R(b) [y - f(b)]
+            2 %          %            2
+
+            1 %          %            1  T  -1
+          + - #logdet[ 2 #pi D ]    + - b  D  b
+            2 %          %            2
+%$$
+(The equation above uses
+$xref/glossary/Individual Notation/individual notation/$$.)
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $code MapObjDiff$$ is true, if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/b/, /fOut/, /f_bOut/, /ROut/, /R_bOut/)
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the parameter vector.
+The $xref/glossary/Output Value/output value/$$ $italic fOut$$
+is a double-precision column vector equal to $math%f(b)%$$.
+The output value $italic f_bOut$$
+is a double-precision matrix equal to $math%f_b(b)%$$.
+The output value $italic ROut$$
+is a double-precision column vector equal to $math%R(b)%$$.
+The output value $italic R_bOut$$
+is a double-precision matrix equal to $math%R_b(b)%$$.
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+$syntax/
+
+/D/
+/$$
+The double-precision matrix $italic D$$
+specifies the variance of the prior distribution and
+has the same number of rows as $italic b$$.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector containing the data vector.
+$syntax/
+
+/bStep/
+/$$
+is a double-precision column vector with the same 
+length as $italic b$$. It specifies the step size for the
+central difference approximations for the derivatives.
+$syntax/
+
+/b/
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the parameter vector.
+$syntax/
+
+/MapObj_bOut/
+/$$
+the output value $italic MapObj_bOut$$
+is a row vector containing the central difference
+approximation for the derivative of $math%MapObj(b)%$$.
+$syntax/
+
+/MapObj_b_bOut/
+/$$
+the output value $italic MapObj_b_bOut$$
+is a square matrix containing 
+the analytic derivative of the 
+central difference approximation of the 
+derivative of $math%MapObj(b)%$$.
+
+$head Example$$
+Suppose that
+$math%
+       /  b(1)     0  \         / 1  0 \
+R(b) = |              |    D  = |      |
+       \  0      b(1) /         \ 0  1 /
+
+       / b(2) \        / 1 \
+f(b) = |      |   y =  |   |
+       \ b(2) /        \ 1 /
+%$$
+It follows that
+$math%                         
+MapObj(b) = (1/2) #log{[2 #pi b(1)]^2} + [1 - b(2)]^2 / b(1)
+          + (1/2) #log{[2 #pi]^2}      + (1/2) [b(1)^2 + b(2)^2]
+%$$
+The gradient of $math%MapObj(b)%$$ is equal to
+$math%
+	/ 1 / b(1) - [1 - b(2)]^2 / b(1)^2 + b(1) \
+	|                                         |
+	\     - 2 [1 - b(2)] / b(1) + b(2)        /
+%$$
+The second derivative of $math%MapObj(b)%$$ is equal to
+$math%
+	/ -1/b(1)^2+2[1-b(2)]^2/b(1)^3+1    2[1-b(2)]/b(1)^2 \
+	|                                                    |
+	\        2[1-b(2)]/b(1)^2             2/b(1)+1       /
+%$$
+If both components of $math%b%$$ are two,
+$math%
+MapObj_b(b)   = [ 1 / 2 - 1 / 4 + 2 , 1 + 2  ]
+	        = [ 2.25 , 3 ]
+                / 1   -1/2 \
+MapObj_b_b(b) = |          |
+                \ -1/2   2 /
+%$$
+If you enter
+$codep
+
+clear
+include MapObjDiff.oms
+#
+function Model(b, fOut, f_bOut, ROut, R_bOut) begin
+	if fOut then ...
+		fOut = {b(2), b(2)}
+	if f_bOut then ...
+		f_bOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 1 ] ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ b(1) ,   0   ], ...
+		[ 0    ,  b(1) ] ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		[ 1 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 1 , 0 ] ...
+	}
+	return true
+end
+y             = {1, 1}
+bStep         = {.05, .05}
+b             = {2., 2.}
+D             = real(identity(2))
+MapObj_bOut   = true
+MapObj_b_bOut = true
+ok = MapObjDiff(function Model, D, y, bStep, b, MapObj_bOut, MapObj_b_bOut)
+print "ok            =", ok
+print "MapObj_bOut   =", MapObj_bOut
+print "MapObj_b_bOut =", MapObj_b_bOut
+
+$$
+O-Matrix will respond
+$codep
+	ok            = T
+	MapObj_bOut   = [ 2.24995 , 3 ] 
+	MapObj_b_bOut = {
+	[ 1.00016 , -0.500312 ]
+	[ -0.499999 , 2 ]
+	}
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+include MapObj.oms
+include cendiff.oms
+#
+local Ok = novalue
+local function MapObjFunction(function Model, D, y, b) begin
+	value = true
+	if Ok then ...
+		Ok = MapObj(function Model, D, y, b, value, false)
+	if Ok then ...
+		return value
+	return 0
+end
+local function MapObjGradient(function Model, D, y, b) begin
+	value = true
+	if Ok then ...
+		Ok = MapObj(function Model, D, y, b, false, value)
+	if Ok then ...
+		return value'
+	zero = fill(0, rowdim(b), 1)
+	return zero
+end
+#
+function MapObjDiff( ...
+	function Model, ...
+	D, ...
+	y,  ...
+	bStep, ...
+	b, ...
+	MapObj_bOut, ...
+	MapObj_b_bOut ...
+) begin
+	# special do nothing case
+	if not (MapObj_bOut or MapObj_b_bOut) then ...
+		return true
+	Ok = true
+	if MapObj_bOut then begin
+		function f    = MapObjFunction(Model, D, y)
+		x             = b
+		h             = bStep
+		MapObj_bOut = cendiff(function f, x, h)
+	end
+	if MapObj_b_bOut then begin
+		function f    = MapObjGradient(Model, D, y)
+		x             = b
+		h             = bStep
+		MapObj_b_bOut = cendiff(function f, x, h)'
+	end
+	return Ok
+end
+
+end # blocking for automatic include

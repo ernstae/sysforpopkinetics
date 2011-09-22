@@ -1,0 +1,217 @@
+clear ParseSolution
+function ParseSolution(pattern,x,head) begin
+	# could be row or column vector
+	if coldim(x) > rowdim(x) then x = x'
+
+	foo=sprintf("%5s : %5s ","Ind.","#")
+	for i = 1 to rowdim(head) begin
+		foo=[foo,sprintf(": %10s ",head.row(i))]
+	end
+	print foo
+
+	# let's check the kind of data we have:
+	if type(x(1)) == "int" then fstr = ": %10d "
+	else if type(x(1)) == "char" then fstr = ": %10s "
+	else if colmax(abs(x)) > 100 or colmax(-abs(x)) > -0.01 then fstr = ": %5.3e "
+	else fstr = ": %2.8f "
+
+	for i = 1 to rowdim(pattern) begin
+		if i == 1 then design = x.row(1,pattern(1))
+		else design = x.row(colsum(pattern.row(1,i-1))+1,pattern(i))
+		[sprintf("%5d : %5d ",i,pattern(i)),sprintf(fstr,design)]
+	end
+end
+
+clear Header
+function Header(text) begin
+	width = 80
+	ch = "-"
+
+	if coldim(text) > 0 then text = ["  ",text, "  "]
+
+	foo = fill(ch,1,int((width - coldim(text))/2))
+	foo = [foo, text]
+	foo = [foo, fill(ch,1,width - coldim(foo))]
+	return(foo)
+end
+
+clear ParseProblem
+function ParseProblem (xPossible, criterion, problem, output_file, xStep, xLow, xUp, xIn, alpStep, alpIn, alpLow, alpUp, alpP1, alpP2, K, eps, delta, mitr, level, covariates, bLength, alpLength, xLength) begin
+
+	print Header(["Loading problem definitions for: ",problem])
+	print "Transcript of output sent to:",[output_file,"_",criterion,".diary"]
+	print ""
+
+	print Header(["Optimizer criteria"])
+	print "Optimality criterion:",criterion
+	print "Converge on relative variable change in (alpha, x):"
+	print eps'
+	print "Converge on absolute objective change in (alpha, x):"
+	print delta'
+	print "Allow maximum iterations of (alpha, x):",mitr'
+	print "Diagnostic output level (alpha, x):",level'
+	print ""
+
+	print Header("Covariates")
+	ParseSolution(fill(coldim(covariates),rowdim(K),1),rvec(covariates),"Covariates")
+	print ""
+
+	print Header("Design Variables")
+	print "Low Bounds on design for each individual:"
+	ParseSolution(K,xLow,"Low Bounds")
+	print "High Bounds on design for each individual:"
+	ParseSolution(K,xUp,"High Bounds")
+	print "Step Sizes on design for each individual:"
+	ParseSolution(K,xStep,"Step Sizes")
+	if any(xPossible <> false) then begin
+		print "Starting values come from a design guess set:"
+		ParseSolution(rowdim(xPossible),xPossible,"Possible Values")
+	end
+	print "Starting Values on design for each individual:"
+	ParseSolution(K,xIn,"Starting Values")
+	print ""
+
+	print Header("Fixed Effects")
+	if criterion == "ED" then begin
+		print "Alphas have gaussian distributions with parameters:"
+		ParseSolution(fill(2,alpLength,1),rvec([alpP1,alpP2]),{"Mean","SD"})
+		print "Alphas have as bounds and step sizes:"
+		ParseSolution(fill(3,alpLength,1),rvec([alpLow,alpUp,alpStep]),{"Lower","Upper","Step"})
+	end else if criterion == "D" then begin
+		print "Alphas have point-distributions with values:"
+		ParseSolution(fill(1,alpLength,1),rvec(alpP1),"Value")
+	end
+	print ""
+	
+	print Header("Done loading definitions")
+	print ""
+end
+
+clear Sim_Reset_Seed
+function Sim_Reset_Seed() begin
+
+	# to be fair, we'll seed the random number generator the same way 
+	seed(42, 4, 27, 73)
+
+end
+
+clear Sim_Population_Data
+function Sim_Population_Data(N_Pop, alpTrue, bLength, Pattern, xIn, yOut, CheckMixedSign, CheckNegativeData) begin 
+
+	# divide our mixed effects
+	bpop = alpTrue.row(1,rowdim(alpTrue)-bLength)
+	d = alpTrue.row(rowdim(alpTrue)-bLength+1,bLength)
+
+	# # of individuals
+	Ind = rowdim(Pattern)
+
+	# our data stream output
+	yOut = fill(0d0, rowdim(xIn), N_Pop)
+
+	for j = 1 to N_Pop begin
+	
+		sim_count = 0
+		ok = false
+		while not ok begin
+
+			# generate our random effects once for each individual
+			# mean = 0
+			b = snormal(bLength, Ind)
+			
+			ok = true
+			for i = 1 to bLength begin
+				# SD = sqrt( d )	
+				b.row(i) = b.row(i) % sqrt( d(i) )
+				if any(bpop(i) + b.row(i) <= 0d0) then ok = false
+			end
+
+			if not CheckMixedSign then ok = true
+
+			if ok then begin
+				# generate data stream for each individual
+				for i = 1 to Ind begin
+
+					# sub-fraction of overall design for this individual
+					if i == 1 then ...
+						xInd = xIn.row(1,Pattern(1))
+					else ...
+						xInd = xIn.row(colsum(Pattern.row(1,i-1))+1,Pattern(i))
+
+					# the random effects for this individual
+					bInd = b.col(i)
+						
+					# evaluate the model
+					fOut = true
+					ROut = true
+					ret = Sim_Model (i, xInd, alpTrue, bInd, fOut, ROut)
+			 
+					# y ~ N ( f , R )
+					epsInd = snormal( rowdim(fOut), 1 ) % sqrt( diag( ROut ) )
+
+					# check to see if we went negative in y
+					if CheckNegativeData and any(fOut + epsInd < 0d0) then ok = false
+
+					# sub-fraction of overall data for this individual
+					if i == 1 then ...
+						yOut.blk(1,j,Pattern(1),1) = fOut + epsInd
+					else ...
+						yOut.blk(colsum(Pattern.row(1,i-1))+1,j,Pattern(i),1) = fOut + epsInd
+					
+				end
+			end
+
+			sim_count = sim_count + 1
+		end
+
+		print fill(".",1,sim_count),"simulated population [",j,"/",N_Pop,"]"
+	end
+end
+
+clear Est_Population_Parameters
+function Est_Population_Parameters(yEst, xEst, Obj, K, alpTrue, bLength, alpOut, bOut) begin
+
+	eps = {1d-4, 1d-4}
+	delta = {1d-3, 1d-3}
+	mitr = {100, 100}
+	level = {0, 1}
+
+	# divide our mixed effects
+	bpop = alpTrue.row(1,rowdim(alpTrue)-bLength)
+	d = alpTrue.row(rowdim(alpTrue)-bLength+1,bLength)
+
+	# these are the values to estimate
+	alpIn = { bpop, d }
+
+	alpUp = alpIn % 10d0
+	alpLow = alpIn / 10d0
+	alpStep = (alpUp - alpLow) % 1d-3
+
+	bIn = fill(0d0,bLength,rowdim(K))
+
+	bUp = sqrt(d) % 10d0
+	bLow = - bUp
+	bStep = (bUp - bLow) % 1d-3
+
+	LTildeOut = false
+	LTilde_alpOut = false
+	LTilde_alp_alpOut = false
+	
+	function ppkaOpt_Model = Est_Model(xEst, K)
+
+	ok = ppkaOpt( ...
+		function ppkaOpt_Model, ...
+		Obj, ...
+		K, ...
+		yEst, ...
+		eps, ...
+		delta, ...
+		mitr, ...
+		level, ...
+		alpStep, alpLow,  alpUp,  alpIn, alpOut, ...
+		bStep,  bLow, bUp, ...
+		bIn, bOut, ...
+		LTildeOut, LTilde_alpOut, LTilde_alp_alpOut  ...
+	)
+
+	return(ok)
+end

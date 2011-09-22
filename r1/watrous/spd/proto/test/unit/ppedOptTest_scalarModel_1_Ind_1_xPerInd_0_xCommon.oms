@@ -1,0 +1,389 @@
+# ---------------------------------------------------------------------
+# File: ppedOptTest_scalarModel_1_Ind_1_xPerInd_0_xCommon.oms
+#
+#
+# Unit test for ppedOpt for which all of the parameter vectors,
+# data mean models, and covariance matrix models are all scalars.
+#
+# Author: Mitch Watrous
+# 
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+#
+# Preliminaries
+#
+# ---------------------------------------------------------------------
+
+clear
+
+dir   = up2low(cwd)
+index = find(dir, "\pped")
+index = index(end, 2)
+dir   = dir(1 :: index)
+
+path([ ...
+  dir, "general;",      NEW_LINE, ...
+  dir, "pped\src;",     NEW_LINE, ...
+  dir, "ppka;",         NEW_LINE, ...
+  path                           ...
+])
+
+format double "e24.15"
+
+# Modified SPK functions.
+include ppedOpt.oms
+
+
+# ---------------------------------------------------------------------
+#
+# Local variables
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Quantities related to the population.
+# ---------------------------------------------------------------------
+
+# Number of individuals.
+local nInd = 1
+
+# Data values per individual.
+local nYPerInd = 1
+local nY       = nInd*nYPerInd
+local N        = fill(nYPerInd, nInd, 1)
+
+
+# ---------------------------------------------------------------------
+# Quantities related to the design parameters.
+# ---------------------------------------------------------------------
+
+local nXPerInd = 1
+local K_common = 0
+local K        = { fill(nXPerInd, nInd, 1), K_common }
+local nX_iTot  = nInd*nXPerInd
+local nX       = nX_iTot + K_common
+
+
+# ---------------------------------------------------------------------
+# Quantities related to the fixed population parameter.
+# ---------------------------------------------------------------------
+
+local nAlp = 1
+
+
+# ---------------------------------------------------------------------
+# Quantities related to the random population parameter.
+# ---------------------------------------------------------------------
+
+local bLength = 1
+
+
+# ---------------------------------------------------------------------
+#
+# Global functions
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: Model
+# ---------------------------------------------------------------------
+
+function Model( ...
+  i, ...
+  x, ...
+  alp, ...
+  b, ...
+  fOut, ...
+  f_xOut, ...
+  f_alpOut, ...
+  f_bOut, ...
+  f_b_xOut, ...
+  f_b_alpOut, ...
+  ROut, ...
+  R_xOut, ...
+  R_alpOut, ...
+  R_bOut, ...
+  DOut, ...
+  D_alpOut, ...
+  pOut, ...
+  p_alpOut ...
+) ...
+begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries
+  # -------------------------------------------------------------------
+
+  # Get the number of data values for this individual.
+  if type(i) <> "novalue" then begin
+    nY = N(i)
+    if nY <> 1 then stop
+  end
+
+  # Get the total number of design parameters for all of the individuals.
+  if type(x) <> "novalue" then begin
+    nX = rowdim(x)
+    if nX <> 1 then stop
+  end
+
+  # Get the number of fixed population parameters.
+  if type(alp) <> "novalue" then begin
+    nAlp = rowdim(alp)
+    if nAlp <> 1 then stop
+  end
+
+  # Get the number of random population parameters.
+  if type(b) <> "novalue" then begin
+    nB = rowdim(b)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Calculate the mean of the data and its derivatives.
+  # -------------------------------------------------------------------
+
+  if fOut then begin
+    fOut = {alp(1)}
+  end
+  if f_xOut then begin
+    f_xOut = fill(0.d0, nY, nX)
+  end
+  if f_alpOut then begin
+    f_alpOut = {1}
+  end
+  if f_bOut then begin
+    f_bOut = fill(0.d0, nY, nB)
+  end
+  if f_b_xOut then begin
+    f_b_xOut = fill(0.d0, nY*nB, nX)
+  end
+  if f_b_alpOut then begin
+    f_b_alpOut = fill(0.d0, nY*nB, nAlp)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Calculate the covariance of the data and its derivatives.
+  # -------------------------------------------------------------------
+
+  if ROut then begin
+    ROut = {1.d0/(1.d0 - x(1)^2)}
+  end
+  if R_xOut then begin
+    R_xOut = {2.d0*x(1)/((1.d0 - x(1)^2)^2)}
+  end
+  if R_alpOut then begin
+    R_alpOut = fill(0.d0, nY*nY, nAlp)
+  end
+  if R_bOut then begin
+    R_bOut = fill(0.d0, nY*nY, nB)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Calculate the covariance of the random effects and its derivatives.
+  # -------------------------------------------------------------------
+
+  if DOut then begin
+    DOut = double( identity(nB) )
+  end
+  if D_alpOut then begin
+    D_alpOut = fill(0.d0, nB*nB, nAlp)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Calculate the prior distribution of the fixed effects and its derivative.
+  # -------------------------------------------------------------------
+
+  if pOut then begin
+    pOut = exp(-alp(1)^2)
+  end
+  if p_alpOut then begin
+    p_alpOut = -2.d0*alp(1)*exp(-alp(1)^2)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  return true
+end
+
+
+# ---------------------------------------------------------------------
+#
+# Do the test.
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Quantities related to the optimization problems.
+# ---------------------------------------------------------------------
+
+# Initial values, bounds, and step sizes for the design parameters.
+xIn     = fill(0.5d0, nX, nInd)
+xLow    = xIn % -1.25d0
+xUp     = xIn % +1.25d0
+xStep   = fill(0.001d0, nX, 1)
+
+# Initial values, bounds, and step sizes for the fixed population parameter.
+alpIn   = fill(0.3d0, nAlp, 1)
+alpLow  = alpIn % -1.25d0
+alpUp   = alpIn % +1.25d0
+alpStep = fill(0.001d0, nAlp, 1)
+
+# Relative solution error.
+eps     = {1d-4, 1d-4}
+
+# Absolute convergence criteria in function units.
+delta   = {1d-200, 1d-200 }
+
+# Maximum number of iterations.
+mitr    = {50, 50}
+
+# Level controls the amount of printing during optimization.
+level   = {1, 0}
+
+
+# ---------------------------------------------------------------------
+# Optimize the design criterion.
+# ---------------------------------------------------------------------
+
+xOut       = true
+alpOut     = true
+phiOut     = true
+phi_xOut   = true
+phi_x_xOut = true
+
+ok = ppedOpt( ...
+  function Model, ...
+  K, ...
+  eps, ...
+  delta, ...
+  mitr, ...
+  level, ...
+  xStep, xLow, xUp, xIn, xOut,...
+  alpStep, alpLow, alpUp, alpIn, alpOut,...
+  bLength, ...
+  phiOut, phi_xOut, phi_x_xOut  ...
+)
+
+if not ok then halt
+
+
+# ---------------------------------------------------------------------
+# Calculate the known values.
+# ---------------------------------------------------------------------
+
+# For this test the prior distribution of the fixed effects is
+#
+#                        2
+#    p(alp)  =  exp( -alp  )  ,
+#
+# and the determinant of the expected Hessian, i.e., the Fisher
+# information matrix, is
+#
+#                                2
+#    det[ H(x, alp) ]  =  ( 1 - x  )  .
+#
+# Therefore, the criterion for this test is 
+#
+#                +infinity
+#               /\
+#               \                      
+#    phi(x)  =   \        p(alp) det[ HTilde(x, alp) ] dalp
+#               \/
+#                -infinity
+#
+#                 1/2         2
+#            =  pi     ( 1 - x  )  ,
+#
+# and the negative log of this integrand is
+#
+#                             -                               -
+#                            |                                 |
+#    Lambda(x, alp) = - log  |  p(alp)  det[ HTilde(x, alp) ]  |
+#                            |                                 |
+#                             -                               -
+#
+#                         2        2
+#                   =  alp  ( 1 - x  )  .
+#
+xHat         = fill(0.d0, nX, 1)      # The maximizer of phi(x).
+alpHat       = fill(0.d0, nAlp, 1)    # The minimizer of Lambda(x, alp) w.r.t. alp.
+phiKnown     = sqrt(pi)
+phi_xKnown   = fill(0.d0, 1, nX)
+phi_x_xKnown = fill(-2.d0*sqrt(pi), nX, nX)
+
+
+# ---------------------------------------------------------------------
+# Check the results.
+# ---------------------------------------------------------------------
+
+print "xOut            = ", xOut
+print "xHat (analytic) = ", xHat
+print "Relative Difference = ", abs((xOut - xHat)/xOut)
+print "Absolute Difference = ", abs(xOut - xHat)
+print
+converged = abs(xOut - xHat) < eps(1)*(xUp - xLow)
+if not all(converged) then begin
+  stop "[ppedOptTest] Error: xOut does not agree."
+end
+
+print "alpOut            = ", alpOut
+print "alpHat (analytic) = ", alpHat
+print "Relative Difference = ", abs((alpOut - alpHat)/alpOut)
+print "Absolute Difference = ", abs(xOut - xHat)
+print
+converged = abs(alpOut - alpHat) < eps(2)*(alpUp - alpLow)
+if not all(converged) then begin
+  stop "[ppedOptTest] Error: alpOut does not agree."
+end
+
+tol = 10.d0*eps(1)^2
+phiOutFinal = phiOut(coldim(phiOut))
+print "phiOut         = ", phiOutFinal
+print "phi (analytic) = ", phiKnown
+print "Relative Difference = ", abs((phiOutFinal - phiKnown)/phiOutFinal)
+print "Absolute Difference = ", abs(phiOutFinal - phiKnown)
+print
+converged = abs(phiOutFinal - phiKnown) < tol*abs(phiKnown)
+if not all(converged) then begin
+  stop "[ppedOptTest] Error: phiOut does not agree."
+end
+
+tol = 1.0d-6
+
+print "phi_xOut         = ", phi_xOut
+print "phi_x (analytic) = ", phi_xKnown
+print "Relative Difference = ", abs((phi_xOut - phi_xKnown)/phi_xOut)
+print "Absolute Difference = ", abs(phi_xOut - phi_xKnown)
+print
+converged = abs(phi_xOut - phi_xKnown) < tol
+if not all(converged) then begin
+  stop "[ppedOptTest] Error: phi_xOut does not agree."
+end
+
+tol = 1.0d-5
+
+print "phi_x_xOut         = ", phi_x_xOut
+print "phi_x_x (analytic) = ", phi_x_xKnown
+print "Relative Difference = ", abs((phi_x_xOut - phi_x_xKnown)/phi_x_xOut)
+print "Absolute Difference = ", abs(phi_x_xOut - phi_x_xKnown)
+print
+converged = abs(phi_x_xOut - phi_x_xKnown) < tol*abs(phi_x_xKnown)
+if not all(converged) then begin
+  stop "[ppedOptTest] Error: phi_x_xOut does not agree."
+end
+
+# ---------------------------------------------------------------------
+#
+# Finish up.
+#
+# ---------------------------------------------------------------------
+
+format double ""
+

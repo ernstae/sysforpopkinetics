@@ -1,0 +1,49 @@
+$begin firefox$$
+$spell
+	centos
+	dir
+	edu
+	ernst
+	exit exit
+	firefox
+	http
+	rfpk
+	rhel
+	rpk
+	rpm rpm
+	su
+	sudo
+	tmp
+	uvh
+$$
+
+$section Install FireFox$$
+
+$head Rpk$$
+Andrew Ernst set up an rpm for Firefox that worked via the following commands:
+$codep
+	sudo su -
+	cd /tmp
+	dir=http://toronto.rfpk.washington.edu/software/rhel4
+	file=firefox-1.5.0.1-2.c4.centos.i386.rpm
+	rpm -Uvh @dir/@file
+$$
+The resulting messages were
+$nospell
+$codep
+sh-3.00# rpm -Uvh @dir/@file
+Retrieving http://toronto.rfpk.washington.edu/software/firefox-1.5.0.1-2.c4.centos.i386.rpm
+warning: /var/tmp/rpm-xfer.mDAGwE: V3 DSA signature: NOKEY, key ID 443e1821
+Preparing...                ########################################### [100%]
+   1:firefox                ########################################### [100%]
+$$
+$$
+After this output, normal user settings were restored with the command
+$codep
+	exit
+	exit
+$$
+The installation did not actually take effect until I closed all the windows
+that were running the old version of the browser.
+
+$end

@@ -1,0 +1,203 @@
+$begin gsl_monte_vegas.omh$$
+$spell
+	rebinning
+	configurable
+	chisq
+	ostream
+	gsl
+	alloc
+	init
+	rng
+	abserr
+	xl
+	xu
+	workspace
+	hypercubic
+	initializes
+$$
+
+$index vegas, monte integrate$$
+$index integrate, monte vegas$$
+$index monte, vegas integrate$$
+$section Vegas Monte Carlo Integration$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%int gsl_monte_vegas_state * gsl_monte_vegas_alloc (size_t %dim%)%$$
+$rnext $cnext
+$syntax%int gsl_monte_vegas_init (gsl_monte_vegas_state* %s%)%$$
+$rnext $cnext
+$syntax%int gsl_monte_vegas_integrate (
+	gsl_monte_function *    %f%, 
+	double *                %xl%    , 
+	double *                %xu%    ,         
+	size_t                  %dim%   ,         
+	size_t                  %calls% ,         
+	gsl_rng *               %r%     ,         
+	gsl_monte_vegas_state * %s%     , 
+	double *                %result%, 
+	double *                %abserr%)%$$
+$rnext $cnext
+$syntax%gsl_monte_vegas_free (gsl_monte_vegas_state * %s%)%$$
+$tend
+
+$fend 25$$
+
+$head gsl_monte_plain_alloc$$
+$index plain, alloc$$
+$index alloc, plain$$
+This function allocates and initializes a workspace for 
+Monte Carlo integration in $italic dim$$ dimensions.
+
+$head gsl_monte_plain_init$$
+$index init, plain$$
+$index plain, init$$
+This function initializes a previously allocated integration state. 
+This allows an existing workspace to be reused for different integrations.
+
+$head int gsl_monte_plain_integrate$$
+$index integrate, plain$$
+$index plain, integrate$$
+This routines uses the plain Monte Carlo algorithm to 
+integrate the function $italic f$$
+over the $italic dim$$-dimensional hypercubic region 
+defined by the lower and upper limits in the arrays 
+$italic xl$$ and $italic xu$$, 
+each of size $italic dim$$. 
+The integration uses a fixed number of function calls $italic calls$$, 
+and obtains random sampling points using 
+the random number generator $italic r$$. 
+A previously allocated workspace $italic s$$ must be supplied. 
+The result of the integration is returned in 
+$italic result$$, with an estimated absolute error $italic abserr$$. 
+
+$head gsl_monte_plain_free$$
+$index free, plain$$
+$index plain, free$$
+This function frees the memory associated with the integrator state 
+$italic s$$.
+
+$head Discussion$$
+The VEGAS algorithm computes a number of 
+independent estimates of the integral internally, 
+according to the iterations parameter described below, 
+and returns their weighted average. 
+
+Random sampling of the integrand can occasionally produce an estimate 
+where the error is zero, particularly if the function is constant 
+in some regions. 
+
+An estimate with zero error causes the weighted average 
+to break down and must be handled separately. 
+
+In the original Fortran implementations of VEGAS 
+the error estimate is made non-zero by substituting a small value 
+(typically 1e-30). 
+
+The implementation in GSL differs from this and avoids the use of 
+an arbitrary constant -- it either assigns the value a weight which 
+is the average weight of the preceding estimates or discards it 
+according to the following procedure,
+$pre
+
+$$
+If current estimate has zero error, 
+and weighted average has finite error:
+The current estimate is assigned a weight which is 
+the average weight of the preceding estimates. 
+If current estimate has finite error, 
+previous estimates had zero error:
+The previous estimates are discarded and 
+the weighted averaging procedure begins with the current estimate. 
+If current estimate has zero error, previous estimates had zero error:
+The estimates are averaged using the arithmetic mean, 
+but no error is computed.
+
+$head gsl_monte_vegas_state$$
+The VEGAS algorithm is highly configurable. 
+The following variables can be accessed through the following
+fields in this structure: 
+$syntax%
+
+double result, sigma
+%$$
+These parameters contain the raw value of the integral result and 
+its error sigma from the last iteration of the algorithm.
+$syntax%
+
+double chisq
+%$$
+This parameter gives the chi-squared per degree of freedom 
+for the weighted estimate of the integral. 
+The value of chisq should be close to 1. 
+A value of chisq which differs significantly from 1 indicates that 
+the values from different iterations are inconsistent. 
+In this case the weighted error will be under-estimated, 
+and further iterations of the algorithm are needed 
+to obtain reliable results.
+$syntax%
+
+double alpha
+%$$
+The parameter $code alpha$$ controls the stiffness of the 
+rebinning algorithm. 
+It is typically set between one and two. 
+A value of zero prevents rebinning of the grid. 
+The default value is 1.5.
+$syntax%
+
+size_t iterations
+%$$
+The number of iterations to perform for each call to the routine. 
+The default value is 5 iterations.
+$syntax%
+
+int stage
+%$$
+Setting this determines the stage of the calculation. 
+Normally, $code stage = 0$$ which begins with a 
+new uniform grid and empty weighted average. 
+Calling vegas with $code stage = 1$$ retains the grid 
+from the previous run but discards the weighted average, 
+so that one can "tune" the grid using a relatively 
+small number of points and then do a large run with 
+$code stage = 1$$ on the optimized grid. 
+Setting $code stage = 2$$ keeps the grid and the 
+weighted average from the previous run, 
+but may increase (or decrease) the number 
+of histogram bins in the grid depending on the number of calls available. 
+Choosing $code stage = 3$$ enters at the main loop, 
+so that nothing is changed, and is equivalent 
+to performing additional iterations in a previous call.
+$syntax%
+
+int mode
+%$$
+The possible choices are 
+$codep
+	GSL_VEGAS_MODE_IMPORTANCE
+	GSL_VEGAS_MODE_STRATIFIED
+	GSL_VEGAS_MODE_IMPORTANCE_ONLY
+$$
+This determines whether VEGAS will use importance sampling 
+or stratified sampling, 
+or whether it can pick on its own. 
+In low dimensions VEGAS uses strict stratified sampling 
+(more precisely, stratified sampling is chosen 
+if there are fewer than 2 bins per box).
+$syntax%
+
+int verbose
+FILE * ostream
+%$$
+These parameters set the level of information printed by VEGAS. 
+All information is written to the stream $code ostream$$. 
+The default setting of $code verbose$$ is -1, 
+which turns off all output. 
+A verbose value of 0 prints summary information about 
+the weighted average and final result, 
+while a value of 1 also displays the grid coordinates. 
+A value of 2 prints information from the rebinning procedure 
+for each iteration.
+
+$end

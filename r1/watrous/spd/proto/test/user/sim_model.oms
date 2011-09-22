@@ -1,0 +1,121 @@
+# Bulk of the scripted code
+
+dir   = up2low(cwd)
+index = find(dir, "\pped")
+index = index(end, 2)
+dir   = dir(1 :: index)
+
+origpath = path
+path([ ...
+  dir, "general;",      NEW_LINE, ...
+  dir, "ppka;",         NEW_LINE, ...
+  cwd, NEW_LINE, ...
+  path                           ...
+])
+
+include ppkaOpt.oms
+
+close
+tic
+format double "e24.15"
+
+include core_functions.oms
+
+est_pop = novalue
+sim_pop = novalue
+problem = novalue
+xPossible = novalue
+criterion = novalue
+output_file = novalue
+xStep = novalue
+xLow = novalue
+xUp = novalue
+xIn = novalue
+alpTrue = novalue
+alpStep = novalue
+alpIn = novalue
+alpLow = novalue
+alpUp = novalue
+alpP1 = novalue
+alpP2 = novalue
+K = novalue
+eps = novalue
+delta = novalue
+mitr = novalue
+level = novalue
+covariates = novalue
+bLength = novalue
+alpLength = novalue
+xLength = novalue
+
+# load the variables relating to the problem
+Problem (sim_pop, est_pop, xPossible, criterion, problem, output_file, xStep, xLow, xUp, xIn, alpTrue, alpStep, alpIn, alpLow, alpUp, alpP1, alpP2, K, eps, delta, mitr, level, covariates, bLength, alpLength, xLength) 
+
+#rmfile([output_file,"_",criterion,".diary"])
+diary([output_file,"_",criterion,".diary"])
+
+
+if sim_pop > 0 then begin
+	print Header(["Starting simulations of ",ntoa(sim_pop)," populations for: ",problem])
+	print ""
+
+	print "Getting design solution from: ",[output_file,"_",criterion,".out"]
+	xOut=read([output_file,"_",criterion,".out"],"double")'
+	close
+	print "True values for alphas:"
+	print alpTrue'
+
+	Sim_Reset_Seed()
+
+	print Header("Simulation Results")
+	print ""
+
+	yOut = novalue
+	CheckMixedSign = true
+	CheckNegativeData = true
+
+	print "Simulating data for ",ntoa(sim_pop)," populations:"
+	Sim_Population_Data(sim_pop, alpTrue, bLength, K, xOut, yOut, CheckMixedSign, CheckNegativeData)
+
+#	ParseSolution(fill(1+sim_pop,xLength,1),rvec([xOut, yOut]),{"x","y"})
+
+	ginit
+	gplot(xOut,yOut,"circle")
+	gxtitle("Design values")
+	gytitle("Simulated Data")
+	gtitle(["Simulated population data for ",sprintf("%d",sim_pop)," populations:"])
+
+	xmin=-colmax(-xLow)
+	xmax=colmax(xUp)
+	xres=-colmax(-xStep)
+	xdiv=(xmax-xmin)/xres
+	xvals=linspace(xmin,xmax,xdiv)'
+	bsim=fill(0d0,bLength,1)
+	simout=true
+	simrout=false
+	ind=1
+	ret = Sim_Model (ind, xvals, alpTrue, bsim, simout, simrout)
+
+	gplot(xvals,simout,"solid")
+	
+
+	print "Simulation set sent to:",[output_file,"_",criterion,"_sim.out"]
+	foo=rmfile([output_file,"_",criterion,"_sim.out"])
+	foo=write([output_file,"_",criterion,"_sim.out"],xOut')
+	foo=write([output_file,"_",criterion,"_sim.out"],sim_pop)
+	foo=write([output_file,"_",criterion,"_sim.out"],yOut')
+	close
+	print ""
+
+	print "This problem took",sprintf("%3.3f",toc/60),"minutes."
+	print ""
+
+	print Header(["Done with simulations for: ",problem])
+
+end else begin
+	print Header("No simulation data requested")
+end
+
+print ""
+diary("off")
+

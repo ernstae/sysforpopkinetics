@@ -1,0 +1,45 @@
+$begin atlas$$
+$dollar @$$
+$spell
+	devel
+	dir
+	edu
+	Ernst
+	exit exit
+	http
+	rfpk
+	rhel
+	rpm rpm
+	su
+	sudo
+	tmp
+	uvh
+$$
+
+$section Install Atlas$$
+
+$head Rpm$$
+Andrew Ernst set up an rpm for Atlas that worked via the following commands:
+$codep
+	sudo su -
+	cd /tmp
+	dir=http://toronto.rfpk.washington.edu/software/rhel4
+	file=atlas-3.7.9-1RFPK.i386.rpm
+	rpm -Uvh @dir/@file
+$$
+The resulting messages were output
+$nospell
+$codep
+sh-3.00# rpm -Uvh @dir/@file
+Retrieving http://toronto.rfpk.washington.edu/software/rhel4/atlas-3.7.9-1RFPK.i386.rpm
+Preparing...                ########################################### [100%]
+   1:atlas                  ########################################### [100%]
+$$
+$$
+After this output, normal user settings were restored with the command
+$codep
+	exit
+	exit
+$$
+
+$end

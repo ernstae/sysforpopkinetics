@@ -1,0 +1,114 @@
+$begin wish_list$$
+$spell
+	argmin
+	CppAD
+$$
+
+$section Wish List$$
+
+$head Excessive Memory Requirement$$
+The non-parameter objective function $latex F(x, \lambda )$$ is expressed as
+$latex \[
+\begin{array}{rcl}
+H_i ( x , \lambda ) & = &
+	\sum_{j=1}^n \Psi_{i,j} ( x_j ) \lambda_j
+\\
+F(x , \lambda ) & = &  
+	- \sum_{i=1}^m \log [ H_i ( x , \lambda ) ]
+	- \mu \sum_{j=1}^n  \log ( \lambda_j )
+	+ m \left( \sum_{j=1}^n \lambda_j - 1 \right)
+\end{array}
+\] $$
+where $latex \Psi_{i,j} ( x_j )$$ is the likelihood of the $th i$$
+individuals data given the parameters are equal to the discrete measure
+point $latex x_j$$. 
+Currently, calculation of the entire
+matrix $latex [ \Psi ( x_1) , \ldots , \Psi (x_m ) ]$$ 
+is done on one CppAD tape and this is used to compute the gradient 
+and Hessian of
+$latex \[
+	G(x) = \min_\lambda F( x , \lambda )
+\] $$
+In addition, we not that there are no common terms in the calculation of
+$latex \Psi_{i,j} ( x_j )$$ for different values of $latex i$$ or $latex j$$.
+Thus the tape is $latex m * n$$ times as big as it needs to be;
+e.g., with 100 individuals and 100 weight points the tape is
+10,000 as large as it needs to be.
+$pre
+
+$$
+We use $latex \delta ( k - \ell ) $$ for the Delta function which is
+on when $latex k = \ell$$ and zero otherwise.
+We can express the Hessian of $latex F(x)$$
+in terms of the gradient and Hessian of $latex \Psi_{i,j} (x)$$ as follows:
+$latex \[
+\partial_{\lambda(k)} F(x, \lambda ) = 
+	\sum_{i=1}^m \frac{ - \Psi_{i,k} ( x_k) }{ H_i ( x , \lambda ) }
+	- \frac{\mu}{ \lambda_k } 
+	+ m
+\] $$
+$latex \[
+\partial^2_{\lambda(k) \lambda(\ell)} F(x, \lambda ) = 
+\sum_{i=1}^m \frac{ 
+		\Psi_{i,k} ( x_k ) \Psi_{i,\ell} ( x_\ell ) 
+	}{ H_i ( x , \lambda )^2 }
+\] $$
+$latex \[
+\partial_{x(k)} F(x, \lambda ) = 
+\sum_{i=1}^m 
+\frac{ - \partial_{x(k)} \Psi_{i,k} ( x_k) \lambda_k }{ H_i ( x , \lambda ) }
+\] $$
+$latex \[
+\partial_{x(k) x( \ell )} F(x, \lambda ) = 
+\sum_{i=1}^m 
+\frac{ - \delta ( k - \ell ) \partial^2_{x(k) x(k)} 
+	\Psi_{i,k} ( x_k ) \lambda_k 
+}{ H_i ( x , \lambda ) }
++
+\frac{  \partial_{x(k)} \Psi_{i,k} ( x_k) \lambda_k 
+	 \partial_{x( \ell )} \Psi_{i, \ell} ( x_\ell ) \lambda_\ell 
+}{ H_i ( x , \lambda )^2 }
+\] $$
+$latex \[
+\partial_{x(k) \lambda ( \ell )} F(x, \lambda ) = 
+\sum_{i=1}^m 
+\frac{ - \delta ( k - \ell ) \partial_{x(k)} 
+	\Psi_{i,k} ( x_k ) 
+}{ H_i ( x , \lambda ) }
++
+\frac{  \partial_{x(k)} \Psi_{i,k} ( x_k) \lambda_k \Psi_{i, \ell} ( x_\ell )
+}{ H_i ( x , \lambda )^2 }
+\] $$
+$pre
+
+$$
+We define $latex \Lambda ( x ) $$ as the argmin of $latex F( x , \lambda )$$ 
+with respect to $latex \lambda$$.
+It follows that
+$latex \[
+\begin{array}{rcl}
+G^{(1)} (x) & = & \partial_x F [ x , \Lambda ( x ) ]
+\\
+G^{(2)} (x) & = & 
+\partial^2_{x x} F [ x , \Lambda ( x ) ]
++
+\partial^2_{x \lambda} F [ x , \Lambda (x) ] \Lambda^{(1)} (x)
+\\
+0 & = & \partial_\lambda F [ x , \Lambda(x) ]
+\\
+0 & = & \partial^2_{\lambda x}  F [ x , \Lambda(x) ]
++ \partial^2_{\lambda \lambda} F [ x , \Lambda(x) ] \Lambda^{(1)} (x)
+\\
+G^{(2)} (x) & = & 
+\partial^2_{x x} F [ x , \Lambda ( x ) ]
+-
+\partial^2_{x \lambda} F [ x , \Lambda (x) ] 
+\partial^2_{\lambda \lambda} F [ x , \Lambda(x) ]^{-1} 
+\partial^2_{\lambda x} F [ x , \Lambda (x) ] 
+\end{array}
+\] $$
+
+
+
+
+$end

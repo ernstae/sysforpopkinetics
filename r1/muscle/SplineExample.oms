@@ -1,0 +1,84 @@
+clear
+format double ""
+include SmoothSpline.oms
+#
+# function that we are estimating
+function S(t) begin
+	return 4.26 % ( exp(-t) - 4%exp(-2%t) + 3%exp(-3%t) )
+end
+#
+# constant values that are used by Psi
+#
+const N        = 20   # number of eigen functions
+const M        = 50   # number of data points
+const T        = 3d0  # length of time interval
+#
+const TimeGrid = (seq(M) - 1) * T / double(M)
+const Beta     = PI % (seq(N) - .5d0) / T
+const Sigma    = .2
+#
+# set Psi(theta, F(a,*) ) equal to model for S(t)
+#
+function [Psi, Psi_a, sigma] = callback(theta, a) begin
+	if nargout == 3 then begin
+		sigma = fill(Sigma, M, 1)
+		return
+	end
+	#
+	t   = TimeGrid
+	Psi = theta(2) + theta(3) * t
+	for j = 1 to N begin
+		Psi = Psi + sqrt(2d0 / T) % a(j) % (1d0 - cos(Beta(j) % t) ) / Beta(j)
+	end
+	if nargout < 2 then ...
+		return
+	Psi_a = fill(0d0, M, N)
+	for j = 1 to N begin
+		Psi_a(:,j) =  sqrt(2d0 / T) % (1d0 - cos(Beta(j) % t) ) / Beta(j)
+	end
+	return
+end
+#
+# arguments to SmoothSpline
+#
+y          = S(TimeGrid) + Sigma * snormal(M, 1)
+aIn        = zeros(N, 1)
+aMax       = 10d0 * sqrt(T) * max( abs(y) ) 
+aStep      = 1d-5 * aMax
+aMitr      = 40
+aLevel     = 0
+thetaIn    = { 10d0, -.5d0,  -1d0 }
+thetaStep  = { 5d-1,  1d-1,  1d-1 }
+thetaMobj   = 100
+thetaLevel = 2
+format double "f9.3"
+[aOut, aNitrOut, thetaOut, thetaNOut] = SmoothSpline( ...
+	function callback, ...
+	T, ...
+	y, ...
+	aIn, ...
+	aStep, ...
+	aMax, ...
+	aMitr, ...
+	aLevel, ...
+	thetaIn, ...
+	thetaStep, ...
+	thetaMobj, ...
+	thetaLevel ...
+)
+print "thetaNOut =", thetaNOut
+print "thetaOut' =", thetaOut'
+print "aOut'     =", aOut'
+
+format double "f7.3"
+theta = ntoa(thetaOut)
+title = { "      thetaOut", ...
+	[theta.row(1), theta.row(2), theta.row(3) ] ...
+}
+gcolor( "black" )
+Psi = callback(thetaOut, aOut)
+gplot(TimeGrid, Psi, "solid")
+gplot(TimeGrid, S(TimeGrid), "dotted")
+gstyle("square", 1, 10)
+gplot(TimeGrid, y, "square")
+gaddtext( title,  [.5, 1.], [.5, 1.]);

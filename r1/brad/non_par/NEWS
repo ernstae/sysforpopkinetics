@@ -1,0 +1,56 @@
+$begin NEWS$$
+$spell
+	div
+	NEWS
+	Matlab
+	Ublas
+	npipp
+$$
+
+$section Changes and Additions to the non_par Software$$
+
+$head Purpose$$
+This section contains a list of changes to the non_par software
+in reverse order by date. 
+
+$head 06-04-03$$
+Done with the first version of 
+$href%matlab_ublas/doc%matlab_ublas%$$.
+This includes the following functions
+(together with examples and validation tests for each):
+abs,
+add,
+dot_div,
+dot_prod,
+matrix_div,
+matrix_prod,
+max,
+min,
+ones,
+rand,
+scalar_div,
+scalar_prod,
+size,
+sub,
+transpose,
+zeros.
+
+$head 06-03-28$$
+Added 
+$href%matlab_ublas/doc%matlab_ublas%$$ directory to distribution.
+This will document and test the steps necessary to convert the 
+program from Matlab to C++ using Ublas.
+
+$head 06-03-27$$
+Add the nearly degenerate test case to the
+$xref/npipp_of/Example/npipp_of example/$$.
+
+
+$head 06-03-23$$
+Finished code review of $xref/npipp_of/$$.
+
+$head 06-03-15$$
+First version.
+
+
+$end

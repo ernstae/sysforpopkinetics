@@ -1,0 +1,528 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+
+#begin##
+$begin MapTilde$$
+$escape #$$
+
+$spell
+	Rval
+	fval
+	Bayesian
+	ok
+	exp
+	mitr
+	eps
+	diag
+	Diff
+	Obj
+	lsq
+$$
+
+$section Solving The Map Bayesian Difference Equation$$
+
+$cindex map bayesian difference equation$$
+$index MapTilde$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/MapTilde( ...
+function /Model/, ...
+/D/, ...
+/y/, ...
+/eps/, ...
+/delta/, ...
+/mitr/, ...
+/level/, ...
+/bIn/, /bLow/, /bUp/, /bOut/, /bStep/, ...
+/NormOut/, /MapObj_bOut/, /MapObj_b_bOut/,  ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Solves the first order
+necessary conditions for a solution to the problem
+$math%
+	#minimize MapObj(b) #subject #to bLow #le b #le bUp
+%$$
+where $math%
+            1 %          %            1          T    -1
+MapObj(b) = - #logdet[ 2 #pi R(b) ] + - [y - f(b)] R(b) [y - f(b)]
+            2 %          %            2
+
+            1 %          %            1  T  -1
+          + - #logdet[ 2 #pi D ]    + - b  D  b
+            2 %          %            2
+%$$
+and the derivative $math%MapObj(b)%$$
+is replaced by its central difference approximation.
+This is the same as determining a point where the 
+approximate $xref/glossary/Projected Gradient/projected gradient/$$
+is zero. The approximate projected gradient replaces the gradient
+by its central difference approximate in the definition of
+the approximate gradient.
+(The equation above uses
+$xref/glossary/Individual Notation/individual notation/$$.)
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $code MapTilde$$ is true if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/b/, /fOut/, /f_bOut/, /ROut/, /R_bOut/)
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the parameter vector 
+and has the same length as $italic bIn$$.
+The $xref/glossary/Output Value/output value/$$ $italic fOut$$
+is a double-precision column vector equal to $math%f(b)%$$.
+The output value $italic f_bOut$$
+is a double-precision matrix equal to $math%f_b(b)%$$.
+The output value $italic ROut$$
+is a double-precision column vector equal to $math%R(b)%$$.
+The output value $italic R_bOut$$
+is a double-precision matrix equal to $math%R_b(b)%$$.
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+$syntax/
+
+/D/
+/$$
+The double-precision matrix $italic D$$
+specifies the variance of the prior distribution and
+has the same number of rows as $italic b$$.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector containing the data vector.
+$syntax/
+
+/eps/
+/$$
+Is a double-precision scalar greater than zero. 
+A parameter value $math%bOut%$$ is accepted when 
+$math%
+	abs(bOut - bTilde) \le eps (bUp - bLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%bTilde%$$ is the value 
+where the approximate projected gradient is zero.
+This is a rough approximation that is quick to
+calculate during the optimization procedure.
+A more accurate approximation of the distance
+to the solution can be calculated using the first and second
+derivatives of the objective function at $math%bOut%$$.
+$syntax/
+
+/delta/
+/$$
+is a double-precision scalar greater than zero.
+A parameter value $math%bOut%$$ is accepted when 
+$math%
+	abs( p(bOut) ) \le (delta / bStep)
+%$$
+where $math%p(b)%$$ is the
+approximate projected gradient
+of $math%MapObj(b)%$$.
+$syntax/
+
+/mitr/
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If $italic mitr$$ is zero, the initial values in $italic bIn$$
+are used and convergence is immediately accepted.
+$syntax/
+
+/level/
+/$$
+this integer scalar specifies the amount of tracing.
+$math%
+level \ge 1
+%$$
+The initial gradient of the Map Bayesian objective
+and its finite difference approximation are printed.
+In addition, the sequence of the norm of the approximate gradients
+is printed. This is the objective for the MapTilde function
+(not including the constrained directions in the gradient).
+$syntax/
+
+/bIn/
+/$$
+The double-precision column vector $italic bIn$$
+specifies the initial value for the parameter vector 
+during the optimization procedure.
+This value should be close to the solution to
+the first order conditions because no line searching is 
+done by $code MapTilde$$. 
+The routine $mref/MapOpt/$$ can be used to obtain
+a value for $italic bIn$$ that is close to the solution.
+$syntax/
+
+/bLow/
+/$$
+The double-precision column vector $italic bLow$$
+specifies the lower limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bUp/
+/$$
+The double-precision column vector $italic bUp$$
+specifies the upper limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bOut/
+/$$
+the output value $italic bOut$$
+is a double-precision column vector containing the 
+approximate solution for the first order conditions.
+$syntax/
+
+/bStep/
+/$$
+The double-precision column vector $italic bStep$$
+specifies the step size used for approximation of
+the derivative of $math%MapObj_b(b)%$$
+that is used in the first order condition.
+This is not used unless 
+the input value of $italic MapObj_b_bOut$$ is true.
+$syntax/
+
+/NormOut/
+/$$
+the output value $italic NormOut$$
+is a column vector containing the norm of the
+projected approximate gradient
+at each iteration of the optimizer.
+$syntax/
+
+/MapObj_bOut/
+/$$
+the output value $italic MapObj_bOut$$
+is a row vector containing the 
+approximate gradient corresponding to $italic bOut$$.
+$syntax/
+
+/MapObj_b_bOut/
+/$$
+the output value $italic MapObj_b_bOut$$
+is a a matrix containing the derivative of the 
+approximate gradient.
+
+$head Example$$
+Suppose that
+$math%
+       /  #exp[b(1)]     0  \         / 1  0 \
+R(b) = |  %                 |    D  = |      |
+       \  0      #exp[b(1)] /         \ 0 .5 /
+
+       / b(2) \        / 2 \
+f(b) = |      |   y =  |   |
+       \ b(2) /        \ 2 /
+%$$
+It follows that
+$math%                         
+MapObj(b) = #log{2 #pi #exp[b(1)]} + [2 - b(2)]^2 #exp[-b(1)]
+          + #log(2 #pi)%           + (1/2) b(1)^2 +  b(2)^2
+%$$
+The gradient of $math%MapObj(x)%$$ is equal to
+$math%
+	/ 1 - [2 - b(2)]^2 #exp[-b(1)] + b(1) \
+	|               %                     |
+	\ -2 [2 - b(2)] #exp[-b(1)] + 2 b(2)  /
+%$$
+The gradient is zero when
+$math%b(1) = 0%$$ and $math%b(2) = 1%$$
+(which satisfies the constraints).
+$pre
+
+$$
+Taking the derivative of the gradient above,
+$math%
+                / [2-b(2)]^2#exp[-b(1)]+1   2[2-b(2)]#exp[-b(1)] \
+MapObj_b_b(b) = |           %                  %                 |
+                \  2[2-b(2)]#exp[-b(1)]       2#exp[-b(1)] + 2   /
+%$$
+substituting in 
+$math%b(1) = 0%$$ and $math%b(2) = 1%$$, we obtain
+$math%
+	/ 2   2 \
+	|       |
+	\ 2  4  /
+%$$
+$pre
+
+$$
+If you enter
+$codep
+
+clear
+include MapObj.oms
+#
+function Model(b, fOut, f_bOut, ROut, R_bOut) begin
+	if fOut then ...
+		fOut = {b(2), b(2)}
+	if f_bOut then ...
+		f_bOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 1 ] ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ exp(b(1)) ,   0   ], ...
+		[ 0    ,  exp(b(1)) ] ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		[ exp(b(1)) , 0 ], ...
+		[ 0         , 0 ], ...
+		[ 0         , 0 ], ...
+		[ exp(b(1)) , 0 ] ...
+	}
+	return true
+end
+D             = diag({1., .5})
+y             = {2, 2}
+eps           = 1e-3
+delta         = 1e-7
+mitr          = 40
+level         = 0
+bIn           = {1.2, .8}
+bUp           = {4., 4.}
+bLow          = -{4., 4.}
+bOut          = true
+bStep         = {.05, .05}
+NormOut       = true
+MapObj_bOut   = true
+MapObj_b_bOut = true
+ok = MapTilde( ...
+	function Model, D, y, ...
+	eps, delta, mitr, level, ...
+	bIn, bLow, bUp, bOut, bStep, ...
+	NormOut, MapObj_bOut, MapObj_b_bOut ...
+)
+print "ok             =", ok
+print "bOut'          =", bOut'
+print "NormOut'       =", NormOut'
+print "MapObj_bOut    =", MapObj_bOut
+print "MapObj_b_bOut  =", MapObj_b_bOut
+
+$$
+O-Matrix will respond
+$codep
+	ok             = T 
+	bOut'          = [ 0.000416752 , 0.999792 ] 
+	NormOut'       = [ 1.97192 , 1.00109 , 0.044063 , 0.000656469 ] 
+	MapObj_bOut'   = [ 0.000637154 , 0.000158071 ] 
+	MapObj_b_bOut  = {
+	[ 2.00034 , 1.99978 ]
+	[ 1.99895 , 3.99805 ]
+	}
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+include MapObjDiff.oms
+#
+#
+# minimize    .5 * x' * Q * x + b' * x
+#
+local function Active(x, g, xlow, xup) begin
+	upper = (x == xlow) and (g > 0)
+	lower = (x == xup) and (g < 0)
+	return upper or lower
+end
+local function Qbox(level, Q, b, xin, xlow, xup) begin
+	n      = rowdim(xin)
+	x      = xin
+	change = true
+	itr    = 0
+	while change begin
+		change = false
+		itr    = itr + 1
+		k      = 0
+		g      = Q * x + b
+		d      = - g
+		active = Active(x, g, xlow, xup)
+		dk     = d.row(not active)
+		gk     = g.row(not active)
+		Qk     = Q.blk(not active, not active)
+		#
+		if itr == 1 and level >= 1 then ...
+			print "gk =", gk'
+		while k <= colsum(not active) and not change begin
+			# use algorihtm on page 83 of Luenberger's
+			# Introduction to Linear and Nonlinear Programming
+			k     = k + 1
+			#
+			fk    = .5 * x' * Q * x + b' * x
+			if level >= 1 then ...
+				print "f =", fk, "active =", active'
+			#
+			Qd    = Qk * dk
+			dQd   = dk' * Qd
+			if dQd <= 0 then ...
+				k = n + 1
+			else begin
+				alpk              = - gk' * dk / dQd
+				x.row(not active) = x.row(not active) + alpk * dk
+				#
+				flag = x > xup
+				x.row(flag) = xup.row(flag)
+				flag = x < xlow
+				x.row(flag) = xlow.row(flag)
+				#
+				change = any( Active(x, g, xlow, xup) <> active )
+				if not change then begin
+					g      = Q * x + b
+					gk     = g.row(not active)
+					betak  = gk' * Qd / dQd
+					dk     = - gk + betak * dk
+				end
+			end
+		end
+	end
+	g      = Q * x + b
+	gk     = g.row(not active)
+	if level >= 1 then ...
+		print "gk =", gk'
+	return x
+end
+function MapTilde( ...
+	function Model, ...
+	D, ...
+	y,  ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	bIn, ...
+	bLow, ...
+	bUp, ...
+	bOut, ...
+	bStep, ...
+	NormOut, ...
+	MapObj_bOut, ...
+	MapObj_b_bOut ...
+) begin
+	#
+	# initialize
+	bCur = bIn
+	Norm = fill(0, 0, 1)
+	#
+	if mitr == 0 then ...
+		nitr = 1
+	else	nitr = mitr
+	MapObj_b   = true
+	MapObj_b_b = true
+	ok = MapObjDiff( ...
+		function Model, ...
+		D, ...
+		y, ...
+		bStep, ...
+		bCur, ...
+		MapObj_b, MapObj_b_b ...
+	)
+	if level >= 1 then begin
+		print "MapObj_b exact =", MapObj_b
+	end
+	for itr = 1 to nitr begin
+		if itr == 1 and level >= 1 then ...
+			print "MapObj_b approx =", MapObj_b
+		#
+		# minimize    .5 * x' * Q * x + q * x
+		# subject to  bLow <= bCur + x <= bUp
+		sublevel   = 0
+		Q          = MapObj_b_b
+		q          = MapObj_b'
+		xin        = fill(0d0, rowdim(bCur), 1)
+		xlow       = bLow - bCur
+		xup        = bUp  - bCur
+		xout       = Qbox(sublevel, Q, q, xin, xlow, xup)
+		#
+		# take the step and ensure that constraining components
+		# are exactly equal to limiting values
+		bCur  = bCur + xout
+		bCur.row(xout == xup)  = bUp.row(xout == xup)
+		bCur.row(xout == xlow) = bLow.row(xout == xlow)
+		#
+		# evaluate functions at new point
+		MapObj_b   = true
+		MapObj_b_b = true
+		ok = MapObjDiff( ...
+			function Model, ...
+			D, ...
+			y, ...
+			bStep, ...
+			bCur, ...
+			MapObj_b, MapObj_b_b ...
+		)
+		# Compute the norm of the projected gradient at the new point
+		g     = MapObj_b'
+		lower = bCur == bLow and g > 0d0
+		upper = bCur == bUp and g < 0d0
+		g.row(lower or upper) = fill(0d0, colsum(lower or upper), 1)
+		Norm = {Norm, |g|}
+		#
+		# check for convergence
+		converge = all( abs(g) <= delta / bStep ) or ...
+		           all( abs(xout) <= eps * (bUp - bLow) )
+		if converge or mitr == 0d0 then begin
+			if bOut then ...
+				bOut = bCur
+			if NormOut then ...
+				NormOut = Norm
+			if MapObj_bOut then ...
+				MapObj_bOut = MapObj_b
+			if MapObj_b_bOut then ...
+				MapObj_b_bOut = MapObj_b_b
+			Y0 = novalue
+			if level >= 1 then ...
+				print "MapTilde Objective =", Norm'
+			return true
+		end
+	end
+	stop
+	return false
+end
+
+end # blocking for automatic include

@@ -1,0 +1,76 @@
+$begin mat2cpp$$
+$spell
+	cpp
+	getstarted
+	grep
+	gz
+	-llapack
+	-lmat
+	ls
+	matlab
+	sudo
+	usr
+	xvzf
+$$
+
+$section Install mat2cpp$$
+
+$head Download$$
+The file 
+$href%mat2cpp-06-05-15.tar.gz%$$
+was downloaded from the web page
+$href%http://toronto.rfpk.washington.edu/doc/mat2cpp/mat2cpp.xml%$$.
+Then the following commands were executed
+$codep
+	tar -xvzf mat2cpp-06-05-15.tar.gz
+	cd mat2cpp-06-05-15
+$$
+$head Configure$$
+The following command was executed
+$codep
+	./configure --prefix=/usr/local  BOOST_DIR=/usr/local
+$$
+
+$head Build$$
+The following command was executed
+$codep
+	make
+$$
+
+$head Test$$
+Test the Matlab / Octave files with the commands
+$codep
+	cd mat
+	octave
+	mat2cpp_ok
+	quit
+	cd ..
+$$
+Test the C++ files with the commands
+$codep
+	cd cpp
+	./mat2cpp_ok
+	cd ..
+$$
+
+$head Install$$
+The following commands were executed
+$codep
+	sudo make install
+$$
+Execute the following command
+$codep
+	ls /usr/local/lib | grep mat2cpp
+$$
+to see that the library was actually replaced 
+(check date).
+
+$head Check Install$$
+Execute the following commands:
+$codep
+	cd cpp
+	g++ getstarted.cpp -o getstarted -lmat2cpp -llapack
+	./getstarted
+$$
+
+$end

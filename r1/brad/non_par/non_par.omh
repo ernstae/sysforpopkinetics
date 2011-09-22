@@ -1,0 +1,47 @@
+$begin non_par$$
+$spell
+	cpp
+	sudo
+	cvs
+$$
+
+$section Non-parametric Population Analysis$$
+
+$head Installation Instructions$$
+
+$head Get Source$$
+Use cvs to get the $code r1/brad/non_par$$ directory.
+
+$head Build$$
+Execute the command 
+$codep
+ 	./build.sh
+$$ 
+in the $code r1/brad/non_par$$ directory.
+
+$head Test$$
+Execute the command 
+$codep
+	cpp/all_ok
+$$ 
+from the $code r1/brad/non_par$$ directory.
+At the end the program should print
+$codep
+	All tests passed
+$$
+
+$head Install$$
+Execute the command
+$codep
+	sudo make install
+$$
+
+$contents%
+	cpp/npipp_of.cpp%
+	cpp/relaxed.cpp%
+	non_par/bender.hpp%
+	non_par/opt_measure.hpp%
+	wish_list.omh
+%$$
+
+$end

@@ -1,0 +1,8 @@
+clear
+include model_2_2.oms
+run_model
+
+#clear
+#include model_2_2.oms
+#plots
+

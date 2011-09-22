@@ -1,0 +1,105 @@
+$begin Alpha$$
+$spell
+	Nonmem
+	Eps
+$$
+
+$latex \newcommand{\E}{ {\bf E} }$$
+
+$section Alpha is the Parameter Vector Containing All the Fixed Effects$$
+
+$head Notation$$
+We use $latex \theta \in \R^m$$ for the explicit fixed effects in the model. 
+The value $latex m$$ is equal to the value of
+$xref/NonmemPars/Theta/nTheta/nTheta/1/$$ in the file $code NonmemPars.h$$.
+$pre
+
+$$
+We use $latex \eta \in \R^n$$ for the random effects in the model.
+The value $latex n$$ is equal to the value of
+$xref/NonmemPars/Eta/nEta, n/nEta/1/$$ in the file $code NonmemPars.h$$.
+$pre
+
+$$
+We use $latex \varepsilon \in \R^s$$ for the measurement error vector.
+The value $latex s$$ is equal to the value of
+$xref/NonmemPars/Eps/nEps, s/nEps/1/$$ in the file $code NonmemPars.h$$.
+
+$head Theta$$
+The first $latex m$$ components of $latex \alpha$$ are the 
+explicit fixed effects; i.e.,
+$latex \[
+	\theta = ( \alpha_0 , \cdots , \alpha_{m-1} )^T
+\] $$
+
+$head Omega$$
+This matrix $latex \Omega ( \alpha ) \in \R^{n \times n}$$ is defined by
+$latex \[
+\begin{array}{rcl}
+	\Omega ( \alpha ) & = & \E [ \eta \eta^T ] 
+\\
+	& = & \omega(\alpha) * \omega(\alpha)^T
+\end{array}
+\]$$ 
+where $latex \omega ( \alpha ) \in \R^{n \times n}$$ is defined below.
+We use $latex q$$ for the number of components of $latex \alpha$$
+that $latex \Omega( \alpha )$$ depends on.
+
+$subhead Diagonal Covariance$$
+If we are using a diagonal covariance model, $latex q = n$$ and
+$latex \[
+\omega ( \alpha ) = \left( \begin{array}{ccccc}
+\exp(\alpha_m )  & 0                  & 0      & \cdots  & 0 \\
+0                & \exp(\alpha_{m+1}) & 0      & \cdots  & 0 \\
+\vdots           & \vdots             & \ddots &         & \vdots \\
+0                & 0                  & \cdots & 0       & \exp(\alpha_{m+q-1} )
+\end{array} \right)
+\] $$
+
+$subhead Full Covariance$$
+If we are using a full covariance model, $latex q = n * (n+1) / 2$$ and
+$latex \[
+\omega( \alpha ) = \left( \begin{array}{ccccc}
+\exp(\alpha_m )  & 0                        & 0       & \cdots           & 0 \\
+\alpha_{m+1}     & \exp( \alpha_{m+2} )     & 0       & \cdots           & 0 \\
+\vdots           & \vdots                   & \ddots  &                  & \vdots \\
+\alpha_{m+q-n}   & \alpha_{m+q-n+1}         & \cdots  & \alpha_{m+q-2}   & \exp(\alpha_{m+q-1})
+\end{array} \right)
+\] $$
+
+$head Sigma$$
+This matrix $latex \Sigma ( \alpha ) \in \R^{s \times s}$$ is defined by
+$latex \[
+\begin{array}{rcl}
+	\Sigma ( \alpha ) & = & \E [ \varepsilon \varepsilon^T ]
+\\
+	                  & = & \sigma (\alpha) * \sigma (\alpha)^T
+\end{array}
+\]$$ 
+where $latex \sigma ( \alpha ) \in \R^{s \times s}$$ is defined below.
+We use $latex r$$ for the number of components of $latex \alpha$$
+that $latex \Sigma( \alpha )$$ depends on.
+
+$subhead Diagonal Covariance$$
+If we are using a diagonal covariance model, $latex r = s$$ and
+$latex \[
+\sigma( \alpha ) = \left( \begin{array}{ccccc}
+\exp(\alpha_{m+q})  & 0                    & 0      & \cdots  & 0 \\
+0                   & \exp(\alpha_{m+q+1}) & 0      & \cdots  & 0 \\
+\vdots              & \vdots               & \ddots &         & \vdots \\
+0                   & 0                    & \cdots & 0       & \exp(\alpha_{m+q+s-1} )
+\end{array} \right)
+\] $$
+
+$subhead Full Covariance$$
+If we are using a full covariance model, $latex r = s * (s+1) / 2$$ and
+$latex \[
+\sigma ( \alpha ) = \left( \begin{array}{ccccc}
+\exp(\alpha_{m+q})  & 0                        & 0       & \cdots           & 0 \\
+\alpha_{m+q+1}      & \exp(\alpha_{m+q+2})     & 0       & \cdots           & 0 \\
+\vdots              & \vdots                   & \ddots  &                  & \vdots \\
+\alpha_{m+q+r-n}    & \alpha_{m+q+r-n+1}       & \cdots  & \alpha_{m+q+r-2} & \exp(\alpha_{m+q+r-1})
+\end{array} \right)
+\] $$
+
+$end

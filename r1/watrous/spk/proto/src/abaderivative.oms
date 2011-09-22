@@ -1,0 +1,178 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+#begin##
+$begin ABADerivative$$
+$spell oms $$
+$escape &$$
+
+$section Derivative of A(x)' * B(x) * A(x)$$
+
+$index ABADerivative$$
+$index derivative, A(x)' * B(x) * A(x)$$
+
+$table
+$bold syntax$$ $cend $syntax/ABADerivative(/A/, /B/, /A_x/, /B_x/)/$$
+$tend
+
+$head Description$$
+Returns the derivative of 
+$math%
+	A(x)' * B(x) * A(x)
+%$$
+where $math%*%$$ denotes matrix multiplication and the prime $math%'%$$
+denotes transpose.
+The values of $math%A(x)%$$ 
+and $math%B(x)%$$ for the particular value of $math%x%$$
+are specified by $italic A$$ and $italic B$$ respectively.
+The derivatives of
+$math%A(x)%$$ and $math%B(x)%$$ for the particular value of $math%x%$$
+are specified by $italic A_x$$ and $italic B_x$$ respectively.
+
+$head Example$$
+Suppose that you define the function $math%A(x)%$$ and $math%B(x)%$$
+and the corresponding derivatives by entering
+$codep
+
+clear
+include ABADerivative.oms
+#
+function A(x) begin
+	return { ...
+		[ 0    , x(2) ], ...
+		[ x(1) , 1    ] ...
+		}
+end
+function B(x) begin
+	return { ...
+		[ 1    , x(1)    ], ...
+		[ x(2) , x(2)^2  ] ...
+	}
+end
+function A_x(x) begin
+	return { ...
+		[ 0  , 0 ], ...
+		[ 0  , 1 ], ...
+		[ 1  , 0 ], ...
+		[ 0  , 0 ] ...
+	}
+end
+function B_x(x) begin
+	return { ...
+		[ 0 , 0         ], ...
+		[ 1 , 0         ], ...
+		[ 0 ,  1        ], ...
+		[ 0 ,  2 * x(2) ] ...
+	}
+end
+
+$$
+It follows that the matrix product 
+$math%A(x)' * B(x)%$$ is given by
+$math%
+	/  x(1) x(2)     x(1) x(2)^2       \
+	|                                  |
+	\  2 x(2)      x(1) x(2) + x(2)^2  /
+%$$
+It follows that the matrix product 
+$math%A(x) * B(x) A(x)'%$$ is given by
+$math%
+	/        x(1)^2 x(2)^2              2 x(1) x(2)^2     \
+	|                                                     |
+	\  x(1)^2 x(2) + x(1) x(2)^2     3 x(2)^2 + x(1) x(2) /
+%$$
+The derivative of this matrix is equal to
+$math%
+	/   2 x(1) x(2)^2              2 x(1)^2 x(2)    \  
+      |   2 x(2)^2                   4 x(1) x(2)      |
+	|  2 x(1) x(2) + x(2)^2    x(1)^2 + 2 x(1) x(2) |
+	\       x(2)                  6 x(2) + x(1)     /
+%$$
+If you enter
+$codep
+	x = {1, 2}
+	A(x)' * B(x) * A(x)
+$$
+O-Matrix will respond
+$codep
+	{
+	[ 4 ,  8 ]
+	[ 6 , 14 ]
+	}
+$$
+If you continue by entering
+$codep
+	ABADerivative(A(x), B(x), A_x(x), B_x(x))
+
+$$
+O-Matrix will reply
+$codep
+	{
+	[ 8 , 4 ]
+	[ 8 , 8 ]
+	[ 8 , 5 ]
+	[ 2 , 13 ]
+	}
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+------------------------------------------------------------
+#end##
+include AkronBtimesC.oms
+local function TransposeDerivative(A, A_x) begin
+	#
+	# get dimensions
+	nr   = rowdim(A)
+	nc   = coldim(A)
+	nx   = coldim(A_x)
+	#
+	#
+	if arg(0) == 2 then begin
+		At_x = fill(0, nr * nc, nx)
+		for j = 1 to nx begin
+			A_j  = A_x.col(j)
+			dim A_j(nc, nr)
+			A_j  = A_j'
+			dim A_j(nr * nc, 1)
+			At_x.col(j) = A_j
+		end
+		return At_x
+	end
+end
+#
+function ABADerivative(A, B, A_x, B_x) begin
+	Ia   = identity(coldim(A))
+	At   = A'
+	At_x = TransposeDerivative(A, A_x)
+	return AkronBtimesC(At * B, Ia, A_x) + ...
+	       AkronBtimesC(At, At, B_x) + ...
+	       AkronBtimesC(Ia, At * B', At_x)
+end
+
+end # blocking for automatic include

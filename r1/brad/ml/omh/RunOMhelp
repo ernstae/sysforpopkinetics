@@ -1,0 +1,6 @@
+cd htm
+rm *.xml
+rm *.htm
+$omhelp_dir/omhelp ../../monteDriver.cpp -debug -xml 
+$omhelp_dir/omhelp ../../monteDriver.cpp -debug -xml -printable
+ 

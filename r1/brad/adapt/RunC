@@ -1,0 +1,13 @@
+# !/bin/bash
+f2c -c -P -r8 adapt.f
+mv adapt.c adapt.$$
+sed  < adapt.$$ > adapt.c \
+	-e 's/"f2c.h"/<f2c.h>/' 
+sed  < adapt.P > adapt.h \
+	-e 's/adapt_(/&\n\t/' \
+	-e 's/,/&\n\t/g' \
+	-e 's/);/\n&/' \
+	-e 's/U_fp functn/D_fp functn/'
+gcc -g -I$HOME/include Test.c adapt.c pow_ii.c -lm -o Test
+./Test
+rm adapt.$$

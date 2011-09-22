@@ -1,0 +1,135 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+
+# m number of columns in A
+function rvecInverse( Acol , m ) begin
+	total = rowdim(Acol)
+	n = total / m
+	r = rem( total , n )
+	# error if r != 0 
+	temp = Acol
+	dim temp( m , n )
+	return temp'
+end
+
+
+#begin##
+$begin rvecInverse$$
+$escape #$$
+
+$spell
+	rvecInverse
+	
+ Acol
+
+ rvec
+$$
+
+$section Inverse of a rvec$$
+
+$index rvecInverse$$
+$cindex inverse rvec$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/rvecInverse(/Acol/, /m/)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+rvecInverse  takes two parameters: the first is a column vector
+which it treats as a result of an rvec operation.  The second parameter
+is the number of columns in the original matrix used for the rvec
+operation.  rvecInverse returns the original matrix.
+
+$head Arguments$$
+$syntax/
+
+/Acol/
+/$$
+a column actor, assumed to be the result of an rvec operation.
+$syntax/
+
+/m/
+/$$
+the number of columns in the matrix used for the rvec operation.
+
+
+$head Example$$
+if you run the following program
+$codep
+clear 
+
+A = [{1,2,3,4},{5,6,7,8}]'
+print "here is A"
+print A
+B = rvec(A)
+print "here is rvec(A)"
+print B
+C = rvecInverse(B,4)
+print "here is rvecInverse( ,4) of prior matrix"
+print C
+$$
+O-Matrix will respond
+$codep
+output of program:
+
+here is A 
+{
+[ 1 , 2 , 3 , 4 ]
+[ 5 , 6 , 7 , 8 ]
+}
+
+here is rvec(A) 
+{
+1
+2
+3
+4
+5
+6
+7
+8
+}
+
+here is rvecInverse( ,4) of prior matrix 
+{
+[ 1 , 2 , 3 , 4 ]
+[ 5 , 6 , 7 , 8 ]
+}
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+end # blocking for automatic include

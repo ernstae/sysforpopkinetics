@@ -1,0 +1,70 @@
+$begin DataSet$$
+$spell
+	const
+	valarray
+	Cpp
+	std
+	yi
+$$
+
+$section The DataSet Class$$
+
+$table
+$bold Syntax$$
+$cnext 
+$syntax%# include "DataSet.h"%$$
+$tend
+
+$fend 20$$
+
+$head DataSet$$
+$index DataSet$$
+The following is a documentation of the 
+aspects of the $code DataSet$$ class that are used
+by the monte carlo integration routine.
+
+$head Constructor$$
+The syntax
+$syntax%
+	DataSet< CppAD::AD<double> > %set%;
+%$$
+constructs a data set. 
+
+$head getPopSize$$
+$index getPopSize$$
+The syntax
+$syntax%
+	%M% = %set%.getPopSize();
+%$$
+sets $italic M$$ to the number of individuals in the population data set
+where $italic M$$ is an $code int$$.
+
+$head getN$$
+$index getN$$
+If $italic N$$ is a $code std::valarray<int>$$ of size $italic M$$,
+the syntax 
+$syntax%
+	%N% = %set%.getN()
+%$$
+sets $latex N$$ to the number of measurements for each individual.
+For $latex i = 1, \ldots , M$$,
+$latex N[i]$$ is the number of measurements
+corresponding to the individual with index $italic i$$.
+
+$head getAllMeasurements$$
+$index getAllMeasurements$$
+If $italic y$$ is a $code std::valarray<double>$$ of size 
+$latex N[0] + \ldots + N[M-1]$$,
+the syntax
+$syntax%
+	%y% = %set%.getAllMeasurements()
+%$$
+set $italic y$$ the measurement values for all the individuals
+in the population. 
+The first $syntax%%N%[0]%$$ elements correspond to the
+individual with index zero; i.e., $xref/Notation/yi/yi: i=0/$$.
+The next $syntax%%N%[1]%$$ elements correspond to the
+individual with index one; i.e., $xref/Notation/yi/yi: i=1/$$,
+and so on.
+
+$end

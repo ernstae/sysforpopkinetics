@@ -1,0 +1,55 @@
+$syntax/
+
+/xOut/
+/$$
+The $xref/glossary/Output Value/output value/$$ of $italic xOut$$
+is a double-precision column vector containing the approximate
+maximizer of the population optimal design criterion.
+
+
+
+
+
+
+
+
+$syntax/
+
+/alpStep/
+/$$
+The double-precision column vector $italic alpStep$$
+specifies the step size used for approximating
+the derivatives with respect to the fixed population parameters.
+$syntax/
+
+/alpLow/
+/$$
+is a double-precision column vector with the same length as $italic alpIn$$
+specifying the lower limit for $italic alp$$ during the optimization.
+$syntax/
+
+/alpUp/
+/$$
+is a double-precision column vector with the same length as $italic alpIn$$
+specifying the upper limit for $italic alp$$ during the optimization.
+$syntax/
+
+/alpIn/
+/$$
+is a double-precision column vector specifying the initial value
+for the fixed population parameters.
+The $xref/glossary/Ordering Of Vectors/order condition/$$
+$math%alpLow \le alpIn \le alpUp%$$ is assumed to hold.
+$syntax/
+
+/alpOut/
+/$$
+The $xref/glossary/Output Value/output value/$$ of $italic alpOut$$
+is a double-precision column vector containing the approximate
+minimizer of the negative logarithm of the integrand that appears 
+in the population expected determinant optimal design criterion
+as a function of the fixed population parameters.
+This is under the assumption that $italic xOut$$
+is the true value for the design parameters.
+The values $math%eps(1)%$$, and $math%delta(1)%$$, are used 
+for accepting the minimizers with respect to the fixed population parameters.

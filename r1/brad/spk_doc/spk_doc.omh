@@ -1,0 +1,15 @@
+$begin spk_doc$$
+$spell
+	OMhelp
+	Spk
+$$
+
+$section Spk OMhelp Documentation$$
+
+$contents%
+	min_spk_model.omh%
+	spk_non_par.omh
+	
+%$$
+
+$end

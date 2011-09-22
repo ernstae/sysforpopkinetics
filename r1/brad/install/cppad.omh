@@ -1,0 +1,61 @@
+$begin cppad$$
+$spell
+	grep
+	config
+	cpp
+	cppad
+	gz
+	ls
+	su
+	sudo
+	usr
+	xvzf
+$$
+
+$section Install CppAD$$
+
+$head Download$$
+The file 
+$href%CppAD-06-08-30.tar.gz%$$
+was downloaded from the web page
+$href%http://www.coin-or.org/CppAD/Doc/installunix.xml%$$.
+Then the following commands were executed 
+$codep
+	tar -xvzf CppAD-06-08-30.tar.gz
+	cd cppad-06-08-30
+$$
+
+$head Configure$$
+The following command was executed
+$codep
+	./configure --prefix=/usr/local  --with-Example --with-TestMore 
+$$
+
+$head Build$$
+The following command was executed
+$codep
+	make
+$$
+
+$head Test$$
+The following command was executed
+$codep
+	./Example/Example
+	./TestMore/TestMore
+$$
+The programs both responded that all the tests passed.
+
+$head Install$$
+The following commands were executed
+$codep
+	sudo su
+	make install
+	exit
+	grep PACKAGE_STRING /usr/local/include/CppAD/config.h
+$$
+The $code grep$$ command resulted in the following output
+$codep
+	#define PACKAGE_STRING "CppAD 06-08-30"
+$$
+
+$end

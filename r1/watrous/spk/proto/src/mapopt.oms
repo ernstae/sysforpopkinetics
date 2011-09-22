@@ -1,0 +1,420 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+
+#begin##
+$begin MapOpt$$
+$escape #$$
+
+$spell
+	Rval
+	fval
+	Bayesian
+	ok
+	exp
+	mitr
+	eps
+	diag
+	Obj
+$$
+
+$section Optimizing The Map Bayesian Objective Function$$
+
+$cindex map bayesian optimization$$
+$index MapOpt$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/MapOpt( ...
+function /Model/, ...
+/D/, ...
+/y/, ...
+/eps/, ...
+/delta/, ...
+/mitr/, ...
+/level/, ...
+/bIn/, /bLow/, /bUp/, /bOut/, /bStep/, ...
+/MapObjOut/, /MapObj_bOut/, /MapObj_b_bOut/ ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Minimizes the map Bayesian objective function. To be specific,
+$math%
+	#minimize MapObj(b) #subject #to bLow #le b #le bUp
+%$$
+where the function $math%MapObj(b)%$$ is defined by
+$math%
+            1 %          %            1          T    -1
+MapObj(b) = - #logdet[ 2 #pi R(b) ] + - [y - f(b)] R(b) [y - f(b)]
+            2 %          %            2
+
+            1 %          %            1  T  -1
+          + - #logdet[ 2 #pi D ]    + - b  D  b
+            2 %          %            2
+%$$
+(The equation above uses
+$xref/glossary/Individual Notation/individual notation/$$.)
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $code MapOpt$$ is true if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/b/, /fOut/, /f_bOut/, /ROut/, /R_bOut/)
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the parameter vector 
+and has the same length as $italic bIn$$.
+The $xref/glossary/Output Value/output value/$$ $italic fOut$$
+is a double-precision column vector equal to $math%f(b)%$$.
+The output value $italic f_bOut$$
+is a double-precision matrix equal to $math%f_b(b)%$$.
+The output value $italic ROut$$
+is a double-precision column vector equal to $math%R(b)%$$.
+The output value $italic R_bOut$$
+is a double-precision matrix equal to $math%R_b(b)%$$.
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+$syntax/
+
+/D/
+/$$
+The double-precision matrix $italic D$$
+specifies the variance of the prior distribution and
+has the same number of rows as $italic b$$.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector containing the data vector.
+$syntax/
+
+/eps/
+/$$
+is a double-precision scalar greater than zero. 
+A parameter value $math%bOut%$$ is accepted when an approximation for
+$math%abs(bOut - bHat)%$$ is element-by-element less than or equal
+$math%eps (bUp - bLow)%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%bHat%$$ is the true minimizer of the objective function.
+The approximation mentioned above is quick to
+calculate during the optimization procedure.
+A more accurate approximation of the distance
+to the solution can be calculated using the first and second
+derivatives of the objective function at $math%bOut%$$.
+$syntax/
+
+/delta/
+/$$
+is a double-precision scalar greater than zero.
+A parameter value $math%bOut%$$ is accepted when 
+$math%
+	MapObj(bOut) - MapObj(bHat) #le delta
+%$$
+where $math%bHat%$$ is its true minimizer of $math%MapObj(b)%$$.
+$syntax/
+
+/mitr/
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+$syntax/
+
+/level/
+/$$
+this integer scalar specifies the amount of tracing.
+$math%
+level #ge 1
+%$$
+the current value of the objective is printed
+with the label $code f$$ and the norm of the gradient is
+printed with the label $code |g|$$ 
+(not including the constrained directions in the gradient).
+In addition, the total time between calling $code mapOpt$$ and its
+return is printed.
+$math%
+level #ge 2
+%$$
+the current value of $math%b%$$ is 
+printed with the label $code x$$, and the gradient of the
+objective is printed with the label $code g$$
+(not including the constrained directions in the gradient).
+$math%
+level #ge 3
+%$$
+the step size and function values are traced
+during each line search procedure.
+$math%
+level #ge 4
+%$$
+the analytic of the objective function with respect to the
+$math%b%$$ is compared with its numerical approximation.
+$syntax/
+
+/bIn/
+/$$
+The double-precision column vector $italic bIn$$
+specifies the initial value for the parameter vector 
+during the optimization procedure.
+$syntax/
+
+/bLow/
+/$$
+The double-precision column vector $italic bLow$$
+specifies the lower limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bUp/
+/$$
+The double-precision column vector $italic bUp$$
+specifies the upper limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bOut/
+/$$
+the output value $italic bOut$$
+is a double-precision column vector containing the 
+approximately optimal value for $math%b%$$.
+$syntax/
+
+/bStep/
+/$$
+The double-precision column vector $italic bStep$$
+specifies the step size used for approximating
+the derivative of $math%MapObj_b(b)%$$.
+This is not used unless 
+the input value of $italic MapObj_b_bOut%$$ is true.
+$syntax/
+
+/MapObjOut/
+/$$
+the output value $italic MapObjOut$$
+is a column vector containing the value of the objective function
+at each iteration of the optimizer.
+$syntax/
+
+/MapObj_bOut/
+/$$
+the output value $italic MapObj_bOut$$
+is a row vector containing the derivative of the objective function; i.e.,
+$math%MapObj_b(b)%$$.
+$syntax/
+
+/MapObj_b_bOut/
+/$$
+the output value $italic MapObj_b_bOut$$
+is a matrix containing an approximation for second 
+derivative of the objective function; i.e.,
+$math%MapObj_b_b(b)%$$
+This approximation is formed using central
+differences of the function $math%MapObj_b(b)%$$ with
+step sizes specified by $italic bStep$$.
+
+$head Example$$
+Suppose that
+$math%
+       /  #exp[b(1)]     0  \         / 1  0 \
+R(b) = |  %      %          |    D  = |      |
+       \  0      #exp[b(1)] /         \ 0 .5 /
+
+       / b(2) \        / 2 \
+f(b) = |      |   y =  |   |
+       \ b(2) /        \ 2 /
+%$$
+It follows that
+$math%                         
+MapObj(b) = #log{2 #pi #exp[b(1)]} + [2 - b(2)]^2 #exp[-b(1)]
+          + #log(2 #pi)%           + (1/2) b(1)^2 +  b(2)^2
+%$$
+The gradient of $math%MapObj(b)%$$ is equal to
+$math%
+	/ 1 - [2 - b(2)]^2 #exp[-b(1)] + b(1) \
+	|               %                     |
+	\ -2 [2 - b(2)] #exp[-b(1)] + 2 b(2)  /
+%$$
+The first order necessary condition for a minimum is 
+that the gradient is zero. This is true when
+$math%b(1) = 0%$$ and $math%b(2) = 1%$$.
+$pre
+
+$$
+Taking the derivative of the gradient above,
+$math%
+                / [2-b(2)]^2#exp[-b(1)]+1   2[2-b(2)]#exp[-b(1)] \
+MapObj_b_b(b) = |           %                  %                 |
+                \  2[2-b(2)]#exp[-b(1)]       2#exp[-b(1)] + 2   /
+%$$
+substituting in 
+$math%b(1) = 0%$$ and $math%b(2) = 1%$$, we obtain
+$math%
+	/  2  -2 \
+	|        |
+	\ -2   4 /
+%$$
+$pre
+
+$$
+If you enter
+$codep
+
+clear
+include MapOpt.oms
+#
+function Model(b, fOut, f_bOut, ROut, R_bOut) begin
+	if fOut then ...
+		fOut = {b(2), b(2)}
+	if f_bOut then ...
+		f_bOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 1 ] ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ exp(b(1)) ,   0   ], ...
+		[ 0    ,  exp(b(1)) ] ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		[ exp(b(1)) , 0 ], ...
+		[ 0         , 0 ], ...
+		[ 0         , 0 ], ...
+		[ exp(b(1)) , 0 ] ...
+	}
+	return true
+end
+D             = diag({1., .5})
+y             = {2, 2}
+eps           = 1e-3
+delta         = 1e-7
+mitr          = 40
+level         = 0
+bIn           = {2., 2.}
+bUp           = {4., 4.}
+bLow          = -{4., 4.}
+bOut          = true
+bStep         = {1e-3, 1e-3}
+MapObjOut     = true
+MapObj_bOut   = true
+MapObj_b_bOut = true
+ok = MapOpt( ...
+	function Model, D, y, ...
+	eps, delta, mitr, level, ...
+	bIn, bLow, bUp, bOut, bStep, ...
+	MapObjOut, MapObj_bOut, MapObj_b_bOut ...
+)
+print "ok             =", ok
+print "bOut'          =", bOut'
+print "MapObj_bOut    =", MapObj_bOut
+print "MapObj_b_bOut  =", MapObj_b_bOut
+
+$$
+O-Matrix will respond
+$codep
+	ok            = T 
+	bOut'         = [ -2.69058e-007 , 0.999999 ] 
+	MapObj_bOut   = [ -3.21115e-006 , -5.88419e-006 ] 
+	MapObj_b_bOut = {
+	[ 2 , 2 ]
+	[ 2 , 4 ]
+	}
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+include MapObj.oms
+include MapObjDiff.oms
+include cganybox.oms
+#
+function MapOpt( ...
+	function Model, ...
+	D, ...
+	y,  ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	bIn, ...
+	bLow, ...
+	bUp, ...
+	bOut, ...
+	bStep, ...
+	MapObjOut, ...
+	MapObj_bOut, ...
+	MapObj_b_bOut ...
+) begin
+	#
+	# arguments for CgAnyBox
+	function fval = MapObj(Model, D, y)
+	xOut          = true
+	# eps = eps
+	# delta = delta
+	# mitr  = mitr
+	# xLow  = bLow
+	# xUp   = bUp
+	# xIn   = bIn
+	# fOut  = MapObjOut
+	# level = level
+	#
+	[mOut, xOut, MapObjOut, fCount, gCount] = CgAnyBox( ...
+		function fval, ...
+		eps, ...
+		delta, ...
+		mitr, ...
+		level, ...
+		bLow, ...
+		bUp, ...
+		bIn ...
+	)
+	Ok = mOut == "ok"
+	#
+	if not Ok then return false 
+	#
+	if bOut then ...
+		bOut = xOut
+	if MapObj_bOut then ...
+		Ok = MapObj(function Model, D, y, xOut, false, MapObj_bOut)
+	if not Ok then return false
+	if MapObj_b_bOut then ...
+		Ok = MapObjDiff(function Model, D, y, bStep, xOut, false, MapObj_b_bOut)
+	return Ok
+end
+
+end # blocking for automatic include

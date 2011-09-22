@@ -1,0 +1,56 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin utilities$$
+$section Utilities$$
+$spell
+    Rfpk
+    Pop3cm
+    Spk
+    FoModel
+$$
+
+$path/..\..\..\Tools/.cpp/$$
+$path/..\..\..\Tools\simulate/.cpp/$$
+$path/..\..\..\Tools\src/.cpp/$$
+
+$head Note$$
+The programs listed in this section are considered auxiliary tools built for aiding development of
+the products' (e.x. Spk library, Pop3cm Interface) components.  Under the Rfpk software development policy,
+these are not required to be tested as rigor as the core components.
+
+$childtable/
+	simulate.cpp/
+	randNormal.cpp/
+	calcMean.cpp/
+	residuals.cpp/
+	sampleCovariance.cpp/$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+	

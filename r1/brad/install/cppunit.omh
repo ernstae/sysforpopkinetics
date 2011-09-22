@@ -1,0 +1,52 @@
+$begin cppunit$$
+$spell
+	cpp
+	cppunit
+	devel
+	dir
+	edu
+	ernst
+	exit exit
+	file file
+	http
+	rfpk
+	rhel
+	rpm rpm
+	su
+	sudo
+	tmp
+	uvh
+$$
+
+$section Install CppUnit$$
+
+$head Rpm$$
+Andrew Ernst set up three rpm files for CppUnit that worked 
+via the following commands:
+$codep
+	sudo su -
+	cd /tmp
+	dir=http://toronto.rfpk.washington.edu/software/rhel4
+	file=cppunit-1.10.2-2.i386.rpm
+	rpm -Uvh @dir/@file
+	file=cppunit-devel-1.10.2-2.i386.rpm
+	rpm -Uvh @dir/@file
+	file=cppunit-doc-1.10.2-2.i386.rpm
+	rpm -Uvh @dir/@file
+$$
+The resulting messages after the last $code rpm$$ command were
+$nospell
+$codep
+Retrieving http://toronto.rfpk.washington.edu/software/rhel4/cppunit-doc-1.10.2-2.i386.rpm
+Preparing...                ########################################### [100%]
+   1:cppunit-doc            ########################################### [100%]
+sh-3.00#
+$$
+$$
+After this output, normal user settings were restored with the command
+$codep
+	exit
+	exit
+$$
+
+$end

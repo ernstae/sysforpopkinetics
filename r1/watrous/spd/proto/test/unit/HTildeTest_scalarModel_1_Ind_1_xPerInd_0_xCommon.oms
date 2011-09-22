@@ -1,0 +1,298 @@
+# ---------------------------------------------------------------------
+# File: HTildeTest_scalarModel_1_Ind_1_xPerInd_0_xCommon.oms
+#
+#
+# Unit test for HTilde for which all of the parameter vectors,
+# data mean models, and covariance matrix models are all scalars.
+#
+# Author: Mitch Watrous
+# 
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+#
+# Preliminaries
+#
+# ---------------------------------------------------------------------
+
+clear
+
+dir   = up2low(cwd)
+index = find(dir, "\pped")
+index = index(end, 2)
+dir   = dir(1 :: index)
+
+path([ ...
+  dir, "general;",      NEW_LINE, ...
+  dir, "pped\src;",     NEW_LINE, ...
+  dir, "ppka;",         NEW_LINE, ...
+  path                           ...
+])
+
+format double "e24.15"
+
+# Modified SPK functions.
+include HTilde.oms
+
+
+# ---------------------------------------------------------------------
+#
+# Local variables
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Quantities related to the population.
+# ---------------------------------------------------------------------
+
+# Number of individuals.
+local nInd = 1
+
+# Data values per individual.
+local nYPerInd = 1
+local nY       = nInd*nYPerInd
+local N        = fill(nYPerInd, nInd, 1)
+
+
+# ---------------------------------------------------------------------
+# Quantities related to the design parameters.
+# ---------------------------------------------------------------------
+
+local nXPerInd = 1
+local K_common = 0
+local K        = { fill(nXPerInd, nInd, 1), K_common }
+local nX_iTot  = nInd*nXPerInd
+local nX       = nX_iTot + K_common
+
+
+# ---------------------------------------------------------------------
+# Quantities related to the fixed population parameter.
+# ---------------------------------------------------------------------
+
+local nAlp = 1
+
+
+# ---------------------------------------------------------------------
+# Quantities related to the random population parameter.
+# ---------------------------------------------------------------------
+
+local bLength = 1
+
+
+# ---------------------------------------------------------------------
+#
+# Global functions
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: Model
+# ---------------------------------------------------------------------
+
+function Model( ...
+  i, ...
+  x, ...
+  alp, ...
+  b, ...
+  fOut, ...
+  f_xOut, ...
+  f_alpOut, ...
+  f_bOut, ...
+  f_b_xOut, ...
+  f_b_alpOut, ...
+  ROut, ...
+  R_xOut, ...
+  R_alpOut, ...
+  R_bOut, ...
+  DOut, ...
+  D_alpOut ...
+) ...
+begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries
+  # -------------------------------------------------------------------
+
+  # Get the number of data values for this individual.
+  if type(i) <> "novalue" then begin
+    nY = N(i)
+    if nY <> 1 then stop
+  end
+
+  # Get the total number of design parameters for all of the individuals.
+  if type(x) <> "novalue" then begin
+    nX = rowdim(x)
+    if nX <> 1 then stop
+  end
+
+  # Get the number of fixed population parameters.
+  if type(alp) <> "novalue" then begin
+    nAlp = rowdim(alp)
+    if nAlp <> 1 then stop
+  end
+
+  # Get the number of random population parameters.
+  if type(b) <> "novalue" then begin
+    nB = rowdim(b)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Calculate the mean of the data and its derivatives.
+  # -------------------------------------------------------------------
+
+  if fOut then begin
+    fOut = {alp(1)}
+  end
+  if f_xOut then begin
+    f_xOut = fill(0.d0, nY, nX)
+  end
+  if f_alpOut then begin
+    f_alpOut = {1}
+  end
+  if f_bOut then begin
+    f_bOut = fill(0.d0, nY, nB)
+  end
+  if f_b_xOut then begin
+    f_b_xOut = fill(0.d0, nY*nB, nX)
+  end
+  if f_b_alpOut then begin
+    f_b_alpOut = fill(0.d0, nY*nB, nAlp)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Calculate the covariance of the data and its derivatives.
+  # -------------------------------------------------------------------
+
+  if ROut then begin
+    ROut = {1.d0/(1.d0 - x(1)^2)}
+  end
+  if R_xOut then begin
+    R_xOut = {2.d0*x(1)/((1.d0 - x(1)^2)^2)}
+  end
+  if R_alpOut then begin
+    R_alpOut = fill(0.d0, nY*nY, nAlp)
+  end
+  if R_bOut then begin
+    R_bOut = fill(0.d0, nY*nY, nB)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Calculate the covariance of the random effects and its derivatives.
+  # -------------------------------------------------------------------
+
+  if DOut then begin
+    DOut = double( identity(nB) )
+  end
+  if D_alpOut then begin
+    D_alpOut = fill(0.d0, nB*nB, nAlp)
+  end
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  return true
+end
+
+
+# ---------------------------------------------------------------------
+#
+# Do the test.
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Quantities related to the state of the population information matrix.
+# ---------------------------------------------------------------------
+
+# Values for the design parameters.
+x       = fill(0.5d0, nX, nInd)
+
+# Values and step size for the fixed population parameter.
+alp     = fill(0.3d0, nAlp, 1)
+alpStep = fill(0.001d0, nAlp, 1)
+
+
+# ---------------------------------------------------------------------
+# Evaluate the population information matrix.
+# ---------------------------------------------------------------------
+
+HTildeOut     = true
+HTilde_xOut   = true
+HTilde_alpOut = true
+
+ok = HTilde( ...
+  function Model, ...
+  K, ...
+  x,...
+  alpStep, alp,...
+  bLength, ...
+  HTildeOut, HTilde_xOut, HTilde_alpOut  ...
+)
+
+if not ok then halt
+
+
+# ---------------------------------------------------------------------
+# Calculate the known values.
+# ---------------------------------------------------------------------
+
+# The population Fisher information matrix is
+#
+#                           2
+#   HTilde(x, alp)  =  1 - x   .
+#
+HTildeKnown     = { 1.d0-x^2 }
+HTilde_xKnown   = { -2.d0*x }
+HTilde_alpKnown = { 0.d0 }
+
+
+# ---------------------------------------------------------------------
+# Check the results.
+# ---------------------------------------------------------------------
+
+tol = 1.d-14
+
+print "HTildeOut         = ", HTildeOut
+print "HTilde (analytic) = ", HTildeKnown
+print "Relative Difference = ", abs((HTildeOut - HTildeKnown)/HTildeOut)
+print "Absolute Difference = ", abs(HTildeOut - HTildeKnown)
+print
+converged = abs(HTildeOut - HTildeKnown) < tol*HTildeKnown
+if not all(converged) then begin
+  stop "[HTildeTest_scalarModel] Error: HTildeOut does not agree."
+end
+
+print "HTilde_xOut         = ", HTilde_xOut
+print "HTilde_x (analytic) = ", HTilde_xKnown
+print "Relative Difference = ", abs((HTilde_xOut - HTilde_xKnown)/HTilde_xOut)
+print "Absolute Difference = ", abs(HTilde_xOut - HTilde_xKnown)
+print
+converged = abs(HTildeOut - HTildeKnown) < tol*HTildeKnown
+if not all(converged) then begin
+  stop "[HTildeTest_scalarModel] Error: HTildeOut does not agree."
+end
+
+print "HTilde_alpOut         = ", HTilde_alpOut
+print "HTilde_alp (analytic) = ", HTilde_alpKnown
+print "Relative Difference = ", abs((HTilde_alpOut - HTilde_alpKnown)/HTilde_alpOut)
+print "Absolute Difference = ", abs(HTilde_alpOut - HTilde_alpKnown)
+print
+converged = abs(HTildeOut - HTildeKnown) < tol*HTildeKnown
+if not all(converged) then begin
+  stop "[HTildeTest_scalarModel] Error: HTildeOut does not agree."
+end
+
+
+# ---------------------------------------------------------------------
+#
+# Finish up.
+#
+# ---------------------------------------------------------------------
+
+format double ""
+

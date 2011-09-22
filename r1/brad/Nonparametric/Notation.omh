@@ -1,0 +1,64 @@
+$begin Notation$$
+$spell
+	ind
+	yi
+	ei
+	Ri
+	fi
+$$
+
+$section Notation$$
+
+$index ahead$$
+
+$head m$$
+The number of fixed effects is denoted by $italic m$$.
+This is the number of components in the $xref/Alpha/$$ vector.
+
+$head n$$
+The number of random effects for each individual is denoted by $italic n$$
+and is specified by $xref/NonmemPars/Eta/nEta/nEta/1/$$.
+
+$head alpha$$
+The $xref/Alpha/$$ vector $latex \alpha$$
+contains values for the fixed effects in the space that
+they are optimized with respect to.
+
+$head b$$
+The vector $italic b$$ contains the value of random effects for one individual.
+
+$head D$$
+The covariance of the random effects is denoted by $latex D( \alpha )$$ 
+where $latex D : \R^m \rightarrow \R^{n \times n}$$.
+This function is evaluated using 
+$xref/SpkPopModel/Random Effects Covariance/indParVariance/indParVariance/1/$$.
+
+$head N[i]$$
+The number of measurements for $th i$$ individual is denoted by 
+$latex N[i]$$ and is specified by $xref/DataSet/getN/getN/$$.
+
+$head yi$$
+The measurement vector for $th i$$ individual is denoted by $latex y^i$$
+and is specified by 
+$xref/DataSet/getAllMeasurements/getAllMeasurements/$$. 
+
+$head ei$$
+The measurement noise vector for $th i$$ individual is denoted by $latex e^i$$.
+       
+$head Ri$$
+The covariance of the measurement noise for the $th i$$ individual,
+given the random effects for the $th i$$ individual,
+is denoted by $latex R^i (b , \alpha )$$
+where $latex R^i : \R^n \times \R^m \rightarrow \R^{N[i] \times N[i]}$$.
+This function is evaluated using 
+$xref/SpkPopModel/Measurement Covariance Given the Random Effects/dataVariance/dataVariance/1/$$.
+
+$head fi$$
+The mean of measurement for the $th i$$ individual,
+given the random effects for the $th i$$ individual,
+is denote by $latex f^i (b , \alpha)$$
+where $latex f^i : \R^n \times \R^m \rightarrow \R^{N[i]}$$.     
+This function is evaluated using 
+$xref/SpkPopModel/Measurement Mean Given the Random Effects/dataMean/dataMean/1/$$.
+
+$end

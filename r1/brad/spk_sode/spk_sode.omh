@@ -1,0 +1,352 @@
+$begin spk_sode$$
+$spell
+	Runge-Kutta
+	dt
+	spk
+	sode
+	init
+	const
+$$
+$latex
+	\newcommand{\Bd}{{\bf d}}
+	\newcommand{\BN}{{\bf N}}
+	\newcommand{\BR}{{\bf R}}
+$$
+
+$section 
+	Nonlinear Mixed Effects Modeling with 
+	Linear Stochastic Ordinary Differential Equations
+$$
+
+
+$head Syntax$$
+$syntax%spk_sode(%n%, %dt%, %N%, %t%, %y%, %alpha%, %eta_all%)
+%$$ 
+$syntax%spk_sode_fixed(%alpha%, %Omega%)
+%$$
+$syntax%spk_sode_random(%i%, %alpha%, %eta_i%, %beta_i%, %A_i%, %C_i%)
+%$$
+$syntax%spk_sode_random(%
+	i%, %alpha%, %eta_i%, %beta_i%, %A_i%, %B_i%, %C_i%, %Sigma_i%)
+%$$
+
+$head Purpose$$
+Compute the maximum likelihood estimate for the fixed effects $latex \alpha$$
+and the post hoc estimate for the random effects $latex \eta^i$$
+for $latex i = 0 , \ldots , M-1$$.
+The state function $latex \beta^i ( t , \alpha , \eta^i )$$
+is modeled by the linear stochastic ordinary differential equation 
+$latex \[
+\Bd 
+\beta^i ( t , \alpha , \eta^i )
+=
+A^i ( \alpha , \eta^i ) \beta^i ( t , \alpha , \eta^i ) \; \Bd t 
++
+B^i ( \alpha , \eta^i ) \; \Bd w^i (t) 
+\] $$
+where $latex \{ w^i (t) \}$$ is a set of $latex M$$ independent
+Weiner processes. 
+The Measurements are modeled as
+$latex \[
+y^i_j =  
+	C_j^i ( \alpha , \eta^i ) \beta^i ( t^i_j , \alpha , \eta^i ) 
+	+ \varepsilon^i_j
+\] $$
+The random effects are
+$latex \[
+\begin{array}{rcl}
+\varepsilon^i   & \sim & \BN [ 0 , \Sigma^i ( \alpha , \eta^i ) ]
+\\
+\eta^i          & \sim & \BN [ 0 , \Omega ( \alpha ) ]
+\end{array}
+\] $$
+
+
+$head Notation$$
+$table
+$latex t$$
+	$cnext time
+$rnext
+$latex \alpha$$     
+	$cnext vector of fixed effects, $latex \alpha \in \BR^\ell$$
+$rnext
+$latex M$$       
+	$cnext number of individuals in population study
+$rnext
+$latex \Omega ( \alpha )$$
+	$cnext variance common for each of the $latex \eta^i$$,
+	$latex \Omega ( \alpha ) \in \BR^{m \times m} $$.
+$rnext
+$latex i$$
+	$cnext individual index,
+	$latex i \in \{ 0 , \ldots , M-1 \}$$
+$rnext
+$latex \eta^i$$       
+	$cnext random effects for individual $latex i$$,
+	$latex \eta^i \in \BR^m$$
+$rnext
+$latex y^i$$
+	$cnext measurement vector for individual $italic i$$,
+	$latex y^i \in \BR^{N(i)}$$ 
+$rnext
+$latex \varepsilon^i$$
+	$cnext measurement noise vector for individual $italic i$$,
+	$latex \varepsilon^i \in \BR^{N(i)}$$ 
+$rnext
+$latex \Sigma^i ( \alpha , \eta^i )$$
+	$cnext variance of $latex \varepsilon^i$$,
+	$latex \Sigma^i ( \alpha , \eta^i ) \in \BR^{N(i) \times N(i)} $$.
+$rnext
+$latex j$$
+	$cnext measurement index for a given $latex i$$,
+	$latex j \in \{ 0 , \ldots , N(i) \}$$
+$rnext
+$latex t^i_j$$
+	$cnext time when $latex y^i_j$$ was measured
+	($latex t^i_j \leq t^i_{j+1}$$).
+$tend
+
+$latex \[
+S(N, i) = \left\{ \begin{array}{ll}
+	0 & {\rm if} \; i = 0 \\
+	N[0] + \cdots + N[i-1] & {\rm if} \; i > 0
+\end{array} \right.
+\] $$
+
+$head SizeVector$$
+The class $italic SizeVector$$ is a 
+$href%http://www.coin-or.org/CppAD/Doc/simplevector.xml%Simple Vector%$$
+class with elements of type $code size_t$$.
+
+$head FloatVector$$
+The class $italic FloatVector$$ is a Simple Vector class.
+The element operations required by 
+$cref/spk_sode_fixed/spk_sode/spk_sode_fixed/$$ and 
+$cref/spk_sode_random/spk_sode/spk_sode_random/$$ 
+must be operations supported by the types 
+$code double$$ and $code AD<double>$$.
+
+$head dt$$
+The $code spk_sode$$ argument $latex dt$$ has prototype
+$syntax%
+	double %dt%
+%$$
+It specifies a maximum step size for integrating the 
+ordinary differential equations 
+(using a Runge-Kutta fifth order method).
+
+$head n$$
+The $code spk_sode$$ argument $latex n$$ has prototype
+$syntax%
+	size_t %n%
+%$$
+It specifies the number components in the state vector
+for one individual.
+
+$head N$$
+The $code spk_sode$$ argument $latex N$$ has prototype
+$syntax%
+	const %SizeVector% &%N%
+%$$
+Its size determines $latex M$$, the number of individuals 
+in the population.
+For $latex i = 0 , \ldots , M-1$$, the value
+$syntax%%N%[%i%]%$$ is the number of measurements 
+corresponding to individual $latex i$$.
+
+$head t$$
+The $code spk_sode$$ argument $italic t$$ has prototype
+$syntax%
+	const %FloatVector% &%t%
+%$$
+Its size must be equal to $latex S(N, M)$$,
+the total number of measurement points.
+$latex \[
+	t [ S(N, i) + j ] = t^i_j
+\] $$ 
+for $latex i = 0 , \ldots , M-1$$,
+$latex j = 0 , \ldots , N(i) - 1$$.
+
+$head y$$
+The $code spk_sode$$ argument $italic y$$ has prototype
+$syntax%
+	const %FloatVector% &%y%
+%$$
+Its size must be equal to $latex S(N, M)$$,
+the total number of measurement points.
+$latex \[
+	y [ S(N, i) + j ] = y^i_j
+\] $$ 
+for $latex i = 0 , \ldots , M-1$$, $latex j = 0 , \ldots , N(i) - 1$$.
+
+$head alpha$$
+The $code spk_sode$$ argument $italic alpha$$ has prototype
+$syntax%
+	%FloatVector% &%alpha%
+%$$
+Its size must be equal to $latex \ell$$, the number of fixed effects.
+$latex \[
+	alpha [ k ] = \alpha_k
+\] $$
+for $latex k = 0 , \ldots , \ell - 1$$.
+The input value of its elements determine the initial fixed effects vector 
+during the optimization process.
+The output value of its elements will be set to the maximum likelihood
+estimate for the fixed effects.
+
+$head eta$$
+The $code spk_sode$$ argument $italic eta$$ has prototype
+$syntax%
+	%FloatVector% &%eta%
+%$$
+Its size must be equal to $latex m \times M$$, 
+$latex \[
+	eta [ i * m + k ] = \eta^i_k
+\] $$
+for $latex i = 0 , \ldots , M-1$$,  $latex k = 0 , \ldots , m-1$$.
+The input value of its elements determine the initial random effects vector 
+during the optimization process.
+The output value of its elements will be set to the post hoc
+estimate for the random effects.
+
+$head spk_sode_fixed$$
+This template function has the template parameter
+$cref/FloatVector/spk_sode/FloatVector/$$.
+It sets the value of the functions that depend only on the fixed effects
+$italic alpha$$.
+
+$subhead alpha$$
+The $code spk_sode_fixed$$ argument $italic alpha$$ has prototype
+$syntax%
+	const %FloatVector% &%alpha%
+%$$
+Its size is equal to $latex \ell$$ and
+$latex \[
+	alpha [ k ] = \alpha_k
+\] $$
+for $latex k = 0 , \ldots , \ell - 1$$.
+It specifies the value of the fixed effects for this model evaluation.
+
+$subhead Omega$$
+The $code spk_sode_fixed$$ argument $italic Omega$$ has prototype
+$syntax%
+	%FloatVector% &%Omega%
+%$$
+and it size is equal to $latex m \times m$$.
+The input value of the elements of $italic Omega$$ does not matter.
+On output,
+$latex \[
+	Omega [ q * m + r ] =  \Omega_{q,r} ( \alpha )
+\] $$
+for $latex q = 0 , \ldots , m - 1$$, $latex r = 0 , \ldots , m - 1$$.
+
+$head spk_sode_random$$
+This template function has the template parameter
+$cref/FloatVector/spk_sode/FloatVector/$$.
+It sets the value of the functions that depend on the 
+fixed effects $italic alpha$$, 
+the random effects $italic eta_i$$, 
+and the individual index $italic i$$.
+
+$subhead i$$
+The $code spk_sode_random$$ argument $italic i$$ has prototype
+$syntax%
+	size_t %i%
+%$$
+It specifies which individual this model evaluation is for.
+
+$subhead alpha$$
+The $code spk_sode_random$$ argument $italic alpha$$ has prototype
+$syntax%
+	const %FloatVector% &%alpha%
+%$$
+Its size is equal to $latex \ell$$ and
+$latex \[
+	alpha [ k ] = \alpha_k
+\] $$
+for $latex k = 0 , \ldots , \ell - 1$$.
+It specifies the value of the fixed effects for this model evaluation.
+
+$subhead eta_i$$
+The $code spk_sode_random$$ argument $italic eta_i$$ has prototype
+$syntax%
+	const %FloatVector% &%eta_i%
+%$$
+and its size is equal to $italic m$$.
+It specifies the value of the random effects for individual $italic i$$
+during this model evaluation.
+$latex \[
+	eta\_i [k] = \eta^i_k
+\] $$
+for $latex k = 0 , \ldots , m-1$$.
+
+$subhead beta_i$$
+The $code spk_sode_random$$ argument $italic beta_i$$ has prototype
+$syntax%
+	%FloatVector% &%beta_i%
+%$$
+and it size is equal to $latex n$$.
+The input value of the elements of $italic beta_i$$ does not matter.
+On output,
+$latex \[
+	beta\_i[ k ] =  \beta^i_k (0, \alpha , \eta^i )
+\] $$
+for $latex k = 0 , \ldots , n-1$$.
+
+$subhead A_i$$
+The $code spk_sode_random$$ argument $italic A_i$$ has prototype
+$syntax%
+	%FloatVector% &%A_i%
+%$$
+and it size is equal to $latex n \times n$$.
+The input value of the elements of $italic A_i%$$ does not matter.
+On output,
+$latex \[
+	A\_i [ q * n + r ] = A^i_{q,r} ( \alpha , \eta^i )
+\] $$
+for $latex q = 0 , \ldots , n-1$$, $latex r = 0 , \ldots , n-1$$.
+
+$subhead B_i$$
+If it is present in the syntax,
+the $code spk_sode_random$$ argument $italic B_i$$ has prototype
+$syntax%
+	%FloatVector% &%B_i%
+%$$
+and it size is equal to $latex n \times n$$.
+The input value of the elements of $italic B_i%$$ does not matter.
+On output,
+$latex \[
+	B\_i [ q * n + r ] = B^i_{q,r} ( \alpha , \eta^i )
+\] $$
+for $latex q = 0 , \ldots , n-1$$, $latex r = 0 , \ldots , n-1$$.
+
+$subhead C_i$$
+The $code spk_sode_random$$ argument $italic C_i$$ has prototype
+$syntax%
+	%FloatVector% &%C_i%
+%$$
+and it size is equal to $latex N[i] \times n$$.
+The input value of the elements of $italic C_i$$ does not matter.
+On output,
+$latex \[
+	C\_i [ j * n + k  ] = C^i_{j,k} ( \alpha , \eta^i )
+\] $$
+for $latex j = 0 , \ldots , N(i)-1$$, $latex k = 0 , \ldots , n-1$$.
+
+
+$subhead Sigma_i$$
+If it is present in the syntax,
+the $code spk_sode_random$$ argument $italic Sigma_i$$ has prototype
+$syntax%
+	%FloatVector% &%Sigma_i%
+%$$
+and it size is equal to $latex N[i] \times N[i]$$.
+The input value of the elements of $italic Sigma_i$$ does not matter.
+On output,
+$latex \[
+	Sigma\_i [ j * N(i) + k  ] = \Sigma^i_{j,k} ( \alpha , \eta^i )
+\] $$
+for $latex j = 0 , \ldots , N(i)-1$$, $latex k = 0 , \ldots , N(i)-1$$.
+
+
+$end

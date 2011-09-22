@@ -1,0 +1,305 @@
+begin # blocking for automatic include
+
+#begin##
+$begin CylinderDiffusion$$
+$spell
+	Nr
+	Fe
+	Fb
+	Lm
+	Rm
+	Tf
+	Tg
+	Yg
+	covariance
+$$
+
+$section Cylindrical Diffusion Model for O2 Concentration in the Muscle$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax/[/Psi/, /Psi_a/, /sigma/] = CylinderDiffusion(
+/Nr/, /Fe/, /Vc/, /Lm/, /Rm/, /Tg/, /Yg/, /D/, /theta/, /a/ )/$$
+$tend
+
+$fend 20$$
+
+
+$head Notation$$
+$table
+$latex t$$		$cnext Time	$cnext time	$rnext
+$latex r$$		$cnext Radial distance from the center of the muscle cylinder	$cnext length	$rnext
+$latex C_c (t)$$	$cnext Concentration of O2 in the chamber		$cnext mass per volume	$rnext
+$latex C_0$$		$cnext Initial concentration of O2 in the chamber	$cnext mass per volume	$rnext
+$latex C_m (r, t)$$ 	$cnext Concentration of O2 in the muscle		$cnext mass per volume	$rnext
+$latex C_b (r)$$ 	$cnext Initial concentration of O2 in the muscle 	$cnext mass per volume	$rnext
+$latex F (a, t)$$	$cnext Muscle O2 consumption rate above baseline	$cnext mass per time	$rnext
+$latex Fb$$		$cnext Muscle O2 consumption rate at baseline		$cnext mass per time	$rnext
+$latex Fe$$		$cnext Electrode O2 consumption rate			$cnext mass per time	$rnext
+$latex Vc$$		$cnext Volume of the chamber				$cnext length cubed	$rnext
+$latex Rm$$		$cnext Radius of the muscle				$cnext length		$rnext
+$latex Lm$$		$cnext Length of the muscle				$cnext length		$rnext
+$latex D$$		$cnext Diffusion coefficient of O2 in the muscle	$cnext length squared per time	$rnext
+$tend
+
+
+$head Model Description$$
+The model calculate the value of $latex C_c (t)$$ on a grid of values of $latex t$$ 
+specified by the column vector $italic Tg$$ where $latex C_c (t)$$ satisfies 
+the differential equations:
+
+$latex
+\[
+\begin{array}{rcl}
+\frac{\partial}{\partial t} C_c (t)
+& = & 
+- \frac{ Fe }{ Vc }
+-  \frac{ 2 \pi R_m L_m }{ Vc } \; 
+\left[ D \; \frac{ \partial }{ \partial r } C_m (r, t) \right]
+\\
+\frac{ \partial }{ \partial t } C_m (r, t)
+& = &
+\frac{ D }{ r } \; 
+\frac{ \partial }{ \partial r } 
+\left[ r \; \frac{ \partial }{ \partial r } C_m (r, t) \right]
+- \frac{ F_b + F (a, t) }{ \pi R_m^2 Lm }
+\end{array}
+\]
+$$
+with the following initial conditions:
+$latex \[
+\begin{array}{rclcll}
+C_c ( t )  & = & C_0     & {\rm for} &                   & t = 0   \\
+C_m (r ,t) & = & C_b (r) & {\rm for} & r \in [ 0, R_m ], & t = 0  \\
+C_m (r ,t) & = & C_c (t) & {\rm for} & r = R_m,          & t \in [ 0, T_f ] \\
+\frac{ \partial }{ \partial r } C_m (r, t) & = & 0
+	& {\rm for} & r = 0, & t \in [ 0, T_f ]
+\end{array}
+\] $$
+where $latex C_b (r)$$ solves the following ordinary differential equation:
+$latex \[
+0 = 
+\frac{ D }{ r } \; 
+\frac{ \partial }{ \partial r } 
+\left[ r \; \frac{ \partial }{ \partial r } C_b (r) \right]
+- \frac{ F_b }{ \pi R_m^2 Lm }
+\] $$
+subject to boundary conditions 
+$latex (\partial / \partial r) C_b (r=0) = 0$$ and $latex C_b ( r=Rm ) = C_0 $$
+
+
+$head F(a, t)$$
+Is the unknown function $latex F(a,t)$$ representing the muscle O2 consumption
+rate during stimulation above the baseline consumption rate. It is expressed
+as an expansion of the form:
+$latex \[
+F(a, t)  =  \sum_{j=1}^N a_j 
+	\sqrt{ \frac{ 2 }{ T_f } } 
+	\sin \left[ \pi \left( j - \frac{1}{2} \right)  \frac{ t }{ T_f } \right]
+\] $$
+
+
+$head N$$
+Is the number of elements in (length of) the column vector $italic a$$.
+
+
+$head Tf$$
+Is the final time point for the simulation; i.e., is the last element of the
+time grid $italic Tg$$ .
+
+
+$head Nr$$
+Is an integer scalar specifying the number of radial grid point in the 
+interval $latex [ 0, Rm ]$$ (no units).
+
+
+$head Fe$$
+Is a double precision scalar specifying the rate of O2 consumption by 
+the electrode in the chamber (mass per time).
+
+
+$head Vc$$
+Is a double precision scalar specifying the volume of the chamber
+(units of length cubed).
+
+
+$head Lm$$
+Is a double precision scalar specifying the length of the muscle.
+
+
+$head Rm$$
+Is a double precision scalar specifying the radius of the muscle.
+
+
+$head Tg$$
+Is a double precision column vector specifying the times at which
+measurements were made.
+
+
+$head Yg$$
+Is a double precision column vector (same length as $italic Tg$$) with 
+$th i$$ element equal to the measured value at $th i$$ element of 
+$italic Tg$$. The value $latex C_c ( Tg_i )$$ is the model for 
+$latex Yg_i$$.  
+
+
+$head D$$
+Is a double precision scalar specifying the diffusion coefficient for O2 
+in the muscle (length squared per time).
+
+
+$head theta$$
+Is a double precision column vector specifying the value of $latex \theta$$:
+$latex C_0 = \theta_2$$ and $latex F_b = \theta_3$$ (note $latex \theta_1$$ is 
+reserved for special use by $code SmoothSpline$$).
+
+
+$head a$$
+Is a double precision column vector of length $latex N$$ specifying the amplitudes
+in the definition of $xref/CylinderDiffusion/F(a, t)/F(a, t)/$$.
+
+
+$head Psi$$
+If the number of output arguments is one or two ($latex 1 \leq nargout \leq 2 $$), 
+the column vector $italic Psi$$ has the same number of elements as the time grid 
+column vector $italic Tg$$, and $latex Psi_i = C_c [ Tg_i ]$$. It is the mean
+(model) for the measurement $latex Yg$$, given the amplitude $italic a$$.
+
+
+$head Psi_a$$
+If the number of output arguments is two ($latex nargout = 2 $$), the matrix 
+$italic Psi_a$$ has the same number of rows as the vector $italic Tg$$ and same 
+number of columns as the vector $italic a$$. The elements of $italic Psi_a$$ are 
+given by the formula:
+$latex \[
+Psi_a ( i , j ) = \frac{ \partial }{ \partial a_j } C_c [ Tg_i ]
+\] $$
+
+
+$head sigma$$
+If the number of output arguments is three ($latex nargout = 3 $$), the column 
+vector $italic sigma$$ has the same number of elements as the vector $italic Tg$$.
+The $th i$$ element of $italic sigma$$ is the standard deviation of the 
+measurement at time $italic Tg_i$$.
+
+$end
+---------------------------------------------------------------------------
+#end##
+
+local function [Fval, Fval_a] = F(Tf, a, t) begin
+	N      = rowdim(a)
+	angle  = (PI * t / Tf) * (seq(N) - 0.5d0)
+	Fval   = exp( sqrt(2d0 / Tf) * a' * sin(angle) )
+	Fval_a = Fval * sqrt(2d0 / Tf) * sin(angle)'
+end
+
+function [Psi, Psi_a, sigma] = CylinderDiffusion( ...
+	Nr, Fe, Vc, Lm, Rm, Tg, Yg, D, theta, a ) begin
+	#
+	if nargout == 3 then begin
+		sigma = 1d-4 * Yg
+		return
+	end
+	#
+	# dimension the return value
+	Psi = fill(0d0, rowdim(Tg), 1)
+	if nargout == 2 then ...
+		Psi_a = fill( 0d0, rowdim(Tg), rowdim(a) )
+	#
+	C0    = theta(2)               # initial O2 concentration in chamber
+	Fb    = theta(3)               # baseline rate of O2 consumption by the muscle
+	Tf    = Tg(end)                # time corresponding to last data point
+	Vm    = PI * Rm^2d0 * Lm       # volume of the muscle
+	Am    = 2d0 * PI * Rm * Lm     # area of the muscle surface 
+	dr    = Rm / double(Nr-1)      # step length in radial direction
+	Rg    = (seq(Nr) - 1) * dr     # grid of r values (uniformuly spaced)
+	dtMax = dr^2d0 / (10d0 * D)    # maximum step length in time, using stability criteria
+	#
+	# indices used with these coefficients
+	cindex = 2 : 1 : (Nr - 1)
+	# coefficient for C(i+1) in finite difference scheme
+	cip    = ( D / dr^2d0 ) * ( 1d0 + 2d0 * dr / Rg )
+	cip    = cip( cindex )
+	Cip    = fillcols(cip, rowdim(a))
+	# coefficient for C(i) in finite difference scheme
+	ci     = - 2d0 *  D / dr^2d0
+	# coefficient for C(i-1) in finite difference scheme
+	cim    = ( D / dr^2d0 ) * ( 1d0 - 2d0 * dr / Rg )
+	cim    = cim( cindex )
+	Cim    = fillcols(cim, rowdim(a))
+	#
+	Cb = C0 - ( Fb / ( 4d0 * Vm * D) ) * ( Rm + Rg) % (Rm - Rg)
+	#
+	Tnext   = 0d0
+	Cnext   = Cb
+	Cnext_a = fill( 0d0, rowdim(Cnext), rowdim(a) )
+	for i = 1 to rowdim(Tg) begin
+		Tprev = Tnext
+		Tnext = Tg(i)
+		#
+		# compute number of times steps for this interval
+		Nt    = int( (Tnext - Tprev) / dtMax ) + 1
+		dt    = (Tnext - Tprev) / double(Nt)
+		if dt > dtMax then stop # can never happen
+		#
+		for k = 1 to Nt begin
+			Cprev   = Cnext
+			Cprev_a = Cnext_a
+			#
+			tprev       = Tg(i) + (k - 1 ) * dt
+			[Fm, Fm_a]  = F(Tf, a, tprev)
+			Fm          = Fb * Fm
+			FM_a        = Fb * fillrows(Fm_a, rowdim( cindex ) )
+			#
+			Cnext ( cindex ) ...
+			= Cprev( cindex )  ...
+			+ dt * ( ...
+				- Fm / Vm ...
+				+ cip % Cprev( cindex + 1 ) ...
+				+ ci  % Cprev( cindex ) ...
+				+ cim % Cprev( cindex - 1 ) ...
+			)
+			#
+			#
+			Cnext(1)  = Cprev(1) ...
+			+ dt * ( ...
+				- Fm / Vm ...
+				+ ( 2d0 * D / dr^2d0 ) * ( Cprev(2) - Cprev(1) ) ...
+			)
+			#
+			Cnext(Nr) = Cprev(Nr) ...
+			+ dt * ( ...
+				- Fe / Vc  ...
+				- 2d0 * Am * D / ( dr * Vc ) * ( Cprev(Nr) - Cprev(Nr-1) ) ...
+			)
+			#
+			if nargout == 2 then begin
+				#
+				Cnext_a ( cindex, : ) ...
+				= Cprev_a( cindex, : )  ...
+				+ dt * ( ...
+					- FM_a / Vm ...
+					+ Cip % Cprev_a( cindex + 1 , :) ...
+					+ ci  % Cprev_a( cindex , :) ...
+					+ Cim % Cprev_a( cindex - 1 , :) ...
+				)
+				#
+				Cnext_a(1, :)  = Cprev_a(1, :) ...
+				+ dt * ( ...
+					- Fm_a / Vm ...
+					+ ( 2d0 * D / dr^2d0 ) * ( Cprev_a(2, :) - Cprev_a(1, :) ) ...
+				)
+				#
+				Cnext_a(Nr, :) = Cprev_a(Nr, :) ...
+				+ dt * ( ...
+					- 2d0 * Am * D / ( dr * Vc ) * ( Cprev_a(Nr, :) - Cprev_a(Nr-1, :) ) ...
+				)
+			end
+		end
+		Psi(i)      = Cnext(Nr)
+		if nargout == 2 then ...
+			Psi_a(i, :) = Cnext_a(Nr, :)
+	end
+end
+
+end # blocking for automatic include

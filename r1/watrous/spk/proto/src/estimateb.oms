@@ -1,0 +1,619 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+
+#begin##
+$begin EstimateB$$
+$escape #$$
+
+$spell
+	mitr
+	eps
+	Obj
+	ok
+	blsq
+$$
+
+$section Solving Derivative and Difference Condition For Random Population Parameters$$
+
+$cindex solving derivative #and difference #condition #for random #population #parameters$$
+$index EstimateB$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/EstimateB( ...
+function /Model/, ...
+/blsq/, ...
+/y/,  ...
+/eps/, ...
+/delta/, ...
+/mitr/, ...
+/level/, ...
+/alp/, ...
+/bIn/, /bLow/, /bUp/, /bHatOut/, /bTildeOut/, /bStep/,  ...
+/bTilde_alpOut/ ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Solves the first order necessary conditions for an optimal value
+for the problem
+$math%
+#minimizes Lambda(alp, b) #with #respect #to b
+#subject #to bLow #le b #le bUp
+#where
+                 1 %          %                 1               T  -1
+Lambda(alp, b) = - #logdet[ 2 #pi R(alp, b) ] + - [y - f(alp, b)] R (alp, b) [y - f(alp, b)]
+                 2 %          %                 2
+
+                 1 %          %                 1  T  -1
+               + - #logdet[ 2 #pi D(alp) ]    + - b  D (alp)  b
+                 2 %          %                 2
+%$$
+The equation above uses
+$xref/glossary/Individual Notation/individual notation/$$.
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $code EstimateB$$ is true, if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/alp/, /b/, /fOut/, /f_alpOut/, /f_bOut/, /ROut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+All the arguments to this routine have real or double-precision values. 
+If $italic blsq$$ (which is described below)
+is true, the value of the argument $italic b$$ is always zero so it does not
+matter what $italic Model$$ would return in the nonzero $italic b$$ case.
+In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+$table
+$bold Argument$$
+	$cend $bold Value$$ 
+	$cend $bold Comments$$ $rend
+$italic alp$$
+	$cend $math%alp%$$ 
+	$cend fixed population parameter vector $rend
+$italic b$$
+	$cend $math%b%$$ 
+	$cend random population parameter vector $rend
+$italic fOut$$
+	$cend $math%f(alp, b)%$$ 
+	$cend model for the mean of $math%y%$$ given $math%b%$$ $rend
+$italic f_alpOut$$ 
+	$cend $math%f_alp(alp, b)%$$ 
+	$cend derivative of $math%f(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+	$cend $math%f_b(alp, b)%$$ 
+	$cend derivative of $math%f(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic ROut$$ 
+	$cend $math%R(alp, b)%$$ 
+	$cend model for the variance of $math%y%$$ given $math%b%$$ $rend
+$italic R_alpOut$$
+	$cend $math%R_alp(alp, b)%$$ 
+	$cend derivative of $math%R(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+	$cend $math%R_b(alp, b)%$$ 
+	$cend derivative of $math%R(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic DOut$$ 
+	$cend $math%D(alp)%$$ 
+	$cend model for the variance of $math%b%$$ $rend
+$italic D_alpOut$$
+	$cend $math%D_alp(alp)%$$ 
+	$cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$syntax/
+
+/blsq/
+/$$
+If this logical scalar is true it is assumed that
+$math%
+	f(alp, b) = f(alp, 0) + f_b(alp, 0) * b
+	R(alp, b) = R(alp, 0)
+%$$
+For this case, the problem of optimizing in $math%b%$$  
+is a linear least squares problem.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector containing the data vector.
+$syntax/
+
+/eps/
+/$$
+Is a double-precision scalar greater than zero. 
+A parameter value $math%bOut%$$ is accepted when 
+$math%
+	abs(bOut - bHat) #le eps (bUp - bLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%bHat%$$ is the true minimizer of the 
+$math%Lambda(alp, b)%$$ with respect to $math%b%$$.
+This is a rough approximation that is quick to
+calculate during the optimization procedure.
+A more accurate approximation of the distance
+to the solution can be calculated using the first and second
+derivatives of the objective function at $math%bOut%$$.
+$syntax/
+
+/delta/
+/$$
+is a double-precision scalar greater than zero.
+A parameter value $math%bOut%$$ is accepted when 
+$math%
+	Lambda(alp, bOut) - Lambda(alp, bHat) #le delta
+%$$
+where $math%bHat%$$ is its true minimizer of $math%Lambda(al, b)%$$
+with respect to $math%b%$$.
+$syntax/
+
+/mitr/
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+$syntax/
+
+/level/
+/$$
+this integer scalar specifies the amount of tracing.
+$math%
+level #ge 1
+%$$
+the current value of the objective is printed
+with the label $code f$$ and the norm of the gradient is
+printed with the label $code |g|$$ 
+(not including the constrained directions in the gradient).
+In addition, the total time between calling $code mapOpt$$ and its
+return is printed.
+$math%
+level #ge 2
+%$$
+the current value of $math%b%$$ is 
+printed with the label $code x$$, and the gradient of the
+objective is printed with the label $code g$$
+(not including the constrained directions in the gradient).
+$math%
+level #ge 3
+%$$
+the step size and function values are traced
+during each line search procedure.
+$math%
+level #ge 4
+%$$
+the analytic of the objective function with respect to the
+$math%b%$$ is compared with its numerical approximation.
+$syntax/
+
+/alp/
+/$$
+The double-precision column vector $italic alp$$
+specifies a value for the fixed population parameter vector.
+$syntax/
+
+/bIn/
+/$$
+The double-precision column vector $italic bIn$$
+specifies the initial value for the parameter vector 
+during the optimization procedure.
+$syntax/
+
+/bLow/
+/$$
+The double-precision column vector $italic bLow$$
+specifies the lower limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bUp/
+/$$
+The double-precision column vector $italic bUp$$
+specifies the upper limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+$syntax/
+
+/bHatOut/
+/$$
+the output value $italic bHatOut$$
+is a double-precision column vector 
+such that the 
+$xref/glossary/Projected Gradient/projected gradient/$$ of
+$math%Lambda(alp, bHatOut)%$$ with respect to $math%b%$$
+is nearly zero.
+$syntax/
+
+/bTildeOut/
+/$$
+the output value $italic bTildeOut$$
+is a double-precision column vector 
+such that the central difference approximation for the
+$xref/glossary/Projected Gradient/projected gradient/$$ of
+$math%Lambda(alp, bTildeOut)%$$ with respect to $math%b%$$
+is nearly zero.
+$syntax/
+
+/bStep/
+/$$
+The double-precision column vector $italic bStep$$
+specifies the step size used for approximating
+the derivative of $math%MapObj_b(b)%$$.
+This is not used unless 
+the input value of $italic MapObj_b_bOut%$$ is true.
+$syntax/
+
+/bTildeOut/
+/$$
+the output value $italic bTildeOut$$
+is a double-precision matrix equal to the derivative
+of $math%bTilde_alp(alp)%$$ where $math%bTilde(alp)%$$
+is the value of $math%b%$$ that solves the approximate
+first order necessary conditions for a minimum.
+Note that this derivative is only value on open sets
+in $math%alp%$$ space where the set of active constraints
+is constant.
+
+$head Example$$
+Suppose that
+$math%
+       / alp(1)   0  \         / alp(2)  0   \
+R(b) = |             |    D  = |             |
+       \ 0    alp(1) /         \ 0    alp(2) /
+
+       / b(1) \        / 1 \
+f(b) = |      |   y =  |   |
+       \ b(2) /        \ 2 /
+%$$
+It follows that
+$math%                         
+Lambda(alp, b) = #log{2 #pi alp(1)} + (1/2) {[1 - b(1)]^2 + [2 - b(2)]^2} / alp(1)
+               + #log{2 #pi alp(2)} + (1/2) [b(1)^2 + b(2)^2] / alp(2)
+%$$
+The transpose of $math%Lambda_b(alp, b)%$$ is equal to
+$math%
+	/ [b(1) - 1] / alp(1) + b(1) / alp(2) \
+	|                                     |
+	\ [b(2) - 2] / alp(1) + b(2) / alp(2) /
+%$$
+The first order necessary condition for a minimum is 
+that the gradient is zero. Thus, if $math%alp > 0%$$,
+$math%bLow = 0%$$ and $math%bUp = 10%$$,
+$math%
+	                  alp(2)      / 1 \
+	bHat(alp) =  ---------------- |   | 
+	             alp(1) + alp(2)  \ 2 /
+%$$
+Taking the derivative of the equation above,
+$math%
+                     -alp(2)        / 1   1 \             1        / 0   1 \
+bHat_alp(alp) = ------------------- |       |  +   --------------- |       |
+                [alp(1) + alp(2)]^2 \ 2   2 /      alp(1) + alp(2) \ 0   2 /
+%$$
+substituting in 
+$math%alp(1) = 1%$$ and $math%alp(2) = 1%$$, we obtain
+$math%
+	                   / .5 \
+	bHat(alp)     =    |    |
+	                   \ 1. /
+
+	                / -.25  .25 \
+	bHat_alp(alp) = |           |
+	                \ -.5   .5  /
+%$$
+$pre
+
+$$
+If you enter
+$codep
+
+clear
+include EstimateB.oms
+#
+function Model(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	if fOut then ...
+		fOut = b
+	if f_alpOut then ...
+		f_alpOut = { ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ] ...
+	}
+	if f_bOut then ...
+		f_bOut = { ...
+		[ 1 , 0 ], ...
+		[ 0 , 1 ] ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ alp(1) ,   0   ], ...
+		[ 0    ,  alp(1) ] ...
+	}
+	if R_alpOut then ...
+		R_alpOut = { ...
+		[ 1 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 1 , 0 ] ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ] ...
+	}
+	if DOut then ...
+		DOut = { ...
+		[alp(2), 0] , ...
+		[0, alp(2)] ...
+	}
+	if D_alpOut then ...
+		D_alpOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 1 ] ...
+	}
+	return true
+end
+blsq          = true
+y             = {1, 2}
+eps           = 1e-3
+delta         = 1e-7
+mitr          = 40
+level         = 0
+alp           = {1., 1.}
+bIn           = {.75, .75}
+bUp           = {10., 10.}
+bLow          = {0., 0.}
+bHatOut       = true
+bTildeOut     = true
+bTilde_alpOut = true
+bStep         = {.1, .1}
+ok = EstimateB( ...
+	function Model, ...
+	blsq, ...
+	y,  ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	alp, ...
+	bIn, bLow, bUp, bHatOut, bTildeOut, bStep,  ...
+	bTilde_alpOut ...
+)
+print "ok             =", ok
+print "bHatOut'       =", bHatOut'
+print "bTildeOut'     =", bTildeOut'
+print "bTilde_alpOut  =", bTilde_alpOut
+
+$$
+O-Matrix will respond
+$codep
+	ok            = T 
+	bHatOut'      = [ .5, 1. ] 
+	bTildeOut'    = [ .5, 1. ] 
+	bTilde_alpOut = {
+	[ -0.25 , 0.25 ]
+	[ -0.5 , 0.5 ]
+	}
+
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+include mapopt.oms
+include maptilde.oms
+include lambdadiff.oms
+#
+local function dummy() begin
+	stop "unexpected call to dummy"
+end
+local function Model = dummy()
+local Alp            = novalue
+local BStep          = novalue
+local Blsq           = novalue
+#
+local function NoAlpModel(b, fOut, f_bOut, ROut, R_bOut) begin
+	f_alpOut = false
+	R_alpOut = false
+	DOut     = false
+	D_alpOut = false
+	if Blsq then ...
+		ok = FoModel(b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut)
+	else	ok = Model(Alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut)
+	return ok
+end
+local function AlpModel(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	if Blsq then begin
+		ok = SetFoModel(function Model, BStep, alp)
+		if not ok then begin
+			stop
+			return false
+		end
+		ok = FoModel(b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut)
+	end else ...
+		ok = Model(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut)
+	return ok
+end
+local function Active(g, bLow, bUp, b) begin
+	upper = (b == bLow) and (g >= 0)
+	lower = (b == bUp) and (g <= 0)
+	return upper or lower
+end
+function EstimateB( ...
+	function model, ...
+	blsq, ...
+	y,  ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	alp, ...
+	bIn, bLow, bUp, bHatOut, bTildeOut, bStep,  ...
+	bTilde_alpOut ...
+) begin
+	if not (bHatOut or bTildeOut or bTilde_alpOut) then ...
+		return true
+	#
+	if type(Alp) <> "novalue" then ...
+		stop "EstimateB does not support recursion"
+	#
+	# pass information to NoAlpModel
+	#
+	function Model = model()
+	Alp            = alp
+	BStep          = bStep
+	Blsq           = blsq
+	#
+	# Compute D(alp)
+	#
+	f     = false
+	f_alp = false
+	f_b   = false
+	R     = false
+	R_alp = false
+	R_b   = false
+	D     = true
+	D_alp = false
+	ok = Model(Alp, bIn, f, f_alp, f_b, R, R_alp, R_b, D, D_alp)
+	if not ok then begin
+		stop
+		Alp = novalue
+		return false
+	end
+	#
+	# compute bHat
+	#
+	if blsq then begin
+		ok = SetFoModel(function Model, bStep, alp)
+		if not ok then begin
+			stop
+			return false
+		end
+	end
+	bHat       = true
+	MapObj     = false
+	MapObj_b   = false
+	MapObj_b_b = false
+	ok = MapOpt( ...
+		function NoAlpModel, ...
+		D, ...
+		y, ...
+		eps, ...
+		delta, ...
+		mitr, ...
+		level, ...
+		bIn, bLow, bUp, bHat, bStep, ...
+		MapObj, MapObj_b, MapObj_b_b ...
+	)
+	if not ok then begin
+		stop
+		Alp = novalue
+		return false
+	end
+	if bHatOut then ...
+		bHatOut = bHat
+	if not (bTildeOut or bTilde_alpOut) then begin
+		Alp = novalue
+		return true
+	end
+	#
+	# compute bTile
+	#
+	bTilde     = bTildeOut
+	Norm       = false
+	MapObj_b   = bTilde_alpOut
+	MapObj_b_b = bTilde_alpOut
+	ok = MapTilde( ...
+		function NoAlpModel, ...
+		D, ...
+		y, ...
+		eps, ...
+		delta, ...
+		mitr, ...
+		level, ...
+		bHat, bLow, bUp, bTilde, bStep, ...
+		Norm, MapObj_b, MapObj_b_b ...
+	)
+	if not ok then begin
+		stop
+		Alp = novalue
+		return false
+	end
+	if bTildeOut then ...
+		bTildeOut = bTilde
+	if not bTilde_alpOut then begin
+		Alp = novalue
+		return true
+	end
+	#
+	# Compute bTilde_alp
+	#
+	x  = "b"
+	alpStep      = novalue
+	Lambda_x     = false
+	Lambda_x_alp = true
+	Lambda_x_b   = false
+	ok = LambdaDiff( ...
+		function AlpModel, ...
+		y,  ...
+		alp, alpStep, ...
+		bTilde, bStep, ...
+		x, ...
+		Lambda_x, Lambda_x_alp, Lambda_x_b ...
+	)
+	if not ok then begin
+		stop
+		Alp = novalue
+		return false
+	end
+	#
+	active        = Active(MapObj_b', bLow, bUp, bTilde)
+	free          = not active
+	Lambda_b      = MapObj_b.col(free')
+	Lambda_b_alp  = Lambda_x_alp.row(free)
+	Lambda_b_b    = MapObj_b_b.blk(free, free')
+	bTilde_alpOut = fill(0, rowdim(bIn), rowdim(alp))
+	bTilde_alpOut.row(free) = - Lambda_b_b \ Lambda_b_alp
+	#
+	Alp = novalue
+	return true
+end
+
+
+end # blocking for automatic include

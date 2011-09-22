@@ -1,0 +1,329 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+#begin##
+$begin Lambda$$
+$escape #$$
+
+$spell
+	ok
+$$
+
+$section Individual Joint Negative Log-Likelihood$$
+
+$index Lambda$$
+$cindex individual joint #negative log-likelihood$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/Lambda( ...
+function /Model/, ...
+/y/,  ...
+/alp/,
+/b/, ...
+/LambdaOut/, /Lambda_alpOut/, /Lambda_bOut/, ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Evaluates the negative log-likelihood of $math%y%$$ and $math%b%$$ and its derivatives. 
+To be specific,
+$math%
+                 1 %          %                 1               T  -1
+Lambda(alp, b) = - #logdet[ 2 #pi R(alp, b) ] + - [y - f(alp, b)] R (alp, b) [y - f(alp, b)]
+                 2 %          %                 2
+
+                 1 %          %                 1  T  -1
+               + - #logdet[ 2 #pi D(alp) ]    + - b  D (alp)  b
+                 2 %          %                 2
+%$$
+(The equation above uses
+$xref/glossary/Individual Notation/individual notation/$$.)
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+The return value of $code Lambda$$ is true, if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/alp/, /b/, /fOut/, /f_alpOut/, /f_bOut/, /ROut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+$table
+$bold Argument$$
+	$cend $bold Value$$ 
+	$cend $bold Comments$$ $rend
+$italic alp$$
+	$cend $math%alp%$$ 
+	$cend fixed population parameter vector $rend
+$italic b$$
+	$cend $math%b%$$ 
+	$cend random population parameter vector $rend
+$italic fOut$$
+	$cend $math%f(alp, b)%$$ 
+	$cend model for the mean of $math%y%$$ given $math%b%$$ $rend
+$italic f_alpOut$$ 
+	$cend $math%f_alp(alp, b)%$$ 
+	$cend derivative of $math%f(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+	$cend $math%f_b(alp, b)%$$ 
+	$cend derivative of $math%f(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic ROut$$ 
+	$cend $math%R(alp, b)%$$ 
+	$cend model for the variance of $math%y%$$ given $math%b%$$ $rend
+$italic R_alpOut$$
+	$cend $math%R_alp(alp, b)%$$ 
+	$cend derivative of $math%R(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+	$cend $math%R_b(alp, b)%$$ 
+	$cend derivative of $math%R(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic DOut$$ 
+	$cend $math%D(alp)%$$ 
+	$cend model for the variance of $math%b%$$ $rend
+$italic D_alpOut$$
+	$cend $math%D_alp(alp)%$$ 
+	$cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector containing the data vector.
+$syntax/
+
+/alp/
+/$$
+The double-precision column vector $italic alp$$
+specifies a value for the fixed population parameter vector.
+$syntax/
+
+/b/
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the random population parameter vector.
+$syntax/
+
+/LambdaOut/
+/$$
+the output value $italic LambdaOut$$
+is a scalar containing the value of $math%Lambda(alp, b)%$$.
+$syntax/
+
+/Lambda_alpOut/
+/$$
+the output value $italic Lambda_alpOut$$
+is a row vector containing the derivative of
+$math%Lambda(alp, b)%$$ with respect to $math%alp%$$.
+$syntax/
+
+/Lambda_bOut/
+/$$
+the output value $italic Lambda_bOut$$
+is a row vector containing the derivative of
+$math%Lambda(alp, b)%$$ with respect to $math%b%$$.
+
+$head Example$$
+Suppose that
+$math%
+	            /  b(1)     0  \
+	R(alp, b) = |              |
+	            \  0      b(1) /
+
+	            / alp(1)  0 \
+	D(alp)    = |           |
+	            \ 0  alp(1) /
+
+	            / alp(2) + b(2) \
+	f(alp, b) = |               |
+	            \ alp(2) + b(2) /
+
+	            / 1 \
+	y         = |   |
+	            \ 1 /
+%$$
+It follows that
+$math%                         
+Lambda(alp, b) = (1/2) #log{[2 #pi b(1)]^2}   + [1 - alp(2) - b(2)]^2 / b(1)
+               + (1/2) #log{[2 #pi alp(1)]^2} + (1/2) [b(1)^2 + b(2)^2] / alp(1)
+%$$
+The transpose of $math%Lambda_alp(alp, b)%$$ is equal to
+$math%
+/ 1 / alp(1) - (1/2) [b(1)^2 + b(2)^2] / alp(1)^2  \
+|                                                  |
+\       - 2 [1 - alp(2) - b(2)] / b(1)             /
+%$$
+The transpose of $math%Lambda_b(alp, b)%$$ is equal to
+$math%
+/ 1 / b(1) - [1 - alp(2) - b(2)]^2 / b(1)^2 + b(1) / alp(1) \
+|                                                           |
+\     - 2 [1 - alp(2) - b(2)] / b(1) + b(2) / alp(1)        /
+%$$
+If all the components of $math%alp%$$ and $math%b%$$ are one,
+$math%
+Lambda(alp, b)     = #log(2 #pi) + #log(2 #pi) + 1  + 1
+                   = 2 #log(2 #pi) + 2
+
+Lambda_alp(alp, b) = [ 1 - 1 , 2 ]
+                   = [ 0 , 2 ]
+
+Lambda_b(alp, b)   = [ 1 - 1 + 1 , 2 + 1]
+	             = [ 1 , 3 ]
+%$$
+If you enter
+$codep
+
+clear
+include Lambda.oms
+#
+function Model(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	if fOut then ...
+		fOut = {alp(2) + b(2), alp(2) + b(2)}
+	if f_alpOut then ...
+		f_alpOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 1 ] ...
+	}
+	if f_bOut then ...
+		f_bOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 1 ] ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ b(1) ,   0   ], ...
+		[ 0    ,  b(1) ] ...
+	}
+	if R_alpOut then ...
+		R_alpOut = { ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ] ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		[ 1 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 1 , 0 ] ...
+		}
+	if DOut then ...
+		DOut = { ...
+		[ alp(1) ,   0   ], ...
+		[ 0    ,  alp(1) ] ...
+	}
+	if D_alpOut then ...
+		D_alpOut = { ...
+		[ 1 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 1 , 0 ] ...
+	}
+	return true
+end
+y             = {1, 1}
+alp           = {1., 1.}
+b             = {1., 1.}
+LambdaOut     = true
+Lambda_alpOut = true
+Lambda_bOut   = true
+ok = Lambda(function Model, y, alp, b, LambdaOut, Lambda_alpOut, Lambda_bOut)
+print "ok                      =", ok
+print "LambdaOut - 2 log(2 pi) =", LambdaOut - 2 * log(2 * pi)
+print "Lambda_alpOut           =", Lambda_alpOut
+print "Lambda_bOut             =", Lambda_bOut
+
+$$
+O-Matrix will respond
+$codep
+	ok                      = T
+	LambdaOut - 2 log(2 pi) = 2
+	Lambda_alpOut           = [ 0 , 2 ]
+	Lambda_bOut             = [ 1 , 3 ]
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+include elsq.oms
+#
+function Lambda( ...
+	function Model, ...
+	y,  ...
+	alp, ...
+	b, ...
+	LambdaOut, ...
+	Lambda_alpOut, ...
+	Lambda_bOut ...
+) begin
+	# special do nothing case
+	if not (LambdaOut or Lambda_alpOut or Lambda_bOut) then ...
+		return true
+	#
+	# evalute the model functions
+	f      = true
+	f_alp  = Lambda_alpOut
+	f_b    = Lambda_bOut
+	R      = true
+	R_alp  = Lambda_alpOut
+	R_b    = Lambda_bOut
+	D      = true
+	D_alp  = Lambda_alpOut
+	ok     = Model(alp, b, f, f_alp, f_b, R, R_alp, R_b, D, D_alp)
+	if not ok then begin
+		stop
+		return false
+	end
+	#
+	# related values
+	Rinv = inv(R)
+	Dinv = inv(D)
+	zero = fill(0d0, rowdim(b), 1)
+	#
+	if LambdaOut then ...
+		LambdaOut = elsq(y, f, R, Rinv) + elsq(zero, b, D, Dinv)
+	if Lambda_alpOut then begin
+		zero_alp = fill(0d0, rowdim(b), rowdim(alp))
+		Lambda_alpOut = elsq_x(y, f, R, Rinv, f_alp, R_alp) +  ...
+		                elsq_x(zero, b, D, Dinv, zero_alp, D_alp)
+	end
+	if Lambda_bOut then ...
+		Lambda_bOut = elsq_x(y, f, R, Rinv, f_b, R_b) + b' * Dinv
+	return true
+end

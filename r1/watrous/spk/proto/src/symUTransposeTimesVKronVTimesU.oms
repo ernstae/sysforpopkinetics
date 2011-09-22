@@ -1,0 +1,318 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+
+# UVList is a km x m set of k blocks, each is Ui * V
+
+function [ result , UVList ] = symUTransposeTimesVKronVTimesU( U, V ) begin 
+	m = rowdim( V )
+ 	k = coldim( U )
+	# check that rowdim(U) = m^2
+
+	UVList = zeros( k*m , m ) 
+	result = zeros( k , k )
+
+ 	for i = 1 to k begin
+		Uicol = U( :,i)		
+		Ui = rvecInverse( Uicol , m )
+		UVi = Ui * V
+		UVList.blk( (i-1)* m + 1 , 1, m , m ) = UVi
+	end
+	for i = 1 to k begin
+		for j = 1 to i begin
+			UVi = UVList.blk( (i-1)* m + 1 , 1, m , m ) 
+			UVj = UVList.blk( (j-1)* m + 1 , 1, m , m ) 
+			UVirow = rvec(UVi)'
+			VUjcol = rvec(UVj')
+			result(i,j) = UVirow * VUjcol
+			result( j,i) = result(i,j)
+		end
+	end
+end
+
+
+#begin##
+$begin symUTransposeTimesVKronVTimesU$$
+$escape #$$
+
+$spell
+	symUTransposeTimesVKronVTimesU
+        end end
+        optimizations
+symUTransposeTimesVKronVTimesU_der
+rvecinverse 
+rvecinversed 
+sym
+Kron
+subblock 
+blk 
+Vi 
+backdiv 
+covariance 
+Inv 
+
+Akron
+Btimes
+Omatrix 
+AkronBtimes
+rowdim
+coldim
+rvm
+
+
+Ui 
+ith 
+rvec 
+Kronecker 
+$$
+
+$section U' ( V @ V ) U , where V and each column of U are symmetric matrices$$
+
+$index symUTransposeTimesVKronVTimesU$$
+$cindex symmetric Kronecker product$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/[result , UVList ] = symUTransposeTimesVKronVTimesU(/U/, /V/)/$$
+$tend
+$fend 25$$
+
+$head Description$$
+This function computes the expression $math%U' ( V @ V ) U%$$, 
+where $math%@%$$ denotes the Kronecker product, and $math%'%$$ denotes 
+the transpose a matrix.
+It assumes that the matrix $math%V%$$ is a symmetric matrix and that each 
+column of $math%U%$$
+is the rvecinverse of a symmetric matrix of the same size as $math%V%$$.  
+The purpose of
+this function and $pre symUTransposeTimesVKronVTimesU_der$$
+is to provide faster implementations of the computations  
+$math%U' ( V @ V ) U%$$ and, 
+its derivative then could be obtained through functions like 
+$pre AkronBtimesC$$.
+
+$head Arguments$$
+To discuss the arguments, we assume the dimensions of $math%V%$$ 
+and $math%U%$$ are such that
+$math%V%$$ is a $math%m x m%$$ matrix, and $math%U%$$ is 
+a $math%m^2 x k%$$ matrix.
+
+
+The function returns two arguments:
+[result , UVList ].
+result is   $math%U' ( V @ V ) U%$$, 
+and $math%UVList%$$ is an intermediate part of the computation 
+which is returned
+in the case the user will be calling 
+$pre symUTransposeTimesVKronVTimesU_der$$
+in order to get the derivative of  $math%U' ( V @ V ) U%$$.  
+
+$syntax/
+
+/UVList/
+/$$
+is meant to be a list, each element of the list is the $math%m x m%$$ 
+matrix product 
+$math%Ui * V%$$, where $math%Ui%$$ is the $math%ith%$$ 
+column of $math%U%$$ rvecinversed to be a $math%m x m%$$ matrix.
+
+In the Omatrix implementation, UVList is stored as 
+a $math%k m x m%$$ matrix, where each
+$math%m x m%$$ block is a matrix product as described above.
+$syntax/
+
+/U/
+/$$
+This is a $math%m^2 x k%$$ matrix.  Each column is assumed to be the 
+$pre rvec$$ of a symmetric $math%m x m%$$
+matrix.
+$syntax/
+
+/V/
+/$$
+This is a $math%m x m%$$ symmetric matrix.
+$head C++ Implementation$$
+The C++ implementation should check that the matrices coming in 
+are the correct sizes,
+that is $math%V%$$ is square, say $math%m x m%$$, and that 
+$math%U%$$ has $math%m^2%$$ rows.
+
+The parameter $math%UVList%$$ should  be a vector<Matrix>, or some such 
+list.  The function $pre symUTransposeTimesVKronVTimesU$$ will then 
+initialize it.  This will 
+clean up the blk subblock syntax in the code.  i.e., 
+$codep
+ 	UVList.blk( (i-1)* m + 1 , 1, m , m ) = UVi
+$$
+will become
+$codep
+	UVList[i] = UVi.
+$$
+Further optimizations could include a version that computes 
+$math%U' (VInv @ VIn ) U%$$ given $math%V%$$ and using 
+$pre backdiv$$ or the planned covariance class.
+
+$head Example$$
+The following code tests this function.  It defines several matrix 
+valued functions
+that return symmetric matrices, namely the functions 
+$math%V(x), U1(x), U2(x), U3(x)%$$.  It 
+then defines the function $math%U(x)%$$ which takes an rvec of 
+each of $math%U1(x)%$$,$math%U2(x)%$$ and $math%U3(x)%$$
+to form the columns of $math%U%$$.  The details of the formulas in $math%U1(x),U2(x)%$$ and $math%U3(x)%$$ are
+unimportant, they are just expressions that will create symmetric matrices
+which we can differentiate when testing symUTransposeTimesVKronVTimesU_der.
+
+Finally the program compares the results of this function
+with $math%U' * AkronBtimesC( V , V , U )%$$.
+
+$codep
+clear
+
+function V( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( x(i) - i)*(x(j) - j )
+		end
+	end
+	return result
+end
+
+function U1( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( 1 / ( x(i)*x(j) - (i + j )  ) )
+		end
+	end
+	return result
+end
+
+function U2( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( ( x(i) + x(j) - i*j ) )
+		end
+	end
+	return result
+end
+
+function U3( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( ( x(i) - j ) ) * ( ( x(j) - i ) )			
+		end
+	end
+	return result
+end
+
+function U( x ) begin
+	n = rowdim(x)
+
+	mU1 = U1( x )
+	mU2 = U2( x )
+	mU3 = U3( x )
+
+	mU = zeros( n*n, 3 )
+
+	mU.col(1) = rvec(mU1)
+	mU.col(2) = rvec(mU2)
+	mU.col(3) = rvec(mU3)
+
+	return mU
+end
+
+x = [ 0.0,0.0]'
+
+mU = U(x)
+mV = V(x)
+
+print "Here is U ", mU
+print "Here is V ", mV
+print "Here is rvecInverse( U.col(1) ), note that it is symmetric:"
+mU1 = mU.col(1)
+rvmU1 =  rvecInverse( mU1 , coldim( mV ) )
+print rvmU1
+D = mU' * AkronBtimesC( mV , mV , mU )
+print "Here is U' ( V @ V) U computed as U' * AkronBtimesC( V , V , U )"
+print D
+
+result = symUTransposeTimesVKronVTimesU( mU, mV ) 
+print "Here is U' ( V @ V) U computed with symUTransposeTimesVKronVTimesU", result
+
+$$
+O-Matrix will respond
+$codep
+Here is U  {
+[ -0.5 , -1 , 1 ]
+[ -0.333333 , -2 , 2 ]
+[ -0.333333 , -2 , 2 ]
+[ -0.25 , -4 , 4 ]
+}
+
+Here is V  {
+[ 1 , 2 ]
+[ 2 , 4 ]
+}
+
+Here is rvecInverse( U.col(1) ), note that it is symmetric: 
+{
+[ -0.5 , -0.333333 ]
+[ -0.333333 , -0.25 ]
+}
+
+Here is U' ( V @ V) U computed as U' * AkronBtimesC( V , V , U ) 
+{
+[ 8.02778 , 70.8333 , -70.8333 ]
+[ 70.8333 , 625 , -625 ]
+[ -70.8333 , -625 , 625 ]
+}
+
+Here is U' ( V @ V) U computed with symUTransposeTimesVKronVTimesU {
+[ 8.02778 , 70.8333 , -70.8333 ]
+[ 70.8333 , 625 , -625 ]
+[ -70.8333 , -625 , 625 ]
+}
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+end # blocking for automatic include

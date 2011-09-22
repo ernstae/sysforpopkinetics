@@ -1,0 +1,191 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin Optimizer$$
+
+$spell 
+  optimizer
+  optimizers
+  Spk
+  iostream
+  const
+  iters
+  cout
+  endl
+  Itrs
+  Iter
+  nlp
+  namespace
+  std
+  bool
+$$ 
+
+$section Optimizer Class$$
+
+$index Optimizer$$
+
+$head Description$$
+Defined in $code Optimizer.h$$.
+$pre
+
+$$
+$code Optimizer$$ encapsulates information needed to control the
+general-purpose optimization library that is used by SPK to search
+for the maximum likelihood solutions.
+Objects of this class are passed as input arguments to SPK's 
+top-level search routines
+$mref%fitIndividual%fitPopulation%$$.
+Ultimately, $code Optimizer$$ might allow users to choose among 
+several optimizers;
+if and when that happens, $code Optimizer$$ may become a base class
+defining the common interface for a family of optimizers.
+Currently, SPK always uses the function $code nag_opt_nlp$$ from the
+$href@http://www.nag.com@Numerical Algorithms Group (NAG)@$$ library,
+so our $code Optimizer$$ class is merely a bundle of information and 
+controls relevant to that optimizer including the state information
+required by the warm start run of SPK. 
+It has the following members:
+
+
+$childtable/
+   Optimizer.cpp/$$
+
+
+$head Example$$
+If you compile and link the following program,
+
+  $codep
+
+     #include <iostream>
+     #include "Optimizer.h"
+     using namespace std;
+
+     int main()
+     {
+        const double epsilon        = 0.1;
+        const int    maxItrs        = 40;
+        const int    traceLevel     = 1;
+        const int    nIterCompleted = 10;
+        const bool   isTooManyIter  = true;
+        const bool   isSubLevelOpt  = false;
+
+        Optimizer myOptimizer( epsilon, maxItrs, traceLevel );
+        myOptimizer.setNIterCompleted( nIterCompleted );
+        myOptimizer.setIsTooManyIter( isTooManyIter );
+        myOptimizer.setIsSubLevelOpt( isSubLevelOpt );
+
+        cout << "epsilon        = " << myOptimizer.getEpsilon() << endl;
+        cout << "maxItrs        = " << myOptimizer.getNMaxIter() << endl;
+        cout << "traceLevel     = " << myOptimizer.getLevel() << endl; 
+        cout << "nIterCompleted = " << myOptimizer.getNIterCompleted() << endl;
+        cout << "isTooManyIter  = " << ( myOptimizer.getIsTooManyIter() ? "true":"false" ) << endl;
+        cout << "isSublevelOpt  = " << ( myOptimizer.getIsSubLevelOpt() ? "true":"false" ) << endl;
+
+	// setupWarmStart
+	myOptimizer.setupWarmStart( 2 );
+
+	// setIsWarmStart
+	myOptimizer.setIsWarmStart( true );
+
+	// setStateInfo
+	int     n        = 2;
+	double  x     [] = { 1.0, 2.0 };
+	Integer state [] = { 1  , 2   };
+	double  lambda[] = { 1.0, 2.0 };
+	double  h     [] = { 1.0, 2.0, 3.0, 4.0 };
+        StateInfo s1;
+	s1.n      = n;
+	s1.x      = x;
+	s1.state  = state;
+	s1.lambda = lambda;
+	s1.h      = h;
+	myOptimizer.setStateInfo( s1 );
+
+	// getStateInfo
+	StateInfo s2;
+	s2 = myOptimizer.getStateInfo();
+
+        cout << "isWarmStart    = " << ( myOptimizer.getIsWarmStart() ? "true":"false" ) << endl;
+        cout << "stateInfo.n    = " << s2.n << endl;
+        cout << "stateInfo.x[ 0 ] = " << s2.x[ 0 ] << endl;
+        cout << "stateInfo.x[ 1 ] = " << s2.x[ 1 ] << endl;
+        cout << "stateInfo.state[ 0 ] = " << s2.state[ 0 ] << endl;
+        cout << "stateInfo.state[ 1 ] = " << s2.state[ 1 ] << endl;
+        cout << "stateInfo.lambda[ 0 ] = " << s2.lambda[ 0 ] << endl;
+        cout << "stateInfo.lambda[ 1 ] = " << s2.lambda[ 1 ] << endl;
+        cout << "stateInfo.h[ 0 ] = " << s2.h[ 0 ] << endl;
+        cout << "stateInfo.h[ 1 ] = " << s2.h[ 1 ] << endl;
+        cout << "stateInfo.h[ 2 ] = " << s2.h[ 2 ] << endl;
+        cout << "stateInfo.h[ 3 ] = " << s2.h[ 3 ] << endl;
+
+        myOptimizer.deleteStateInfo();
+        s2 = myOptimizer.getStateInfo();
+        cout << "After calling deleteStateInfo()" << endl;
+        cout << "stateInfo.n      = " << s2.n << endl;
+        cout << "stateInfo.x      = " << ( s2.x      ? "1":"0" ) << endl;
+        cout << "stateInfo.state  = " << ( s2.state  ? "1":"0" ) << endl;
+        cout << "stateInfo.lambda = " << ( s2.lambda ? "1":"0" ) << endl;
+        cout << "stateInfo.h      = " << ( s2.h      ? "1":"0" ) << endl;
+
+        return 0;
+     }
+  $$
+
+it displays the following:
+
+  $codep
+
+  epsilon        = 0.1
+  maxItrs        = 40
+  traceLevel     = 1
+  nIterCompleted = 10
+  isTooManyIter  = true
+  isSubLevelOpt  = false
+  isWarmStart    = true
+  stateInfo.n    = 2
+  stateInfo.x[ 0 ] = 1
+  stateInfo.x[ 1 ] = 2
+  stateInfo.state[ 0 ] = 1
+  stateInfo.state[ 1 ] = 2
+  stateInfo.lambda[ 0 ] = 1
+  stateInfo.lambda[ 1 ] = 2
+  stateInfo.h[ 0 ] = 1
+  stateInfo.h[ 1 ] = 2
+  stateInfo.h[ 2 ] = 3
+  stateInfo.h[ 3 ] = 4
+  After calling deleteStateInfo()
+  stateInfo.n    = 0
+  stateInfo.x = 0
+  stateInfo.state = 0
+  stateInfo.lambda = 0
+  stateInfo.h = 0
+  $$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+	
