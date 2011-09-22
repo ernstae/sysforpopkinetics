@@ -1,0 +1,418 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+#begin##
+
+
+$begin FoModel$$
+$spell ok Fo oms$$
+$escape #$$
+
+$section First Order Model$$
+
+$index FoModel$$
+$cindex first order model$$
+
+$table
+$bold Syntax$$ $cend
+$syntax/SetFoModel(function /Model/, /bStep/, /alp/)
+FoModel( ...
+        /b/, ...
+        /gOut/, ...
+        /g_alpOut/, ...
+        /g_bOut/, ...
+        /SOut/, ...
+        /S_alpOut/, ...
+        /S_bOut/, ...
+        /DOut/, ...
+        /D_alpOut/...
+)/$$
+$tend
+
+$fend 25$$
+
+$head Description$$
+The function $code SetFoModel$$ sets up the function $code FoModel$$
+to correspond to a certain first order approximation.
+The function $code FoModel$$ returns the first order approximation
+that corresponds to the previous call to $code SetFoModel$$.
+The return value of these functions are true, if they succeed,
+and false otherwise.
+
+
+$head Arguments$$
+We use the notation
+$math%g(alp, b)%$$ and $math%S(alp, b)%$$ for the first order approximations
+of the functions $math%f(alp, b)%$$ and $math%R(alp, b)%$$ respectively.
+The function
+$code FoModel$$ returns values corresponding to the functions
+$math%
+	g(alp, b) = f(alp, 0) + ftilde_b(alp, 0) * b
+	S(alp, b) = R(alp, 0)
+%$$
+where $math%ftilde_b(alp, 0)%$$ is a finite difference approximation for
+$math%f_b(alp, 0)%$$.
+$syntax/
+
+/Model/(/alp/, /b/, /fOut/, /f_alpOut/, /f_bOut/, /ROut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+$table
+$bold Argument$$
+	$cend $bold Value$$ 
+	$cend $bold Comments$$ $rend
+$italic alp$$
+	$cend $math%alp%$$ 
+	$cend fixed population parameter vector $rend
+$italic b$$
+	$cend $math%b%$$ 
+	$cend random population parameter vector $rend
+$italic fOut$$
+	$cend $math%f(alp, b)%$$ 
+	$cend model for the mean of $math%y%$$ given $math%b%$$ $rend
+$italic f_alpOut$$ 
+	$cend $math%f_alp(alp, b)%$$ 
+	$cend derivative of $math%f(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+	$cend $math%f_b(alp, b)%$$ 
+	$cend derivative of $math%f(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic ROut$$ 
+	$cend $math%R(alp, b)%$$ 
+	$cend model for the variance of $math%y%$$ given $math%b%$$ $rend
+$italic R_alpOut$$
+	$cend $math%R_alp(alp, b)%$$ 
+	$cend derivative of $math%R(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+	$cend $math%R_b(alp, b)%$$ 
+	$cend derivative of $math%R(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic DOut$$ 
+	$cend $math%D(alp)%$$ 
+	$cend model for the variance of $math%b%$$ $rend
+$italic D_alpOut$$
+	$cend $math%D_alp(alp)%$$ 
+	$cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$syntax/
+
+/bStep/
+/$$
+is the vector of random effects steps sizes for the finite
+difference approximation of the derivative
+$math%f_b(alp, 0)%$$.
+$syntax/
+
+/alp/
+/$$
+fixed population parameter vector at which to evaluate
+$math%g(alp, b)%$$ and $math%S(alp, b)%$$.
+$syntax/
+
+/b/
+/$$
+random population parameter vector at which to evaluate
+$math%g(alp, b)%$$ and $math%S(alp, b)%$$.
+$syntax/
+
+/gOut/
+/$$
+value of the function $math%g(alp, b)%$$
+$syntax/
+
+/g_alpOut/
+/$$ 
+derivative of $math%g(alp, b)%$$ with respect to $math%alp%$$
+$syntax/
+
+/g_bOut/
+/$$ 
+derivative of $math%g(alp, b)%$$ with respect to $math%b%$$; i.e.,
+$math%ftilde_b(alp, 0)%$$.
+$syntax/
+
+/SOut/
+/$$
+value of the function $math%S(alp, b)%$$.
+$syntax/
+
+/S_alpOut/
+/$$
+derivative of $math%S(alp, b)%$$ with respect to $math%alp%$$
+$syntax/
+
+/S_bOut/
+/$$
+derivative of $math%S(alp, b)%$$ with respect to $math%b%$$
+(which is always zero).
+$syntax/
+
+/DOut/
+/$$ 
+model for the variance of $math%b%$$
+$syntax/
+
+/D_alpOut/
+/$$
+derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+
+$head Example$$
+Suppose that
+$math%
+	            / 1     0 \
+	R(alp, b) = |         |
+	            \ 0     1 /
+
+	            / alp(1)  0 \
+	D(alp)    = |           |
+	            \ 0  alp(1) /
+
+	            / alp(2) + b(2) \
+	f(alp, b) = |               |
+	            \ alp(2) + b(2) /
+%$$
+It follows that
+$math%g(alp, b) = f(alp, b)%$$ and $math%S(alp, b) = R(alp, b)%$$; i.e.,
+the first order approximation is equal to the actual model.
+The following program demonstrates this because the printed
+pairs are all equal:
+
+$codep
+
+clear
+include FoModel.oms
+#
+function Model(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+     if fOut then ...
+          fOut = {alp(2) + b(2), alp(2) + b(2)}
+     if f_alpOut then ...
+          f_alpOut = { ...
+          [ 0 , 1 ], ...
+          [ 0 , 1 ] ...
+     }
+     if f_bOut then ...
+          f_bOut = { ...
+          [ 0 , 1 ], ...
+          [ 0 , 1 ] ...
+     }
+     if ROut then ...
+          ROut = { ...
+          [ 1 ,   0   ], ...
+          [ 0    ,  1 ] ...
+     }
+     if R_alpOut then ...
+          R_alpOut = { ...
+          [ 0 , 0 ], ...
+          [ 0 , 0 ], ...
+          [ 0 , 0 ], ...
+          [ 0 , 0 ] ...
+     }
+     if R_bOut then ...
+          R_bOut = { ...
+          [ 0 , 0 ], ...
+          [ 0 , 0 ], ...
+          [ 0 , 0 ], ...
+          [ 0 , 0 ] ...
+          }
+     if DOut then ...
+          DOut = { ...
+          [ alp(1) ,   0   ], ...
+          [ 0    ,  alp(1) ] ...
+     }
+     if D_alpOut then ...
+          D_alpOut = { ...
+          [ 1 , 0 ], ...
+          [ 0 , 0 ], ...
+          [ 0 , 0 ], ...
+          [ 1 , 0 ] ...
+     }
+     return true
+end
+alp           = {1., 1.}
+b             = {1., 1.}
+bStep         = {.1, .1}
+SetFoModel(function Model, bStep, alp)
+#
+# evaluate true model
+f     = true
+f_alp = true
+f_b   = true
+R     = true
+R_alp = true
+R_b   = true
+D     = true
+D_alp = true
+ok = Model(alp, b, f, f_alp, f_b, R, R_alp, R_b, D, D_alp)
+#
+# evaluate first order approximation
+g      = true
+g_alp  = true
+g_b    = true
+S      = true
+S_alp  = true
+S_b    = true
+D0     = true
+D0_alp = true
+okFo = FoModel(b, g, g_alp, g_b, S, S_alp, S_b, D0, D0_alp)
+#
+# show that the values are equal
+print "ok, okFo         = ", [ok, okFo]
+print "[f, g]           = ", [f, g]
+print "[f_alp, g_alp]   = ", [f_alp, g_alp]
+print "[f_b, g_b]       = ", [f_b, g_b]
+print "[R, S]           = ", [R, S]
+print "[R_alp, S_alp]   = ", [R_alp, S_alp]
+print "[R_b, S_b]       = ", [R_b, S_b]
+print "[D, D0]          = ", [D, D0]
+print "[D_alp, D0_alp]  = ", [D_alp, D0_alp]
+
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+include AkronBtimesC.oms
+
+local Ny        = 1
+local F0        = novalue
+local F0_alp    = novalue
+local F0_b      = novalue
+local F0_b_alp  = novalue
+local R0        = novalue
+local R0_alp    = novalue
+local D0        = novalue
+local D0_alp    = novalue
+#
+local Ok        = novalue
+local function Fun(function Model, alp, b) begin
+	zero = fill(0d0, Ny * rowdim(alp), 1)
+	if not Ok then return zero
+	#
+	# evalute f at b random effects
+	f       = true
+	f_alp   = false
+	f_b     = false
+	R       = false
+	R_alp   = false
+	R_b     = false
+	D       = false
+	D_alp   = false
+	Ok = Model(alp, b, f, f_alp, f_b, R, R_alp, R_b, D, D_alp)
+	if not Ok then return zero
+	return f
+end
+local function Fun_alp(function Model, alp, b) begin
+	zero = fill(0d0, Ny * rowdim(alp), 1)
+	if not Ok then return zero
+	#
+	# evalute f at b random effects
+	f       = false
+	f_alp   = true
+	f_b     = false
+	R       = false
+	R_alp   = false
+	R_b     = false
+	D       = false
+	D_alp   = false
+	Ok = Model(alp, b, f, f_alp, f_b, R, R_alp, R_b, D, D_alp)
+	if not Ok then return zero
+	return f_alp
+end
+function SetFoModel( ...
+	function Model, ...
+	bStep, ...
+	alp ...
+) begin
+	#
+	# evalute at zero random effects
+	b0 = fill(0d0, rowdim(bStep), 1)
+	F0     = true
+	F0_alp = true
+	f_b    = false
+	R0     = true
+	R0_alp = true
+	R_b    = false
+	D0     = true
+	D0_alp = true
+	Ok = Model(alp, b0, F0, F0_alp, f_b, R0, R0_alp, R_b, D0, D0_alp)
+	if not Ok then begin
+		stop
+		return false
+	end
+	Ny   = rowdim(F0)
+	Nalp = rowdim(alp)
+	Nb   = rowdim(bStep)
+	#
+	# evaluate central difference approximation for f_b and f_b_alp
+	function F = Fun(Model, alp)
+	F0_b       = cendiff(function F, b0, bStep)
+	function F = Fun_alp(Model, alp)
+	F0_b_alp   = TranCenDiff(function F, b0, bStep)
+	return true
+end
+function FoModel( ...
+	b, ...
+	gOut, ...
+	g_alpOut, ...
+	g_bOut, ...
+	SOut, ...
+	S_alpOut, ...
+	S_bOut, ...
+	DOut, ...
+	D_alpOut ...
+) begin
+	if not Ok then begin
+		stop
+		return false
+	end
+	#
+	if gOut then ...
+		gOut = F0 + F0_b * b
+	if g_alpOut then begin
+		I = identity(Ny)
+		g_alpOut = F0_alp +  AkronBtimesC(I, b', F0_b_alp)
+	end
+	if g_bOut then ...
+		g_bOut = F0_b
+	if SOut then ...
+		SOut = R0
+	if S_alpOut then ...
+		S_alpOut = R0_alp
+	if S_bOut then ...
+		S_bOut = fill(0d0, Ny * Ny, rowdim(b))
+	if DOut then ...
+		DOut = D0
+	if D_alpOut then ...
+		D_alpOut = D0_alp
+	#
+	return true
+end
+
+end #blocking for automatic include

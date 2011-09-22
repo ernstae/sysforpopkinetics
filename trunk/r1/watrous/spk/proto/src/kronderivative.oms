@@ -1,0 +1,133 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+#begin##
+
+$begin KronDerivative$$
+$escape &$$
+$spell Kron Kronker$$
+
+$section Derivative of the Kronker Product$$
+
+$index KronDerivative$$
+$cindex derivative &of &the Kronker product$$
+
+$table
+$bold syntax$$ $cend $syntax/KronDerivative(/A/, /B/, /A_x/, /B_x/)/$$
+$tend
+
+$head Description$$
+Returns the derivative $math%A(x) @ B(x)%$$ where $math%@%$$ denotes
+the Kronker product.
+The values of $math%A(x)%$$ and $math%B(x)%$$ for the particular value of $math%x%$$
+are specified by $italic A$$ and $italic B$$ respectively.
+The derivatives of
+$math%A(x)%$$ and $math%B(x)%$$ for the particular value of $math%x%$$
+are specified by $italic A_x$$ and $italic B_x$$ respectively. 
+
+$head Example$$
+Suppose that you define the function $math%A(x)%$$, $math%B(x)%$$,
+and the derivatives $math%A_x(x)%$$, $math%B_x(x)%$$ by entering
+$codep
+	clear
+	function A(x) begin
+		return { ...
+			[ x(1) , x(2) ] ...
+		}
+	end
+	function A_x(x) begin
+		return { ...
+			[ 1  , 0 ], ...
+			[ 0  , 1 ] ...
+		}
+	end
+	function B(x) begin
+		return { ...
+			[ x(1) , x(1)^2 ], ...
+			[ x(2) , x(2)^2 ] ...
+		}
+	end
+	function B_x(x) begin
+		return { ...
+			[ 1        , 0 ], ...
+			[ 2 * x(1) , 0 ], ...
+			[ 0,         1 ], ...
+			[ 0,  2 * x(2) ] ...
+		}
+	end
+$$
+It follows that the Kronker product $math%A(x) @ B(x)%$$ is given by
+$math%
+/                                                        \
+| x(1)*x(1)    x(1)*x(1)^2      x(2)*x(1)    x(2)*x(1)^2 |
+|                                                        |
+| x(1)*x(2)    x(1)*x(2)^2      x(2)*x(2)    x(2)*x(2)^2 |
+\                                                        /
+%$$
+If you enter
+$codep
+	x = {1, 1}
+	KronDerivative(A(x), B(x), A_x(x), B_x(x))
+$$
+O-Matrix will respond
+$codep
+	{
+	[ 2 , 0 ]
+	[ 3 , 0 ]
+	[ 1 , 1 ]
+	[ 2 , 1 ]
+	[ 1 , 1 ]
+	[ 1 , 2 ]
+	[ 0 , 2 ]
+	[ 0 , 3 ]
+	}
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+------------------------------------------------------------
+#end##
+include rvec.oms
+function KronDerivative(A, B, A_x, B_x) begin
+	nr    = rowdim(A) * rowdim(B)
+	nc    = coldim(A) * coldim(B)
+	N     = nr * nc
+	AB_x  = fill(0, N, coldim(A_x))
+	for j = 1 to coldim(A_x) begin
+		A_j  = A_x.col(j)
+		B_j  = B_x.col(j)
+		dim A_j(coldim(A), rowdim(A))
+		dim B_j(coldim(B), rowdim(B))
+		A_j  = A_j'
+		B_j  = B_j'
+		AB_x.col(j) = rvec(kron(A, B_j) + kron(A_j, B))
+	end
+	return AB_x
+end
+
+end # blocking for automatic include

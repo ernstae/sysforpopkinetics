@@ -1,0 +1,42 @@
+Conversion of Non-Parametric Population Analysis from Matlab to C++.
+
+The documentation for the Octave / Matlab version is in 
+	matlab/doc
+The documentation for the C++ version is in
+	cpp/doc
+
+Step 0: Download and install mat2cpp.
+
+Step 1: Execute the command
+	./configure BOOST_DIR=<boost_dir> MAT2CPP_PREFIX=<mat2cpp_prefix>
+where <boost_dir> is replaced by the directory where boost is installed
+and <mat2cpp_prefix> is the prefix for the mat2cpp installation. If these
+values are chosen correctly the following two files will exist:
+	<boost_dir>/boost/numeric/ublas/matrix.hpp
+	<mat2cpp_prefix>/include/mat2cpp.hpp
+
+	(note to users who are installing SPK)
+  	To install the non_par library with the SPK defaults, execute the 
+	shell script:
+
+	./build.sh spk
+
+Step 2: Execute the command
+	make
+
+Step 3: Execute the commands
+	cd matlab
+	octave
+	all_ok
+	exit
+	cd ..
+the Octave program should respond that all the tests pass (you can use
+Matlab in place of Octave).
+
+
+Step 4: Execute the commands
+	cd cpp
+	./all_ok
+	cd ..
+the all_ok program should respond that all the tests pass.
+

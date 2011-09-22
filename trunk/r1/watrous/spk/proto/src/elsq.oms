@@ -1,0 +1,226 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+#begin##
+
+$begin elsq$$
+$escape &$$
+$spell 
+	elsq
+	Qinv
+	Qi
+	kron
+	inv
+$$
+
+$section Extended Least Squares Function And Its Derivative$$
+
+$index elsq$$
+$index elsq_x$$
+$cindex extended least squares function &and derivative$$
+
+$table
+$bold syntax$$ $cend 
+$syntax/elsq(/z/, /h/, /Q/, /Qinv/)
+elsq_x(/z/, /h/, /Q/, /Qinv/, /h_x/, /Q_x/)/$$
+$tend
+
+$fend 25$$
+
+$head Description$$
+The routine $code elsq$$ computes the
+extended least squares function 
+$math%g(x)%$$
+which is defined by
+$math%
+	        1  %          %             1            T  -1
+	g(x) = --- &logdet[ 2 &pi Q(x) ] + --- [z - h(x)]  Q (x) [z - h(x)]
+	        2  %          %             2
+%$$
+$math%x%$$ and $math%z%$$ are column vectors,
+$math%Q(x)%$$ is a square matrix valued function,
+and $math%h(x)%$$ is a column vector valued function.
+The routine $code elsq_x$$ computes the
+$xref/glossary/Derivative/derivative/$$ of $math%g(x)%$$; i.e.,
+$math%g_x(x)%$$.
+
+
+$head Reference$$
+See Lemma 11 of 
+$italic Approximating the maximum likelihood estimate 
+for models with random parameters$$.
+
+$head Arguments$$
+
+$syntax//z/
+/$$
+is a real or double-precision column vector.
+
+$syntax/
+
+/h/
+/$$
+is a real or double-precision column vector 
+containing the value of $math%h(x)%$$.
+It has the same number of rows as $italic z$$.
+
+$syntax/
+
+/Q/
+/$$
+is a real or double-precision
+square matrix containing the value of $math%Q(x)%$$
+corresponding to the current value of $math%x%$$.
+It has the same row dimension as $italic z$$.
+
+$syntax/
+
+/Qinv/
+/$$
+is a real or double-precision
+square matrix containing the matrix inverse of $italic Q$$.
+It has the same dimensions a $italic Q$$.
+
+
+
+$syntax/
+
+/h_x/
+/$$
+is a real or double-precision
+matrix containing the 
+$xref/glossary/Derivative/derivative/$$ of $math%h(x)%$$;
+i.e., $math%h_x(x)%$$.
+
+
+$syntax/
+
+/Q_x/
+/$$
+is a real or double-precision
+matrix containing the 
+$xref/glossary/Derivative/derivative/$$ of $math%Q(x)%$$; 
+i.e., $math%Q_x(x)%$$.
+
+$head Example$$
+Suppose that
+$math%
+              / 2 x(1)     0  \            / x(3) \        / 0 \
+       Q(x) = |               |    h(x) =  |      |    z = |   |
+              \  0      x(2)  /            \ x(3) /        \ 0 /
+%$$
+It follows that
+$math%                             
+	g(x) = 1/2 &log[ (2 &pi)^2 2 x(1) x(2)] + 1/4 x(3)^2 [1 / x(1) + 2 / x(2)]
+%$$
+The gradient of $math%g(x)%$$ is equal to
+$math%
+	 1  /  2 / x(1) - x(3)^2 / x(1)^2    \
+	--- |  2 / x(2) - 2 x(3)^2 / x(2)^2  |
+	 4  \ 2 x(3) [ 1 / x(1) + 2 / x(2)]  /
+%$$
+If all the components of $math%x%$$ are one, 
+The derivative of $math%g(x)%$$ is equal to
+$math%
+	[ 1 , 0 , 6 ] / 4 = [ .025 , 0 , 1.5 ]
+%$$
+If you enter
+$codep
+
+clear
+include elsq.oms
+#
+function Q(x) begin
+	return { ...
+		[ 2 * x(1) ,   0   ], ...
+		[     0    ,  x(2) ] ...
+	}
+end
+function Qinv(x) begin
+	return inv(Q(x))
+end
+function Q_x(x) begin
+	return { ...
+		[ 2 , 0 , 0 ], ...
+		[ 0 , 0 , 0 ], ...
+		[ 0 , 0 , 0 ], ...
+		[ 0 , 1 , 0 ] ...
+	}
+end
+function h(x) begin
+	return { x(3), x(3) }
+end
+function h_x(x) begin
+	return { ...
+		[ 0 , 0 , 1 ], ...
+		[ 0 , 0 , 1 ] ...
+	}
+end
+z      = {0, 0}
+x      = {1., 1., 1.}
+elsq_x(z, h(x), Q(x), Qinv(x), h_x(x), Q_x(x))
+
+$$
+O-Matrix will respond
+$codep
+	[ .025 , 0 , 1.5 ]
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+------------------------------------------------------------
+#end##
+#
+include AkronBtimesC.oms
+include det.oms
+include rvec.oms
+#
+local Pi2 = 2 * PI
+#
+function elsq(z, h, Q, Qinv) begin
+	r    = z - h
+	g = log( det( Pi2 * Q ) ) + r' * Qinv * r
+	return g / 2d0
+end
+function elsq_x(z, h, Q, Qinv, h_x,  Q_x) begin
+	#
+	# Use Lemma 11 in the reference but in addition, use
+	# the following facts:
+	# rvec(Q)' * Qinv_x = - rvec(Qinv) * Q_x
+	# kron(r' , r') * Qinv_x = kron(r', r') * kron(Qinv, Qinv) * Q_x
+	#                        = kron(r' * Qinv, r' * Qinv) * Q_x
+	r      = z - h
+	rpQinv = r' * Qinv
+	term1  = rvec(Qinv)' * Q_x
+	term2  = rpQinv * h_x
+	term3  = AkronBtimesC(rpQinv, rpQinv, Q_x)
+	return  term1 / 2d0 - term2  - term3 / 2d0
+end
+# ------------------------------------------------------------
+
+end # blocking for automatic include

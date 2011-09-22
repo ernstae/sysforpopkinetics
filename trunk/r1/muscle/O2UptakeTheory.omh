@@ -1,0 +1,190 @@
+$begin O2UptakeTheory$$
+
+$spell
+	mitochondrial
+	myoglobin
+	differencing
+	deconvolution
+	mmHg
+	torr
+	cm
+$$
+
+$comment
+	Theory of the Time Course of Mitochondrial Oxygen Consumption 
+	During Muscle Contraction and Recovery
+$$
+
+$section Theory and Mathematical Model$$
+
+$fend 10$$
+
+$head Model for Apparatus Baseline$$
+
+Due to polarographic measurements, the electrode consumes oxygen at a
+finite rate. Besides, there are some apparent leaks of oxygen from the
+high $latex pO_2$$ (partial pressure of oxygen) in the chamber ($latex
+\approx$$ 700 torr) to the atmosphere ($latex \approx$$ 150 torr). These
+two processes characterize the apparatus baseline. Assessment or
+evaluation of this apparatus baseline can be performed experimentally
+through the measurement of oxygen concentration in the chamber without the
+muscle present.
+
+For simplicity and convenience in the modeling, let us assume that the
+flux (rate) of oxygen consumption by the electrode, $latex F_E$$, is
+constant. The leaking of oxygen from the chamber to the atmosphere is
+characterized by the transfer coefficient, $latex K_{ch}$$ (also known as
+the "conductance" or "permeability surface area product"), of the chamber
+wall, and the physical volume, $latex V_{ch}$$, of the chamber, which are
+also assumed to be constant. The chamber is considered to be well mixed by
+a circulating fluid. Thus, the concentration of oxygen inside the chamber,
+$latex C_{ch}$$, without the muscle present is governed by the following
+differential equation:
+
+$latex
+\[
+\frac{dC_{ch}}{dt} = -\frac{K_{ch}}{V_{ch}}(C_{ch}-C_{air}) - F_E,
+\]
+$$
+
+subject to the initial condition:
+
+$latex
+\[
+C_{ch}(t=0) = C_{ch0}.
+\]
+$$
+
+The above equations can be equivalently written in terms of the partial
+pressure of oxygen, $latex pO_2$$, using the Henry's law: $latex
+C=\alpha_{O_2} \times pO_2$$, where $latex \alpha_{O_2}$$ is the
+solubility of oxygen in the fluid.
+
+The known (input) parameters are $latex \alpha_{O_2}$$, $latex V_{ch}$$,
+$latex pO_{2air}$$ (partial pressure of oxygen in the atmosphere), and
+$latex pO_{2ch0}$$ (initial partial pressure of oxygen inside the
+chamber). As mentioned above, $latex pO_{2air}=150$$ mmHg and $latex
+pO_{2ch0}=700$$ mmHg. The parameters to be estimated (output) using the
+experimental data on measured oxygen concentrations are $latex K_{ch}$$
+and $latex F_E$$.
+
+The analytical solution of the above model problem characterizing the 
+apparatus baseline is given by
+
+$latex
+\[
+C_{ch} = C_{ch0} \exp \left(-\frac{K_{ch}}{V_{ch}}t\right) + 
+\left[ C_{air} - \frac{K_{ch}}{V_{ch}} F_E \right] \left[ 
+1 - \exp \left(-\frac{K_{ch}}{V_{ch}}t\right) \right].
+\]
+$$
+
+The actual amount of oxygen in the chamber, $latex A_{ch}$$, can then be
+computed from the concentration of oxygen in the chamber, $latex C_{ch}$$,
+using the above equation and the relation $latex A_{ch} = V_{ch} \times
+C_{ch}$$.
+
+
+$head Model for Muscle Mitochondrial Oxygen Consumption$$
+
+In the presence of muscle, oxygen in the chamber is also decayed due the
+consumption by the muscle mitochondria, in addition to the apparatus
+baseline. The flux (rate) of oxygen uptake by the muscle is low when
+muscle is not stimulated (about the same order of magnitude as the
+apparatus baseline), and rises 5 to 10 fold when the muscle is stimulated.
+The actual time course of the mitochondrial oxygen uptake is the desired
+result of the deconvolution. The apparatus baseline information/parameters 
+are used as a prior for the whole system.
+
+To characterize the muscle as a diffusion system, the following
+assumptions were made. (1) The muscle is a circular cylinder, the radius,
+$latex R$$, of which is small compared to its length, $latex L$$, so that
+the axial diffusion of oxygen can be neglected compared to its radial
+diffusion. (2) The diffusion is homogeneous so that the molecular
+diffusion coefficient, $latex D$$, can be considered as a constant. (3)
+The contribution of facilitated diffusion due to the presence of myoglobin
+is considered negligible. Thus the concentration of oxygen inside the
+muscle, $latex C_M(r,t)$$, is a function of both time, $latex t$$, and
+radial distance, $latex r$$.
+
+The concentration of oxygen inside the chamber, $latex C_{ch}(t)$$, and in
+the muscle, $latex C_M(r,t)$$, are governed by the following coupled
+differential equations:
+
+$latex
+\[
+\frac{dC_{ch}}{dt} = -\frac{K_{ch}}{V_{ch}}(C_{ch}-C_{air}) - F_E -
+\frac{V_{M}}{V_{ch}} F_M(t),
+\]
+$$
+
+and
+
+$latex
+\[
+\frac{\partial C_M}{\partial t} = D\frac{1}{r}\frac{\partial}{\partial r}
+\left(r\frac{\partial C_M}{\partial r} \right) - F_M(t),
+\]
+$$
+
+where $latex V_M=2\pi R^2 L$$ is the volume of the cylindrical muscle and
+$latex F_M(t)$$ is the flux (rate) of oxygen consumption by the muscle.  
+The initial and boundary conditions are given by
+
+$latex
+\[
+\begin{array}{l}
+C_{ch}(t=0) = C_0, \\
+C_M(r,t=0) = 0, \\
+C_M(r=R,t) = C_{ch}(t), \\
+\frac{\partial C_M}{\partial r} (r=0,t) = 0. 
+\end{array}
+\]
+$$
+
+The last condition states the symmetry of the solutions about the center
+($latex r=0$$) of the cylinder. For the present model, this is equivalent
+to state that $latex C_M(r=0,t)$$ = finite. The flux of oxygen uptake by 
+the muscle surface, $latex F_{MS}(t)$$, is given by
+
+$latex
+\[
+F_{MS}(t) = \frac{2D}{R}\left(\frac{\partial C}{\partial r}\right)|_{r=R},
+\]
+$$
+
+which depend on the oxygen concentration on the surface of the muscle
+(same as inside the chamber) and on the muscle layer just beneath the
+muscle surface. Thus $latex F_{MS}(t)$$ is a function of time, $latex t$$, 
+only and can be obtained using central difference scheme.
+
+The known and estimated parameters from the apparatus baseline simulation
+are used as prior information. The diffusion coefficient, $latex D$$, for
+oxygen in the muscle is also a known parameter $latex D = 6.0 \times
+10^{-4} cm^2/min$$. The only unknown parameter (function) in the model is
+$latex F_M(t)$$, the time course of which need to be obtained through
+DECONVOLUTION using the experimental data on oxygen concentration
+measurement in the chamber.
+
+The solution for $latex C_{ch}$$ of the chamber equation can be obtained 
+analytically in the following form 
+
+$latex
+\[
+\begin{array}{l}
+C_{ch} = C_{ch0} \exp \left(-\frac{K_{ch}}{V_{ch}}t\right) + 
+\left[ C_{air} - \frac{K_{ch}}{V_{ch}} F_E \right] \left[ 
+1 - \exp \left(-\frac{K_{ch}}{V_{ch}}t\right) \right] \\
+-\frac{V_M}{V_{ch}} \int_0^t \exp \left(-\frac{K_{ch}}{V_{ch}}
+(t-\tau)\right) F_M(\tau) d\tau.
+\end{array}
+\]
+$$
+
+This solution for $latex C_{ch}$$ is used as the boundary condition for
+the muscle equation. The actual amount of oxygen in the chamber, $latex
+A_{ch}$$, can then be computed from the concentration of oxygen in the
+chamber, $latex C_{ch}$$, using the above equation and the relation $latex
+A_{ch} = V_{ch} \times C_{ch}$$.
+
+$end

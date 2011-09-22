@@ -1,0 +1,102 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin general$$
+
+$section General Purpose Components$$
+
+$childtable/
+    ABA_x.cpp/
+    add.cpp/
+    AkronBtimesC.cpp/
+    AkronItimesC.cpp/
+    allTrue.cpp/
+    allZero.cpp/
+    backDiv.cpp/
+    BlockAlloc.cpp/
+    blockDiagonalDerivative.cpp/
+    centdiff.h/
+    cholesky.cpp/
+    CovarianceClasses.omh/
+    elsq.cpp/
+    elsq_x.cpp/
+    elsq_xDiag.cpp/
+    elsq_xBlockDiag.cpp/
+    DBL_EPS_EQUAL_MULT.h/
+    det.cpp/
+    divByScalar.cpp/
+    DMclass.omh/
+    elementwiseAnd.cpp/
+    elementwiseOr.cpp/
+
+    File.cpp/
+    FpErrorChecker.cpp/
+
+    Function.cpp/
+    getCol.cpp/
+    getMulCols.cpp/
+    getMulRows.cpp/
+    getRow.cpp/
+    getSubblock.cpp/
+    identity.cpp/
+    IkronBtimesC.cpp/
+    inverse.cpp/
+    inxToMax.cpp/
+    isDblEpsEqual.h/
+    isDmatEpsEqual.cpp/
+    isGreaterThanOrEqualTo.cpp/
+    isLessThanOrEqualTo.cpp/
+    matabs.cpp/
+    matmax.cpp/
+    matmin.cpp/
+    mulByScalar.cpp/
+    multiply.cpp/
+    OptimizerClass.omh/
+    pi.h/
+    printInMatrix.h/
+    replaceIth.cpp/
+    replaceJth.cpp/
+    replaceSubblock.cpp/
+    rvec.h/
+    rvecInverse.cpp/
+ 
+    SpkError.cpp/
+    SpkException.cpp/
+    SpkValarray.h/
+    sqpAnyBox.cpp/
+    subtract.cpp/
+    symmetrize.cpp/
+    System.cpp/
+    transpose.cpp/
+    transposeDerivative.cpp/
+    transposeRowBlocks.cpp/
+    UTranTimesSymKronSymTimesU.cpp/
+    UTranTimesSymKronSymTimesU_x.cpp/$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+

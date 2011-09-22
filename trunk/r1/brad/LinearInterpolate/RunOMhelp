@@ -1,0 +1,4 @@
+rm -r htm
+mkdir htm
+cd htm
+~/OMhelp/omhelp ../LinearInterpolate.h -xml

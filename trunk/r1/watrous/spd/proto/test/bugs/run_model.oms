@@ -1,0 +1,159 @@
+close
+tic
+
+dir   = up2low(cwd)
+index = find(dir, "\pped")
+index = index(end, 2)
+dir   = dir(1 :: index)
+
+path([ ...
+  dir, "general;",      NEW_LINE, ...
+  dir, "pped\src;",     NEW_LINE, ...
+  dir, "ppka;",         NEW_LINE, ...
+  path                           ...
+])
+
+# Modified SPK functions.
+include ppedOpt.oms
+
+clear ParseSolution
+function ParseSolution(pattern,x,cov) begin
+	sprintf(" %5s%10s%10s","Ind.","# Samp.","Design")
+	for i = 1 to rowdim(pattern) begin
+		if i == 1 then design = x.row(1,pattern(1))
+		else design = x.row(colsum(pattern.row(1,i-1))+1,pattern(i))
+		[sprintf("%5d%10d   ",i,pattern(i)),sprintf("%5.5f  ",design)]
+	end
+end
+
+format double "e24.15"
+
+problem = novalue
+output_file = novalue
+xStep = novalue
+xLow = novalue
+xUp = novalue
+xIn = novalue
+alpStep = novalue
+alpIn = novalue
+alpLow = novalue
+alpUp = novalue
+K = novalue
+eps = novalue
+delta = novalue
+mitr = novalue
+level = novalue
+covariates = novalue
+bLength = novalue
+alpLength = novalue
+xLength = novalue
+
+# load the variables relating to the problem
+Problem (problem, output_file, xStep, xLow, xUp, xIn, alpStep, alpIn, alpLow, alpUp, K, eps, delta, mitr, level, covariates, bLength, alpLength, xLength) 
+
+rmfile([output_file,".diary"])
+diary([output_file,".diary"])
+
+print "^^^^^ Checking initial design guess for",problem,"^^^^^"
+
+#[Remove]========================
+#
+#mitr_check = {20,0}
+mitr_check = {0,0}
+#
+#[Remove]========================
+level_check = {0,1}
+xOut_check       = true
+alpOut_check     = true
+phiOut_check     = true
+phi_xOut_check   = false
+phi_x_xOut = false
+
+ok = ppedOpt( ...
+  function Model, ...
+  K, ...
+  eps, ...
+  delta, ...
+  mitr_check, ...
+  level_check, ...
+  xStep, xLow, xUp, xIn, xOut_check,...
+  alpStep, alpLow, alpUp, alpIn, alpOut_check,...
+  bLength, ...
+  phiOut_check, phi_xOut_check, phi_x_xOut  ...
+)
+
+print "Starting guess is:"
+ParseSolution(K,xOut_check)
+
+print "Objective at this guess is:"
+print phiOut_check
+
+print "The alphas used in the final pass of the integral approximation are:"
+print alpOut_check'
+
+print "^^^^^ Starting optimization for",problem,"^^^^^"
+
+# Optimize the design criterion.
+xOut       = true
+alpOut     = true
+phiOut     = true
+phi_xOut   = true
+phi_x_xOut = false
+
+ok = ppedOpt( ...
+  function Model, ...
+  K, ...
+  eps, ...
+  delta, ...
+  mitr, ...
+  level, ...
+  xStep, xLow, xUp, xIn, xOut,...
+  alpStep, alpLow, alpUp, alpIn, alpOut,...
+  bLength, ...
+  phiOut, phi_xOut, phi_x_xOut  ...
+)
+
+print "^^^^^ Finishing optimization for",problem,"^^^^^"
+print ""
+
+print "Starting guess was:"
+ParseSolution(K,xIn)
+
+print "Objective at the starting guess was:"
+print phiOut_check
+
+print ""
+
+print "Optimized solution is:"
+ParseSolution(K,xOut)
+
+print "Objective is:"
+print phiOut
+
+print ""
+
+print "The derivative of the objective w.r.t. the design variables is:"
+print phi_xOut
+
+print ""
+
+print "The alphas passed as a central tendency for each distribution were:"
+print alpIn'
+
+print "The alphas used in the final pass of the integral approximation are:"
+print alpOut'
+
+print ""
+print "This problem took",sprintf("%3.3f",toc/60),"minutes."
+
+print "Solution set sent to:",[output_file,".oms"]
+rmfile([output_file,".oms"])
+write([output_file,".oms"],xOut')
+close
+
+print "Transcript of output sent to:",[output_file,".diary"]
+print " "
+print "^^^^^ Done ^^^^^"
+
+diary("off")
+

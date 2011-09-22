@@ -1,0 +1,152 @@
+$begin O2UptakeGlossary$$
+
+$spell
+	mitochondrial
+	subinterval
+	deconvolution
+	deltar
+	deltat
+	diff
+	ch
+	cm
+	conc
+	mmHg
+	ml
+	mM
+	mu
+	Vch
+	Vmu
+	amt
+	mmol
+$$
+
+$comment
+	Glossary in the Program for Computing the Time Course of 
+	Mitochondrial Oxygen Consumption During Muscle Contraction 
+	and Recovery
+$$
+
+$section
+	Glossary of Parameters and Variables
+$$
+
+$fend 10$$
+$aindex head$$
+
+$head alphaO2$$
+Solubility of oxygen in the fluid in the chamber; mM/mmHg;
+a double precision scalar (known constant)
+
+$head amtO2ch$$
+Amount of oxygen in the chamber; mmol; 
+amtO2ch=Vch*concO2ch;
+a double precision vector of length N (known through the
+measurement; a function of time, t)
+
+$head amtO2mu$$
+Amount of oxygen in the muscle; mmol; 
+amtO2mu=Vmu*concO2mu;
+a double precision matrix of length M*N (solution of the
+model equation for the muscle; a function of radial distance, 
+r, and time, t)
+
+$head concO2air$$
+Concentration of oxygen in the air (atmosphere); mM; 
+concO2air=alphaO2*pO2air;
+a double precision scalar (known constant)
+
+$head concO2ch$$
+Concentration of oxygen in the chamber; mM; 
+concO2ch=alphaO2*pO2ch;
+a double precision vector of length N (known through the
+measurement; a function of time, t)
+
+$head concO2ch0$$
+Concentration of oxygen in the chamber at time t=0; mM; 
+concO2ch0=alphaO2*pO2ch0;
+a double precision scalar (known constant)
+
+$head concO2mu$$
+Concentration of oxygen in the muscle; mM; 
+a double precision matrix of length M*N (solution of the
+model equation for the muscle; a function of radial distance, 
+r, and time, t)
+
+$head deltar$$
+step length in the radial direction r; cm;
+a double precision scalar (known constant)
+
+$head deltat$$
+step length in time t; sec;
+a double precision scalar (known constant)
+
+$head diffO2$$
+Molecular diffusion coefficient of oxygen in the muscle; cm^2/sec;
+a double precision scalar (known constant)
+
+$head fluxO2el$$
+Flux of oxygen consumption by the electrode; mM/sec;
+a double precision scalar (unknown parameter to be estimated)
+
+$head fluxO2mu$$
+Flux of oxygen consumption by the muscle; mM/sec;
+a double precision vector (unknown function of time, t, to be 
+evaluated using deconvolution)
+
+$head fluxO2ms$$
+Flux of oxygen uptake by the muscle surface; mM/sec;
+a double precision vector (unknown function of time, t, 
+to be computed)
+
+$head L$$
+Length of the muscle fiber as a circular cylinder; cm;
+a double precision scalar (known constant); does not appear
+in the model as variations in the axial direction is neglected
+
+$head M$$
+Number of equal subinterval in the radial direction, r;
+a double precision constant (we choose for making grid)
+
+$head N$$
+Number of equal subinterval in time, t;
+a double precision constant (we choose for making grid)
+
+$head pO2air$$
+Partial pressure of oxygen in the air (atmosphere); mmHg;
+a double precision scalar (known constant)
+
+$head pO2ch$$
+Partial pressure of oxygen in the chamber; mmHg;
+a double precision vector of length N (known through the
+measurement; a function of time, t)
+
+$head pO2ch0$$
+Partial pressure of oxygen in the chamber at time t=0; mmHg;
+a double precision scalar (known constant)
+
+$head KO2ch$$
+Permeability surface area product or conductance of the 
+chamber wall (transfer coefficient) for oxygen; ml/sec;
+a double precision scalar (unknown parameter to be estimated)
+
+$head R$$
+Radius of the muscle fiber as a circular cylinder, cm;
+a double precision scalar (known constant)
+
+$head r$$
+Radial distance from the muscle center, cm;
+a double precision vector of length M
+
+$head t$$
+Time; sec;
+a double precision vector of length N
+
+$head Vch$$
+Volume of the chamber; ml;
+a double precision scalar (known constant)
+
+
+$head Vmu$$
+Volume of the muscle = $latex 2\pi R^2 L$$; ml;
+a double precision scalar (known constant)
+$end

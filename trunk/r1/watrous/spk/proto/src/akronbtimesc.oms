@@ -1,0 +1,136 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+#begin##
+$begin AkronBtimesC$$
+
+$spell
+	Kronker
+	Akron
+	Btimes
+	kron
+$$
+
+$section Kronker Product Of A With B Matrix Multiplied by C$$
+
+$index AkronBtimesC$$
+$index kronker product, fast and memory efficient computation of$$ 
+
+$table
+$bold Syntax:$$ $cend 
+$syntax/AkronBtimesC(/A/, /B/, /C/)/$$
+$tend
+
+$index kronker product, saving space and time$$
+
+$fend 25$$
+
+$head Description$$
+Often the kronker product of two matrices is matrix multiplied by a third matrix.
+In this case, when the matrix $italic B$$ is large,
+you can save space and time by forming the final product using the statement
+$codep
+	Result = AkronBtimesC(A, B, C)
+$$
+instead of the statement
+$codep
+	Result = kron(A, B) * C
+$$
+which would both calculate the same result.
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+#end##
+function AkronBtimesC(A, B, C) begin
+	#
+	nrA  = rowdim(A)
+	ncA  = coldim(A)
+	nrB  = rowdim(B)
+	ncB  = coldim(B)
+	#
+	# reduce to the case where C is a column vector
+	if coldim(C) <> 1 then begin
+		Result = fill(0, nrA * nrB, coldim(C))
+		for j = 1 to coldim(C) begin
+			Result.col(j) = AkronBtimesC(A, B, C.col(j))
+		end
+		return Result
+	end
+	# AkronBtimesC =
+	#                [ a11*B     a12*B  ... ]
+	#                [ a21*B     a22*B  ... ] * C
+	#                [ ...                  ]
+	#              =
+	#                [ a11*B*c1 + a12*B*c2  ...]
+	#                [ a21*B*c1 + a22*B*c2 ... ]
+	#                [ ...                     ]
+	#
+	# The following matrix contains these values except for 
+	# the fact that its dimensions are worng
+	#              = [ B*c1   B*c2  ...][a11 a21 ...]
+	#                                   [a12 a22 ...]
+	#                                   [...        ]
+	#
+	# where c1 is the first ncB elements of C,
+	# c2 is the second ncB elements of C, and so on
+	#
+	# Convert the column vector C to a matrix where the first column
+	# is the first ncB elements of C, the second column is the second ncB
+	# elements of C and so on
+	Cmat = C
+	dim Cmat(ncB, ncA)
+	#
+	# form the product of B * cj for each j
+	BC   = B * Cmat
+	#
+	# form the product ai1 * B *c1 + ai2 * B * c2 + ...
+	# for each value of i
+	ABC  = BC * A'
+	#
+	dim ABC(nrA * nrB, 1)
+	#
+	return ABC
+end
+#
+#begin## Test case
+nrA = 2
+nrB = 3
+ncA = 4
+ncB = 5
+ncC = 6
+A   = rand(nrA, ncA)
+B   = rand(nrB, ncB)
+C   = rand(ncA * ncB, ncC)
+print "(kron(A, B) * C) ="
+print (kron(A, B) * C)
+print "AkronBtimesC(A, B, C) ="
+print AkronBtimesC(A, B, C)
+#end##
+
+end# blocking for automatic include

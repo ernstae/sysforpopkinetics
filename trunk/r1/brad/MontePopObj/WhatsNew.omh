@@ -1,0 +1,77 @@
+$begin WhatsNew$$
+$spell
+	Spk
+	Pred
+	Sachiko
+	sed
+	Ind
+	Nonmem
+$$
+
+$section Additions and Changes in Reverse Chronological Order$$
+
+$head Current Long Term Objective$$
+Build, test, and document an interface that connects an SPK
+population model to a GSL
+$href%
+	http://www.gnu.org/software/gsl/manual/gsl-ref_23.html#SEC370%
+	gsl_monte_function
+%$$
+that corresponds to the 
+$xref/MapBay//Map Bayesian objective/$$ for one individual. 
+
+$head 06-13$$
+Added the $xref/GridIntegral/$$ routine and hooked this up
+to the $xref/monteDriver/$$.
+The $code GridIntegral$$ routine is a valid check for all problems
+(not just the $xref/LinearModel/$$ as is the case for
+$xref/AnalyticIntegral/$$). 
+
+
+$head 06-03$$
+Have a stand alone version of the driver that only uses the necessary
+data structure.
+Used stubs that correspond to the $xref/LinearModel/$$ case
+for the include files
+$code Pred.h$$,
+$code NonmemPars.h$$,
+$code DataSet.h$$,
+$code IndData.h$$.
+
+$head 05-28$$
+Have agreement for $xref/LinearModel/$$ between $xref/MontePopObj/$$ and
+$xref/AnalyticIntegral/$$ in context of driver created by Sachiko's program
+and then batch editing using sed.
+
+$head 05-13$$
+The $code PopModel$$ base class was replaced by an $code SpkModel$$ base
+class. In addition, the $xref/LinearModel/$$ was separated and documented.
+
+$head 05-06$$
+Corrected mathematical error in expressions derived on 05-03.
+The test of the GSL plain monte carlo integrator on a one dimensional 
+first order model now passes.
+
+$head 05-03$$
+Completed documentation for expressing the integral between finite limits,
+for a certain one dimensional linear test case,
+in terms of the cumulative of a standard normal distribution.
+This will be used to test the Monte Carlo integrator.
+
+$head 04-30$$
+The Map Bayesian objective function passes its unit test.
+$pre
+
+$$
+The $code PopModel$$ class was adjusted so that an $code SpkModel$$
+could be derived from it.
+
+$head 04-29$$
+Define $code PopModel$$ as a base class from which the particular
+population model is defined.
+If the $code PopModel$$ class is a valid instance of a template parameter,
+then the $code SpkModel$$ class is also a valid instance; i.e.,
+the $code SpkModel$$ class is more restrictive.
+
+
+$end

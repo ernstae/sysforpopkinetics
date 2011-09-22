@@ -1,0 +1,63 @@
+$begin xerces$$
+$spell
+	devel
+	dir
+	edu
+	Ernst
+	exit exit
+	http
+	rfpk
+	rhel
+	rpm rpm
+	su
+	sudo
+	tmp
+	uvh
+	xerces
+$$
+
+$section Install Xerces$$
+
+$head Rpm$$
+Andrew Ernst set up an rpm for Xerces that worked via the following commands:
+$codep
+	sudo su -
+	cd /tmp
+	dir=http://toronto.rfpk.washington.edu/software/rhel4
+	file=xerces-c-2.7.0-1.2.el4.rf.i386.rpm
+	rpm -Uvh @dir/@file
+$$
+The resulting messages were output
+$nospell
+$codep
+sh-3.00# rpm -Uvh @dir/@file
+Retrieving http://toronto.rfpk.washington.edu/software/rhel4/xerces-c-2.7.0-1.2.el4.rf.i386.rpm
+warning: /var/tmp/rpm-xfer.AI7FkG: V3 DSA signature: NOKEY, key ID 1aa78495
+Preparing...                ########################################### [100%]
+   1:xerces-c               ########################################### [100%]
+sh-3.00#
+$$
+$$
+After this output, the following commands were executed:
+$codep
+	file=xerces-c-devel-2.7.0-1.2.el4.rf.i386.rpm
+	rpm -Uvh @dir/@file
+$$
+The resulting messages were output
+$nospell
+$codep
+sh-3.00# rpm -Uvh @dir/@file
+Retrieving http://toronto.rfpk.washington.edu/software/rhel4/xerces-c-devel-2.7.0-1.2.el4.rf.i386.rpm
+warning: /var/tmp/rpm-xfer.3CHFou: V3 DSA signature: NOKEY, key ID 1aa78495
+Preparing...                ########################################### [100%]
+   1:xerces-c-devel         ########################################### [100%]
+sh-3.00#
+$$
+$$
+After this output, normal user settings were restored with the command
+$codep
+	exit
+	exit
+$$
+
+$end

@@ -1,0 +1,246 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+#begin##
+$begin MapObj$$
+$escape #$$
+
+$spell
+	Rval
+	fval
+	Bayesian
+	ok
+	Obj
+$$
+
+$section Map Bayesian Objective Function$$
+
+$index MapObj$$
+$cindex map Bayesian objective function$$
+$index individual, objective function$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/MapObj( ...
+function /Model/, ...
+/D/, ...
+/y/,  ...
+/b/, ...
+/MapObjOut/, /MapObj_bOut/, ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Evaluates the map Bayesian objective function. To be specific,
+$math%
+            1 %          %            1          T   -1
+MapObj(b) = - #logdet[ 2 #pi R(b) ] + - [y - f(b)] R(b) [y - f(b)]
+            2 %          %            2
+
+            1 %          %            1  T  -1
+          + - #logdet[ 2 #pi D ]    + - b  D  b
+            2 %          %            2
+%$$
+(The equation above uses
+$xref/glossary/Individual Notation/individual notation/$$.)
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $code MapObj$$ is true, if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/b/, /fOut/, /f_bOut/, /ROut/, /R_bOut/)
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the parameter vector.
+The $xref/glossary/Output Value/output value/$$ $italic fOut$$
+is a double-precision column vector equal to $math%f(b)%$$.
+The output value $italic f_bOut$$
+is a double-precision matrix equal to $math%f_b(b)%$$.
+The output value $italic ROut$$
+is a double-precision column vector equal to $math%R(b)%$$.
+The output value $italic R_bOut$$
+is a double-precision matrix equal to $math%R_b(b)%$$.
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+$syntax/
+
+/D/
+/$$
+The double-precision matrix $italic D$$
+specifies the variance of the prior distribution and
+has the same number of rows as $italic b$$.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector containing the data vector.
+$syntax/
+
+/b/
+/$$
+The double-precision column vector $italic b$$
+specifies a value for the parameter vector.
+$syntax/
+
+/MapObjOut/
+/$$
+the output value $italic MapObjOut$$
+is a column vector containing the value of the objective function.
+$syntax/
+
+/MapObj_bOut/
+/$$
+the output value $italic MapObj_bOut$$
+is a row vector containing the derivative of the objective function; i.e.,
+$math%MapObj_b(b)%$$.
+
+$head Example$$
+Suppose that
+$math%
+       /  b(1)     0  \         / 1  0 \
+R(b) = |              |    D  = |      |
+       \  0      b(1) /         \ 0  1 /
+
+       / b(2) \        / 1 \
+f(b) = |      |   y =  |   |
+       \ b(2) /        \ 1 /
+%$$
+It follows that
+$math%                         
+MapObj(b) = (1/2) #log{[2 #pi b(1)]^2} + [1 - b(2)]^2 / b(1)
+          + (1/2) #log{[2 #pi]^2}      + (1/2) [b(1)^2 + b(2)^2]
+%$$
+The gradient of $math%MapObj(b)%$$ is equal to
+$math%
+	/ 1 / b(1) - [1 - b(2)]^2 / b(1)^2 + b(1) \
+	|                                         |
+	\     - 2 [1 - b(2)] / b(1) + b(2)        /
+%$$
+If all the components of $math%b%$$ are two,
+$math%
+MapObj(b)   = #log(4 #pi) + #log(2 #pi) + 1 / 2 + 4
+            = #log(8 #pi^2) + 4.5
+
+MapObj_b(b) = [ 1 / 2 - 1 / 4 + 2 , 1 + 2  ]
+	      = [ 2.25 , 3 ]
+%$$
+If you enter
+$codep
+
+clear
+include MapObj.oms
+#
+function Model(b, fOut, f_bOut, ROut, R_bOut) begin
+	if fOut then ...
+		fOut = {b(2), b(2)}
+	if f_bOut then ...
+		f_bOut = { ...
+		[ 0 , 1 ], ...
+		[ 0 , 1 ] ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ b(1) ,   0   ], ...
+		[ 0    ,  b(1) ] ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		[ 1 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 0 , 0 ], ...
+		[ 1 , 0 ] ...
+	}
+	return true
+end
+y           = {1, 1}
+b           = {2., 2.}
+D           = real(identity(2))
+MapObjOut   = true
+MapObj_bOut = true
+ok = MapObj(function Model, D, y, b, MapObjOut, MapObj_bOut)
+print "ok                        =", ok
+print "MapObjOut - log(8 * pi^2) =", MapObjOut - log(8 * pi^2)
+print "MapObj_bOut               =", MapObj_bOut
+
+$$
+O-Matrix will respond
+$codep
+	ok                     = T
+	MapObj - log(4 * pi^2) = 4.5
+	MapObj_b               = [ 2.25 , 3 ]
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+include elsq.oms
+#
+function MapObj( ...
+	function Model, ...
+	D, ...
+	y,  ...
+	b, ...
+	MapObjOut, ...
+	MapObj_bOut ...
+) begin
+	# special do nothing case
+	if not (MapObjOut or MapObj_bOut) then ...
+		return true
+	#
+	# evalute the model functions
+	f   = true
+	R   = true
+	f_b = MapObj_bOut
+	R_b = MapObj_bOut 
+	ok     = Model(b, f, f_b, R, R_b)
+	if not ok then begin
+		stop
+		return false
+	end
+	#
+	# related values
+	Rinv = inv(R)
+	Dinv = inv(D)
+	zero = fill(0d0, rowdim(b), 1)
+	#
+	if MapObjOut then ...
+		MapObjOut = elsq(y, f, R, Rinv) + elsq(zero, b, D, Dinv)
+	if MapObj_bOut then ...
+		MapObj_bOut = elsq_x(y, f, R, Rinv, f_b, R_b) + b' * Dinv
+	return true
+end

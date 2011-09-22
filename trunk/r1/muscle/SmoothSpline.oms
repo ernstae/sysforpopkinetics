@@ -1,0 +1,541 @@
+begin # Blocking for automatic include
+
+#begin##
+$begin SmoothSpline$$
+$escape #$$
+$spell
+	Mobj
+	covariance
+	eps
+	Mitr
+	Whaba
+	exp
+	snormal
+	nargout
+	const
+	Inv
+	gplot
+	optimizer
+	Bradley
+	Gianluigi Pillonetto
+	Nitr
+	Jacobian
+$$
+
+$section Nonlinear Smoothing Splines With Unknown Parameters$$
+$center
+(Bradley M. Bell)
+$$
+
+
+$table
+$bold Syntax$$
+$cend $syntax%[%aOut%, %aNitrOut%, %thetaOut%,  %thetaNOut%, %QOut% ] = SmoothSpline( ...
+	function %callback%, ...
+	%T%, ...
+	%y%, ...
+	%aIn%, ...
+	%aEpsilon%, ...
+	%aMax%, ...
+	%aMitr%, ...
+	%aLevel% ...
+	%thetaIn%, ...
+	%thetaEpsilon%, ...
+	%thetaMobj%, ...
+	%thetaLevel% ...
+)%$$
+$tend
+
+$fend 25$$
+
+$head Reference$$
+One Dimensional Nonlinear Smoothing Splines
+by Bradley M. Bell and Gianluigi Pillonetto.
+
+$head Notation$$
+$table
+$latex \theta \in {\rm R}^P$$
+	$cnext unknown parameter vector $rnext
+$latex a \in {\rm R}^N$$
+	$cnext unknown amplitude vector $rnext
+$latex y \in {\rm R}^M$$
+	$cnext measurement vector $rnext
+$latex \sigma ( \theta ) \in {\rm R}^M $$
+	$cnext standard deviation of measurement noise $rnext
+$latex f : [0,T] \rightarrow {\rm R}$$
+	$cnext the function that we are estimating $rnext 
+$latex \Psi [ \theta , f( \bullet ) ] \in {\rm R}^M$$
+	$cnext model for measurement mean given $latex \theta$$ and $latex f $$ $rnext 
+$latex a^k \in {\rm R}^N$$
+	$cnext amplitude vector at $th k$$ function optimization iteration $rnext 
+$latex \theta^k \in {\rm R}^P$$
+	$cnext parameter vector at $th k$$ parameter optimization iteration
+$tend
+
+$head Nonlinear Smoothing Spline Problem$$
+$latex \[ 
+{\rm minimize} \;
+\frac{1}{2} 
+\sum_{i=1}^M 
+\left( 
+\frac{ y_i - \Psi_i [ \theta , f ( \bullet ) ] } { \sigma_i ( \theta ) } \right)^2
++
+\frac{1}{2 \theta_1 } \int_0^T f'(t)^2 dt
+\] $$
+with respect to absolutely continuous functions $latex f( \bullet )$$
+such that $latex f(0) = 0$$.
+
+$head Function Estimation Problem$$
+$latex \[
+{\rm minimize} \; L( \theta , a) \; {\rm w.r.t} \; a \in {\rm R}^N
+\]$$
+where the function $latex L( \theta , \bullet )$$ is defined on $latex  {\rm R}^N$$ by
+$latex \[
+\begin{array}{rcl}
+L( \theta , a ) & = &
+\frac{N}{2} \log ( 2 \pi \theta_1 )
++ \frac{1}{2} \sum_{i=1}^M \log [ 4 \pi \sigma_i ( \theta ) ]
++ \frac{1}{2 \theta_1 } \sum_{j=1}^N  \beta_j^2 a_j^2 
+\\
+& + & \frac{1}{2} 
+\sum_{i=1}^M 
+\left( 
+\frac{ y_i - \Psi_i [ \theta , F( a , \bullet ) ] } { \sigma_i ( \theta ) } \right)^2
+\end{array}
+\] $$
+and the functions $latex F( a , \bullet )$$ and $latex \phi_j ( \bullet )$$
+are defined on $latex  {\rm R}$$ by
+$latex \[
+\begin{array}{rcl}
+\beta_j    & = & \pi (j - 1 / 2) / T \\
+\phi_j (t) & = & \sqrt{2 / T} \sin ( \beta_j t ) \\
+F(a, t) & = & \sum_{j=1}^N a_j \phi_j (t)
+\end{array}
+\] $$
+Given a value for vector $latex \theta$$,
+we define $latex A( \theta ) \in {\rm R}^N $$ as the solution of the corresponding
+function estimation problem.
+In the
+$xref/SmoothSpline/Reference/reference/$$ it is shown 
+that, as $latex N \rightarrow \infty$$,
+$latex F[ A( \theta ) , \bullet ]$$
+converges to the solution of the nonlinear smoothing spline problem.
+
+
+$head Parameter Estimation Problem$$
+We define $latex H( \theta ) \in {\rm R}^{N \times N}$$ 
+and $latex Q( \theta ) \in {\rm R}$$ by
+$latex \[
+\begin{array}{rcl}
+H( \theta ) & = & \theta_1 I_N 
++ 
+\sum_{i=1}^M 
+\sigma_i ( \theta )^{-2}
+\partial_a \Psi_i [ \theta , F( A( \theta ) , \bullet ) ]^T
+\partial_a \Psi_i [ \theta , F( A( \theta ) , \bullet ) ]
+\\
+Q( \theta ) & = & L[ \theta , A ( \theta ) ] + \log ( \det [ H ( \theta ) / ( 2 \pi ) ] )
+\end{array}
+\] $$
+In the
+$xref/SmoothSpline/Reference/reference/$$,
+the  parameter estimation problem is:
+$latex \[
+{\rm minimize} \; Q( \theta) \; {\rm w.r.t} \; \theta \in {\rm R}^P
+\]$$
+
+
+
+$head T$$
+The double precision value $italic T$$ specifies 
+the time interval for the function that is being estimated.
+
+$head y$$
+The column vector $italic y$$ has length $latex M$$ and
+contains the measurement values
+that are related to the function we are estimating.
+
+$head aIn$$
+The column vector $italic aIn$$ has length $latex N$$ and
+specifies the initial value for the
+amplitudes; i.e., 
+were the
+$xref/SmoothSpline/Function Estimation Problem/function estimation problem/$$
+begins.
+
+$head aEpsilon$$
+The scalar $italic aEpsilon$$ specifies
+the convergence criteria.
+The amplitude vector  $latex a^k$$ is considered an approximate solution if 
+for $latex j = 1 , \ldots , N $$
+$latex \[
+	| a_j^k - a_j^{k-1} | \leq aEpsilon
+\] $$
+A suggested value is 
+$latex \[
+	aEpsilon = 10^{-3} aMax
+\] $$
+
+$head aMax$$
+The scalar $italic aMax$$ specifies
+the maximum absolute change in $latex a$$
+between optimizer iterations.
+To be specific, 
+for $latex j = 1 , \ldots , N $$
+$latex \[
+	| a_j^k - a_j^{k-1} | \leq aMax
+\] $$
+A suggested value is 
+$latex \[
+	aMax = \sqrt{ T } \max \{ | y_i | : i = 1 , ... , M \}
+\] $$
+
+$head aMitr$$
+Maximum number of 
+function optimization iterations to preform before 
+giving up on convergence and accepting $latex a^k$$ for $latex k = aMitr$$
+as an approximation for $latex A ( \theta )$$
+
+$head aLevel$$
+The integer scalar 
+$italic aLevel$$ specifies the amount of tracing to do 
+during the function optimization problem.
+$pre
+
+$$
+If $latex aLevel \geq 1 $$
+the objective function, $latex L( \theta , a )$$, minus the log terms,
+is traced with the name $code |f(x)|^2$$.
+$pre
+
+$$
+If $latex aLevel \geq 2 $$,
+the transpose of the argument, $latex a$$,
+is traced with the name $code x'$$.
+$pre
+
+$$
+If $latex aLevel \geq 3 $$,
+the Jacobian for the least squares equations
+is traced with the name $code J$$.
+$pre
+
+$$
+If
+$latex aLevel \geq 4$$ the output is
+a check on calculation of $italic Psi_a$$ using analytic and
+finite difference values for $latex \partial_a  \Psi ( \theta , a )$$ 
+
+
+$head aOut$$
+The column vector $italic aOut$$ has length $latex N$$ and
+is an approximation for $latex A ( thetaOut )$$; i.e.,
+an approximate solution to the 
+$xref/SmoothSpline/Function Estimation Problem/function estimation problem/$$
+corresponding to $italic thetaOut$$.
+
+$head aNitrOut$$
+The integer scalar $italic aNitrOut$$
+is the number of iterations that were required to solve for $italic aOut$$.
+If $latex aNitrOut \leq aMitr$$,
+the function estimation convergence criteria were met.
+Otherwise, $latex aNitrOut = aMitr+1$$ and the 
+function estimation problem did not converge.
+
+$head thetaIn$$
+The column vector $italic thetaIn$$ 
+has length $latex P$$ and specifies the initial value for the
+parameter vector; i.e., where the
+$xref/SmoothSpline/Parameter Estimation Problem/parameter estimation problem/$$
+begins.
+
+
+$head thetaEpsilon$$
+The column vector $italic thetaEpsilon$$ 
+has  length $latex P$$ and specifies the parameter convergence criteria.
+A parameter vector  $latex \theta^k$$ is considered an approximate solution if 
+for $latex i = 1 , \ldots , P $$
+$latex \[
+	| \theta_i^k - \theta_i^{k-1} | \leq thetaEpsilon_i
+\] $$
+
+$head thetaMobj$$
+Maximum number of objective function evaluations
+to allow before
+giving up on convergence and accepting the $latex theta$$
+corresponding to the lowest object so far obtained
+as an approximate solution for the
+parameter estimate problem.
+If $italic thetaMobj$$ is zero,
+$latex thetaOut = thetaIn$$ but the value of 
+$italic aOut$$ is still optimal with respect to the 
+$xref/SmoothSpline/Function Estimation Problem/function estimation problem/$$.
+
+$head thetaLevel$$
+The integer scalar 
+$italic thetaLevel$$ specifies the amount of tracing to do 
+during the function optimization problem.
+$table
+$latex thetaLevel \geq 1 $$ $cnext
+	The objective function, $latex Q( \theta )$$, is traced as $code f(x)$$.
+$rnext
+$latex thetaLevel \geq 2 $$ $cnext
+	Value of $latex \theta^k$$ traced as $code x$$.
+$rnext
+$latex thetaLevel \geq 3 $$ $cnext 
+	Line search procedure is traced
+$tend
+
+$head thetaOut$$
+The column vector $italic thetaOut$$ has length $latex P$$ and
+is an approximation for the
+$xref/SmoothSpline/Parameter Estimation Problem/parameter estimation problem/$$.
+
+
+$head thetaNOut$$
+The integer scalar $italic thetaNOut$$
+is the number of objective function evaluations that
+were required to solve for $italic thetaOut$$.
+If $latex thetaNOut \leq thetaMobj$$,
+the parameter estimation convergence criteria were met.
+Otherwise, $latex thetaNOut = thetaMobj+1$$ and the 
+parameter estimation problem did not converge.
+
+$head QOut$$
+The scalar $italic QOut$$ is equal to the
+parameter objective function evaluated at $latex \theta = thetaOut$$.
+
+$head callback$$
+The function call
+$syntax%
+	[%Psi%] = %callback%(%theta%, %a%)
+%$$
+returns the column vector $italic Psi$$ has length $latex M$$ and
+is equal to $latex \Psi [ \theta , F( a , \bullet ) ] $$.
+
+The function call
+$syntax%
+	[%Psi%, %Psi_a%] = %callback%(%theta%, %a%)
+%$$
+has the addition return value $italic Psi_a$$ 
+(a matrix with $latex M$$ rows and $latex N$$ columns)
+which is equal to 
+$latex \partial_a \Psi [ \theta , F( a , \bullet ) ] $$.
+
+The function call
+$syntax%
+	[%Psi%, %Psi_a%, %sigma%] = %callback%(%theta%)
+%$$
+returns just $italic sigma$$
+(a column vector with $latex M$$ rows)
+that is equal to $latex \sigma( \theta )$$.
+All the elements of $italic sigma$$ must be greater than zero.
+(The returns values $italic Psi$$ and $italic Psi_a$$ are not defined
+for this calling sequence.)
+
+
+
+$head Example$$
+The following problem comes from Page 45 of Grace Whaba's book
+$italic Spline Models for Observational Data$$.
+For this problem, the function $latex S(t)$$ that we want to reconstruct 
+is given by
+$latex \[
+\begin{array}{rcl}
+S(t)  & = & 4.26 * [ \exp(-t) - 4 \exp(-2 t) + 3 \exp(-3 t)] \\
+y_i   & = & \varepsilon_i + S( t_i ) \\
+\varepsilon_i & \sim & {\bf N} (0, .04 )
+\end{array}
+\] $$
+In order to agree with Whaba's example, 
+we want the limiting problem to minimize the integral of
+the second derivative of $latex S(t)$$ so we use the model
+$latex \[
+\begin{array}{rcl}
+ \Psi [ \theta , F( a , \bullet ) ] 
+& = & \theta_2 + \int_0^t [ \theta_3 + F( a , s ) ] ds \\
+& = &  \theta_2 + \theta_3 t +
+	 \sqrt{2 / T}   \sum_{j=1}^N a_j 
+	[ 1 - \cos( \beta_j t ) ] / \beta_j
+\end{array}
+\] $$
+
+Here are the results for this example and the program that computed
+and plotted these results:
+
+$image SplineExample.gif$$
+$code
+$verbatim%SplineExample.oms%$$
+$$
+
+$end
+---------------------------------------------------------------
+#end##
+local BradsVersion = true
+if BradsVersion then ...
+	eval("include c:\users\Brad\lib\ConjugateDirection.oms")
+#
+# function used to test derivatives w.r.t. a
+local function TestPsi_a(function callback, theta, a, PsiOut, Psi_aOut) begin
+	if nargin < 3 then ...
+		PsiOut = callback(theta, a)
+	else	[PsiOut, Psi_aOut] = callback(theta, a)
+	return
+end
+#
+# The objective function for the function estimation problem
+# Note that the log terms are not included and theta(1) is log scaled.
+local function Residual(function callback, T, y, sigma, theta, a, ROut, R_aOut) begin
+	if nargin <= 7 then ...
+		Psi = callback(theta, a)
+	else	[Psi, Psi_a] = callback(theta, a)
+	#
+	N     = rowdim(a)
+	beta  = PI % (seq(N) - .5d0) / T
+	ares  = a % beta / exp(theta(1) / 2d0)
+	yres  = (y - Psi) / sigma
+	ROut  = { ares , yres } / sqrt(2d0)
+	if nargin <= 7 then ...
+		return
+	R_aOut  = { ...
+		diag( beta / exp(theta(1) / 2d0) ) , ...
+		-  Psi_a / fillcols(sigma, N) ...
+		} / sqrt(2d0)
+	return
+end
+#
+# The objective function for the parameter estimation problem
+local function [QOut, aOut, aNitrOut] = ParObj( ...
+	function callback, T, y, aIn, aEpsilon, aMax, aMitr, aLevel, aMin, QMin, theta) begin
+	N      = rowdim(aIn)
+	M      = rowdim(y)
+	aScale = aMax * ones(N, 1)
+	if type(aMin) == "novalue" then ...
+		aMin = aIn
+	#
+	# evalute sigma for this value of theta
+	[Psi, Psi_a, sigma] = callback(theta)
+	#
+	# function objective with just a as an input argument
+	function fval = Residual(callback, T, y, sigma, theta)
+	#
+	# other arguments to dnlsq
+	scale        = aMax / sqrt( double( seq(N) ) )
+	eps          = aEpsilon / aMax
+	x            = dnlsq(function fval, aMin, scale, eps, aMitr, aLevel)
+	aNitrOut     = coldim(x) - 1
+	aOut         = x.col(coldim(x))
+	#
+	[Psi, Psi_a] = callback(theta, aOut)
+	#
+	beta       = PI % (seq(N) - .5d0)
+	lambda     = ( T / beta )^2
+	Lam        = diag( exp( theta(1)) * lambda )
+	LamInv     = diag( exp(-theta(1)) / lambda ) 
+	logdetLam  = colsum(log(diag(Lam)))
+	#
+	if any( sigma <= 0 ) then ...
+		stop "The vector sigma is not strictly positive"
+	logdetS   = 2 * colsum( log( sigma ) )
+	#
+	res_a          = Psi_a / fillcols(sigma, N) 
+	H              = LamInv + res_a' * res_a
+	[s, logdetH]   = logdet(H)
+	#
+	H2             = diag( sigma^2 ) + Psi_a * Lam * Psi_a'
+	[s, logdetH2]  = logdet(H2)
+	if s <= 0 then ...
+		stop "The matrix H2 is not positive definate"
+	#
+	# Using Equation v. of 1.4.1.d of Linear and Nonlinear Models for the
+	# Analysis of Repeated measurements by Vonesh and Chinchilli
+	logdetH  = logdetH2 - logdetLam - logdetS
+	#
+	ROut = novalue
+	Residual(function callback, T, y, sigma, theta, aOut, ROut)
+	LOut = | ROut |^2
+	QOut = LOut  + .5d0 * ( logdetS + M * log(2d0 * PI) )
+	QOut = QOut + .5d0 * colsum( log(2d0 * PI * lambda ) + theta(1) )
+	QOut = QOut + .5d0 * ( logdetH - N * log(2d0 * PI) )
+	#
+	if type(QMin) == "novalue" then begin
+		aMin = aOut
+		QMin = QOut
+	end else if QOut < QMin then begin
+		aMin = aOut
+		QMin = QOut
+	end
+end
+function [aOut, aNitrOut, thetaOut, thetaNOut, QOut] = SmoothSpline(...
+		function callback, ...
+		T, ...
+		y, ...
+		aIn, ...
+		aEpsilon, ...
+		aMax, ...
+		aMitr, ...
+		aLevel, ...
+		thetaIn, ...
+		thetaEpsilon, ...
+		thetaMobj, ...
+		thetaLevel ...
+) begin
+	#
+	N         = rowdim(aIn)
+	M         = rowdim(y)
+	aStep     = aEpsilon * ones(N, 1)
+	aMin      = novalue
+	QMin      = novalue
+	#
+	# log scale the first component of theta
+	theta     = thetaIn
+	theta(1)  = log(thetaIn(1))
+	ThStep    = thetaEpsilon
+	ThStep(1) = thetaEpsilon(1) / thetaIn(1)
+	#
+	if aLevel >= 4 then begin
+		function testpsi = TestPsi_a(callback, theta)
+		testder(function testpsi, aIn, aStep)
+	end
+	if thetaLevel > 0 then begin
+		print "SmoothSpline:"
+		print "initial theta =", theta'
+		print "initial Q     =", ParObj( ...
+			function callback, T, y, aIn, aEpsilon, aMax, aMitr, aLevel, aMin, QMin, theta)
+	end
+	#
+	if thetaMobj > 0 and BradsVersion then begin
+		function obj = ParObj(callback, T, y, aIn, aEpsilon, aMax, aMitr, aLevel, aMin, QMin)
+		trace        = {"k, nf, f, cond, x'", "nf, step, f"}
+		fEps         = 0d0
+		xEps         = ThStep
+		nMax         = thetaMobj
+		xIn          = theta
+		# only link ConjugateDirection in BradsVersion case
+		thetaOut     = novalue
+		fOut         = novalue
+		thetaNOut    = novalue
+		cmd = [ "[thetaOut, fOut, thetaNOut] = ConjugateDirection(", ...
+			  "function obj, trace, fEps, xEps, nMax, xIn)" ...
+		]
+		eval(cmd)
+	end else if thetaMobj > 0 then begin
+		function obj = ParObj(callback, T, y, aIn, aEpsilon, aMax, aMitr, aLevel, aMin, QMin)
+		level        = thetaLevel
+		mitr         = thetaMobj
+		xin          = theta
+		step         = ThStep
+		[thetaOut, thetaNOut] = conjdir(...
+			function obj, xin, step, mitr, level)
+	end else begin
+		thetaOut = theta
+		thetaNOut = 0
+	end
+	[QOut, aOut, aNitrOut] = ParObj( ...
+			function callback, T, y, aIn, aEpsilon, aMax, aMitr, aLevel, aMin, QMin, thetaOut)
+	thetaOut(1) = exp( thetaOut(1) )
+	#
+	return
+end
+
+end # Blocking for automatic include

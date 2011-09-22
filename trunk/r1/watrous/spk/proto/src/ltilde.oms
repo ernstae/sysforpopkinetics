@@ -1,0 +1,645 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+
+#begin##
+
+$begin Ltilde$$
+$escape #$$
+$spell
+	eps
+	mitr
+	Laplace 
+	Hessian
+	ok
+	novalue
+	obj
+	subvector
+$$
+
+$section The Parametric Population Objective Functions$$
+
+$index LTilde$$
+$cindex parametric population objective function$$
+
+$syntax/LTilde( ...
+function /Model/, ...
+/objective/, ...
+/y/,  ...
+/N/, ...
+/eps/, ...
+/delta/, ...
+/mitr/, ...
+/level/, ...
+/alp/, ...
+/bLow/, /bUp/, /bStep/,  ...
+/bIn/, /bOut/, ...
+/LTildeOut/, ...
+/LTilde_alpOut/
+)/$$
+
+$fend 25$$
+
+$children/
+	expectedhessian.oms/$$
+
+$head Description$$
+Evaluates the modified Laplace, 
+$xref\ExpectedHessian\\Expected Hessian\$$, or First Order objective
+function as defined in the reference
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Arguments$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+The return value of $code LTilde$$ is true, if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/i/, /alp/, /b/, /fOut/, /f_alpOut/, /f_bOut/, /ROut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are 
+$xref/glossary/Output Value/output values/$$.
+The following table uses 
+$xref/glossary/Population Notation/population notation/$$
+$table
+$bold Argument$$
+	$cend $bold Value$$ 
+	$cend $bold Comments$$ $rend
+$italic i$$
+	$cend $math%i%$$
+	$cend index for this individual $rend
+$italic alp$$
+	$cend $math%alp%$$
+	$cend fixed population parameter vector $rend
+$italic b$$
+	$cend $math%b%$$
+	$cend random population parameter vector $rend
+$italic fOut$$
+	$cend $math%f_i(alp, b)%$$ 
+	$cend model for the mean of $math%y_i%$$ given $math%b%$$ $rend
+$italic f_alpOut$$ 
+	$cend $math%f_i_alp(alp, b)%$$ 
+	$cend derivative of $math%f_i(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+	$cend $math%f_i_b(alp, b)%$$ 
+	$cend derivative of $math%f_i(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic ROut$$ 
+	$cend $math%R_i(alp, b)%$$ 
+	$cend model for the variance of $math%y%$$ given $math%b%$$ $rend
+$italic R_alpOut$$
+	$cend $math%R_i_alp(alp, b)%$$ 
+	$cend derivative of $math%R_i(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+	$cend $math%R_i_b(alp, b)%$$ 
+	$cend derivative of $math%R_i(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic DOut$$ 
+	$cend $math%D(alp)%$$ 
+	$cend model for the variance of $math%b%$$ $rend
+$italic D_alpOut$$
+	$cend $math%D_alp(alp)%$$ 
+	$cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$syntax/
+
+/objective/
+/$$
+is a character scalar that is equal to "L", "E", "F", or "J"
+for the modified Laplace, Expected Hessian, and First order
+and joint likelihood objectives respectively.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector that contains
+the data for all the individuals.
+The vector $italic y$$ has
+$math%
+	N(1) + N(2) + ... + N(M)
+%$$
+elements where $math%M%$$ is the number of rows in $italic N$$.
+The data vector corresponding to the first individual is
+$math%
+	                                     T
+	y_1 = [ y(1) , y(2) , ... , y(N(1)) ]
+%$$
+Elements $math%y(N(1) + 1)%$$ through $math%y(N(1) + N(2))%$$ 
+correspond to the second individual and so on.
+(Note that $math%y_1%$$ refers to the first subvector or $italic y$$ while
+$math%y(1)%$$ refers to the first element of the vector $italic y$$.)
+
+$syntax/
+
+/N/
+/$$
+is an integer column vector. 
+The $th i$$ element of $italic N$$
+specifies the number of elements of $italic y$$ that
+correspond to the $th i$$ individual.
+$syntax/
+
+/eps/
+/$$
+Is a double-precision scalar greater than zero. 
+A random population parameter value $math%b0%$$ is 
+accepted as the point at which to make the Laplace or Expected
+Hessian approximation when 
+$math%
+	abs(b0 - bHat) #le eps (bUp - bLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%bHat%$$ is the true minimizer of 
+$xref/Lambda//Lambda(alp, b)/$$ with respect to $math%b%$$.
+This is a rough approximation that is quick to
+calculate during the optimization procedure.
+$syntax/
+
+/delta/
+/$$
+is a double-precision scalar greater than zero.
+A random population parameter value $math%b0%$$ is 
+accepted as the point at which to make the Laplace or Expected
+Hessian approximation when
+$math%
+	Lmabda(alp, b0) - Lambda(alp, bHat) #le delta
+%$$
+where $math%bHat%$$ is its true minimizer of $math%Lambda(alp, b)%$$.
+$syntax/
+
+/mitr/
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence
+of the random population parameter values.
+$syntax/
+
+/level/
+/$$
+this integer scalar specifies the amount of tracing during the
+determination of the optimal random population values.
+$math%
+level #ge 1
+%$$
+the current value of the objective is printed
+with the label $code f$$ and the norm of the gradient is
+printed with the label $code |g|$$ 
+(not including the constrained directions in the gradient).
+In addition, the total time between calling $code mapOpt$$ and its
+return is printed.
+$math%
+level #ge 2
+%$$
+the current value of $math%b%$$ is 
+printed with the label $code x$$, and the gradient of the
+objective is printed with the label $code g$$
+(not including the constrained directions in the gradient).
+$math%
+level #ge 3
+%$$
+the step size and function values are traced
+during each line search procedure.
+$math%
+level #ge 4
+%$$
+the analytic of the objective function with respect to the
+$math%b%$$ is compared with its numerical approximation.
+$syntax/
+
+/alp/
+/$$
+The double-precision column vector $italic alp$$
+specifies a value for the fixed population parameter vector.
+$syntax/
+
+/bLow/
+/$$
+The double-precision column vector $italic bLow$$
+specifies the lower limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+All the elements of this vector must be less than or equal zero.
+$syntax/
+
+/bUp/
+/$$
+The double-precision column vector $italic bUp$$
+specifies the upper limit for the parameter vector 
+$math%b%$$ during the optimization procedure.
+All the elements of this vector must be greater than or equal zero.
+$syntax/
+
+/bStep/
+/$$
+The double-precision column vector $italic bStep$$
+specifies the step size used for approximating
+the derivatives with respect to the random population parameters.
+$syntax/
+
+/bIn/
+/$$
+The Laplace and Expected Hessian objectives require determination
+of the optimal random population parameters that correspond to the 
+current value of $italic alp$$.
+The double-precision matrix $italic bIn$$
+specifies the initial value for the search for
+the optimal random population parameter vectors.
+The $th i$$ column of $italic bIn$$ corresponds to the $th i$$ individual.
+The argument $italic bIn$$ is not used for the First order objective case.
+$syntax/
+
+/bOut/
+/$$
+the output value $italic bOut$$
+is a matrix with the same type and dimension as $italic bIn$$.
+The $th i$$ column of $italic bOut$$ contains
+the optimal random population parameters that correspond to the 
+$th i$$ individual and the current value of $italic alp$$.
+$syntax/
+
+/LTildeOut/
+/$$
+the output value $italic LOut$$ is a scalar that contains
+the value of the objective function.
+$syntax/
+
+/LTilde_alpOut/
+/$$
+the output value $italic L_alpOut$$ is a row vector that is equal to
+the derivative of the objective function w.r.t. $math%alp%$$.
+
+$head Example$$
+Suppose that there are two subjects and for each subject
+$math%
+	               / 1    0 \
+	R_i (alp, b) = |        |
+	               \ 0    2 /
+
+	               / b \
+	f_i(alp, b)  = |   |
+	               \ b /
+
+	               / 1 \
+	y_i          = |   |
+	               \ 1 /
+
+	D(alp)       = alp
+%$$
+It follows that
+$math%                         
+Lambda_i (alp, b) = (1/2) #log{8 #pi^2}   + (3/4)(1 - b)^2
+                  + (1/2) #log{2 #pi alp} + (1/2) b^2 / alp
+%$$
+It follows that the Hessian of $math%Lambda_i (alp, b)%$$
+with respect to $math%b%$$ is
+$math%
+	3 / 2 + 1 / alp
+%$$
+In addition, the optimal value of $math%b%$$ solves the equation
+$math%
+	0   = -2 (3/4)(1 - b) +  b / alp
+	0   = 1 - b - 2 b / (3 alp)
+	1   = [1 + 2 / (3 alp)] b
+	b   = 3 alp / (3 alp + 2)
+
+%$$
+
+Note that in this example,
+the model function is linear,
+and the data variance does not depend on the random effects.
+Thus the three objective functions actually have the same value.
+
+If you enter
+$codep
+
+clear
+include LTilde.oms
+#
+function objCheck(alp, bOut, LOut, L_alpOut) begin
+	H        = 3. / 2. + 1. / alp
+	H_alp    =         - 1. / alp^2
+	b        = 3. * alp / (3. * alp + 2.)
+	b_alp    = 3. / (3. * alp + 2.) ...
+	           - 9. * alp / (3. * alp + 2.)^2
+	Lambda   = .5 * log(8. * pi^2) ...
+	           + .75 * (1. - b)^2 ...
+                 + .5 * log(2. * pi * alp) ...
+	           +  .5 * b^2 / alp
+	Lambda_alp = - 1.5 * (1. - b) * b_alp ...
+	             + .5 / alp ...
+	             + b * b_alp / alp ...
+	             - .5 * b^2 / alp^2
+	bOut       = [b, b]
+	LOut       = 2. * Lambda + log(H/(2 * pi))
+	L_alpOut   = 2. * Lambda_alp + H_alp / H
+end
+function Model(i, alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	if fOut then ...
+		fOut = {b, b}
+	if f_alpOut then ...
+		f_alpOut = { ...
+		0., ...
+		0. ...
+	}
+	if f_bOut then ...
+		f_bOut = { ...
+		1., ...
+		1. ...
+	}
+	if ROut then ...
+		ROut = { ...
+		[ 1. ,  0. ], ...
+		[ 0.  , 2. ] ...
+	}
+	if R_alpOut then ...
+		R_alpOut = { ...
+		0, ...
+		0, ...
+		0, ...
+		0 ...
+	}
+	if R_bOut then ...
+		R_bOut = { ...
+		0., ...
+		0., ...
+		0., ...
+		0. ...
+		}
+	if DOut then ...
+		DOut = { ...
+		alp ...
+	}
+	if D_alpOut then ...
+		D_alpOut = { ...
+		1. ...
+	}
+	return true
+end
+objective     = "L"
+y             = {1., 1., 1., 1.}
+N             = {2., 2.}
+eps           = 1e-5
+delta         = 1e-7
+mitr          = 40
+level         = 0
+alp           = 2.1
+bLow          = -2.
+bUp           = +2.
+bStep         = 1e-2
+bIn           = [0., 0.]
+bOut          = true
+LTildeOut     = true
+LTilde_alpOut = true
+ok = LTilde( ...
+	function Model, ...
+	objective, ...
+	y,  ...
+	N, ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	alp, ...
+	bLow, bUp, bStep,  ...
+	bIn, bOut, ...
+	LTildeOut, ...
+	LTilde_alpOut ...
+)
+#
+bCheck           = novalue
+LTildeCheck      = novalue
+LTilde_alpCheck  = novalue
+objCheck(alp, bCheck, LTildeCheck, LTilde_alpCheck)
+#
+print "ok                               =", ok
+print "[bOut, bCheck]                   =", [bOut, bCheck]
+print "[LTildeOut, LTildeCheck]         =", [LTildeOut, LTildeCheck]
+print "[LTilde_alpOut, LTilde_alpCheck] =", [LTilde_alpOut, LTilde_alpCheck]
+
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+---------------------------------------------------------------------
+#end##
+#
+include FoModel.oms
+include estimateb.oms
+include lambda2diff.oms
+include expectedhessian.oms
+#
+local function dummy() begin
+	stop "Model not set"
+end
+local function Model = dummy()
+local SubjectIndex   = novalue
+local BStep          = novalue
+#
+local function Model_i(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	return Model(SubjectIndex, alp, b, ...
+		fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut)
+end
+local function FoModel_i(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	ok = SetFoModel(function Model_i, BStep, alp)
+	if not ok then begin
+		stop
+		return false
+	end
+	return FoModel(b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut)
+end
+function LTilde( ...
+	function model, ...
+	objective, ...
+	y,  ...
+	N, ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	alp, ...
+	bLow, bUp, bStep,  ...
+	bIn, bOut, ...
+	LTildeOut, ...
+	LTilde_alpOut ...
+) begin
+	if not (LTildeOut or LTilde_alpOut) then ...
+		return true
+	#
+	if type(SubjectIndex) <> "novalue" then ...
+		stop "LTilde does not support recursion"
+	#
+	function Model = model()
+	Objective      = objective
+	BStep          = bStep
+	#
+	# some other constants
+	nsub = rowdim(N)    # number of subjects
+	nalp = rowdim(alp)  # number of fixed population parameters
+	nb   = rowdim(bIn)  # number of random population parameters per subject	
+	#
+	# initialize for summation over subjects
+	Lvalue     = 0
+	LTilde_alp = fill(0, 1, nalp)
+	bMin       = fill(0, nb, nsub)
+	yindex     = 1
+	#
+	# loop over subjects
+	for i = 1 to nsub begin
+		#
+		# Number of data values for this subject
+		N_i = N(i)
+		#
+		# data for this subject
+		y_i    = y.row(yindex, N_i)
+		yindex = yindex + N_i
+		#
+		# initial random population parameter value
+		b_i = bIn.col(i)
+		#
+		# model function for this subect
+		SubjectIndex = i
+		#
+		# compute the random population estimates and corresponding derivatives
+		#
+		blsq       = objective == "F"
+		bHat       = true
+		bTilde     = true
+		bTilde_alp = LTilde_alpOut
+		ok = EstimateB( ...
+			function Model_i, ...
+			blsq, ...
+			y_i,  ...
+			eps, ...
+			delta, ...
+			mitr, ...
+			level, ...
+			alp, ...
+			b_i, bLow, bUp, bHat, bTilde, bStep,  ...
+			bTilde_alp ...
+		)
+		if not ok then begin
+			stop
+			return false
+		end
+		bMin.col(i) = bHat
+		#
+		# compute the approximation to the Hessian and corresponding derivatives
+		#
+		HTilde     = true
+		HTilde_alp = LTilde_alpOut
+		HTilde_b   = LTilde_alpOut
+		if objective == "J" then ...
+			ok = true
+		else if objective == "L" then begin
+			ok = Lambda2Diff( ...
+				function Model_i, ...
+				y_i, ...
+				alp, ...
+				bTilde, ...
+				bStep, ...
+				HTilde, ...
+				HTilde_alp, ...
+				HTilde_b ...
+			)
+		end else if objective == "E" then begin
+			HTilde     = true
+			HTilde_alp = LTilde_alpOut
+			HTilde_b   = LTilde_alpOut
+			ok = ExpectedHessian( ...
+        			function Model_i, ...
+        			alp, ...
+       			bTilde, bStep, ...
+       			HTilde, HTilde_alp, HTilde_b ...
+        		)
+		end else if objective == "F" then begin
+			bzero      = fill(0d0, nb, 1)
+			HTilde     = true
+			HTilde_alp = LTilde_alpOut
+			HTilde_b   = false
+			ok = ExpectedHessian( ...
+        			function FoModel_i, ...
+        			alp, ...
+       			bzero, bStep, ...
+       			HTilde, HTilde_alp, HTilde_b ...
+        		)
+			if LTilde_alpOut then ...
+				HTilde_b = fill(0d0, nb * nb, nb)
+		end else ...
+			stop "LTilde: illegal objective"
+		if not ok then begin
+			stop
+			return false
+		end
+		#
+		# compute value of joint likelihood and corresponding derivatives
+		#
+		Lam       = LTildeOut
+		Lam_alp   = LTilde_alpOut
+		Lam_b     = false
+		if objective == "F" then ...
+			function ModelTmp = FoModel_i()
+		else	function ModelTmp = Model_i()
+		ok = Lambda( ...
+			function ModelTmp, ...
+			y_i,  ...
+			alp, ...
+			bHat, ...
+			Lam, Lam_alp, Lam_b ...
+		)
+		if not ok then begin
+			stop
+			return false
+		end
+		#
+		# value of the objective
+		if LTildeOut then begin
+			Lvalue = Lvalue + Lam
+			if objective <> "J" then Lvalue = Lvalue ...
+				+ .5d0 * log(det(HTilde / (2 * PI) ))
+		end
+		if LTilde_alpOut then begin
+			LTilde_alp = LTilde_alp + Lam_alp 
+			if objective <> "J" then LTilde_alp = ...
+				LTilde_alp ...
+				+ .5d0 * rvec(inv(HTilde))' * ...
+				( HTilde_alp + HTilde_b * bTilde_alp)
+		end
+	end
+	if bOut then ...
+		bOut = bMin
+	if LTildeOut then ...
+		LTildeOut = Lvalue
+	if LTilde_alpOut then ...
+		LTilde_alpOut = LTilde_alp
+	function Model = dummy()
+	SubjectIndex   = novalue
+	#
+	return true
+end
+
+end # blocking for automatic include

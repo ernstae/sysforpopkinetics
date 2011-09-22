@@ -1,0 +1,342 @@
+\documentclass{article}
+\usepackage{epsfig}
+
+\title{Using Stochastic ODE's in Compartmental Model Design}
+\author{Bradley M. Bell}
+\date{2007-09-10}
+
+\newcommand{\B}[1]{{\bf #1}}
+\newcommand{\R}[1]{{\rm #1}}
+
+\begin{document}
+\maketitle
+
+\section{Abstract}
+We present a simulated example application of a method 
+that uses stochastic ordinary differential equations 
+as a tool in the design of population compartmental PK models.
+The example individual model has only two transfer rates;
+its absorption and elimination rates.
+Data is simulated with one rate constant
+and the other changing with respect to time.
+Both the changing absorption rate
+and changing elimination rate cases are simulated.
+The models are then fit with one rate constant and the 
+other rate stochastic with respect to time.
+The fitting results in much better likelihood values
+(lower values for the negative log-likelihood objective)
+when the time-varying rate is modeled as stochastic.
+We also check that, when both rates are constant in time,
+both stochastic models detect this fact.
+
+\section{Compartmental Model}
+We are given a maximum simulation time \( T \).
+Our compartmental model 
+is parametrized by two stochastic functions
+\( a (t) \) and \( b (t) \) for \( t \in [0, T] \).
+The corresponding ordinary differential equation for the
+concentration in the absorption compartment \( q(t) \)
+and in the central compartment \( r(t) \) is
+\begin{eqnarray*}
+q (0)  & = & q_0
+\\
+q' (t) & = & - a(t) q(t)
+\\
+r (0) & = & r_0
+\\
+r' (t) & = & + a(t) q(t) - b(t) r(t)
+\end{eqnarray*}
+where \( q_0 \) and \( r_0 \) are the initial concentrations
+in the corresponding compartments.
+The solution of this ODE is
+\begin{eqnarray*}
+q ( t ) 
+& = & 
+q_0 \exp \left[ - \int_0^t a(s) \B{d} s \right]
+\\
+r ( t ) 
+& = & 
+r_0 \exp \left[ - \int_0^t b(s) \B{d} s \right]
+\\
+& + & 
+\int_0^t \exp \left[ 
+	\int_0^s b(u) \B{d} u - \int_0^t  b(u) \B{d} u 
+\right] a(s) q(s) \B{d} s
+\end{eqnarray*}
+For general stochastic differential equations the functions
+\( a(t) \) and \( b(t) \) would be expressed in terms of 
+Brownian motion.
+
+\section{Example Rate Functions}
+We consider a very simple approximation where the rate functions
+\( a(t) \) and \( b(t) \) are piecewise constant.
+This enables us to use existing mixed effects modeling programs
+to test our method for designing compartmental models.
+To be specific, 
+we fix a set of times \( t_0 < t_q < \cdots < t_N \)
+where \( t_0 = 0 \) and \( t_N = T \),
+corresponding absorption rate values \( a_0 , \ldots , a_{N-1} \),
+and elimination rate values \( b_0 , \ldots , b_{N-1} \).
+The functions \( a(t) \) and \( b(t) \) are defined for 
+\( t \in [0, T) \) by 
+\begin{eqnarray*}
+a (t) & = & a_j \; \R{for} \; t \in [ t_j , t_{j+1} )
+\\
+b (t) & = & b_j \; \R{for} \; t \in [ t_j , t_{j+1} )
+\end{eqnarray*}
+
+\noindent
+We are given \( q_0 \) and \( r_0 \) and for \( j = 1 , \ldots , N \)
+we use \( q_j \) and \( r_j \)
+to denote \( q ( t_j ) \) and \( r ( t_j ) \) respectively.
+It follows from the equations for \( q(t) \) and \( r(t) \) above that
+we can express \( q_{j+1} \) and \( r_{j+1} \) in terms of \( q_j \)
+and \( r_j \) as follows:
+\begin{eqnarray*}
+q_{j+1} 
+& = & 
+q_j \exp [ - a_j ( t_{j+1} - t_j ) ] 
+\\
+r_{j+1} 
+& = & 
+r_j \exp [ - b_j ( t_{j+1} - t_j ) ]
+\\
+& + &
+\int_{t(j)}^{t(j+1)}
+	\exp [ b_j ( s - t_j ) - b_j ( t_{j+1} - t_j ) ] 
+		a_j q_j  \exp [ - a_j ( s - t_j ) ]
+			\B{d} s
+\\
+& = &
+r_j \exp [ - b_j ( t_{j+1} - t_j ) ]
+\\
+& + &
+a_j q_j \exp [ - b_j ( t_{j+1} - t_j ) \exp [ (a_j - b_j ) t_j ] 
+	\int_{t(j)}^{t(j+1)}
+		\exp[ ( b_j - a_j ) s ]  
+			\B{d} s
+\\
+& = &
+\exp [ - b_j ( t_{j+1} - t_j ) ] \left\{ 
+r_j
++
+a_j q_j \exp [ (a_j - b_j ) t_j ]  
+\frac{ \exp [ ( b_j - a_j ) t_{j+1} - \exp[ ( b_j - a_j ) t_j ]}{b_j - a_j}
+\right\}
+\\
+& = &
+\exp [ - b_j ( t_{j+1} - t_j ) ] \left\{ 
+r_j
++
+a_j q_j 
+\frac{ \exp [ ( b_j - a_j ) ( t_{j+1} - t_j ) ] - 1 }{b_j - a_j}
+\right\}
+\\
+& = &
+\exp [ - b_j ( t_{j+1} - t_j ) ] \left\{ 
+r_j
++
+a_j q_j 
+\frac{ 1 - \exp [ - ( a_j - b_j ) ( t_{j+1} - t_j ) ] }{a_j - b_j}
+\right\}
+\end{eqnarray*}
+We now define the functions that relate \( q_{j+1} \) and \( r_{j+1} \)
+to \( q_j \) and \( r_j \);
+\begin{eqnarray*}
+Q_{j+1} ( a_j , b_j , q_j , r_j ) 
+& = &
+q_j \exp [ - a_j ( t_{j+1} - t_j ) ] 
+\\
+R_{j+1} ( a_j , b_j , q_j , r_j ) 
+& = &
+\exp [ - b_j ( t_{j+1} - t_j ) ] \left\{ 
+r_j
++
+a_j q_j 
+\frac{ 1 - \exp [ - ( a_j - b_j ) ( t_{j+1} - t_j ) ] }{a_j - b_j}
+\right\}
+\end{eqnarray*}
+
+\section{Simulating Data}
+When simulating the data we used the following constants
+
+\bigskip
+\begin{tabular}{lll}
+{\bf Notation}    & {\bf Value} & {\bf Description} \\
+\( M \)           &  20     & number of individuals in population data set \\
+\( N \)           &  5      & number of measurement per individual \\
+\( T \)           &  1      & time corresponding to last measurement \\
+\( q_0 \)         &  1      & initial absorption compartment concentration \\
+\( r_0 \)         &  0      & initial central compartment concentration  \\
+\( \mu_a \)       &  2      & mean initial absorption rate \( a_0 \) \\
+\( \mu_b \)       &  2      & mean initial absorption rate \( b_0 \) \\
+\( \sigma_a \)    &  .1     & standard deviation for \( a_0 \) \\
+\( \sigma_b \)    &  .1     & standard deviation for \( a_0 \) \\
+\( \Delta a \)    & 0, 0, .2  & change in absorption rate \( a_j - a_{j-1} \) \\
+\( \Delta b \)    & 0, .2, 0  & change in elimination rate \( a_j - a_{j-1} \) 
+\end{tabular}
+
+\bigskip
+\noindent
+Note that there are three simulated data sets corresponding to the 
+three pairs of values for \( ( \Delta a , \Delta b ) \).
+For \( i = 0 , \ldots , M-1 \)
+and \( j = 0 , \ldots , N-1 \)
+we simulate independent values 
+\begin{eqnarray*}
+\eta_{i,0} & \sim & \B{N} (0, \sigma_a^2 ) \\
+\eta_{i,1} & \sim & \B{N} (0, \sigma_b^2 ) \\
+\varepsilon_{i,j} & \sim & \B{N} (0, \sigma_\varepsilon^2 ) 
+\end{eqnarray*}
+We then compute the simulated values
+\begin{eqnarray*}
+a_{i,0} & = & \mu_a + \eta_{i,0}        \\
+b_{i,0} & = & \mu_b + \eta_{i,1}        \\
+a_{i,j} & = & a_{i, j-1} + \Delta a     \\
+b_{i,j} & = & b_{i, j-1} + \Delta b     \\
+q_{i, j+1} & = & Q_{j+1} ( a_j , b_j , q_j , r_j ) 
+\\
+r_{i, j+1} & = & R_{j+1} ( a_j , b_j , q_j , r_j ) 
+\\
+y_{i,j} & = & r_{i, j+1} + \varepsilon_{i,j}
+\end{eqnarray*}
+
+
+\section{Mixed Effects Model}
+In this section we define the nonlinear mixed effects model
+that is used to fit the data (using {\sc spk} or some other 
+nonlinear mixed effects modeling program; e.g., {\sc nonmem}).
+Parameters are known values 
+(do not need to be estimated) that are the same for all individuals
+and all measurement values:
+
+\bigskip
+\begin{tabular}{lll}
+{\bf Parameter} & {\bf Value} & {\bf Description} 
+\\
+\( M \)        & 10
+& number of individuals in simulated population
+\\
+\( N \)        & 10
+& number of measurements per individual
+\\
+\( T \)        & 1
+& time corresponding to last measurement
+\\
+\( \lambda \)  & 0 , 1
+& zero (one) if \( a_{i,j} \) ( \( b_{i,j} \) ) constant w.r.t \( i \)
+\\
+\( q_0 \)      & 1
+& concentration in absorption compartment at time zero
+\\
+\( r_0 \)     & 0
+& concentration in central compartment at time zero
+\\
+\( \mu_a \)   & 2
+& mean value for \( a_{i,0} \)
+\\
+\( \mu_b \)   & .5
+& mean value for \( b_{i,0} \)
+\\
+\( \sigma_\varepsilon \) & .001
+& standard deviation of measurement noise
+\end{tabular}
+
+\bigskip
+\noindent
+Fixed effects are unknown values 
+(need to be estimated) that are the same for all individuals
+and all measurement values
+(note that some of the fixed effects have been log scaled to improve
+the optimization procedure):
+
+\bigskip
+\begin{tabular}{ll}
+{\bf Fixed Effect} & {\bf Description}
+\\
+\( \log ( \sigma_a^2 ) \)    & log of variance of \( \eta_{i,0} \) 
+\\
+\( \log ( \sigma_b^2 ) \)    & log of variance of \( \eta_{i,1} \) 
+\\
+\( \log ( \sigma_\eta^2 ) \) & log of variance of change in transfer rate
+\end{tabular}
+
+
+\bigskip
+\noindent
+Random effects are unknown random values that are independently distributed
+between individuals 
+and are the same for all measurements corresponding to one individual.
+Note that the model below is unusual in that there is a random
+effect corresponding to each measurement index.
+Each of these random variables is independent from the other random variables.
+We use \( i \) to represent the dependence on individual 
+in the table below:
+
+\bigskip
+\begin{tabular}{lll}
+{\bf Random Effect}  & {\bf Distribution} & {\bf Description}
+\\
+\( \eta_{i,0} \) &  \( \B{N} ( 0 , \sigma_a^2 ) \)    
+& initial absorption rate is \( \mu_a + \eta_{i,0} \)
+\\
+\( \eta_{i,1} \) & \( \B{N} ( 0 , \sigma_b^2 ) \)    
+& initial elimination rate if \( \mu_b + \eta_{i,1} \)
+\\
+\( \eta_{i,j} \) & \( \B{N} ( 0 , \sigma_\eta^2 ) \)    
+& change in elimination rate (for \( j \geq 2 \) )
+\end{tabular}
+
+\bigskip
+\noindent
+We are given the initial concentrations 
+\( q_{i,0} = q_0 \), \( r_{i,0} = r_0 \).
+Our stochastic model for the rate constants \( a_i (t) \) and \( b_i (t) \)
+is specified by the following equations for
+\( i = 0 , \ldots , M-1 \) and \( j = 1 , \ldots , N-1 \):
+\begin{eqnarray*}
+a_{i,0} & = & \mu_a + \eta_{i,0} \\
+b_{i,0} & = & \mu_b + \eta_{i,1} \\
+a_{i,j} & = & a_{i, j-1} + \lambda \eta_{i, j+1} \\
+b_{i,j} & = & b_{i, j-1} + (1 - \lambda ) \eta_{i, j+1} \\
+a_i (t) & = & a_{i,j} \; \R{for} \; t \in [ t_j , t_{j+1} ) \\
+b_i (t) & = & b_{i,j} \; \R{for} \; t \in [ t_j , t_{j+1} )
+\end{eqnarray*}
+
+\bigskip
+\noindent
+The measurement noise \( \{ \varepsilon_{i,j} \} \)
+is a set of unknown random values 
+that are independent from the other random variables above and
+from each other.
+The mixed effects model for the the concentration \( \{ r_{i, j+1} \} \),
+and the measurement values \( \{ y_{i,j} \} \)
+for \( i = 0 , \ldots , M-1 \)
+and \( j = 0 , \ldots , N-1 \) is given by
+\begin{eqnarray*}
+q_{i, j+1} & = & Q_{j+1} ( a_j , b_j , q_j , r_j ) 
+\\
+r_{i, j+1} & = & R_{j+1} ( a_j , b_j , q_j , r_j ) 
+\\
+y_{i,j} & = & r_{i, j+1} + \varepsilon_{i,j}
+\end{eqnarray*}
+where the values \( a_{i,j} \) and \( b_{i,j} \) are related
+to the the random variables  \( \{ \eta_{i,j} \} \) by the equations above.
+
+\section{Results}
+% Plot file naming convention: plot_lambda_deltaA_deltaB.eps
+%
+\subsection{Simulated With Absorption Rate Varying in Time}
+\epsfig{file=plot_0_0.2_0.eps}
+\epsfig{file=plot_1_0.2_0.eps}
+%
+\subsection{Simulated With Elimination Rate Varying in Time}
+\epsfig{file=plot_0_0_0.2.eps}
+\epsfig{file=plot_1_0_0.2.eps}
+%
+\subsection{Simulated With Both Rates Constant in Time}
+\epsfig{file=plot_0_0_0.eps}
+\epsfig{file=plot_1_0_0.eps}
+
+
+\end{document}

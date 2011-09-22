@@ -1,0 +1,51 @@
+$begin omhelp$$
+$spell
+	gz
+	ls
+	OMhelp
+	omhelp
+	su
+	sudo
+	usr
+	xvzf
+$$
+
+$section Install OMhelp$$
+
+$head Download$$
+The file 
+$href%OMhelp.unix.tar.gz%$$
+was downloaded from the web page
+$href%http://www.seanet.com/~bradbell/omhelp/installunix.xml%$$.
+Then the following commands were executed
+$codep
+	tar -xvzf OMhelp.unix.tar.gz
+	cd omhelp-06-04-11
+$$
+$head Configure$$
+The following command was executed
+$codep
+	./configure --prefix=/usr/local  VIMRUNTIME=/usr/share/vim/vim63
+$$
+
+$head Build$$
+The following command was executed
+$codep
+	make
+$$
+The $code make$$ command resulted in the user documentation being built
+and I could view 
+$href%../omhelp-06-04-11/Doc/_contents.htm%$$ in my web browser.
+
+$head Install$$
+The following commands were executed
+$codep
+	sudo su
+	make install
+	exit
+	ls /usr/local/bin
+$$
+The $code ls$$ command resulted in the $code omhelp$$ program
+being listed.
+
+$end

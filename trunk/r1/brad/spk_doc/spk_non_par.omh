@@ -1,0 +1,242 @@
+$begin spk_non_par$$
+$latex \newcommand{\B}[1]{{\bf #1}}$$
+$latex \newcommand{\R}{{\bf R}}$$
+$latex \newcommand{\T}{{\rm T}}$$
+$spell
+	Dirac
+	lamout
+	bup
+	const
+	nr
+	spk
+	nc
+$$
+
+$section Spk Nonparametric Population Analysis$$
+
+
+$index spk_non_par$$
+$index nonparametric, population analysis$$
+$index population, nonparametric analysis$$
+
+$head Syntax$$
+$syntax%void spk_non_par(%model%, %N%, %y%, %epsilon%, %blow%, %bup%, %
+	Bin%, %Bout%, %lamout%, %pout%)%$$
+
+$head Problem Definition$$
+We define the discrete measure
+$latex \mu$$ on $latex \R^n$$ 
+and the non-parametric population objective function
+$latex F : \R^{J \times n} \times \R_+^J \rightarrow \R$$ by
+$latex \[
+\begin{array}{rcl}
+\mu ( b )     & = & \sum_{j=1} \lambda_j \delta ( b - B_j )
+\\
+F(B, \lambda) & = & - \sum_{i=1}^M \log [ \B{p} ( y^i | \mu ) ]
+\end{array}
+\] $$
+where $latex \delta$$ denotes the Dirac delta function on $latex \R^n$$,
+$latex \R_+$$ denotes the non-negative real numbers,
+$latex B_j$$ denotes the $th j$$ row of the matrix $italic B$$,
+$cref/M/min_spk_model/Notation/M/$$ is the number of individuals
+in the population, 
+$cref/y^i/min_spk_model/Notation/y^i/$$ is the 
+measurement vector corresponding to individual $latex i$$,
+the probability of $latex y^i$$ given $latex \mu$$ is given by
+$latex \[
+\begin{array}{rcl}
+\B{p} ( y^i | \mu ) & = & 
+\sum_{j=1} \lambda_j \B{p}( y^i | B_j )
+\\
+\B{p} ( y^i | b ) & = & 
+\det \left[ 2 \pi R ( i, \alpha, b  ) \right]^{-1/2} 
+\exp \left\{ 
+		- \frac{1}{2} \left[ y^i - f(i, \alpha, b ) \right]^\T 
+		R ( i, \alpha, b  )^{-1}
+			\left[ y^i - f(i, \alpha, b ) \right]
+\right\} 
+\end{array}
+\] $$
+$cref/f(i,alpha,b)/min_spk_model/Notation/f(i,alpha,b)/$$ 
+is the mean of $latex y^i$$, and 
+$cref/R(i,alpha,b)/min_spk_model/Notation/R(i,alpha,b)/$$
+is the variance of $latex y^i$$. 
+The $code spk_non_par$$ routine determines a vector 
+$latex \lambda \in \R^J$$
+and matrix $latex B \in \R^{J \times n}$$ that solves the problem
+$latex \[
+\begin{array}{ll}
+{\rm minimize}      
+	& F(B, \lambda )
+	\; , \;
+	{\rm w.r.t.} \; \lambda \in \R_+^J \; , \; B \in \R^{J \times n}
+\\
+{\rm subject \; to} 
+	& \sum_{j=1}^J \lambda_j = 1
+	\; , \;
+	blow \leq B_j \leq bup \; {\rm for} \; j = 1 , \ldots , J
+\end{array}
+\] $$
+
+$head model$$
+The argument $italic model$$ has prototype
+$syntax%
+	SpkModel<%Scalar%> &%model%
+%$$
+It specifies the individual and population model
+functions as per the $cref/min_spk_model/$$ requirements.
+
+
+$head N$$
+The argument $italic N$$ has prototype
+$syntax%
+	const DoubleMatrix &%N%
+%$$
+The value $syntax%%N%.nr()%$$ must be equal to
+$cref/M/min_spk_model/Notation/M/$$
+the number of individuals in the $italic model$$.
+The value $syntax%%N%.nc()%$$ must be equal one.
+For $latex i = 0 , \ldots , M-1$$,
+$syntax%
+	*(%N%.data() + %i%)
+%$$
+is equal to
+$cref/N[i]/min_spk_model/Notation/N[i]/$$
+the number of measurements corresponding to individual $italic i$$
+in the $italic model$$.
+
+
+$head y$$
+The argument $italic y$$ has prototype
+$syntax%
+	const DoubleMatrix &%y%
+%$$
+The value $syntax%%y%.nr()%$$ must be equal to
+$latex N[0] + \cdots + N[M-1]$$.
+The value $syntax%%y%.nc()%$$ must be equal one.
+For $latex i = 0 , \ldots , M-1$$ and $latex j = 0 , \ldots , N[i]$$
+$syntax%
+	*(%y%.data() + %N%[0] + ... + %N%[%i%-1] + %j%)
+%$$  
+Is the $th j$$ data value corresponding to individual $italic i$$.
+
+$head epsilon$$
+The argument $italic epsilon$$ has prototype
+$syntax%
+	double %epsilon%
+%$$
+It specifies the value $latex \varepsilon$$ in the convergence
+criteria below.
+We define the scaled projected gradient of $latex F$$
+with respect to $latex B$$,
+$latex F_B (B , \lambda ) \in \R^{J \times n} $$ by
+$latex \[
+F_B ( B , \lambda )_{j,k} = \left\{ \begin{array}{ll}
+( bup_k - B_{j,k} ) \partial_{B(j,k)} F(B, \lambda)
+	& {\rm if} \; \partial_{B(j,k)} F(B, \lambda) \geq 0
+\\
+( B_{j,k} - blow_k ) \partial_{B(j,k)} F(B, \lambda)
+	& {\rm if} \; \partial_{B(j,k)} F(B, \lambda) \leq 0
+\end{array} \right.
+\] $$
+We define the average partial of $latex F$$ 
+with respect to $latex \lambda$$ ,
+$latex F_\bar{\lambda} (B , \lambda ) \in \R $$ by
+$latex \[
+F_\bar{\lambda} ( B , \lambda ) = 
+	\frac{1}{J} \sum_{j=1}^J \partial_{\lambda(j)} F( B , \lambda )
+\] $$
+The output values for $latex B$$ and $latex \lambda$$ satisfy the
+following approximate first order conditions for a minimum:
+$list number$$
+for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , p$$,
+$latex blow_k \leq B_{j,k} \leq bup_k$$.
+$lnext
+$latex \varepsilon \geq | 1 - \sum_{j=1}^J \lambda_j |$$ 
+$lnext
+for $latex j = 1 , \ldots , J$$, 
+$latex \varepsilon \geq  
+| F_\bar{\lambda} ( B , \lambda )  - \partial_{\lambda(j)}  F(B, \lambda ) | 
+$$
+$lnext
+for $latex j = 1 , \ldots , J$$, $latex k = 1 , \ldots , p$$,
+$latex 
+\varepsilon \geq | F_B (B, \lambda)_{i,j} | 
+$$.
+$lend
+
+
+$head blow$$
+The argument $italic blow$$ has prototype
+$syntax%
+	const DoubleMatrix &%blow%
+%$$
+The value $syntax%%blow%.nr()%$$ must be equal to
+the number of random effects
+$cref/n/min_spk_model/Notation/n/$$. 
+The value $syntax%%blow%.nc()%$$ must be equal one.
+It specifies a lower limit for the random effects.
+
+
+$head bup$$
+The argument $italic bup$$ has prototype
+$syntax%
+	const DoubleMatrix &%bup%
+%$$
+The value $syntax%%bup%.nr()%$$ must be equal to
+the number of random effects
+$cref/n/min_spk_model/Notation/n/$$. 
+The value $syntax%%bup%.nc()%$$ must be equal one.
+It specifies an upper limit for the random effects.
+
+$head Bin$$
+The argument $italic Bin$$ has prototype
+$syntax%
+	const DoubleMatrix &%Bin%
+%$$
+Each column of $italic Bin$$ represents an initial guess for the location 
+of the atomic measure points $latex \{ B_j \}$$ that solve the problem.
+The value $syntax%%Bin%.nc()%$$ defines $latex J$$
+the number of atomic points in the non-parametric measure
+for the random effects.
+It must be greater than or equal
+the number of individuals in the study
+$cref/M/min_spk_model/Notation/M/$$. 
+The value $syntax%%bup%.nr()%$$ must be 
+equal to $cref/n/min_spk_model/Notation/n/$$ 
+the number if random effects per atomic point in the measure.
+
+$head Bout$$
+The argument $italic Bout$$ has prototype
+$syntax%
+	const DoubleMatrix &%Bout%
+%$$
+It must have the same dimensions as $italic Bin$$
+and is the location of the atomic measure points corresponding
+to the solution of the optimization problem.
+
+$head lamout$$
+The argument $italic lamout$$ has prototype
+$syntax%
+	const DoubleMatrix &%lamout%
+%$$
+It is the weights corresponding to each of the atomic measure points
+in the solution to the optimization problem.
+The value $syntax%%lamout%.nc()%$$ must be equal to $latex J$$
+and the value $syntax%%lamout%.nr()%$$ must be equal to one. 
+
+
+$head pout$$
+The argument $italic pout$$ has prototype
+$syntax%
+	const DoubleMatrix &%pout%
+%$$
+The $latex (i, j)$$ element of $italic pout$$
+is the probability density of $latex y^i$$ given the 
+random effects value $latex b$$ is equal to the $th j$$
+column of $italic Bout$$; i.e. $latex \B{p} ( y^i | b = B_j )$$
+where $italic B_j$$ is the $th j$$ column of $italic Bout$$..
+The value $syntax%%pout%.nr()%$$ must be equal to $latex M$$
+and the value $syntax%%lamout%.nc()%$$ must be equal to $latex J$$. 
+
+$end

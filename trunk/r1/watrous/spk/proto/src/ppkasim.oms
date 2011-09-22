@@ -1,0 +1,832 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+#begin##
+
+$begin ppkaSim$$
+$escape #$$
+
+$spell
+	eps
+	fi
+	Hessian
+	Info
+	Laplace
+	mitr
+	ok
+	ppka
+	Ri
+	Std
+	subvector
+	const
+	sqrt
+	snormal
+	seq
+	Carlo
+	Sim
+	expb
+	exp
+	lam
+	novalue
+	delalp
+	ppka
+	rowdim
+	inv
+	oms
+$$
+
+
+
+$section Monte-Carlo Simulation of Parametric Population Analysis Values$$
+
+$index ppkaSim$$
+$cindex information matrix population$$
+$cindex monte-carlo approximation #of likelihood #and #its derivatives$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/ppkaSim( ...
+function /Model/, ...
+/N/, ...
+/yInOut/, ...
+/J/,
+/K/, ...
+/alpStep/, /alp/,...
+/bLow/, /bUp/, /bLOut/, /bUpOut/, /bOut/, /bOut/, ...
+/LTildeOut/, ...
+/LTilde_alpOut/, ...
+/LTilde_alp_alpOut/, ...
+/ITildeOut/
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Monte Carlo simulation of population analysis data
+and of the log-likelihood, its derivatives, and its information matrix.
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Model Assumptions$$
+The following model assumptions are stated using 
+$xref/glossary/Population Notation/population notation/$$.
+The bar above $math%alp%$$ and $math%b_i%$$ denote the true, but unknown,
+values for the fixed population parameters and the random population parameters
+for the $th i$$ individual respectively.
+$math%
+	           ___   ___
+	y_i = f_i( alp , b_i ) + e_i
+	                ___  ___
+	e_i ~ N[0, R_i( alp, b_i)]
+	___          ___
+	b_i ~ N[0, D(alp)]
+%$$
+
+$head Arguments$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+The return value of $code ppkaOpt$$ is true, if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/i/, /alp/, /b/, /fOut/, /f_alpOut/, /f_bOut/, /ROut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+The following table uses $xref/glossary/Population Notation/population notation/$$
+$table
+$bold Argument$$
+	$cend $bold Value$$ 
+	$cend $bold Comments$$ $rend
+$italic i$$
+	$cend $math%i%$$
+	$cend index for this individual $rend
+$italic alp$$
+	$cend $math%alp%$$
+	$cend fixed population parameter vector $rend
+$italic b$$
+	$cend $math%b%$$
+	$cend random population parameter vector $rend
+$italic fOut$$
+	$cend $math%f_i(alp, b)%$$ 
+	$cend model for the mean of $math%y_i%$$ given $math%b%$$ $rend
+$italic f_alpOut$$ 
+	$cend $math%f_i_alp(alp, b)%$$ 
+	$cend derivative of $math%f_i(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+	$cend $math%f_i_b(alp, b)%$$ 
+	$cend derivative of $math%f_i(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic ROut$$ 
+	$cend $math%R_i(alp, b)%$$ 
+	$cend model for the variance of $math%y%$$ given $math%b%$$ $rend
+$italic R_alpOut$$
+	$cend $math%R_i_alp(alp, b)%$$ 
+	$cend derivative of $math%R_i(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+	$cend $math%R_i_b(alp, b)%$$ 
+	$cend derivative of $math%R_i(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic DOut$$ 
+	$cend $math%D(alp)%$$ 
+	$cend model for the variance of $math%b%$$ $rend
+$italic D_alpOut$$
+	$cend $math%D_alp(alp)%$$ 
+	$cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$syntax/
+
+/yInOut/
+/$$
+if the input value of $italic yInOut$$ has type "novalue", 
+it is replaced by simulated values
+before any other calculations in this routine.
+If its input value does not have type "novalue", 
+it is not changed by this routine.
+In either case, its output value
+is a double-precision column vector that contains
+the actual data for all the individuals.
+The vector $italic y$$ has
+$math%
+	N(1) + N(2) + ... + N(M)
+%$$
+elements where $math%M%$$ is the number of rows in $italic N$$.
+The data vector corresponding to the first individual is
+$math%
+	                                     T
+	y_1 = [ y(1) , y(2) , ... , y(N(1)) ]
+%$$
+Elements $math%y(N(1) + 1)%$$ through $math%y(N(1) + N(2))%$$ 
+correspond to the second individual and so on.
+(Note that $math%y_1%$$ refers to the first subvector or $italic y$$ while
+$math%y(1)%$$ refers to the first element of the vector $italic y$$.)
+The input value of $italic yInOut$$ does not matter,
+if the input values of 
+$italic LTildeOut$$,
+$italic LTilde_alpOut$$, and
+$italic LTilde_alp_alpOut$$ are all false.
+$syntax/
+
+/N/
+/$$
+is an integer column vector. 
+The $th i$$ element of $italic N$$
+specifies the number of elements of $italic y$$ that
+correspond to the $th i$$ individual.
+$syntax/
+
+/J/
+/$$
+this integer scalar greater than or equal to one that specifies the number of 
+random points to use for
+approximating integrals with respect to the random population parameters.
+Each such point corresponds to random parameter values for
+all the individuals.
+The value of $italic J$$ is not
+used if the none of the output values are true
+(note $italic yInOut$$ is not an  $xref/glossary/Output Value/output values/$$ 
+because it does not abide by the strict definition).
+$syntax/
+
+/K/
+/$$
+this integer scalar greater than or equal to one that specifies the number of 
+copies of $math%y%$$ to simulate 
+when approximating integrals with respect to the data.
+This value is not used if $italic ITildeOut$$ is false
+on input.
+$syntax/
+
+/alpStep/
+/$$
+The double-precision column vector $italic alpStep$$
+specifies the step size used for approximating
+the derivatives with respect to the fixed population parameters.
+The value of this parameter does not matter if
+$italic LTiled_alp_alpOut$$ is false.
+$syntax/
+
+/alp/
+/$$
+is a double-precision column vector specifying the value
+of the fixed population parameters.
+$syntax/
+
+/bLow/
+/$$
+is a double-precision column vector
+that specifies the lower limit for the
+random parameters for all the individuals.
+Its row dimension is equal to the number of random parameters.
+Simulated random parameter values below this level will not 
+be used.
+$syntax/
+
+/bUp/
+/$$
+is a double-precision column vector 
+that specifies the upper limit for the
+random parameters for all the individuals.
+Its row dimension is equal to the number of random parameters.
+Simulated random parameter values above this level will not 
+be used.
+$syntax/
+
+/bLowOut/
+/$$
+is an integer column vector with
+row dimension is equal to the number of random parameters.
+The value $math%bLowOut(j)%%$$ is equal to the number
+of simulated values of the random parameters that had the
+$th j$$ element less than $math%bLow(j)%$$
+$syntax/
+
+/bUpOut/
+/$$
+is an integer column vector with
+row dimension is equal to the number of random parameters.
+The value $math%bUpOut(j)%%$$ is equal to the number
+of simulated values of the random parameters that had the
+$th j$$ element greater than $math%bUp(j)%$$
+$syntax/
+
+/bOut/
+/$$
+If the input value of $italic yInOut$$ is novalue and the input value
+of $italic bOut$$ is true, the $th i$$ column of 
+the output value $italic bOut$$ contains the random effects used
+to simulate the data in $italic yInOut$$ that corresponds to the
+$th i$$ individual.
+$syntax/
+
+/LTildeOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic LTildeOut$$
+is a Monte Carlo approximation for the negative log-likelihood function
+that uses $italic J$$ points to approximate the integral by a a summation.
+$syntax/
+
+/LTilde_alpOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic LTilde_alpOut$$
+is a Monte Carlo approximation for the derivative
+of the negative log-likelihood function
+that uses $italic J$$ points to approximate the integral by a a summation.
+$syntax/
+
+/LTilde_alp_alpOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic LTilde_alp_alpOut$$
+is a Monte Carlo approximation for the Hessian
+of the negative log-likelihood function
+that uses $italic J$$ points to approximate the integral by a a summation.
+$syntax/
+
+/ITildeOut/
+/$$
+is a double-precision matrix containing an approximation for the
+information matrix that uses
+$italic J$$ points to approximate the integral with respect to the
+random parameters and $italic K$$ points to approximate
+the integral with respect to the data values.
+
+$head Example$$
+Suppose that $math%y_i%$$, $math%alp%$$, and $math%b%$$ are all
+scalar valued where $math%y_i%$$ is the data for the $th i$$ individual.
+Furthermore suppose that
+$math%
+	D(alp)      = alp
+	R_(alp, b)  = 1
+	f_i(alp, b) = b
+%$$
+It follows that the joint negative log-likelihood 
+of the data and random parameters for the $th i$$ individual is given by
+$math%
+	Lambda_i(alp, b) = .5 log(2 pi)     + .5 (y_i - b)^2 
+	                 + .5 log(2 pi alp) + .5 b^2 / alp
+%$$
+The partial derivatives of this function
+with respect to $math%b%$$ are given by
+$math%
+	Lambda_i_b(alp, b)   = b (alp + 1) / alp - y_i
+	Lamdba_i_b_b(alp, b) = (alp + 1) / alp
+%$$
+It follows that the optimal value of $math%b%$$ given $math%alp%$$ is
+$math%
+	bhat_i(alp) = y_i alp / (alp + 1)
+%$$
+It follows that for all the objective functions are equal to the 
+true negative log-likelihood which is the sum over $math%i%$$ of
+$math%
+	L_i(alp) = .5 log[ (alp + 1) / (2 pi alp) ] + Lambda_i[alp, bhat(alp)]
+	         = .5 log(alp + 1) + .5 log(2 pi) + .5 y_i^2 / (alp + 1)
+%$$
+The derivative and Hessian of $math%L_i%$$ is given by
+$math%
+	L_i_alp(alp)     = .5 / (alp + 1) - .5 y_i^2 / (alp + 1)^2
+	L_i_alp_alp(alp) = - .5 / (alp + 1)^2 + y_i^2 / (alp + 1)^3
+%$$
+We use the notation $math%I_i(alp)%$$ to denote the contribution to the information matrix
+that corresponds to the $th i$$ individual.
+This is is equal to the expected value of the
+Hessian where the expected value is take over both the measurement
+and noise and random parameters; i.e.,
+$math%
+	I(alp) = -.5 / (alp + 1)^2 + (alp + 1) / (alp + 1)^3
+	       = .5 / (alp + 1)^2
+%$$
+The function $code LCheck$$ below 
+is used to check the approximation of the negative log-likelihood
+by $code ppkaSim$$ and its calculation by $code ppkaOpt$$.
+The calculation is exact in this case because the Hessian
+is constant with respect to the random parameters.
+
+$codep
+clear
+include ppkaSim.oms
+include ppkaOpt.oms
+#
+function LCheck(y, alp, L, L_alp, L_alp_alp, I) begin
+	sum         = 0
+	sum_alp     = 0
+	sum_alp_alp = 0
+	alp1        = alp + 1.
+	for i = 1 to rowdim(y) begin
+		sum         = sum + .5 * log(alp1) + .5 * log(2 * pi) + .5 * y(i)^2 / alp1
+		sum_alp     = sum_alp + .5 / alp1 - .5 * y(i)^2 / alp1^2
+		sum_alp_alp = sum_alp_alp - .5 / alp1^2 +  y(i)^2 / alp1^3
+	end
+	L = sum
+	L_alp = sum_alp
+	L_alp_alp = sum_alp_alp
+	I = rowdim(y) * .5 / alp1^2
+end
+#
+function Model(i, alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+     if fOut then ...
+          fOut = b
+     if f_alpOut then ...
+          f_alpOut = 0d0
+     if f_bOut then ...
+          f_bOut   = 1d0
+     if ROut then ...
+          ROut     =  1d0 
+     if R_alpOut then ...
+          R_alpOut = 0d0
+     if R_bOut then ...
+          R_bOut   = 0d0
+     if DOut then ...
+          DOut     =  alp
+     if D_alpOut then ...
+          D_alpOut = 1d0
+     return true
+end
+M  = 20                       # number of individuals
+N  = fill(1, M, 1)            # number of measurements
+yInOut         = novalue      # simulate data value
+J              = 100          # number integration points over random parameters
+K              = 100          # number of simulated data sets
+alpTrue        = 3d0          # true value of fixed parameters
+alpStep        = 1d-1         # step size in fixed parameters not needed
+bLow           = -5d1         # lower limit for random parameters
+bUp            = +5d1         # upper limit for random parameters
+bLowOut        = true         # number out of limits
+bUpOut         = true         # number out of limits
+bOut           = true         # simulated values corresponding to yInOut
+LTildeOut      = true         # value of likelihood 
+LTilde_alpOut  = true         # derivative of likelihood
+LTilde_alp_alpOut = true      # Hessian of likelihood
+ITildeOut         = true      # information matrix
+#
+ok = ppkaSim( ...
+     function Model, ...
+     N, ...
+     yInOut, ...
+     J, ...
+     K, ...
+     alpStep, alpTrue,...
+     bLow, bUp, bLowOut, bUpOut, bOut, ...
+     LTildeOut, ...
+     LTilde_alpOut, ...
+     LTilde_alp_alpOut, ...
+     ITildeOut ...
+)
+print "ok                =", ok
+print "bLowOut           =", bLowOut
+print "bUpOut            =", bUpOut
+print "bOut              =", bOut
+print "alpTrue           =", alpTrue
+print "LTildeOut         =", LTildeOut
+print "LTilde_alpOut     =", LTilde_alpOut
+print "LTilde_alp_alpOut =", LTilde_alp_alpOut
+print "DeltaAlp          =", (LTilde_alp_alpOut \ LTilde_alpOut')'
+print "inv(ITildeOut)    =", inv(ITildeOut)
+#
+print
+I         = novalue
+L         = novalue
+L_alp     = novalue
+L_alp_alp = novalue
+LCheck(yInOut, alpTrue, L, L_alp, L_alp_alp, I)
+print "LCheck         =", L
+print "L_alpCheck     =", L_alp
+print "L_alp_alpCheck =", L_alp_alp
+print "DeltaAlpCheck  =", (L_alp_alp \ L_alp')'
+print "inv(ICheck)    =", inv(I)
+#
+objective = "L"
+y         = yInOut
+eps       = [1d-4, 1d-4]
+delta     = [1d-10,1d-10]
+mitr      = [40, 0]
+level     = [0, 1]
+alpIn     = alpTrue 
+alpLow    = alpTrue * 1d-1
+alpUp     = alpTrue * 1d1
+alpStep   = alpTrue * 1d-1
+bStep     = 1d-2
+bIn       = fill(0d0, 1, M)
+alpOut            = true
+bOut              = true
+LTildeOut         = true
+LTilde_alpOut     = true
+LTilde_alp_alpOut = true
+#
+ok = ppkaOpt( ...
+     function Model, ...
+     objective, ...
+     N, ...
+     y, ...
+     eps, ...
+     delta, ...
+     mitr, ...
+     level, ...
+     alpStep, alpLow,  alpUp,  alpIn, alpOut, ...
+     bStep,  bLow, bUp, ...
+     bIn, bOut, ...
+     LTildeOut, LTilde_alpOut, LTilde_alp_alpOut  ...
+)
+#
+print "ok                =", ok
+print "alpOut'           =", alpOut'
+print "bOut              =", bOut
+print "LTildeOut         =", LTildeOut
+print "LTilde_alpOut     =", LTilde_alpOut
+print "LTilde_alp_alpOut =", LTilde_alp_alpOut
+print "DeltaAlp          =", (LTilde_alp_alpOut \ LTilde_alpOut')'
+
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+---------------------------------------------------------------------
+#end##
+# include any
+include elsq.oms
+include LambdaDiff.oms
+#
+local function dummy() begin
+	stop "program error"
+end
+local function Model = dummy()
+local Individual     = novalue
+local function Model_i(alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	return Model(Individual, alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut)
+end
+#
+local RootD     = novalue
+local BLow      = novalue
+local BUp       = novalue
+local BLowCount = novalue
+local BUpCount  = novalue
+	
+local function BSim() begin
+	# simulated random parameter values
+	flag  = true
+	nb    = rowdim(RootD)
+	while flag begin
+		b          = RootD * snormal(nb, 1)
+		BLowCount  = BLowCount + (b < BLow)
+		BUpCount   = BUpCount  + (b > BUp)
+		flag  = any(b < BLow or b > BUp)
+	end
+	return b
+end
+local function IModel(i, alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut) begin
+	#
+	# evaluate the model for this individual
+	Dno     = false
+	D_alpno = false
+	ok = Model(i, alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, Dno, D_alpno)
+	return ok
+end
+
+local function Lambda_alp(b, y, f, R, Rinv, f_alp, R_alp, D, Dinv, D_alp) begin
+	zero      = fill(0d0, rowdim(b), 1)
+	zero_alp  = fill(0d0, rowdim(b), coldim(f_alp))
+	term1   = elsq_x(y, f, R, Rinv, f_alp, R_alp)
+	term2   = elsq_x(b, zero, D, Dinv, zero_alp, D_alp)
+	return term1 + term2
+end
+#
+function ppkaSim( ...
+	function model, ...
+	N, ...
+	yInOut, ...
+	J, ...
+	K, ...
+	alpStep, alp,...
+	bLow, bUp, bLowOut, bUpOut, bOut, ...
+	LTildeOut, ...
+	LTilde_alpOut, ...
+	LTilde_alp_alpOut, ...
+	ITildeOut ...
+) begin
+	#
+	nb    = rowdim(bLow)     # number of random parameters per individual
+	nalp  = rowdim(alp)      # numer of fixed population parameters
+	M     = rowdim(N)        # number of individuals
+	Ny    = colsum(N)        # number of data values summed over individuals
+	#
+	# accumulate out of bounds summations here
+	BLowCount  = fill(0, nb, 1)
+	BUpCount   = fill(0, nb, 1)
+	#
+	# default output arguments
+	bno     = false
+	fno     = false
+	f_alpno = false
+	f_bno   = false
+	Rno     = false
+	R_alpno = false
+	R_bno   = false
+	Dno     = false
+	D_alpno = false
+	#
+	# determine the covariance of the random parameters
+	i     = 1
+	b     = fill(0d0, nb, 1)
+	D     = true
+	D_alp = LTilde_alpOut or ITildeOut
+	ok    = model(i, alp, b, fno, f_alpno, f_bno, Rno, R_alpno, R_bno, D, D_alp)
+	if not ok then begin
+		stop
+		return false
+	end
+	Dinv  = inv(D)
+	#
+	# pass informaiton that does not change to bsim
+	function Model = model()
+	RootD          = cholesky(D)'
+	BLow           = bLow
+	BUp            = bUp
+	#
+	# number of simulated data sets
+	if ITildeOut then ...
+		kSim = K
+	else if type(yInOut) == "novalue" then ...
+		kSim = 1
+	else	kSim = 0
+	ySim  = fill(0d0, Ny, kSim)
+	bSim  = fill(0d0, nb, M)
+	#
+	# simulate the data values
+	for k = 1 to kSim begin
+		yindex = 1
+		for i = 1 to M begin
+			#
+			# evaluate the model for this individual
+			f_i   = true
+			R_i   = true
+			b     = BSim
+			ok = IModel(i, alp, b, f_i, f_alpno, f_bno, R_i, R_alpno, R_bno)
+			if not ok then begin
+				stop
+				return false
+			end
+			if bOut and k == 1 then ...
+				bSim.col(i) = b
+			#
+			# simulate data for this individual
+			e_i = cholesky(R_i)' * snormal(N(i), 1)
+			y_i = f_i + e_i
+			#
+			# store the result
+			ySim.blk(yindex, k, N(i), 1) = y_i
+			#
+			# advance index
+			yindex = yindex + N(i)
+		end
+	end
+	#
+	# data set for LTilde, LTilde_alp, and LTilde_alp_alp
+	if type(yInOut) == "novalue" then ...
+		yInOut = ySim.col(1)
+	#
+	more = LTildeOut or LTilde_alpOut or LTilde_alp_alpOut or ITildeOut
+	if not more then ...
+		return true
+	#
+	# initialize summations
+	LJ         = 0
+	LJ_alp     = 0
+	LJ_alp_alp = 0
+	LJz_alp    = 0
+	yindex     = 1
+	for i = 1 to M begin
+		#
+		# data for this individual
+		y_i = yInOut.row(yindex, N(i))
+		#
+		# log [ p( y_i | alp , b ) ] for J values of b
+		LogP         = fill(0, J, 1)
+		#
+		# Lambda_alp(alp, b, y_i) for J values of b
+		Term_alp   = fill(0, J, nalp)
+		#
+		# Lambda_alp^T * Lambda_alp - Lambda_alp_alp for J values of b
+		Term_alp_alp = fill(0, J, nalp^2)
+		#
+		# Lambda_alp(alp, b, z) for J values of b and K values of z
+		Termz_alp    = fill(0, J, nalp * k)
+		#
+		# log [ p( z | alp , b ) ] for J values of b and K values of z
+		LogPz        = fill(0, J, kSim)
+		#
+		sum         = 0
+		sum_alp     = 0
+		sum_alp_alp = 0
+		sumz        = fill(0d0, kSim, 1)
+		sumz_alp    = fill(0d0, kSim, nalp)
+		for j = 1 to J begin
+			#
+			# j-th simulation for this individual
+			b_i     = BSim
+			f_i     = true
+			R_i     = true
+			f_i_alp = LTilde_alpOut or ITildeOut
+			R_i_alp = LTilde_alpOut or ITildeOut
+			ok = IModel(i, alp, b_i, f_i, f_i_alp, f_bno, R_i, R_i_alp, R_bno)
+			if not ok then begin
+				stop
+				return false
+			end
+			#
+			# inverse of data variance
+			Rinv_i = inv(R_i)
+			#
+			# likelihood of actual data for this individual and simulated value of b
+			LogP(j) = - elsq(y_i, f_i, R_i, Rinv_i)
+			p       = exp( LogP(j) )
+			sum     = sum + p
+			if LTilde_alpOut or LTilde_alp_alpOut then begin
+				Lam_alp  = Lambda_alp(b_i, y_i, f_i, ...
+					R_i, Rinv_i, f_i_alp, R_i_alp, D, Dinv, D_alp)
+				sum_alp  = sum_alp + p * Lam_alp
+				Term_alp.row(j) = Lam_alp
+			end
+			if LTilde_alp_alpOut then begin
+				Individual = i
+				bStep            = novalue
+				x                = "alp"
+				Lam_alpno        = false
+				Lam_alp_alp      = true
+				Lam_alp_bno      = false
+				ok = LambdaDiff(...
+					function Model_i, ...
+					y_i, ...
+					alp, ...
+					alpStep, ...
+					b_i, ...
+					bStep, ...
+           				x, ...
+					Lam_alpno, ...
+					Lam_alp_alp, ...
+					Lam_alp_bno ...
+				)
+				if not ok then begin
+					stop
+					return false
+				end
+				Tmp         = Lam_alp' * Lam_alp - Lam_alp_alp
+				sum_alp_alp = sum_alp_alp + p * Tmp
+				dim Tmp(1, nalp^2)
+				Term_alp_alp.row(j) = Tmp
+			end
+			for k = 1 to ITildeOut * K begin
+				# likelihood of simulated data for this individual 
+				# and simulated value of b
+				z_i      = ySim.blk(yindex, k, N(i), 1)
+				term     = elsq(z_i, f_i, R_i, Rinv_i)
+				pz       = exp(- term )
+				sumz(k)  = sumz(k) + pz
+				Lamz_alp  = Lambda_alp(b_i, z_i, f_i, ...
+					R_i, Rinv_i, f_i_alp, R_i_alp, D, Dinv, D_alp)
+				sumz_alp.row(k)  = sumz_alp.row(k) + pz * Lamz_alp
+				LogPz(j, k) = - term
+				m = (k - 1) * nalp + 1
+				Termz_alp.blk(j, m, 1, nalp) = Lamz_alp
+			end
+		end
+		dJ         = double(J)
+		#
+		# determine the maximum value of P
+		MaxLogP    = max(LogP)
+		#
+		# scale by maximum value of p for numerical stability
+		LogP       = LogP - MaxLogP
+		P          = exp(LogP)
+		#
+		# scaled version of colsum(P)
+		sumP       = colsum(P)
+		#
+		# compute log ( colsum( P ) / J ) (correct for scaling)
+		LogAvgP    = MaxLogP + log( sumP / dJ )
+		#
+		# accumulate negative log-likelihood for all individuals
+		LJ    = LJ - LogAvgP
+		if LTilde_alpOut then begin
+			#
+			# compute - colsum( P * Lam_alp ) / colsum( P )
+			Ptmp       = fillcols(P, nalp)
+			Ratio_alp  = - colsum( Ptmp % Term_alp ) / sumP
+			LJ_alp  = LJ_alp - Ratio_alp
+		end
+		if LTilde_alp_alpOut then begin
+			#
+			# compute colsum( P * Term_alp_alp ) / colsum(P)
+			Ptmp       = fillcols(P, nalp^2)
+			Ratio_alp_alp = colsum( Ptmp % Term_alp_alp ) / sumP
+			dim Ratio_alp_alp(nalp, nalp)
+			LJ_alp_alp = LJ_alp_alp + Ratio_alp' * Ratio_alp  - Ratio_alp_alp
+		end
+		#
+		if ITildeOut then begin
+			# determine the maximum value of Pz for each simulation
+			MaxLogPz   = colmax(LogPz)
+			#
+			# scale by maximum value of Pz for numerical stability
+			LogPz      = LogPz - fillrows(MaxLogPz, J)
+			Pz         = exp(LogPz)
+			#
+			# scaled version of colsum(Pz)
+			sumPz      = colsum(Pz)
+			#
+			# compute log ( colsum( Pz ) / J ) (correct for scaling)
+			LogAvgPz   = MaxLogPz + log( sumPz / dJ )
+			#
+			# compute - colsum( Pz * Lam_alp ) / colsum( Pz )
+			Ratioz_alp = fill(0, K, nalp)
+			for k = 1 to ITildeOut * K begin
+				m = (k - 1) * nalp + 1
+				Ptmp               = fillcols(Pz.col(k), nalp)
+				Ratioz_alp.row(k)  = - colsum( Ptmp % Termz_alp.col(m, nalp) ) / sumPz(k)
+			end
+			LJz_alp    = LJz_alp - Ratioz_alp
+		end
+		#
+		# advance to next individual
+		yindex = yindex + N(i)			
+	end
+	if LTildeOut then ...
+		LTildeOut = LJ
+	if LTilde_alpOut then ...
+		LTilde_alpOut = LJ_alp
+	if LTilde_alp_alpOut then ...
+		LTilde_alp_alpOut = LJ_alp_alp
+	if ITildeOut then ...
+		ITildeOut = (LJz_alp' * LJz_alp) / double(K)
+	if bLowOut then ...
+		bLowOut = BLowCount
+	if bUpOut then ...
+		bUpOut = BUpCount
+	if bOut then ...
+		bOut = bSim
+	return true
+end

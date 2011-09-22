@@ -1,0 +1,163 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+
+function IdentityKronATimesB( k, A , B ) begin 
+	n = rowdim( A )
+ 	m = coldim( A )
+	p = coldim( B )
+	# check that B is mk x p
+	
+	C = zeros( k*n , p ) 
+ 	
+ 	for i = 1 to k begin
+		Bi = B.blk( (i-1)* m + 1 , 1, m , p )
+		Ci = A * Bi		
+		C.blk( (i-1)* n + 1 , 1, n , p ) = Ci
+	end
+	return C
+end
+
+
+
+#begin##
+$begin IdentityKronATimesB$$
+$escape #$$
+
+$spell
+IdentityKronATimesB
+kronecker
+Kron
+Akron
+Btimes
+$$
+
+$section Identity Kron A Times B$$
+
+$index IdentityKronATimesB$$
+$index kronecker product, with Identity matrix$$ 
+
+$table
+$bold Syntax:$$ $cend
+$syntax/IdentityKronATimesB(/k/, /A/, /B/)/$$
+
+$tend
+
+$fend 30$$
+
+$head Description$$
+This function computes 
+$math%
+	(I @ A ) B 
+%$$
+where $math%@%$$ denotes the kronecker product, and $math%I%$$ is a 
+$math%k x k%$$ identity matrix.
+$head Arguments$$
+$syntax/
+
+/k/
+/$$
+integer, size of Identity
+$syntax/
+
+/A/
+/$$
+matrix, $math%n x m%$$
+$syntax/
+
+/B/
+/$$
+matrix, must be $math%k m  x p%$$
+
+
+$head Example$$
+
+If you enter
+$codep
+clear 
+
+A = [{1,3,2},{5,1,7}]
+print "here is A"
+print A
+B = [{2,-1,2},{-5,1,2},{4,-5,2},{1,2,0}]'
+print "here is B"
+print B
+C = IdentityKronATimesB( 2, A, B )
+print "here is IdentityKronATimesB( 2, A, B )"
+print C
+I2 = identity(2)
+
+D = AkronBtimesC( I2,A,B )
+print "here is AkronBtimesC( I2,A,B )"
+print D
+$$
+O-Matrix will respond
+$codep
+here is A 
+{
+[ 1 , 5 ]
+[ 3 , 1 ]
+[ 2 , 7 ]
+}
+
+here is B 
+{
+[ 2 , -1 , 2 ]
+[ -5 , 1 , 2 ]
+[ 4 , -5 , 2 ]
+[ 1 , 2 , 0 ]
+}
+
+here is IdentityKronATimesB( 2, A, B ) 
+{
+[ -23 , 4 , 12 ]
+[ 1 , -2 , 8 ]
+[ -31 , 5 , 18 ]
+[ 9 , 5 , 2 ]
+[ 13 , -13 , 6 ]
+[ 15 , 4 , 4 ]
+}
+
+here is AkronBtimesC( I2,A,B ) 
+{
+[ -23 , 4 , 12 ]
+[ 1 , -2 , 8 ]
+[ -31 , 5 , 18 ]
+[ 9 , 5 , 2 ]
+[ 13 , -13 , 6 ]
+[ 15 , 4 , 4 ]
+}
+
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+end # blocking for automatic include

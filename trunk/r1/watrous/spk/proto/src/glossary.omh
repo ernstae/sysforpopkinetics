@@ -1,0 +1,114 @@
+$comment
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+$$
+$begin glossary$$
+$escape #$$
+
+$section Glossary$$
+
+$head Affine$$
+A function is affine if its second derivative is zero for all argument values.
+
+$head Derivative$$
+A scalar or vector valued function is a special case
+of a matrix valued function.
+In general, if $math%A(x)%$$ is a matrix valued function 
+of a column vector $math%x%$$, 
+its derivative with respect to $math%x%$$ is denoted by $math%A_x(x)%$$. 
+The derivative of the $th (m, n)$$ element of $math%A(x)%$$
+with respect to the $th k$$ element of $math%x%$$ is equal to the element of 
+$math%A_x(x)%$$ with row index $math%n + (m - 1) * rowdim(A(x))%$$ and with 
+column index $math%k%$$. The row dimension $math%A_x(x)%$$ is equal to the 
+product of the row and column dimension of $math%A_x(x)%$$. 
+The column dimension of $math%A_x(x)%$$ is equal to the row dimension of $math%x%$$.
+
+$head Gradient$$
+The gradient of a vector valued function is the transpose of its derivative.
+
+$head Ordering Of Vectors$$
+If $math%x%$$ and  $math%y%$$ are vector with the same length, 
+$math%x <= y %$$ if and only if 
+$math%x(j) <= y(j) %$$
+where $math%j%$$ is any index between one and the length of the vectors.
+ 
+$head Output Value$$
+Arguments to a routine that have names ending in $italic Out$$ are either true or 
+false on input to the routine. If the argument is false on input, 
+its output value may not be equal to the specified value for the argument. 
+If it is true on input, its output value will be equal to the specified value.
+
+$head Projected Gradient$$
+Suppose that $math%g(x)%$$ is the gradient of an objective function
+that is being minimized subject to the constraint that $math%xLow #le x #le xUp%$$.
+The project gradient $math%p(x)%$$ is defined by
+$math%
+	          / 0      #if xLow  = x  #and g (x) >= 0
+	         /         %       i    i %     i
+	         |
+	p (x) =  |  0      #if xUp  = x  #and g (x) <= 0
+	 i       |         %      i    i %     i
+	         \
+	          \ g (x)  #otherwise
+	             i
+%$$
+
+$head Individual Notation$$
+Individual notation refers to the following convention:
+$table
+$bold Notation$$ $cend $bold Description$$ $rend
+$math%alp%$$     $cend fixed population parameter vector    $rend
+$math%b%$$       $cend random population parameter vector for one individual  $rend
+$math%y%$$           $cend data vector for one individual                     $rend
+$math%f(alp, b)%$$   $cend model for mean of $math%y%$$ given $math%b%$$      $rend
+$math%R(alp, b)%$$   $cend model for variance of $math%y%$$ given $math%b%$$  $rend
+$math%D(alp)%$$      $cend model for variance of prior distribution on $math%b%$$ $rend
+$tend
+The fixed population parameter $math%alp%$$ is sometimes not included in
+individual notation. To be specific, in this case we have:
+$table
+$bold Notation$$ $cend $bold Description$$ $rend
+$math%f(b)%$$   $cend model for mean of $math%y%$$     $rend
+$math%R(b)%$$   $cend model for variance of $math%y%$$ $rend
+$math%D%$$      $cend variance of prior distribution on $math%b%$$ $rend
+$tend
+
+$head Population Notation$$
+Population notation refers to the following convention:
+$table
+$bold Notation$$     $cend $bold Description$$ $rend
+$math%alp%$$         $cend fixed population parameter vector    $rend
+$math%b%$$           $cend random population parameter vector for one individual  $rend
+$math%y_i%$$         $cend data vector for individual number i                    $rend
+$math%f_i(alp, b)%$$ $cend model for mean of $math%y_i%$$ given $math%b%$$        $rend
+$math%R_i(alp, b)%$$ $cend model for variance of $math%y_i%$$ given $math%b%$$    $rend
+$math%D(alp)%$$      $cend model for variance of prior distribution on $math%b%$$ $rend
+$tend
+
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end

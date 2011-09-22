@@ -1,0 +1,16 @@
+begin # blocking for automatic include
+function EuclidTrustRegionTest() begin
+	n     = 5
+	I     = double(identity(n))
+	Q     = diag( {1d0 / seq( n - 1 )^2d0, -1d0 / n^2d0 } )
+	c     = fill(1d0, n, 1)
+	Delta = 1d0
+	[xBar, alphaBar, ok] = EuclidTrustRegion(Q, c, Delta)
+	ok    = ok ...
+		and |xBar|   <= Delta (1d0 + 10d0 * DOUBLE_EPSILON) ...
+		and alphaBar >= 0d0 ...
+		and | alphaBar * ( |xBar| - Delta ) |   <= 10d0 * Delta * DOUBLE_EPSILON ...
+		and | c' + xBar' * (Q + alphaBar * I) | <= 10d0 * | c | * DOUBLE_EPSILON
+	return ok
+end
+end # blocking for automatic include

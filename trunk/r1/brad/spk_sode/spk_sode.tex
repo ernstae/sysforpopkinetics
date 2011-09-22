@@ -1,0 +1,427 @@
+% LaTeX Article Template - customizing page format
+%
+% LaTeX document uses 10-point fonts by default.  To use
+% 11-point or 12-point fonts, use \documentclass[11pt]{article}
+% or \documentclass[12pt]{article}.
+\documentclass{article}
+
+% Set left margin - The default is 1 inch, so the following 
+% command sets a 1.25-inch left margin.
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\evensidemargin}{-0.25in}
+
+% Set width of the text - What is left will be the right margin.
+% In this case, right margin is 8.5in - 1.25in - 6in = 1.25in.
+\setlength{\textwidth}{7in}
+
+% Set top margin - The default is 1 inch, so the following 
+% command sets a 0.75-inch top margin.
+\setlength{\topmargin}{-0.25in}
+
+% Set height of the text - What is left will be the bottom margin.
+% In this case, bottom margin is 11in - 0.75in - 9.5in = 0.75in
+\setlength{\textheight}{8in}
+
+\newcommand{\BE}{{\bf E}}
+\newcommand{\BN}{{\bf N}}
+\newcommand{\BR}{{\bf R}}
+\newcommand{\RT}{{\rm T}}
+\newcommand{\BV}{{\bf V}}
+\newcommand{\BZ}{{\bf Z}}
+
+\newcommand{\Bd}{{\bf d}}
+
+\newcommand{\Th}[1]{{\( #1 \)}-th}
+
+\newtheorem{lemma}{Lemma}
+
+% Set the beginning of a LaTeX document
+\begin{document}
+\Large
+
+\title{
+	Nonlinear Mixed Effects Modeling with 
+	Linear Stochastic Ordinary Differential Equations
+}
+\author{Bradley M. Bell}
+\date{\today}
+\maketitle
+
+
+\section{Notation}
+\begin{tabular}{lll}
+Notation
+	& Space
+	& Description 
+\\
+M       & \( \BZ_+ \)
+	& number of individuals in population study
+\\
+\( m \)
+	& \( \BZ_+ \)
+	& number of random effects per individual
+\\
+\( n \) 
+	& \( \BZ_+ \)
+	& number of state components in individual model 
+\\
+\( i \)
+	& \( \BZ_+ \)
+	& index indicating which individual  ( \( 1 \leq i \leq M \) )
+\\
+N(i)    & \( \BZ_+ \)
+	& number of measurements 
+\\
+\( j \)
+	& \( \BZ_+ \)
+	& index indicating which measurement value  ( \( 1 \leq j \leq N(i) \) )
+\\
+\( t_j^i \)
+	& \( \BR \)
+	& measurement time
+\\
+\( y_j^i \)
+	& \( \BR \)
+	& measurement value
+\\
+\( \varepsilon^i \)
+	& \( \BR^{N(i)} \)
+	& measurement noise
+\\
+\( \Sigma^i ( \eta^i ) \)
+	& \( \BR^{N(i) \times N(i)} \)
+	& covariance of the measurement noise
+\\
+\( \eta^i \)
+	& \( \BR^m \)
+	& vector of random effects 
+\\
+\( \Omega \)
+	& \( \BR^{m \times m} \)
+	& variance of the random effects
+\\
+\( \beta^i (t , \eta^i ) \)
+	& \( \BR^n \) 
+	& state vector 
+\\
+\( d^i ( \eta^i ) \)
+	& \( \BR^n \)
+	& state vector at time \( t = 0 \)
+\\
+\( w^i (t) \)
+	& \( \BR^n \) 
+	& Weiner process 
+\\
+\( A^i  (  \eta^i )  \)
+	& \( \BR^{n \times n} \)
+	& state vector multiplier in stochastic ODE  
+\\
+\( B^i (  \eta^i ) \)
+	& \( \BR^{n \times n} \)
+	& Weiner process multiplier in stochastic ODE  
+\\
+\( C^i (  \eta^i ) \)
+	& \( \BR^{N(i) \times n} \)
+	& state vector multiplier in measurement equation
+\end{tabular}
+
+\bigskip
+\noindent
+The values
+\( \Omega \),
+\( \Sigma^i ( \eta^i ) \), 
+\( A^i ( \eta^i ) \), 
+\( B^i( \eta^i ) \), 
+\( C^i ( \eta^i ) \), 
+and
+\( q( t, \eta^i ) \)
+may depend on a fixed effects vector \( \alpha \).
+Such a dependence would not
+affect the results below
+(but it is not included in order to simplify the presentation).
+
+\bigskip
+\noindent
+We use \( \BV ( X , Y ) \) for the covariance of \( X \) and \( Y \); i.e.,
+\begin{eqnarray*}
+\BV ( X , Y ) & = & \BE \{ [ X - \BE (X) ] [ Y - \BE (Y) ]^\RT \}
+\end{eqnarray*}
+
+\bigskip
+\noindent
+We use the notation \( C^i_j ( \eta^i ) \) for the \Th{j}
+row of the matrix \( C^i ( \eta^i ) \).
+
+\section{Model Equations}
+The model for the measurements is
+\begin{eqnarray*}
+y_j^i           & = &  
+C^i_j (  \eta^i ) \beta^i ( t_j^i , \eta^i ) + \varepsilon_j^i
+\\
+\varepsilon^i   & \sim & \BN [ 0 , \Sigma^i ( \eta^i ) ]
+\\
+\eta^i          & \sim & \BN ( 0 , \Omega )
+\end{eqnarray*}
+where the random variables \( \{ \varepsilon_j^i \} \) and \( \{ \eta^i \} \)
+are all mutually independent. 
+
+\bigskip
+\noindent
+The stochastic differential equation that models 
+the \Th{i} individual is
+\begin{eqnarray*}
+\beta^i (0, \eta^i ) 
+& = & d^i ( \eta^i )
+\\
+\Bd \beta^i (t, \eta^i ) 
+& = & 
+A^i (  \eta^i ) \beta^i (t, \eta^i ) \Bd t + B^i (  \eta^i ) \Bd w^i (t)
+\end{eqnarray*}
+where the the random effects vector \( \eta^i \) is a fixed parameter and
+the Weiner processes \( \{ w^i (t) \} \)
+are all mutually independent and independent of the random variables
+mentioned above. 
+
+
+\section{Stochastic ODE}
+We can write the stochastic differential equation above
+as the following stochastic integral 
+\begin{eqnarray*}
+\beta^i ( t , \eta^i ) - \exp[ A^i (  \eta^i ) t ] d^i ( \eta^i ) 
+& = &
+\int_{0}^{t}
+\exp[ A^i (  \eta^i ) ( t - \tau ) ] B^i (  \eta^i ) \Bd w^i ( \tau ) 
+\end{eqnarray*}
+It follows that the expected value of \( \beta^i (t, \eta^i ) \)
+given \( \eta^i \) is
+\begin{eqnarray*}
+\BE [ \beta^i (t, \eta^i ) | \eta^i ]
+& = &
+\exp[ A^i (  \eta^i ) t ] d^i ( \eta^i )
+\end{eqnarray*}
+For \( t \geq s \), we define \( V^i (s , t | \eta^i ) \) 
+to be the covariance variance of \( \beta^i (t, \eta^i ) \) 
+and \( \beta^i (s, \eta^i ) \) given \( \eta^i \); i.e., 
+\begin{eqnarray*}
+V^i (s , t | \eta^i )
+& = &
+\BV [ \beta^i (s, \eta^i ) , \beta^i (t, \eta^i ) | \eta^i ]
+\end{eqnarray*}
+A direct application of the Ito isometry yields the following equation
+\begin{eqnarray*}
+V^i (t , t | \eta^i )
+& = &
+\int_0^{t}
+\exp[ A^i (  \eta^i ) ( t - \tau ) ] 
+	B^i (  \eta^i ) B^i (  \eta^i )^\RT 
+		\exp[ A^i (  \eta^i ) ( t - \tau ) ]^\RT
+			\Bd \tau
+\end{eqnarray*}
+It follows that this variance satisfies the following
+intial value ordinary differential equation
+\begin{eqnarray*}
+V^i ( 0 ,  0 | \eta^i ) & = & 0
+\\
+\partial_t  V^i (t , t |  \eta^i )  
+& = & A^i  (  \eta^i ) V^i (t , t | \eta^i ) 
+  +   V^i (t , t | \eta^i ) A^i (  \eta^i )^\RT 
+  +   B^i (  \eta^i ) B^i (  \eta^i )^\RT 
+\end{eqnarray*}
+It also follows from the independent increments in a Weiner process that
+for \( t > s \)
+\begin{eqnarray*}
+V^i ( s , t | \eta^i ) & = & V^i (s , s | \eta^i )
+\end{eqnarray*}
+We define \( E^i (t | \eta^i ) \in \BR^n \) to be the expected value
+of \( \beta^i (t, \eta^i ) \) given \( \eta^i \).
+We also have the following initial value ordinary differential equaiton
+for this expected value
+\begin{eqnarray*}
+E^i (0 | \eta^i ) & = & d^i ( \eta^i )
+\\
+\partial_t E^i (t | \eta^i ) & = & A^i  (  \eta^i ) E^i (t | \eta^i )
+\end{eqnarray*}
+
+
+\section{Likelihood Functions}
+The combination of all the model random variables 
+is multi-normally distributed.
+In addition, except for functions of the fixed
+and random effects, all the models are linear.
+Thus, we can specify the likelihood for any random variable,
+given the fixed and random effects, by determining its mean and variance.
+We define \( F^i ( \eta^i ) \in \BR^{N(i)} \) as the mean of
+\( y^i \) given \( \eta^i \)
+\begin{eqnarray*}
+F^i_j ( \eta^i )
+& = &
+\BE [ y_j^i | \eta^i ] 
+\\
+& = & 
+C^i_j ( \eta^i ) E^i ( t_j^i | \eta^i )
+\end{eqnarray*}
+We use the notation
+\( R_{j,k}^i ( \eta^i ) \in \BR^{N(i) \times N(i)} \) 
+for the conditional covariance of \( y^i_j \) with \( y^i_k \)
+which is given as follows:
+for \( j \leq k \) ( \( t_j^i \leq t_k^i \) )
+\begin{eqnarray*}
+R_{j,k}^i ( \eta^i )
+& = &
+R_{k,j}^i ( \eta^i )
+\\
+& = &
+\BV [ y_j^i , y_k^i | \eta^i , \beta^i ( 0 , \eta^i ) ]
+\\
+& = &
+C^i_j ( \eta^i ) V^i ( t_j^i , t_k^i | \eta^i ) C^i_k ( \eta^i )^\RT
++
+\Sigma^i_{j,k} ( \eta^i )
+\end{eqnarray*}
+
+\section{Example}
+We now apply the analysis above to a particular example.
+Suppose we are given a two compartment model diagrammed below.
+For the moment, we
+drop the dependence on time \( t \),
+individual index \( i \),
+and random effects value \( \eta^i \),
+to simply the presentation.
+
+
+% ===========================================================================
+% The default \unitlength for a picture is one point; i.e., ~ 1/72 inches
+% diagram with size (250, 200) and lower left corner at (-40,0)
+% In the picture below 0  <= x <= 240, 40 <= y <= 175 
+\begin{picture}(320,215)(-40,0)
+
+% Bolus injection -----------------------------------------
+% text d with its bottom center at location(15, 110)
+\put(15, 110){\makebox(0,0)[bc]{\( d=1 \)}}
+
+% line starting at (0, 105), dx = 1, dy = 0, length = 20
+\put(0, 105){\line(1, 0){30}}
+
+% line starting at (0,  95), dx = 1, dy = 0, length = 20
+\put(0,  95){\line(1, 0){30}}
+
+% line starting at (40, 100), dx = -1, dy = 1, length = 10
+\put(40, 100){\line(-1, 1){10}}
+
+% line starting at (40, 100), dx = -1, dy = -1, length = 10
+\put(40, 100){\line(-1, -1){10}}
+
+% First compartment --------------------------------------
+% circle centered a (60, 100), diameter = 40
+\put(60,100){\circle{40}}
+
+% text q_0 centered at the location (60, 100)
+\put(60, 100){\makebox(0,0)[c]{\( q_0 \)}}
+
+% vector starting at (100, 100), dx = 1, dy = 0, length = 40
+\put(80, 100){\vector(1,0){40}}
+
+% text k_a with its bottom center at location (100, 105)
+\put(100, 105){\makebox(0,0)[bc]{\( k_a \)}}
+
+% Second compartment --------------------------------------
+% circle centered a (140, 100), diameter = 40
+\put(140,100){\circle{40}}
+
+% text q_1 centered at the location (140, 100)
+\put(140, 100){\makebox(0,0)[c]{\( q_1 \)}}
+
+% vector starting at (160, 100), dx = 1, dy = 0, length = 40
+\put(160, 100){\vector(1,0){40}}
+
+% text k_e with its bottom center at location (200, 105)
+\put(180, 105){\makebox(0,0)[bc]{\( k_e \)}}
+
+% line starting at (155, 115), dx = 1, dy = 1, length = 40
+\put(155, 115){\line(1,1){40}}
+
+% text y = \beta q_1  + epsilon with bottom center at (195, 155)
+\put(155, 155){
+	\framebox(100,20)[c]{\( y = \beta q_1  + \varepsilon \)}
+}
+
+\end{picture}
+% ===========================================================================
+
+\bigskip
+\noindent
+We now include the dependence on time \( t \) and write
+the corresponding deterministic ordinary differential equations
+\[
+\begin{array}{rclcrcl}
+q_0 (0) & = & 1 & , & q_0 (t) & = & -k_a q_0 (t) 
+\\ 
+q_1 (0) & = & 0   & ,  & q_1 (t) & = & +k_a q_0 (t) - k_e q_1 (t) 
+\end{array}
+\]
+The corresponding solution is
+\begin{eqnarray*}
+q_0 (t)   & = & \exp( - k_a t ) \\
+q_1 (t)   & = & k_a \frac{ \exp( - k_a t ) - \exp( -k_e t ) }{ k_e - k_a }
+\end{eqnarray*}
+We now include the dependence on individual index \( i \)
+random effects vector \( \eta^i \),
+and fixed effects vector \( \alpha \) in our model:
+\begin{eqnarray*}
+\Bd \beta^i (t, \alpha, \eta^i ) & = & 
+	\exp( \alpha_6 / 2 ) \; \Bd w (t)  
+\\
+\beta^i (0, \alpha, \eta^i ) & = & 
+	\alpha_0 \exp( \eta^i_0 )   
+\\
+k_a ( \alpha , \eta^i ) & = & 
+	\alpha_1 \exp( \eta^i_1 ) 
+\\
+k_e ( \alpha , \eta^i ) & = & 
+	\alpha_2 \exp( \eta^i_2 ) 
+\\
+\Omega_{k, \ell} ( \alpha ) & = & \left\{ \begin{array}{ll}
+	\exp( \alpha_{k + 3} ) & \mbox{if} \; k = \ell \in \{ 0 , 1 , 2 \} 
+	\\
+	0                      & \mbox{otherwise}
+\end{array} \right.
+\\
+\Sigma^i_{j, k} & = & \left\{ \begin{array}{ll}
+	\sigma^2 & \mbox{if} \; j = k \in \{ 1 , \ldots , N(i) \} 
+	\\
+	0                      & \mbox{otherwise}
+\end{array} \right.
+\end{eqnarray*}
+
+\bigskip
+\noindent
+Given \( \alpha \) and \( \eta^i \) we can calculate the necessary SPK model 
+function values for 
+\( i = 1 , \ldots , M \),
+\( j = 1 , \ldots , N(i) \),
+\( k = 1 , \ldots , N(i) \),
+\( \ell = 1 , \ldots , 4 \)
+\begin{eqnarray*}
+\Omega & = & \left( \begin{array}{ccc}
+	\exp( \alpha_3 ) & 0 & 0 \\
+	0 & \exp( \alpha_4 ) & 0 \\
+	0 & 0 & \exp( \alpha_5 ) 
+\end{array} \right)
+\\
+k_a^i & = & \alpha_1 \exp( \eta^i_1 ) 
+\\
+k_e^i & = & \alpha_2 \exp( \eta^i_2 ) 
+\\
+q^i_{1,j} & = & 
+	k_a^i 
+		\frac{ \exp( - k_a^i t^i_j ) - \exp( -k_e^i t^i_j ) } 
+			{ k_e^i - k_a^i }
+\\
+F^i_j & = & q^i_{1,j} \alpha_0 \exp( \eta^i_0 ) 
+\\
+R^i_{j,k} & = & 
+	\Sigma_{j,k}^i +
+		\exp( \alpha_6 ) q^i_{1,j} \min\{ t_j , t_k \}  q^i_{1,k} 
+\end{eqnarray*}
+
+\end{document}

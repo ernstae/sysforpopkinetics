@@ -1,0 +1,59 @@
+$begin DataSet$$
+$spell
+	const
+	valarray
+$$
+
+$section The DataSet Class$$
+
+$table
+$bold Syntax$$
+$cnext 
+$syntax%# include "DataSet.h"%$$
+$tend
+
+$fend 20$$
+
+$head DataSet$$
+The following is a documentation of the 
+aspects of the $code DataSet$$ class that are used
+by the monte carlo integration routine.
+
+$head Constructor$$
+The syntax
+$syntax%
+	DataSet<double> %set%;
+%$$
+constructs a data set in which each data value is stored
+as a $code double$$ value.
+
+
+$head popSize, M$$
+The variable
+$syntax%
+	const int %set%.popSize;
+%$$
+specifies the number of individuals in the population
+data set.
+
+$head data[i]->DV$$
+For $latex i = 0 , \ldots , M-1$$,
+$syntax%%set%.data[%i%]->DV%$$ is a $code valarray$$ that
+contains the measurement values for the $th i$$ individual.
+
+$subhead N[i]$$
+It follows that the corresponding number of measurements is
+$syntax%
+	%N%[%i%] = %set%.data[%i%]->DV.size()
+%$$
+
+$subhead Measurements$$
+It also follows that for $latex j = 0 , \ldots , N[i] - 1$$
+$syntax%
+	%set%.data[%i%]->DV[j]
+%$$
+is the $th j$$ measurement for the $th i$$ individual.
+
+
+
+$end

@@ -1,0 +1,360 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+
+#begin##
+$begin cganybox$$
+$spell cgbox
+	itr
+	dx
+	ndir
+	fval
+	eps
+	mitr
+	dir
+	fmin
+	xmin
+	diag
+	seq
+	ok
+	Cg
+	pk
+	rowdim
+$$
+
+$section Conjugate Gradient Optimization With Derivatives And Box Constraints$$
+
+$index CgAnyBox$$
+$cindex conjugate gradient optimization \with derivatives \and box constraints$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/function CgAnyBox( ...
+function /fval/, ...
+/eps/, ...
+/delta/, ...
+/mitr/, ...
+/xLow/, /xUp/, /xIn/, /xOut/, ...
+/fOut/, ...
+/level/ ...
+)/$$
+$tend
+
+$fend 25$$
+
+$head Description$$
+Use the conjugate gradient method to solve the problem
+$math%
+	\minimize f(x) \with \respect \to x
+	\subject \to xLow \le x \le xUp
+%$$
+The return value for $code cgbox$$ is either true or false. If it is true,
+the algorithm converged.
+
+
+$head Arguments$$
+$syntax/fval(/x/, /fOut/, /gOut/)
+/$$
+The vector $italic x$$ has the same type and dimension as $italic xIn$$.
+It specifies the point at which to evaluate $math%f(x)%$$.
+The $xref/glossary/Output Value/output value/$$ of $italic fOut$$
+is equal to $math%f(x)%$$.
+The $xref/glossary/Output Value/output value/$$ of $italic gOut$$
+is a vector with the same type and length as $italic x$$ and equal
+to the derivative $math%f_x(x)%$$, or the corresponding gradient.
+The return value of $italic fval$$ is true,
+if it succeeds and false otherwise.
+
+$syntax/
+
+/xLow/
+/$$
+The real or double-precision column vector $italic xLow$$ specifies the 
+lower limit for the box constraints in the problem. 
+
+$syntax/
+
+/xUp/
+/$$
+The real or double-precision column vector $italic xUp$$ specifies the 
+upper limit for the box constraints in the problem.
+It has the same length as $italic xLow$$
+
+$syntax/
+
+/xIn/
+/$$
+The real or double-precision column vector $italic xIn$$ specifies the 
+initial estimate for the argument that solves the problem. 
+It has the same length as $italic xLow$$ and satisfies
+the box constraints
+$math%xLow \le xIn <= \le xUp%$$.
+
+
+$syntax/
+
+/xOut/
+/$$
+The $xref/glossary/Output Value/output value/$$ of $italic xOut$$
+is the final approximation for the solution to the problem.
+It has the same type and dimension as $italic xLow$$ and satisfies
+the box constraints
+$math%xLow \le xOut <= \le xUp%$$.
+
+$syntax/
+
+/eps/
+/$$
+Is a real or double-precision scalar greater than zero. 
+A minimizer approximation $math%xOut%$$ is accepted when 
+$math%
+	abs(xOut - xStar) \le eps (xUp - xLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%xStar%$$ is the true minimizer of the objective function.
+This is a rough approximation that is quick to
+calculate during the optimization procedure.
+The value $math%eps (xUp - xLow)%$$.
+is also used as the initial step size for the line search
+as a distance in the vector $math%x%$$ space.
+
+
+$syntax/
+
+/delta/
+/$$
+is a real or double-precision scalar greater than zero.
+A parameter estimate of $math%xOut%$$ is accepted when 
+$math%
+	f(xOut) - f(xStar) \le delta
+%$$
+where $math%xStar%$$ is its true minimizer of $math%f(x)%$$.
+
+$syntax/
+
+/mitr/
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+
+$syntax/
+
+/fOut/
+/$$
+he $xref/glossary/Output Value/output value/$$ of $italic fOut$$
+is a row vector containing the value
+of the objective function at each iteration. The value 
+$math%fout(j)%$$
+is the objective function at the beginning of the $th j$$ iteration.
+
+$syntax/
+
+/level/
+/$$
+Tracing using the $italic level$$ parameter is done in normalized coordinates.
+If $math%level \ge 1%$$, a status window is used
+to trace some values.
+This window is automatically dismissed before $code cgbox$$ returns
+unless convergence fails, in which case an error message 
+is placed in the status window and it can be dismissed
+using its close button.
+Larger values of $italic level$$ entail more tracing in the command
+window with $4$$ being the highest level of tracing.
+If $math%level \ge 4%$$, 
+the analytic derivative of $math%f(x)%$$ as computed by $italic fval$$
+is compared with its numerical value
+before the optimization process is started. The step size
+$math%eps (xUp - xLow)%$$ is used for central difference approximation of the
+derivatives of $math%f(x)%$$ with respect to $math%x%$$.
+
+$head Example$$
+The following example program minimizes the function
+$math%
+                 N
+             1  ----                               2
+     f(x) =  -  >       i^2 * [ x(i) + (-1)^i * i ]
+             2  ----
+                i = 1
+%$$
+subject to the constraint that 
+$math%
+     -(N-1) \le x \le +(N-1) .
+%$$
+In the case below, where $math%N%$$ is $4$$, the minimizer
+is the vector $math%(1, -2, 3, -3)%$$.
+$codep
+
+clear
+function fval(x, fOut, gOut) begin
+	N = rowdim(x)
+	# 
+	# matrix with 1, 2, ... along diagonal
+	A = diag(double(seq(N)^2))
+	#
+	# vector of x(1) - 1, x(2) + 2, x(3) - 3 ...
+	y = x +  (-1d0)^seq(N) % seq(N)
+	#
+	# compute objective function
+	if fOut then ...
+		fOut = .5 * y' * A * y
+	#
+	# compute gradient
+	if gOut then ...
+		gOut = A * y
+	#
+	return true
+end
+N        = 4
+eps      = 1d-4
+delta    = 1d-7
+mitr     = 20
+xLow     = fill(-(N-1d0), N, 1)
+xUp      = fill(+(N+1d0), N, 1)
+xIn      = fill(0d0, N, 1)
+xOut     = true
+fOut     = true
+level    = 4
+ok       = CgAnyBox(function fval, eps, delta, mitr, xLow, xUp, xIn, xOut, fOut, level)
+#
+print "ok    =", ok
+print "xOut' =", xOut'
+print "fOut  =", fOut
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+#----------------------------------------------------------------------
+#end##
+#
+include cg01box.oms
+#
+local function dummy() begin
+end#
+# first call level function
+local function fone = dummy()
+local function ftwo = dummy()
+local CallLevel     = 0 
+#
+# current scaling data structrue
+local Xlow  = novalue
+local Xdiff = novalue
+local Xfree = novalue
+#
+# previous scaling data structrue
+local Ylow  = novalue
+local Ydiff = novalue
+local Yfree = novalue
+#
+# scaled version of the objective function
+local function fscaled(x, fOut, gOut) begin
+	#
+	# convert from scaled to user coordinates
+	X            = Xlow
+	X.row(Xfree) = Xlow.row(Xfree) + Xdiff.row(Xfree) % x
+	#
+	# evaluate the function in user cooridantes
+	FOut = fOut
+	GOut = gOut
+	#
+	if CallLevel == 1 then ...
+		ok = fone(X, FOut, GOut)
+	else if CallLevel == 2 then ...
+		ok = ftwo(X, FOut, GOut)
+	else	stop "error in cganybox"
+	#
+	if not ok then begin
+		stop
+		return false
+	end
+	#
+	# pass function value unchanged
+	if fOut then ...
+		fOut = FOut
+	#
+	# convert gradient from user to scaled coordiantes
+	if gOut then begin
+		dim GOut(rowdim(Xdiff), 1)
+		gOut = GOut % Xdiff
+		gOut = gOut.row(Xfree)
+	end
+	return true
+end
+#
+function CgAnyBox(function fval, eps, delta, mitr, xLow, xUp, xIn, xOut, fOut, level) begin
+	#
+	CallLevel = CallLevel + 1
+	#
+	# shift current scaling into Y
+	if CallLevel == 2 then begin
+		Ylow  = Xlow
+		Ydiff = Xdiff
+		Yfree = Xfree
+		function ftwo = fval()
+	end else if CallLevel == 1 then ...
+		function fone = fval()
+	else 	stop "cgbox does not support more than one level of recursion"
+
+	#
+	# new scaling parameters
+	Xlow  = xLow
+	Xdiff = xUp - xLow
+	Xfree = Xdiff > 0
+	#
+	# convert initial x to scaled coordinates
+	xsIn  = (xIn.row(Xfree) - xLow.row(Xfree)) / Xdiff.row(Xfree)
+	xsOut = xOut
+	#
+	# 
+	ok = Cg01Box(function fscaled, xsIn, eps, delta, mitr, level, xsOut, fOut)
+	if not ok then ...
+		stop
+	#
+	if ok and xOut then begin
+		# convert final x to user coordinates and
+		# ensure exact equality when on boundry
+		xfree  = xsOut % Xdiff.row(Xfree) + Xlow.row(Xfree)
+		lower  = xsOut == 0
+		upper  = xsOut == 1
+		free   = not (lower or upper)
+		xfree  = free % xfree + lower % xLow.row(Xfree) + upper % xUp.row(Xfree)
+		xOut   = xLow
+		xOut.row(Xfree) = xfree
+	end
+	#
+	# shift current scaling into back to X
+	if CallLevel == 2 then begin
+		Xlow  = Ylow
+		Xdiff = Ydiff
+		Xfree = Yfree
+	end
+	#
+	CallLevel = CallLevel - 1
+	return ok
+end
+
+end # blocking for automatic include

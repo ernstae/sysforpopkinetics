@@ -1,0 +1,665 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+#begin##
+
+$begin ppkaOpt$$
+$escape #$$
+
+$spell
+	cg
+	df
+	dx
+	eps
+	epsline
+	fval
+	Hessian
+	Info
+	itr
+	Laplace
+	mitr
+	ndir
+	ok
+	ppka
+	Ri
+	Rval
+	Std
+	subvector
+	const
+	sqrt
+	snormal
+	seq
+$$
+
+
+
+$section Optimization Of Parametric Population Likelihood Approximations$$
+
+$index ppkaOpt$$
+$cindex optimization #of parametric population likelihood approximations$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/ppkaOpt( ...
+function /Model/, ...
+/objective/, ...
+/N/, ...
+/y/, ...
+/eps/, ...
+/delta/, ...
+/mitr/, ...
+/level/, ...
+/alpStep/, /alpLow/,  /alpUp/, /alpIn/, /alpOut/,...
+/bStep/, /bLow/, /bUp/,  ...
+/bIn/, /bOut/, ...
+/LTildeOut/, /LTilde_alpOut/, /LTilde_alp_alpOut/  ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Determines the fixed population parameter vector $math%alp%$$ that
+optimizes an approximation for the negative log-likelihood.
+
+$head Reference$$
+$italic
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+$$
+
+$head Model Assumptions$$
+The following model assumptions are stated using 
+$xref/glossary/Population Notation/population notation/$$.
+The bar above $math%alp%$$ and $math%b_i%$$ denote the true, but unknown,
+values for the fixed population parameters and the random population parameters
+for the $th i$$ individual respectively.
+$math%
+	           ___   ___
+	y_i = f_i( alp , b_i ) + e_i
+	                ___  ___
+	e_i ~ N[0, R_i( alp, b_i)]
+	___          ___
+	b_i ~ N[0, D(alp)]
+%$$
+
+$head Arguments$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+The return value of $code ppkaOpt$$ is true, if it succeeds,
+and false otherwise.
+$syntax/
+
+/Model/(/i/, /alp/, /b/, /fOut/, /f_alpOut/, /f_bOut/, /ROut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+The following table uses $xref/glossary/Population Notation/population notation/$$
+$table
+$bold Argument$$
+	$cend $bold Value$$ 
+	$cend $bold Comments$$ $rend
+$italic i$$
+	$cend $math%i%$$
+	$cend index for this individual $rend
+$italic alp$$
+	$cend $math%alp%$$
+	$cend fixed population parameter vector $rend
+$italic b$$
+	$cend $math%b%$$
+	$cend random population parameter vector $rend
+$italic fOut$$
+	$cend $math%f_i(alp, b)%$$ 
+	$cend model for the mean of $math%y_i%$$ given $math%b%$$ $rend
+$italic f_alpOut$$ 
+	$cend $math%f_i_alp(alp, b)%$$ 
+	$cend derivative of $math%f_i(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+	$cend $math%f_i_b(alp, b)%$$ 
+	$cend derivative of $math%f_i(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic ROut$$ 
+	$cend $math%R_i(alp, b)%$$ 
+	$cend model for the variance of $math%y%$$ given $math%b%$$ $rend
+$italic R_alpOut$$
+	$cend $math%R_i_alp(alp, b)%$$ 
+	$cend derivative of $math%R_i(alp, b)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+	$cend $math%R_i_b(alp, b)%$$ 
+	$cend derivative of $math%R_i(alp, b)%$$ with respect to $math%b%$$ $rend
+$italic DOut$$ 
+	$cend $math%D(alp)%$$ 
+	$cend model for the variance of $math%b%$$ $rend
+$italic D_alpOut$$
+	$cend $math%D_alp(alp)%$$ 
+	$cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$syntax/
+
+/objective/
+/$$
+is a character scalar that is equal to "L", "E", or "F"
+for the modified Laplace, Expected Hessian, and First order objectives respectively.
+$syntax/
+
+/y/
+/$$
+is a double-precision column vector that contains
+the data for all the individuals.
+The vector $italic y$$ has
+$math%
+	N(1) + N(2) + ... + N(M)
+%$$
+elements where $math%M%$$ is the number of rows in $italic N$$.
+The data vector corresponding to the first individual is
+$math%
+	                                     T
+	y_1 = [ y(1) , y(2) , ... , y(N(1)) ]
+%$$
+Elements $math%y(N(1) + 1)%$$ through $math%y(N(1) + N(2))%$$ 
+correspond to the second individual and so on.
+(Note that $math%y_1%$$ refers to the first subvector or $italic y$$ while
+$math%y(1)%$$ refers to the first element of the vector $italic y$$.)
+
+$syntax/
+
+/N/
+/$$
+is an integer column vector. 
+The $th i$$ element of $italic N$$
+specifies the number of elements of $italic y$$ that
+correspond to the $th i$$ individual.
+$syntax/
+
+/eps/(1)
+/$$
+Is a double-precision scalar greater than zero. 
+A random population parameter value $math%b0%$$ is 
+accepted as the point at which to make the Laplace or Expected
+Hessian approximation when 
+$math%
+	abs(b0 - bHat) #le eps(1) (bUp - bLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%bHat%$$ is the true minimizer of 
+$xref/Lambda//Lambda(alp, b)/$$ with respect to $math%b%$$.
+This is a rough approximation that is quick to
+calculate during the optimization procedure.
+$pre
+
+$$
+$syntax/
+
+/eps/(2)
+/$$
+Is a double-precision scalar greater than zero. 
+A fixed population parameter value $math%alpOut%$$ is 
+accepted as close enough to optimal if 
+$math%
+	abs(alpOut - alpHat) #le eps(2) (alpUp - alpLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%alpHat%$$ is the true minimizer of 
+the approximation for the negative log-likelihood.
+This is a rough approximation that is quick to
+calculate during the optimization procedure.
+$syntax/
+
+/delta/(1)
+/$$
+is a double-precision scalar greater than zero.
+A random population parameter value $math%b0%$$ is 
+accepted as the point at which to make the Laplace or Expected
+Hessian approximation when
+$math%
+	Lmabda(alp, b0) - Lambda(alp, bHat) #le delta
+%$$
+where $math%bHat%$$ is its true minimizer of $math%Lambda(alp, b)%$$.
+$syntax/
+
+/delta/(2)
+/$$
+is a double-precision scalar greater than zero.
+AA fixed population parameter value $math%alpOut%$$ is 
+accepted as close enough to optimal if
+$math%
+	LTilde(alpOut) - LTilde(alpHat) #le delta
+%$$
+where $math%Ltilde(alp)%$$ 
+is the approximation for the negative log-likelihood
+as a function of the fixed population parameters and
+$math%alpHat%$$ is its true minimizer of $math%LTilde(alp)%$$.
+$syntax/
+
+/mitr/(1)
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence
+of the random population parameter values.
+$syntax/
+
+/mitr/(2)
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence
+of the fixed population parameter values.
+$syntax/
+
+/level/
+/$$
+this integer vector specifies the amount of tracing during the
+determination of the optimal parameter population values.
+$math%level(1)%$$ corresponds to the random population parameters
+and $math%level(2)%$$ corresponds to the fixed population parameters.
+$math%
+level(j) #ge 1
+%$$
+the current value of the objective that corresponds to $math%j%$$ is printed
+with the label $code f$$ and the norm of the gradient is
+printed with the label $code |g|$$ 
+(not including the constrained directions in the gradient).
+In addition, the total time between calling the objective and its
+return is printed.
+$math%
+level(j) #ge 2
+%$$
+the current value of the parameter that corresponds to $math%j%$$ is 
+printed with the label $code x$$, and the gradient of the
+objective is printed with the label $code g$$
+(not including the constrained directions in the gradient).
+$math%
+level(j) #ge 3
+%$$
+the step size and function values that corresponds to $math%j%$$ are traced
+during each line search procedure.
+$math%
+level(j) #ge 4
+%$$
+the analytic derivative of the objective function 
+that corresponds to $math%j%$$ 
+with respect to the
+parameters is compared with its numerical approximation.
+$syntax/
+
+/alpStep/
+/$$
+The double-precision column vector $italic alpStep$$
+specifies the step size used for approximating
+the derivatives with respect to the fixed population parameters.
+The value of this parameter does not matter unless
+$italic LTiled_alp_alpOut$$ is true.
+$syntax/
+
+/alpLow/
+/$$
+is a double-precision column vector with the same length as $italic alpIn$$
+specifying the lower limit for $italic alp$$ during the optimization.
+$syntax/
+
+/alpUp/
+/$$
+is a double-precision column vector with the same length as $italic alpIn$$
+specifying the upper limit for $italic alp$$ during the optimization.
+$syntax/
+
+/alpIn/
+/$$
+is a double-precision column vector specifying the initial value
+for the fixed population parameters.
+The $xref/glossary/Ordering Of Vectors/order condition/$$
+$math%alpLow \le alpIn \le alpUp%$$ is assumed to hold.
+$syntax/
+
+/alpOut/
+/$$
+The $xref/glossary/Output Value/output value/$$ of $italic alpOut$$
+is a double-precision column vector containing the approximate
+minimizer of the objective function.
+$syntax/
+
+/bStep/
+/$$
+The double-precision column vector $italic bStep$$
+specifies the step size used for approximating
+the derivatives with respect to the random population parameters.
+$syntax/
+
+/bLow/
+/$$
+is a double-precision column vector with the same row dimension as 
+$italic bIn$$. It specifies the lower limit for the
+random parameters for all the individuals.
+$syntax/
+
+/bUp/
+/$$
+is a double-precision column vector with the same row dimension as 
+$italic bIn$$. It specifies the upper limit for the
+random parameters for all the individuals.
+$syntax/
+
+/bIn/
+/$$
+is a double-precision matrix with its $th i$$ column
+specifying the initial value for the random parameters
+for the $th i$$ individual.
+The row dimension of $italic bIn$$ is equal
+to the number of random parameter for each individual
+and its column dimension is equal to the number of individuals.
+If $math%b_i%$$ is any column of $italic bIn$$,
+it is assumed that $math%bLow #le b_i #le bUp%$$.
+$syntax/
+
+/bOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic bOut$$
+is a double-precision matrix with the same row dimension as $italic bIn$$.
+The $th i$$ column of $italic bOut$$ contains an approximate minimizer 
+of the negative log-likelihood for the $th i$$ individuals data
+as a function of the random population parameters.
+This is under the assumption that $italic alphaOut$$
+is the true value for the fixed population parameters.
+The values $math%eps(1)%$$, and $math%delta(1)%$$, are used 
+for accepting the minimizers with respect to the random population parameters.
+$syntax/
+
+/LTildeOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic LOut$$
+is a row vector containing the value of the objective function at each iteration
+of the minimization method. Its first element is the value
+of the objective function at $math%alpIn%$$.
+Its last element is the value
+of the objective function at $math%alpOut%$$.
+The number of elements is one more than the number of 
+optimizer iterations used.
+$syntax/
+
+/LTilde_alpOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic L_alpOut$$
+is a row vector containing the derivative of the objective function
+at the value $math%alpOut%$$.
+$syntax/
+
+/LTilde_alp_alpOut/ 
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic L_alp_alpOut$$
+is a square matrix containing an approximation for the 
+Hessian of the objective function
+at the value $math%alpOut%$$.
+
+$head Example$$
+The following example is take directly from Section 3 of the paper
+$italic Approximating the maximum likelihood 
+estimate for models with random parameters$$
+The Laplace, Expected Hessian and First Order objective all
+give the same results for this model. 
+In addition, as predicted by the paper,
+if change the example to use the joint likelihood of the random
+population parameters and the data, 
+the value of $math%alp%$$ is greatly underestimated,
+in fact, it ends up at its lower limit.
+$codep
+
+
+#
+clear
+include ppkaOpt.oms
+#
+# parameters that define the simulation
+const alpTrue = 1d0    # true but unknown variance of b
+const M       = 100    # number of measurements and individuals
+#
+# simulation
+const e  = snormal(M, 1)                     # true but unknown measurement noise
+const bTrue = snormal(M, 1) * sqrt(alpTrue)  # true but unknown random population parameters
+const y     = bTrue  + e                     # measurement values
+#
+function Model(i, alp, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+	if fOut then ...
+		fOut = b
+	if f_alpOut then begin
+		f_alpOut = 0d0
+	end
+	if f_bOut then ...
+		f_bOut   = 1d0
+	if ROut then ...
+		ROut     = 1d0
+	if R_alpOut then ...
+		R_alpOut = 0d0
+	if R_bOut then ...
+		R_bOut   = 0d0
+	if DOut then ...
+		DOut     =  alp
+	if D_alpOut then ...
+		D_alpOut = 1d0
+	return true
+end
+#
+objective = "F"
+N         = fill(1, M, 1)
+eps       = [1d-3, 1d-3]
+delta     = [1d-6, 1d-6]
+mitr      = [40, 40]
+level     = [0, 1]
+alpStep   = 1d-2
+alpIn     = 2d0
+alpLow    = 1d-1
+alpUp     = 1d+1
+bLow      = -1d1
+bUp       = 1d1
+bStep     = 1d-2
+bIn       = fill(1d0, 1, M)
+alpOut            = true
+bOut              = true
+LTildeOut         = true
+LTilde_alpOut     = true
+LTilde_alp_alpOut = true
+#
+ok = ppkaOpt( ...
+	function Model, ...
+	objective, ...
+	N, ...
+	y, ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	alpStep, alpLow,  alpUp,  alpIn, alpOut, ...
+	bStep,  bLow, bUp, ...
+	bIn, bOut, ...
+	LTildeOut, LTilde_alpOut, LTilde_alp_alpOut  ...
+)
+print "ok                =", ok
+print "alpOut            =", alpOut
+print "LTildeOut         =", LTildeOut
+print "LTilde_alpOut     =", LTilde_alpOut
+print "LTilde_alp_alpOut =", LTilde_alp_alpOut
+
+$$
+If you run the program above, O-Matrix will reply:
+$codep
+	itr = 0 f = 186.527 |g| = 33.9815 time = 2.985 
+	x'  = 0.191919 
+	g'  = 33.9815 
+	itr    = 1 f      = 185.305 |g|    = 4.28928 |dx|   = 0.0572254 df     = 1.22164 epsline= 0.1 ndir   = 2 change = F 
+	itr    = 2 f      = 185.294 |g|    = 0.0682058 |dx|   = 0.00510414 df     = 0.0112721 epsline= 0.0114451 ndir   = 2 change = F 
+	line search not optimal 
+	change in x to small 
+	itr    = 3 f      = 185.294 |g|    = 0.000382889 |dx|   = 7.85907e-005 df     = 2.69577e-006 epsline= 0.00102083 ndir   = 2 change = F 
+	change in x to small 
+	itr    = 4 f      = 185.294 |g|    = 0.000382889 |dx|   = 0 df     = 0 epsline= 0.001 ndir   = 1 change = F 
+	x'  = 0.129511 
+	g'  = 0.000382889 
+	cg01box converged 
+	ok                = T 
+	alpOut            = 1.38216 
+	LTildeOut         = [ 186.527 , 185.305 , 185.294 , 185.294 , 185.294 ] 
+	LTilde_alpOut     = 3.86756e-005 
+	LTilde_alp_alpOut = 8.81149
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+---------------------------------------------------------------------
+#end##
+include LTilde.oms
+include TranCenDiff.oms
+#
+local bBest = novalue
+local LBest = novalue
+local Ok    = novalue
+#
+local Objective = novalue
+local N         = novalue
+local Y         = novalue
+local Eps       = novalue
+local Delta     = novalue
+local Mitr      = novalue
+local Level     = novalue
+local BLow      = novalue
+local BUp       = novalue
+local BStep     = novalue
+#
+local function dummy() begin
+	stop "Model not set"
+end
+local function Model = dummy()
+#
+local function Fval( ...
+	alp,  ...
+	LTildeOut, ...
+	LTilde_alpOut ...
+) begin
+	bIn    = bBest
+	bOut   = true
+	LTmp   = true
+	if not Ok then return false
+	Ok  = LTilde( ...
+		function Model, ...
+		Objective, ...
+		Y,  ...
+		N, ...
+		Eps, ...
+		Delta, ...
+		Mitr, ...
+		Level, ...
+		alp, ...
+		BLow, BUp, BStep,  ...
+		bIn, bOut, ...
+		LTmp, ...
+		LTilde_alpOut ...
+	)
+	if not Ok then return false
+	#
+	if type(LBest) == "novalue" then begin
+		LBest = LTmp
+		bBest = bOut
+	end else if LTmp < LBest then begin
+		LBest = LTmp
+		bBest = bOut
+	end
+	if LTildeOut then ...
+		LTildeOut = LTmp
+	return true
+end
+local function F_alp(alp) begin
+	L       = false
+	L_alp   = true
+	if Ok then ...
+		Ok  = Fval(alp, L, L_alp)
+	if Ok then ...
+		return L_alp
+	return fill(0d0, 1, rowdim(alp))
+end
+#
+function ppkaOpt( ...
+	function model, ...
+	objective, ...
+	n, ...
+	y, ...
+	eps, ...
+	delta, ...
+	mitr, ...
+	level, ...
+	alpStep, alpLow, alpUp, alpIn, alpOut, ...
+	bStep, bLow, bUp, ...
+	bIn, bOut, ...
+	LTildeOut, LTilde_alpOut, LTilde_alp_alpOut  ...
+) begin
+	#
+	bBest  = bIn
+	LBest  = novalue
+	Ok     = true
+	#
+	function Model = model()
+	Objective      = objective
+	N              = n
+	Y              = y
+	Eps            = eps(1)
+	Delta          = delta(1)
+	Mitr           = mitr(1)
+	Level          = level(1)
+	BLow           = bLow
+	BUp            = bUp
+	BStep          = bStep
+	#
+	xLow   = alpLow
+	xUp    = alpUp
+	xIn    = alpIn
+	xOut   = true
+	fOut   = true
+	[mOut, xOut, fOut, fCount, gCount] = CgAnyBox( ...
+		function Fval, ...
+		eps(2), ...
+		delta(2), ...
+		mitr(2), ...
+		level(2), ...
+		xLow, ...
+		xUp, ...
+		xIn ...
+	)
+	if not Ok or mOut <> "ok" then begin
+		bBest = novalue
+		return false
+	end
+	#
+	if alpOut then ...
+		alpOut    = xOut
+	if bOut then ...
+		bOut      = bBest
+	if LTildeOut then ...
+		LTildeOut = fOut'
+	if LTilde_alpOut then ...
+		LTilde_alpOut = F_alp(alpOut)
+	if LTilde_alp_alpOut then ...
+		LTilde_alp_alpOut = TranCenDiff(function F_alp, alpOut, alpStep)
+	#
+	bBest = novalue
+	return true
+end
+

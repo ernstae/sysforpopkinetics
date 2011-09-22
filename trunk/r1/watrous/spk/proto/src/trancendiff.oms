@@ -1,0 +1,137 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # Begin blocking entire file for automatic inclusion
+
+#begin##
+---------------------------------------------------------------------
+Copyright (C) Harmonic Software Inc. 1995 - 1999, All rights reserved
+---------------------------------------------------------------------
+
+$begin TranCenDiff$$
+$spell Tran Cen Diff xp cendiff$$
+
+$section Transposed Central Difference Approximation Of Derivatives$$
+
+$index TranCenDiff$$
+$cindex transposed central difference approximation \of derivatives$$
+
+$table
+$bold Syntax$$   $cend  $syntax/TranCenDiff(function /F/, /x/, /step/)/$$        $rend 
+$bold See Also$$ $cend  $mref/cendiff/$$   
+$tend
+$fend 25$$
+$head Description$$
+Returns the transpose of a central difference approximation for the derivative of 
+the matrix valued function $math%F(x)%$$.
+$syntax/
+
+/F(xp)/
+/$$
+this function call returns a real or double-precision
+matrix equal to $math%F(xp)%$$ where $italic xp$$ is a vector with
+the same type and dimensions as $italic x$$.
+$syntax/
+
+/x/
+/$$
+is a real or double-precision vector 
+that specifies the point at which to approximate the derivative.
+$syntax/
+
+/h/
+/$$
+The vector $italic h$$ has the same type and dimension as
+$italic x$$ and specifies the step size for approximating 
+the partials of $italic F$$.
+If $math%h(j)%$$ is 0, 
+partials with respect to $math%x(j)%$$ are not approximated and 0 
+is returned for the corresponding elements of the return value.
+$pre
+
+$$
+The return value of $code cendiff$$
+has the type that results from 
+$mref/coercion/$$
+between the type of $italic x$$, $italic h$$ and $math%f(x)%$$.
+$pre
+
+$$
+We use the notation $math%f%$$ for the number of rows
+and $math%g%$$ for the number of columns in the matrix value $math%F(x)%$$.
+We also use the notation $math%nx%$$ for the number of elements of $italic x$$.
+the $th (k + (i-1)nx, j)$$ element is an approximation
+for the derivative of the $th (i,j)$$ element of $math%F(x)%$$ with
+respect the $th k$$ element of $math%x%$$.
+
+$head Example$$
+$codep
+	function f(x) begin
+		return x^2
+	end
+	x = 1.
+	h = .1
+	cendiff(function f, x, h)
+$$
+returns
+$codep
+	2
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+#
+function TranCenDiff(function F, x, step) begin
+	F0  = F(x)                      # value of function at x
+	f   = rowdim(F0)
+	g   = coldim(F0)
+	nx  = rowdim(x) * coldim(x)     # dimension of argument space
+	#
+	# dimension the result
+	J = fill(0, nx * f, g)
+	#
+	# for each component of x
+	for k = 1 to nx begin 
+		if step(k) <> 0 then begin
+			xtmp     = x
+			xtmp(k)  = x(k) + step(k)
+			fp       = F(xtmp)
+			xtmp(k)  = x(k) - step(k)
+			fm       = F(xtmp)
+			ratio    = (fp - fm) / step(k)
+			for i = 1 to f begin
+				J.row(k + (i - 1) * nx) = ratio.row(i)
+			end
+		end
+	end
+	J = J / 2
+	return J
+end
+
+end     # End blocking entire file for automatic inclusion

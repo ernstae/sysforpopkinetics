@@ -1,0 +1,3 @@
+# ! /bin/bash
+f77 -g adapt.f Test.f -o Test
+./Test

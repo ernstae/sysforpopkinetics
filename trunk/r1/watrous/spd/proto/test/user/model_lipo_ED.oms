@@ -1,0 +1,308 @@
+# Generated Model file from Mathematica 
+
+clear List
+clear RList
+clear Problem
+clear ED_Model
+clear D_Model
+clear Sim_Model
+clear Est_Model
+
+# this converts the annoying Fortran syntax of List(...0) to {...}
+function [ list ] = List() begin
+	list = fill(0d0,arg(0),rowdim(arg(1)))
+	for i = 1 to arg(0) begin
+		list.row(i) = arg(i)
+	end
+end
+
+# this converts the annoying Fortran syntax of List(...0) to [...]
+function [ list ] = RList() begin
+	list = fill(0d0,rowdim(arg(1)),arg(0))
+	for i = 1 to arg(0) begin
+		list.col(i) = arg(i)
+	end
+end
+
+# define the problem
+function Problem (sim_populations, est_populations, useguess, criterion, problem, output_file, xStep, xLow, xUp, xIn, alpTrue, alpStep, alpIn, alpLow, alpUp, alpP1, alpP2, K, eps, delta, mitr, level, covariates, bLength, alpLength, xLength) begin
+
+	criterion = "ED"
+	problem = "Lipoprotein example"
+	output_file = "output_lipo_ED"
+	sim_populations = 500
+	est_populations = 1 == 1
+
+	xLow = double( {0.007d0,0.007d0,0.007d0,0.007d0,0.007d0,0.007d0,0.007d0,0.007d0,0.007d0} )
+
+	xUp = double( {14d0,14d0,14d0,14d0,14d0,14d0,14d0,14d0,14d0} )
+
+	xIn = double ( {0.007,0.02567125810584633,0.1026823836769809,12.17038834774706,1.691213377375454,4.489692019580381,7.575203639712524,12.96140670635304,4.653548327400462} )
+
+#	xStep = double( 1d-3 )
+	xStep = (xUp - xLow) % double( 1d-3 )
+
+	eps = double( {1d-4,1d-4} )
+
+	delta = double( {1d-10,10d-10} )
+
+	
+	covariates = double( {0d0,0d0,0d0} )
+
+
+	mitr = int( {100,100} )
+
+	level = int( {0,1} )
+
+
+	K = int( {3,3,3} )
+
+	bLength = int( 4 )
+	alpLength = int( 8 )
+	
+	xLength = int( rowdim( xLow ) )
+
+	alpP1 = double( {31000d0,0.61d0,14000d0,0.13d0,86490000d0,0.0335d0,17640000d0,0.001521d0} )
+
+	alpP2 = double( {3000d0,0.08d0,3300d0,0.03d0,8649000d0,0.00436d0,3528000d0,0.000304d0} )
+
+
+	alpTrue = double( {31000d0,0.61d0,14000d0,0.13d0,86490000d0,0.0335d0,17640000d0,0.001521d0} )
+
+
+	# how do we play in alpha?
+
+	# then there's a heinous "correction factor" to scale the overall bounds
+	kludgey_constant = 10.0d0
+
+	# for the Gaussians, start at the mean
+	alpIn = alpP1
+
+	# the low and high should be set to mean(+/-)SD%C, where
+	# C is really quite arbitrary
+	alpUp = alpP1 + alpP2 % kludgey_constant 
+	alpLow = alpP1 - alpP2 % kludgey_constant 
+
+	alpUp = alpP1 % kludgey_constant 
+	alpLow = alpP1 / kludgey_constant 
+
+	alpLow = rowmax([fill(1d-5,alpLength,1), alpLow])
+	# assured of positivity of alphas
+
+	# for the step size, make it a function of the SD and bounds of the alpha
+	alpStep = (alpUp - alpLow) % double( 1d-3 )
+
+	# some foolishness I pulled from derivative analysis of the model
+	if ( 0 == 0 ) then begin
+
+		# check bounds, and stay off them!
+		xmax = colmax( xUp ) 
+		xmin = - colmax( - xLow ) 
+		xmin = xmin + (xmax - xmin) % 0.1d0
+		xmax = xmax % 0.9d0
+
+		xIn = fill( 0d0, xLength, 1) 
+		xPossible = double( {0.9603056354539425,5.597071413726384,4.506049520206961,26.263181249023802,0.9603056354539425,5.597071413726384,4.506049520206961,26.263181249023805} )
+
+		xPossible = double ( sort( { xmin, xmax, xPossible }) )
+		useguess = fill(-99d0,rowdim(xPossible),1)
+
+		n_useguess = 0
+
+		for i = 1 to rowdim(xPossible) begin
+
+			# bounds checking
+			if xPossible(i) > xmax then xPossible(i) = xmax
+			else if xPossible(i) < xmin then xPossible(i) = xmin
+
+			# eliminate duplicates
+			if not any(xPossible(i) == useguess) then begin
+				n_useguess = n_useguess + 1
+				useguess(n_useguess) = xPossible(i)
+			end
+		end
+			
+		useguess = useguess.row(1,n_useguess)
+
+	end else useguess = false 
+
+end
+
+# define the model function used for ED-optimality
+function ED_Model (i, x, alpha, b, fOut, f_xOut, f_alpOut, f_bOut, f_b_xOut, f_b_alpOut, ROut, R_xOut, R_alpOut, R_bOut, DOut, D_alpOut, palpOut, palp_alpOut) begin
+
+	n_bpop = 4
+	n_x = rowdim(x)
+	n_b = 4
+	n_alp = 8
+	n_d = 4
+
+	bpop = alpha.row(1,n_bpop)
+	d = alpha.row(n_bpop+1,n_d)
+
+	alpP1 = double( {31000d0,0.61d0,14000d0,0.13d0,86490000d0,0.0335d0,17640000d0,0.001521d0} )
+
+	alpP2 = double( {3000d0,0.08d0,3300d0,0.03d0,8649000d0,0.00436d0,3528000d0,0.000304d0} )
+
+
+	covariates = double( {0d0,0d0,0d0} )
+
+
+	if type(i) == "novalue" then begin
+		#print "WARNING: Model() called without individual index."
+		i = 1
+	end
+
+	# for this individual
+	a = covariates.row(i)
+
+	if fOut or ROut or R_xOut or R_alpOut or R_bOut then ...
+		fOut = (b(1) + bpop(1))/exp(x%(b(2) + bpop(2))) + (b(3) + bpop(3))/exp(x%(b(4) + bpop(4)))
+
+	if f_xOut then ...
+		f_xOut = diag ( -(((b(1) + bpop(1))%(b(2) + bpop(2)))/exp(x%(b(2) + bpop(2)))) - ((b(3) + bpop(3))%(b(4) + bpop(4)))/exp(x%(b(4) + bpop(4))) )
+
+	if f_alpOut or R_alpOut then ...
+		f_alpOut = [exp(-(x%(b(2) + bpop(2)))),-((x%(b(1) + bpop(1)))/exp(x%(b(2) + bpop(2)))),exp(-(x%(b(4) + bpop(4)))),-((x%(b(3) + bpop(3)))/exp(x%(b(4) + bpop(4)))),fill(0d0,n_x,1),fill(0d0,n_x,1),fill(0d0,n_x,1),fill(0d0,n_x,1)]
+
+
+
+	if f_bOut or R_bOut then ...
+		f_bOut = [exp(-(x%(b(2) + bpop(2)))),-((x%(b(1) + bpop(1)))/exp(x%(b(2) + bpop(2)))),exp(-(x%(b(4) + bpop(4)))),-((x%(b(3) + bpop(3)))/exp(x%(b(4) + bpop(4))))]
+
+
+
+	if f_b_xOut then begin
+		f_b_xOut = [-((b(2) + bpop(2))/exp(x%(b(2) + bpop(2)))),((b(1) + bpop(1))%(-1 + x%(b(2) + bpop(2))))/exp(x%(b(2) + bpop(2))),-((b(4) + bpop(4))/exp(x%(b(4) + bpop(4)))),((b(3) + bpop(3))%(-1 + x%(b(4) + bpop(4))))/exp(x%(b(4) + bpop(4)))]
+
+
+		calc = f_b_xOut
+		f_b_xOut=fill(0d0,n_b%n_x,n_x)
+		for j = 1 to n_x begin
+			f_b_xOut.blk(1+(j-1)%n_b,j,n_b,1) = calc.row(j)'
+		end
+	end
+
+	if f_b_alpOut then begin
+		f_b_alpOut = [fill(0d0,n_x,1),(x^2%(b(1) + bpop(1)))/exp(x%(b(2) + bpop(2))),fill(0d0,n_x,1),(x^2%(b(3) + bpop(3)))/exp(x%(b(4) + bpop(4))),fill(0d0,n_x,1),fill(0d0,n_x,1),fill(0d0,n_x,1),fill(0d0,n_x,1)]
+
+
+		calc = f_b_alpOut
+		f_b_alpOut=fill(0d0,n_b%n_x,n_alp)
+		for j = 1 to n_x begin
+			f_b_alpOut.blk(1+(j-1)%n_b,1,n_b,n_bpop) = diag(calc.blk(j,1,1,n_bpop))
+		end
+	end
+
+	if ROut then ...
+		ROut = diag( double(0.00111d0) % fill(1d0,n_x,1) )
+
+	if R_xOut then begin
+		R_xOut = fill(0d0,n_x,n_x)
+
+		calc = R_xOut
+		R_xOut=fill(0d0,n_x%n_x,n_x)
+		for j = 1 to n_x begin
+			R_xOut.col(j) = reshape( diag(calc.col(j)), n_x%n_x, 1)
+		end
+	end
+
+	if R_alpOut then begin
+		R_alpOut = fill(0d0,n_x,n_alp)
+
+		calc = R_alpOut
+		R_alpOut=fill(0d0,n_x%n_x,n_alp)
+		for j = 1 to n_alp begin
+			R_alpOut.col(j) = reshape( diag(calc.col(j)), n_x%n_x, 1)
+		end
+	end
+
+	if R_bOut then begin
+		R_bOut = fill(0d0,n_x,n_b)
+
+		calc = R_bOut
+		R_bOut=fill(0d0,n_x%n_x,n_b)
+		for j = 1 to n_b begin
+			R_bOut.col(j) = reshape( diag(calc.col(j)), n_x%n_x, 1)
+		end
+	end
+
+	if DOut then begin
+		DOut = double( d ) 
+
+		DOut = diag( DOut )	
+	end
+
+	if D_alpOut then begin
+		D_alpOut = [fill(0d0,1,n_bpop), fill(1d0,1,n_d)] 
+
+		calc = D_alpOut
+		D_alpOut=fill(0d0,n_d^2,n_alp)
+		for j = 1 to n_d begin
+			D_alpOut(j+(j-1)%n_d,j+n_bpop) = calc(j+n_bpop)
+		end
+	end
+
+	if palpOut then ...
+		palpOut = exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)/(16.%pi^4%alpP2(1)%alpP2(2)%alpP2(3)%alpP2(4)%alpP2(5)%alpP2(6)%alpP2(7)%alpP2(8))
+
+	if palp_alpOut then ...
+		palp_alpOut = [(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(1) - bpop(1)))/(16.%pi^4%alpP2(1)^3%alpP2(2)%alpP2(3)%alpP2(4)%alpP2(5)%alpP2(6)%alpP2(7)%alpP2(8)),(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(2) - bpop(2)))/(16.%pi^4%alpP2(1)%alpP2(2)^3%alpP2(3)%alpP2(4)%alpP2(5)%alpP2(6)%alpP2(7)%alpP2(8)),(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(3) - bpop(3)))/(16.%pi^4%alpP2(1)%alpP2(2)%alpP2(3)^3%alpP2(4)%alpP2(5)%alpP2(6)%alpP2(7)%alpP2(8)),(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(4) - bpop(4)))/(16.%pi^4%alpP2(1)%alpP2(2)%alpP2(3)%alpP2(4)^3%alpP2(5)%alpP2(6)%alpP2(7)%alpP2(8)),(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(5) - d(1)))/(16.%pi^4%alpP2(1)%alpP2(2)%alpP2(3)%alpP2(4)%alpP2(5)^3%alpP2(6)%alpP2(7)%alpP2(8)),(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(6) - d(2)))/(16.%pi^4%alpP2(1)%alpP2(2)%alpP2(3)%alpP2(4)%alpP2(5)%alpP2(6)^3%alpP2(7)%alpP2(8)),(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(7) - d(3)))/(16.%pi^4%alpP2(1)%alpP2(2)%alpP2(3)%alpP2(4)%alpP2(5)%alpP2(6)%alpP2(7)^3%alpP2(8)),(exp((-((alpP1(1) - bpop(1))^2/alpP2(1)^2) - (alpP1(2) - bpop(2))^2/alpP2(2)^2 - (alpP1(3) - bpop(3))^2/alpP2(3)^2 - (alpP1(4) - bpop(4))^2/alpP2(4)^2 - (alpP1(5) - d(1))^2/alpP2(5)^2 - (alpP1(6) - d(2))^2/alpP2(6)^2 - (alpP1(7) - d(3))^2/alpP2(7)^2 - (alpP1(8) - d(4))^2/alpP2(8)^2)/2.0)%(alpP1(8) - d(4)))/(16.%pi^4%alpP2(1)%alpP2(2)%alpP2(3)%alpP2(4)%alpP2(5)%alpP2(6)%alpP2(7)%alpP2(8)^3)]
+
+
+	return true
+end
+
+# the D-optimal requirements are the same, save that the p(alpha) components are unused
+function D_Model (i, x, alpha, b, fOut, f_xOut, f_alpOut, f_bOut, f_b_xOut, f_b_alpOut, ROut, R_xOut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+
+	palpOut = false
+	palp_alpOut = false
+
+	return ED_Model(i, x, alpha, b, fOut, f_xOut, f_alpOut, f_bOut, f_b_xOut, f_b_alpOut, ROut, R_xOut, R_alpOut, R_bOut, DOut, D_alpOut, palpOut, palp_alpOut) 
+
+end
+
+# simulation requirements are quite reduced
+function Sim_Model (i, x, alpha, b, fOut, ROut) begin
+
+	f_xOut=false
+	f_alpOut=false
+	f_bOut=false
+	f_b_xOut=false
+	f_b_alpOut=false
+	R_xOut=false
+	R_alpOut=false
+	R_bOut=false
+	DOut=false
+	D_alpOut=false
+	palpOut = false
+	palp_alpOut = false
+
+	return ED_Model(i, x, alpha, b, fOut, f_xOut, f_alpOut, f_bOut, f_b_xOut, f_b_alpOut, ROut, R_xOut, R_alpOut, R_bOut, DOut, D_alpOut, palpOut, palp_alpOut) 
+
+end
+
+# estimation requirement are modest
+function Est_Model (x, Pattern, i, alpha, b, fOut, f_alpOut, f_bOut, ROut, R_alpOut, R_bOut, DOut, D_alpOut) begin
+
+	# NOTE: the "x" dependency of this function must be buried from the estimation
+	# code
+
+	# sub-fraction of overall design for this individual
+	if i == 1 then ...
+		xInd = x.row(1,Pattern(1))
+	else ...
+		xInd = x.row(colsum(Pattern.row(1,i-1))+1,Pattern(i))
+
+	f_xOut=false
+	f_b_xOut=false
+	f_b_alpOut=false
+	R_xOut=false
+	palpOut = false
+	palp_alpOut = false
+
+	return ED_Model(i, xInd, alpha, b, fOut, f_xOut, f_alpOut, f_bOut, f_b_xOut, f_b_alpOut, ROut, R_xOut, R_alpOut, R_bOut, DOut, D_alpOut, palpOut, palp_alpOut) 
+
+end
+

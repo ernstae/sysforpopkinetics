@@ -1,0 +1,702 @@
+# ---------------------------------------------------------------------
+# File: ppdOpt.oms
+#
+#
+# Optimizes the population determinant optimal design criterion.
+#
+# Author: Mitch Watrous
+# 
+# ---------------------------------------------------------------------
+
+#begin##
+
+$begin ppdOpt$$
+$escape #$$
+
+$spell
+  cg
+  covariance
+  df
+  dx
+  eps
+  epsline
+  negLogVal
+  Hessian
+  Info
+  itr
+  Laplace
+  mod
+  mitr
+  ndir
+  ok
+  opt
+  pped
+  ppka
+  Ri
+  Rval
+  Std
+  subvector
+  const
+  sqrt
+  snormal
+  seq
+$$
+
+$section Optimization of the Population Determinant Criterion$$
+
+$index ppdOpt$$
+$cindex optimization #of #the population determinant criterion$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/ppdOpt( ...
+  function /Model/, ...
+  /K/, ...
+  /eps/, ...
+  /delta/, ...
+  /mitr/, ...
+  /level/, ...
+  /xStep/, /xLow/, /xUp/, /xIn/, /xOut/, ...
+  /alpStep/, /alp/, ...
+  /bLength/, ...
+  /phiTildeOut/, /phiTilde_xOut/, /phiTilde_x_xOut/ ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Determines the design vector $math%x%$$ that
+maximizes the parametric population determinant criterion
+$math%
+
+    phiTilde(x)  =  #det[ HTilde(x, alp) ]  .
+
+%$$
+In this expression, $xref/HTilde//HTilde(x, alp)/$$ is an approximation for
+the information matrix corresponding to the negative log-likelihood
+of all of the data,
+and $math%alp%$$ is the value for the fixed population parameter vector.
+$pre
+
+$$
+The full design parameter vector $math%x%$$ contains the design vectors 
+$math%x_i%$$ for all $math%M%$$ of the individuals in the population 
+together with $math%x_common%$$, which is a vector of design 
+parameters common to all of the individuals.
+That is,
+$math%
+           -          -
+          |  x_1       |
+          |  x_2       |
+          |   .        |
+    x  =  |   .        |  .
+          |   .        |
+          |  x_M       |
+          |  x_common  |
+           -          -
+
+%$$
+The combination of parameters that each individuals' model functions will
+depend on is denoted by
+$math%
+               -          -
+    chi_i  =  |  x_i       |  .
+              |  x_common  |
+               -          -
+
+%$$
+
+The approximate information matrix $math%HTilde(x, alp)%$$ is defined as
+$math%
+
+                        M
+                       ----   
+    HTilde(x, alp)  =  >      HTilde_i(chi_i, alp)  ,
+                       ----
+                       i = 1
+
+%$$
+where the contribution from each individual is given by
+replacing the derivatives with respect to the fixed population 
+parameter $math%alp%$$ by central difference approximations
+in the definition of
+$math%
+
+    HTilde_i(chi_i, alp)
+
+                                      T         -1            
+        =  fTilde_i_alp(chi_i, alp, 0)  VTilde_i  (chi_i, alp)  fTilde_i_alp(chi_i, alp, 0)
+
+           1                         T               -1                      -1             
+        +  - VTilde_i_alp(chi_i, alp)  kron[ VTilde_i  (chi_i, alp), VTilde_i  (xTilde_i, alp) ] VTilde_i_alp(chi_i, alp)  ,
+           2
+%$$
+and where
+$math%
+
+    VTilde_i(chi_i, alp)  =  RTilde_i(chi_i, alp)
+
+                                                                       T
+        +  fTilde_i_b(chi_i, alp, 0)  D(alp)  fTilde_i_b(chi_i, alp, 0)  .
+%$$
+
+$head Notes$$
+(1.) This function makes the following first order approximation
+for the model for the mean of the $th i$$ individual's data,
+$math%
+
+    fTilde_i(chi_i, alp, b_i)  =  f_i(chi_i, alp, 0)  +  f_i_b(chi_i, alp, 0) * b_i  ,
+
+%$$
+where $math%f_i_b(chi_i, alp, b_i)%$$ is the derivative of 
+$math%f_i(chi_i, alp, b_i)%$$ with respect to the random effect 
+vector $math%b_i%$$.
+$pre
+
+$$
+(2.) This function makes the following approximation for the
+model for the covariance of the $th i$$ individual's data,
+$math%
+
+    RTilde_i(chi_i, alp)  =  R_i(chi_i, alp, 0)  .
+%$$
+$pre
+
+$$
+(3.) This function requires the model function to provide the
+following second derivatives of $math%f_i(chi_i, alp, b_i)%$$
+$math%
+
+  f_i_b_chi(chi_i, alp, b_i)  ,
+
+  f_i_b_alp(chi_i, alp, b_i)  .
+%$$
+$pre
+
+$$
+(4.) The number of individuals in the population, $math%M%$$, is 
+determined by subtracting one from the number of elements in the 
+argument $italic K$$, which is a column vector containing 
+information about the partitioning of the elements in $italic x$$.
+
+$head Reference$$
+B. M. Bell, $italic Approximating The Marginal Likelihood Estimate 
+For Models With Random Parameters$$, Applied Mathematics and Computation,
+119 (2001), pp. 57-73. 
+
+$head Model Assumptions$$
+The following model assumptions are stated using 
+$xref/glossary/Population Notation/population notation/$$.
+The bar above $math%chi_i%$$, $math%alp%$$, and $math%b_i%$$ denote 
+the true, but unknown, values for the design parameters, 
+the fixed population parameters, and the random population 
+parameters for the $th i$$ individual, respectively.
+$math%
+             _____  ___   ___
+  y_i = f_i( chi_i, alp , b_i ) + e_i
+                  _____  ___  ___
+  e_i ~ N[0, R_i( chi_i, alp, b_i)]
+  ___          ___
+  b_i ~ N[0, D(alp)]
+%$$
+
+$head Return Values$$
+The return value of $code ppdOpt$$ 
+is true, if it succeeds, and false otherwise.
+
+$head Arguments$$
+$syntax//Model/(/i/, /chi/, /alp/, /b/, /fOut/, /f_chiOut/, /f_alpOut/, /f_bOut/, /f_b_chiOut/, /f_b_alpOut/, 
+    /ROut/, /R_chiOut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+$pre
+
+$$
+$center
+$table
+$bold Argument$$
+  $cend $bold Value$$ 
+  $cend $bold Comments$$ $rend
+$italic i$$
+  $cend $math%i%$$
+  $cend index for this individual $rend
+$italic chi$$
+  $cend $math%chi_i%$$
+  $cend design parameter vector for this individual combined with the
+          design parameter vector common to all individuals $rend
+$italic alp$$
+  $cend $math%alp%$$
+  $cend fixed population parameter vector $rend
+$italic b$$
+  $cend $math%b_i%$$
+  $cend random population parameter vector for this individual $rend
+$italic fOut$$
+  $cend $math%f_i(chi_i, alp, b_i)%$$ 
+  $cend model for the mean of $math%y_i%$$ given $math%b_i%$$ $rend
+$italic f_chiOut$$ 
+  $cend $math%f_i_chi(chi_i, alp, b_i)%$$
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic f_alpOut$$ 
+  $cend $math%f_i_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+  $cend $math%f_i_b(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%b_i%$$ $rend
+$italic f_b_chiOut$$ 
+  $cend $math%f_i_b_chi(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i_b(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic f_b_alpOut$$ 
+  $cend $math%f_i_b_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i_b(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic ROut$$ 
+  $cend $math%R_i(chi_i, alp, b_i)%$$ 
+  $cend model for the variance of $math%y_i%$$ given $math%b_i%$$ $rend
+$italic R_chiOut$$ 
+  $cend $math%R_i_chi(chi_i, alp, b_i)%$$
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic R_alpOut$$
+  $cend $math%R_i_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+  $cend $math%R_i_b(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%b_i%$$ $rend
+$italic DOut$$ 
+  $cend $math%D(alp)%$$ 
+  $cend model for the variance of $math%b_i%$$ $rend
+$italic D_alpOut$$
+  $cend $math%D_alp(alp)%$$ 
+  $cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$$
+
+$syntax/
+/K/
+/$$
+The $th i$$ element of the integer column vector $italic K$$
+specifies $math%K(i)%$$, the number of elements of $italic x$$ that
+correspond to the $th i$$ individual.
+The last element in $italic K$$ specifies $math%K_common%$$,
+the number of elements of $italic x$$ that
+are common to all of the individuals in the population.
+The number of elements in $italic K$$ should be one more than
+the number of individuals in the population, $math%M%$$,
+since the length of $italic K$$ minus one specifies $math%M%$$.
+$pre
+
+$$
+To be specific, the vector $italic x$$ should have
+$math%
+
+  K(1) + K(2) + ... + K(M) + K_common
+
+%$$
+elements.  
+The design vector corresponding to the first individual is
+$math%
+                                       T
+  x_1 = [ x(1) , x(2) , ... , x(K(1)) ]   .
+
+%$$
+Elements $math%x(K(1) + 1)%$$ through $math%x(K(1) + K(2))%$$ 
+correspond to the second individual and so on.
+The last $math%K_common%$$ elements make up $math%x_common%$$.
+(Note that $math%x_1%$$ refers to the first subvector or $italic x$$ while
+$math%x(1)%$$ refers to the first element of the vector $italic x$$.)
+
+$syntax/
+
+/eps/
+/$$
+Is a double-precision scalar greater than zero. 
+A design parameter value $math%xOut%$$ is 
+accepted as close enough to optimal if 
+$math%
+	abs(xOut - xHat) #le eps (xUp - xLow)
+%$$
+where $math%abs%$$ is the element-by-element absolute value function
+and $math%xHat%$$ is the true maximizer of the population optimal 
+design criterion.
+This is a rough approximation that is quick to
+calculate during the optimization procedure.
+$syntax/
+
+/delta/
+/$$
+is a double-precision scalar greater than zero.
+A design parameter value $math%xOut%$$ is 
+accepted as close enough to optimal if
+$math%
+	phiTilde(xOut) - phiTilde(xHat) #le delta
+%$$
+where $math%phiTilde(x)%$$ is the population optimal design criterion
+and $math%xHat%$$ is the true minimizer of $math%phiTilde(x)%$$.
+$syntax/
+
+/mitr/
+/$$
+this integer scalar specifies the maximum number of 
+iterations to attempt before giving up on convergence
+of the design parameter values.
+$syntax/
+
+/level/
+/$$
+this integer scalar specifies the amount of tracing during the
+determination of the optimal design parameter values.
+Note that the objective function for the optimization problem
+is the negative logarithm of the population optimal design criterion.
+$math%
+level #ge 1
+%$$
+the current value of the objective is printed
+with the label $code f$$ and the norm of the gradient is
+printed with the label $code |g|$$ 
+(not including the constrained directions in the gradient).
+In addition, the total time between calling the objective and its
+return is printed.
+$math%
+level #ge 2
+%$$
+the current value of the design parameters is 
+printed with the label $code x$$, and the gradient of the
+objective is printed with the label $code g$$
+(not including the constrained directions in the gradient).
+$math%
+level #ge 3
+%$$
+the step size and function values are traced
+during each line search procedure.
+$math%
+level #ge 4
+%$$
+the analytic derivative of the objective function 
+with respect to the design 
+parameters is compared with its numerical approximation.
+$syntax/
+
+/xStep/
+/$$
+The double-precision column vector $italic xStep$$
+specifies the step size used for approximating
+the derivatives with respect to the design parameters.
+The value of this parameter does not matter unless
+$italic phiTilde_x_xOut$$ is true.
+$syntax/
+
+/xLow/
+/$$
+is a double-precision column vector with the same length as $italic xIn$$
+specifying the lower limit for $italic x$$ during the optimization.
+$syntax/
+
+/xUp/
+/$$
+is a double-precision column vector with the same length as $italic xIn$$
+specifying the upper limit for $italic x$$ during the optimization.
+$syntax/
+
+/xIn/
+/$$
+is a double-precision column vector specifying the initial value
+for the design parameters.
+The $xref/glossary/Ordering Of Vectors/order condition/$$
+$math%xLow \le xIn \le xUp%$$ is assumed to hold.
+$syntax/
+
+/xOut/
+/$$
+The $xref/glossary/Output Value/output value/$$ of $italic xOut$$
+is a double-precision column vector containing the approximate
+maximizer of the population optimal design criterion.
+$syntax/
+
+/alpStep/
+/$$
+The double-precision column vector $italic alpStep$$
+specifies the step size used for approximating
+the derivatives with respect to the fixed population parameters.
+$syntax/
+
+/alp/
+/$$
+is a double-precision column vector specifying the value
+for the fixed population parameters.
+$syntax/
+
+/bLength/
+/$$
+is an integer scalar that specifies the number of random population 
+parameters.
+$syntax/
+
+/phiTildeOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic phiTildeOut$$
+is a row vector containing the value of the population optimal design 
+criterion at each iteration of the minimization method. 
+Its first element is the value of the population optimal design 
+criterion at $math%xIn%$$.
+Its last element is the value of the population optimal design 
+criterion at $math%xOut%$$.
+The number of elements is one more than the number of 
+optimizer iterations used.
+$syntax/
+
+/phiTilde_xOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic phiTilde_xOut$$
+is a row vector containing the derivative of the population optimal 
+design criterion at the value $math%xOut%$$.
+$syntax/
+
+/phiTilde_x_xOut/ 
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic phiTilde_x_xOut$$
+is a square matrix containing an approximation for the 
+Hessian of the population optimal design criterion at the value 
+$math%xOut%$$.
+
+$end
+---------------------------------------------------------------------
+#end##
+
+# ---------------------------------------------------------------------
+#
+# Local variables
+#
+# ---------------------------------------------------------------------
+
+local Alp     = novalue
+local AlpStep = novalue
+local BLength = novalue
+local KLocal  = novalue
+
+
+# ---------------------------------------------------------------------
+#
+# Local functions
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: dummy
+# ---------------------------------------------------------------------
+
+local function dummy() begin
+  stop "Model not set"
+end
+
+
+# ---------------------------------------------------------------------
+# Function: Model
+# ---------------------------------------------------------------------
+
+local function Model = dummy()
+
+
+# ---------------------------------------------------------------------
+#
+# Include files
+#
+# ---------------------------------------------------------------------
+
+# PPED functions.
+include HTilde.oms
+
+# SPK functions.
+include CgAnyBox.oms
+
+
+# ---------------------------------------------------------------------
+# Function: negLogVal
+# ---------------------------------------------------------------------
+
+local function negLogVal( ...
+  x,  ...
+  negLogOut, ...
+  negLog_xOut ...
+) ...
+begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries.
+  # -------------------------------------------------------------------
+
+  if not (negLogOut or negLog_xOut) then ...
+    return true
+
+
+  # -------------------------------------------------------------------
+  # Evaluate the population information matrix.
+  # -------------------------------------------------------------------
+
+  HTildeOut      = negLogOut or negLog_xOut
+  HTilde_xOut    = negLog_xOut
+  HTilde_alpOut  = false
+
+  ok = HTilde( ...
+    function Model, ...
+    KLocal, ...
+    x,...
+    AlpStep, Alp,...
+    BLength, ...
+    HTildeOut, HTilde_xOut, HTilde_alpOut  ...
+  )
+  if not ok then return false
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  if negLogOut then ...
+    negLogOut = - log(det(HTildeOut))
+
+  if negLog_xOut then ...
+    negLog_xOut = - rvec(inv(HTildeOut))' * HTilde_xOut
+
+  return true
+end
+
+
+# ---------------------------------------------------------------------
+# Function: negLog_xVal
+# ---------------------------------------------------------------------
+
+local function negLog_xVal( x ) ...
+begin
+
+  # -------------------------------------------------------------------
+  # Evaluate the population information matrix.
+  # -------------------------------------------------------------------
+
+  HTildeOut      = true
+  HTilde_xOut    = true
+  HTilde_alpOut  = false
+
+  ok = HTilde( ...
+    function Model, ...
+    KLocal, ...
+    x,...
+    AlpStep, Alp,...
+    BLength, ...
+    HTildeOut, HTilde_xOut, HTilde_alpOut  ...
+  )
+  if not ok then return false
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  negLog_xOut = - rvec(inv(HTildeOut))' * HTilde_xOut
+
+  return negLog_xOut
+ end
+
+
+# ---------------------------------------------------------------------
+#
+# Global functions.
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: ppdOpt
+# ---------------------------------------------------------------------
+
+function ppdOpt( ...
+  function model, ...
+  K, ...
+  eps, ...
+  delta, ...
+  mitr, ...
+  level, ...
+  xStep, xLow, xUp, xIn, xOut, ...
+  alpStep, alp, ...
+  bLength, ...
+  phiTildeOut, phiTilde_xOut, phiTilde_x_xOut  ...
+) ...
+begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries.
+  # -------------------------------------------------------------------
+
+  if not (phiTildeOut or phiTilde_xOut or phiTilde_x_xOut) then ...
+    return true
+
+  Alp     = alp
+  AlpStep = alpStep
+  BLength = bLength
+  KLocal  = K
+
+  function Model = model()
+
+
+  # -------------------------------------------------------------------
+  # Optimize the design criterion.
+  # -------------------------------------------------------------------
+
+  xOutTemp  = true
+  negLogOut = phiTildeOut
+
+  # The criterion phi is maximized by finding the minumum of 
+  # its negative logarithm.
+  ok = CgAnyBox( ...
+    function negLogVal, ...
+    eps, ...
+    delta, ...
+    mitr, ...
+    xLow, ...
+    xUp, ...
+    xIn, ...
+    xOutTemp, ...
+    negLogOut, ...
+    level...
+  )
+
+  if not ok then begin
+    return false
+  end
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  if xOut then ...
+    xOut = xOutTemp
+
+  if phiTildeOut then ...
+    phiTildeOut = exp(-negLogOut)
+
+  if phiTilde_xOut or phiTilde_x_xOut then ...
+    negLogLast = negLogOut(coldim(negLogOut))
+
+  if phiTilde_xOut or phiTilde_x_xOut then begin
+    negLog_xOut   = negLog_xVal(xOutTemp)
+    phiTilde_xOut = - exp(-negLogLast) * negLog_xOut
+  end
+
+  # [Revisit - Hessian Mixes Analytic and Approximate Derivatives - Mitch]
+  # Would it be better to approximate the Hessian, phiTilde_x_x(x),
+  # by taking finite differences of the full derivative, phiTilde_x(x),
+  # rather than approximating one term in the Hessian, negLog_x_xOut(x),
+  # by taking finite differences of negLog_x(x)?
+  #
+  if phiTilde_x_xOut then begin
+    negLog_x_xOut   = TranCenDiff(function negLog_xVal, xOutTemp, xStep)
+    phiTilde_x_xOut = ...
+      exp(-negLogLast) * (-negLog_x_xOut + negLog_xOut'*negLog_xOut)
+  end
+
+  function Model = dummy()
+
+  return ok
+end
+

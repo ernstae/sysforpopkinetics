@@ -1,0 +1,87 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+#begin##
+
+$begin rvec$$
+
+$spell rvec$$
+
+$section Row Major Conversion Of A Matrix To A Column Vector$$
+
+$cindex row major conversion \of \a matrix \to \a column vector$$
+$index rvec$$
+
+$table
+$bold Syntax$$ $cend $syntax/rvec(/x/)/$$
+$tend
+
+$fend 25$$
+
+$head Description$$
+The return value is the column vector
+$math%
+	                                                  T
+	[ x   , x    , ... , x  ,  x   ,  x   , ... , x  ]
+	   1,1   1,2          1,n   2,1    2,2         m,n
+%$$
+where $math%m%$$ is the number of rows
+and $math%n%$$ is the
+number of columns 
+in the matrix $italic x$$
+
+$head Example$$
+If you enter
+$codep
+	x = { [ 1 , 2 ] , [3 , 4 ] }
+	rvec(x)
+$$
+O-Matrix will reply
+$codep
+	{
+	1
+	2
+	3
+	4
+	}
+$$
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+#end##
+
+function rvec(x) begin
+	nr = rowdim(x)
+	nc = coldim(x)
+	X  = x'
+	dim X(nr * nc, 1)
+	return X
+end
+
+end # blocking for automatic include

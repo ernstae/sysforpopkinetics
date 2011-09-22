@@ -1,0 +1,71 @@
+begin # Blocking for automatic include
+
+#begin##
+
+$begin ReadCalibration$$
+
+$section Read an O2 Uptake Calibration File$$
+
+$table
+$bold Syntax$$ 
+$cnext
+$syntax/[/Time/, /Concentration/] = ReadCalibration(/File/)/$$
+$tend
+
+$fend 20$$
+
+$head Description$$
+During a calibration experiment,
+the O2 concentraiton in the chamber is measured as a function of time.
+This is to get the baseline change it concentration
+when there is no muscle present.
+
+$head File$$
+The argument $italic File$$ is a character row vector containing
+the name of the file containing the calibration data.
+This file has two columns of data with white space between the columns.
+The first column contains time in seconds and the second 
+column contains nanomoles.
+It is possible that the second column of a line of the file contains
+the text $code NaN$$ in place of the concentration.
+In addition, it is possible that no data is present on a line of the file.
+Such lines will note be included in $italic Time$$ or $italic Concentration$$.
+
+
+$head Time$$
+The double precision column vector $italic Time$$
+contains the time in seconds corresponding to each measurement value.
+
+$head Concentration$$
+The doulbe precision column vector $italic Concentration$$
+contains the concentration measurements.
+The measurement $syntax//Concentration/[/i/]/$$
+corresponds to $syntax//Time/[/i/]/$$.
+
+$head Example$$
+The following code plots calibration data
+$codep
+	File                  = "CalibrationSet3.txt"
+	[Time, Concentration] = ReadCalibration(File)
+	gplot(Time, Concentration, "dot")
+$$
+
+$end
+#end##
+
+function [Time, Concentration] = ReadCalibration(File) begin
+	nc            = ncols(File, "byte")
+	nr            = rowdim(nc)
+	nc            = max(nc)
+	text          = read(File, "byte", nr, nc)
+	separator     = [" ", TAB]
+	width         = [10, 20]
+	data          = align(text, separator, width)
+	col1          = data.col(1, width(2))
+	col2          = data.col(width(1)+1, width(2))
+	ok            = col2 <> "NaN" or (data == " ")
+	Time          = atod( col1.row(ok) )
+	Concentration = atod( col2.row(ok)  )
+end
+
+end # Blocking for automatic include

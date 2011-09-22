@@ -1,0 +1,528 @@
+# ---------------------------------------------------------------------
+# File: FOOptimalDesignModel.oms
+#
+#
+# Evaluates first order approximations for the models for the 
+# mean of the data and the covariance of the data.
+#
+# Author: Mitch Watrous
+# 
+# ---------------------------------------------------------------------
+
+#begin##
+
+$begin FOOptimalDesignModel$$
+$escape #$$
+
+$spell
+  covariance
+  subvector
+$$
+
+$section First Order Model for the Mean and Covariance of the Data$$
+
+$index FOOptimalDesignModel$$
+$cindex first order model #for #the mean #and covariance #of #the #data$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/FOOptimalDesignModel( ...
+  function /Model/, ...
+  /x/,...
+  /alp/,...
+  /fTildeOut/, /fTilde_chiOut/, /fTilde_alpOut/, ...
+  /VTildeOut/, /VTilde_chiOut/, /VTilde_alpOut/ ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+
+Evaluates first order approximations for the model for the 
+mean of an individual's data
+$math%
+
+    fTilde_i(chi_i, alp, b_i = 0)
+
+%$$
+and the model for the covariance of an individual's data
+$math%
+                                                                                                                  T
+    VTilde_i(chi_i, alp)  =  RTilde_i(chi_i, alp)  +  fTilde_i_b(chi_i, alp, 0)  D(alp)  fTilde_i_b(chi_i, alp, 0)  .
+
+%$$
+where $math%chi_i%$$ is a subset of the vector of design parameters
+that is described below, 
+$math%alp%$$ is a vector of fixed population parameters,
+and $math%b_i%$$ is a vector of random population parameters.
+This function also evaluates the derivatives of these functions
+with respect to $math%chi_i%$$ and with respect to $math%alp%$$.
+$pre
+
+$$
+The full design parameter vector $math%x%$$ contains the design vectors 
+$math%x_i%$$ for all $math%M%$$ of the individuals in the population 
+together with $math%x_common%$$, which is a vector of design 
+parameters common to all of the individuals.
+That is,
+$math%
+           -          -
+          |  x_1       |
+          |  x_2       |
+          |   .        |
+    x  =  |   .        |  .
+          |   .        |
+          |  x_M       |
+          |  x_common  |
+           -          -
+
+%$$
+The combination of parameters that each individuals' model functions will
+depend on is denoted by
+$math%
+               -          -
+    chi_i  =  |  x_i       |  .
+              |  x_common  |
+               -          -
+%$$
+
+$head Notes$$
+(1.) This function makes the following first order approximation
+for the model for the mean of the $th i$$ individual's data,
+$math%
+
+    fTilde_i(chi_i, alp, b_i)  =  f_i(chi_i, alp, 0)  +  f_i_b(chi_i, alp, 0) * b_i  ,
+
+%$$
+where $math%f_i_b(chi_i, alp, b_i)%$$ is the derivative of 
+$math%f_i(chi_i, alp, b_i)%$$ with respect to the random effect 
+vector $math%b_i%$$.
+$pre
+
+$$
+(2.) This function makes the following approximation for the
+model for the covariance of the $th i$$ individual's data,
+$math%
+
+    RTilde_i(chi_i, alp)  =  R_i(chi_i, alp, 0)  .
+%$$
+$pre
+
+$$
+(3.) This function requires the model function to provide the
+following second derivatives of $math%f_i(chi_i, alp, b_i)%$$
+$math%
+
+  f_i_b_chi(chi_i, alp, b_i)  ,
+
+  f_i_b_alp(chi_i, alp, b_i)  .
+%$$
+$pre
+
+$$
+(4.) The individual $math%i%$$ is specified by the global variable 
+$code GLOBAL_SubjectIndex$$.
+$pre
+
+$$
+(5.) Information about the partitioning of the elements in $italic x$$
+must be specified by the global variable $code GLOBAL_K$$.
+$pre
+
+$$
+The $th i$$ element of the integer column vector $italic K$$
+specifies $math%K(i)%$$, the number of elements of $italic x$$ that
+correspond to the $th i$$ individual.
+The last element in $italic K$$ specifies $math%K_common%$$,
+the number of elements of $italic x$$ that
+are common to all of the individuals in the population.
+The number of elements in $italic K$$ should be one more than
+the number of individuals in the population, $math%M%$$,
+since the length of $italic K$$ minus one specifies $math%M%$$.
+$pre
+
+$$
+To be specific, the vector $italic x$$ should have
+$math%
+
+  K(1) + K(2) + ... + K(M) + K_common
+
+%$$
+elements.  
+The design vector corresponding to the first individual is
+$math%
+                                       T
+  x_1 = [ x(1) , x(2) , ... , x(K(1)) ]   .
+
+%$$
+Elements $math%x(K(1) + 1)%$$ through $math%x(K(1) + K(2))%$$ 
+correspond to the second individual and so on.
+The last $math%K_common%$$ elements make up $math%x_common%$$.
+(Note that $math%x_1%$$ refers to the first subvector or $italic x$$ while
+$math%x(1)%$$ refers to the first element of the vector $italic x$$.)
+
+$head Return Values$$
+The return value of $code FOOptimalDesignModel$$ 
+is true, if it succeeds, and false otherwise.
+
+$head Arguments$$
+$syntax//Model/(/i/, /chi/, /alp/, /b/, /fOut/, /f_chiOut/, /f_alpOut/, /f_bOut/, /f_b_chiOut/, /f_b_alpOut/, 
+    /ROut/, /R_chiOut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+$pre
+
+$$
+$center
+$table
+$bold Argument$$
+  $cend $bold Value$$ 
+  $cend $bold Comments$$ $rend
+$italic i$$
+  $cend $math%i%$$
+  $cend index for this individual $rend
+$italic chi$$
+  $cend $math%chi_i%$$
+  $cend design parameter vector for this individual combined with the
+          design parameter vector common to all individuals $rend
+$italic alp$$
+  $cend $math%alp%$$
+  $cend fixed population parameter vector $rend
+$italic b$$
+  $cend $math%b_i%$$
+  $cend random population parameter vector for this individual $rend
+$italic fOut$$
+  $cend $math%f_i(chi_i, alp, b_i)%$$ 
+  $cend model for the mean of $math%y_i%$$ given $math%b_i%$$ $rend
+$italic f_chiOut$$ 
+  $cend $math%f_i_chi(chi_i, alp, b_i)%$$
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic f_alpOut$$ 
+  $cend $math%f_i_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+  $cend $math%f_i_b(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%b_i%$$ $rend
+$italic f_b_chiOut$$ 
+  $cend $math%f_i_b_chi(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i_b(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic f_b_alpOut$$ 
+  $cend $math%f_i_b_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i_b(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic ROut$$ 
+  $cend $math%R_i(chi_i, alp, b_i)%$$ 
+  $cend model for the variance of $math%y_i%$$ given $math%b_i%$$ $rend
+$italic R_chiOut$$ 
+  $cend $math%R_i_chi(chi_i, alp, b_i)%$$
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic R_alpOut$$
+  $cend $math%R_i_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+  $cend $math%R_i_b(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%b_i%$$ $rend
+$italic DOut$$ 
+  $cend $math%D(alp)%$$ 
+  $cend model for the variance of $math%b_i%$$ $rend
+$italic D_alpOut$$
+  $cend $math%D_alp(alp)%$$ 
+  $cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$$
+
+$syntax/
+/x/
+/$$
+The double-precision column vector $italic x$$
+specifies a value for the design parameter vector.
+
+$syntax/
+
+/alp/
+/$$
+The double-precision column vector $italic alp$$
+specifies a value for the fixed population parameter vector.
+
+$syntax/
+
+/fTildeOut/
+/$$
+The output value $italic fTildeOut$$
+is a column vector containing the value of 
+$math%fTilde_i(chi_i, alp, b_i = 0)%$$.
+
+$syntax/
+
+/fTilde_chiOut/
+/$$
+The output value $italic fTilde_chiOut$$
+is a matrix containing the derivative of
+$math%fTilde_i(chi_i, alp, b_i = 0)%$$ with respect to $math%chi_i%$$.
+$syntax/
+
+/fTilde_alpOut/
+/$$
+The output value $italic fTilde_alpOut$$
+is a matrix containing the derivative of
+$math%fTilde_i(chi_i, alp, b_i = 0)%$$ with respect to $math%alp%$$.
+
+$syntax/
+
+/VTildeOut/
+/$$
+The output value $italic VTildeOut$$
+is a column vector containing the value of 
+$math%VTilde_i(chi_i, alp)%$$.
+
+$syntax/
+
+/VTilde_chiOut/
+/$$
+The output value $italic VTilde_chiOut$$
+is a matrix containing the derivative of
+$math%VTilde_i(chi_i, alp)%$$ with respect to $math%chi_i%$$.
+$syntax/
+
+/VTilde_alpOut/
+/$$
+The output value $italic VTilde_alpOut$$
+is a matrix containing the derivative of
+$math%VTilde_i(chi_i, alp)%$$ with respect to $math%alp%$$.
+
+
+$end
+---------------------------------------------------------------------
+#end##
+
+
+# ---------------------------------------------------------------------
+#
+# Global variables
+#
+# ---------------------------------------------------------------------
+
+GLOBAL_alpStep      = novalue
+GLOBAL_K            = {0}
+GLOBAL_nB           = novalue
+GLOBAL_SubjectIndex = 1
+
+
+# ---------------------------------------------------------------------
+#
+# Local functions
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: TransposeDerivative
+#
+# Note:  This function was copied from abaderivative.oms.
+# ---------------------------------------------------------------------
+
+local function TransposeDerivative(A, A_x) begin
+  #
+  # get dimensions
+  nr   = rowdim(A)
+  nc   = coldim(A)
+  nx   = coldim(A_x)
+  #
+  #
+  if arg(0) == 2 then begin
+    At_x = fill(0, nr * nc, nx)
+    for j = 1 to nx begin
+      A_j  = A_x.col(j)
+      dim A_j(nc, nr)
+      A_j  = A_j'
+      dim A_j(nr * nc, 1)
+      At_x.col(j) = A_j
+    end
+    return At_x
+  end
+end
+
+
+# ---------------------------------------------------------------------
+# Function: ABAtDerivative
+#
+# Returns the derivative of 
+#
+#                   T
+#     A(x) B(x) A(x)   .
+#     
+# Note: This is a modified version of the function ABADerivative
+# that can be found in abaderivative.oms.
+# ---------------------------------------------------------------------
+
+function ABAtDerivative(A, B, A_x, B_x) begin
+  Ia   = identity(rowdim(A))
+  At   = A'
+  At_x = TransposeDerivative(A, A_x)
+  return AkronBtimesC(A * B, Ia, At_x) + ...
+         AkronBtimesC(A, A, B_x) + ...
+         AkronBtimesC(Ia, A * B', A_x)
+end
+
+
+# ---------------------------------------------------------------------
+# Function: ABAtDerivativeBFixed
+#
+# Returns the derivative of 
+#
+#                  T
+#     A(x)  B  A(x)   .
+#
+# ---------------------------------------------------------------------
+
+function ABAtDerivativeBFixed(A, B, A_x) begin
+  Ia   = identity(rowdim(A))
+  At   = A'
+  At_x = TransposeDerivative(A, A_x)
+
+  # Calculate the derivative using Corollary 7 from B. M. Bell, 
+  # "Approximating the Marginal Likelihood Estimate For Models 
+  # With Random Parameters", Applied Mathematics and Computation, 
+  # 119 (2001), pp. 57-73.
+  return AkronBtimesC(A * B, Ia, At_x) + ...
+         AkronBtimesC(Ia, A * B', A_x)
+end
+
+
+# ---------------------------------------------------------------------
+#
+# Global functions.
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: FOOptimalDesignModel
+# ---------------------------------------------------------------------
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# [Revisit - Global Subject Index Value - Mitch]
+# This global value must be used to pass the subject index
+# to the model function.  The reason for this is that the
+# original lambda function, i.e., the lambda function that
+# is used for parameter estimation rather than optimal design,
+# is evaluated for a particular individual, but this lambda 
+# function requires a sum over all of the individuals.  This
+# difference is an artifact of the fact that the second level
+# of the hierarchical model for parameter estimation involves
+# a separate optimization problem for each individual, while
+# the second level of the hierarchical model for optimal design
+# involves a single optimization problem that has an objective
+# which includes contributions from each individual.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+function FOOptimalDesignModel( ...
+  function model, ...
+  x, ....
+  alp, ...
+  fTildeOut, fTilde_chiOut, fTilde_alpOut, ...
+  VTildeOut, VTilde_chiOut, VTilde_alpOut ...
+) begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries.
+  # -------------------------------------------------------------------
+
+  global GLOBAL_K
+  global GLOBAL_SubjectIndex
+  global GLOBAL_nB
+
+  i   = GLOBAL_SubjectIndex
+  K_i = GLOBAL_K(i)
+
+  # Get the number of design parameters.
+  nX = rowdim(x)
+
+  if nX <> colsum(GLOBAL_K) then begin
+    stop "The length of x and the values in GLOBAL_K are not consistent."
+    return false
+  end
+
+  # Get this individual's design vector.
+  nX_iBefore  = colsum(GLOBAL_K.row(1, i-1))
+  x_i         = x.row(nX_iBefore + 1, K_i)
+
+  # Get the vector of design parameters common to all individuals. 
+  K_common = GLOBAL_K(rowdim(GLOBAL_K))
+  x_common = x.row(nX - K_common + 1, K_common)
+
+  # Combine this individual's and the common design parameters.
+  chi_i = { x_i, x_common }
+
+
+  # -------------------------------------------------------------------
+  # Evaluate the model.
+  # -------------------------------------------------------------------
+
+  fOut          = fTildeOut
+  f_chiOut      = fTilde_chiOut
+  f_alpOut      = fTilde_alpOut
+  f_bOut        = VTildeOut or VTilde_chiOut or VTilde_alpOut
+  f_b_chiOut    = VTilde_chiOut
+  f_b_alpOut    = VTilde_alpOut
+  ROut          = VTildeOut
+  R_chiOut      = VTilde_chiOut
+  R_alpOut      = VTilde_alpOut
+  DOut          = VTildeOut or VTilde_chiOut or VTilde_alpOut
+  D_alpOut      = VTilde_alpOut
+
+  # This is never required for this model.
+  R_bOut        = false
+
+  # Evaluate the model functions with the random effects set to zero
+  # so that
+  #              ~
+  #     fOut  =  f_i(chi_i, alp, b_i = 0)  ,
+  #              ~
+  #     ROut  =  R_i(chi_i, alp)  .
+  #
+  b_i = fill( 0.d0, GLOBAL_nB, 1 )
+  ok = model( ...
+    i, ...
+    chi_i, ...
+    alp, ...
+    b_i, ...
+    fOut, f_chiOut, f_alpOut, f_bOut, f_b_chiOut, f_b_alpOut, ...
+    ROut, R_chiOut, R_alpOut, R_bOut, ...
+    DOut, D_alpOut ...
+  )
+  if not ok then begin
+    stop
+    return false
+  end
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  if fTildeOut then ...
+    fTildeOut = fOut 
+
+  if fTilde_chiOut then ...
+    fTilde_chiOut = f_chiOut
+
+  if fTilde_alpOut then ...
+    fTilde_alpOut = f_alpOut
+
+  if VTildeOut then ...
+    VTildeOut = ROut + f_bOut * DOut * f_bOut'
+
+  if VTilde_chiOut then ...
+    VTilde_chiOut = R_chiOut + ABAtDerivativeBFixed(f_bOut, DOut, f_b_chiOut)
+
+  if VTilde_alpOut then ...
+    VTilde_alpOut = R_alpOut + ABAtDerivative(f_bOut, DOut, f_b_alpOut, D_alpOut)
+
+  return true
+end
+
+
+
+

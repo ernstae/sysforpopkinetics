@@ -1,0 +1,524 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin  # blocking for automatic include
+
+include zeros.oms
+include rvecinverse.oms
+include akronidentitytimesb.oms
+include identitykronatimesb.oms
+
+local function matsize( s , A) begin
+	print s , rowdim(A) , coldim(A )
+end
+
+# V         m     x  m
+# V_x       m^2   x  p
+# U         m^2   x  k      
+# U_x_tr    p m^2 x  k
+
+function symUTransposeTimesVKronVTimesU_der( U, V , UVList, V_der, U_der_tr ) begin 
+	m = rowdim( V )
+ 	k = coldim( U )
+	p = coldim( V_der )
+	# check that rowdim(U) = m^2
+
+#print "rowdim( V ) m = " , rowdim( V ) 
+#print "coldim( U ) k = " , k 
+#print "coldim( V_der ) p = " ,p 
+#print "rowdim(U)  m^2 = " ,  rowdim(U)
+
+	VKronIU_der = zeros( k * m * m , p )
+	IKronUV_der = zeros( k * m * m , p )
+	UKronIV_der = zeros( k * m * m , p )
+	IKronVU_der = zeros( k * m * m , p )
+	
+	for i = 1 to k begin
+		Uicol = U(:,i)
+#matsize("Uicol", Uicol)
+		Ui = rvecInverse( Uicol, m )
+#matsize("Ui", Ui)
+		Ui_der_col = U_der_tr( :,i)		
+#matsize("Ui_der_col", Ui_der_col)
+		Ui_der = rvecInverse( Ui_der_col , p )
+#matsize("Ui_der", Ui_der)
+		
+
+		VKronIU_der.blk( (i-1)* (m*m) + 1 , 1, (m*m) , p ) = ...
+			AKronIdentityTimesB( V , m , Ui_der )
+
+		IKronUV_der.blk( (i-1)* (m*m) + 1 , 1, (m*m) , p ) = ...
+			IdentityKronATimesB( m , Ui, V_der )
+
+		UKronIV_der.blk( (i-1)* (m*m) + 1 , 1, (m*m) , p ) = ...
+			AKronIdentityTimesB( Ui, m , V_der )
+
+		IKronVU_der.blk( (i-1)* (m*m) + 1 , 1, (m*m) , p ) = ...
+			IdentityKronATimesB( m , V , Ui_der )
+	end
+
+	result_der = zeros( k*k, p )
+
+	for i = 1 to k begin
+		for j = 1 to i begin
+
+			VKronIU_derj =  VKronIU_der.blk( (j-1)* (m*m) + 1 , 1, (m*m) , p ) 
+			IKronUV_derj =  IKronUV_der.blk( (j-1)* (m*m) + 1 , 1, (m*m) , p ) 
+
+			sum12j = VKronIU_derj + IKronUV_derj 
+			UVi = UVList.blk( (i-1)* m + 1 , 1, m , m )
+
+			rvecUVi = rvec( UVi )
+			firsthalf = rvecUVi' * sum12j
+
+			UKronIV_deri = UKronIV_der.blk( (i-1)* (m*m) + 1 , 1, (m*m) , p ) 
+			IKronVU_deri = IKronVU_der.blk( (i-1)* (m*m) + 1 , 1, (m*m) , p )
+			sum34i =  UKronIV_deri + IKronVU_deri
+			UVj = UVList.blk( (j-1)* m + 1 , 1, m , m )
+			rvecUVj = rvec(UVj')
+			secondhalf = rvecUVj'  * sum34i 
+
+			result_der( (i-1)*k + j, : ) = firsthalf + secondhalf
+			if ( not ( i == j)  ) then ...
+				result_der( (j-1)*k + i, : ) = result_der( (i-1)*k + j, : )
+		end
+	end
+
+	return result_der
+end
+
+
+#begin##
+$begin symUTransposeTimesVKronVTimesU_der$$
+$escape #$$
+
+$spell
+	symUTransposeTimesVKronVTimesU
+        end end
+symUTransposeTimesVKronVTimesU_der
+rvecinverse 
+rvecinversed 
+sym
+differencing
+Kron
+subblock 
+blk 
+Vi 
+backdiv 
+covariance 
+Inv 
+tr
+Akron
+Btimes
+Omatrix 
+AkronBtimes
+rowdim
+coldim
+rvm
+cendiff
+Un 
+bt 
+UtVkron
+vs
+VKron
+Ut
+Ui 
+ith 
+rvec 
+Kronecker 
+$$
+
+$section Derivative of U' ( V @ V ) U, where V and each column of U is symmetric$$
+
+$index symUTransposeTimesVKronVTimesU_der$$
+$cindex derivative symmetric Kronecker product$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/symUTransposeTimesVKronVTimesU_der( 
+/U/, /V/, /UVList/, /V_der/, /U_der_tr/)/$$
+
+$tend
+
+$fend 30$$
+
+$head Description$$
+This function computes the derivative of $math%U' ( V @ V ) U%$$, 
+where $math%@%$$ denotes the Kronecker product, and $math%'%$$ 
+denotes the transpose a matrix.
+It assumes that the matrix $math%V%$$ is a symmetric matrix and that 
+each column of $math%U%$$
+is the $pre rvecinverse$$ of a symmetric matrix of the same size as $math%V%$$.  The purpose of
+this function and $pre symUTransposeTimesVKronVTimesU$$
+is to provide faster implementations of the 
+computations  $math%U' ( V @ V ) U%$$ and, 
+its derivative then could be obtained through functions like $pre AkronBtimesC$$,
+where the straightforward approach leads to forming $math%V @ V%$$ in the 
+derivative expression.
+
+$head Arguments$$
+To discuss the arguments, we assume the dimensions of 
+$math%V%$$ and $math%U%$$ are such that
+$math%V%$$ is a $math%m x m%$$ matrix, and $math%U%$$ is a $math%m^2 x k%$$ 
+matrix. We further assume that we 
+are differentiating with respect to $math%p%$$ variables.
+
+$syntax/
+
+/U/
+/$$
+This is a $math%m^2 x k%$$ matrix.  Each column is assumed to be the $pre rvec$$ 
+of a symmetric $math%m x m%$$ matrix.
+
+
+$syntax/
+
+/V/
+/$$
+This is a $math%m x m%$$ symmetric matrix.
+
+
+$syntax/
+
+/UVList/
+/$$
+is meant to be a list, each element of the list is the $math%m x m%$$ matrix product 
+$math%Ui * V%$$, where $math%Ui%$$ is the $math%ith%$$ column of $math%U%$$ 
+rvecinversed to be a $math%m x m%$$ matrix.
+
+In the Omatrix implementation, $pre UVList$$ is stored as a $math%k m x m%$$ 
+matrix, where each $math%m x m%$$ block is a matrix product as described 
+above.  
+
+The user does not have to compute this; this argument is 
+computed by $pre symUTransposeTimesVKronVTimesU$$ when that function is called.
+$syntax/
+
+/V_der/
+/$$
+This is a $math%m^2 x p%$$ matrix giving the derivative of $math%V%$$.
+
+$syntax/
+
+/U_der_tr/
+/$$
+This is a  $math%( p m^2 ) x  k%$$ matrix of derivatives for $math%U%$$.  
+It is ordered so that 
+$codep
+	rvecInverse( U_der_tr.col(i) , p ) = 
+	the derivative of U.col(i).
+$$
+If $math%U%$$ is the central difference of some symmetric matrix 
+$math%R%$$, then this
+argument is simply the central difference of the derivative of $math%R%$$, 
+not the central difference transpose operator applied to the derivative of 
+$math%R%$$.
+
+$head C++ Implementation$$
+The C++ implementation should check that the matrices coming in are the 
+correct sizes,
+that is $math%V%$$ is square, say $math%m x m%$$, and that $math%U%$$ 
+has $math%m^2%$$ rows.  After reading 
+$math%p%$$ from the number of columns of $math%V%$$, it should check that 
+$pre U_der_tr$$ has  
+$math%p m^2%$$ rows.
+
+The function first computes 4 lists of matrix products, 
+$pre
+
+VKronIU_der,
+IKronUV_der,
+UKronIV_der, and
+IKronVU_der.
+
+$$
+Each holds $math%k%$$ (where $math%k%$$ is the number of columns of 
+$math%U%$$) $math%m^2 x p%$$ matrices.
+
+It then goes on to compute the derivative formula, making use of $pre UVList$$.
+	
+Further optimizations would involve returning the result by reference
+argument.
+
+$head Example$$
+The following code tests this function.  It defines several 
+matrix valued functions
+that return symmetric matrices, namely the functions 
+$math%V(x), U1(x), U2(x), U3(x)%$$.  It 
+then defines the function $math%U(x)%$$ which takes an $pre rvec$$ of each of 
+$math%U1(x),U2(x)%$$ and $math%U3(x)%$$
+to form the columns of $math%U%$$.  
+
+The details of the formulas in $math%V(x), U1(x),U2(x)%$$ and $math%U3(x)%$$ 
+are
+unimportant, they are just expressions that will create symmetric matrices.  
+Approximations to the derivatives of the matrices $math%U(x)%$$ and $math%V(x)%$$ 
+are obtained 
+with  central differencing.  The function $pre rU(x)$$ simply returns an 
+$pre rvec$$ of
+$math%U(x)%$$, then the function $pre U_der(x , h )$$ returns an approximation to the derivative
+of $math%U%$$ at $math%x%$$ by central differencing.  however the entries of $pre U_der $$
+are not ordered as required by the function
+$pre symUTransposeTimesVKronVTimesU_der$$.  That is $pre U_der$$ is a 
+$math%( k m^2) x p%$$
+matrix as opposed to a $math%( p m^2) x k%$$ matrix.
+
+
+The function $pre funnyTranspose$$ is introduced to reorder the entries
+of $pre U_der$$ so that it will meet the specifications for the 
+argument $pre U_der_tr$$.
+
+The example prints out both $pre U_der$$ and $pre U_der_tr$$ for comparison.
+
+The functions $pre rV(x)$$ and $pre V_der(x)$$ are introduced in order to 
+get a central difference
+approximation to the derivative of $pre V$$.
+
+Finally the central difference approximation to the derivative of
+$math%U' ( V @ V ) U%$$, which is computed using only the function
+$pre symUTransposeTimesVKronVTimesU$$, is compared to the analytic derivative
+obtained with the function $pre symUTransposeTimesVKronVTimesU_der$$,
+using the derivatives $pre U_der_tr$$ and $pre V_der$$ that were obtained with central differencing.
+the results are very similar.
+
+$codep
+clear
+
+function V( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( x(i) - i)*(x(j) - j )
+		end
+	end
+	return result
+end
+
+function U1( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( 1 / ( x(i)*x(j) - (i + j )  ) )
+		end
+	end
+	return result
+end
+
+function U2( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( ( x(i)^2 + x(j)^2 - x(i)*x(j) - i*j ) )
+		end
+	end
+	return result
+end
+
+function U3( x ) begin
+	n = rowdim(x)
+	result = zeros( n,n)
+
+	for i = 1 to n begin
+		for j = 1 to n begin
+			result(i,j) = ( ( x(i) - j ) ) * ( ( x(j) - i ) )^3			
+		end
+	end
+	return result
+end
+
+function U( x ) begin
+	n = rowdim(x)
+
+	mU1 = U1( x )
+	mU2 = U2( x )
+	mU3 = U3( x )
+
+	mU = zeros( n*n, 3 )
+
+	mU.col(1) = rvec(mU1)
+	mU.col(2) = rvec(mU2)
+	mU.col(3) = rvec(mU3)
+
+	return mU
+end
+
+
+function rU( x ) begin
+	return rvec( U ( x ) )
+end
+
+
+function rV( x ) begin
+	return rvec( V ( x ) )
+
+end
+
+
+function U_der( x , h  ) begin
+	return cendiff(function rU, x, h)
+end
+
+function V_der( x , h ) begin
+	return cendiff(function rV, x, h)
+end
+
+
+#m number columns in original U
+function funnyTranspose( U_der , m ) begin 
+	n = rowdim(U_der)
+	p = coldim(U_der)
+	Un = n / m
+	
+	result = zeros( Un * p , m )
+	for i = 1 to Un begin
+		b = U_der.blk( (i-1)* m + 1 , 1, m , p  )
+		bt = b'
+		result.blk( (i-1)* p + 1 , 1, p , m  ) = bt
+	end
+	return result
+end
+
+
+
+function UtVkronVU( x ) begin
+	n = rowdim(x)
+	mV = V( x )
+	mU = U( x )
+
+	result = symUTransposeTimesVKronVTimesU( mU, mV )
+	return result
+	
+end
+
+function rvecUtVkronVU( x ) begin
+	A = UtVkronVU(x)
+	rA = rvec(A)
+	return rA
+end
+
+
+
+x = [ 0.3,1.6]'
+h = {.01, .01 }
+mU = U(x)
+mV = V(x)
+[ result, UVList ] = symUTransposeTimesVKronVTimesU( mU, mV ) 
+
+
+mU_der = U_der(x,h)
+mU_der_tr = funnyTranspose( mU_der, coldim(mU ) )
+print "The central difference approximation for the derivative of U: U_der"
+print mU_der
+print "The transposed version required: U_der_tr:"
+print mU_der_tr
+
+mV_der = V_der(x,h)
+result_der = symUTransposeTimesVKronVTimesU_der( mU, mV , UVList, mV_der, mU_der_tr )
+
+print "Now we compare central difference vs analytic formula."
+print "central difference of U' (V @ V) U="
+print  cendiff(function rvecUtVkronVU, x, h)
+
+print "analytic derivative returned from  symUTransposeTimesVKronVTimesU_der"
+print "using cendiff for derivatives of U and V as above."
+print result_der
+
+
+$$
+O-Matrix will respond
+$codep
+
+The central difference approximation for the derivative of U: U_der 
+{
+[ -0.164488 , 0 ]
+[ 0.599998 , 0 ]
+[ -1.37228 , 0 ]
+[ -0.251964 , -0.0472412 ]
+[ -0.999999 , 2.9 ]
+[ 0.216 , -1.83617 ]
+[ -0.251964 , -0.0472412 ]
+[ -0.999999 , 2.9 ]
+[ 5.20205 , -4.913 ]
+[ 0 , -1.54419 ]
+[ 0 , 3.20001 ]
+[ 0 , -0.25616 ]
+}
+
+The transposed version required: U_der_tr: 
+{
+[ -0.164488 , 0.599998 , -1.37228 ]
+[ 0 , 0 , 0 ]
+[ -0.251964 , -0.999999 , 0.216 ]
+[ -0.0472412 , 2.9 , -1.83617 ]
+[ -0.251964 , -0.999999 , 5.20205 ]
+[ -0.0472412 , 2.9 , -4.913 ]
+[ 0 , 0 , 0 ]
+[ -1.54419 , 3.20001 , -0.25616 ]
+}
+
+Now we compare central difference vs analytic formula. 
+central difference of U' (V @ V) U= 
+{
+[ -0.977822 , -0.988337 ]
+[ -0.995907 , -2.28662 ]
+[ -1.75027 , -0.893137 ]
+[ -0.995907 , -2.28662 ]
+[ -1.01323 , -3.54931 ]
+[ -1.76881 , -2.67339 ]
+[ -1.75027 , -0.893137 ]
+[ -1.76881 , -2.67339 ]
+[ -2.95798 , -0.595465 ]
+}
+
+analytic derivative returned from  symUTransposeTimesVKronVTimesU_der 
+using cendiff for derivatives of U and V as above. 
+{
+[ -0.977716 , -0.988146 ]
+[ -0.995956 , -2.28585 ]
+[ -1.75047 , -0.893298 ]
+[ -0.995956 , -2.28585 ]
+[ -1.01344 , -3.54471 ]
+[ -1.76925 , -2.67427 ]
+[ -1.75047 , -0.893298 ]
+[ -1.76925 , -2.67427 ]
+[ -2.95888 , -0.595596 ]
+}
+
+
+$$
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+-------------------------------------------------------------------------
+#end##
+end # blocking for automatic include

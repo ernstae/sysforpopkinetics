@@ -1,0 +1,112 @@
+clear
+format double "e10.2"
+include CylinderDiffusion.oms
+#
+# The following parameters can be changed.
+# The local in front of the assignments to make them local to this file
+# and visible to all the routines in this file.
+#
+local InputFile = "MuscleSet1.txt" # input data file
+local N    = 10      # number of eigen functions in representation of Fm(t)
+local M    = 40      # maximum number of input values (average to get this many)
+#
+# This flag needs to agree with its value in SmoothSpline
+local BradsVersion = true # using Brads version of the theta optimizer
+#
+Nr    = 11           # number of radial grid points
+Fe    = 0.0125       # consumption rate for electrode
+Fb    = 0.00048      # initial estimate of baseline muscle consumption
+Vc    = 5.4          # volume of chamber
+C0    = 1119.41/Vc   # initial estimate of initial concentration in chamber
+Lm    = 1            # length of the muscle
+Rm    = 0.05         # radius of the muscle cylinder
+D     = 1d-5         # diffusion coefficient
+#
+#------------------------------------------
+# Read data file
+[Time, Mass] = ReadCalibration(InputFile)
+if( rowdim(Time) < M ) then ...
+	M = rowdim(Time)
+else begin
+	Navg  = int( rowdim(Time) / M )
+	Time  = Time(1 :: (Navg * M))
+	Mass  = Mass(1 :: (Navg * M))
+	dim Time(Navg, M)
+	dim Mass(Navg, M)
+	Time = colmean(Time)'
+	Mass = colmean(Mass)'
+end
+#------------------------------------------
+function [Fval] = F(Tf, a, t) begin
+	N      = rowdim(a)
+	angle  =   (PI * t / Tf) * (seq(N)' - 0.5d0)
+	Fval   =  sqrt(2d0 / Tf) * sin(angle) * a
+end
+#------------------------------------------
+# arguments to SmoothSpline
+#
+T            = Time(end)
+y            = Mass / Vc
+aIn          = zeros(N, 1)
+aMax         = 10d0 * sqrt( T ) * max( abs(y) ) 
+aEpsilon     = 1d-4 * aMax
+aMitr        = 10
+aLevel       = 0
+thetaIn      = {  1d0 / T^2 , C0, Fb}
+thetaStep    = 1d-2 * thetaIn
+thetaLevel   = 3
+loopMax      = 4
+converge     = false
+sumItr       = 0
+thetaMitr    = 1
+while thetaMitr < loopMax and not converge begin
+	#
+	function callback = CylinderDiffusion(Nr, Fe, Vc, Lm, Rm, Time, y, D)
+	if BradsVersion then ...
+		thetaMax = thetaMitr * 5 * rowdim(thetaIn)^2
+	else	thetaMax = thetaMitr
+	[aOut, aNitrOut, thetaOut, thetaNOut] = SmoothSpline( ...
+		function callback, ...
+		T, ...
+		y, ...
+		aIn, ...
+		aEpsilon, ...
+		aMax, ...
+		aMitr, ...
+		aLevel, ...
+		thetaIn, ...
+		thetaStep, ...
+		thetaMax, ...
+		thetaLevel ...
+		)
+		converge  = thetaNOut <= thetaMax
+		if thetaNOut <= thetaMax then ...
+			sumItr = sumItr + thetaNOut
+		else	sumItr = sumItr + thetaMax
+		# --------------------------------------------
+		ginit
+		#
+		gaddwin;
+		Tf    = T(end)
+		title = [ "Muscle O2 Consumption Rate: Itr =", ntoa(sumItr) ]
+		gtitle(title)
+		gxtitle("Seconds")
+		gytitle("Nanomoles / Second")
+		gplot(Time, F(Tf, aOut, Time))
+		#
+		gaddwin;
+		title = [ "Chamber O2 Concentration: Itr =", ntoa(sumItr) ]
+		gtitle(title)
+		gxtitle("Seconds")
+		gytitle("Nanomoles / Ml")
+		Psi = callback(thetaOut, aOut)
+		gcolor("black")
+		gplot(Time, Psi)
+		gstyle("circle", 1, 20)
+		gplot(Time, y)
+		#
+		gupdate
+		# --------------------------------------------
+		thetaIn   = thetaOut
+		thetaMitr = thetaMitr + 1
+end

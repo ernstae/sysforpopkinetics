@@ -1,0 +1,383 @@
+# ---------------------------------------------------------------------
+# File: MapObj.oms
+#
+#
+# Evaluates the negative logarithm of the integrand that appears 
+# in the population expected determinant optimal design criterion.  
+#
+# Author: Mitch Watrous
+# 
+# ---------------------------------------------------------------------
+
+#begin##
+$begin MapObj$$
+$escape #$$
+
+$spell
+  ok
+$$
+
+$section Negative Logarithm of the Population Expected Determinant Criterion Integrand$$
+
+$index MapObj$$
+$cindex negative logarithm #of #the population expected determinant criterion integrand$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/MapObj( ...
+  function /Model/, ...
+  /Unused/,  ...
+  /x/,
+  /alp/, ...
+  /MapObjOut/, /MapObj_alpOut/, ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Evaluates the negative logarithm of the integrand that appears 
+in the population expected determinant optimal design criterion.  
+In particular, this function evaluates
+$math%
+
+                       %      -         %                      -
+                       %     |          %                       |
+    MapObj(alp) = - #log  |  p(alp)  #det[ HTilde(alp) ]  |  ,
+                       %     |          %                       |
+                       %      -         %                      -
+
+%$$
+where $math%p(alp)%$$ is the prior distribution of the
+value of $math%alp%$$, $math%HTilde(alp)%$$ is an approximation for
+the information matrix corresponding to the negative log-likelihood
+of all of the data. 
+The approximate information matrix $math%HTilde(alp)%$$ is defined as
+$math%
+
+                        M
+                       ----   
+    HTilde(alp)  =  >      HTilde_i(alp)  ,
+                       ----
+                       i = 1
+
+%$$
+where $math%M%$$ is the number of the individuals in the population 
+and the contribution from each individual is given by
+replacing the derivatives with respect to the fixed population 
+parameter $math% alp%$$ by central difference approximations
+in the definition of
+$math%
+                                       T     -1                
+    H_i(alp)  =  f_i_alp(alp)   V_i  (alp)  f_i_alp(alp)
+
+           1                  T          -1               -1                 
+        +  - V_i_alp(alp)  kron[ V_i  (alp), V_i  (alp) ] V_i_alp(alp)  .
+           2
+%$$
+
+$head Reference$$
+B. M. Bell, $italic Approximating The Marginal Likelihood Estimate 
+For Models With Random Parameters$$, Applied Mathematics and Computation,
+119 (2001), pp. 57-73. 
+
+$head Return Values$$
+The return value of $code lambda$$ 
+is true, if it succeeds, and false otherwise.
+
+$head Arguments$$
+$syntax//Model/(/alp/, /fOut/, /f_alpOut/, /VOut/, /V_alpOut/, /Unused1/, /Unused2/)
+/$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+$comment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[Revisit - Global Subject Index Value - Mitch]
+This global value must be used to pass the subject index
+to the model function. 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+$$
+Note that the current individual $math%i%$$ is specified by the global
+variable GLOBAL_SubjectIndex.
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+$pre
+
+$$
+$center
+$table
+$bold Argument$$
+  $cend $bold Value$$ 
+  $cend $bold Comments$$ $rend
+$italic alp$$
+  $cend $math%alp%$$
+  $cend fixed population parameter vector $rend
+$italic fOut$$
+  $cend $math%f_i(alp)%$$ 
+  $cend model for the mean of $math%y_i%$$ $rend
+$italic f_alpOut$$ 
+  $cend $math%f_i_alp(alp)%$$ 
+  $cend derivative of $math%f_i(alp)%$$ with respect to $math%alp%$$ $rend
+$italic VOut$$ 
+  $cend $math%V_i(alp)%$$ 
+  $cend model for the variance of $math%y_i%$$ $rend
+$italic V_alpOut$$
+  $cend $math%V_i_alp(alp)%$$ 
+  $cend derivative of $math%V_i(alp)%$$ with respect to $math%alp%$$ $rend
+$italic Unused1$$ 
+  $cend 
+  $cend not used by this model $rend
+$italic Unused2$$ 
+  $cend 
+  $cend not used by this model $rend
+$tend
+$$
+
+$syntax/
+/Unused/
+/$$
+This argument is not used by this function.
+$syntax/
+
+/alp/
+/$$
+The double-precision column vector $italic alp$$
+specifies a value for the fixed population parameter vector.
+$syntax/
+
+/MapObjOut/
+/$$
+the output value $italic MapObjOut$$
+is a scalar containing the value of $math%MapObj(alp)%$$.
+$syntax/
+
+/MapObj_alpOut/
+/$$
+the output value $italic MapObj_alpOut$$
+is a row vector containing the derivative of
+$math%MapObj(alp)%$$ with respect to $math%alp%$$.
+
+$end
+-------------------------------------------------------------------------
+#end##
+
+# ---------------------------------------------------------------------
+#
+# Global variables.
+#
+# ---------------------------------------------------------------------
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# [Revisit - Global Subject Index Value - Mitch]
+# This global value must be used to pass the subject index
+# to the model function.  The reason for this is that the
+# original lambda function, i.e., the lambda function that
+# is used for parameter estimation rather than optimal design,
+# is evaluated for a particular individual, but this lambda 
+# function requires a sum over all of the individuals.  This
+# difference is an artifact of the fact that the second level
+# of the hierarchical model for parameter estimation involves
+# a separate optimization problem for each individual, while
+# the second level of the hierarchical model for optimal design
+# involves a single optimization problem that has an objective
+# which includes contributions from each individual.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+global GLOBAL_K
+global GLOBAL_SubjectIndex
+
+
+# ---------------------------------------------------------------------
+#
+# Include files
+#
+# ---------------------------------------------------------------------
+
+# Modified SPK functions.
+include Lambda.oms
+
+
+# ---------------------------------------------------------------------
+#
+# Local variables
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+#
+# Local functions
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: dummy
+# ---------------------------------------------------------------------
+
+local function dummy() begin
+  stop "Model not set"
+end
+
+
+# ---------------------------------------------------------------------
+# Function: Model
+# ---------------------------------------------------------------------
+
+local function Model = dummy()
+
+
+# ---------------------------------------------------------------------
+# Function: IgnoresXModel
+#
+#
+# Evaluates the model functions 
+#
+#    f_i(alp)  
+#
+# and
+#
+#    V_i(alp)  
+#
+# for the individual i specified by GLOBAL_SubjectIndex.
+#
+# This function also evaluates the derivatives of these functions
+# with respect the fixed population parameter vector alp.
+#
+# Notes
+# -----
+#
+# (1.) This function will be passed to Lambda where it will be 
+# called with various values for chi_i.  These values will be
+# ignored in this function, however, i.e., they will not be
+# passed to the function Model.
+#
+# (2.) This function will return an error if the derivatives
+# of f_i and V_i with respect to chi_i are requested.
+#
+# (3.) The last two arguments of this function are not used.
+#
+# ---------------------------------------------------------------------
+
+local function IgnoresXModel( ...
+  chi_i, ...
+  alp, ...
+  fOut, ...
+  f_chi_iOut, ...
+  f_alpOut, ...
+  VOut, ...
+  V_chi_iOut, ...
+  V_alpOut, ...
+  Unused1, ...
+  Unused2 ...
+) begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries.
+  # -------------------------------------------------------------------
+
+  if f_chi_iOut then begin
+    stop "This model can not be used to compute f_chi_i."
+    return false
+  end
+
+  if V_chi_iOut then begin
+    stop "This model can not be used to compute V_chi_i."
+    return false
+  end
+
+
+  # -------------------------------------------------------------------
+  # Evaluate the model.
+  # -------------------------------------------------------------------
+
+  return Model( ...
+    alp, ...
+    fOut, ...
+    f_alpOut, ...
+    VOut, ...
+    V_alpOut, ...
+    Unused1, ...
+    Unused2 ...
+  )
+
+end
+
+
+# ---------------------------------------------------------------------
+#
+# Global functions.
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: MapObj
+# ---------------------------------------------------------------------
+
+function MapObj( ...
+	function model, ...
+	Unused1, ...
+	Unused2,  ...
+	alp, ...
+	MapObjOut, ...
+	MapObj_alpOut ...
+) begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries.
+  # -------------------------------------------------------------------
+
+  if not (MapObjOut or MapObj_alpOut) then ...
+    return true
+
+	# Pass information to IgnoresXModel.
+  function Model = model()
+
+
+  # -------------------------------------------------------------------
+  # Compute Lambda and its derivatives.
+  # -------------------------------------------------------------------
+
+  # Create a value for x that will be passed to Lambda but 
+  # that won't be passed on to the function model.
+  nX       = colsum(GLOBAL_K)
+  xIgnored = fill(0.0, nX, 1)
+
+  # The expected determinant design criterion does not depend
+  # on the data.
+  y = {}
+
+  LambdaOut     = MapObjOut
+  Lambda_xOut   = false
+  Lambda_alpOut = MapObj_alpOut
+
+  ok = Lambda( ...
+    function IgnoresXModel, ...
+    y,  ...
+    xIgnored, ...
+    alp, ...
+    LambdaOut, ...
+    Lambda_xOut, ...
+    Lambda_alpOut ...
+  )
+
+
+  # -------------------------------------------------------------------
+  # Compute the output values.
+  # -------------------------------------------------------------------
+
+  if MapObjOut then ...
+    MapObjOut = LambdaOut
+
+  if MapObj_alpOut then ...
+    MapObj_alpOut = Lambda_alpOut
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  function Model = dummy()
+
+  return true
+
+end
+

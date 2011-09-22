@@ -1,0 +1,40 @@
+function ok = NewtonStepTest()
+M          = 4;
+N          = 5;
+e_M        = ones(M, 1);
+e_N        = ones(N, 1);
+t          = .3;
+Psi        = rand(M, N);
+lambda     = rand(N, 1);
+w          = rand(M, 1);
+[ok, lambdaStep, wStep] = NewtonStep(t, lambda, w, Psi);
+y          = e_N - Psi' * w;
+yStep      = - Psi' * wStep;
+x          = [ y; lambda; w ];
+xStep      = [ yStep; lambdaStep; wStep ];
+%
+Nx         =   N + N + M;
+dFTilde    = zeros(Nx, Nx);
+for j  = 1:Nx
+    xTmp    = x;
+    h       = x(j) / 10.;
+    xTmp(j) = x(j) + h;
+    Fplus   = F(Psi, xTmp);
+    xTmp(j) = x(j) - h;
+    Fminus  = F(Psi, xTmp);
+    dFTilde(:, j) = (Fplus - Fminus) / (2 * h);
+end
+xStepTilde = dFTilde \ ( [ e_N ; t * e_N ; e_M ] - F(Psi, x) );
+difference = xStep - xStepTilde;
+sumabs     = abs(xStep) + abs(xStepTilde);
+ok         = all( 1e-7 > difference ./ sumabs );
+
+function f = F(Psi, x)
+[M, N] = size(Psi);
+y      = x(1:N);
+lambda = x( (N+1):(2*N) );
+w      = x( (2*N+1): (2*N + M) );
+one    = Psi' * w + y;
+two    = lambda .* y;
+three  = diag(w) * Psi * lambda;
+f      = [ one; two; three ];

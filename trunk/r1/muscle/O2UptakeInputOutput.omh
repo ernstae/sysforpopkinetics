@@ -1,0 +1,93 @@
+$begin O2UptakeInputOutput$$
+
+$spell
+	mitochondrial
+	subinterval
+	deconvolution
+	deltar
+	deltat
+	diff
+	ch
+	cm
+	conc
+	mmHg
+	ml
+	mM
+	mu
+	Vch
+	Vmu
+	amt
+	mmol
+$$
+
+$comment 
+	Table of Input and Output Variables in the Program for Computing 
+	the Time Course of Mitochondrial Oxygen Consumption During Muscle 
+	Contraction and Recovery
+$$
+
+$section Table of Input and Output Variables$$
+
+$fend 10$$
+
+$head Input Variables for the Direct Problem$$
+
+$table
+$pre            $$      $cnext   $pre            $$      $cnext   
+$pre            $$      $cnext   $pre            $$      $rnext
+$bold Name$$            $cnext   $bold Type$$            $cnext
+$bold value$$           $cnext   $bold units$$           $rnext
+$xref/O2UptakeGlossary/alphaO2/alphaO2/$$
+	$cnext double scalar $cnext   $cnext mM/mmHg  $rnext
+$xref/O2UptakeGlossary/pO2air/pO2air/$$
+	$cnext double scalar $cnext   $cnext mmHg  $rnext
+$xref/O2UptakeGlossary/pO2ch0/pO2ch0/$$
+	$cnext double scalar $cnext   $cnext mmHg  $rnext
+$xref/O2UptakeGlossary/concO2air/concO2air/$$
+	$cnext double scalar $cnext   $cnext mM  $rnext
+$xref/O2UptakeGlossary/concO2ch0/concO2ch0/$$
+	$cnext double scalar $cnext   $cnext mM  $rnext
+$xref/O2UptakeGlossary/KO2ch/KO2ch/$$
+	$cnext double scalar $cnext   $cnext ml/sec  $rnext
+$xref/O2UptakeGlossary/Vch/Vch/$$
+	$cnext double scalar $cnext   $cnext ml  $rnext
+$xref/O2UptakeGlossary/Vmu/Vmu/$$
+	$cnext double scalar $cnext   $cnext ml  $rnext
+$xref/O2UptakeGlossary/fluxO2el/fluxO2el/$$
+	$cnext double scalar $cnext   $cnext mM/sec  $rnext
+$xref/O2UptakeGlossary/fluxO2mu/fluxO2mu/$$
+	$cnext double vector $cnext   $cnext mM/sec  $rnext
+$xref/O2UptakeGlossary/diffO2/diffO2/$$
+	$cnext double scalar $cnext   $cnext cm^2/sec  $rnext
+$xref/O2UptakeGlossary/R/R/$$
+	$cnext double scalar $cnext   $cnext cm  $rnext
+$xref/O2UptakeGlossary/r/r/$$
+	$cnext double vector $cnext   $cnext cm  $rnext
+$xref/O2UptakeGlossary/deltar/deltar/$$
+	$cnext double scalar $cnext   $cnext cm  $rnext
+$xref/O2UptakeGlossary/t/t/$$
+	$cnext double vector $cnext   $cnext sec  $rnext
+$xref/O2UptakeGlossary/deltat/deltat/$$
+	$cnext double scalar $cnext   $cnext sec  $rnext
+$tend
+
+$head Output Variables for the Direct Problem$$
+$table
+$pre            $$      $cnext   $pre            $$      $cnext   
+$pre            $$      $cnext   $pre            $$      $rnext
+$bold Name$$            $cnext   $bold Type$$            $cnext
+$bold value$$           $cnext   $bold units$$           $rnext
+$xref/O2UptakeGlossary/pO2ch/pO2ch/$$
+	$cnext double vector $cnext   $cnext mmHg  $rnext
+$xref/O2UptakeGlossary/concO2ch/concO2ch/$$
+	$cnext double vector $cnext   $cnext mM  $rnext
+$xref/O2UptakeGlossary/concO2mu/concO2mu/$$
+	$cnext double vector $cnext   $cnext mM  $rnext
+$xref/O2UptakeGlossary/amtO2ch/amtO2ch/$$
+	$cnext double vector $cnext   $cnext mmol  $rnext
+$xref/O2UptakeGlossary/amtO2mu/amtO2mu/$$
+	$cnext double vector $cnext   $cnext mM  $rnext
+$xref/O2UptakeGlossary/fluxO2ms/fluxO2ms/$$
+	$cnext double vector $cnext   $cnext mM/sec  $rnext
+$tend
+$end

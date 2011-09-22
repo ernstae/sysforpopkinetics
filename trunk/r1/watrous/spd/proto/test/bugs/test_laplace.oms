@@ -1,0 +1,268 @@
+# change this to sleep("off") just to blaze through everything
+sleep("on")
+#sleep("off")
+
+format double "e24.15"
+
+problem = novalue
+output_file = novalue
+xStep = novalue
+xLow = novalue
+xUp = novalue
+xIn = novalue
+alpStep = novalue
+alpIn = novalue
+alpLow = novalue
+alpUp = novalue
+K = novalue
+eps = novalue
+delta = novalue
+mitr = novalue
+level = novalue
+covariates = novalue
+bLength = novalue
+alpLength = novalue
+xLength = novalue
+
+Problem (problem, output_file, xStep, xLow, xUp, xIn, alpStep, alpIn, alpLow, alpUp, K, eps, delta, mitr, level, covariates, bLength, alpLength, xLength) 
+
+x=xIn
+bpop=alpIn
+alp=alpIn
+pattern=K
+a=covariates
+n_b=bLength
+n_x=xLength
+n_alp=alpLength
+b=double(zeros(n_b,1))
+i=novalue
+
+print "********* Testing sanity for problem:",problem," *********"
+
+fOut=true
+f_xOut=true
+f_alpOut=true
+f_bOut=true
+f_b_xOut=true
+f_b_alpOut=true
+ROut=true
+R_xOut=true
+R_alpOut=true
+R_bOut=true
+DOut=true
+D_alpOut=true
+palpOut=true
+palp_alpOut=true
+
+f=Model (i, x, bpop, b, fOut, f_xOut, f_alpOut, f_bOut, f_b_xOut, f_b_alpOut, ROut, R_xOut, R_alpOut, R_bOut, DOut, D_alpOut, palpOut, palp_alpOut) 
+
+print "fOut=", fOut
+print "f_xOut=", f_xOut
+print "f_alpOut=", f_alpOut
+print "f_bOut=", f_bOut
+print "f_b_xOut=", f_b_xOut
+print "f_b_alpOut=", f_b_alpOut
+print "ROut=", ROut
+print "R_xOut=", R_xOut
+print "R_alpOut=", R_alpOut
+print "R_bOut=", R_bOut
+print "DOut=", DOut
+print "D_alpOut=", D_alpOut
+print "palpOut=", palpOut
+print "palp_alpOut=", palp_alpOut
+
+sleep(2)
+
+alp=bpop
+eps=1d-6
+
+print "check f_x:"
+f_xOut_anal=true
+f=Model (i, x, alp, b, false, f_xOut_anal, false, false, false, false, false, false, false, false, false, false, false, false )
+print "The partials of f w.r.t x at this design, analytically:"
+print diag(f_xOut_anal)'
+f_xOut_num = double(0) % f_xOut_anal
+for j = 1 to n_x begin
+	fOut_f=true
+	fOut_b=true
+	x_f=x
+	x_b=x
+	x_f(j)=x_f(j)+eps
+	x_b(j)=x_b(j)-eps
+	f=Model (i, x_f, alp, b, fOut_f, false, false, false, false, false, false, false, false, false, false, false, false, false)
+	f=Model (i, x_b, alp, b, fOut_b, false, false, false, false, false, false, false, false, false, false, false, false, false)
+
+	f_xOut_num.col(j)=(fOut_f-fOut_b)/(2*eps)
+end
+print "The partials of f w.r.t x at this design, numerically:"
+print diag(f_xOut_num)'
+
+sleep(2)
+
+print "check f_alp:"
+f_alpOut_anal=true
+f=Model (i, x, alp, b, false, false, f_alpOut_anal, false, false, false, false, false, false, false, false, false, false, false, false)
+print "The partials of f w.r.t alp at this design, analytically:"
+print f_alpOut_anal
+f_alpOut_num = double(0) % f_alpOut_anal
+for j = 1 to n_alp begin
+	fOut_f=true
+	fOut_b=true
+	alp_f=alp
+	alp_b=alp
+	alp_f(j)=alp_f(j)+eps
+	alp_b(j)=alp_b(j)-eps
+	f=Model (i, x, alp_f, b, fOut_f, false, false, false, false, false, false, false, false, false, false, false, false, false)
+	f=Model (i, x, alp_b, b, fOut_b, false, false, false, false, false, false, false, false, false, false, false, false, false)
+
+	f_alpOut_num.col(j)=(fOut_f-fOut_b)/(2*eps)
+end
+print "The partials of f w.r.t alp at this design, numerically:"
+print f_alpOut_num
+
+sleep(2)
+
+print "check f_b:"
+f_bOut_anal=true
+f=Model (i, x, alp, b, false, false, false, f_bOut_anal, false, false, false, false, false, false, false, false, false, false, false)
+print "The partials of f w.r.t b at this design, analytically:"
+print f_bOut_anal
+f_bOut_num = double(0) % f_bOut_anal
+for j = 1 to n_b begin
+	fOut_f=true
+	fOut_b=true
+	b_f=b
+	b_b=b
+	b_f(j)=b_f(j)+eps
+	b_b(j)=b_b(j)-eps
+	f=Model (i, x, alp, b_f, fOut_f, false, false, false, false, false, false, false, false, false, false, false, false, false)
+	f=Model (i, x, alp, b_b, fOut_b, false, false, false, false, false, false, false, false, false, false, false, false, false)
+
+	f_bOut_num.col(j)=(fOut_f-fOut_b)/(2*eps)
+end
+print "The partials of f w.r.t b at this design, numerically:"
+print f_bOut_num
+
+sleep(2)
+
+print "check R_alp:"
+R_alpOut_anal=true
+f=Model (i, x, alp, b, false, false, false, false, false, false, false, false, R_alpOut_anal, false, false, false, false, false)
+print "The partials of R w.r.t alp at this design, analytically:"
+print R_alpOut_anal
+R_alpOut_num = double(0) % R_alpOut_anal
+for j = 1 to n_alp begin
+	ROut_f=true
+	ROut_b=true
+	alp_f=alp
+	alp_b=alp
+	alp_f(j)=alp_f(j)+eps
+	alp_b(j)=alp_b(j)-eps
+	f=Model (i, x, alp_f, b, false, false, false, false, false, false, ROut_f, false, false, false, false, false, false, false)
+	f=Model (i, x, alp_b, b, false, false, false, false, false, false, ROut_b, false, false, false, false, false, false, false)
+
+	R_alpOut_num.col(j)=reshape((ROut_f-ROut_b)/(2*eps),n_x*n_x,1)
+end
+print "The partials of R w.r.t alp at this design, numerically:"
+print R_alpOut_num
+
+sleep(2)
+
+print "check R_b:"
+R_bOut_anal=true
+f=Model (i, x, alp, b, false, false, false, false, false, false, false, false, false, R_bOut_anal, false, false, false, false)
+print "The partials of R w.r.t b at this design, analytically:"
+print R_bOut_anal
+R_bOut_num = double(0) % R_bOut_anal
+for j = 1 to n_b begin
+	ROut_f=true
+	ROut_b=true
+	b_f=b
+	b_b=b
+	b_f(j)=b_f(j)+eps
+	b_b(j)=b_b(j)-eps
+	f=Model (i, x, alp, b_f, false, false, false, false, false, false, ROut_f, false, false, false, false, false, false, false)
+	f=Model (i, x, alp, b_b, false, false, false, false, false, false, ROut_b, false, false, false, false, false, false, false)
+
+	R_bOut_num.col(j)=reshape((ROut_f-ROut_b)/(2*eps),n_x*n_x,1)
+end
+print "The partials of R w.r.t b at this design, numerically:"
+print R_bOut_num
+
+sleep(2)
+
+print "check f_b_x:"
+f_b_xOut_anal=true
+f=Model (i, x, bpop, b, false, false, false, false, f_b_xOut_anal, false, false, false, false, false, false, false, false, false)
+print "The partials of f w.r.t b w.r.t x at this design, analytically:"
+print f_b_xOut_anal
+f_b_xOut_num = double(0) % f_b_xOut_anal
+for j = 1 to n_x begin
+	f_bOut_f=true
+	f_bOut_b=true
+	x_f=x
+	x_b=x
+	x_f(j)=x_f(j)+eps
+	x_b(j)=x_b(j)-eps
+	f=Model (i, x_f, alp, b, false, false, false, f_bOut_f, false, false, false, false, false, false, false, false, false, false, false)
+	f=Model (i, x_b, alp, b, false, false, false, f_bOut_b, false, false, false, false, false, false, false, false, false, false, false)
+
+	f_b_xOut_num.row((j-1)*n_b+1,n_b)=(f_bOut_f'-f_bOut_b')/(2*eps)
+end
+print "The partials of f w.r.t b w.r.t x at this design, numerically:"
+print f_b_xOut_num
+
+sleep(2)
+
+print "check f_b_alp:"
+f_b_alpOut_anal=true
+f=Model (i, x, bpop, b, false, false, false, false, false, f_b_alpOut_anal, false, false, false, false, false, false, false, false)
+print "The partials of f w.r.t b w.r.t alp at this design, analytically:"
+print f_b_alpOut_anal
+f_b_alpOut_num = double(0) % f_b_alpOut_anal
+for j = 1 to n_alp begin
+	f_bOut_f=true
+	f_bOut_b=true
+	alp_f=alp
+	alp_b=alp
+	alp_f(j)=alp_f(j)+eps
+	alp_b(j)=alp_b(j)-eps
+	f=Model (i, x, alp_f, b, false, false, false, f_bOut_f, false, false, false, false, false, false, false, false, false, false, false)
+	f=Model (i, x, alp_b, b, false, false, false, f_bOut_b, false, false, false, false, false, false, false, false, false, false, false)
+
+	f_b_alpOut_num.col(j)=reshape((f_bOut_f-f_bOut_b)',[n_x*n_b,1])/(2*eps)
+end
+print "The partials of f w.r.t b w.r.t alp at this design, numerically:"
+print f_b_alpOut_num
+
+sleep(2)
+
+halt
+
+print "check p_alp:"
+p_alpOut_anal=true
+f=Model (i, x, bpop, b, false, false, false, false, false, false, false, false, false, false, false, false, p_alpOut_anal)
+print "The partials of p w.r.t alp at this design, analytically:"
+print p_alpOut_anal
+p_alpOut_num = double(0) % p_alpOut_anal
+for j = 1 to n_alp begin
+	pOut_f=true
+	pOut_b=true
+	alp_f=alp
+	alp_b=alp
+	alp_f(j)=alp_f(j)+eps
+	alp_b(j)=alp_b(j)-eps
+	f=Model (i, x, alp_f, b, false, false, false, false, false, false, false, false, false, false, false, false, pOut_f, false) 
+	f=Model (i, x, alp_b, b, false, false, false, false, false, false, false, false, false, false, false, false, pOut_b, false) 
+
+	f=Model (i, x, alp_f, b, false, false, false, false, false, false, false, false, false, false, false, false, pOut_f, false) 
+
+	p_alpOut_num(j,j)=(pOut_f(j)-pOut_b(j))/(2*eps)
+end
+print "The partials of p w.r.t alp at this design, numerically:"
+print p_alpOut_num
+
+sleep(2)
+
+print "******************************************"
+print " "

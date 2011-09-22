@@ -1,0 +1,10 @@
+$begin markov_chain$$
+
+$section Markov Chain Routines$$
+
+$contents%
+	lib/metropolis_hastings.c
+%$$
+	
+
+$end

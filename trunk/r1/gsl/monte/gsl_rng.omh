@@ -1,0 +1,106 @@
+----------------------------------------------------------------------------
+$begin gsl_rng_alloc$$
+$spell
+	gsl
+	rng
+	alloc
+	Tausworthe
+	const
+	taus
+$$
+
+$index random, create generator$$
+$index create, random generator$$
+$index generator, create random$$
+$section Creating a Random Number Generator$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%gsl_rng * gsl_rng_alloc (const gsl_rng_type * %T%)%$$
+$tend
+
+$fend 20$$
+
+$head Description$$
+This function returns a pointer to a newly-created instance of a 
+random number generator of type $italic T$$. 
+For example, 
+the following code creates an instance of the Tausworthe generator,
+$syntax%
+	gsl_rng * %r% = gsl_rng_alloc (gsl_rng_taus);
+%$$
+If there is insufficient memory to create the generator
+then the function returns a null pointer and the error handler 
+is invoked with an error code of $code GSL_ENOMEM$$.
+$pre
+
+$$
+The generator is automatically initialized with the default seed, 
+$code gsl_rng_default_seed$$. 
+This is zero by default but can be changed either directly or by 
+using the environment variable $code GSL_RNG_SEED$$
+(see section Random number environment variables).
+$pre
+
+$$
+The details of the available generator types are described later 
+in the Random number generation chapter. 
+$end
+-------------------------------------------------------------------------
+$begin gsl_rng_env_setup$$
+$spell
+	gsl
+	rng
+	env
+	const
+	mt
+	strtoul
+	taus
+$$
+
+$index random, environment$$
+$index environment, random$$
+$section Set Up Random Number Environment$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%const gsl_rng_type * gsl_rng_env_setup (void)%$$
+$tend
+
+$fend 20$$
+
+$head Description$$
+$index gsl_rng_default$$
+$index gsl_rng_default_seed$$
+
+This function reads the environment variables 
+$code GSL_RNG_TYPE$$
+and 
+$code GSL_RNG_SEED$$ 
+and uses their values to set the corresponding library variables 
+$code gsl_rng_default$$
+and 
+$code gsl_rng_default_seed$$. 
+These global variables are defined as follows,
+$syntax%
+extern const gsl_rng_type *gsl_rng_default;
+extern unsigned long int gsl_rng_default_seed;
+%$$
+The environment variable 
+$code GSL_RNG_TYPE$$ 
+should be the name of a generator, such as $code taus$$ or $code mt19937$$. 
+The environment variable 
+$code GSL_RNG_SEED$$ should contain the desired seed value. 
+It is converted to an unsigned long int using the 
+C library function $code strtoul$$.
+$pre
+
+$$
+If you don't specify a generator for 
+$code GSL_RNG_TYPE$$
+then 
+$code gsl_rng_mt19937$$ is used as the default. 
+The initial value of $code gsl_rng_default_seed$$ is zero.
+
+$end
+

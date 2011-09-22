@@ -1,0 +1,205 @@
+begin # Blocking for automatic include
+#begin##
+---------------------------------------------------------------------------
+$begin EuclidTrustRegion$$
+$spell
+	Subproblem
+$$
+
+$section The Euclidean Norm Trust-Region Problem$$
+
+$table
+$bold Syntax$$
+$cnext $syntax/[/xBar/, /alphaBar/, /ok/] = EuclidTrustRegion(/Q/, /c/, /Delta/)/$$
+$tend
+
+$fend 20$$
+
+$head Problem$$
+Given
+$latex Q \in {\bf R}^{n \times n}$$,
+$latex c \in {\bf R}^n$$,
+and
+$latex \Delta > 0 $$,
+the corresponding Euclidean norm trust-region problem is
+$latex \[
+\begin{array}{l}
+{\rm minimize} \; c^T x + \frac{1}{2} x^T Q x \; {\rm with \: respect \; to} \; x \in {\bf R}^n
+\\
+{\rm subject to} \; | x | \leq \Delta
+\end{array}
+\] $$
+The $code EuclidTrustRegion$$ routine solves this problem using
+the method described in Section 5.5 of
+$href%
+	http://www.math.washington.edu/~burke/%
+	James Burke's
+%$$
+course notes for
+$href%
+	http://www.math.washington.edu/~burke/crs/516/%
+	Math 516
+%$$.
+
+$head First Order Conditions$$
+Suppose that 
+$latex \bar{x} \in {\bf R}^n$$,
+$latex \bar{\alpha} \in {\bf R}$$,
+$latex \bar{\alpha} \geq 0 $$,
+$latex \[
+\begin{array}{rcl}
+0 & = &
+\bar{\alpha} ( | x | - \Delta )
+\\
+0 & = &
+c + ( Q + \bar{\alpha} I  ) \bar{x} 
+\\
+0 & \leq & 
+x^T  ( Q + \bar{\alpha} I  ) x \; {\rm for \: all} \; x \in {\bf R}^n
+\end{array}
+\] $$
+where $latex I \in {\bf R}^{n \times n}$$ is the identity matrix.
+In this case we say
+that the pair
+$latex ( \bar{x} , \bar{\alpha} )$$
+satisfies the first order conditions for
+the Euclidean norm trust-region
+$xref/EuclidTrustRegion/Problem/problem/$$.
+
+$head Q$$
+The real or double-precision matrix $latex Q$$
+has $latex n$$ rows and $latex n$$ columns.
+
+$head c$$
+The real or double-precision column vector $latex c$$
+has $latex n$$ rows.
+
+$head Delta$$
+The real or double-precision scalar $latex Delta$$
+must be greater than zero.
+
+$head xBar$$
+The return value $italic  xBar$$ is a column vector
+with $latex n$$ rows that solves
+the Euclidean norm trust-region
+$xref/EuclidTrustRegion/Problem/problem/$$.
+If both $italic c$$ and $italic Q$$ are zero,
+this routine returns zero for $italic xBar$$.
+
+$head alphaBar$$
+The return value $italic  alphaBar$$ is a column vector
+with $latex n$$ rows such that the pair 
+$latex ( xBar, alphaBar ) $$ satisfies the
+$xref/EuclidTrustRegion/First Order Conditions/first order conditions/$$
+for the Euclidean norm trust-region problem.
+If both $italic c$$ and $italic Q$$ are zero,
+this routine returns zero for $italic alphaBar$$.
+
+$head ok$$
+The return value $italic ok$$ is either true or false.
+It if is true, the return values from 
+$code EuclidTrustRegion$$ satisfy their specifications.
+
+$head Example$$
+The function $code EuclidTrustRegionTest$$
+returns true if it succeeds and false otherwise:
+$code
+$pre
+
+$$
+$verbatim%EuclidTrustRegionTest.oms%$$
+$$
+
+$end
+---------------------------------------------------------------------------
+#end##
+# The method in Section 5.5 of James Burke's course notes for Math 516
+# makes multiple use of the variable lambda. The code below uses alpha in place 
+# of the the scalar meaning of lambda in the notes.
+#
+# 
+local function [phi, dphi, r] = Phi(Delta, lambda, mu, alpha) begin
+	#
+	# r = V' * inv(Q + alpha * I) * c and V is orthogonal
+	#
+	r      = mu / (alpha + lambda)
+	rNorm  = | r |
+	phi    = 1d0 / Delta - 1d0 / rNorm
+	if nargout > 1 then begin
+		dr     = - mu / (alpha + lambda)^2d0
+		drNorm = ( r' * dr ) / rNorm
+		dphi   = drNorm / rNorm^2d0 
+	end
+end
+function [xBar, alphaBar, ok] = EuclidTrustRegion(Q, c, Delta) begin
+	# dimension of argument space
+	n = rowdim(Q)
+	# Set Qs to a symmetrix matrix such that x' * Qs * x = x' * Q * x
+	Qs = (Q + Q') / 2d0
+	# Compute the eigenvalues of Qs
+	V      = novalue
+	lambda = eigsym(Qs, V)
+	#
+	# order the eigenvalues as increasing with index
+	p      = psort( lambda )
+	lambda = lambda(p)
+	V      = V(:, p)
+	#
+	# In the case where Qs is positive definite, 
+	# check for an unconstrained solution
+	if lambda(1) > 0 then begin
+		xBar      = - Qs \ c
+		alphaBar  = 0d0
+		if | xBar | <= Delta then ...
+			return
+	end
+	#
+	# Solve the equation V * mu = c using the fact that V is orthogonal
+	mu = V' * c
+	#
+	# minimum possible value for alpha
+	alphaMin = maxs( -lambda(1), 0d0 )
+	# maximum possible value for alpha
+	alphaMax = | c | / Delta + max(abs(lambda))
+	if alphaMax <= 0 then begin
+		# both c and Q are zero
+		ok       = true
+		xBar     = fill(0d0, n, 1)
+		alphaBar = 0d0
+	end
+	#
+	# set initial value for alpha so that phi(alpha) > 0
+	alpha = alphaMax
+	while Phi(Delta, lambda, mu, alpha) < 0 and alpha > alphaMin begin
+		alpha = alphaMin + (alpha - alphaMin) / 2d0
+	end
+	if Phi(Delta, lambda, mu, alpha) < 0 then begin
+		ok    = false
+		return
+	end
+	# Newton's method will monitonically increase alpha to alphaBar where:
+	# phi(alphaBar) = 0 because phi and alpha have the following properities:
+	# 1: phi is convex, 
+	# 2: phi(beta) > 0 for beta < alphaBar
+	# 3: phi'(beta) < 0 for all beta
+	# 4: alpha <= alphaBar
+	#
+	[phi, dphi] = Phi(Delta, lambda, mu, alpha)
+	step        = - phi / dphi
+	while step > DOUBLE_EPSILON * 10d0 * alphaMax begin
+		alpha = alpha + step
+		[phi, dphi] = Phi(Delta, lambda, mu, alpha)
+		step        = - phi / dphi
+		if alpha > alphaMax then begin
+			ok = false
+			return
+		end
+	end
+	#
+	# compute return values
+	alphaBar = alpha
+	I        = double( identity(n) )
+	xBar     = - (Qs + alpha * I ) \ c
+	ok       = true
+end
+end   # Blocking for automatic include

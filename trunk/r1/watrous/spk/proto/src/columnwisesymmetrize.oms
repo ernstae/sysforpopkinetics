@@ -1,0 +1,144 @@
+#begin##
+%************************************************************************
+%                                                                       *
+%  From:   Resource Facility for Population Kinetics                    *
+%          Department of Bioengineering Box 352255                      *
+%          University of Washington                                     *
+%          Seattle, WA 98195-2255                                       *
+%                                                                       *
+%  Copyright (C) 2002, University of Washington,                        *
+%  Resource Facility for Population Kinetics. All Rights Reserved.      *
+%                                                                       *
+%  This software was developed with support from NIH grant RR-12609.    *
+%  Please cite this grant in any publication for which this software    *
+%  is used and send a notification to the address given above.          *
+%                                                                       *
+%  Check for updates and notices at:                                    *
+%  http://www.rfpk.washington.edu                                       *
+%                                                                       *
+%************************************************************************
+
+#end##
+begin # blocking for automatic include
+
+function columnwisesymmetrize( A, m ) begin 
+	rows = rowdim( A )
+ 	col = coldim( A )
+ 	B = zeros( rows, col )
+ 	for i = 1 to col begin
+		Ai = A( :,i)		
+		dim Ai(m,m)
+		Bi = Ai + Ai'
+		dim Bi( rows , 1 )
+		B(:,i) = Bi
+	end
+	return B
+end
+
+end  # blocking for automatic include
+
+
+#begin##
+$begin columnwisesymmetrize$$
+$spell 
+columnwisesymmetrize
+rvec 
+kronecker
+hessian
+th$$
+$escape &$$
+
+$section Symmetrize Columns of a Matrix$$
+
+$index columnwisesymmetrize $$
+$index derivative, when result has symmetric columns$$
+
+$table
+$bold syntax$$ $cend $syntax/columnwisesymmetrize (/A/, /m/)/$$
+$tend
+
+$head Description$$
+This function assumes that each column of $math%A%$$ is itself
+the rvec of a $math% m x m%$$ matrix.  Call $math%Ai%$$ the i-th column 
+$math%Ai%$$ as a $math%m x m%$$ matrix.  Each column of the answer $math%B%$$ is the 
+rvec of $math% Ai + Ai'%$$, where prime $math%'%$$ denotes transpose.
+$pre
+
+$$
+One use for this is when differentiating a matrix that is symmetric.
+Then one knows that the columns of the resulting derivative come
+from a symmetric matrix.  That is instead of computing
+$math%
+
+d/dx A'A = [ A' @ I ] d/dx A + [ I @ A' ] d/dx A'
+
+%$$
+where $math%'%$$ is transpose and $math%@%$$ is 
+kronecker product (and $math%I%$$ is an
+identity matrix) one may compute
+$math%
+
+B = [ A' @ I ] d/dx A 
+result =  columnwisesymmetrize(B)
+d/dx A'A = result
+
+%$$
+
+$head C++ version$$
+There is NO NEED to implement this in C++ at this time, the expected hessian
+routine does not use it.  This function is a utility function, 
+currently useful for prototyping.
+$pre
+
+$$
+In the event of a C++ version, it should take $math%A%$$ as a reference argument and modify it, 
+returning no argument.  If the need arises the function could be overloaded
+to take a separate result argument.
+
+$head Example$$
+if you run the following program 
+$codep
+clear 
+A = [{1,2,3,4},{5,6,7,8}]
+print A
+B = columnwisesymmetrize(A,2)
+print B
+$$
+0 matrix produces
+$codep
+{
+[ 1 , 5 ]
+[ 2 , 6 ]
+[ 3 , 7 ]
+[ 4 , 8 ]
+}
+
+{
+[ 2 , 10 ]
+[ 5 , 13 ]
+[ 5 , 13 ]
+[ 8 , 16 ]
+}
+$$
+
+Note that 
+$math%
+/      \      /      \     /      \
+| 2 5  |      | 1 2  |     | 1 3  | 
+|      |  =   |      |  +  |      |
+| 5 8  |      | 3 4  |     | 2 4  |
+\      /      \      /     \      /
+%$$
+
+
+$pre
+
+$$
+$center
+$italic
+$include shortCopyright.txt$$
+$$
+$$
+$end
+------------------------------------------------------------
+#end##

@@ -1,0 +1,39 @@
+$begin MontePars$$
+
+$spell
+   namespace
+   const
+   enum
+   Eval
+$$
+
+$section Parameters for Monte Carlo Integration$$
+
+$table
+$bold Syntax$$ $cnext
+$code #include "MontePars.h"$$
+$tend
+
+$head Introduction$$
+All the values defined by this include command are in the
+$code MontePars$$ namespace.
+
+$head method$$
+The value
+$syntax%
+	const enum { analytic, grid, monte } %method%;
+%$$
+specifies the method that is being used by $code monteDriver$$
+to approximation (or compute) the integral.
+
+$head numberEval$$
+The value
+$syntax%
+	const int %numberEval%
+%$$
+specifies the number of function evaluations to use for each
+individual in the population.
+Actually it is the maximum number when $italic method$$ is 
+$code grid$$ and it is not used when $italic method$$ is $code analytic$$.
+
+$end

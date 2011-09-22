@@ -1,0 +1,3 @@
+mv $1 BatchEdit.tmp
+sed -f BatchEdit.sed < BatchEdit.tmp > $1
+diff BatchEdit.tmp $1

@@ -1,0 +1,49 @@
+$begin ml$$
+$spell
+	apps
+	cspk
+	cvs
+	ml
+	spk
+	src
+	sudo
+$$
+
+$section  Install Monte-Carlo Routines$$
+
+$head Dependence$$
+The Monte-Carlo routines depends on
+$xref/xerces/$$, $xref/cppunit/$$, $xref/atlas/$$, $xref/cppad/$$,
+$xref/qn01box/$$, $xref/spk/$$, and $xref/spkpred/$$  being installed.
+
+$head Checkout r2$$
+The r2 repository was checked out with the following command:
+$codep
+	cvs checkout -P r2
+$$
+
+$head Unit Tests$$
+The Monte-Carlo unit tests were built and run with the following commands:
+$codep
+	cd r2/src/apps/spk/cspk/ml/UnitTest
+	make
+	./RunTest
+$$
+
+$head Program Tests$$
+The Monte-Carlo program tests were built and run with the following commands:
+$codep
+	cd ../Test
+	./Build
+	./RunTest
+$$
+
+$head Installing Spk$$
+The Monte-Carlo programs was then installed with the following command:
+$codep
+	cd ..
+	sudo make install
+$$
+
+
+$end

@@ -1,0 +1,23 @@
+clear
+file         = "MuscleSet1.txt";
+[Time, Mass] = ReadCalibration(file);
+Time         = Time.row(1, 100)
+Mass         = Mass.row(1, 100)
+#
+setprint("trace", true)
+Nr  = 11
+Fe  = 0.0125
+Fb = 0.00048
+Vc = 5.4
+C0 = 1119.41/Vc
+Lm = 1
+Rm = 0.05
+Tg = 0:1:800
+Yg = Mass / Vc
+D = 1d-5
+theta = {1, C0, Fb}
+a = {Fb, 0.001}
+#
+[Psi, Psi_a, Sigma] = CylinderDiffusion( ...
+	Nr, Fe, Vc, Lm, Rm, Tg, Yg, D, theta, a )
+

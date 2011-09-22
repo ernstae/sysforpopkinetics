@@ -1,0 +1,63 @@
+
+Model Equations
+===============
+F = ( THETA(1) + ETA(1)  ) *  TIME
+Y = F + EPS(1)
+
+Sim.dat
+=======
+1  0  -0.0566087  
+1  1  2.15878  
+2  0  -0.00733425  
+2  1  2.88191  
+3  0  0.075537  
+3  1  0.831321  
+4  0  0.120011  
+4  1  -0.588709  
+5  0  0.0157215  
+5  1  -0.407271  
+6  0  -0.02444  
+6  1  1.93778  
+7  0  -0.141565  
+7  1  -1.48958  
+8  0  -0.159169  
+8  1  1.88597  
+9  0  -0.133682  
+9  1  2.06994  
+10  0  0.0132823  
+10  1  2.25377  
+
+Sim.log 
+=======
+Command line arguments
+seed  = 123
+M     = 10
+theta = 1
+sigma = 0.1
+omega = 1
+
+True parameter values
+theta:   1
+sigma^2: 0.01
+omega^2: 1
+
+Estimates for this simulation
+theta:     1.15339
+sigma^2:   0.00876342
+omega^2:   1.96734
+Objective: 8.09855
+
+Standard deviations between simulations
+theta:   0.317805
+sigma^2: 0.00447214
+omega^2: 0.42853
+
+95% Confidence Interval (using true values)
+theta:   [0.377114, 1.62289]
+sigma^2: [0.00123477, 0.0187652]
+omega^2: [0.160097, 1.8399]
+
+95% Confidence Interval (using estimates)
+theta:   [0.530504, 1.77628]
+sigma^2: [-1.81003e-06, 0.0175286]
+omega^2: [1.12743, 2.80724]

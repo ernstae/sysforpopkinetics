@@ -1,0 +1,146 @@
+dir   = up2low(cwd)
+index = find(dir, "\pped")
+index = index(end, 2)
+dir   = dir(1 :: index)
+
+path([ ...
+  dir, "general;",      NEW_LINE, ...
+  dir, "ppka;",         NEW_LINE, ...
+  path                           ...
+])
+
+include ppkaOpt.oms
+
+include core_functions.oms
+
+close
+tic
+format double "e24.15"
+
+sim_pop = novalue
+est_pop = novalue
+problem = novalue
+xPossible = novalue
+criterion = novalue
+output_file = novalue
+xStep = novalue
+xLow = novalue
+xUp = novalue
+xIn = novalue
+alpTrue = novalue
+alpStep = novalue
+alpIn = novalue
+alpLow = novalue
+alpUp = novalue
+alpP1 = novalue
+alpP2 = novalue
+K = novalue
+eps = novalue
+delta = novalue
+mitr = novalue
+level = novalue
+covariates = novalue
+bLength = novalue
+alpLength = novalue
+xLength = novalue
+
+# load the variables relating to the problem
+
+Problem (sim_pop, est_pop, xPossible, criterion, problem, output_file, xStep, xLow, xUp, xIn, alpTrue, alpStep, alpIn, alpLow, alpUp, alpP1, alpP2, K, eps, delta, mitr, level, covariates, bLength, alpLength, xLength) 
+
+#rmfile([output_file,"_",criterion,".diary"])
+diary([output_file,"_",criterion,".diary"])
+
+if est_pop and sim_pop > 0 then begin
+
+	Header(["Starting estimation step for: ",problem])
+
+	file=[output_file,"_",criterion,"_sim.out"]
+	print "Getting data from: ",file
+	xEst=read(file,"double",1,rowdim(xIn))'
+	sim_pop=read(file,"int")
+	yOut=read(file,"double",sim_pop,rowdim(xIn))'
+	close
+
+	print "True values of alphas are:"
+	ParseSolution(fill(1,alpLength,1),rvec(alpTrue),"Alpha")
+
+	alpEst = fill( 0d0, rowdim(alpIn), sim_pop)
+
+	bEst = fill( 0d0, bLength, sim_pop)
+
+	exceptions = fill( true, sim_pop, 1 )
+
+	# "L" | "E" | "F" ; see ppkaOpt users guide
+	MLObjAttempt = "L"
+
+	for i = 1 to sim_pop begin
+#	for i = 14 to 15 begin
+
+		alpOut = true
+
+#		bOut = true
+		bOut = false
+
+		yEst = yOut.col(i)
+
+		MLObj = MLObjAttempt
+		ok = false
+
+		while not ok begin
+			ok = Est_Population_Parameters(yEst, xEst, MLObj, K, alpTrue, bLength, alpOut, bOut) 
+
+			if ok and rowdim(alpOut) == rowdim(alpIn) then begin
+				exceptions(i) = false 
+				
+	#			if rowdim(bEst.col(i)) == rowdim(colmean(bOut')') then ...
+	#				bEst.col(i) = colmean(bOut')'
+
+				alpEst.col(i) = alpOut
+				print "Alphas of population ",sprintf("%d/%d",i,sim_pop),sprintf(" : %3.3e",alpOut)
+
+			end else if MLObj == MLObjAttempt then begin
+				exceptions(i) = true 
+				print "Exception estimating alphas of population [",i,"/",sim_pop,"] when using preferred objective."
+				print "Switching to FO method and retrying..."
+				MLObj = "F"
+
+			end else begin
+				print "FO method did not resolve the problem. Flagging an exception and moving on."
+				exceptions(i) = true 
+				ok = true
+			end
+		end
+	end
+
+	mean_alpEst = colmean(alpEst.col(not exceptions)')'
+	std_alpEst = colstd(alpEst.col(not exceptions)')'
+	median_alpEst = colmedian(alpEst.col(not exceptions)')'
+	CV_alpEst = std_alpEst / mean_alpEst % 100d0
+
+	print "Estimation of alphas from simulation data yields the following results:"
+	ParseSolution(fill(5,alpLength,1),rvec([alpTrue,median_alpEst,mean_alpEst,std_alpEst,CV_alpEst]),{"True","Median","Mean","SD","%CV"})
+	print ""
+
+	print "There were",colsum(int(exceptions)),"exceptions in estimating alphas"
+	
+	print ""
+	file=[output_file,"_",criterion,"_est_",MLObj,".out"]
+	print "Writing estimation data to: ",file
+	print ""
+	foo=rmfile(file)
+	foo=write(file,exceptions')
+	foo=write(file,alpEst)
+	close
+
+	print "This problem took",sprintf("%3.3f",toc/60),"minutes."
+	print ""
+
+	print Header(["Done with estimation for: ",problem])
+
+end else begin
+	Header("No estimation step requested or no simulation data to process")
+end
+
+print ""
+diary("off")

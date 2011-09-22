@@ -1,0 +1,5 @@
+rm -r htm
+mkdir htm
+cd    htm
+$HOME/OMhelp/omhelp ../PopModelAndData.omh -xml
+cd ..

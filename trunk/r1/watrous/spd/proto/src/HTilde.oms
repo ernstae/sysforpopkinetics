@@ -1,0 +1,686 @@
+# ---------------------------------------------------------------------
+# File: HTilde.oms
+#
+#
+# Calculates the approximate population information matrix.
+#
+# Author: Mitch Watrous
+# 
+# ---------------------------------------------------------------------
+
+#begin##
+
+$begin HTilde$$
+$escape #$$
+
+$spell
+  cg
+  covariance
+  df
+  dx
+  eps
+  epsline
+  lambdaVal
+  Hessian
+  Info
+  itr
+  Laplace
+  mod
+  mitr
+  ndir
+  ok
+  opt
+  pped
+  ppka
+  Ri
+  Rval
+  Std
+  subvector
+  const
+  sqrt
+  snormal
+  seq
+$$
+
+$section The Approximate Population Information Matrix$$
+
+$index HTilde$$
+$cindex #the #approximate population information matrix$$
+
+$table
+$bold Syntax:$$ $cend
+$syntax/HTilde( ...
+  function /Model/, ...
+  /K/, ...
+  /x/, ...
+  /alpStep/, /alp/, ...
+  /bLength/, ...
+  /HTildeOut/, /HTilde_xOut/, /HTilde_alpOut/ ...
+)/$$
+
+$tend
+
+$fend 25$$
+
+$head Description$$
+Calculates an approximation for the population information matrix
+corresponding to the negative log-likelihood of all of the data,
+$math%
+
+    HTilde(x, alp)  ,
+
+%$$
+where $math%x%$$ is a vector of design parameters and $math%alp%$$
+is a vector of fixed population parameters.
+This function also evaluates the derivatives of this function
+with respect to $math%x%$$ and with respect to $math%alp%$$.
+$pre
+
+$$
+The full design parameter vector $math%x%$$ contains the design vectors 
+$math%x_i%$$ for all $math%M%$$ of the individuals in the population 
+together with $math%x_common%$$, which is a vector of design 
+parameters common to all of the individuals.
+That is,
+$math%
+           -          -
+          |  x_1       |
+          |  x_2       |
+          |   .        |
+    x  =  |   .        |  .
+          |   .        |
+          |  x_M       |
+          |  x_common  |
+           -          -
+
+%$$
+The combination of parameters that each individuals' model functions will
+depend on is denoted by
+$math%
+               -          -
+    chi_i  =  |  x_i       |  .
+              |  x_common  |
+               -          -
+
+%$$
+
+The approximate information matrix $math%HTilde(x, alp)%$$ is defined as
+$math%
+
+                        M
+                       ----   
+    HTilde(x, alp)  =  >      HTilde_i(chi_i, alp)  ,
+                       ----
+                       i = 1
+
+%$$
+where the contribution from each individual is given by
+replacing the derivatives with respect to the fixed population 
+parameter $math%alp%$$ by central difference approximations
+in the definition of
+$math%
+
+    HTilde_i(chi_i, alp)
+
+                                      T         -1            
+        =  fTilde_i_alp(chi_i, alp, 0)  VTilde_i  (chi_i, alp)  fTilde_i_alp(chi_i, alp, 0)
+
+           1                         T               -1                      -1             
+        +  - VTilde_i_alp(chi_i, alp)  kron[ VTilde_i  (chi_i, alp), VTilde_i  (xTilde_i, alp) ] VTilde_i_alp(chi_i, alp)  ,
+           2
+%$$
+and where
+$math%
+
+    VTilde_i(chi_i, alp)  =  RTilde_i(chi_i, alp)
+
+                                                                       T
+        +  fTilde_i_b(chi_i, alp, 0)  D(alp)  fTilde_i_b(chi_i, alp, 0)  .
+%$$
+
+$head Notes$$
+(1.) This function makes the following first order approximation
+for the model for the mean of the $th i$$ individual's data,
+$math%
+
+    fTilde_i(chi_i, alp, b_i)  =  f_i(chi_i, alp, 0)  +  f_i_b(chi_i, alp, 0) * b_i  ,
+
+%$$
+where $math%f_i_b(chi_i, alp, b_i)%$$ is the derivative of 
+$math%f_i(chi_i, alp, b_i)%$$ with respect to the random effect 
+vector $math%b_i%$$.
+$pre
+
+$$
+(2.) This function makes the following approximation for the
+model for the covariance of the $th i$$ individual's data,
+$math%
+
+    RTilde_i(chi_i, alp)  =  R_i(chi_i, alp, 0)  .
+%$$
+$pre
+
+$$
+(3.) This function requires the model function to provide the
+following second derivatives of $math%f_i(chi_i, alp, b_i)%$$
+$math%
+
+  f_i_b_chi(chi_i, alp, b_i)  ,
+
+  f_i_b_alp(chi_i, alp, b_i)  .
+%$$
+$pre
+
+$$
+(4.) The number of individuals in the population, $math%M%$$, is 
+determined by subtracting one from the number of elements in the 
+argument $italic K$$, which is a column vector containing 
+information about the partitioning of the elements in $italic x$$.
+
+$head Reference$$
+B. M. Bell, $italic Approximating The Marginal Likelihood Estimate 
+For Models With Random Parameters$$, Applied Mathematics and Computation,
+119 (2001), pp. 57-73. 
+
+$head Model Assumptions$$
+The following model assumptions are stated using 
+$xref/glossary/Population Notation/population notation/$$.
+The bar above $math%chi_i%$$, $math%alp%$$, and $math%b_i%$$ denote 
+the true, but unknown, values for the design parameters, 
+the fixed population parameters, and the random population 
+parameters for the $th i$$ individual, respectively.
+$math%
+             _____  ___   ___
+  y_i = f_i( chi_i, alp , b_i ) + e_i
+                  _____  ___  ___
+  e_i ~ N[0, R_i( chi_i, alp, b_i)]
+  ___          ___
+  b_i ~ N[0, D(alp)]
+%$$
+
+$head Return Values$$
+The return value of $code HTilde$$ 
+is true, if it succeeds, and false otherwise.
+
+$head Arguments$$
+$syntax//Model/(/i/, /chi/, /alp/, /b/, /fOut/, /f_chiOut/, /f_alpOut/, /f_bOut/, /f_b_chiOut/, /f_b_alpOut/, 
+    /ROut/, /R_chiOut/, /R_alpOut/, /R_bOut/, /DOut/, /D_alpOut/)
+/$$
+The return value of $italic Model$$ is true if it succeeds and false otherwise.
+All the arguments to this routine have real or double-precision values. In addition,
+the arguments that end in $italic Out$$ are $xref/glossary/Output Value/output values/$$.
+$pre
+
+$$
+$center
+$table
+$bold Argument$$
+  $cend $bold Value$$ 
+  $cend $bold Comments$$ $rend
+$italic i$$
+  $cend $math%i%$$
+  $cend index for this individual $rend
+$italic chi$$
+  $cend $math%chi_i%$$
+  $cend design parameter vector for this individual combined with the
+          design parameter vector common to all individuals $rend
+$italic alp$$
+  $cend $math%alp%$$
+  $cend fixed population parameter vector $rend
+$italic b$$
+  $cend $math%b_i%$$
+  $cend random population parameter vector for this individual $rend
+$italic fOut$$
+  $cend $math%f_i(chi_i, alp, b_i)%$$ 
+  $cend model for the mean of $math%y_i%$$ given $math%b_i%$$ $rend
+$italic f_chiOut$$ 
+  $cend $math%f_i_chi(chi_i, alp, b_i)%$$
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic f_alpOut$$ 
+  $cend $math%f_i_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic f_bOut$$ 
+  $cend $math%f_i_b(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i(chi_i, alp, b_i)%$$ with respect to $math%b_i%$$ $rend
+$italic f_b_chiOut$$ 
+  $cend $math%f_i_b_chi(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i_b(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic f_b_alpOut$$ 
+  $cend $math%f_i_b_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%f_i_b(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic ROut$$ 
+  $cend $math%R_i(chi_i, alp, b_i)%$$ 
+  $cend model for the variance of $math%y_i%$$ given $math%b_i%$$ $rend
+$italic R_chiOut$$ 
+  $cend $math%R_i_chi(chi_i, alp, b_i)%$$
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%chi_i%$$ $rend
+$italic R_alpOut$$
+  $cend $math%R_i_alp(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%alp%$$ $rend
+$italic R_bOut$$
+  $cend $math%R_i_b(chi_i, alp, b_i)%$$ 
+  $cend derivative of $math%R_i(chi_i, alp, b_i)%$$ with respect to $math%b_i%$$ $rend
+$italic DOut$$ 
+  $cend $math%D(alp)%$$ 
+  $cend model for the variance of $math%b_i%$$ $rend
+$italic D_alpOut$$
+  $cend $math%D_alp(alp)%$$ 
+  $cend derivative of $math%D(alp)%$$ with respect to $math%alp%$$
+$tend
+$$
+
+$syntax/
+/K/
+/$$
+The $th i$$ element of the integer column vector $italic K$$
+specifies $math%K(i)%$$, the number of elements of $italic x$$ that
+correspond to the $th i$$ individual.
+The last element in $italic K$$ specifies $math%K_common%$$,
+the number of elements of $italic x$$ that
+are common to all of the individuals in the population.
+The number of elements in $italic K$$ should be one more than
+the number of individuals in the population, $math%M%$$,
+since the length of $italic K$$ minus one specifies $math%M%$$.
+$pre
+
+$$
+To be specific, the vector $italic x$$ should have
+$math%
+
+  K(1) + K(2) + ... + K(M) + K_common
+
+%$$
+elements.  
+The design vector corresponding to the first individual is
+$math%
+                                       T
+  x_1 = [ x(1) , x(2) , ... , x(K(1)) ]   .
+
+%$$
+Elements $math%x(K(1) + 1)%$$ through $math%x(K(1) + K(2))%$$ 
+correspond to the second individual and so on.
+The last $math%K_common%$$ elements make up $math%x_common%$$.
+(Note that $math%x_1%$$ refers to the first subvector or $italic x$$ while
+$math%x(1)%$$ refers to the first element of the vector $italic x$$.)
+
+$syntax/
+
+/x/
+/$$
+The double-precision column vector $italic x$$
+specifies the value for the design parameter vector.
+
+$syntax/
+
+/alpStep/
+/$$
+The double-precision column vector $italic alpStep$$
+specifies the step size used for approximating
+the derivatives with respect to the fixed population parameters.
+$syntax/
+
+/alp/
+/$$
+The double-precision column vector $italic alp$$
+specifies the value for the fixed population parameter vector.
+$syntax/
+
+/bLength/
+/$$
+is an integer scalar that specifies the number of random population 
+parameters.
+$syntax/
+
+/HTildeOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic HTildeOut$$
+is a square matrix containing the value of $math%HTilde(x, alp)%$$.
+$syntax/
+
+/HTilde_xOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic HTilde_xOut$$
+is a matrix containing the derivative of $math%HTilde(x, alp)%$$
+with respect to $italic x$$.
+$syntax/
+
+/HTilde_alpOut/
+/$$
+the $xref/glossary/Output Value/output value/$$ of $italic HTilde_alpOut$$
+is a matrix containing the derivative of $math%HTilde(x, alp)%$$
+with respect to $italic x$$.
+
+$end
+---------------------------------------------------------------------
+#end##
+
+# ---------------------------------------------------------------------
+#
+# Include files
+#
+# ---------------------------------------------------------------------
+
+# PPED functions.
+include FOOptimalDesignModel.oms
+
+# Modified SPK functions.
+include ExpectedHessian.oms
+
+
+# ---------------------------------------------------------------------
+#
+# Global variables.
+#
+# ---------------------------------------------------------------------
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# [Revisit - Global Subject Index Value - Mitch]
+# This global value must be used to pass the subject index
+# to the model function.  The reason for this is that the
+# original lambda function, i.e., the lambda function that
+# is used for parameter estimation rather than optimal design,
+# is evaluated for a particular individual, but this lambda 
+# function requires a sum over all of the individuals.  This
+# difference is an artifact of the fact that the second level
+# of the hierarchical model for parameter estimation involves
+# a separate optimization problem for each individual, while
+# the second level of the hierarchical model for optimal design
+# involves a single optimization problem that has an objective
+# which includes contributions from each individual.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+global GLOBAL_SubjectIndex
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# [Revisit - Global Variables for Lambda - Mitch]
+# It would be better if these were part of the model function
+# that was passed down from function to function.  The reason
+# they cannot be passed down to lambda is that the LTilde/Lambda
+# interface does not include these.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+global GLOBAL_K
+global GLOBAL_alpStep
+global GLOBAL_nB
+
+
+# ---------------------------------------------------------------------
+#
+# Local functions
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: dummy
+# ---------------------------------------------------------------------
+
+local function dummy() begin
+  stop "Model not set"
+end
+
+
+# ---------------------------------------------------------------------
+# Function: Model
+# ---------------------------------------------------------------------
+
+local function Model = dummy()
+
+
+# ---------------------------------------------------------------------
+# Function: Model_i
+#
+#
+# Evaluates the approximate model functions 
+#
+#    fTilde_i(chi_i, alp, b_i = 0)  
+#
+# and
+#
+#    VTilde_i(chi_i, alp)  
+#
+# where 
+#                                T
+#     chi_i  =  ( x_i, x_common )   
+#
+# is a vector that contains the design parameters for the current
+# individual i combined with the design parameters common to all 
+# individuals.  
+#
+# Note that the current individual is specified by GLOBAL_SubjectIndex.
+#
+# This function also evaluates the derivatives of these functions
+# with respect to chi_i and it evaluates the derivatives with 
+# respect to the fixed population parameter vector alp.
+#
+# Notes
+# -----
+#
+# (1.) The last two arguments of this function are not used.
+#
+# ---------------------------------------------------------------------
+
+local function Model_i( ...
+  chi_i, ...
+  alp, ...
+  fOut, ...
+  fTilde_chiOut, ...
+  fTilde_alpOut, ...
+  VOut, ...
+  VTilde_chiOut, ...
+  VTilde_alpOut, ...
+  Unused1, ...
+  Unused2 ...
+) begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries.
+  # -------------------------------------------------------------------
+
+  i         = GLOBAL_SubjectIndex
+  K_i       = GLOBAL_K(i)
+  K_common  = GLOBAL_K(rowdim(GLOBAL_K))
+
+  if K_i + K_common <> rowdim(chi_i) then begin
+    stop "Wrong number of elements in chi_i."
+    return false
+  end
+
+  nX          = colsum(GLOBAL_K)
+  nX_iBefore  = colsum(GLOBAL_K.row(1, i-1))
+  nX_iAfter   = nX - nX_iBefore - K_i - K_common
+
+  x_i       = chi_i.row(1,     K_i)
+  x_common  = chi_i.row(K_i+1, K_common)
+
+  # Set the components in x that correspond to x_i and x_common.
+  x = { ...
+    fill(0.0, nX_iBefore, 1), ... 
+    x_i, ...
+    fill(0.0, nX_iAfter, 1), ...
+    x_common ...
+  }
+
+
+  # -------------------------------------------------------------------
+  # Evaluate the model.
+  # -------------------------------------------------------------------
+
+  return FOOptimalDesignModel( ...
+    function Model, ...
+    x, ...
+    alp, ...
+    fOut, ...
+    fTilde_chiOut, ...
+    fTilde_alpOut, ...
+    VOut, ...
+    VTilde_chiOut, ...
+    VTilde_alpOut ...
+  )
+
+end
+
+
+# ---------------------------------------------------------------------
+#
+# Global functions.
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# Function: HTilde
+# ---------------------------------------------------------------------
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# [Revisit - Duplicate HTilde Code - Mitch]
+# The code that calculates HTilde and its derivatives is
+# copied from Lambda.oms, which should really call this
+# function rather than doing the calculation itself.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+function HTilde( ...
+  function model, ...
+  K, ...
+  x, ...
+  alpStep, alp, ...
+  bLength, ...
+  HTildeOut, HTilde_xOut, HTilde_alpOut  ...
+) ...
+begin
+
+  # -------------------------------------------------------------------
+  # Preliminaries.
+  # -------------------------------------------------------------------
+
+  if not (HTildeOut or HTilde_xOut or HTilde_alpOut) then ...
+    return true
+
+  GLOBAL_K       = K
+  GLOBAL_alpStep = alpStep
+  GLOBAL_nB      = bLength
+
+  nSub  = rowdim(K) - 1   # Number of subjects.
+  nX    = rowdim(x)       # Number of design parameters.
+  nAlp  = rowdim(alp)     # Number of fixed population parameters.
+
+  if nX <> colsum(K) then begin
+    stop "The length of x and the values in K are not consistent."
+    return false
+  end
+
+  # Get the vector of design parameters common to all individuals. 
+  K_common = K(rowdim(K))
+  x_common = x.row(nX - K_common + 1, K_common)
+
+  function Model = model()
+
+
+  # -------------------------------------------------------------------
+  # Compute the expected Hessian and its derivatives.
+  # -------------------------------------------------------------------
+
+  if HTildeOut then ...
+    HTildeTemp = fill(0, nAlp, nAlp)
+  if HTilde_xOut then begin
+    HTilde_x        = fill(0, 0, 0)
+    HTilde_x_common = fill(0, nAlp*nAlp, K_common)
+  end
+  if HTilde_alpOut then ...
+    HTilde_alp = fill(0, nAlp*nAlp, nAlp)
+
+  # Compute each individual's contribution.
+  xindex = 1
+  for i = 1 to nSub begin
+
+    # Specify the subject for the model function.
+    GLOBAL_SubjectIndex = i
+
+    # Get this subject's design vector.
+    K_i    = GLOBAL_K(i)
+    x_i    = x.row(xindex, K_i)
+    xindex = xindex + K_i
+
+    # Combine this subject's and the common design parameters.
+    chi_i = { x_i, x_common }
+
+    # Compute the expected Hessian for this subject.
+    HTilde_i      = HTildeOut
+    HTilde_i_chi  = HTilde_xOut
+    HTilde_i_alp  = HTilde_alpOut
+    withD         = false
+    ok = ExpectedHessian( ...
+      function Model_i, ...
+      chi_i, ...
+      alp, GLOBAL_alpStep, ...
+      HTilde_i, HTilde_i_chi, HTilde_i_alp, ...
+      withD ...
+      )
+    if not ok then begin
+      stop
+      return false
+    end
+
+    # Calculate the population information matrix as
+    #                         M
+    #                        ----   
+    #     HTilde(x, alp)  =  >      HTilde_i(chi_i, alp)  .
+    #                        ----
+    #                        i = 1
+    if HTildeOut then ...
+      HTildeTemp = HTildeTemp + HTilde_i
+
+    # Calculate the derivative with respect to x as
+    #
+    #     HTilde_x(x, alp)  =  
+    #
+    #          -                                                                                   -
+    #         |  HTilde_1_x_1(chi_1, alp), ... , HTilde_M_x_M(chi_M, alp), HTilde_x_common(x, alp)  |  ,
+    #          -                                                                                   -
+    # where
+    #                                  M
+    #                                 ----   
+    #     HTilde_x_common(x, alp)  =  >      HTilde_i_x_common(chi_i, alp)  .
+    #                                 ----
+    #                                 i = 1
+    #
+    # Note that
+    #
+    #                                   -                                                         -
+    #     HTilde_i_chi(chi_i, alp)  =  |  HTilde_i_x_i(chi_i, alp), HTilde_i_x_common(chi_i, alp)  |  .
+    #                                   -                                                         -
+    #
+    if HTilde_xOut then begin
+      HTilde_x        = [ HTilde_x,         HTilde_i_chi.col(1,       K_i) ]
+      HTilde_x_common =   HTilde_x_common + HTilde_i_chi.col(K_i + 1, K_common)
+   end
+
+    # Calculate the derivative with respect to alp as
+    #
+    #                              M
+    #                             ----   
+    #      HTilde_alp(x, alp)  =  >      HTilde_i_alp(chi_i, alp)  .
+    #                             ----
+    #                             i = 1
+    if HTilde_alpOut then ...
+      HTilde_alp = HTilde_alp + HTilde_i_alp
+
+  end
+
+
+  # -------------------------------------------------------------------
+  # Finish up.
+  # -------------------------------------------------------------------
+
+  if HTildeOut then ...
+    HTildeOut = HTildeTemp
+
+  if HTilde_xOut then ...
+    HTilde_xOut = [ HTilde_x, HTilde_x_common ]
+
+  if HTilde_alpOut then ...
+    HTilde_alpOut = HTilde_alp
+
+  function Model = dummy()
+
+  return ok
+end
+

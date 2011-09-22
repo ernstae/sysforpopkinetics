@@ -1,0 +1,72 @@
+$begin qn01box$$
+$spell
+	Bennet
+	Bfgs
+	cpp
+	cvs
+	exp
+	optimizer
+	proj
+	su
+	sudo
+$$
+
+$section Install QN01Box$$
+
+$head Dependence$$
+This package depends on $xref/omhelp/$$ being installed first.
+
+$head Check Out r1$$
+The $code r1$$ repository was checked out with the following command:
+$codep
+	cvs checkout -P r1
+$$
+
+$head Build$$
+The optimizer library was build with the following commands:
+$codep
+	cd r1/Optimizer/QN01Box
+	./Build
+$$
+
+$head Test$$
+The tests were executed with the following command
+$codep
+	Test/RunTest
+$$
+The response to the $code RunTest$$ command was
+$codep
+Ok:    Bennet5          :functionCount = 14 :gradientCount = 9
+Ok:    Bfgs             
+Ok:    Degenerate        :functionCount = 9 :gradientCount = 5
+Ok:    Delta            
+Ok:    ExpLeastSquares   :functionCount = 222 :gradientCount = 97
+Ok:    LinearObjective   :functionCount = 15 :gradientCount = 3
+Ok:    MaxAbs           
+Ok:    MemoryError      
+Ok:    Next             
+Ok:    PlusInfinity      :functionCount = 21 :gradientCount = 11
+Ok:    PositiveMatrix   
+Ok:    QuadBox           :QuadBox Iteration Count = 19
+Ok:    QuasiNewton01Box  :functionCount = 68 :gradientCount = 34
+Ok:    ResidualIncrease  :QuadBox Iteration Count = 5
+Ok:    Residual         
+Ok:    ScaleProjGradTest
+Ok:    SingularUpdate   
+Ok:    SumAbs           
+Ok:    Test_03_12_16     :functionCount = 34 :gradientCount = 17
+Ok:    Test_04_02_18     :QuadBox Iteration Count = 4
+Ok:    TwoCompartment    :functionCount = 58 :gradientCount = 30
+
+All the correctness tests passed.
+$$
+
+$head Install$$
+The QN01Box library and include files were installed with the 
+following commands:
+$codep
+	sudo make install
+$$
+
+$end
+

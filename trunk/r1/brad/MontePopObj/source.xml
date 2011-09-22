@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<spksource>
+   <nonmem version="0.1">
+      <constraint>
+         <pop_analysis approximation="fo" is_estimation="yes" is_eta_out="yes" is_restart="no" mitr="450" pop_size="2" sig_digits="3">
+            <description>BradLinearModel</description>
+            <data_labels>
+               <label name="ID"/>
+               <label name="TIME"/>
+               <label name="DV"/>
+            </data_labels>
+            <theta length="1">
+               <low>
+                  <value fixed="no">0</value>
+               </low>
+               <in>
+                  <value fixed="no">.5</value>
+               </in>
+               <up>
+                  <value fixed="no">2</value>
+               </up>
+            </theta>
+            <omega dimension="1" same_as_previous="no" struct="diagonal">
+               <in>
+                  <value fixed="no">.5</value>
+               </in>
+            </omega>
+            <sigma dimension="1" same_as_previous="no" struct="diagonal">
+               <in>
+                  <value fixed="no">.25</value>
+               </in>
+            </sigma>
+            <pop_stat covariance_form="rsr"/>
+         </pop_analysis>
+      </constraint>
+      <model>
+         <pred>
+; FIXED EFFECT THETA(1)  IS THE SLOPE OF THE LINE
+; RANDOM EFFECT ETA(1) IS THE INTERCEPT OF THE LINE
+; MEASUREMENT ERROR IS EPS(1)
+;
+; MODEL FOR THE MEAN GIVEN THE RANDOM EFFECTS
+F = THETA(1) * TIME + ETA(1)
+;
+; MODEL FOR THE DATA FIVEN THE MEASUREMENT ERROR
+Y = F + EPS(1)
+         </pred>
+      </model>
+      <presentation>
+         <table header="every" process="estimation">
+            <column appearance_order="1" label="TIME" sort_order="1"/>
+            <column appearance_order="2" label="F" sort_order="0"/>
+            <column appearance_order="3" label="DV" sort_order="0"/>
+            <column appearance_order="4" label="PRED" sort_order="0"/>
+            <column appearance_order="5" label="RES" sort_order="0"/>
+            <column appearance_order="6" label="WRES" sort_order="0"/>
+         </table>
+         <scatterplot begin="1" end="6" process="estimation" unit_slope="hide" x0_line="hide" y0_line="hide">
+            <x label="TIME"/>
+            <y label="F"/>
+            <split label="ID"/>
+         </scatterplot>
+      </presentation>
+   </nonmem>
+</spksource>

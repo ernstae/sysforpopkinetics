@@ -1,0 +1,184 @@
+% LaTeX Article Template - customizing page format
+%
+% LaTeX document uses 10-point fonts by default.  To use
+% 11-point or 12-point fonts, use \documentclass[11pt]{article}
+% or \documentclass[12pt]{article}.
+\documentclass{article}
+
+% Set left margin - The default is 1 inch, so the following 
+% command sets a 1.25-inch left margin.
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\evensidemargin}{-0.25in}
+
+% Set width of the text - What is left will be the right margin.
+% In this case, right margin is 8.5in - 1.25in - 6in = 1.25in.
+\setlength{\textwidth}{7in}
+
+% Set top margin - The default is 1 inch, so the following 
+% command sets a 0.75-inch top margin.
+\setlength{\topmargin}{-0.25in}
+
+% Set height of the text - What is left will be the bottom margin.
+% In this case, bottom margin is 11in - 0.75in - 9.5in = 0.75in
+\setlength{\textheight}{8in}
+
+\newcommand{\BE}{{\bf E}}
+\newcommand{\BN}{{\bf N}}
+\newcommand{\BR}{{\bf R}}
+\newcommand{\RT}{{\rm T}}
+\newcommand{\BV}{{\bf V}}
+\newcommand{\BZ}{{\bf Z}}
+
+\newcommand{\Bd}{{\bf d}}
+\newcommand{\Bp}{{\bf p}}
+
+\newcommand{\Th}[1]{{\( #1 \)}-th}
+
+\newtheorem{lemma}{Lemma}
+
+% Set the beginning of a LaTeX document
+\begin{document}
+\Large
+
+\title{
+	Nonlinear Mixed Effects Modeling with 
+	Linear Stochastic Ordinary Differential Equations
+}
+\author{Bradley M. Bell}
+\date{\today}
+\maketitle
+
+\section{Individual Model}
+
+% ===========================================================================
+% The default \unitlength for a picture is one point; i.e., ~ 1/72 inches
+% diagram with size (250, 200) and lower left corner at (-40,0)
+% In the picture below 0  <= x <= 240, 40 <= y <= 175 
+\begin{picture}(320,215)(-40,0)
+
+% First compartment --------------------------------------
+% circle centered a (60, 100), diameter = 40
+\put(60,100){\circle{40}}
+
+% text q(t) centered at the location (60, 100)
+\put(60, 100){\makebox(0,0)[c]{\( q(t) \)}}
+
+% vector starting at (100, 100), dx = 1, dy = 0, length = 40
+\put(80, 100){\vector(1,0){40}}
+
+% text a with its bottom center at location (100, 105)
+\put(100, 105){\makebox(0,0)[bc]{\( a \)}}
+
+% Second compartment --------------------------------------
+% circle centered a (140, 100), diameter = 40
+\put(140,100){\circle{40}}
+
+% text r(t) centered at the location (140, 100)
+\put(140, 100){\makebox(0,0)[c]{\( r(t) \)}}
+
+% vector starting at (160, 100), dx = 1, dy = 0, length = 40
+\put(160, 100){\vector(1,0){40}}
+
+% text b with its bottom center at location (200, 105)
+\put(180, 105){\makebox(0,0)[bc]{\( b \)}}
+
+% line starting at (155, 115), dx = 1, dy = 1, length = 40
+\put(155, 115){\line(1,1){40}}
+
+% text y(t) = r(t)  + eps(t) with bottom center at (195, 155)
+\put(155, 155){
+	\framebox(140,20)[c]{\( y(t) = r(t)  + \varepsilon(t) \)}
+}
+
+\end{picture}
+% ===========================================================================
+
+\[
+\begin{array}{rcllcl}
+\partial_t q(t) & = & - a q(t)                     & , & q(0) = q_0  
+\\
+\partial_t r(t) & = & + a q(t) - b r(t)            & , & r(0) = r_0
+\\
+y(t)                      & = & r(t) + \varepsilon (t)
+\end{array}
+\]
+The solution of the differential equation is
+\begin{eqnarray*}
+q(t) & = & q_0 \exp ( - a t )
+\\
+r(t) & = & \left[ 
+	r_0 + a q_0 \frac{ 1  - \exp[ - (a - b) t ] }{ a - b } 
+\right] \exp( - b t )
+\end{eqnarray*}
+
+
+\section{Stochastic Difference Equation}
+Suppose we have a constant time points \( t_j \),
+we write the corresponding stochastic difference equations:
+\begin{eqnarray*}
+a_j & = & a_{j-1} + \gamma_{j-1}
+\\
+b_j & = & b_{j-1} + \delta_{j-1}
+\\
+q_j & = & q_{j-1} \exp [ - a_{j-1} ( t_j - t_{j-1} ) ] 
+\\ 
+r_j & = & 
+\left [ r_{j-1} + a_{j-1} q_{j-1} 
+	\frac{ 1 - \exp[ - (a_{j-1} - b_{j-1}) ( t_j - t_{j-1} ) ] }
+		{ a_{j-1} - b_{j-1} }
+\right] \exp[ - b_{j-1} ( t_j - t_{j-1} ) ]
+\\
+y_j     & = & r_j + \varepsilon_j
+\end{eqnarray*}
+This is a naive representation of a stochastic differential equation that
+is just meant for demonstration purposes.
+For our example model,
+the first two difference equations are deterministic
+and the second two are stochastic as follows:
+\( \varepsilon_j \sim \BN(0, \sigma_\varepsilon^2 ) \),
+\( \gamma_j \sim \BN(0, \sigma_\gamma^2 ) \),
+\( \delta_j \sim \BN(0, \sigma_\delta^2 ) \)
+where the random variables are all independent.
+We use the vector \( x_j \in \BR^4 \) to denote the state vector
+\[
+x_j = [ a_j , b_j, q_j , r_j ]^\RT
+\]
+Note that, given \( x_0 \), \( \gamma \) and \( \delta \)
+we can use the difference equations above to calculate 
+\(  q \), \( r \), \( a \) and \( b \).
+
+
+\section{Population Mixed Effects Model}
+We use \( \alpha \) for our fixed effects and \( \eta \)
+for our random effects and \( i \) to index individuals in population.
+The initial conditions \( x_0 \) are given by
+\begin{eqnarray*}
+q^i_0 & = & 1
+\\
+r^i_0 & = & 0
+\\
+a^i_0 & = & \alpha_0 \exp ( \eta^i_0 )
+\\
+b^i_0 & = & \alpha_1 \exp ( \eta^i_1 )
+\end{eqnarray*}
+The stochastic part of the differential equations are
+given by random effects; to be specific, for \( j = 0 , \ldots , N-1 \)
+\begin{eqnarray*}
+\gamma^i_j & = & \eta^i_{2 + j}
+\\
+\delta^i_j & = & \eta^i_{N+1+j}
+\end{eqnarray*}
+All of the random variables listed below are independent:
+\begin{eqnarray*}
+\eta^i_0 & \sim & \BN [ 0, \exp( \alpha_2 ) ] 
+\\
+\eta^i_1 & \sim & \BN [ 0, \exp( \alpha_3 ) ] 
+\\
+\eta^i_{2+j} & \sim & \BN [ 0, \exp( \alpha_4 ) ] 
+\\
+\eta^i_{N+1+j} & \sim & \BN [ 0, \exp( \alpha_5 ) ] 
+\\
+\varepsilon^i_j & \sim & \BN [ 0 , \exp( \alpha_6 ) ]
+\end{eqnarray*}
+
+\end{document}
