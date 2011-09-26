@@ -1,0 +1,20 @@
+
+
+To install the System for Population Kinetics, please run the
+installer script, which requires a working version of Perl.
+
+As root,
+
+   ./setup.pl
+
+Expect this to take approximately 30 to 90 minutes, depending on
+the speed of your computer.
+
+After completing the install of all the runtime components for SPK,
+please ensure you have a Sun Java JDK installed, and go to the 
+
+       java-components
+
+directory and read the README file for instructions on building
+and installing the SPK java components.
+
