@@ -20,14 +20,15 @@ mkdir -p ${RELEASE_DIR}/contrib
 rsync -rvl --exclude .svn aspk cspk db *.pl LICENSE INSTALL README ${RELEASE_DIR}
 
 echo "Getting QN01Box from r1"
-svn export ${SVN_BASE}/rfpk_r1/trunk/Optimizer/QN01Box ${RELEASE_DIR}/contrib/QN01Box
+cp -a ../../r1/Optimizer/QN01Box ${RELEASE_DIR}/contrib/QN01Box
 
-svn export ${SVN_BASE}/rfpk_r1/trunk/brad/non_par ${RELEASE_DIR}/contrib/non_par
+cp -a ../../r1/brad/non_par ${RELEASE_DIR}/contrib/non_par
 
 echo "Getting mat2cpp from the web"
-MAT2CPP="mat2cpp-06-08-30"
+MAT2CPP_URL="https://svn.apl.washington.edu/packages/mat2cpp/"
+MAT2CPP="mat2cpp-20110812.tar.gz"
 
-(cd ${RELEASE_DIR}/contrib; wget http://toronto.rfpk.washington.edu/doc/mat2cpp/${MAT2CPP}.tar.gz; tar xvfz ${MAT2CPP}.tar.gz; rm -rf ${MAT2CPP}.tar.gz; mv ${MAT2CPP} mat2cpp )
+(cd ${RELEASE_DIR}/contrib; wget ${MAT2CPP_URL}${MAT2CPP}; tar xvfz ${MAT2CPP}.tar.gz; rm -rf ${MAT2CPP}.tar.gz; mv ${MAT2CPP} mat2cpp )
 
 echo "Getting OMHelp from the web"
 OMHELP_URL="http://www.seanet.com/~bradbell"
