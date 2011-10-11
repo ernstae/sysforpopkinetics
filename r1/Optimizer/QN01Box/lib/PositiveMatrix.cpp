@@ -86,7 +86,10 @@ $codep */
 
 # include <QN01Box/PositiveMatrix.h>
 
+# include <climits>
 # include <cstddef>
+# include <cstdlib>
+# include <cstring>
 # include <string>
 # include <math.h>
 # include <QN01Box/Memory.h>

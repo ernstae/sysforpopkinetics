@@ -22,7 +22,7 @@ dnl this a modified version of CppAD-05-10-12/configure.ac in the sense of the
 dnl COPYING file mentioned above.
 
 dnl     package,          version,  bugreport
-AC_INIT(QN01Box, 07-09-21, bradbell@apl.washington.edu)
+AC_INIT(QN01Box, 11-10-11, bradbell@apl.washington.edu)
 
 dnl The postfix directiory corresponding to this installation of QN01Box --
 AC_MSG_CHECKING( [POSTFIX_DIR] )

@@ -22,7 +22,10 @@ Author: Brad Bell (brad@apl.washington.edu)
 
 # include <cassert>
 # include <iostream>
-
+# include <climits>
+# include <cstddef>
+# include <cstdlib>
+# include <cstring>
 /*
 $begin Error$$
 $spell

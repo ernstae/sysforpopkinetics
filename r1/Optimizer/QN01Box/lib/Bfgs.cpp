@@ -153,10 +153,14 @@ $codep */
 # include <QN01Box/Bfgs.h>
 # include <QN01Box/Memory.h>
 
+# include <climits>
 # include <cstddef>
+# include <cstdlib>
+# include <cstring>
 # include <iostream>
 # include <string>
 # include <math.h>
+
 
 bool BfgsTest(std::string &msg)
 {	bool ok = true;
