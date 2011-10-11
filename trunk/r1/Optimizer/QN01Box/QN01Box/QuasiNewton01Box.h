@@ -670,6 +670,10 @@ $end
 
 # include <algorithm>
 # include <iostream>
+# include <climits>
+# include <cstddef>
+# include <cstdlib>
+# include <cstring>
 
 # include <QN01Box/Error.h>
 # include <QN01Box/QuadBox.h>
