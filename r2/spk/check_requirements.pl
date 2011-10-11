@@ -34,6 +34,11 @@ my @programs_ubuntu = qw (
    libxml-simple-perl
    libmime-lite-perl
    libproc-daemon-perl
+   libdigest-hmac-perl
+   libdigest-sha1-perl
+   libxml-simple-perl
+   libcompress-zlib-perl
+   libstring-crc32-perl
 );
 
 my @programs = qw ( gcc-c++
@@ -106,7 +111,11 @@ my @programs = qw ( gcc-c++
                     flex
 		    );
 
+
 $rpmcmd = "rpm -q ";
+if ( get_os() eq "Ubuntu" ) {
+    $rpmcmd = 'dpkg -s ';
+}
 
 my @not_avail = ();
 
