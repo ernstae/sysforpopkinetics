@@ -41,7 +41,7 @@ my @programs_ubuntu = qw (
    libstring-crc32-perl
 );
 
-my @programs = qw ( gcc-c++
+my @programs_fedora = qw ( gcc-c++
                     ginac
 		    ginac-devel
 		    atlas
@@ -113,8 +113,11 @@ my @programs = qw ( gcc-c++
 
 
 $rpmcmd = "rpm -q ";
+$programs = $programs_fedora;
+
 if ( get_os() eq "Ubuntu" ) {
     $rpmcmd = 'dpkg -s ';
+    $programs = $programs_ubuntu;
 }
 
 my @not_avail = ();
