@@ -28,7 +28,7 @@ echo "Getting mat2cpp from the web"
 MAT2CPP_URL="https://svn.apl.washington.edu/packages/mat2cpp/"
 MAT2CPP="mat2cpp-20110812.tar.gz"
 
-(cd ${RELEASE_DIR}/contrib; wget ${MAT2CPP_URL}${MAT2CPP}; tar xvfz ${MAT2CPP}.tar.gz; rm -rf ${MAT2CPP}.tar.gz; mv ${MAT2CPP} mat2cpp )
+(cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${MAT2CPP_URL}${MAT2CPP}; tar xvfz ${MAT2CPP}.tar.gz; rm -rf ${MAT2CPP}.tar.gz; mv ${MAT2CPP} mat2cpp )
 
 echo "Getting OMHelp from the web"
 OMHELP_URL="http://www.seanet.com/~bradbell"
