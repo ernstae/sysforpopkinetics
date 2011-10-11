@@ -26,7 +26,7 @@ cp -a ../../r1/brad/non_par ${RELEASE_DIR}/contrib/non_par
 
 echo "Getting mat2cpp from the web"
 MAT2CPP_URL="https://svn.apl.washington.edu/packages/mat2cpp/"
-MAT2CPP="mat2cpp-20110812.tar.gz"
+MAT2CPP="mat2cpp-20110812"
 
 (cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${MAT2CPP_URL}${MAT2CPP}; tar xvfz ${MAT2CPP}.tar.gz; rm -rf ${MAT2CPP}.tar.gz; mv ${MAT2CPP} mat2cpp )
 
