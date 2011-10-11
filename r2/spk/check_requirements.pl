@@ -113,11 +113,11 @@ my @programs_fedora = qw ( gcc-c++
 
 
 $rpmcmd = "rpm -q ";
-$programs = $programs_fedora;
+@programs = @programs_fedora;
 
 if ( get_os() eq "Ubuntu" ) {
     $rpmcmd = 'dpkg -s ';
-    $programs = $programs_ubuntu;
+    @programs = @programs_ubuntu;
 }
 
 my @not_avail = ();
